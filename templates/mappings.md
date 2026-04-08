@@ -3,6 +3,8 @@
 <!-- Connective concepts: Data transformations between shapes.
      Each mapping documents field-by-field how data moves between
      domain entities, DTOs, API payloads, and external systems. -->
+<!-- Linking rule: every referenced concept/type/field name must be a markdown link.
+     Source/Target field refs should prefer [ConceptName](file.md#concept).fieldName form. -->
 
 ## {MappingName}
 

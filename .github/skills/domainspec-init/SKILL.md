@@ -20,5 +20,6 @@ Also read domainspec/CHANGELOG.md to apply latest framework updates.
 2. Ensure docs, docs/features, docs/shared, docs/registry.md, and docs/glossary.md exist.
 3. Create docs/features/{feature}/SPEC.md from template when feature name is provided.
 4. If --with-example is set, copy payment-processing example into docs/features.
-5. Output a short next-step checklist.
+5. In the checklist, require markdown links for referenced concept/type/field names in authored docs.
+6. Output a short next-step checklist.
 </process>

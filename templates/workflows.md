@@ -3,6 +3,8 @@
 <!-- Behavioral concepts: Multi-step orchestrations that coordinate multiple operations.
      Each workflow section documents steps, decision points, and compensation logic.
      Each policy section documents the strategy selection logic applied at decision points. -->
+<!-- Linking rule: every referenced concept/type/field name must be a markdown link.
+    Operation and compensation references must point to operations.md anchors. -->
 
 ## {WorkflowName}
 

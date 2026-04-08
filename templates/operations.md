@@ -3,6 +3,10 @@
 <!-- Behavioral concepts: Operations (mutations) with their rules, calculations,
      pre/postconditions, state transitions, and error states.
      Each operation is a business action that changes state. -->
+<!-- Linking rule: every referenced concept/type/field name must be a markdown link.
+    Local references: [ConceptName](#conceptname)
+    Cross-file references: [EntityName](domain.md#entityname), [StateMachine](states.md#statemachinename)
+    Field refs: [EntityName](domain.md#entityname).fieldName -->
 
 ## {OperationName}
 
@@ -34,7 +38,7 @@
 
 ### State Transition
 
-`{Entity}: {FromState} → {ToState}`
+`[{Entity}](domain.md#entity-lowercase): {FromState} -> {ToState}`
 
 ### Postconditions
 

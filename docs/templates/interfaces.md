@@ -3,6 +3,8 @@
 <!-- Connective concepts: API boundaries — external (REST, GraphQL) and internal (module contracts).
      Each interface exposes operations or queries and documents the mapping
      between API shape and domain concepts. -->
+<!-- Linking rule: every referenced concept/type/field name must be a markdown link.
+     Field mappings should use: [OperationName](operations.md#operationname-lowercase).fieldName -->
 
 ## External: {API Name} ({Protocol})
 
@@ -15,7 +17,7 @@
 
 | Field | Type | Maps To             |
 | ----- | ---- | ------------------- |
-|       |      | {Operation}.{field} |
+|       |      | [OperationName](operations.md#operationname-lowercase).{field} |
 
 **Responses:**
 

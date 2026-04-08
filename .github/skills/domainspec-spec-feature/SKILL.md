@@ -25,6 +25,6 @@ Target location:
 2. Create or update SPEC.md and concept table.
 3. Generate relevant aspect files from templates.
 4. Add formal rules, formulas, transitions, and invariants where applicable.
-5. Validate cross-links and concept ID naming.
+5. Validate cross-links, referenced field-name links, and concept ID naming.
 6. Summarize what is ready and what remains undefined.
 </process>

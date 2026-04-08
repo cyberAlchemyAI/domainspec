@@ -37,3 +37,5 @@ This package provides reusable custom agents and commands for DomainSpec-driven 
 ## Installation
 
 Use INSTALL.md for copy instructions into .github/agents and .github/skills.
+
+During scripted install, choose a tools profile (`full`, `standard`, `minimal`, or `custom`) to control what installed DomainSpec agents are allowed to do.

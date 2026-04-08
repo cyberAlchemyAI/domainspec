@@ -1,6 +1,8 @@
 # Use Case: {UseCaseName}
 
 <!-- Implementation-facing template that maps DomainSpec Operation/Query/Workflow to an executable application function. -->
+<!-- Linking rule: every referenced concept/type/field name must be a markdown link.
+  Use [ConceptName](relative-file.md#conceptname) and [EntityName](domain.md#entityname).fieldName formats. -->
 
 ## Metadata
 

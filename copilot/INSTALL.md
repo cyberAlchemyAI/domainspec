@@ -19,6 +19,28 @@ Run:
 bash domainspec/copilot/install.sh
 ```
 
+The installer now asks which tool-permission profile should be applied to `domainspec-*` agents.
+
+### Non-interactive examples
+
+Use full repository permissions:
+
+```bash
+bash domainspec/copilot/install.sh --tools-profile full --yes
+```
+
+Use standard coding permissions:
+
+```bash
+bash domainspec/copilot/install.sh --tools-profile standard --yes
+```
+
+Use a custom tools list:
+
+```bash
+bash domainspec/copilot/install.sh --tools-profile custom --custom-tools "[read, edit, search, agent]" --yes
+```
+
 ## Post-install checks
 
 1. Confirm agent files exist under .github/agents with names domainspec-*.agent.md
