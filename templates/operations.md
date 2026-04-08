@@ -17,24 +17,24 @@
 ### Input
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| | | | |
+| ----- | ---- | -------- | ----------- |
+|       |      |          |             |
 
 ### Rules
 
 <!-- Business constraints that must hold. Each rule maps to 1+ validation tests. -->
 
-| ID | Rule | Formal |
-|----|------|--------|
-| R1 | | `<!-- formal expression -->` |
+| ID  | Rule | Formal                       |
+| --- | ---- | ---------------------------- |
+| R1  |      | `<!-- formal expression -->` |
 
 ### Calculations
 
 <!-- Derived values computed during the operation. Each maps to correctness tests. -->
 
-| ID | Calculation | Formula |
-|----|------------|---------|
-| C1 | | `<!-- formula -->` |
+| ID  | Calculation | Formula            |
+| --- | ----------- | ------------------ |
+| C1  |             | `<!-- formula -->` |
 
 ### State Transition
 
@@ -52,5 +52,5 @@
 <!-- What happens when rules are violated or external calls fail. Each maps to a negative test. -->
 
 | Condition | Result |
-|-----------|--------|
-| | |
+| --------- | ------ |
+|           |        |

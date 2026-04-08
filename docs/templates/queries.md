@@ -26,8 +26,8 @@
 
 ### Output
 
-| Field | Type | Source           | Description |
-| ----- | ---- | ---------------- | ----------- |
+| Field | Type | Source                                       | Description |
+| ----- | ---- | -------------------------------------------- | ----------- |
 |       |      | [EntityName](domain.md#entityname).fieldName |             |
 
 ### Reads From

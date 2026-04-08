@@ -15,8 +15,8 @@
 
 **Request:**
 
-| Field | Type | Maps To             |
-| ----- | ---- | ------------------- |
+| Field | Type | Maps To                                                        |
+| ----- | ---- | -------------------------------------------------------------- |
 |       |      | [OperationName](operations.md#operationname-lowercase).{field} |
 
 **Responses:**

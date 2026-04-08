@@ -27,16 +27,16 @@ graph TD
 
 ### Step Table
 
-| # | Step | Actor | Operation | On Success | On Failure | Compensation |
-|---|------|-------|-----------|------------|------------|--------------|
-| 1 | | | [{OperationName}](operations.md#) | Go to step 2 | | — |
-| 2 | | | | | | [{CompensationOp}](operations.md#) |
+| #   | Step | Actor | Operation                         | On Success   | On Failure | Compensation                       |
+| --- | ---- | ----- | --------------------------------- | ------------ | ---------- | ---------------------------------- |
+| 1   |      |       | [{OperationName}](operations.md#) | Go to step 2 |            | —                                  |
+| 2   |      |       |                                   |              |            | [{CompensationOp}](operations.md#) |
 
 ### Invariants
 
-| ID | Invariant | Formal |
-|----|-----------|--------|
-| | | |
+| ID  | Invariant | Formal |
+| --- | --------- | ------ |
+|     |           |        |
 
 ---
 
@@ -49,8 +49,8 @@ graph TD
 ### Decision Table
 
 | Condition | Selected Behavior | Notes |
-|-----------|------------------|-------|
-| | | |
+| --------- | ----------------- | ----- |
+|           |                   |       |
 
 ### Formula (if applicable)
 
@@ -61,5 +61,5 @@ graph TD
 ### Configuration Parameters
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| | | | |
+| --------- | ---- | ------- | ----------- |
+|           |      |         |             |

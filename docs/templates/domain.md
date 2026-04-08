@@ -13,10 +13,10 @@
 
 <!-- Description: what this entity represents and its business purpose -->
 
-| Field | Type     | Required | Description       |
-| ----- | -------- | -------- | ----------------- |
+| Field | Type                          | Required | Description       |
+| ----- | ----------------------------- | -------- | ----------------- |
 | id    | [{IdType}](#idtype-lowercase) | yes      | Unique identifier |
-|       |          |          |                   |
+|       |                               |          |                   |
 
 **Lifecycle:** See [{StateMachineName}](states.md#{statemachinename-lowercase})
 **Operations:** [{OperationName}](operations.md#{operationname-lowercase})

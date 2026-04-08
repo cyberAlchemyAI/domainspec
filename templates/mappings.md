@@ -14,22 +14,22 @@
 
 ### Field Mapping
 
-| Source Field | Target Field | Transform | Notes |
-|-------------|-------------|-----------|-------|
-| | | <!-- direct / computed / default / omitted --> | |
+| Source Field | Target Field | Transform                                      | Notes |
+| ------------ | ------------ | ---------------------------------------------- | ----- |
+|              |              | <!-- direct / computed / default / omitted --> |       |
 
 ### Defaults
 
 <!-- Fields that get default values when not present in source -->
 
 | Target Field | Default Value | Condition |
-|-------------|--------------|-----------|
-| | | |
+| ------------ | ------------- | --------- |
+|              |               |           |
 
 ### Validation
 
 <!-- Constraints checked during mapping -->
 
 | Field | Validation | On Failure |
-|-------|-----------|------------|
-| | | |
+| ----- | ---------- | ---------- |
+|       |            |            |

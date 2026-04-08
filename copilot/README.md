@@ -5,6 +5,7 @@ This package provides reusable custom agents and commands for DomainSpec-driven 
 ## What is included
 
 ### Agents
+
 - domainspec-planner
 - domainspec-spec-writer
 - domainspec-registry-sync
@@ -15,6 +16,7 @@ This package provides reusable custom agents and commands for DomainSpec-driven 
 - domainspec-researcher
 
 ### Commands
+
 - /domainspec-init
 - /domainspec-spec-feature
 - /domainspec-sync-registry

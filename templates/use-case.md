@@ -6,13 +6,13 @@
 
 ## Metadata
 
-| Field | Value |
-| --- | --- |
-| Kind | `Operation` / `Query` / `Workflow` |
-| Source Concept ID | `{feature}.{ConceptName}` |
-| Layer | Application |
-| Public API | `export function make{UseCaseName}(deps)` |
-| Output Function | `async function {useCaseName}(input)` |
+| Field             | Value                                     |
+| ----------------- | ----------------------------------------- |
+| Kind              | `Operation` / `Query` / `Workflow`        |
+| Source Concept ID | `{feature}.{ConceptName}`                 |
+| Layer             | Application                               |
+| Public API        | `export function make{UseCaseName}(deps)` |
+| Output Function   | `async function {useCaseName}(input)`     |
 
 ## Purpose
 
@@ -20,59 +20,59 @@ Describe the business intent and expected outcome.
 
 ## Inputs
 
-| Field | Type | Required | Source |
-| --- | --- | --- | --- |
-| | | yes/no | API / Event / Scheduler / Internal |
+| Field | Type | Required | Source                             |
+| ----- | ---- | -------- | ---------------------------------- |
+|       |      | yes/no   | API / Event / Scheduler / Internal |
 
 ## Output
 
 | Field | Type | Description |
-| --- | --- | --- |
-| | | |
+| ----- | ---- | ----------- |
+|       |      |             |
 
 ## Dependencies (Ports)
 
-| Port | Type Signature | Why Needed |
-| --- | --- | --- |
-| Repository | | |
-| Gateway | | |
-| Event Bus | | |
+| Port       | Type Signature | Why Needed |
+| ---------- | -------------- | ---------- |
+| Repository |                |            |
+| Gateway    |                |            |
+| Event Bus  |                |            |
 
 ## Business Rules
 
-| Rule ID | Rule | Enforcement Point |
-| --- | --- | --- |
-| | | before/after step X |
+| Rule ID | Rule | Enforcement Point   |
+| ------- | ---- | ------------------- |
+|         |      | before/after step X |
 
 ## Calculations
 
 | Calc ID | Formula / Function | Used At |
-| --- | --- | --- |
-| | | |
+| ------- | ------------------ | ------- |
+|         |                    |         |
 
 ## State Effects
 
-| Entity | From | To | Condition |
-| --- | --- | --- | --- |
-| | | | |
+| Entity | From | To  | Condition |
+| ------ | ---- | --- | --------- |
+|        |      |     |           |
 
 ## Events Emitted
 
 | Event | When | Payload Notes |
-| --- | --- | --- |
-| | | |
+| ----- | ---- | ------------- |
+|       |      |               |
 
 ## Error Mapping
 
 | Condition | Error Type | Code | Retryable |
-| --- | --- | --- | --- |
-| | | | yes/no |
+| --------- | ---------- | ---- | --------- |
+|           |            |      | yes/no    |
 
 ## Workflow Steps (only for Kind=Workflow)
 
-| # | Step | Action Function | Compensation |
-| --- | --- | --- | --- |
-| 1 | | | |
+| #   | Step | Action Function | Compensation |
+| --- | ---- | --------------- | ------------ |
+| 1   |      |                 |              |
 
 ## Pseudocode
 

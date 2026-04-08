@@ -15,16 +15,16 @@
 
 **Request:**
 
-| Field | Type | Maps To |
-|-------|------|---------|
-| | | [OperationName](operations.md#operationname-lowercase).{field} |
+| Field | Type | Maps To                                                        |
+| ----- | ---- | -------------------------------------------------------------- |
+|       |      | [OperationName](operations.md#operationname-lowercase).{field} |
 
 **Responses:**
 
-| Status | Condition | Body |
-|--------|-----------|------|
-| 2xx | Success | |
-| 4xx | Rule violation | |
+| Status | Condition      | Body |
+| ------ | -------------- | ---- |
+| 2xx    | Success        |      |
+| 4xx    | Rule violation |      |
 
 ---
 
@@ -32,7 +32,7 @@
 
 **Consumers:** <!-- Which modules call this interface -->
 
-| Method | Maps To | Description |
-|--------|---------|-------------|
-| | {OperationName} operation | |
-| | {QueryName} query | |
+| Method | Maps To                   | Description |
+| ------ | ------------------------- | ----------- |
+|        | {OperationName} operation |             |
+|        | {QueryName} query         |             |

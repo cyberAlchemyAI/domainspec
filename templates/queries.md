@@ -13,27 +13,27 @@
 ### Input
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| | | | |
+| ----- | ---- | -------- | ----------- |
+|       |      |          |             |
 
 ### Filters
 
 <!-- Optional filtering/pagination parameters -->
 
 | Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| | | | |
+| ----- | ---- | ------- | ----------- |
+|       |      |         |             |
 
 ### Output
 
-| Field | Type | Source | Description |
-|-------|------|--------|-------------|
-| | | [EntityName](domain.md#entityname).fieldName | |
+| Field | Type | Source                                       | Description |
+| ----- | ---- | -------------------------------------------- | ----------- |
+|       |      | [EntityName](domain.md#entityname).fieldName |             |
 
 ### Reads From
 
 <!-- Which entities/projections this query accesses -->
 
 | Entity | Relationship | Fields Used |
-|--------|-------------|-------------|
-| | queries | |
+| ------ | ------------ | ----------- |
+|        | queries      |             |

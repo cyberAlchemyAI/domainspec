@@ -12,8 +12,8 @@
 ## Fields
 
 | Field | Type | Constraint | Description |
-|-------|------|-----------|-------------|
-| | | | |
+| ----- | ---- | ---------- | ----------- |
+|       |      |            |             |
 
 ## Equality
 
@@ -23,14 +23,14 @@
 
 <!-- Constraints that must hold for a valid instance -->
 
-| Constraint | Formal | Description |
-|-----------|--------|-------------|
-| | `<!-- expression -->` | |
+| Constraint | Formal                | Description |
+| ---------- | --------------------- | ----------- |
+|            | `<!-- expression -->` |             |
 
 ## Used By
 
 <!-- Features that reference this shared concept -->
 
 | Feature | Entity/Field | Usage |
-|---------|-------------|-------|
-| | | |
+| ------- | ------------ | ----- |
+|         |              |       |

@@ -13,10 +13,10 @@
 
 <!-- Description: what this entity represents and its business purpose -->
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| id | [{IdType}](#idtype-lowercase) | yes | Unique identifier |
-| | | | |
+| Field | Type                          | Required | Description       |
+| ----- | ----------------------------- | -------- | ----------------- |
+| id    | [{IdType}](#idtype-lowercase) | yes      | Unique identifier |
+|       |                               |          |                   |
 
 **Lifecycle:** See [{StateMachineName}](states.md#{statemachinename-lowercase})
 **Operations:** [{OperationName}](operations.md#{operationname-lowercase})
@@ -30,8 +30,8 @@
 <!-- If shared across features: **Shared:** [docs/shared/{name}.md](../../shared/{name}.md) -->
 
 | Field | Type | Constraint |
-|-------|------|-----------|
-| | | |
+| ----- | ---- | ---------- |
+|       |      |            |
 
 **Equality:** <!-- How two instances are compared for equality -->
 
@@ -42,5 +42,5 @@
 ### {EnumName}
 
 | Value | Description |
-|-------|-------------|
-| | |
+| ----- | ----------- |
+|       |             |

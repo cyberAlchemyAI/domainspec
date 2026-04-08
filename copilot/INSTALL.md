@@ -43,8 +43,8 @@ bash domainspec/copilot/install.sh --tools-profile custom --custom-tools "[read,
 
 ## Post-install checks
 
-1. Confirm agent files exist under .github/agents with names domainspec-*.agent.md
-2. Confirm skill directories exist under .github/skills/domainspec-*
+1. Confirm agent files exist under .github/agents with names domainspec-\*.agent.md
+2. Confirm skill directories exist under .github/skills/domainspec-\*
 3. Run /domainspec-help to verify command discovery
 
 ## Notes
