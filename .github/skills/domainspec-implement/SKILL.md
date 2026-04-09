@@ -1,7 +1,7 @@
 ---
 name: domainspec-implement
 description: Implement feature code from DomainSpec docs and generated test specifications.
-argument-hint: "<feature-name> [--strict]"
+argument-hint: "<feature-name> [--strict] [--mode native|gsd-phase]"
 agent: domainspec-implementer
 allowed-tools: Read, Write, Bash, Glob, Grep, Task
 ---
@@ -20,8 +20,10 @@ Inputs:
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
-2. Build implementation task list from documented concepts and behaviors.
-3. Implement code and tests in small verifiable increments.
-4. Run automated checks and report failures with remediation.
-5. In --strict mode, stop on first doc-code mismatch and request spec fix.
+2. Resolve execution mode (`native` by default, `gsd-phase` when explicitly requested).
+3. Build implementation task list from documented concepts and behaviors.
+4. In `gsd-phase` mode, delegate orchestration to GSD execution flow and normalize outputs back to DomainSpec traceability.
+5. Implement code and tests in small verifiable increments.
+6. Run automated checks and report failures with remediation.
+7. In --strict mode, stop on first doc-code mismatch and request spec fix.
 </process>

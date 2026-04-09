@@ -72,6 +72,8 @@ Core responsibilities:
 - Include explicit file paths and automated verification commands
 - Keep the plan traceable to concepts listed in SPEC.md
 - Include explicit validation tasks for markdown links on referenced concept/type/field names
+- Delegate orchestration to GSD phase planning when feature complexity is medium/high
+- Keep DomainSpec semantics authoritative when GSD orchestration and docs diverge
   </role>
 
 <context>
@@ -87,7 +89,29 @@ Use these artifacts as contracts:
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load existing feature docs and source code scope.
-3. Produce a short plan with deterministic tasks and checks.
-4. Ensure every task maps to one or more documented concepts.
-5. Return assumptions explicitly when docs are incomplete.
+3. Classify planning complexity.
+4. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
+5. For medium/high complexity, delegate orchestration to GSD plan-phase flow and map resulting tasks back to DomainSpec concepts.
+6. Ensure every task maps to one or more documented concepts.
+7. Return assumptions explicitly when docs are incomplete.
 </execution>
+
+<delegation-contract>
+Mode selection:
+- `native`: Use DomainSpec-only planning.
+- `gsd-phase`: Use GSD phase planning orchestration and then normalize output back to DomainSpec terminology.
+
+Delegation trigger:
+- Prefer `gsd-phase` when at least one is true:
+  - Feature requires cross-cutting docs/tests/implementation sequencing.
+  - Feature has explicit dependencies across multiple aspect files.
+  - Work is expected to require checkpointed execution or wave planning.
+
+Authority rule:
+- DomainSpec docs remain source of truth for behavior and acceptance.
+- GSD provides orchestration only (task decomposition, wave/dependency ordering, checkpoints).
+
+Output rule:
+- Always return a DomainSpec-readable plan even when delegated.
+- Include explicit mapping from GSD tasks to DomainSpec concept IDs.
+</delegation-contract>

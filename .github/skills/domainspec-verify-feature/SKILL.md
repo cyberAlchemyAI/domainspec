@@ -17,12 +17,17 @@ Inputs include:
 - docs/features/{feature}/TEST-SPEC.md
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 - automated test outputs
+- delegated evidence artifacts when present:
+	- .planning/phases/**/**-PLAN.md
+	- .planning/phases/**/**-SUMMARY.md
+	- .planning/phases/**/VERIFICATION.md
 </context>
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Validate artifact completeness and structural quality.
 3. Validate automated verification evidence.
-4. Validate unresolved drift and risk level.
-5. Return verdict with required next actions.
+4. When delegated evidence exists, validate consistency between GSD verification outputs and DomainSpec acceptance obligations.
+5. Validate unresolved drift and risk level.
+6. Return verdict with required next actions.
 </process>

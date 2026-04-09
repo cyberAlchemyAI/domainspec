@@ -15,6 +15,10 @@ Inputs:
 - domainspec/CHANGELOG.md
 - docs/features/{feature}/*.md
 - related source and tests
+- delegated execution evidence when present:
+	- .planning/phases/**/**-PLAN.md
+	- .planning/phases/**/**-SUMMARY.md
+	- .planning/phases/**/VERIFICATION.md
 Output:
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 </context>

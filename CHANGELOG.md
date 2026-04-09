@@ -51,3 +51,17 @@ Versioning guidance:
 - Copilot command skill updates under copilot/skills:
   - All domainspec-\* skills now read CHANGELOG.md before running command workflows.
   - Skill process steps now explicitly extract current-framework constraints from CHANGELOG.md prior to action.
+
+## [1.1.0] - 2026-04-08
+
+### Added
+
+- DomainSpec-GSD delegation contract support in the local `.github` integration layer:
+  - DomainSpec planner/implementer now support explicit execution mode selection (`native` or `gsd-phase`).
+  - Verification and alignment skills now recognize delegated GSD evidence artifacts under `.planning/phases/**`.
+
+### Changed
+
+- Delegation authority model is now explicit:
+  - DomainSpec artifacts remain source of truth for semantics and acceptance.
+  - GSD workflows provide orchestration (phase planning, execution ordering, checkpoints, summaries).

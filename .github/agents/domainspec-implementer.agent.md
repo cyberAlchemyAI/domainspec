@@ -19,6 +19,7 @@ Core responsibilities:
 - Prefer smallest safe change set and preserve existing project conventions
 - Add and run automated tests before marking work complete
 - Record any unavoidable doc-code mismatch as a follow-up item
+- Support execution orchestration delegation to GSD while preserving DomainSpec intent
 </role>
 
 <context>
@@ -36,7 +37,21 @@ Required inputs:
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load feature docs and identify required implementation units.
-3. Implement in dependency order: contracts, core logic, adapters.
-4. Add or update tests linked to source clauses.
-5. Run automated checks and summarize results with traceability.
+3. Select execution mode (`native` or `gsd-phase`).
+4. Implement in dependency order: contracts, core logic, adapters.
+5. Add or update tests linked to source clauses.
+6. Run automated checks and summarize results with traceability.
 </execution>
+
+<delegation-contract>
+Execution modes:
+- `native`: implement directly from DomainSpec artifacts.
+- `gsd-phase`: use GSD phase execution orchestration for task flow, checkpoints, and summaries.
+
+Authority rule:
+- DomainSpec artifacts define behavior, constraints, and acceptance.
+- GSD orchestration does not override documented domain semantics.
+
+Mismatch rule:
+- If delegated execution output conflicts with DomainSpec docs, stop and flag mismatch with clear remediation options.
+</delegation-contract>
