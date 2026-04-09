@@ -8,18 +8,18 @@
 
 ### Input
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| featureId | string | yes | Target feature |
-| sourceDocs | string[] | yes | DomainSpec semantic artifacts |
-| planningMode | string | no | Native or delegated planning hint |
+| Field        | Type     | Required | Description                       |
+| ------------ | -------- | -------- | --------------------------------- |
+| featureId    | string   | yes      | Target feature                    |
+| sourceDocs   | string[] | yes      | DomainSpec semantic artifacts     |
+| planningMode | string   | no       | Native or delegated planning hint |
 
 ### Rules
 
-| ID | Rule | Formal |
-|----|------|--------|
-| R1 | Feature docs must exist | `len(sourceDocs) > 0` |
-| R2 | Delegated planning must map tasks to concepts | `forall task, exists conceptRef` |
+| ID  | Rule                                          | Formal                           |
+| --- | --------------------------------------------- | -------------------------------- |
+| R1  | Feature docs must exist                       | `len(sourceDocs) > 0`            |
+| R2  | Delegated planning must map tasks to concepts | `forall task, exists conceptRef` |
 
 ### Postconditions
 
@@ -34,10 +34,10 @@
 
 ### Rules
 
-| ID | Rule | Formal |
-|----|------|--------|
-| R1 | Delegated tasks must preserve DomainSpec constraints | `taskSemantics subsetOf domainConstraints` |
-| R2 | Automated verification command is required per code task | `forall codeTask, verify.automated != null` |
+| ID  | Rule                                                     | Formal                                      |
+| --- | -------------------------------------------------------- | ------------------------------------------- |
+| R1  | Delegated tasks must preserve DomainSpec constraints     | `taskSemantics subsetOf domainConstraints`  |
+| R2  | Automated verification command is required per code task | `forall codeTask, verify.automated != null` |
 
 ### Postconditions
 
@@ -52,10 +52,10 @@
 
 ### Rules
 
-| ID | Rule | Formal |
-|----|------|--------|
-| R1 | PASS/FLAG/BLOCK uses DomainSpec acceptance criteria | `verdictCriteria = domainSpecAcceptance` |
-| R2 | GSD evidence must be normalized before verdict | `rawEvidence -> normalizedEvidence` |
+| ID  | Rule                                                | Formal                                   |
+| --- | --------------------------------------------------- | ---------------------------------------- |
+| R1  | PASS/FLAG/BLOCK uses DomainSpec acceptance criteria | `verdictCriteria = domainSpecAcceptance` |
+| R2  | GSD evidence must be normalized before verdict      | `rawEvidence -> normalizedEvidence`      |
 
 ### Postconditions
 

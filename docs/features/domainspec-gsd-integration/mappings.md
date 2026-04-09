@@ -8,11 +8,11 @@
 
 ### Field Mapping
 
-| Source Field | Target Field | Transform | Notes |
-|--------------|--------------|-----------|-------|
-| featureId | phaseSlug | kebab-normalize | Stable phase slug |
-| sourceDocs[] | contextRefs[] | path-normalize | Used as canonical refs in planning context |
-| conceptIds[] | requirements[] | direct map | Used for task traceability |
+| Source Field | Target Field   | Transform       | Notes                                      |
+| ------------ | -------------- | --------------- | ------------------------------------------ |
+| featureId    | phaseSlug      | kebab-normalize | Stable phase slug                          |
+| sourceDocs[] | contextRefs[]  | path-normalize  | Used as canonical refs in planning context |
+| conceptIds[] | requirements[] | direct map      | Used for task traceability                 |
 
 ## DelegatedEvidenceToVerificationInput
 
@@ -22,17 +22,17 @@
 
 ### Field Mapping
 
-| Source Artifact | Target Field | Transform | Notes |
-|-----------------|--------------|-----------|-------|
-| *-PLAN.md | plannedTasks | extract tasks | Includes wave/dependency metadata |
-| *-SUMMARY.md | executionEvidence | extract completed work | Includes files and outcomes |
-| VERIFICATION.md | delegatedChecks | normalize checks | Mapped to DomainSpec acceptance clauses |
-| test output | automatedEvidence | direct | Command outcomes and failures |
+| Source Artifact | Target Field      | Transform              | Notes                                   |
+| --------------- | ----------------- | ---------------------- | --------------------------------------- |
+| \*-PLAN.md      | plannedTasks      | extract tasks          | Includes wave/dependency metadata       |
+| \*-SUMMARY.md   | executionEvidence | extract completed work | Includes files and outcomes             |
+| VERIFICATION.md | delegatedChecks   | normalize checks       | Mapped to DomainSpec acceptance clauses |
+| test output     | automatedEvidence | direct                 | Command outcomes and failures           |
 
 ### Validation
 
-| Field | Validation | On Failure |
-|-------|------------|------------|
-| plannedTasks | each task has concept mapping | FLAG |
-| executionEvidence | references existing outputs | FLAG |
-| delegatedChecks | maps to DomainSpec acceptance criteria | BLOCK |
+| Field             | Validation                             | On Failure |
+| ----------------- | -------------------------------------- | ---------- |
+| plannedTasks      | each task has concept mapping          | FLAG       |
+| executionEvidence | references existing outputs            | FLAG       |
+| delegatedChecks   | maps to DomainSpec acceptance criteria | BLOCK      |

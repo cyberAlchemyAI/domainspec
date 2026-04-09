@@ -24,16 +24,16 @@
 
 ### Decision Table
 
-| Condition | Selected Behavior | Notes |
-|-----------|-------------------|-------|
-| DomainSpec and GSD outputs agree | Continue | Standard delegated flow |
-| GSD output conflicts with DomainSpec rule | DomainSpec wins; stop and flag | Requires docs or execution correction |
-| GSD artifacts incomplete | Flag and request rerun or native fallback | Prevents unverifiable completion |
+| Condition                                 | Selected Behavior                         | Notes                                 |
+| ----------------------------------------- | ----------------------------------------- | ------------------------------------- |
+| DomainSpec and GSD outputs agree          | Continue                                  | Standard delegated flow               |
+| GSD output conflicts with DomainSpec rule | DomainSpec wins; stop and flag            | Requires docs or execution correction |
+| GSD artifacts incomplete                  | Flag and request rerun or native fallback | Prevents unverifiable completion      |
 
 ### Configuration Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| defaultMode | string | native | Default orchestration path |
-| delegatedComplexityThreshold | string | medium | Minimum complexity to auto-delegate |
-| conflictHandling | string | stop-and-flag | Behavior on semantic mismatch |
+| Parameter                    | Type   | Default       | Description                         |
+| ---------------------------- | ------ | ------------- | ----------------------------------- |
+| defaultMode                  | string | native        | Default orchestration path          |
+| delegatedComplexityThreshold | string | medium        | Minimum complexity to auto-delegate |
+| conflictHandling             | string | stop-and-flag | Behavior on semantic mismatch       |
