@@ -364,8 +364,15 @@ bash domainspec/copilot/install.sh
 | `/domainspec-generate-tests` | Stage 4 | Derive TEST-SPEC.md from formal aspect docs |
 | `/domainspec-implement` | Stage 5 | Implement code from documented contracts |
 | `/domainspec-audit-alignment` | Stage 5/6 | Produce alignment report comparing docs vs code |
+| `/domainspec-audit-layering` | Stage 5/6 | Detect domain-logic drift into application layers |
 | `/domainspec-verify-feature` | Stage 6 | PASS / FLAG / BLOCK verdict on feature readiness |
 | `/domainspec-help` | Any | Show commands and recommend next step |
+
+### Intelligent Context Discovery
+
+Agents that gather context (spec-writer, planner) use a **weighted heuristic** to choose the most efficient discovery path before acting. Four strategies are evaluated (`links-tags-first`, `broad-search-first`, `focused-researcher-first`, `capability-graph-first`) and scored against signal quality, search cost, and ambiguity risk. When SPEC frontmatter already resolves the full file graph, a pre-filter shortcut skips scoring entirely.
+
+The researcher agent returns results in a **structured output contract** (`featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, `recommendation`) so callers can act without re-navigating.
 
 See [copilot/README.md](copilot/README.md) and [copilot/INSTALL.md](copilot/INSTALL.md).
 

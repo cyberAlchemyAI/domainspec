@@ -66,6 +66,39 @@ Versioning guidance:
   - DomainSpec artifacts remain source of truth for semantics and acceptance.
   - GSD workflows provide orchestration (phase planning, execution ordering, checkpoints, summaries).
 
+## [1.2.0] - 2026-04-14
+
+### Added
+
+- Context search heuristic for intelligent discovery path selection:
+  - Agents now evaluate four strategies (`links-tags-first`, `broad-search-first`, `focused-researcher-first`, `capability-graph-first`) using a weighted scoring formula before gathering context.
+  - Pre-filter shortcut: when SPEC frontmatter `includes` and `dependencies` fully resolve the file graph, scoring is skipped.
+  - Tie-breaker defaults to `links-tags-first` (trust existing DomainSpec navigation).
+  - Validated by `tools/context-search-heuristic.test.mjs` with 9 representative scenarios at 100% accuracy.
+- New `domainspec-story-sync` agent for maintaining user-story files aligned with capability and aspect changes.
+- Structured output contract for researcher agent: callers receive `featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, and `recommendation`.
+
+### Changed
+
+- `domainspec-spec-writer` agent:
+  - Capability-driven SPEC structure (capabilities first, aspects second).
+  - Governance thresholds for SPEC size → STORIES.md / capabilities/ splits.
+  - Story coverage enforcement with `domainspec-story-sync` delegation.
+  - Context search heuristic with 4 strategies and pre-filter shortcut.
+- `domainspec-planner` agent:
+  - Context search heuristic with 4 strategies and pre-filter shortcut.
+  - Subagent delegation to `Explore`, `domainspec-researcher`, and audit agents.
+  - GSD phase delegation contract for medium/high complexity planning.
+- `domainspec-researcher` agent:
+  - DomainSpec-aware navigation using index artifacts, frontmatter signals, and capability anchors.
+  - `Explore` subagent delegation for broad discovery fallback.
+  - Structured output contract matching caller expectations.
+- `domainspec-implementer` agent:
+  - Audit gates (alignment + layering) before implementation edits.
+  - GSD execution delegation contract.
+  - Extended context inputs: STORIES.md, capabilities/*.md.
+- Heuristic weights tuned from `signal:0.45 / cost:0.35 / ambiguity:0.20` to `signal:0.45 / cost:0.30 / ambiguity:0.25` to reflect cheaper search costs from index artifacts.
+
 ## [1.1.1] - 2026-04-09
 
 ### Added
