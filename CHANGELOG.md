@@ -65,3 +65,15 @@ Versioning guidance:
 - Delegation authority model is now explicit:
   - DomainSpec artifacts remain source of truth for semantics and acceptance.
   - GSD workflows provide orchestration (phase planning, execution ordering, checkpoints, summaries).
+
+## [1.1.1] - 2026-04-09
+
+### Added
+
+- Layering enforcement artifacts in the local `.github` integration layer:
+  - New `domainspec-layering-auditor` agent to detect domain-logic drift into application/use-case layers.
+  - New `domainspec-audit-layering` skill to produce deterministic remediation plans tied to DomainSpec concepts.
+
+### Changed
+
+- DomainSpec planning and implementation workflows are expected to include a layering audit gate for features that already have production code.

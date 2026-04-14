@@ -1,46 +1,105 @@
 # {Feature Name}
 
-## Overview
+## What This Module Owns
 
-<!-- 1-3 paragraphs: what this feature does from a business perspective, why it exists -->
+<!-- 2-3 sentences: domain ownership boundary, core capabilities, and design intent -->
 
-## Concepts
+## Module Map
 
-<!-- List all domain concepts in this feature with their meta-types.
-     This table is the SOURCE OF TRUTH for the global registry. -->
+<!-- Visual concept flow by capability. Keep concise and capability-oriented. -->
 
-| Concept | ID | Type | Description |
-|---------|----|------|-------------|
-| | {feature}.{Name} | Entity | |
-| | {feature}.{Name} | Value Object | |
-| | {feature}.{Name} | Operation | |
-| | {feature}.{Name} | State Machine | |
+```mermaid
+graph TD
+     A[{Capability A}] --> B[{Capability B}]
+     B --> C[(Entity/State)]
+```
 
-## Aspects
+## Capabilities
+
+<!--
+Primary navigation is capability-driven.
+
+Governance thresholds:
+- SPEC < 120 lines: keep capability details inline as subsections.
+- SPEC 120-200 lines: keep capability summary in SPEC and move stories to STORIES.md.
+- SPEC > 300 lines OR any capability section > 15 rows: create capabilities/{capability-name}.md and keep only summary links in SPEC.
+-->
+
+| Capability | What | Key Aspects | Detail |
+| ---------- | ---- | ----------- | ------ |
+| [{CapabilityName}](capabilities/{capability-name}.md) | {business outcome} | {main operations/queries + states/events} | {counts/complexity summary} |
+
+### {Capability Name} (inline variant)
+
+<!-- Use this subsection format when capability details stay inline. -->
+
+{One-sentence capability summary.}
+
+| Aspect | Concept | Summary |
+| ------ | ------- | ------- |
+| Operation | [{OperationName}](operations.md#{anchor}) | {what it changes} |
+| Query | [{QueryName}](queries.md#{anchor}) | {what it reads} |
+| Interface | [{Endpoint or Contract}](interfaces.md#{anchor}) | {how it is exposed} |
+| Mapping | [{MappingName}](mappings.md#{anchor}) | {data transformation} |
+| State/Event | [{StateOrEvent}](states.md#{anchor}) | {lifecycle effect} |
+
+## Domain Concepts
+
+<!-- Structural concepts and key constraints for quick human understanding. -->
+
+| Concept | Type | Key Constraints |
+| ------- | ---- | --------------- |
+| [{EntityName}](domain.md#{anchor}) | Entity | {invariants, uniqueness, bounds} |
+| [{EnumOrType}](domain.md#{anchor}) | Enum / Type | {allowed values} |
+
+## Concept Registry
+
+<!-- Source of truth for registry sync. Keep compact: no Description column. -->
+
+| Concept | ID | Type |
+| ------- | -- | ---- |
+| [{ConceptName}](domain.md#{anchor}) | {feature}.{ConceptName} | Entity |
+| [{ConceptName}](operations.md#{anchor}) | {feature}.{ConceptName} | Operation |
+| [{ConceptName}](queries.md#{anchor}) | {feature}.{ConceptName} | Query |
+| [{ConceptName}](interfaces.md#{anchor}) | {feature}.{ConceptName} | Interface |
+
+## Aspect Docs
 
 <!-- Link only to aspect files that exist for this feature. Delete unused lines. -->
 
-- [Domain](domain.md) — Entities, value objects, enums
-- [Operations](operations.md) — Business operations, rules, calculations
-- [States](states.md) — State machines and transitions
-- [Interfaces](interfaces.md) — API contracts (external + internal)
-- [Events](events.md) — Domain events
-- [Queries](queries.md) — Read models
-- [Workflows](workflows.md) — Multi-step processes
-- [Mappings](mappings.md) — Data transformations
+| Aspect | Contains | Key Concepts |
+| ------ | -------- | ------------ |
+| [Domain](domain.md) | Entities, value objects, enums | {top concepts} |
+| [Operations](operations.md) | Mutations, rules, calculations | {top concepts} |
+| [Interfaces](interfaces.md) | External/internal contracts | {top concepts} |
+| [Queries](queries.md) | Read models | {top concepts} |
+| [Mappings](mappings.md) | Data transformations | {top concepts} |
+| [Workflows](workflows.md) | Multi-step orchestrations and policies | {top concepts} |
+| [States](states.md) | State machines and transitions | {top concepts} |
+| [Events](events.md) | Domain events and consumers | {top concepts} |
 
 ## Cross-Feature Dependencies
 
-<!-- Features this one depends on -->
+<!-- Capability-to-capability dependencies. -->
 
-| Depends On | Relationship | Why |
-|-----------|-------------|-----|
-| | | |
+| Capability | Depends On | Via | Why |
+| ---------- | ---------- | --- | --- |
+| {CapabilityName} | [{other-feature}.{OtherCapability}](../{other-feature}/SPEC.md) | Query / Operation / Interface | {reason} |
 
 ## Produces For
 
-<!-- Features that consume from this one -->
+<!-- Capability-aware outputs for downstream consumers. -->
 
-| Consumer | Via | What |
-|----------|-----|------|
-| | | |
+| Consumer | Consumes Capability | Via | What |
+| -------- | ------------------- | --- | ---- |
+| {consumer-feature or system} | {CapabilityName} | Query / Interface / Event | {artifact/value} |
+
+## Stories
+
+See [User Stories](STORIES.md) for acceptance scenarios and BDD coverage.
+
+## References
+
+- [Implementation tasks](tasks.en.md)
+- [Architecture decisions](decisions.en.md)
+- [Test specification](TEST-SPEC.md)
