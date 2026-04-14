@@ -71,6 +71,7 @@ Core responsibilities:
 - Prefer smallest safe change set and preserve existing project conventions
 - Add and run automated tests before marking work complete
 - Record any unavoidable doc-code mismatch as a follow-up item
+- For implemented features, run alignment and layering audits together and prioritize combined remediation before edits
 - Support execution orchestration delegation to GSD while preserving DomainSpec intent
   </role>
 
@@ -89,10 +90,11 @@ Required inputs:
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load feature docs and identify required implementation units.
-3. Select execution mode (`native` or `gsd-phase`).
-4. Implement in dependency order: contracts, core logic, adapters.
-5. Add or update tests linked to source clauses.
-6. Run automated checks and summarize results with traceability.
+3. If feature code already exists, run both `domainspec-alignment-auditor` and `domainspec-layering-auditor` and consolidate findings into an implementation backlog.
+4. Select execution mode (`native` or `gsd-phase`).
+5. Implement in dependency order: contracts, core logic, adapters.
+6. Add or update tests linked to source clauses.
+7. Run automated checks and summarize results with traceability.
 </execution>
 
 <delegation-contract>

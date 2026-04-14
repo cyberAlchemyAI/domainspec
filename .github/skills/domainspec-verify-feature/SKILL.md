@@ -16,6 +16,8 @@ Inputs include:
 - docs/features/{feature}/SPEC.md
 - docs/features/{feature}/TEST-SPEC.md
 - docs/features/{feature}/ALIGNMENT-REPORT.md
+- docs/features/{feature}/LAYERING-ALIGNMENT-REPORT.md
+- docs/features/{feature}/LAYERING-ALIGNMENT-PLAN.md
 - automated test outputs
 - delegated evidence artifacts when present:
 	- .planning/phases/**/**-PLAN.md
@@ -28,6 +30,6 @@ Inputs include:
 2. Validate artifact completeness and structural quality.
 3. Validate automated verification evidence.
 4. When delegated evidence exists, validate consistency between GSD verification outputs and DomainSpec acceptance obligations.
-5. Validate unresolved drift and risk level.
+5. Validate unresolved semantic and layering drift with risk level.
 6. Return verdict with required next actions.
 </process>

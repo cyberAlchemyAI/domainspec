@@ -16,12 +16,14 @@ Inputs:
 - docs/features/{feature}/SPEC.md
 - docs/features/{feature}/*.md
 - docs/features/{feature}/TEST-SPEC.md (if present)
+- docs/features/{feature}/LAYERING-ALIGNMENT-REPORT.md (required when feature already has implementation)
 </context>
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
-2. Build implementation task list from documented concepts and behaviors.
-3. Implement code and tests in small verifiable increments.
-4. Run automated checks and report failures with remediation.
-5. In --strict mode, stop on first doc-code mismatch and request spec fix.
+2. If feature code already exists, run `domainspec-audit-layering` and convert findings to explicit tasks before edits.
+3. Build implementation task list from documented concepts and behaviors.
+4. Implement code and tests in small verifiable increments.
+5. Run automated checks and report failures with remediation.
+6. In --strict mode, stop on first doc-code mismatch and request spec fix.
 </process>

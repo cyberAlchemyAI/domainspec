@@ -72,6 +72,7 @@ Core responsibilities:
 - Include explicit file paths and automated verification commands
 - Keep the plan traceable to concepts listed in SPEC.md
 - Include explicit validation tasks for markdown links on referenced concept/type/field names
+- Trigger both alignment and layering audits for implemented features and merge findings into one dependency-ordered remediation track
   </role>
 
 <context>
@@ -87,7 +88,8 @@ Use these artifacts as contracts:
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load existing feature docs and source code scope.
-3. Produce a short plan with deterministic tasks and checks.
-4. Ensure every task maps to one or more documented concepts.
-5. Return assumptions explicitly when docs are incomplete.
+3. If the feature already has implementation, run both `domainspec-alignment-auditor` and `domainspec-layering-auditor` and consolidate remediation obligations.
+4. Produce a short plan with deterministic tasks and checks.
+5. Ensure every task maps to one or more documented concepts.
+6. Return assumptions explicitly when docs are incomplete.
 </execution>

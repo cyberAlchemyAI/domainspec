@@ -16,6 +16,8 @@ Inputs:
 - docs/features/{feature}/SPEC.md
 - docs/features/{feature}/TEST-SPEC.md
 - docs/features/{feature}/ALIGNMENT-REPORT.md
+- docs/features/{feature}/LAYERING-ALIGNMENT-REPORT.md
+- docs/features/{feature}/LAYERING-ALIGNMENT-PLAN.md
 - .planning/phases/**/**-PLAN.md
 - .planning/phases/**/**-SUMMARY.md
 - .planning/phases/**/VERIFICATION.md
@@ -26,7 +28,7 @@ Inputs:
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load DomainSpec acceptance obligations.
 3. Load delegated evidence and normalize it to DomainSpec verification fields.
-4. Detect unresolved semantic mismatches, drift, and missing evidence.
+4. Detect unresolved semantic mismatches, layering drift, and missing evidence.
 5. Return PASS, FLAG, or BLOCK with required next actions.
 </process>
 
