@@ -1,0 +1,74 @@
+---
+config:
+  theme: neo-dark
+---
+graph TD
+
+  subgraph LAYER0["Layer 0"]
+    L0["L0 — Domain Reality
+    entities · relations · rules
+    internal dynamics · actions"]
+  end
+
+  subgraph LAYER1["Layer 1"]
+    L1["L1 — Business Ontology
+    formal domain model · mappings
+    processes and semantics"]
+  end
+
+  subgraph LAYER2["Layer 2"]
+    L2["L2 — Operational Software
+    code · schema · APIs · event logs
+    derived from L1 and subordinate to ontology"]
+  end
+
+  subgraph LAYER3B["Layer 3B"]
+    L3B["L3B — Business Governance Rules
+    constitutions · conventions · quality gates
+    business confidence standards"]
+  end
+
+  subgraph LAYER4B["Layer 4B"]
+    L4B["L4B — Business Epistemic Foundations
+    business axioms · business premises"]
+  end
+
+  subgraph LAYER5B["Layer 5B"]
+    L5B["L5B — Business Navigation
+    agent-navigation · human-navigation
+    ontology graph edges"]
+  end
+
+  subgraph LAYER6B["Layer 6B"]
+    L6B["L6B — Business Auto-Application
+    concept extraction · semantic checks
+    ontology consistency gates"]
+  end
+
+  subgraph LAYER7B["Layer 7B"]
+    L7B["L7B — Business Orchestration
+    workflows · memory · skills
+    ontology execution support"]
+  end
+
+  %% L0 is the start point for business ontology
+  L0 -->|"gives rise to"| L1
+  L1 -.->|"models and abstracts"| L0
+
+  %% L1 to L2 handoff (kept explicit, but secondary)
+  L1 -->|"is operationalized by"| L2
+  L1 -.->|"semantic authority over"| L2
+  L2 -.->|"reveals mapping gaps in"| L1
+
+  %% Business governance and foundations
+  L4B -->|"enables"| L3B
+  L3B -.->|"governs"| L1
+
+  %% Business navigation and validation
+  L5B -.->|"navigates"| L1
+  L6B -.->|"validates"| L1
+  L6B -.->|"validates integration of"| L2
+  L5B -->|"composes"| L7B
+  L6B -->|"composes"| L7B
+  L7B -.->|"orchestrates over"| L1
+  L7B -.->|"orchestrates over"| L2

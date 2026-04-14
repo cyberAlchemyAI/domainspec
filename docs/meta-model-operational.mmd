@@ -1,0 +1,57 @@
+---
+config:
+  theme: neo-dark
+---
+graph TD
+
+  L0["L0 — Domain Reality
+  entities · relations · rules
+  internal dynamics · actions"]
+
+  L1["L1 — Business Ontology
+  formal domain model · mappings
+  processes and semantics"]
+
+  L2["L2 — Operational Software
+  code · schema · APIs · event logs
+  derived from L1 and subordinate to ontology
+  executable probe to improve L0 understanding"]
+
+  L3O["L3O — Operational Governance Rules
+  constitutions · conventions · quality gates
+  operational confidence standards"]
+
+  L4O["L4O — Operational Epistemic Foundations
+  operational axioms · operational premises"]
+
+  L5O["L5O — Operational Navigation
+  agent-navigation · human-navigation
+  implementation graph edges"]
+
+  L6O["L6O — Operational Auto-Application
+  build/test execution · implementation checks
+  operational consistency gates"]
+
+  L7O["L7O — Operational Orchestration
+  workflows · memory · skills
+  implementation execution support"]
+
+  %% L0 is the start point for operationalization
+  L0 -->|"grounds ontology"| L1
+  L1 -->|"is operationalized by"| L2
+  L1 -.->|"semantic authority over"| L2
+
+  %% Software as measurement and correction signal
+  L2 -.->|"measures and stress-tests understanding of"| L0
+  L2 -.->|"reveals and can falsify mapping assumptions in"| L1
+
+  %% Operational governance and foundations
+  L4O -->|"enables"| L3O
+  L3O -.->|"governs"| L2
+
+  %% Operational navigation and validation
+  L5O -.->|"navigates"| L2
+  L6O -.->|"validates"| L2
+  L5O -->|"composes"| L7O
+  L6O -->|"composes"| L7O
+  L7O -.->|"orchestrates over"| L2
