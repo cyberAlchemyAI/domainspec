@@ -53,7 +53,14 @@ tools:
     web/githubRepo,
     todo,
   ]
-agents: ["Explore", "domainspec-researcher", "domainspec-alignment-auditor", "domainspec-layering-auditor", "domainspec-ui-architect"]
+agents:
+  [
+    "Explore",
+    "domainspec-researcher",
+    "domainspec-alignment-auditor",
+    "domainspec-layering-auditor",
+    "domainspec-ui-architect",
+  ]
 color: green
 ---
 
@@ -89,11 +96,12 @@ Use these artifacts as contracts:
 - docs/features/{feature}/*.md
 
 Navigational artifacts for context discovery:
+
 - docs/index/feature-map.md
 - docs/index/features-index.json
 - docs/index/tag-index.json
 - SPEC frontmatter: status, pillar, domain, audience, priority, lang, owners, dependencies, includes
-</context>
+  </context>
 
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.

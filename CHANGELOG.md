@@ -125,7 +125,7 @@ Versioning guidance:
 - `domainspec-implementer` agent:
   - Audit gates (alignment + layering) before implementation edits.
   - GSD execution delegation contract.
-  - Extended context inputs: STORIES.md, capabilities/*.md.
+  - Extended context inputs: STORIES.md, capabilities/\*.md.
 - Heuristic weights tuned from `signal:0.45 / cost:0.35 / ambiguity:0.20` to `signal:0.45 / cost:0.30 / ambiguity:0.25` to reflect cheaper search costs from index artifacts.
 
 ## [1.1.1] - 2026-04-09

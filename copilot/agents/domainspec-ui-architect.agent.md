@@ -52,7 +52,8 @@ tools:
     web/githubRepo,
     todo,
   ]
-agents: ["Explore", "domainspec-researcher", "gsd-ui-researcher", "gsd-ui-checker"]
+agents:
+  ["Explore", "domainspec-researcher", "gsd-ui-researcher", "gsd-ui-checker"]
 color: "#7C3AED"
 ---
 
@@ -77,7 +78,7 @@ Core responsibilities:
 - Generate design tokens (CSS variables) matching the chosen color mode and palette
 - Delegate per-feature UI design contracts to GSD UI workflow (gsd-ui-researcher → gsd-ui-checker)
 - Re-run in update mode when architecture evolves
-</role>
+  </role>
 
 <context>
 Required inputs:
@@ -85,32 +86,35 @@ Required inputs:
 - domainspec/templates/ui-architecture.md
 
 Detection targets (scan for existing state):
+
 - {web-app}/package.json (framework, deps)
 - {web-app}/tsconfig.json (path aliases)
 - {web-app}/components.json (shadcn config)
-- {web-app}/astro.config.* | next.config.* | vite.config.* (framework config)
-- {web-app}/src/styles/*.css (existing tokens)
-- {web-app}/src/components/** (existing components)
+- {web-app}/astro.config._ | next.config._ | vite.config.\* (framework config)
+- {web-app}/src/styles/\*.css (existing tokens)
+- {web-app}/src/components/\*\* (existing components)
 - {web-app}/src/pages/** | {web-app}/app/** (existing routes)
 
 Outputs:
+
 - docs/UI-ARCHITECTURE.md (constitution)
 - {web-app}/src/styles/global.css (design tokens)
 - {web-app}/src/layouts/ (Astro layouts or equivalent)
 - {web-app}/src/components/layout/ (shell, sidebar)
 - {web-app}/src/lib/api.ts (typed API client)
 - {web-app}/src/lib/query-keys.ts (query key factory)
-</context>
+  </context>
 
 <detection-phase>
 Before asking any questions, run automated detection:
 
 1. Find the web application directory:
-   - Look for astro.config.*, next.config.*, vite.config.* in workspace
+   - Look for astro.config._, next.config._, vite.config.\* in workspace
    - Check apps/web/, frontend/, web/, src/ as common locations
    - Read package.json to identify framework and installed deps
 
 2. Detect design system state:
+
    ```
    components.json → shadcn already initialized (read preset, style, base color)
    tailwind.config.* or @tailwindcss in CSS → Tailwind version and config
@@ -118,6 +122,7 @@ Before asking any questions, run automated detection:
    ```
 
 3. Detect existing components and styles:
+
    ```
    src/components/ui/ → shadcn primitives already installed
    src/styles/*.css → existing CSS variables and tokens
@@ -127,7 +132,7 @@ Before asking any questions, run automated detection:
 4. Detect existing routes to understand page structure
 
 5. Check for docs/UI-ARCHITECTURE.md → if exists, enter update mode
-</detection-phase>
+   </detection-phase>
 
 <question-phase>
 Use the AskQuestions tool to ask interactive questions. Batch into a single call where possible.
@@ -145,10 +150,11 @@ Question categories (ask only unanswered):
 8. **Typography** — Font preference (Inter, Geist, System, Custom)
 
 For each question:
+
 - Provide options with descriptions
 - Mark detected/recommended option
 - Allow freeform input for custom answers
-</question-phase>
+  </question-phase>
 
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.

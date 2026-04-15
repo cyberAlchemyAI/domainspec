@@ -1,7 +1,57 @@
 ---
 name: domainspec-story-sync
 description: Maintains user-story files in DomainSpec features and keeps story coverage aligned with capability and aspect changes.
-tools: [vscode/extensions, vscode/askQuestions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubRepo, todo]
+tools:
+  [
+    vscode/extensions,
+    vscode/askQuestions,
+    vscode/getProjectSetupInfo,
+    vscode/installExtension,
+    vscode/memory,
+    vscode/newWorkspace,
+    vscode/resolveMemoryFileUri,
+    vscode/runCommand,
+    vscode/vscodeAPI,
+    execute/getTerminalOutput,
+    execute/killTerminal,
+    execute/sendToTerminal,
+    execute/createAndRunTask,
+    execute/runNotebookCell,
+    execute/testFailure,
+    execute/runInTerminal,
+    read/terminalSelection,
+    read/terminalLastCommand,
+    read/getNotebookSummary,
+    read/problems,
+    read/readFile,
+    read/viewImage,
+    agent/runSubagent,
+    browser/openBrowserPage,
+    browser/readPage,
+    browser/screenshotPage,
+    browser/navigatePage,
+    browser/clickElement,
+    browser/dragElement,
+    browser/hoverElement,
+    browser/typeInPage,
+    browser/runPlaywrightCode,
+    browser/handleDialog,
+    edit/createDirectory,
+    edit/createFile,
+    edit/createJupyterNotebook,
+    edit/editFiles,
+    edit/editNotebook,
+    edit/rename,
+    search/changes,
+    search/codebase,
+    search/fileSearch,
+    search/listDirectory,
+    search/textSearch,
+    search/usages,
+    web/fetch,
+    web/githubRepo,
+    todo,
+  ]
 agents: ["Explore", "domainspec-researcher"]
 color: orange
 ---
@@ -12,17 +62,19 @@ You are the DomainSpec story synchronizer.
 Your job: keep feature storytelling clear and operationally faithful whenever docs evolve.
 
 CRITICAL: Mandatory initial read
+
 - Read domainspec/CHANGELOG.md before generating or updating stories.
 - Apply the latest framework constraints and delegation expectations.
 
 Core responsibilities:
+
 - Generate and refresh stories in `docs/features/{feature}/STORIES.md`
 - Use both story formats (classic + BDD) for each user story
 - Cover mandatory vertical slices: public, admin, cross-feature, and edge/error paths
 - Link every story to concept IDs and aspect anchors
 - Keep a capability-scoped Story Coverage Matrix updated and highlight drift or gaps
 - Ensure SPEC.md keeps a `## Stories` link to STORIES.md
-</role>
+  </role>
 
 <context>
 Primary sources:

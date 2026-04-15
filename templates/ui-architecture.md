@@ -1,13 +1,13 @@
 ---
-project: {project-name}
+project: { project-name }
 status: draft
-framework: {astro|next|remix|vite|other}
-ui-framework: {react|vue|svelte|solid|none}
-styling: {tailwind|css-modules|styled-components|other}
-component-lib: {shadcn|radix|headless-ui|none}
-color-mode: {dark-only|light-only|light-dark}
-created: {date}
-updated: {date}
+framework: { astro|next|remix|vite|other }
+ui-framework: { react|vue|svelte|solid|none }
+styling: { tailwind|css-modules|styled-components|other }
+component-lib: { shadcn|radix|headless-ui|none }
+color-mode: { dark-only|light-only|light-dark }
+created: { date }
+updated: { date }
 ---
 
 # Frontend Architecture Constitution
@@ -19,16 +19,16 @@ updated: {date}
 
 ## Stack
 
-| Layer            | Choice          | Version | Notes                     |
-| ---------------- | --------------- | ------- | ------------------------- |
-| Meta-framework   | {name}          | {x.x}   | {routing model}           |
-| UI framework     | {name}          | {x.x}   | {rendering strategy}      |
-| Styling          | {name}          | {x.x}   | {approach}                |
-| Component lib    | {name}          | {x.x}   | {source: copy-paste / npm} |
-| Icons            | {name}          | {x.x}   | {icon style}              |
-| Data fetching    | {name}          | {x.x}   | {caching strategy}        |
-| Forms            | {name}          | {x.x}   | {validation approach}     |
-| Font             | {name}          | {x.x}   | {loading method}          |
+| Layer          | Choice | Version | Notes                      |
+| -------------- | ------ | ------- | -------------------------- |
+| Meta-framework | {name} | {x.x}   | {routing model}            |
+| UI framework   | {name} | {x.x}   | {rendering strategy}       |
+| Styling        | {name} | {x.x}   | {approach}                 |
+| Component lib  | {name} | {x.x}   | {source: copy-paste / npm} |
+| Icons          | {name} | {x.x}   | {icon style}               |
+| Data fetching  | {name} | {x.x}   | {caching strategy}         |
+| Forms          | {name} | {x.x}   | {validation approach}      |
+| Font           | {name} | {x.x}   | {loading method}           |
 
 ---
 
@@ -46,21 +46,21 @@ updated: {date}
 
 {color-mode} theme using {token-format} values.
 
-| Token                                    | Role                           |
-| ---------------------------------------- | ------------------------------ |
-| `--background` / `--foreground`          | Page background / default text |
-| `--card` / `--card-foreground`           | Elevated surfaces              |
-| `--popover` / `--popover-foreground`     | Floating overlays              |
-| `--primary` / `--primary-foreground`     | Brand actions, CTAs            |
-| `--secondary` / `--secondary-foreground` | Lower-emphasis actions         |
-| `--muted` / `--muted-foreground`         | Subtle backgrounds, helper text|
-| `--accent` / `--accent-foreground`       | Hover/focus/active states      |
-| `--destructive`                          | Error & destructive actions    |
-| `--border`                               | Borders and dividers           |
-| `--input`                                | Form control borders           |
-| `--ring`                                 | Focus rings                    |
-| `--sidebar-*`                            | Sidebar-specific theming       |
-| `--chart-1..5`                           | Chart palette                  |
+| Token                                    | Role                            |
+| ---------------------------------------- | ------------------------------- |
+| `--background` / `--foreground`          | Page background / default text  |
+| `--card` / `--card-foreground`           | Elevated surfaces               |
+| `--popover` / `--popover-foreground`     | Floating overlays               |
+| `--primary` / `--primary-foreground`     | Brand actions, CTAs             |
+| `--secondary` / `--secondary-foreground` | Lower-emphasis actions          |
+| `--muted` / `--muted-foreground`         | Subtle backgrounds, helper text |
+| `--accent` / `--accent-foreground`       | Hover/focus/active states       |
+| `--destructive`                          | Error & destructive actions     |
+| `--border`                               | Borders and dividers            |
+| `--input`                                | Form control borders            |
+| `--ring`                                 | Focus rings                     |
+| `--sidebar-*`                            | Sidebar-specific theming        |
+| `--chart-1..5`                           | Chart palette                   |
 
 Palette direction: {describe palette approach}
 
@@ -68,10 +68,10 @@ Palette direction: {describe palette approach}
 
 ## Typography
 
-| Usage        | Font        | Weight        |
-| ------------ | ----------- | ------------- |
-| Body / UI    | {font}      | {weights}     |
-| Code / Mono  | {font}      | {weights}     |
+| Usage       | Font   | Weight    |
+| ----------- | ------ | --------- |
+| Body / UI   | {font} | {weights} |
+| Code / Mono | {font} | {weights} |
 
 Base size: {px}. Scale: {description of scale}.
 
@@ -141,13 +141,13 @@ Base size: {px}. Scale: {description of scale}.
 
 ### Naming
 
-| Item              | Convention        | Example                  |
-| ----------------- | ----------------- | ------------------------ |
-| Component files   | PascalCase .tsx   | `PlayerCard.tsx`         |
-| Hook files        | camelCase use*.ts | `usePlayer.ts`           |
-| Utility files     | kebab-case .ts    | `query-keys.ts`          |
-| Page files        | {convention}      | {example}                |
-| CSS variables     | kebab-case        | `--sidebar-background`   |
+| Item            | Convention         | Example                |
+| --------------- | ------------------ | ---------------------- |
+| Component files | PascalCase .tsx    | `PlayerCard.tsx`       |
+| Hook files      | camelCase use\*.ts | `usePlayer.ts`         |
+| Utility files   | kebab-case .ts     | `query-keys.ts`        |
+| Page files      | {convention}       | {example}              |
+| CSS variables   | kebab-case         | `--sidebar-background` |
 
 ### Imports
 
@@ -195,4 +195,4 @@ Base size: {px}. Scale: {description of scale}.
 
 ---
 
-*Last updated: {date}*
+_Last updated: {date}_

@@ -16,18 +16,20 @@ Source references:
 - domainspec/templates/ui-architecture.md
 
 Detection targets:
+
 - {web-app}/package.json, tsconfig.json, components.json
-- {web-app}/astro.config.* | next.config.* | vite.config.*
-- {web-app}/src/styles/*.css
-- {web-app}/src/components/**
+- {web-app}/astro.config._ | next.config._ | vite.config.\*
+- {web-app}/src/styles/\*.css
+- {web-app}/src/components/\*\*
 - {web-app}/src/pages/** | {web-app}/app/**
 
 Output:
+
 - docs/UI-ARCHITECTURE.md
 - Installed dependencies and configured tools
 - Layout scaffolding and design tokens
 - Lib files (api client, query keys)
-</context>
+  </context>
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.

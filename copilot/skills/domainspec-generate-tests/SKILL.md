@@ -17,20 +17,22 @@ Derivation rules:
 - domainspec/TEST-PIPELINE.md (includes UI E2E test generation rules)
 
 Feature inputs (backend):
+
 - docs/features/{feature}/states.md
 - docs/features/{feature}/operations.md
 - docs/features/{feature}/interfaces.md
 - docs/features/{feature}/events.md
 - docs/features/{feature}/SPEC.md
 - docs/features/{feature}/STORIES.md (if present)
-- docs/features/{feature}/capabilities/*.md (if present)
+- docs/features/{feature}/capabilities/\*.md (if present)
 
 Feature inputs (UI — when --ui or --all):
+
 - docs/UI-ARCHITECTURE.md (routes, breakpoints, component lib)
 - docs/features/{feature}/UI-SPEC.md (design contract)
 - docs/features/{feature}/STORIES.md (user journeys for E2E)
 - docs/features/{feature}/operations.md (validation rules for form tests)
-</context>
+  </context>
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
@@ -62,7 +64,7 @@ Feature inputs (UI — when --ui or --all):
 Generated Playwright test stubs follow this pattern:
 
 ```typescript
-import { test, expect } from "@playwright/test"
+import { test, expect } from "@playwright/test";
 
 /**
  * @source features/{feature}/UI-SPEC.md#{section}
@@ -71,8 +73,8 @@ import { test, expect } from "@playwright/test"
 test.describe("{Feature} - {Test Category}", () => {
   test("{test description}", async ({ page }) => {
     // TODO: Implement — derived from {source-ref}
-  })
-})
+  });
+});
 ```
 
 A `playwright.config.ts` is generated at the E2E root if missing, using base URL and breakpoints from UI-ARCHITECTURE.md.

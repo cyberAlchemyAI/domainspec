@@ -6,18 +6,18 @@ This package provides reusable custom agents and commands for DomainSpec-driven 
 
 ### Agents
 
-| Agent | Role |
-|-------|------|
-| domainspec-planner | Builds executable plans with context search heuristic and GSD delegation |
-| domainspec-spec-writer | Authors capability-driven specs with context search heuristic and story enforcement |
-| domainspec-researcher | Navigates DomainSpec artifacts with structured output contract |
-| domainspec-implementer | Implements from specs with audit gates and GSD execution delegation |
-| domainspec-test-designer | Derives test specifications from formal aspect docs |
-| domainspec-alignment-auditor | Audits implementation fidelity against domain docs |
-| domainspec-layering-auditor | Detects domain-logic drift into application layers |
-| domainspec-verifier | PASS/FLAG/BLOCK readiness verdict |
-| domainspec-registry-sync | Syncs global registry and glossary from SPEC concept tables |
-| domainspec-story-sync | Maintains STORIES.md aligned with capability and aspect changes |
+| Agent                        | Role                                                                                |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| domainspec-planner           | Builds executable plans with context search heuristic and GSD delegation            |
+| domainspec-spec-writer       | Authors capability-driven specs with context search heuristic and story enforcement |
+| domainspec-researcher        | Navigates DomainSpec artifacts with structured output contract                      |
+| domainspec-implementer       | Implements from specs with audit gates and GSD execution delegation                 |
+| domainspec-test-designer     | Derives test specifications from formal aspect docs                                 |
+| domainspec-alignment-auditor | Audits implementation fidelity against domain docs                                  |
+| domainspec-layering-auditor  | Detects domain-logic drift into application layers                                  |
+| domainspec-verifier          | PASS/FLAG/BLOCK readiness verdict                                                   |
+| domainspec-registry-sync     | Syncs global registry and glossary from SPEC concept tables                         |
+| domainspec-story-sync        | Maintains STORIES.md aligned with capability and aspect changes                     |
 
 ### Context Search Heuristic
 

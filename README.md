@@ -47,15 +47,15 @@ flowchart LR
 
 Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate.
 
-| Stage | Input | Output |
-|-------|-------|--------|
-| 1. Classify | Business knowledge | Typed concept inventory |
-| 2. Connect | Concept inventory | Navigable knowledge graph |
-| 3. Document | Knowledge graph | Feature vertical slices (SPEC + aspect files + stories) |
-| 4. Derive Tests | Aspect docs + UI-SPEC | Backend TEST-SPEC + Playwright E2E scaffold |
-| 5. Implement Backend | TEST-SPEC + aspect docs | Production code + passing tests |
-| 6. Design & Build UI | UI-ARCHITECTURE + aspect docs | UI-SPEC + frontend pages + E2E tests |
-| 7. Maintain Registry | All SPEC.md concept tables | Global registry, glossary, verification verdicts |
+| Stage                | Input                         | Output                                                  |
+| -------------------- | ----------------------------- | ------------------------------------------------------- |
+| 1. Classify          | Business knowledge            | Typed concept inventory                                 |
+| 2. Connect           | Concept inventory             | Navigable knowledge graph                               |
+| 3. Document          | Knowledge graph               | Feature vertical slices (SPEC + aspect files + stories) |
+| 4. Derive Tests      | Aspect docs + UI-SPEC         | Backend TEST-SPEC + Playwright E2E scaffold             |
+| 5. Implement Backend | TEST-SPEC + aspect docs       | Production code + passing tests                         |
+| 6. Design & Build UI | UI-ARCHITECTURE + aspect docs | UI-SPEC + frontend pages + E2E tests                    |
+| 7. Maintain Registry | All SPEC.md concept tables    | Global registry, glossary, verification verdicts        |
 
 ---
 
@@ -88,65 +88,78 @@ The first thing to understand is how DomainSpec classifies domain knowledge. Eve
 
 These categories reflect the fundamental questions every system must answer:
 
-| Question | Category | What it contains |
-|----------|----------|-----------------|
-| What things exist? | **Structural** | Entity, Value Object, Enum |
-| What happens? | **Behavioral** | Operation, Query, Calculation, Rule, Policy, Workflow |
-| How do parts communicate? | **Connective** | Interface, Event, Mapping |
-| How do things change over time? | **Lifecycle** | State Machine |
+| Question                        | Category       | What it contains                                      |
+| ------------------------------- | -------------- | ----------------------------------------------------- |
+| What things exist?              | **Structural** | Entity, Value Object, Enum                            |
+| What happens?                   | **Behavioral** | Operation, Query, Calculation, Rule, Policy, Workflow |
+| How do parts communicate?       | **Connective** | Interface, Event, Mapping                             |
+| How do things change over time? | **Lifecycle**  | State Machine                                         |
 
 ### Structural — What things exist
 
 These are the **nouns** of your domain.
 
 **Entity** — An object with a unique identity that persists over time. Two entities can have identical values and still be different things. Entities have lifecycles, can be acted on by operations, and are tracked in state machines.
-> *Examples:* Order, PaymentTransaction, User, Invoice
+
+> _Examples:_ Order, PaymentTransaction, User, Invoice
 
 **Value Object** — An immutable concept defined entirely by its content, with no identity. Two instances with the same fields are interchangeable. Value objects are often shared across features.
-> *Examples:* Money (amount + currency), Address, DateRange, Email
+
+> _Examples:_ Money (amount + currency), Address, DateRange, Email
 
 **Enum / Type** — A fixed, finite set of named values. They constrain field values and drive branching logic.
-> *Examples:* OrderStatus, PaymentMethod, UserRole, Currency
+
+> _Examples:_ OrderStatus, PaymentMethod, UserRole, Currency
 
 ### Behavioral — What happens
 
 These are the **verbs** of your domain.
 
 **Operation** — A business action that changes state. Operations have input, validate rules, run calculations, transition entities, emit events, and define error modes. Every meaningful mutation in the system is an operation.
-> *Examples:* ProcessPayment, CreateOrder, CancelSubscription
+
+> _Examples:_ ProcessPayment, CreateOrder, CancelSubscription
 
 **Query** — A read that returns data without side effects. Calling it twice produces the same result and nothing changes.
-> *Examples:* GetPaymentStatus, GetOrderHistory, SearchProducts
+
+> _Examples:_ GetPaymentStatus, GetOrderHistory, SearchProducts
 
 **Calculation** — A pure function that derives a value from inputs. Same input always produces same output. Calculations are extracted from operations because they carry their own formulas and test obligations.
-> *Examples:* FeeCalculation (amount × rate), TaxCalculation, DiscountAmount
+
+> _Examples:_ FeeCalculation (amount × rate), TaxCalculation, DiscountAmount
 
 **Rule** — A business constraint that must hold for an operation to proceed. Rules are the guards of the system — they have formal boolean expressions and block operations when violated.
-> *Examples:* `amount.value > 0`, `user.age >= 18`, `product.stock >= quantity`
 
-**Policy** — Decision logic that selects between behaviors at runtime. Unlike rules (which block or allow), policies *choose* how something happens.
-> *Examples:* RetryPolicy (when to retry), PricingPolicy (which tier applies), RoutingPolicy (which gateway to use)
+> _Examples:_ `amount.value > 0`, `user.age >= 18`, `product.stock >= quantity`
+
+**Policy** — Decision logic that selects between behaviors at runtime. Unlike rules (which block or allow), policies _choose_ how something happens.
+
+> _Examples:_ RetryPolicy (when to retry), PricingPolicy (which tier applies), RoutingPolicy (which gateway to use)
 
 **Workflow** — A multi-step process coordinating multiple operations in sequence, with decision points and compensation logic (undoing completed steps when later steps fail).
-> *Examples:* OrderFulfillment (charge → reserve → ship → notify), UserOnboarding
+
+> _Examples:_ OrderFulfillment (charge → reserve → ship → notify), UserOnboarding
 
 ### Connective — How things communicate
 
 These are the **boundaries** and **bridges** of your domain.
 
 **Interface** — An API boundary exposing operations and queries to consumers. Can be external (REST, GraphQL) or internal (module contract between services).
-> *Examples:* PaymentAPI (REST), OrderModule (internal), NotificationService
+
+> _Examples:_ PaymentAPI (REST), OrderModule (internal), NotificationService
 
 **Event** — A notification that something happened. Events decouple producers from consumers — the thing that happened does not need to know who reacts.
-> *Examples:* PaymentCompleted, OrderShipped, UserRegistered
+
+> _Examples:_ PaymentCompleted, OrderShipped, UserRegistered
 
 **Mapping** — A field-by-field data transformation between two shapes. Mappings make boundary translations explicit, including defaults, computed fields, and validation.
-> *Examples:* RequestToTransaction (API input → entity), TransactionToResponse (entity → API output)
+
+> _Examples:_ RequestToTransaction (API input → entity), TransactionToResponse (entity → API output)
 
 ### Lifecycle — How things evolve
 
 **State Machine** — A formal specification of how an entity moves through states. Defines all possible states, valid transitions, guards (conditions for transitions), effects (side effects), and invariants (properties that must always hold).
-> *Examples:* PaymentStatus (Created → Processing → Completed/Failed), OrderLifecycle
+
+> _Examples:_ PaymentStatus (Created → Processing → Completed/Failed), OrderLifecycle
 
 > See [TAXONOMY.md](TAXONOMY.md) for the full reference with decision guides and disambiguation tables.
 
@@ -156,20 +169,20 @@ These are the **boundaries** and **bridges** of your domain.
 
 Once you have classified concepts, you connect them using 12 typed relationship edges. This forms a **knowledge graph** — from any concept, you can follow edges to understand everything it touches.
 
-| Edge | Connects | Answers |
-|------|----------|---------|
-| `performs` | Entity → Operation | What can a User/Admin/System do? |
-| `produces` | Operation → Event | What happens after this operation runs? |
-| `enforces` | Rule → Operation | What conditions must hold for this operation? |
-| `calculates` | Calculation → Operation | What values does this operation derive? |
-| `transitions` | Event → State Machine | What state changes does this event trigger? |
-| `exposes` | Interface → Operation/Query | What does this API surface? |
-| `orchestrates` | Workflow → Operation[] | What steps does this process coordinate? |
-| `applies` | Policy → Operation | What strategies govern this operation? |
-| `maps` | Mapping → Entity/Interface | What data transformations exist at this boundary? |
-| `contains` | Entity → Value Object | What value types does this entity embed? |
-| `queries` | Query → Entity | What data does this query read? |
-| `emits` | Entity → Event | What events does this entity announce? |
+| Edge           | Connects                    | Answers                                           |
+| -------------- | --------------------------- | ------------------------------------------------- |
+| `performs`     | Entity → Operation          | What can a User/Admin/System do?                  |
+| `produces`     | Operation → Event           | What happens after this operation runs?           |
+| `enforces`     | Rule → Operation            | What conditions must hold for this operation?     |
+| `calculates`   | Calculation → Operation     | What values does this operation derive?           |
+| `transitions`  | Event → State Machine       | What state changes does this event trigger?       |
+| `exposes`      | Interface → Operation/Query | What does this API surface?                       |
+| `orchestrates` | Workflow → Operation[]      | What steps does this process coordinate?          |
+| `applies`      | Policy → Operation          | What strategies govern this operation?            |
+| `maps`         | Mapping → Entity/Interface  | What data transformations exist at this boundary? |
+| `contains`     | Entity → Value Object       | What value types does this entity embed?          |
+| `queries`      | Query → Entity              | What data does this query read?                   |
+| `emits`        | Entity → Event              | What events does this entity announce?            |
 
 **Why this matters:** Relationships make your documentation navigable. To understand any feature, follow the chain: Entity → Operation → Rules/Calculations → Events → State Machine. Every connection is explicit and traceable.
 
@@ -237,26 +250,26 @@ The combination of diagram and table makes state machines both human-readable an
 
 Transition table:
 
-| From | Event | To | Guard | Effect |
-|------|-------|----|-------|--------|
-| Created | ProcessPayment | Processing | R1–R5 pass | Emit `PaymentInitiated`, call gateway |
-| Processing | GatewayConfirm | Completed | — | Store gatewayRef, emit `PaymentCompleted` |
-| Processing | GatewayReject | Failed | — | Store rejection reason |
-| FailedRetryable | RetryPayment | Processing | R9, R10 pass | Increment retryCount, call gateway |
+| From            | Event          | To         | Guard        | Effect                                    |
+| --------------- | -------------- | ---------- | ------------ | ----------------------------------------- |
+| Created         | ProcessPayment | Processing | R1–R5 pass   | Emit `PaymentInitiated`, call gateway     |
+| Processing      | GatewayConfirm | Completed  | —            | Store gatewayRef, emit `PaymentCompleted` |
+| Processing      | GatewayReject  | Failed     | —            | Store rejection reason                    |
+| FailedRetryable | RetryPayment   | Processing | R9, R10 pass | Increment retryCount, call gateway        |
 
 Invalid transitions:
 
-| From | Attempted Event | Why Invalid |
-|------|----------------|-------------|
-| Completed | RetryPayment | Already succeeded — nothing to retry |
-| Failed | any | Terminal state — no transitions allowed |
+| From      | Attempted Event | Why Invalid                             |
+| --------- | --------------- | --------------------------------------- |
+| Completed | RetryPayment    | Already succeeded — nothing to retry    |
+| Failed    | any             | Terminal state — no transitions allowed |
 
 Invariants:
 
-| ID | Invariant | Formal |
-|----|-----------|--------|
-| I1 | Completed payments have gateway reference | `status == Completed → gatewayRef != null` |
-| I4 | Terminal states are immutable | `status ∈ {Failed, Refunded, RefundFailed} → no transitions` |
+| ID  | Invariant                                 | Formal                                                       |
+| --- | ----------------------------------------- | ------------------------------------------------------------ |
+| I1  | Completed payments have gateway reference | `status == Completed → gatewayRef != null`                   |
+| I4  | Terminal states are immutable             | `status ∈ {Failed, Refunded, RefundFailed} → no transitions` |
 
 Notice that every row above is already a complete test specification. The From + Event + Guard columns define the preconditions and trigger. The To column defines the expected outcome. The Why Invalid column defines what must be rejected. Nothing is left to interpret.
 
@@ -270,31 +283,31 @@ The formal structure in the previous stage is not accidental — it exists speci
 
 ### Backend test derivation (rules 1–14)
 
-| Doc section | What it produces |
-|-------------|-----------------|
-| Each state machine transition row | 1 happy-path state transition test |
-| Each listed invalid transition | 1 rejection test (must be blocked) |
-| Each state machine invariant | 1 property-based test (holds in every state) |
-| Each operation rule | 2+ tests — one pass, one per failure mode |
-| Each calculation formula | 1+ correctness tests + property tests |
-| Each operation postcondition | 1 assertion test |
-| Each operation error state | 1 negative test |
-| Each API endpoint × response status | 1 contract test |
-| Each event producer | 1 producer test |
-| Each event consumer | 1 consumer test |
+| Doc section                         | What it produces                             |
+| ----------------------------------- | -------------------------------------------- |
+| Each state machine transition row   | 1 happy-path state transition test           |
+| Each listed invalid transition      | 1 rejection test (must be blocked)           |
+| Each state machine invariant        | 1 property-based test (holds in every state) |
+| Each operation rule                 | 2+ tests — one pass, one per failure mode    |
+| Each calculation formula            | 1+ correctness tests + property tests        |
+| Each operation postcondition        | 1 assertion test                             |
+| Each operation error state          | 1 negative test                              |
+| Each API endpoint × response status | 1 contract test                              |
+| Each event producer                 | 1 producer test                              |
+| Each event consumer                 | 1 consumer test                              |
 
 ### UI E2E test derivation (rules 15–20)
 
 When a feature has a `UI-SPEC.md`, six additional test categories are derived:
 
-| Rule | Category | Source |
-|------|----------|--------|
-| 15 | Navigation | Route table in UI-SPEC → each route produces a navigation test |
-| 16 | Journey | User journeys → multi-step Playwright scenarios |
-| 17 | Form Validation | Form contracts → validation rule tests per field |
-| 18 | State Reflection | Component state mapping → UI reflects backend state correctly |
-| 19 | Responsive Layout | Breakpoint table → viewport-specific layout assertions |
-| 20 | Accessibility | Component list → axe-core checks per page |
+| Rule | Category          | Source                                                         |
+| ---- | ----------------- | -------------------------------------------------------------- |
+| 15   | Navigation        | Route table in UI-SPEC → each route produces a navigation test |
+| 16   | Journey           | User journeys → multi-step Playwright scenarios                |
+| 17   | Form Validation   | Form contracts → validation rule tests per field               |
+| 18   | State Reflection  | Component state mapping → UI reflects backend state correctly  |
+| 19   | Responsive Layout | Breakpoint table → viewport-specific layout assertions         |
+| 20   | Accessibility     | Component list → axe-core checks per page                      |
 
 E2E scaffold convention: `{web-app}/e2e/{feature}/` with `.navigation.spec.ts`, `.journey.spec.ts`, `.forms.spec.ts`, `.states.spec.ts`, `.responsive.spec.ts`.
 
@@ -306,33 +319,33 @@ Using the PaymentStatus excerpt above, here is the mechanical derivation. Each r
 
 **From transition rows** — one happy-path test per row:
 
-| Doc row | Test obligation |
-|---------|----------------|
-| Created + ProcessPayment (R1–R5 pass) → Processing | `given Created payment, when ProcessPayment with valid input, then status is Processing and PaymentInitiated emitted` |
-| Processing + GatewayConfirm → Completed | `given Processing payment, when GatewayConfirm received, then status is Completed and gatewayRef is stored` |
-| Processing + GatewayReject → Failed | `given Processing payment, when GatewayReject received, then status is Failed and rejection reason stored` |
+| Doc row                                                    | Test obligation                                                                                                            |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Created + ProcessPayment (R1–R5 pass) → Processing         | `given Created payment, when ProcessPayment with valid input, then status is Processing and PaymentInitiated emitted`      |
+| Processing + GatewayConfirm → Completed                    | `given Processing payment, when GatewayConfirm received, then status is Completed and gatewayRef is stored`                |
+| Processing + GatewayReject → Failed                        | `given Processing payment, when GatewayReject received, then status is Failed and rejection reason stored`                 |
 | FailedRetryable + RetryPayment (R9, R10 pass) → Processing | `given FailedRetryable payment, when RetryPayment with valid guards, then status is Processing and retryCount incremented` |
 
 **From invalid transitions** — one rejection test per row:
 
-| Doc row | Test obligation |
-|---------|----------------|
+| Doc row                  | Test obligation                                                                                                 |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
 | Completed + RetryPayment | `given Completed payment, when RetryPayment attempted, then InvalidTransitionError raised and status unchanged` |
-| Failed + any event | `given Failed payment, when any event triggered, then InvalidTransitionError raised` |
+| Failed + any event       | `given Failed payment, when any event triggered, then InvalidTransitionError raised`                            |
 
 **From invariants** — one property test per invariant:
 
-| Doc row | Test obligation |
-|---------|----------------|
-| I1: `status == Completed → gatewayRef != null` | `for all paths reaching Completed, assert gatewayRef is non-null` |
-| I4: terminal states are immutable | `for all {Failed, Refunded, RefundFailed}, assert no operation produces a new state` |
+| Doc row                                        | Test obligation                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+| I1: `status == Completed → gatewayRef != null` | `for all paths reaching Completed, assert gatewayRef is non-null`                    |
+| I4: terminal states are immutable              | `for all {Failed, Refunded, RefundFailed}, assert no operation produces a new state` |
 
 **From operation rules** — two tests minimum per rule:
 
-| Doc row | Test obligation |
-|---------|----------------|
-| R1: `amount.value > 0` — valid | `given amount=10, ProcessPayment proceeds without rule violation` |
-| R1: `amount.value > 0` — boundary | `given amount=0, ProcessPayment returns ValidationError(VALIDATION_ERROR)` |
+| Doc row                           | Test obligation                                                             |
+| --------------------------------- | --------------------------------------------------------------------------- |
+| R1: `amount.value > 0` — valid    | `given amount=10, ProcessPayment proceeds without rule violation`           |
+| R1: `amount.value > 0` — boundary | `given amount=0, ProcessPayment returns ValidationError(VALIDATION_ERROR)`  |
 | R1: `amount.value > 0` — negative | `given amount=-5, ProcessPayment returns ValidationError(VALIDATION_ERROR)` |
 
 Every test obligation above was **read** from the documentation tables. No logic was invented, no edge cases guessed. If a scenario is not in the docs, the docs are incomplete — add the row first, then derive the test.
@@ -486,71 +499,71 @@ Skills are invoked as Copilot commands. They map to specific pipeline stages.
 
 **Specification & Documentation**
 
-| Skill | Stage | Purpose |
-|-------|-------|---------|
-| `domainspec-init` | Setup | Create `docs/` structure and first feature skeleton |
-| `domainspec-spec-feature` | 3 | Author or update a feature specification (SPEC + aspects) |
-| `domainspec-sync-user-stories` | 3 | Generate/refresh STORIES.md from aspect docs |
-| `domainspec-sync-registry` | 7 | Sync registry and glossary from all SPEC.md concept tables |
+| Skill                          | Stage | Purpose                                                    |
+| ------------------------------ | ----- | ---------------------------------------------------------- |
+| `domainspec-init`              | Setup | Create `docs/` structure and first feature skeleton        |
+| `domainspec-spec-feature`      | 3     | Author or update a feature specification (SPEC + aspects)  |
+| `domainspec-sync-user-stories` | 3     | Generate/refresh STORIES.md from aspect docs               |
+| `domainspec-sync-registry`     | 7     | Sync registry and glossary from all SPEC.md concept tables |
 
 **Testing**
 
-| Skill | Stage | Purpose |
-|-------|-------|---------|
-| `domainspec-generate-tests` | 4 | Derive TEST-SPEC.md from formal aspect docs |
-| `domainspec-generate-tests --ui` | 4 | Derive Playwright E2E scaffold from UI-SPEC.md |
-| `domainspec-generate-tests --all` | 4 | Generate both backend and E2E test specs |
+| Skill                             | Stage | Purpose                                        |
+| --------------------------------- | ----- | ---------------------------------------------- |
+| `domainspec-generate-tests`       | 4     | Derive TEST-SPEC.md from formal aspect docs    |
+| `domainspec-generate-tests --ui`  | 4     | Derive Playwright E2E scaffold from UI-SPEC.md |
+| `domainspec-generate-tests --all` | 4     | Generate both backend and E2E test specs       |
 
 **Implementation**
 
-| Skill | Stage | Purpose |
-|-------|-------|---------|
-| `domainspec-implement` | 5 | Implement backend code from documented contracts |
-| `domainspec-ui-architecture` | 6a | Create or evolve project-wide UI-ARCHITECTURE.md |
-| `domainspec-ui-implement` | 6d | Implement frontend pages from UI-SPEC and UI-ARCHITECTURE |
+| Skill                        | Stage | Purpose                                                   |
+| ---------------------------- | ----- | --------------------------------------------------------- |
+| `domainspec-implement`       | 5     | Implement backend code from documented contracts          |
+| `domainspec-ui-architecture` | 6a    | Create or evolve project-wide UI-ARCHITECTURE.md          |
+| `domainspec-ui-implement`    | 6d    | Implement frontend pages from UI-SPEC and UI-ARCHITECTURE |
 
 **Verification & Auditing**
 
-| Skill | Stage | Purpose |
-|-------|-------|---------|
-| `domainspec-audit-alignment` | 5–7 | Produce alignment report comparing docs vs code |
-| `domainspec-audit-layering` | 5–7 | Detect domain-logic drift into application layers |
-| `domainspec-verify-feature` | 7 | PASS / FLAG / BLOCK verdict on feature readiness |
-| `domainspec-pilot-readiness` | 7 | Prepare a feature for pilot testing, fill readiness gaps |
+| Skill                        | Stage | Purpose                                                  |
+| ---------------------------- | ----- | -------------------------------------------------------- |
+| `domainspec-audit-alignment` | 5–7   | Produce alignment report comparing docs vs code          |
+| `domainspec-audit-layering`  | 5–7   | Detect domain-logic drift into application layers        |
+| `domainspec-verify-feature`  | 7     | PASS / FLAG / BLOCK verdict on feature readiness         |
+| `domainspec-pilot-readiness` | 7     | Prepare a feature for pilot testing, fill readiness gaps |
 
 **Bridge Skills** (GSD orchestration delegation)
 
-| Skill | Purpose |
-|-------|---------|
-| `domainspec-plan-phase-bridge` | Bridge DomainSpec planning to GSD phase planner |
+| Skill                             | Purpose                                                 |
+| --------------------------------- | ------------------------------------------------------- |
+| `domainspec-plan-phase-bridge`    | Bridge DomainSpec planning to GSD phase planner         |
 | `domainspec-execute-phase-bridge` | Bridge DomainSpec implementation to GSD phase execution |
-| `domainspec-verify-phase-bridge` | Bridge GSD verification into DomainSpec PASS/FLAG/BLOCK |
-| `domainspec-ui-phase-bridge` | Generate per-feature UI-SPEC via GSD UI workflow |
-| `domainspec-ui-audit-bridge` | Retroactive 6-pillar visual audit of implemented UI |
+| `domainspec-verify-phase-bridge`  | Bridge GSD verification into DomainSpec PASS/FLAG/BLOCK |
+| `domainspec-ui-phase-bridge`      | Generate per-feature UI-SPEC via GSD UI workflow        |
+| `domainspec-ui-audit-bridge`      | Retroactive 6-pillar visual audit of implemented UI     |
 
 **Utility**
 
-| Skill | Purpose |
-|-------|---------|
+| Skill             | Purpose                                        |
+| ----------------- | ---------------------------------------------- |
 | `domainspec-help` | Show command reference and recommend next step |
 
 ### Agents Reference
 
 Agents are specialized autonomous workflows invoked by the planner or by other agents.
 
-| Agent | Role |
-|-------|------|
-| `domainspec-planner` | Converts feature goals into executable, dependency-ordered plans |
-| `domainspec-spec-writer` | Authors/evolves feature specs with context research and story coverage |
-| `domainspec-researcher` | Investigates implementation decisions using structured domain navigation |
-| `domainspec-test-designer` | Derives test specifications and Playwright E2E scaffolds from docs |
-| `domainspec-implementer` | Implements production code and tests from approved artifacts |
-| `domainspec-registry-sync` | Synchronizes registry and glossary from SPEC concept tables |
-| `domainspec-story-sync` | Maintains STORIES.md aligned with capability and aspect changes |
-| `domainspec-alignment-auditor` | Audits implementation fidelity against DomainSpec docs |
-| `domainspec-layering-auditor` | Detects domain logic misplaced in application layers |
-| `domainspec-verifier` | Produces PASS / FLAG / BLOCK feature completion verdicts |
-| `domainspec-ui-architect` | Defines frontend architecture constitution via interactive questions |
+| Agent                          | Role                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------ |
+| `domainspec-planner`           | Converts feature goals into executable, dependency-ordered plans         |
+| `domainspec-spec-writer`       | Authors/evolves feature specs with context research and story coverage   |
+| `domainspec-researcher`        | Investigates implementation decisions using structured domain navigation |
+| `domainspec-test-designer`     | Derives test specifications and Playwright E2E scaffolds from docs       |
+| `domainspec-implementer`       | Implements production code and tests from approved artifacts             |
+| `domainspec-registry-sync`     | Synchronizes registry and glossary from SPEC concept tables              |
+| `domainspec-story-sync`        | Maintains STORIES.md aligned with capability and aspect changes          |
+| `domainspec-alignment-auditor` | Audits implementation fidelity against DomainSpec docs                   |
+| `domainspec-layering-auditor`  | Detects domain logic misplaced in application layers                     |
+| `domainspec-verifier`          | Produces PASS / FLAG / BLOCK feature completion verdicts                 |
+| `domainspec-ui-architect`      | Defines frontend architecture constitution via interactive questions     |
 
 ### Intelligent Context Discovery
 
@@ -573,21 +586,21 @@ The planner auto-selects between `native` (DomainSpec-only) and `gsd-phase` (del
 
 All templates are in [templates/](templates/) and ready to copy into your feature directories.
 
-| Template | Purpose |
-|----------|---------|
-| [SPEC.md](templates/SPEC.md) | Feature index — overview, concept table, aspect links, dependencies |
-| [STORIES.md](templates/STORIES.md) | User stories in classic + BDD format, traceable to concepts |
-| [domain.md](templates/domain.md) | Entities, value objects, enums with field tables |
-| [operations.md](templates/operations.md) | Operations with rules, calculations, state transitions |
-| [states.md](templates/states.md) | State machines — mermaid diagram + transition tables |
-| [interfaces.md](templates/interfaces.md) | API contracts — endpoints, request/response shapes |
-| [events.md](templates/events.md) | Domain events — payload, producer, consumers |
-| [queries.md](templates/queries.md) | Read models — input, output shape, auth rules |
-| [workflows.md](templates/workflows.md) | Multi-step orchestrations with compensation |
-| [mappings.md](templates/mappings.md) | Data transformations at boundaries |
-| [shared-value-object.md](templates/shared-value-object.md) | Cross-feature value objects |
-| [use-case.md](templates/use-case.md) | Application-layer use case documentation |
-| [ui-architecture.md](templates/ui-architecture.md) | Project-wide frontend architecture constitution |
+| Template                                                   | Purpose                                                             |
+| ---------------------------------------------------------- | ------------------------------------------------------------------- |
+| [SPEC.md](templates/SPEC.md)                               | Feature index — overview, concept table, aspect links, dependencies |
+| [STORIES.md](templates/STORIES.md)                         | User stories in classic + BDD format, traceable to concepts         |
+| [domain.md](templates/domain.md)                           | Entities, value objects, enums with field tables                    |
+| [operations.md](templates/operations.md)                   | Operations with rules, calculations, state transitions              |
+| [states.md](templates/states.md)                           | State machines — mermaid diagram + transition tables                |
+| [interfaces.md](templates/interfaces.md)                   | API contracts — endpoints, request/response shapes                  |
+| [events.md](templates/events.md)                           | Domain events — payload, producer, consumers                        |
+| [queries.md](templates/queries.md)                         | Read models — input, output shape, auth rules                       |
+| [workflows.md](templates/workflows.md)                     | Multi-step orchestrations with compensation                         |
+| [mappings.md](templates/mappings.md)                       | Data transformations at boundaries                                  |
+| [shared-value-object.md](templates/shared-value-object.md) | Cross-feature value objects                                         |
+| [use-case.md](templates/use-case.md)                       | Application-layer use case documentation                            |
+| [ui-architecture.md](templates/ui-architecture.md)         | Project-wide frontend architecture constitution                     |
 
 ---
 
@@ -595,27 +608,27 @@ All templates are in [templates/](templates/) and ready to copy into your featur
 
 Reference implementations showing complete feature slices:
 
-| Example | Scope |
-|---------|-------|
+| Example                                                   | Scope                                                                                   |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [payment-processing](examples/payment-processing/SPEC.md) | Full vertical slice — entities, operations, state machine, events, interfaces, mappings |
-| [user-account](examples/user-account/) | User management with roles, authentication, and lifecycle |
-| [order-management](examples/order-management/) | Order creation, fulfillment workflow, and cancellation |
-| [inventory-management](examples/inventory-management/) | Stock tracking, reservations, and replenishment |
-| [shared](examples/shared/) | Cross-feature value objects (Money, Address, etc.) |
+| [user-account](examples/user-account/)                    | User management with roles, authentication, and lifecycle                               |
+| [order-management](examples/order-management/)            | Order creation, fulfillment workflow, and cancellation                                  |
+| [inventory-management](examples/inventory-management/)    | Stock tracking, reservations, and replenishment                                         |
+| [shared](examples/shared/)                                | Cross-feature value objects (Money, Address, etc.)                                      |
 
 ---
 
 ## Reference
 
-| File | Contents |
-|------|----------|
-| [TAXONOMY.md](TAXONOMY.md) | Full 13-type reference with examples, decision guides, and disambiguation |
-| [RELATIONSHIPS.md](RELATIONSHIPS.md) | All 12 typed edge types with navigation patterns |
-| [TEST-PIPELINE.md](TEST-PIPELINE.md) | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules) |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Framework architecture and design decisions |
-| [CHANGELOG.md](CHANGELOG.md) | Versioned record of framework updates (current: v1.3.0) |
-| [templates/](templates/SPEC.md) | All 13 aspect templates, ready to copy |
-| [examples/](examples/) | 5 reference feature implementations |
-| [copilot/README.md](copilot/README.md) | Copilot agent pack overview |
-| [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup) |
-| [tools/](tools/) | Framework validation and index generation tools |
+| File                                     | Contents                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------- |
+| [TAXONOMY.md](TAXONOMY.md)               | Full 13-type reference with examples, decision guides, and disambiguation |
+| [RELATIONSHIPS.md](RELATIONSHIPS.md)     | All 12 typed edge types with navigation patterns                          |
+| [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)     |
+| [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                               |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.3.0)                   |
+| [templates/](templates/SPEC.md)          | All 13 aspect templates, ready to copy                                    |
+| [examples/](examples/)                   | 5 reference feature implementations                                       |
+| [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                               |
+| [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup)                        |
+| [tools/](tools/)                         | Framework validation and index generation tools                           |

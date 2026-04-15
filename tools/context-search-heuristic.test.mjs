@@ -142,7 +142,7 @@ const scenarios = [
         ambiguity: 0.31,
       },
       [STRATEGIES.CAPABILITY_GRAPH_FIRST]: {
-        signal: 0.80,
+        signal: 0.8,
         cost: 0.33,
         ambiguity: 0.31,
       },
