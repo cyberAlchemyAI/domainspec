@@ -693,3 +693,17 @@ Reference implementations showing complete feature slices:
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                               |
 | [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup)                        |
 | [tools/](tools/)                         | Framework validation and index generation tools                           |
+
+---
+
+## License
+
+DomainSpec is licensed under the [Business Source License 1.1](LICENSE).
+
+- **Free for non-commercial use** — evaluation, personal projects, academic research, and contributions.
+- **Commercial use requires a license** — selling, SaaS, paid consulting, or incorporating into commercial products.
+- **Converts to AGPL 3.0** on April 15, 2031.
+
+For commercial licensing inquiries, contact the author.
+
+© 2026 Vladimir Rondelli. All rights reserved.
