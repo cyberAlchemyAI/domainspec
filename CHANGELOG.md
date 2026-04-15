@@ -78,6 +78,47 @@ Versioning guidance:
 - New `domainspec-story-sync` agent for maintaining user-story files aligned with capability and aspect changes.
 - Structured output contract for researcher agent: callers receive `featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, and `recommendation`.
 
+## [1.4.0] - 2026-04-15
+
+### Added
+
+- UI Meta-Concept Taxonomy (11 types) extending the domain model to the frontend:
+  - **UI Structural:** Page, Layout, Component, View Model.
+  - **UI Behavioral:** Hook, Form, Action, Guard.
+  - **UI Connective:** Binding, Adapter.
+  - **UI Presentational:** State Indicator.
+  - Each UI meta-concept documents purpose, examples, when-to-use, template location, and typical structure.
+  - Backend counterpart column maps UI concepts to their domain equivalents (View Model ↔ Value Object, Guard ↔ Rule, Binding ↔ Interface, Adapter ↔ Mapping, State Indicator ↔ State Machine/Enum).
+
+- Intra-UI Relationship Edges (8 typed edges):
+  - `renders` (Page → Component[]), `wraps` (Layout → Page[]), `composes` (Component → Component[]), `consumes` (Component → Hook), `submits` (Form → Action), `shapes` (Adapter → View Model), `protects` (Guard → Page), `displays` (Component → View Model).
+
+- Cross-Layer Relationship Edges UI ↔ Backend (6 typed edges):
+  - `fetches` (Binding → Query), `mutates` (Binding → Operation), `reflects` (State Indicator → State Machine), `derives` (View Model → Entity), `contracts` (Form → Interface), `mirrors` (Guard → Rule).
+
+- Full-stack trace navigation examples showing end-to-end paths from user click to database and from database to screen.
+
+- `ui-spec.md` template under `templates/` with typed concept inventory, data flow, form contracts, state-to-UI mapping, and UI Concept Registry section.
+
+- UI concept sections in `docs/registry.md`: Pages, Layouts, Components, View Models, Hooks, Forms, Actions, Guards, Bindings, Adapters, State Indicators.
+
+- UI concept graph ID convention: `ui.{feature}.{Concept}` for feature-scoped, `ui.{Concept}` for shared.
+
+### Changed
+
+- TAXONOMY.md:
+  - Title updated from 13 to 24 building blocks.
+  - Overview split into Backend (13) and UI (11) tables.
+  - Quick Reference split into Backend and UI sections.
+  - Common Confusion split into Backend and UI sections (9 new UI confusion pairs).
+  - Architecture Mapping appendix split into Backend Layer and UI Layer tables.
+
+- RELATIONSHIPS.md:
+  - Title updated from 12 to 26 typed edges.
+  - Overview split into Backend (12), Intra-UI (8), and Cross-Layer (6) tables.
+  - Navigation section split into Backend, UI, and Full-Stack Trace subsections.
+  - Registry Format updated with UI concept graph example and `ui.` prefix convention.
+
 ## [1.3.0] - 2026-04-15
 
 ### Added
@@ -105,7 +146,13 @@ Versioning guidance:
 - Planner agent now includes a **UI detection gate** (execution step 4):
   - Auto-detects frontend aspects by checking for HTTP endpoints in `interfaces.md`, presence of `UI-ARCHITECTURE.md`, and `UI-SPEC.md`.
   - Automatically includes UI architecture, UI-SPEC generation, UI implementation, UI audit, and Playwright E2E tasks based on detected state.
+  - Prefers `domainspec-ui-pipeline` as single orchestration task when backend specs are complete.
   - `domainspec-ui-architect` added to planner's agent delegation list.
+- New `domainspec-ui-pipeline` skill for end-to-end UI lifecycle orchestration:
+  - Single command runs: architecture check → UI-SPEC generation → E2E test scaffolding → frontend implementation → visual audit.
+  - Flags: `--spec-only` (stop after UI-SPEC), `--skip-audit`, `--dry-run`.
+  - Pre-flight validates SPEC.md + interfaces.md with HTTP endpoints before proceeding.
+  - Delegates to existing UI skills sequentially; propagates interactive questions to user.
 
 ### Changed
 

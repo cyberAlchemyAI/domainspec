@@ -35,7 +35,7 @@ docs/
 - [Glossary](glossary.md) — Domain term definitions
 - [Changelog](CHANGELOG.md) — Versioned documentation changes for project DomainSpec
 - **Framework Reference:** [domainspec/](../domainspec/README.md)
-  - [Taxonomy](../domainspec/TAXONOMY.md) — 13 meta-concept types explained
-  - [Relationships](../domainspec/RELATIONSHIPS.md) — 12 typed edge types
+  - [Taxonomy](../domainspec/TAXONOMY.md) — 24 meta-concept types (13 backend + 11 UI)
+  - [Relationships](../domainspec/RELATIONSHIPS.md) — 26 typed edge types (12 backend + 8 intra-UI + 6 cross-layer)
   - [Test Pipeline](../domainspec/TEST-PIPELINE.md) — Doc → test generation rules
   - [Templates](../domainspec/templates/) — Copy these to start a new feature

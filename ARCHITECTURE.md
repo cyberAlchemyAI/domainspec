@@ -68,6 +68,8 @@ Calls application functions; does not contain core business logic.
 
 ## DomainSpec Mapping
 
+### Backend Concepts
+
 | DomainSpec Concept | Layer | Implementation Pattern (Functional) |
 | --- | --- | --- |
 | Entity | Domain | `type` + factory + transition functions |
@@ -83,6 +85,22 @@ Calls application functions; does not contain core business logic.
 | Workflow | Application | saga function with compensation stack |
 | Interface | Interface / Adapters | controllers + module contract |
 | Mapping | Infrastructure | pure mapping functions |
+
+### UI Concepts
+
+| DomainSpec Concept | Layer | Implementation Pattern |
+| --- | --- | --- |
+| Page | Pages (routes) | Astro `.astro` file importing layout + React island |
+| Layout | Layouts | Astro layout component with `<slot />` |
+| Component | Components | React function component with typed props |
+| View Model | Hooks / Components | TypeScript `type` exported from hook or co-located |
+| Hook | Hooks | `use{Name}()` custom React hook wrapping TanStack Query |
+| Form | Components | Zod schema + `useForm()` resolver + field render |
+| Action | Components | Event handler calling mutation hook or `navigate()` |
+| Guard | Components / Pages | Auth context check → redirect or `null` render |
+| Binding | Hooks | TanStack `useQuery()` / `useMutation()` call |
+| Adapter | Hooks / Lib | Pure function transforming API shape to view model |
+| State Indicator | Components | Badge/icon with `Record<Value, VisualConfig>` map |
 
 ## Functional Building Blocks
 

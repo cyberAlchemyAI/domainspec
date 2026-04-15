@@ -1,8 +1,10 @@
 # Meta-Concept Taxonomy
 
-> The 13 building blocks for describing any domain. Every concept in your system maps to exactly one of these types.
+> The 24 building blocks for describing any domain — 13 backend and 11 UI. Every concept in your system maps to exactly one of these types.
 
 ## Overview
+
+### Backend Meta-Concepts (13)
 
 | Category       | Meta-Concept  | Purpose                                          |
 | -------------- | ------------- | ------------------------------------------------ |
@@ -19,6 +21,22 @@
 |                | Event         | Notification of something that happened          |
 |                | Mapping       | Data transformation between shapes               |
 | **Lifecycle**  | State Machine | States + transitions + guards + effects          |
+
+### UI Meta-Concepts (11)
+
+| Category              | Meta-Concept    | Purpose                                                | Backend Counterpart |
+| --------------------- | --------------- | ------------------------------------------------------ | ------------------- |
+| **UI Structural**     | Page            | Routable URL view with layout + auth gate              | —                   |
+|                       | Layout          | Reusable page shell (sidebar, header, slot)            | —                   |
+|                       | Component       | Composable UI building block with typed props          | —                   |
+|                       | View Model      | Shaped data optimized for rendering                    | Value Object        |
+| **UI Behavioral**     | Hook            | Encapsulated reactive data/state logic                 | —                   |
+|                       | Form            | Schema-validated user input contract                   | —                   |
+|                       | Action          | User-triggered mutation or navigation                  | —                   |
+|                       | Guard           | Client-side access gate (auth, permissions)            | Rule                |
+| **UI Connective**     | Binding         | Named connection between hook and API endpoint         | Interface           |
+|                       | Adapter         | Data shape transformation at UI boundary               | Mapping             |
+| **UI Presentational** | State Indicator | Visual encoding of domain state (badge, icon, color)   | State Machine / Enum |
 
 ---
 
@@ -285,7 +303,221 @@ _When to use:_ If an entity has a `status` field or moves through stages, it has
 
 ---
 
+## UI Structural — What users see
+
+These define the **surfaces** of the frontend: the pages, shells, building blocks, and shaped data that compose the user experience.
+
+### Page
+
+A routable URL that renders a complete view. Each page is bound to a layout, optionally gated by authentication/permissions, and renders one or more components as interactive islands. Pages are the entry points of the UI — every user journey starts at a page.
+
+> _Examples:_ `/players` (All Players), `/login`, `/settlements`, `/coaches/[coachId]/players`
+
+_When to use:_ If it has a URL and the user can navigate to it, it's a page. Document its route, layout, auth requirements, and the components it renders.
+
+**Documented in:** `UI-SPEC.md` → Route Table
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Route path, page title, layout reference
+- Auth requirement and permission
+- ASCII wireframe showing component arrangement
+
+### Layout
+
+A reusable page shell that provides consistent structure (sidebar, header, footer, content slot). Layouts wrap pages — they own the navigation chrome but not the page content. Multiple pages share the same layout.
+
+> _Examples:_ DashboardLayout (sidebar + breadcrumb + content area), AuthLayout (centered card)
+
+_When to use:_ If multiple pages share the same structural shell, extract it as a layout.
+
+**Documented in:** `UI-SPEC.md` → Route Table (Layout column)
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Slot diagram (where content renders)
+- Navigation structure
+- Responsive behavior
+
+### Component
+
+A composable UI building block with typed props. Components are the atoms and molecules of the interface — tables, cards, badges, dialogs, forms. Each component has a single responsibility and communicates through props and callbacks.
+
+> _Examples:_ PlayersTable, SettlementPreviewCard, AssignPlayerDialog, StatsWindowCard, EligibilityBadge
+
+_When to use:_ If it renders UI and can be composed into a page, it's a component. Document its purpose, prop contract, and which hooks it consumes.
+
+**Documented in:** `UI-SPEC.md` → Component Inventory
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Component name, type classification (Table, Card, Dialog, Badge, Form)
+- File location
+- Purpose description
+- Props (if complex)
+
+### View Model
+
+A typed data shape optimized for rendering. View models decouple what the API returns from what the component needs to display. They are derived from backend entities but shaped for the UI — flattened, formatted, enriched with display-only fields.
+
+> _Examples:_ PlayerOverview (entity + computed stats), SettlementPreview (flattened response), StatsWindow (aggregated period data)
+
+_When to use:_ If the raw API response needs reshaping, formatting, or enrichment before the component can render it, extract a view model type.
+
+**Documented in:** `UI-SPEC.md` → Data Flow section (hook return types)
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- TypeScript type definition
+- Source entity reference
+- Transformation notes (computed fields, formatting)
+
+---
+
+## UI Behavioral — What users do
+
+These define the **interactions** of the frontend: the data fetching, form validation, mutations, and access control.
+
+### Hook
+
+Encapsulated reactive data/state logic exposed as a composable function. Hooks abstract TanStack Query calls, local state machines, and side-effect coordination behind a clean API. Components consume hooks — they never make API calls directly.
+
+> _Examples:_ `usePlayers()`, `useSettlementPreview()`, `useCreatePlayer()`, `useProgression(id, period)`
+
+_When to use:_ If a component needs data from an API, manages async state, or coordinates multiple state values, encapsulate it in a hook.
+
+**Documented in:** `UI-SPEC.md` → Data Flow section
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Hook name, return type
+- API call(s) it wraps
+- Cache key strategy
+- Invalidation rules
+
+### Form
+
+A schema-validated user input contract. Forms combine field definitions, Zod validation schemas, error message mappings, and submission actions into a single documented unit. The schema must align with the backend interface it targets.
+
+> _Examples:_ CreatePlayerForm (4 fields, Zod schema, 409 conflict handling), SettlementForm (3 fields, date refine)
+
+_When to use:_ If the user enters data that must be validated before submission, it's a form. Document every field, its validation, and its error messages.
+
+**Documented in:** `UI-SPEC.md` → Form Contracts section
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Field table (name, type, input element, validation, error message)
+- Zod schema code block
+- API error code → UI message mapping
+
+### Action
+
+A user-triggered mutation or navigation. Actions are the write-side of the UI — button clicks, form submissions, dialog confirmations that invoke mutation hooks or trigger navigation. Each action has a trigger, target, and observable outcome.
+
+> _Examples:_ Submit login form → `POST /auth/login`, Click "Assign" → `POST /coaches/:id/players/:pid`, Click "Preview" → fetch settlement preview
+
+_When to use:_ If clicking something changes server state or navigates the user, it's an action. Document its trigger, the mutation hook it calls, and the UI outcome (toast, redirect, invalidation).
+
+**Documented in:** `UI-SPEC.md` → Data Flow (On Success column) and Form Contracts (submission)
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Trigger (button, form submit, dialog confirm)
+- Mutation hook or navigation target
+- On success: cache invalidation, toast, redirect
+- On error: error display strategy
+
+### Guard
+
+A client-side access gate that controls page/component visibility based on authentication or permissions. Guards prevent unauthorized UI rendering and redirect to appropriate fallback routes. They mirror backend rules but operate at the presentation boundary.
+
+> _Examples:_ AuthGuard (redirect to `/login` if no token), PermissionGuard (hide admin tabs for non-admin roles)
+
+_When to use:_ If a page or component should only render for certain users/roles, protect it with a guard. Guards answer: "Can this user see this?"
+
+**Documented in:** `UI-SPEC.md` → Route Table (Auth Required / Permission columns)
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- What it protects (page, component, route group)
+- Check logic (token presence, role match)
+- Fallback (redirect path or hidden)
+
+---
+
+## UI Connective — How UI talks to the backend
+
+These define the **bridges** between the frontend and the API surface.
+
+### Binding
+
+A named connection between a UI hook and a specific API endpoint. Bindings make the UI-to-backend data flow explicit — which hook calls which endpoint, with what parameters, using what cache key. They are the connective tissue between the UI data layer and the backend interface.
+
+> _Examples:_ `usePlayers() → GET /players`, `useCreatePlayer() → POST /players`, `useSettlementPreview() → GET /settlements/preview`
+
+_When to use:_ Every hook that calls an API endpoint has a binding. Document the endpoint, HTTP method, query parameters, and cache key.
+
+**Documented in:** `UI-SPEC.md` → Data Flow tables
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Hook name → `METHOD /path`
+- Cache key
+- Trigger condition (page mount, user action)
+- Invalidation targets
+
+### Adapter
+
+A data shape transformation at the UI boundary. Adapters convert API response shapes into view model shapes and form input shapes into API request bodies. They are the UI equivalent of backend mappings — pure functions that reshape data without side effects.
+
+> _Examples:_ API player response → PlayerOverview (add computed display fields), Form values → CreatePlayerRequest (coerce types)
+
+_When to use:_ If the API response shape doesn't match what the component needs, or the form values don't match the API request body, document the adapter transformation.
+
+**Documented in:** `UI-SPEC.md` → Data Flow or Form Contracts (implicit in hook return types)
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Source shape → Target shape
+- Transformation rules
+- Computed/formatted fields
+
+---
+
+## UI Presentational — How state looks
+
+### State Indicator
+
+A visual encoding of a domain state value using color, icon, badge, or label. State indicators are the UI projection of backend enums and state machines — they translate abstract status values into visual affordances that users can scan at a glance.
+
+> _Examples:_ PlayerStatusBadge (OBSERVATION=blue, ACTIVE=green, INACTIVE=gray), EligibilityBadge (eligible=green, not eligible=red), StatsStatusBadge (RECORDED=green, CORRECTED=yellow)
+
+_When to use:_ If a domain enum or state machine value needs a visual encoding (color, icon, badge), it's a state indicator. Document the value-to-visual mapping.
+
+**Documented in:** `UI-SPEC.md` → State-to-UI Mapping
+**Template:** [templates/ui-spec.md](templates/ui-spec.md)
+
+**Typical structure:**
+
+- Domain value → color / icon / badge variant mapping table
+- Source domain concept reference (Enum or State Machine)
+
+---
+
 ## Quick Reference: Choosing the Right Meta-Type
+
+### Backend
 
 | If you're describing...               | It's a...     | Document in...         |
 | ------------------------------------- | ------------- | ---------------------- |
@@ -303,7 +535,25 @@ _When to use:_ If an entity has a `status` field or moves through stages, it has
 | A shape conversion between boundaries | Mapping       | mappings.md            |
 | How something moves through states    | State Machine | states.md              |
 
+### UI
+
+| If you're describing...                      | It's a...       | Document in...                  |
+| -------------------------------------------- | --------------- | ------------------------------- |
+| A URL the user can navigate to               | Page            | UI-SPEC.md → Route Table        |
+| A shared page shell (sidebar, header)        | Layout          | UI-SPEC.md → Route Table        |
+| A reusable visual building block             | Component       | UI-SPEC.md → Component Inventory|
+| Shaped data optimized for display            | View Model      | UI-SPEC.md → Data Flow          |
+| Reactive data/state logic for a component    | Hook            | UI-SPEC.md → Data Flow          |
+| Schema-validated user input                  | Form            | UI-SPEC.md → Form Contracts     |
+| A button/submit that changes state or navigates | Action       | UI-SPEC.md → Data Flow          |
+| Client-side auth/permission check            | Guard           | UI-SPEC.md → Route Table        |
+| A hook-to-API-endpoint connection            | Binding         | UI-SPEC.md → Data Flow          |
+| Data reshaping at API/component boundary     | Adapter         | UI-SPEC.md → Data Flow          |
+| Color/badge/icon encoding of domain state    | State Indicator | UI-SPEC.md → State-to-UI Mapping|
+
 ## Common Confusion
+
+### Backend
 
 | Concept A   | vs. | Concept B    | How to tell apart                                                                     |
 | ----------- | --- | ------------ | ------------------------------------------------------------------------------------- |
@@ -315,11 +565,27 @@ _When to use:_ If an entity has a `status` field or moves through stages, it has
 | Interface   | vs. | Mapping      | Interfaces define the **boundary**. Mappings define the **transformation** across it. |
 | Query       | vs. | Operation    | Queries are **read-only**. Operations **change state**.                               |
 
+### UI
+
+| Concept A       | vs. | Concept B       | How to tell apart                                                                        |
+| --------------- | --- | --------------- | ---------------------------------------------------------------------------------------- |
+| Page            | vs. | Layout          | Pages have **routes**. Layouts are **shells** that wrap pages.                           |
+| Component       | vs. | Page            | Components are **embedded**. Pages own a **URL**.                                        |
+| Hook            | vs. | Binding         | Hooks are the **consumer API**. Bindings are the **hook↔endpoint** connection.           |
+| Form            | vs. | Component       | Forms are components with **schema-validated input**. Not all components are forms.       |
+| View Model      | vs. | Value Object    | View models are **display-shaped** (UI). Value objects are **domain-shaped** (backend).  |
+| Adapter         | vs. | Mapping         | Adapters transform at the **UI boundary**. Mappings transform at the **API boundary**.   |
+| Guard           | vs. | Rule            | Guards are **client-side** access gates. Rules are **server-side** operation constraints. |
+| Action          | vs. | Hook            | Actions are **event triggers** (click → mutate). Hooks **encapsulate** the data logic.   |
+| State Indicator | vs. | Enum            | State indicators are **visual encodings**. Enums are **abstract value sets**.             |
+
 ---
 
 ## Architecture Mapping Appendix (Functional Style)
 
 This appendix maps each meta-concept to an implementation pattern in a clean, layered architecture using only functions and types.
+
+### Backend Layer Mapping
 
 | Meta-Concept  | Primary Layer           | Functional Implementation Pattern                              |
 | ------------- | ----------------------- | -------------------------------------------------------------- |
@@ -336,6 +602,22 @@ This appendix maps each meta-concept to an implementation pattern in a clean, la
 | Event         | Domain + Infrastructure | event payload type in domain + publisher adapter in infra      |
 | Mapping       | Infrastructure          | pure shape transformation functions                            |
 | State Machine | Domain                  | transition table/map + guard checks + pure transition function |
+
+### UI Layer Mapping
+
+| Meta-Concept    | Primary Layer      | Implementation Pattern                                              |
+| --------------- | ------------------ | ------------------------------------------------------------------- |
+| Page            | Pages (routes)     | Astro `.astro` file importing layout + React island                 |
+| Layout          | Layouts            | Astro layout component with `<slot />` for content                  |
+| Component       | Components         | React function component with typed props interface                 |
+| View Model      | Hooks / Components | TypeScript `type` (exported from hook or co-located with component) |
+| Hook            | Hooks              | `use{Name}()` custom React hook wrapping TanStack Query             |
+| Form            | Components         | Zod schema + `useForm()` resolver + field render                    |
+| Action          | Components         | Event handler calling mutation hook or `navigate()`                 |
+| Guard           | Components / Pages | Auth context check → redirect or `null` render                     |
+| Binding         | Hooks              | TanStack `useQuery()` / `useMutation()` call configuration         |
+| Adapter         | Hooks / Lib        | Pure function transforming API shape to view model shape            |
+| State Indicator | Components         | Badge/icon with `switch` / `Record<Value, VisualConfig>` color map |
 
 ### Layer Dependency Rule
 

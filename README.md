@@ -84,16 +84,20 @@ For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
 
 ## Stage 1 — Classify Concepts with the Taxonomy
 
-The first thing to understand is how DomainSpec classifies domain knowledge. Every concept in your system belongs to exactly one of 13 meta-types, organized into four categories.
+The first thing to understand is how DomainSpec classifies domain knowledge. Every concept in your system belongs to exactly one of 24 meta-types — 13 for backend domain logic and 11 for UI presentation.
 
 These categories reflect the fundamental questions every system must answer:
 
-| Question                        | Category       | What it contains                                      |
-| ------------------------------- | -------------- | ----------------------------------------------------- |
-| What things exist?              | **Structural** | Entity, Value Object, Enum                            |
-| What happens?                   | **Behavioral** | Operation, Query, Calculation, Rule, Policy, Workflow |
-| How do parts communicate?       | **Connective** | Interface, Event, Mapping                             |
-| How do things change over time? | **Lifecycle**  | State Machine                                         |
+| Question                        | Category              | What it contains                                      |
+| ------------------------------- | --------------------- | ----------------------------------------------------- |
+| What things exist?              | **Structural**        | Entity, Value Object, Enum                            |
+| What happens?                   | **Behavioral**        | Operation, Query, Calculation, Rule, Policy, Workflow |
+| How do parts communicate?       | **Connective**        | Interface, Event, Mapping                             |
+| How do things change over time? | **Lifecycle**         | State Machine                                         |
+| What do users see?              | **UI Structural**     | Page, Layout, Component, View Model                   |
+| What do users do?               | **UI Behavioral**     | Hook, Form, Action, Guard                             |
+| How does UI talk to backend?    | **UI Connective**     | Binding, Adapter                                      |
+| How does state look?            | **UI Presentational** | State Indicator                                       |
 
 ### Structural — What things exist
 
@@ -167,7 +171,7 @@ These are the **boundaries** and **bridges** of your domain.
 
 ## Stage 2 — Connect Concepts with Relationships
 
-Once you have classified concepts, you connect them using 12 typed relationship edges. This forms a **knowledge graph** — from any concept, you can follow edges to understand everything it touches.
+Once you have classified concepts, you connect them using 26 typed relationship edges — 12 for the backend domain graph, 8 for intra-UI navigation, and 6 for cross-layer traceability from screen to database. This forms a **knowledge graph** — from any concept, you can follow edges to understand everything it touches.
 
 | Edge           | Connects                    | Answers                                           |
 | -------------- | --------------------------- | ------------------------------------------------- |
@@ -372,39 +376,95 @@ Deviations from the documentation are not implementation details — they are sp
 
 When a feature exposes HTTP endpoints in `interfaces.md`, DomainSpec extends the pipeline into the frontend. The UI lifecycle mirrors the backend: document first, then design, then test, then implement.
 
-### 6a. UI Architecture Constitution
+### One-command pipeline
 
-Before any per-feature UI work begins, the project needs a **UI-ARCHITECTURE.md** — a single document defining the global frontend stack, theme, layout, data-fetching patterns, and form strategy. This is created once and evolved over time.
-
-The [ui-architecture.md](templates/ui-architecture.md) template provides the starting structure. The `domainspec-ui-architect` agent guides the process interactively.
-
-### 6b. Per-Feature UI-SPEC
-
-Each feature with frontend aspects gets a `UI-SPEC.md` in its feature directory:
+For features that already have backend specs (`SPEC.md` + `interfaces.md`), run the entire UI lifecycle in one command:
 
 ```
-docs/features/{feature}/
-├── SPEC.md
-├── domain.md
-├── operations.md
-├── interfaces.md
-├── UI-SPEC.md          ← frontend design contract
-└── ...
+@domainspec-ui-architect domainspec-ui-pipeline <feature-name>
 ```
 
-The UI-SPEC defines: route table, page layouts, component inventory, data flow, form contracts, state-to-UI mapping, and accessibility requirements. It is generated from the backend aspect docs + UI-ARCHITECTURE.md constitution using the `domainspec-ui-phase-bridge` skill.
+This orchestrates all five steps below automatically — ensuring UI-ARCHITECTURE.md exists, generating UI-SPEC.md, scaffolding E2E tests, implementing the frontend, and running the visual audit. Use flags to control scope:
 
-### 6c. Playwright E2E Tests
+| Flag | Effect |
+|------|--------|
+| `--spec-only` | Stop after generating UI-SPEC.md (Steps 1–2) — review before building |
+| `--skip-audit` | Skip the visual audit (Step 5) |
+| `--dry-run` | Show what would be created without executing |
 
-Once UI-SPEC.md exists, the test pipeline (rules 15–20) derives Playwright E2E test obligations covering navigation, user journeys, form validation, state reflection, responsive layout, and accessibility. Use `domainspec-generate-tests --ui` or `--all` to scaffold E2E test files.
+```mermaid
+flowchart TD
+    P["domainspec-ui-pipeline &lt;feature&gt;"] --> A
+    A["Pre-flight:\nSPEC.md + interfaces.md exist?"] -->|yes| B{UI-ARCHITECTURE.md\nexists?}
+    B -->|no| C["Step 1: domainspec-ui-architecture\n→ creates docs/UI-ARCHITECTURE.md"]
+    B -->|yes| D["Step 2: domainspec-ui-phase-bridge\n→ creates UI-SPEC.md"]
+    C --> D
+    D --> F["Step 3: domainspec-generate-tests --ui\n→ scaffolds e2e/{feature}/*.spec.ts"]
+    F --> G["Step 4: domainspec-ui-implement\n→ builds pages + components"]
+    G --> H["Step 5: domainspec-ui-audit-bridge\n→ 6-pillar visual review"]
+```
 
-### 6d. UI Implementation
+You can also run each step individually:
 
-Frontend pages and components are implemented from the UI-SPEC contract, following the UI-ARCHITECTURE constitution for patterns and conventions. The `domainspec-ui-implement` skill handles this stage.
+### Step 1: Create UI Architecture (once per project)
 
-### 6e. UI Visual Audit
+Before any per-feature UI work, define the project-wide frontend constitution. Run:
 
-After implementation, the `domainspec-ui-audit-bridge` skill runs a retroactive 6-pillar visual review (layout, typography, color, spacing, interaction, accessibility) to verify the UI matches the design contract.
+```
+@domainspec-ui-architect domainspec-ui-architecture
+```
+
+The agent asks interactive questions about your stack (framework, CSS, component library, theme, fonts, layout) and produces **`docs/UI-ARCHITECTURE.md`** — the single source of truth for all frontend decisions. It also installs dependencies and scaffolds the initial layout.
+
+Use the [ui-architecture.md](templates/ui-architecture.md) template as reference.
+
+### Step 2: Generate a Feature UI-SPEC
+
+For each feature that has HTTP endpoints in `interfaces.md`, generate its frontend design contract:
+
+```
+@domainspec-ui-architect domainspec-ui-phase-bridge <feature-name>
+```
+
+This reads the feature's `SPEC.md`, `interfaces.md`, `operations.md`, `queries.md`, `states.md`, and `STORIES.md`, then produces **`docs/features/{feature}/UI-SPEC.md`** containing:
+
+- **Route table** — URL paths, page titles, auth requirements
+- **Page layouts** — which components appear on each page
+- **Component inventory** — data tables, forms, cards, badges
+- **Data flow** — which API endpoints each page calls
+- **Form contracts** — field types, validation rules, error messages
+- **State-to-UI mapping** — how backend states render (badges, disabled buttons, empty states)
+- **Accessibility requirements** — per component
+
+### Step 3: Generate Playwright E2E Tests
+
+With UI-SPEC.md in place, derive E2E test scaffolds:
+
+```
+@domainspec-test-designer domainspec-generate-tests --ui <feature-name>
+```
+
+This produces test files under `{web-app}/e2e/{feature}/` covering navigation, user journeys, form validation, state reflection, responsive layout, and accessibility (rules 15–20 from [TEST-PIPELINE.md](TEST-PIPELINE.md)).
+
+### Step 4: Implement Frontend
+
+Build the actual pages and components from the design contract:
+
+```
+@domainspec-ui-architect domainspec-ui-implement <feature-name>
+```
+
+The skill reads `UI-SPEC.md` + `UI-ARCHITECTURE.md` and produces pages, React components, data hooks, mutation hooks, and updates navigation — all following the conventions defined in the architecture constitution.
+
+### Step 5: Visual Audit
+
+After implementation, run a 6-pillar visual review:
+
+```
+@domainspec-ui-architect domainspec-ui-audit-bridge <feature-name>
+```
+
+This checks layout, typography, color, spacing, interaction, and accessibility against the UI-SPEC contract and reports pass/fail per pillar.
 
 ### MCP Playwright Integration
 
@@ -516,11 +576,12 @@ Skills are invoked as Copilot commands. They map to specific pipeline stages.
 
 **Implementation**
 
-| Skill                        | Stage | Purpose                                                   |
-| ---------------------------- | ----- | --------------------------------------------------------- |
-| `domainspec-implement`       | 5     | Implement backend code from documented contracts          |
-| `domainspec-ui-architecture` | 6a    | Create or evolve project-wide UI-ARCHITECTURE.md          |
-| `domainspec-ui-implement`    | 6d    | Implement frontend pages from UI-SPEC and UI-ARCHITECTURE |
+| Skill                        | Stage | Purpose                                                        |
+| ---------------------------- | ----- | -------------------------------------------------------------- |
+| `domainspec-implement`       | 5     | Implement backend code from documented contracts               |
+| `domainspec-ui-pipeline`     | 6     | **Full UI lifecycle** — spec → tests → implement → audit       |
+| `domainspec-ui-architecture` | 6.1   | Create or evolve project-wide UI-ARCHITECTURE.md               |
+| `domainspec-ui-implement`    | 6.4   | Implement frontend pages from UI-SPEC and UI-ARCHITECTURE      |
 
 **Verification & Auditing**
 
@@ -622,12 +683,12 @@ Reference implementations showing complete feature slices:
 
 | File                                     | Contents                                                                  |
 | ---------------------------------------- | ------------------------------------------------------------------------- |
-| [TAXONOMY.md](TAXONOMY.md)               | Full 13-type reference with examples, decision guides, and disambiguation |
-| [RELATIONSHIPS.md](RELATIONSHIPS.md)     | All 12 typed edge types with navigation patterns                          |
+| [TAXONOMY.md](TAXONOMY.md)               | Full 24-type reference (13 backend + 11 UI) with examples and disambiguation |
+| [RELATIONSHIPS.md](RELATIONSHIPS.md)     | All 26 typed edge types (12 backend + 8 intra-UI + 6 cross-layer)            |
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)     |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                               |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.3.0)                   |
-| [templates/](templates/SPEC.md)          | All 13 aspect templates, ready to copy                                    |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.4.0)                   |
+| [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                  |
 | [examples/](examples/)                   | 5 reference feature implementations                                       |
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                               |
 | [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup)                        |

@@ -120,9 +120,10 @@ Navigational artifacts for context discovery:
    a. Does `interfaces.md` declare HTTP endpoints (transport: http)?
    b. Does `docs/UI-ARCHITECTURE.md` exist?
    c. Does `docs/features/{feature}/UI-SPEC.md` exist?
-   - If endpoints exist but no UI-ARCHITECTURE.md → include `domainspec-ui-architecture` task as prerequisite.
-   - If UI-ARCHITECTURE.md exists but no UI-SPEC.md → include `domainspec-ui-phase-bridge` task.
-   - If UI-SPEC.md exists → include `domainspec-generate-tests --ui` and `domainspec-ui-implement` tasks.
+   - If endpoints exist and backend specs are complete → prefer `domainspec-ui-pipeline` as a single task to handle the full UI lifecycle (architecture → UI-SPEC → E2E tests → implement → audit).
+   - If endpoints exist but no UI-ARCHITECTURE.md → include `domainspec-ui-architecture` task as prerequisite, then `domainspec-ui-pipeline --spec-only` for review.
+   - If UI-ARCHITECTURE.md exists but no UI-SPEC.md → include `domainspec-ui-pipeline` task.
+   - If UI-SPEC.md already exists → include `domainspec-generate-tests --ui` and `domainspec-ui-implement` tasks individually.
    - If UI implementation exists → include `domainspec-ui-audit-bridge` task in verification wave.
 5. Classify planning complexity.
 6. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
