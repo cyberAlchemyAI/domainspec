@@ -53,7 +53,7 @@ tools:
     web/githubRepo,
     todo,
   ]
-agents: ["Explore", "domainspec-researcher", "domainspec-alignment-auditor", "domainspec-layering-auditor"]
+agents: ["Explore", "domainspec-researcher", "domainspec-alignment-auditor", "domainspec-layering-auditor", "domainspec-ui-architect"]
 color: green
 ---
 
@@ -108,11 +108,20 @@ Navigational artifacts for context discovery:
   - Use `domainspec-researcher` for focused implementation feasibility and dependency impact research.
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
 3. If the feature already has implementation, run both `domainspec-alignment-auditor` and `domainspec-layering-auditor` and consolidate remediation obligations.
-4. Classify planning complexity.
-5. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
-6. For medium/high complexity, delegate orchestration to GSD plan-phase flow and map resulting tasks back to DomainSpec concepts.
-7. Ensure every task maps to one or more documented capabilities/concepts.
-8. Return assumptions explicitly when docs are incomplete.
+4. **UI detection gate**: Check if the feature has frontend aspects:
+   a. Does `interfaces.md` declare HTTP endpoints (transport: http)?
+   b. Does `docs/UI-ARCHITECTURE.md` exist?
+   c. Does `docs/features/{feature}/UI-SPEC.md` exist?
+   - If endpoints exist but no UI-ARCHITECTURE.md → include `domainspec-ui-architecture` task as prerequisite.
+   - If UI-ARCHITECTURE.md exists but no UI-SPEC.md → include `domainspec-ui-phase-bridge` task.
+   - If UI-SPEC.md exists → include `domainspec-generate-tests --ui` and `domainspec-ui-implement` tasks.
+   - If UI implementation exists → include `domainspec-ui-audit-bridge` task in verification wave.
+5. Classify planning complexity.
+6. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
+7. For medium/high complexity, delegate orchestration to GSD plan-phase flow and map resulting tasks back to DomainSpec concepts.
+8. Ensure every task maps to one or more documented capabilities/concepts.
+9. For features with UI aspects, include Playwright E2E test generation and scaffold tasks in the plan.
+10. Return assumptions explicitly when docs are incomplete.
 </execution>
 
 <delegation-contract>

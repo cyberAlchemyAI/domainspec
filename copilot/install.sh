@@ -170,3 +170,101 @@ done
 
 echo "Installed DomainSpec Copilot pack into .github/agents and .github/skills"
 echo "Applied tools profile '$TOOLS_PROFILE' to domainspec-* agents"
+
+# --- Playwright E2E setup (optional) ---
+
+SKIP_PLAYWRIGHT="${DOMAINSPEC_SKIP_PLAYWRIGHT:-}"
+if [[ "$SKIP_PLAYWRIGHT" == "1" ]]; then
+  echo "Skipping Playwright setup (DOMAINSPEC_SKIP_PLAYWRIGHT=1)"
+else
+  INSTALL_PLAYWRIGHT=0
+  if [[ $NON_INTERACTIVE -eq 1 ]]; then
+    INSTALL_PLAYWRIGHT=1
+  else
+    read -r -p "Install Playwright for UI E2E test generation? [y/N]: " pw_choice
+    case "${pw_choice:-n}" in
+      [yY]*) INSTALL_PLAYWRIGHT=1 ;;
+    esac
+  fi
+
+  if [[ $INSTALL_PLAYWRIGHT -eq 1 ]]; then
+    # Detect web app directory
+    WEB_APP=""
+    for candidate in apps/web web frontend; do
+      if [[ -f "$ROOT/$candidate/package.json" ]]; then
+        WEB_APP="$ROOT/$candidate"
+        break
+      fi
+    done
+
+    if [[ -n "$WEB_APP" ]]; then
+      echo "Detected web app at: $WEB_APP"
+      echo "Installing Playwright..."
+      cd "$WEB_APP"
+      npm install --save-dev @playwright/test 2>/dev/null || echo "Warning: npm install failed — install @playwright/test manually"
+      npx playwright install chromium 2>/dev/null || echo "Warning: browser install failed — run 'npx playwright install chromium' manually"
+
+      # Create e2e directory if missing
+      mkdir -p "$WEB_APP/e2e"
+
+      # Create playwright.config.ts if missing
+      if [[ ! -f "$WEB_APP/playwright.config.ts" ]]; then
+        cat > "$WEB_APP/playwright.config.ts" << 'PWCONFIG'
+import { defineConfig, devices } from "@playwright/test"
+
+export default defineConfig({
+  testDir: "./e2e",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: "html",
+  use: {
+    baseURL: process.env.BASE_URL ?? "http://localhost:4321",
+    trace: "on-first-retry",
+  },
+  projects: [
+    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
+    { name: "mobile", use: { ...devices["Pixel 5"] } },
+  ],
+  webServer: {
+    command: "npm run dev",
+    url: "http://localhost:4321",
+    reuseExistingServer: !process.env.CI,
+  },
+})
+PWCONFIG
+        echo "Created playwright.config.ts"
+      fi
+      cd "$ROOT"
+    else
+      echo "No web app directory detected — skipping Playwright setup"
+      echo "Install manually: npm install --save-dev @playwright/test && npx playwright install chromium"
+    fi
+
+    # Suggest MCP Playwright configuration for VS Code
+    VSCODE_DIR="$ROOT/.vscode"
+    MCP_FILE="$VSCODE_DIR/mcp.json"
+
+    if [[ ! -f "$MCP_FILE" ]]; then
+      mkdir -p "$VSCODE_DIR"
+      cat > "$MCP_FILE" << 'MCPJSON'
+{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "env": {
+        "DISPLAY": ":0"
+      }
+    }
+  }
+}
+MCPJSON
+      echo "Created .vscode/mcp.json with Playwright MCP server"
+    else
+      echo ".vscode/mcp.json already exists — add Playwright MCP server manually if needed:"
+      echo '  "playwright": { "command": "npx", "args": ["@playwright/mcp@latest"] }'
+    fi
+  fi
+fi

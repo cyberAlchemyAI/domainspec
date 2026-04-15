@@ -78,6 +78,35 @@ Versioning guidance:
 - New `domainspec-story-sync` agent for maintaining user-story files aligned with capability and aspect changes.
 - Structured output contract for researcher agent: callers receive `featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, and `recommendation`.
 
+## [1.3.0] - 2026-04-15
+
+### Added
+
+- UI architecture and frontend lifecycle support:
+  - New `ui-architecture.md` template for defining project-wide frontend constitution (stack, theme, layout, data patterns, form strategy).
+  - New `domainspec-ui-architect` agent for interactive frontend architecture definition.
+  - New `domainspec-ui-architecture` skill for creating or evolving UI-ARCHITECTURE.md from DomainSpec contracts.
+  - New `domainspec-ui-phase-bridge` skill for generating per-feature UI-SPEC.md design contracts via GSD UI workflow delegation.
+  - New `domainspec-ui-implement` skill for implementing frontend pages and components from UI-SPEC.md and UI-ARCHITECTURE.md.
+  - New `domainspec-ui-audit-bridge` skill for retroactive 6-pillar visual audits of implemented UI code.
+- Playwright E2E test generation pipeline:
+  - TEST-PIPELINE.md extended with UI E2E Test Generation Rules (rules 15–20): Navigation, Journey, Form Validation, State Reflection, Responsive Layout, Accessibility.
+  - `domainspec-generate-tests` skill now supports `--ui` and `--all` flags for Playwright E2E test scaffold generation from UI-SPEC.md.
+  - `domainspec-test-designer` agent updated with UI E2E test design capability and Playwright scaffold conventions.
+  - E2E scaffold convention: `{web-app}/e2e/{feature}/` with `.navigation.spec.ts`, `.journey.spec.ts`, `.forms.spec.ts`, `.states.spec.ts`, `.responsive.spec.ts`.
+  - Traceability format: `@source features/{feature}/UI-SPEC.md#{section}`, `@story {story-id}`, `@journey {journey-name}`.
+- MCP Playwright integration in installer:
+  - `install.sh` now auto-detects web app directory and optionally installs `@playwright/test`, Chromium, and generates `playwright.config.ts`.
+  - Creates `.vscode/mcp.json` with `@playwright/mcp@latest` server entry for browser-interactive agent workflows.
+  - Supports `DOMAINSPEC_SKIP_PLAYWRIGHT=1` environment variable for non-interactive skipping.
+
+### Changed
+
+- Planner agent now includes a **UI detection gate** (execution step 4):
+  - Auto-detects frontend aspects by checking for HTTP endpoints in `interfaces.md`, presence of `UI-ARCHITECTURE.md`, and `UI-SPEC.md`.
+  - Automatically includes UI architecture, UI-SPEC generation, UI implementation, UI audit, and Playwright E2E tasks based on detected state.
+  - `domainspec-ui-architect` added to planner's agent delegation list.
+
 ### Changed
 
 - `domainspec-spec-writer` agent:

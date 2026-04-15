@@ -4,23 +4,81 @@
 
 Most software problems are not caused by bad code. They are caused by building the wrong thing — misunderstood business rules, missing edge cases, contradictory behavior between systems. Code written before the domain is understood has to be rewritten once understanding arrives.
 
-**domainspec** is a framework for documenting what your system does before you build it. It gives you a structured vocabulary, consistent templates, and a clear pipeline that turns domain documentation into formal specifications, tests, and implementation — in that order.
+**domainspec** is a framework for documenting what your system does before you build it. It gives you a structured vocabulary, consistent templates, and a clear pipeline that turns domain documentation into formal specifications, tests, backend code, frontend UI, and verification — in that order.
 
 ---
 
-## The Core Idea: Domain First
+## Table of Contents
 
-Every system has a domain: the real-world area it operates in (payments, logistics, user accounts). The domain contains concepts (orders, invoices, customers), behaviors (place order, charge payment, cancel subscription), and rules (amount must be positive, refund cannot exceed original charge).
+- [The Pipeline at a Glance](#the-pipeline-at-a-glance)
+- [Quick Start](#quick-start)
+- [Stage 1 — Classify Concepts (Taxonomy)](#stage-1--classify-concepts-with-the-taxonomy)
+- [Stage 2 — Connect Concepts (Relationships)](#stage-2--connect-concepts-with-relationships)
+- [Stage 3 — Document Features (Vertical Slices)](#stage-3--structure-documentation-as-vertical-slices)
+- [Stage 4 — Derive Tests](#stage-4--derive-tests-from-documentation)
+- [Stage 5 — Implement Backend](#stage-5--implement-backend-from-formal-specifications)
+- [Stage 6 — Design & Build UI](#stage-6--design--build-ui)
+- [Stage 7 — Maintain the Global Registry](#stage-7--maintain-the-global-registry)
+- [Copilot Integration](#copilot-integration)
+  - [Installation](#installation)
+  - [Skills Reference](#skills-reference)
+  - [Agents Reference](#agents-reference)
+  - [Intelligent Context Discovery](#intelligent-context-discovery)
+  - [GSD Delegation](#gsd-delegation)
+- [Templates](#templates)
+- [Examples](#examples)
+- [Reference](#reference)
 
-In DomainSpec, documentation of these concepts comes **before** any code. The documentation is not prose — it is structured, typed, and formal enough to derive tests from.
+---
 
-The pipeline is always:
+## The Pipeline at a Glance
 
-```
-Domain Docs → Formal States → Tests → Implementation
+```mermaid
+flowchart LR
+    A["1 Classify\n(Taxonomy)"] --> B["2 Connect\n(Relationships)"]
+    B --> C["3 Document\n(Vertical Slices)"]
+    C --> D["4 Derive Tests\n(Backend + E2E)"]
+    D --> E["5 Implement\nBackend"]
+    C --> F["6 Design &\nBuild UI"]
+    F --> D
+    E --> G["7 Registry\n& Verify"]
+    F --> G
 ```
 
 Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate.
+
+| Stage | Input | Output |
+|-------|-------|--------|
+| 1. Classify | Business knowledge | Typed concept inventory |
+| 2. Connect | Concept inventory | Navigable knowledge graph |
+| 3. Document | Knowledge graph | Feature vertical slices (SPEC + aspect files + stories) |
+| 4. Derive Tests | Aspect docs + UI-SPEC | Backend TEST-SPEC + Playwright E2E scaffold |
+| 5. Implement Backend | TEST-SPEC + aspect docs | Production code + passing tests |
+| 6. Design & Build UI | UI-ARCHITECTURE + aspect docs | UI-SPEC + frontend pages + E2E tests |
+| 7. Maintain Registry | All SPEC.md concept tables | Global registry, glossary, verification verdicts |
+
+---
+
+## Quick Start
+
+```bash
+# 1. Install framework into your project
+cp -r domainspec/ your-project/
+
+# 2. Install Copilot agent pack (agents, skills, MCP Playwright)
+bash domainspec/copilot/install.sh
+
+# 3. Bootstrap docs structure
+cp -r domainspec/starter/ your-project/docs/
+
+# 4. Create your first feature
+mkdir your-project/docs/features/your-feature
+cp domainspec/templates/SPEC.md your-project/docs/features/your-feature/
+```
+
+Then use the pipeline: write SPEC.md → add aspect files → generate tests → implement → verify.
+
+For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
 
 ---
 
@@ -210,6 +268,8 @@ Notice that every row above is already a complete test specification. The From +
 
 The formal structure in the previous stage is not accidental — it exists specifically so tests can be derived from documentation deterministically. The rules are defined in [TEST-PIPELINE.md](TEST-PIPELINE.md).
 
+### Backend test derivation (rules 1–14)
+
 | Doc section | What it produces |
 |-------------|-----------------|
 | Each state machine transition row | 1 happy-path state transition test |
@@ -222,6 +282,21 @@ The formal structure in the previous stage is not accidental — it exists speci
 | Each API endpoint × response status | 1 contract test |
 | Each event producer | 1 producer test |
 | Each event consumer | 1 consumer test |
+
+### UI E2E test derivation (rules 15–20)
+
+When a feature has a `UI-SPEC.md`, six additional test categories are derived:
+
+| Rule | Category | Source |
+|------|----------|--------|
+| 15 | Navigation | Route table in UI-SPEC → each route produces a navigation test |
+| 16 | Journey | User journeys → multi-step Playwright scenarios |
+| 17 | Form Validation | Form contracts → validation rule tests per field |
+| 18 | State Reflection | Component state mapping → UI reflects backend state correctly |
+| 19 | Responsive Layout | Breakpoint table → viewport-specific layout assertions |
+| 20 | Accessibility | Component list → axe-core checks per page |
+
+E2E scaffold convention: `{web-app}/e2e/{feature}/` with `.navigation.spec.ts`, `.journey.spec.ts`, `.forms.spec.ts`, `.states.spec.ts`, `.responsive.spec.ts`.
 
 **The key insight:** tests are not written from scratch. They are read from the documentation. If a test cannot be derived from the docs, the docs are incomplete — fill the gap in the spec, then derive the test.
 
@@ -266,7 +341,7 @@ The payment-processing example has 9 transitions, 6 invalid transitions, 6 invar
 
 ---
 
-## Stage 5 — Implement from Formal Specifications
+## Stage 5 — Implement Backend from Formal Specifications
 
 With typed documentation and derived tests, implementation has clear contracts. There is nothing to guess or interpret:
 
@@ -280,7 +355,51 @@ Deviations from the documentation are not implementation details — they are sp
 
 ---
 
-## Stage 6 — Maintain the Global Registry
+## Stage 6 — Design & Build UI
+
+When a feature exposes HTTP endpoints in `interfaces.md`, DomainSpec extends the pipeline into the frontend. The UI lifecycle mirrors the backend: document first, then design, then test, then implement.
+
+### 6a. UI Architecture Constitution
+
+Before any per-feature UI work begins, the project needs a **UI-ARCHITECTURE.md** — a single document defining the global frontend stack, theme, layout, data-fetching patterns, and form strategy. This is created once and evolved over time.
+
+The [ui-architecture.md](templates/ui-architecture.md) template provides the starting structure. The `domainspec-ui-architect` agent guides the process interactively.
+
+### 6b. Per-Feature UI-SPEC
+
+Each feature with frontend aspects gets a `UI-SPEC.md` in its feature directory:
+
+```
+docs/features/{feature}/
+├── SPEC.md
+├── domain.md
+├── operations.md
+├── interfaces.md
+├── UI-SPEC.md          ← frontend design contract
+└── ...
+```
+
+The UI-SPEC defines: route table, page layouts, component inventory, data flow, form contracts, state-to-UI mapping, and accessibility requirements. It is generated from the backend aspect docs + UI-ARCHITECTURE.md constitution using the `domainspec-ui-phase-bridge` skill.
+
+### 6c. Playwright E2E Tests
+
+Once UI-SPEC.md exists, the test pipeline (rules 15–20) derives Playwright E2E test obligations covering navigation, user journeys, form validation, state reflection, responsive layout, and accessibility. Use `domainspec-generate-tests --ui` or `--all` to scaffold E2E test files.
+
+### 6d. UI Implementation
+
+Frontend pages and components are implemented from the UI-SPEC contract, following the UI-ARCHITECTURE constitution for patterns and conventions. The `domainspec-ui-implement` skill handles this stage.
+
+### 6e. UI Visual Audit
+
+After implementation, the `domainspec-ui-audit-bridge` skill runs a retroactive 6-pillar visual review (layout, typography, color, spacing, interaction, accessibility) to verify the UI matches the design contract.
+
+### MCP Playwright Integration
+
+DomainSpec's installer configures the [Playwright MCP server](https://github.com/anthropics/playwright-mcp) (`@playwright/mcp@latest`) so agents can interact with browsers directly for visual testing and debugging. See [copilot/INSTALL.md](copilot/INSTALL.md) for setup details.
+
+---
+
+## Stage 7 — Maintain the Global Registry
 
 As features accumulate, the concept table in each `SPEC.md` feeds a global index:
 
@@ -293,46 +412,30 @@ The source of truth for each concept lives in the feature's `SPEC.md`. The regis
 
 ---
 
-## Using DomainSpec in a Project
-
-### Project layout
+## Project Layout
 
 ```
 your-project/
-├── domainspec/        # Framework reference — read only, never edit
-├── docs/              # Your domain documentation — grows feature by feature
+├── domainspec/           # Framework reference — read only, never edit
+├── docs/                 # Your domain documentation — grows feature by feature
 │   ├── registry.md
 │   ├── glossary.md
-│   ├── shared/        # Cross-feature value objects
+│   ├── UI-ARCHITECTURE.md  # Global frontend constitution
+│   ├── shared/           # Cross-feature value objects
 │   └── features/
 │       ├── payments/
+│       │   ├── SPEC.md
+│       │   ├── STORIES.md
+│       │   ├── domain.md
+│       │   ├── operations.md
+│       │   ├── UI-SPEC.md
+│       │   └── ...
 │       └── orders/
-├── src/               # Code that grows from docs
-└── tests/             # Tests that grow from docs
+├── src/                  # Backend code that grows from docs
+├── apps/web/             # Frontend code that grows from UI-SPEC
+│   └── e2e/              # Playwright E2E tests per feature
+└── tests/                # Backend tests that grow from docs
 ```
-
-### Setup
-
-```bash
-# Copy the framework into your project (one time)
-cp -r domainspec/ your-project/
-
-# Bootstrap docs/
-cp -r domainspec/starter/ your-project/docs/
-
-# Create your first feature
-mkdir your-project/docs/features/your-feature
-cp domainspec/templates/SPEC.md your-project/docs/features/your-feature/
-```
-
-### Workflow per feature
-
-1. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
-2. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
-3. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
-4. **Generate test obligations** — apply rules from TEST-PIPELINE.md to produce a TEST-SPEC
-5. **Implement** — write code against the documented contracts and derived tests
-6. **Audit** — verify implementation matches documentation; record any drift
 
 ### Concept naming
 
@@ -344,29 +447,110 @@ Concepts use namespaced IDs: **`{feature}.{ConceptName}`**
 
 Short names within a feature's own files. Full namespace in registry entries and cross-feature references.
 
+### Workflow per feature
+
+1. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
+2. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
+3. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
+4. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
+5. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
+6. **Implement backend** — write code against the documented contracts and derived tests
+7. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
+8. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
+
 ---
 
-## Copilot Agent Pack
+## Copilot Integration
 
-DomainSpec ships with a reusable Copilot integration pack that automates the entire workflow. Each command maps to one stage of the pipeline.
-
-Install in any repository:
+DomainSpec ships with a reusable Copilot integration pack that automates the entire pipeline. Install in any repository:
 
 ```bash
 bash domainspec/copilot/install.sh
 ```
 
-| Command | Stage | Does |
-|---------|-------|------|
-| `/domainspec-init` | Setup | Create docs/ structure and first feature skeleton |
-| `/domainspec-spec-feature` | Stage 3 | Author or update a feature specification |
-| `/domainspec-sync-registry` | Stage 6 | Sync registry and glossary from all SPEC.md files |
-| `/domainspec-generate-tests` | Stage 4 | Derive TEST-SPEC.md from formal aspect docs |
-| `/domainspec-implement` | Stage 5 | Implement code from documented contracts |
-| `/domainspec-audit-alignment` | Stage 5/6 | Produce alignment report comparing docs vs code |
-| `/domainspec-audit-layering` | Stage 5/6 | Detect domain-logic drift into application layers |
-| `/domainspec-verify-feature` | Stage 6 | PASS / FLAG / BLOCK verdict on feature readiness |
-| `/domainspec-help` | Any | Show commands and recommend next step |
+The installer copies agents, skills, and instructions into `.github/`. It optionally installs Playwright + MCP for UI E2E test generation. See [copilot/INSTALL.md](copilot/INSTALL.md) for details.
+
+### Installation
+
+```bash
+# Full interactive install (prompts for Playwright setup)
+bash domainspec/copilot/install.sh
+
+# Skip Playwright (CI or backend-only projects)
+DOMAINSPEC_SKIP_PLAYWRIGHT=1 bash domainspec/copilot/install.sh
+```
+
+### Skills Reference
+
+Skills are invoked as Copilot commands. They map to specific pipeline stages.
+
+**Specification & Documentation**
+
+| Skill | Stage | Purpose |
+|-------|-------|---------|
+| `domainspec-init` | Setup | Create `docs/` structure and first feature skeleton |
+| `domainspec-spec-feature` | 3 | Author or update a feature specification (SPEC + aspects) |
+| `domainspec-sync-user-stories` | 3 | Generate/refresh STORIES.md from aspect docs |
+| `domainspec-sync-registry` | 7 | Sync registry and glossary from all SPEC.md concept tables |
+
+**Testing**
+
+| Skill | Stage | Purpose |
+|-------|-------|---------|
+| `domainspec-generate-tests` | 4 | Derive TEST-SPEC.md from formal aspect docs |
+| `domainspec-generate-tests --ui` | 4 | Derive Playwright E2E scaffold from UI-SPEC.md |
+| `domainspec-generate-tests --all` | 4 | Generate both backend and E2E test specs |
+
+**Implementation**
+
+| Skill | Stage | Purpose |
+|-------|-------|---------|
+| `domainspec-implement` | 5 | Implement backend code from documented contracts |
+| `domainspec-ui-architecture` | 6a | Create or evolve project-wide UI-ARCHITECTURE.md |
+| `domainspec-ui-implement` | 6d | Implement frontend pages from UI-SPEC and UI-ARCHITECTURE |
+
+**Verification & Auditing**
+
+| Skill | Stage | Purpose |
+|-------|-------|---------|
+| `domainspec-audit-alignment` | 5–7 | Produce alignment report comparing docs vs code |
+| `domainspec-audit-layering` | 5–7 | Detect domain-logic drift into application layers |
+| `domainspec-verify-feature` | 7 | PASS / FLAG / BLOCK verdict on feature readiness |
+| `domainspec-pilot-readiness` | 7 | Prepare a feature for pilot testing, fill readiness gaps |
+
+**Bridge Skills** (GSD orchestration delegation)
+
+| Skill | Purpose |
+|-------|---------|
+| `domainspec-plan-phase-bridge` | Bridge DomainSpec planning to GSD phase planner |
+| `domainspec-execute-phase-bridge` | Bridge DomainSpec implementation to GSD phase execution |
+| `domainspec-verify-phase-bridge` | Bridge GSD verification into DomainSpec PASS/FLAG/BLOCK |
+| `domainspec-ui-phase-bridge` | Generate per-feature UI-SPEC via GSD UI workflow |
+| `domainspec-ui-audit-bridge` | Retroactive 6-pillar visual audit of implemented UI |
+
+**Utility**
+
+| Skill | Purpose |
+|-------|---------|
+| `domainspec-help` | Show command reference and recommend next step |
+
+### Agents Reference
+
+Agents are specialized autonomous workflows invoked by the planner or by other agents.
+
+| Agent | Role |
+|-------|------|
+| `domainspec-planner` | Converts feature goals into executable, dependency-ordered plans |
+| `domainspec-spec-writer` | Authors/evolves feature specs with context research and story coverage |
+| `domainspec-researcher` | Investigates implementation decisions using structured domain navigation |
+| `domainspec-test-designer` | Derives test specifications and Playwright E2E scaffolds from docs |
+| `domainspec-implementer` | Implements production code and tests from approved artifacts |
+| `domainspec-registry-sync` | Synchronizes registry and glossary from SPEC concept tables |
+| `domainspec-story-sync` | Maintains STORIES.md aligned with capability and aspect changes |
+| `domainspec-alignment-auditor` | Audits implementation fidelity against DomainSpec docs |
+| `domainspec-layering-auditor` | Detects domain logic misplaced in application layers |
+| `domainspec-verifier` | Produces PASS / FLAG / BLOCK feature completion verdicts |
+| `domainspec-ui-architect` | Defines frontend architecture constitution via interactive questions |
 
 ### Intelligent Context Discovery
 
@@ -374,7 +558,50 @@ Agents that gather context (spec-writer, planner) use a **weighted heuristic** t
 
 The researcher agent returns results in a **structured output contract** (`featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, `recommendation`) so callers can act without re-navigating.
 
-See [copilot/README.md](copilot/README.md) and [copilot/INSTALL.md](copilot/INSTALL.md).
+### GSD Delegation
+
+For medium/high complexity features, DomainSpec delegates orchestration to GSD phase planning while retaining semantic authority. This means:
+
+- **DomainSpec** owns behavior, acceptance criteria, and concept definitions
+- **GSD** provides task decomposition, wave/dependency ordering, checkpoints, and execution summaries
+
+The planner auto-selects between `native` (DomainSpec-only) and `gsd-phase` (delegated) modes based on feature complexity.
+
+---
+
+## Templates
+
+All templates are in [templates/](templates/) and ready to copy into your feature directories.
+
+| Template | Purpose |
+|----------|---------|
+| [SPEC.md](templates/SPEC.md) | Feature index — overview, concept table, aspect links, dependencies |
+| [STORIES.md](templates/STORIES.md) | User stories in classic + BDD format, traceable to concepts |
+| [domain.md](templates/domain.md) | Entities, value objects, enums with field tables |
+| [operations.md](templates/operations.md) | Operations with rules, calculations, state transitions |
+| [states.md](templates/states.md) | State machines — mermaid diagram + transition tables |
+| [interfaces.md](templates/interfaces.md) | API contracts — endpoints, request/response shapes |
+| [events.md](templates/events.md) | Domain events — payload, producer, consumers |
+| [queries.md](templates/queries.md) | Read models — input, output shape, auth rules |
+| [workflows.md](templates/workflows.md) | Multi-step orchestrations with compensation |
+| [mappings.md](templates/mappings.md) | Data transformations at boundaries |
+| [shared-value-object.md](templates/shared-value-object.md) | Cross-feature value objects |
+| [use-case.md](templates/use-case.md) | Application-layer use case documentation |
+| [ui-architecture.md](templates/ui-architecture.md) | Project-wide frontend architecture constitution |
+
+---
+
+## Examples
+
+Reference implementations showing complete feature slices:
+
+| Example | Scope |
+|---------|-------|
+| [payment-processing](examples/payment-processing/SPEC.md) | Full vertical slice — entities, operations, state machine, events, interfaces, mappings |
+| [user-account](examples/user-account/) | User management with roles, authentication, and lifecycle |
+| [order-management](examples/order-management/) | Order creation, fulfillment workflow, and cancellation |
+| [inventory-management](examples/inventory-management/) | Stock tracking, reservations, and replenishment |
+| [shared](examples/shared/) | Cross-feature value objects (Money, Address, etc.) |
 
 ---
 
@@ -382,9 +609,13 @@ See [copilot/README.md](copilot/README.md) and [copilot/INSTALL.md](copilot/INST
 
 | File | Contents |
 |------|----------|
-| [TAXONOMY.md](TAXONOMY.md) | Full 13-type reference with examples, decision guides, and confusion disambiguation |
+| [TAXONOMY.md](TAXONOMY.md) | Full 13-type reference with examples, decision guides, and disambiguation |
 | [RELATIONSHIPS.md](RELATIONSHIPS.md) | All 12 typed edge types with navigation patterns |
-| [TEST-PIPELINE.md](TEST-PIPELINE.md) | Complete doc → test derivation rule set |
-| [CHANGELOG.md](CHANGELOG.md) | Versioned record of framework updates |
-| [examples/payment-processing/](examples/payment-processing/SPEC.md) | Complete feature example across all aspect files |
-| [templates/](templates/SPEC.md) | All aspect templates, ready to copy |
+| [TEST-PIPELINE.md](TEST-PIPELINE.md) | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules) |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Framework architecture and design decisions |
+| [CHANGELOG.md](CHANGELOG.md) | Versioned record of framework updates (current: v1.3.0) |
+| [templates/](templates/SPEC.md) | All 13 aspect templates, ready to copy |
+| [examples/](examples/) | 5 reference feature implementations |
+| [copilot/README.md](copilot/README.md) | Copilot agent pack overview |
+| [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup) |
+| [tools/](tools/) | Framework validation and index generation tools |

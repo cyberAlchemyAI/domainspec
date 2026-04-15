@@ -276,3 +276,154 @@ This enables:
 - **Doc change → find affected tests** (grep for `@source`)
 - **Test failure → find the spec** (follow `@source` + `@transition`)
 - **Coverage audit** — verify every doc row has a `@source` reference
+
+---
+
+## UI E2E Test Generation Rules
+
+> When a feature has a `UI-SPEC.md` and/or `UI-ARCHITECTURE.md`, the test pipeline also generates Playwright E2E test specifications. These tests verify that the implemented frontend satisfies the design contract and domain behavior visible to the user.
+
+### Prerequisites
+
+- `docs/UI-ARCHITECTURE.md` exists (provides base URL, routes, component lib context)
+- `docs/features/{feature}/UI-SPEC.md` exists (provides per-feature design contract)
+- Playwright is installed (`npx playwright install`)
+
+### From `UI-SPEC.md`
+
+#### 15. Page Navigation Tests
+
+**Rule:** Each declared route = 1 navigation + render test.
+
+| Route | Test |
+|-------|------|
+| `/players` | `test("players list page loads and renders table")` |
+
+**Template:**
+```
+GIVEN authenticated user
+WHEN navigating to {route}
+THEN page loads within {timeout}ms
+AND {primary element} is visible
+```
+
+#### 16. User Journey Tests (from STORIES.md + UI-SPEC)
+
+**Rule:** Each user story with UI touchpoints = 1 end-to-end journey test.
+
+| Story | Test |
+|-------|------|
+| `US-01: Admin creates player` | `test("admin can create player via form and see it in list")` |
+
+**Template:**
+```
+GIVEN user with role {role}
+WHEN user performs {story steps via UI interactions}
+THEN {expected outcome} is visible on screen
+AND {data state} is consistent with backend
+```
+
+#### 17. Form Validation Tests
+
+**Rule:** Each form declared in UI-SPEC.md × each validation rule from operations.md = 1 client-side validation test.
+
+| Form × Rule | Test |
+|-------------|------|
+| `CreatePlayer form × R1: name required` | `test("create player form shows error for empty name")` |
+
+**Template:**
+```
+GIVEN user on {page} with {form} visible
+WHEN user submits form with {invalid field}
+THEN validation error {message} is shown
+AND form is NOT submitted to backend
+```
+
+#### 18. State Reflection Tests
+
+**Rule:** Each UI state declared in UI-SPEC.md (empty, loading, error, populated) = 1 visual state test.
+
+| State | Test |
+|-------|------|
+| `Players list: empty state` | `test("shows empty state message when no players exist")` |
+| `Players list: loading` | `test("shows skeleton while loading players")` |
+| `Players list: error` | `test("shows error message on API failure")` |
+
+**Template:**
+```
+GIVEN {API condition: empty response | delay | error}
+WHEN user navigates to {page}
+THEN {state indicator: empty message | skeleton | error banner} is visible
+```
+
+#### 19. Responsive Layout Tests
+
+**Rule:** Each page × each breakpoint declared in UI-ARCHITECTURE.md = 1 responsive test.
+
+| Page × Breakpoint | Test |
+|-------------------|------|
+| `Dashboard × mobile (375px)` | `test("dashboard renders properly at 375px")` |
+| `Dashboard × desktop (1440px)` | `test("dashboard renders properly at 1440px")` |
+
+**Template:**
+```
+GIVEN viewport width = {width}px
+WHEN navigating to {page}
+THEN layout matches {expected layout behavior}
+AND no horizontal overflow exists
+```
+
+#### 20. Accessibility Tests
+
+**Rule:** Each interactive component = 1 keyboard navigation test. Each page = 1 accessibility audit.
+
+**Template:**
+```
+GIVEN user on {page}
+WHEN navigating via keyboard only
+THEN all interactive elements are reachable via Tab
+AND focus indicators are visible
+AND ARIA roles are correct
+```
+
+### Playwright Test Traceability
+
+E2E tests should reference their documentation source:
+
+```typescript
+/**
+ * @source features/player-management/UI-SPEC.md#players-list
+ * @story US-01
+ * @journey admin-creates-player
+ */
+test("admin can create player via form and see it in list", async ({ page }) => {
+  // ...
+})
+```
+
+### Playwright Test Scaffold Convention
+
+Generated test files follow this structure:
+
+```
+{web-app}/e2e/
+├── {feature}/
+│   ├── {feature}.navigation.spec.ts    → Route navigation tests
+│   ├── {feature}.journey.spec.ts       → User story journey tests
+│   ├── {feature}.forms.spec.ts         → Form validation tests
+│   ├── {feature}.states.spec.ts        → Empty/loading/error state tests
+│   └── {feature}.responsive.spec.ts    → Breakpoint layout tests
+├── accessibility.spec.ts               → Cross-feature a11y audit
+└── playwright.config.ts                → Base config (from UI-ARCHITECTURE.md)
+```
+
+### UI E2E Coverage Summary
+
+| Source | Test Type | Derivation |
+|--------|----------|------------|
+| UI-SPEC.md routes | Navigation | 1 per route |
+| STORIES.md + UI-SPEC | Journey (E2E) | 1 per story with UI steps |
+| UI-SPEC.md forms + operations.md rules | Form validation | rules × forms |
+| UI-SPEC.md states | State reflection | 1 per declared state |
+| UI-ARCHITECTURE.md breakpoints | Responsive | pages × breakpoints |
+| All pages | Accessibility | 1 per page + keyboard nav |
