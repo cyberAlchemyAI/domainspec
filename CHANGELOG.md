@@ -82,6 +82,13 @@ Versioning guidance:
 
 ### Added
 
+- **`domainspec-pipeline` skill** — end-to-end feature lifecycle orchestrator:
+  - Single command runs: plan → spec → stories → tests → implement → UI → registry sync → verify.
+  - Delegates each stage to the specialist agent (planner, spec-writer, story-sync, test-designer, implementer, ui-architect, registry-sync, verifier).
+  - Flags: `--spec-only`, `--test-only`, `--backend-only`, `--skip-ui`, `--dry-run`.
+  - Auto-detects new vs existing features and selects `native` or `gsd-phase` execution mode.
+  - Returns pipeline summary with artifact inventory, test results, build status, and PASS/FLAG/BLOCK verdict.
+
 - UI Meta-Concept Taxonomy (11 types) extending the domain model to the frontend:
   - **UI Structural:** Page, Layout, Component, View Model.
   - **UI Behavioral:** Hook, Form, Action, Guard.

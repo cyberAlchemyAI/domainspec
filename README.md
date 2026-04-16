@@ -61,24 +61,68 @@ Each stage depends on the previous. You cannot write meaningful tests without fo
 
 ## Quick Start
 
+### 1. Install
+
 ```bash
-# 1. Install framework into your project
+# Add framework to your project (git submodule or copy)
 cp -r domainspec/ your-project/
 
-# 2. Install Copilot agent pack (agents, skills, MCP Playwright)
+# Install Copilot agent pack (agents, skills, MCP Playwright)
 bash domainspec/copilot/install.sh
-
-# 3. Bootstrap docs structure
-cp -r domainspec/starter/ your-project/docs/
-
-# 4. Create your first feature
-mkdir your-project/docs/features/your-feature
-cp domainspec/templates/SPEC.md your-project/docs/features/your-feature/
 ```
 
-Then use the pipeline: write SPEC.md → add aspect files → generate tests → implement → verify.
-
 For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
+
+### 2. Bootstrap docs structure
+
+```
+@domainspec-spec-writer domainspec-init
+```
+
+Creates `docs/registry.md`, `docs/glossary.md`, and the `docs/features/` directory.
+
+### 3. Build a feature — one command
+
+```
+@domainspec-planner domainspec-pipeline <feature-name>
+```
+
+This single command orchestrates the **entire pipeline** end-to-end:
+
+```mermaid
+flowchart LR
+    A["Plan"] --> B["Spec"]
+    B --> C["Stories"]
+    C --> D["Tests"]
+    D --> E["Implement\nBackend"]
+    E --> F["UI\nPipeline"]
+    F --> G["Registry\nSync"]
+    G --> H["Verify"]
+```
+
+The planner asks clarifying questions about the business domain, then delegates to specialist agents for each stage — spec writing, story generation, test derivation, backend implementation, UI lifecycle, registry sync, and verification. It returns a final PASS / FLAG / BLOCK verdict.
+
+Use flags to control scope:
+
+| Flag | Effect |
+|------|--------|
+| `--spec-only` | Stop after SPEC + aspect files + stories — review before building |
+| `--test-only` | Stop after TEST-SPEC — review test obligations before implementing |
+| `--backend-only` | Implement backend and skip UI pipeline |
+| `--dry-run` | Show the execution plan without running any steps |
+
+### Running individual stages
+
+Each pipeline stage can also be run independently:
+
+| Stage | Command | Agent |
+|-------|---------|-------|
+| Spec | `@domainspec-spec-writer domainspec-spec-feature <feature>` | spec-writer |
+| Stories | `@domainspec-story-sync domainspec-sync-user-stories <feature>` | story-sync |
+| Tests | `@domainspec-test-designer domainspec-generate-tests <feature>` | test-designer |
+| Backend | `@domainspec-implementer domainspec-implement <feature>` | implementer |
+| UI | `@domainspec-ui-architect domainspec-ui-pipeline <feature>` | ui-architect |
+| Verify | `@domainspec-verifier domainspec-verify-feature <feature>` | verifier |
 
 ---
 
@@ -556,6 +600,12 @@ DOMAINSPEC_SKIP_PLAYWRIGHT=1 bash domainspec/copilot/install.sh
 ### Skills Reference
 
 Skills are invoked as Copilot commands. They map to specific pipeline stages.
+
+**Full Pipeline**
+
+| Skill                | Stage | Purpose                                                                     |
+| -------------------- | ----- | --------------------------------------------------------------------------- |
+| `domainspec-pipeline` | 1–7  | **End-to-end feature lifecycle** — plan → spec → stories → tests → implement → UI → verify |
 
 **Specification & Documentation**
 

@@ -33,23 +33,34 @@ Validated by `tools/context-search-heuristic.test.mjs` (9 scenarios, 100% accura
 
 ### Commands
 
+- /domainspec-pipeline (full lifecycle — plan → spec → stories → tests → implement → UI → verify)
 - /domainspec-init
 - /domainspec-spec-feature
+- /domainspec-sync-user-stories
 - /domainspec-sync-registry
 - /domainspec-generate-tests
 - /domainspec-implement
+- /domainspec-ui-pipeline
 - /domainspec-audit-alignment
 - /domainspec-verify-feature
 - /domainspec-help
 
 ## Workflow
 
+One command runs the entire pipeline:
+
+```
+@domainspec-planner domainspec-pipeline <feature>
+```
+
+Or run each stage individually:
+
 1. /domainspec-init
 2. /domainspec-spec-feature <feature>
-3. /domainspec-sync-registry --all
+3. /domainspec-sync-user-stories <feature>
 4. /domainspec-generate-tests <feature>
 5. /domainspec-implement <feature>
-6. /domainspec-audit-alignment <feature>
+6. /domainspec-ui-pipeline <feature>
 7. /domainspec-verify-feature <feature>
 
 ## Installation
