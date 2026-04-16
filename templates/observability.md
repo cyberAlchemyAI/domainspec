@@ -29,8 +29,9 @@ status: draft
 
 **Invalid transition counter:**
 
+*@source [states.md#{EntityName}](states.md#{EntityName})*
+
 ```yaml
-# @source [states.md#{EntityName}](states.md#{EntityName})
 - name: state.invalid_transition
   instrument: Counter
   unit: "{attempt}"
@@ -63,8 +64,9 @@ status: draft
 
 **Base metrics (O4):**
 
+*@source [operations.md#{OperationName}](operations.md#{OperationName})*
+
 ```yaml
-# @source [operations.md#{OperationName}](operations.md#{OperationName})
 - name: operation.invocation
   instrument: Counter
   unit: "{invocation}"
@@ -103,7 +105,7 @@ status: draft
 
 ### Endpoint SLOs (O8)
 
-<!-- @source [interfaces.md](interfaces.md) — one row per endpoint -->
+*@source [interfaces.md](interfaces.md) — one row per endpoint*
 
 | Endpoint | Availability SLO | Latency p99 SLO | Throughput Baseline |
 | -------- | ---------------- | --------------- | ------------------- |
@@ -126,8 +128,9 @@ status: draft
 | ----- | -------- | --------- | ------- |
 |       |          |           | ≤ s     |
 
+*@source [events.md](events.md)*
+
 ```yaml
-# @source [events.md](events.md)
 - name: event.emit # Counter {feature, event_type, producer}
 - name: event.consume # Counter {feature, event_type, consumer}
 - name: event.consumer.lag # Histogram (s) {feature, event_type, consumer}
@@ -135,7 +138,7 @@ status: draft
 
 ### Query Performance (O11)
 
-<!-- @source [queries.md](queries.md) — one row per query -->
+*@source [queries.md](queries.md) — one row per query*
 
 | Query | p95 Latency SLO | Max Result Size | Cache TTL |
 | ----- | --------------- | --------------- | --------- |
@@ -147,7 +150,7 @@ status: draft
 
 ### Capability KPIs (O13)
 
-<!-- @source [SPEC.md](SPEC.md) — one section per capability -->
+*@source [SPEC.md](SPEC.md) — one section per capability*
 
 #### {CapabilityName}
 
@@ -163,7 +166,7 @@ status: draft
 
 ### Funnel Metrics (O14)
 
-<!-- @source [STORIES.md](STORIES.md) — one funnel per multi-step user journey -->
+*@source [STORIES.md](STORIES.md) — one funnel per multi-step user journey*
 
 #### {JourneyName} Funnel
 
