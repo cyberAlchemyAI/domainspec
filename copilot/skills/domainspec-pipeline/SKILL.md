@@ -26,7 +26,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify
+plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → reflect
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
@@ -53,6 +53,7 @@ Created/updated by this skill (cumulative):
 - infra/alerts/{feature}.rules.yml (alert rules from slos.md, if infra applies)
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 - docs/features/{feature}/UI-REVIEW.md (if UI applies)
+- docs/features/{feature}/PIPELINE-REPORT.md (economy of action + reflection)
 - docs/registry.md, docs/glossary.md (synced)
   </context>
 
@@ -202,9 +203,24 @@ Created/updated by this skill (cumulative):
     - Runs alignment audit, layering audit, test evidence check.
     - Returns PASS / FLAG / BLOCK verdict.
 
+## Step 10 — Reflect (Economy of Action + Auto-Tuning)
+
+33. After verification verdict, produce `docs/features/{feature}/PIPELINE-REPORT.md` using `domainspec/templates/PIPELINE-REPORT.md`:
+    a. **Economy of Action counters (G7):** Populate all metrics from the run — steps executed/skipped, agent delegations, human questions asked, files created/modified, tests added, retries, context discovery strategy and cost.
+    b. **Step verdicts table:** Record per-step verdict, duration estimate, and notes.
+    c. **Reflection (G8):** Analyze the run and populate:
+       - **What went well:** Steps that produced correct output first try.
+       - **What required rework:** Steps needing retries or human correction, with root cause.
+       - **Governance gaps discovered:** Blind spots this run exposed that existing skills missed. For each: what was missed, which skill should have caught it, severity.
+       - **Skill improvement proposals:** Concrete changes to skills/agents/instructions, with rationale from this run and priority.
+       - **Patterns for memory:** Reusable insights to persist to repo/user memory.
+    d. **Artifacts table:** List all files created/modified by category.
+34. If the reflection identifies governance gaps (severity ≥ HIGH), append them as action items to the pipeline summary and recommend a follow-up skill update.
+35. Save the report to `docs/features/{feature}/PIPELINE-REPORT.md`.
+
 ## Completion
 
-33. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Next actions (if FLAG or BLOCK)
+36. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Economy of Action: steps executed, agent delegations, human questions, retries, overhead ratio - Reflection: governance gaps found (count + severity), skill improvement proposals (count), patterns persisted - Next actions (if FLAG or BLOCK or governance gaps found)
     </process>
 
 <error-handling>

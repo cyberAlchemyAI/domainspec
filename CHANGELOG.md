@@ -23,6 +23,19 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [1.8.0] - 2026-04-16
+
+### Added
+
+- **PIPELINE-REPORT.md template** — new template capturing economy of action metrics (G7) and structured reflection (G8) per pipeline run. Tracks steps executed, agent delegations, human questions, retries, overhead ratio, governance gaps, and skill improvement proposals.
+- **`domainspec-reflect` skill** — dedicated skill for pipeline retrospection. Produces PIPELINE-REPORT.md with quantified costs and actionable learning. Can run standalone for manual retrospectives.
+- **Pipeline Step 10 (Reflect)** — `domainspec-pipeline` now ends with a reflection step after verification. Pipeline flow: `plan → spec → stories → tests → implement → ui-pipeline → observability → instrument → otel-verify → infra-deploy → registry-sync → verify → reflect`.
+
+### Changed
+
+- **ADLC-ALIGNMENT.md** — G7 (Economy of Action) and G8 (Reflection) marked as implemented. G8 pulled forward from v2.0 to v1.8 roadmap. Tasks T3, T4, T4b, T19 updated.
+- **Pipeline completion summary** — now includes economy of action metrics, reflection summary, and governance gap follow-up items.
+
 ## [1.7.2] - 2026-04-16
 
 ### Added
