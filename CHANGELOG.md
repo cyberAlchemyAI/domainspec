@@ -23,6 +23,17 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [1.5.1] - 2026-04-15
+
+### Changed
+
+- **`domainspec-pipeline` skill** — observability derivation added as Step 7 (between UI and registry sync). New flag `--skip-observability`. Pipeline is now: plan → spec → stories → tests → implement → UI → observability → registry-sync → verify.
+- **OBSERVABILITY.md** — all 16 derivation rules (O1–O16) migrated from Prometheus-style naming to OpenTelemetry semantic conventions. Meter scope = project name, `feature` as attribute, dot-separated names, typed instruments (Counter, Histogram, Gauge, UpDownCounter).
+- **templates/observability.md** — rewritten to OTel instrument declarations.
+- **ARCHITECTURE.md** — metrics convention description updated to OTel.
+
+---
+
 ## [1.5.0] - 2026-04-15
 
 ### Added

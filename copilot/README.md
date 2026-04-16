@@ -33,7 +33,7 @@ Validated by `tools/context-search-heuristic.test.mjs` (9 scenarios, 100% accura
 
 ### Commands
 
-- /domainspec-pipeline (full lifecycle — plan → spec → stories → tests → implement → UI → verify)
+- /domainspec-pipeline (full lifecycle — plan → spec → stories → tests → implement → UI → observability → verify)
 - /domainspec-init
 - /domainspec-spec-feature
 - /domainspec-sync-user-stories

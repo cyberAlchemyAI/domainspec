@@ -627,7 +627,7 @@ Skills are invoked as Copilot commands. They map to specific pipeline stages.
 
 | Skill                | Stage | Purpose                                                                     |
 | -------------------- | ----- | --------------------------------------------------------------------------- |
-| `domainspec-pipeline` | 1–7  | **End-to-end feature lifecycle** — plan → spec → stories → tests → implement → UI → verify |
+| `domainspec-pipeline` | 1–8  | **End-to-end feature lifecycle** — plan → spec → stories → tests → implement → UI → observability → verify |
 
 **Specification & Documentation**
 

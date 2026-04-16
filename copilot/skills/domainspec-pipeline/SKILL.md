@@ -1,7 +1,7 @@
 ---
 name: domainspec-pipeline
-description: End-to-end feature pipeline — from business idea to verified implementation in one command. Orchestrates planning, spec writing, story generation, test derivation, backend implementation, optional UI lifecycle, and verification.
-argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--spec-only] [--test-only] [--dry-run]"
+description: End-to-end feature pipeline — from business idea to verified implementation in one command. Orchestrates planning, spec writing, story generation, test derivation, backend implementation, optional UI lifecycle, observability derivation, and verification.
+argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--skip-observability] [--spec-only] [--test-only] [--dry-run]"
 agent: domainspec-planner
 allowed-tools: Read, Write, Bash, Glob, Grep, AskQuestions, WebFetch, Task
 ---
@@ -15,6 +15,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 - `--test-only`: Stop after generating TEST-SPEC (Steps 1–4). Review test obligations before implementing.
 - `--backend-only`: Run backend implementation and skip UI pipeline entirely.
 - `--skip-ui`: Alias for `--backend-only`.
+- `--skip-observability`: Skip observability spec derivation (Step 7).
 - `--dry-run`: Show the execution plan without running any steps.
 </flags>
 
@@ -22,7 +23,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → verify
+plan → spec → stories → tests → implement → ui-pipeline → observability → registry-sync → verify
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
@@ -41,6 +42,7 @@ Created/updated by this skill (cumulative):
 - Backend source files (entities, operations, use-cases, adapters, tests)
 - docs/features/{feature}/UI-SPEC.md (if UI applies)
 - Frontend pages, components, hooks, E2E tests (if UI applies)
+- docs/features/{feature}/observability.md
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 - docs/features/{feature}/UI-REVIEW.md (if UI applies)
 - docs/registry.md, docs/glossary.md (synced)
@@ -105,25 +107,47 @@ Created/updated by this skill (cumulative):
     - Implements frontend pages and components.
     - Runs visual audit.
 
-## Step 7 — Registry Sync
+## Step 7 — Observability (conditional)
 
-16. Delegate to `domainspec-sync-registry`:
+16. Check if observability applies:
+    - Skip if `--skip-observability`.
+    - Skip if `--spec-only` or `--test-only` (haven't reached this stage yet).
+    - Otherwise, proceed.
+17. Load OBSERVABILITY.md derivation rules (O1–O16) and the observability template.
+18. Scan feature aspect files to determine which rules apply:
+    - `states.md` → O1 (transition counters), O2 (state distribution), O3 (invariant monitors)
+    - `operations.md` → O4 (base operation metrics), O5 (rule violation rates), O6 (calculation drift), O7 (postcondition verification)
+    - `interfaces.md` → O8 (endpoint SLOs)
+    - Operations with idempotency rules → O9 (idempotency monitors)
+    - `events.md` → O10 (event flow)
+    - `queries.md` → O11 (query performance)
+    - `workflows.md` → O12 (workflow completion)
+    - SPEC.md capabilities → O13 (business KPIs)
+    - STORIES.md user journeys → O14 (funnel metrics)
+    - `pillar: finance` in frontmatter → O15 (transaction integrity), O16 (financial cycle metrics)
+19. Generate `docs/features/{feature}/observability.md` using the template, populating each applicable rule section with concrete metric declarations in OTel format.
+20. All instruments use OTel conventions: Meter scope = project name, `feature` as attribute, dot-separated semantic names, typed instruments (Counter, Histogram, Gauge, UpDownCounter).
+
+## Step 8 — Registry Sync
+
+21. Delegate to `domainspec-sync-registry`:
     - Updates docs/registry.md and docs/glossary.md from all SPEC.md concept tables.
 
-## Step 8 — Verify
+## Step 9 — Verify
 
-17. Delegate to `domainspec-verify-feature {feature}`:
+22. Delegate to `domainspec-verify-feature {feature}`:
     - Runs alignment audit, layering audit, test evidence check.
     - Returns PASS / FLAG / BLOCK verdict.
 
 ## Completion
 
-18. Return pipeline summary:
+23. Return pipeline summary:
     - Feature: name, new or evolved
     - Artifacts created/updated (file paths by category: docs, backend, frontend, tests)
     - Test results: count passed / failed / pending
     - Build status: backend + frontend (if applicable)
     - UI audit verdict (if applicable, or "skipped")
+    - Observability: instrument count, applicable rules, pillar-specific obligations (or "skipped")
     - Verification verdict: PASS / FLAG / BLOCK with details
     - Next actions (if FLAG or BLOCK)
 </process>
@@ -135,6 +159,7 @@ Created/updated by this skill (cumulative):
 - Test derivation finds incomplete docs → FLAG with specific gaps, continue to implement what is derivable.
 - Backend implementation test failures after 2 retries → FLAG, continue to UI if applicable.
 - UI pipeline BLOCK → report but do not revert backend implementation.
+- Observability derivation with incomplete aspect docs → FLAG with which rules could not be derived, continue to registry sync.
 - Verification BLOCK → report with required remediation steps.
 </error-handling>
 
