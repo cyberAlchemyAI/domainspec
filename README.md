@@ -29,6 +29,7 @@ The framework is designed to converge with the [Agentic Delivery Lifecycle (ADLC
 - [Examples](#examples)
 - [Reference](#reference)
 - [Appendix: ADLC Alignment & Meta-Track Bridge](#appendix-adlc-alignment--meta-track-bridge)
+- [Appendix: Tuning Loop Architecture](TUNING-LOOP.md)
 
 ---
 
