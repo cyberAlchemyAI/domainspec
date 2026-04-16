@@ -30,7 +30,7 @@ status: draft
 **Invalid transition counter:**
 
 ```yaml
-# @source states.md#{EntityName}
+# @source [states.md#{EntityName}](states.md#{EntityName})
 - name: state.invalid_transition
   instrument: Counter
   unit: "{attempt}"
@@ -64,7 +64,7 @@ status: draft
 **Base metrics (O4):**
 
 ```yaml
-# @source operations.md#{OperationName}
+# @source [operations.md#{OperationName}](operations.md#{OperationName})
 - name: operation.invocation
   instrument: Counter
   unit: "{invocation}"
@@ -103,7 +103,7 @@ status: draft
 
 ### Endpoint SLOs (O8)
 
-<!-- Uses OTel HTTP semantic conventions: http.server.request.duration + custom `feature` attribute -->
+<!-- @source [interfaces.md](interfaces.md) — one row per endpoint -->
 
 | Endpoint | Availability SLO | Latency p99 SLO | Throughput Baseline |
 | -------- | ---------------- | --------------- | ------------------- |
@@ -127,7 +127,7 @@ status: draft
 |       |          |           | ≤ s     |
 
 ```yaml
-# @source events.md
+# @source [events.md](events.md)
 - name: event.emit # Counter {feature, event_type, producer}
 - name: event.consume # Counter {feature, event_type, consumer}
 - name: event.consumer.lag # Histogram (s) {feature, event_type, consumer}
@@ -135,7 +135,7 @@ status: draft
 
 ### Query Performance (O11)
 
-<!-- One row per query in queries.md -->
+<!-- @source [queries.md](queries.md) — one row per query -->
 
 | Query | p95 Latency SLO | Max Result Size | Cache TTL |
 | ----- | --------------- | --------------- | --------- |
@@ -147,7 +147,7 @@ status: draft
 
 ### Capability KPIs (O13)
 
-<!-- One section per capability in SPEC.md -->
+<!-- @source [SPEC.md](SPEC.md) — one section per capability -->
 
 #### {CapabilityName}
 
@@ -163,7 +163,7 @@ status: draft
 
 ### Funnel Metrics (O14)
 
-<!-- Only for multi-step user journeys in STORIES.md -->
+<!-- @source [STORIES.md](STORIES.md) — one funnel per multi-step user journey -->
 
 #### {JourneyName} Funnel
 
@@ -234,11 +234,11 @@ status: draft
 
 ## Alert Runbook Index
 
-| Alert | Severity | Investigation Steps | Source Doc     |
-| ----- | -------- | ------------------- | -------------- |
-|       | P0       |                     | operations.md# |
-|       | P1       |                     | states.md#     |
-|       | P2       |                     | SPEC.md#       |
+| Alert | Severity | Investigation Steps | Source Doc                                           |
+| ----- | -------- | ------------------- | ---------------------------------------------------- |
+|       | P0       |                     | [operations.md#](operations.md#) |
+|       | P1       |                     | [states.md#](states.md#)         |
+|       | P2       |                     | [SPEC.md#](SPEC.md#)             |
 
 ---
 

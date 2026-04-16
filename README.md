@@ -438,6 +438,8 @@ Once features have observability specs and the monitoring stack is defined, Doma
 
 The premise: **3 manual inputs, everything else automated.** Provide a VPS provider token, a domain name, and a Cloudflare API token. The skill provisions the server, configures DNS, sets up TLS, and deploys your full stack — including monitoring.
 
+> **First time?** Follow the [Infrastructure Setup Guide](INFRA-SETUP.md) to create accounts and configure tokens (~15 min).
+
 ```
 @domainspec-infra-architect domainspec-infra-architecture
 ```
