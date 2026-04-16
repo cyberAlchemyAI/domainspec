@@ -15,6 +15,7 @@ Source references:
 - domainspec/CHANGELOG.md
 - domainspec/templates/infra-architecture.md
 - domainspec/templates/slos.md
+- domainspec/templates/setup.sh
 
 Detection targets:
 
@@ -33,6 +34,7 @@ Output:
 - docs/INFRA-ARCHITECTURE.md
 - docs/slos.md (linked to feature observability specs)
 - infra/ directory scaffold (based on preset)
+- infra/setup.sh (automated VPS provisioning script, preset >= single-vps)
 - .github/workflows/ CI/CD pipelines (if preset >= single-vps)
   </context>
 
@@ -175,6 +177,12 @@ b. Create infra/index.ts:
   l. Install Pulumi dependencies: `cd infra && npm init -y && npm install @pulumi/pulumi @pulumi/digitalocean @pulumi/cloudflare`.
   m. Run `pulumi preview --stack dev` to validate IaC (dry run, no deploy).
   n. Run TypeScript compilation on infra/index.ts.
+  o. Generate infra/setup.sh from domainspec/templates/setup.sh:
+     - Replace `{project-name}` with actual project name.
+     - Replace `{pulumi-project-name}` with Pulumi project name from Pulumi.yaml.
+     - Replace `{app-dir}` with /opt/{project-name}.
+     - Make executable: `chmod +x infra/setup.sh`.
+     - The script automates: SSH key gen, Pulumi stack init, config, `pulumi up`, cloud-init wait, file copy, secret generation, deploy user setup, and prints GitHub Secrets summary.
 
 ### Split VPS Scaffold (extends Single VPS:)
 
