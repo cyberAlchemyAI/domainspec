@@ -1,10 +1,12 @@
-# domainspec
+# Domainspec
 
 > Think first, code second. Understand the domain before writing a single line of code.
 
-Most software problems are not caused by bad code. They are caused by building the wrong thing — misunderstood business rules, missing edge cases, contradictory behavior between systems. Code written before the domain is understood has to be rewritten once understanding arrives.
+Most software problems are not caused by bad code — they are caused by building the wrong thing. Misunderstood business rules, missing edge cases, and contradictory behavior between systems all stem from the same root: implementation outrunning understanding.
 
-**domainspec** is a framework for documenting what your system does before you build it. It gives you a structured vocabulary, consistent templates, and a clear pipeline that turns domain documentation into formal specifications, tests, backend code, frontend UI, and verification — in that order.
+**DomainSpec** is a specification-first framework for autonomous software delivery. It provides a structured vocabulary (24 meta-types, 26 typed relationships), consistent templates, and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step.
+
+The framework is designed to converge with the [Agentic Delivery Lifecycle (ADLC)](https://caseywest.com/the-agentic-manifesto/) — where agents operate under domain governance, enforcement is automated, and production behavior feeds back into continuous tuning. See the [ADLC alignment roadmap](ADLC-ALIGNMENT.md) for the full convergence plan.
 
 ---
 
@@ -34,17 +36,17 @@ Most software problems are not caused by bad code. They are caused by building t
 
 ```mermaid
 flowchart LR
-    A["1 Classify\n(Taxonomy)"] --> B["2 Connect\n(Relationships)"]
-    B --> C["3 Document\n(Vertical Slices)"]
-    C --> D["4 Derive Tests\n(Backend + E2E)"]
-    D --> E["5 Implement\nBackend"]
-    C --> F["6 Design &\nBuild UI"]
+    A["1 Classify<br>(Taxonomy)"] --> B["2 Connect<br>(Relationships)"]
+    B --> C["3 Document<br>(Vertical Slices)"]
+    C --> D["4 Derive Tests<br>(Backend + E2E)"]
+    D --> E["5 Implement<br>Backend"]
+    C --> F["6 Design &<br>Build UI"]
     F --> D
-    E --> G["7 Registry\n& Verify"]
+    E --> G["7 Registry<br>& Verify"]
     F --> G
-    G --> H["8 Observability\nMetrics"]
+    G --> H["8 Observability<br>Metrics"]
     C --> H
-    H --> I["9 Infrastructure\n& Deploy"]
+    H --> I["9 Infrastructure<br>& Deploy"]
     G --> I
 ```
 
@@ -99,11 +101,11 @@ flowchart LR
     A["Plan"] --> B["Spec"]
     B --> C["Stories"]
     C --> D["Tests"]
-    D --> E["Implement\nBackend"]
-    E --> F["UI\nPipeline"]
-    F --> G["Observability\n& OTel"]
-    G --> H["Infra\nSync"]
-    H --> I["Registry\nSync"]
+    D --> E["Implement<br>Backend"]
+    E --> F["UI<br>Pipeline"]
+    F --> G["Observability<br>& OTel"]
+    G --> H["Infra<br>Sync"]
+    H --> I["Registry<br>Sync"]
     I --> J["Verify"]
 ```
 
