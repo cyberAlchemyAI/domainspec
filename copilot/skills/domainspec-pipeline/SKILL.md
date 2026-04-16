@@ -1,7 +1,7 @@
 ---
 name: domainspec-pipeline
 description: End-to-end feature pipeline — from business idea to verified implementation in one command. Orchestrates planning, spec writing, story generation, test derivation, backend implementation, optional UI lifecycle, observability derivation, and verification.
-argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--skip-observability] [--spec-only] [--test-only] [--dry-run]"
+argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--skip-observability] [--skip-instrumentation] [--skip-otel-verify] [--spec-only] [--test-only] [--dry-run]"
 agent: domainspec-planner
 allowed-tools: Read, Write, Bash, Glob, Grep, AskQuestions, WebFetch, Task
 ---
@@ -15,7 +15,9 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 - `--test-only`: Stop after generating TEST-SPEC (Steps 1–4). Review test obligations before implementing.
 - `--backend-only`: Run backend implementation and skip UI pipeline entirely.
 - `--skip-ui`: Alias for `--backend-only`.
-- `--skip-observability`: Skip observability spec derivation (Step 7).
+- `--skip-observability`: Skip all observability steps (Steps 7a–7c).
+- `--skip-instrumentation`: Skip OTel code instrumentation (Step 7b). Generates spec only.
+- `--skip-otel-verify`: Skip OTel verification (Step 7c). Instruments without verifying.
 - `--dry-run`: Show the execution plan without running any steps.
 </flags>
 
@@ -23,7 +25,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → observability → registry-sync → verify
+plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → registry-sync → verify
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
@@ -43,6 +45,7 @@ Created/updated by this skill (cumulative):
 - docs/features/{feature}/UI-SPEC.md (if UI applies)
 - Frontend pages, components, hooks, E2E tests (if UI applies)
 - docs/features/{feature}/observability.md
+- docs/features/{feature}/OBSERVABILITY-REPORT.md (instrumentation verification)
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 - docs/features/{feature}/UI-REVIEW.md (if UI applies)
 - docs/registry.md, docs/glossary.md (synced)
@@ -107,7 +110,7 @@ Created/updated by this skill (cumulative):
     - Implements frontend pages and components.
     - Runs visual audit.
 
-## Step 7 — Observability (conditional)
+## Step 7a — Observability Spec (conditional)
 
 16. Check if observability applies:
     - Skip if `--skip-observability`.
@@ -128,26 +131,60 @@ Created/updated by this skill (cumulative):
 19. Generate `docs/features/{feature}/observability.md` using the template, populating each applicable rule section with concrete metric declarations in OTel format.
 20. All instruments use OTel conventions: Meter scope = project name, `feature` as attribute, dot-separated semantic names, typed instruments (Counter, Histogram, Gauge, UpDownCounter).
 
+## Step 7b — Instrument OTel (conditional)
+
+21. Check if instrumentation applies:
+    - Skip if `--skip-observability` or `--skip-instrumentation`.
+    - Skip if `--spec-only` or `--test-only`.
+    - Requires: observability.md exists (from Step 7a or pre-existing).
+    - Otherwise, proceed.
+22. Delegate to `domainspec-instrument-otel {feature}`:
+    - Reads observability.md and maps instruments to code locations.
+    - Imports shared instruments from `infrastructure/telemetry/instruments.ts`.
+    - Creates feature-specific instruments when shared set does not cover.
+    - Wraps use-case functions with metric recording (O4, O5, O7).
+    - Adds state transition recording (O1), event emission tracking (O10).
+    - Runs `tsc --noEmit` to validate compilation.
+23. If compilation fails after 2 retries → FLAG instrumentation, continue to next step.
+
+## Step 7c — Verify OTel (conditional)
+
+24. Check if verification applies:
+    - Skip if `--skip-observability` or `--skip-otel-verify`.
+    - Skip if `--spec-only` or `--test-only`.
+    - Requires: observability.md exists and backend code is instrumented.
+    - Otherwise, proceed.
+25. Delegate to `domainspec-otel-verify {feature}`:
+    - Scans code for instrument registrations and recording calls.
+    - Classifies each declared instrument: ✅ Instrumented | ⚠️ Partial | ❌ Missing | 🔄 Drifted.
+    - Produces docs/features/{feature}/OBSERVABILITY-REPORT.md with change requests.
+26. If verdict is BLOCK and --fix behavior is desired:
+    - Re-invoke `domainspec-instrument-otel --change-requests OBSERVABILITY-REPORT.md`.
+    - Re-verify (max 3 iterations).
+27. Record observability verdict for final pipeline summary.
+
 ## Step 8 — Registry Sync
 
-21. Delegate to `domainspec-sync-registry`:
+28. Delegate to `domainspec-sync-registry`:
     - Updates docs/registry.md and docs/glossary.md from all SPEC.md concept tables.
 
 ## Step 9 — Verify
 
-22. Delegate to `domainspec-verify-feature {feature}`:
+29. Delegate to `domainspec-verify-feature {feature}`:
     - Runs alignment audit, layering audit, test evidence check.
     - Returns PASS / FLAG / BLOCK verdict.
 
 ## Completion
 
-23. Return pipeline summary:
+30. Return pipeline summary:
     - Feature: name, new or evolved
     - Artifacts created/updated (file paths by category: docs, backend, frontend, tests)
     - Test results: count passed / failed / pending
     - Build status: backend + frontend (if applicable)
     - UI audit verdict (if applicable, or "skipped")
-    - Observability: instrument count, applicable rules, pillar-specific obligations (or "skipped")
+    - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped")
+    - Instrumentation: files modified, instruments added, compilation status (or "skipped")
+    - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped")
     - Verification verdict: PASS / FLAG / BLOCK with details
     - Next actions (if FLAG or BLOCK)
 </process>
@@ -159,7 +196,9 @@ Created/updated by this skill (cumulative):
 - Test derivation finds incomplete docs → FLAG with specific gaps, continue to implement what is derivable.
 - Backend implementation test failures after 2 retries → FLAG, continue to UI if applicable.
 - UI pipeline BLOCK → report but do not revert backend implementation.
-- Observability derivation with incomplete aspect docs → FLAG with which rules could not be derived, continue to registry sync.
+- Observability derivation with incomplete aspect docs → FLAG with which rules could not be derived, continue to instrumentation.
+- Instrumentation compilation failure after retries → FLAG, continue to verification.
+- OTel verification BLOCK after 3 fix iterations → FLAG with detailed gap report, continue to registry sync.
 - Verification BLOCK → report with required remediation steps.
 </error-handling>
 

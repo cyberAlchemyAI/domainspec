@@ -23,6 +23,24 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [1.6.0] - 2026-04-16
+
+### Added
+
+- **`domainspec-otel-instrumenter` agent** — reads a feature's observability.md and instruments backend code with OTel API calls. Uses shared instruments from `infrastructure/telemetry/instruments.ts`, creates feature-specific instruments when needed, wraps use-cases with metric recording while preserving functional style.
+- **`domainspec-instrument-otel` skill** — inner loop of the observability verification cycle. Parses YAML instrument blocks from observability.md, maps to code locations, instruments use-cases/entities. Supports `--dry-run` and `--change-requests` from verification reports.
+- **`domainspec-otel-verifier` agent** — audits OTel instrumentation coverage against specs. Scans code for instrument registrations, classifies coverage (✅/⚠️/❌/🔄), generates change requests. Optional live metric verification via MCP Prometheus.
+- **`domainspec-otel-verify` skill** — outer loop of the observability verification cycle. Produces OBSERVABILITY-REPORT.md per feature. Supports `--live` (MCP Prometheus queries), `--all` (multi-feature), and `--fix` (auto-invoke instrumenter for gaps, max 3 iterations).
+- **`templates/OBSERVABILITY-REPORT.md`** — report template for instrumentation coverage audits. Coverage by rule, instrument detail table, live verification section, and prioritized change request table.
+- **OTel infrastructure scaffold** — `backend/src/infrastructure/telemetry/` with shared instruments (O1–O16), Fastify HTTP metrics plugin (O8), Prometheus exporter setup, and meter factory. 20+ pre-built instruments covering all derivation rules.
+- **MCP config** — `.vscode/mcp.json` with Playwright server.
+
+### Changed
+
+- **`domainspec-pipeline` skill** — Step 7 split into three sub-steps: 7a (derive spec, existing), 7b (instrument code, new), 7c (verify coverage, new). New flags: `--skip-instrumentation`, `--skip-otel-verify`. Pipeline is now: plan → spec → stories → tests → implement → UI → observability-spec → instrument-otel → otel-verify → registry-sync → verify (11 stages).
+
+---
+
 ## [1.5.1] - 2026-04-15
 
 ### Changed
