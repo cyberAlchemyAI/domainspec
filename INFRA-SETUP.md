@@ -38,6 +38,153 @@ Remote deployment requires **3 tokens**. Everything else is automated.
 
 ---
 
+## Prerequisites
+
+Before setting up platform tokens, install these tools. Skip any you already have.
+
+### Docker
+
+Docker runs your app locally (Dev preset) and on the VPS (all other presets).
+
+**Install:**
+
+```bash
+# Linux (Ubuntu/Debian)
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+# Log out and back in for group change to take effect
+
+# macOS
+brew install --cask docker
+# Then open Docker Desktop from Applications
+```
+
+**Verify:**
+
+```bash
+docker --version
+# Expected: Docker version 24.x+ or 27.x+
+
+docker compose version
+# Expected: Docker Compose version v2.x+
+```
+
+### Node.js
+
+Required for Pulumi TypeScript IaC and project build tooling.
+
+**Install:**
+
+```bash
+# Using nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc  # or ~/.zshrc
+nvm install 22
+nvm use 22
+
+# Or using system package manager
+# Ubuntu/Debian
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# macOS
+brew install node@22
+```
+
+**Verify:**
+
+```bash
+node --version
+# Expected: v22.x+
+
+npm --version
+# Expected: 10.x+
+```
+
+### Pulumi CLI
+
+Pulumi manages infrastructure as code. Required for all VPS presets.
+
+**Install:**
+
+```bash
+# Linux / macOS
+curl -fsSL https://get.pulumi.com | sh
+
+# Or via Homebrew (macOS)
+brew install pulumi
+```
+
+**Verify:**
+
+```bash
+pulumi version
+# Expected: v3.x+
+```
+
+### DigitalOcean CLI (doctl)
+
+Optional but recommended — lets you inspect and manage resources from the terminal.
+
+**Install:**
+
+```bash
+# Linux (snap)
+sudo snap install doctl
+
+# macOS
+brew install doctl
+
+# Or download from GitHub releases
+# https://github.com/digitalocean/doctl/releases
+```
+
+**Verify:**
+
+```bash
+doctl version
+# Expected: doctl version 1.x+
+```
+
+### jq
+
+Used by verification scripts to parse JSON API responses.
+
+**Install:**
+
+```bash
+# Linux (Ubuntu/Debian)
+sudo apt-get install -y jq
+
+# macOS
+brew install jq
+```
+
+**Verify:**
+
+```bash
+jq --version
+# Expected: jq-1.x+
+```
+
+### Prerequisites checklist
+
+Run all at once:
+
+```bash
+echo "Docker:  $(docker --version 2>/dev/null || echo 'NOT INSTALLED')" && \
+echo "Compose: $(docker compose version 2>/dev/null || echo 'NOT INSTALLED')" && \
+echo "Node:    $(node --version 2>/dev/null || echo 'NOT INSTALLED')" && \
+echo "npm:     $(npm --version 2>/dev/null || echo 'NOT INSTALLED')" && \
+echo "Pulumi:  $(pulumi version 2>/dev/null || echo 'NOT INSTALLED')" && \
+echo "doctl:   $(doctl version 2>/dev/null | head -1 || echo 'NOT INSTALLED (optional)')" && \
+echo "jq:      $(jq --version 2>/dev/null || echo 'NOT INSTALLED')"
+```
+
+> **Dev preset only needs Docker.** Node.js, Pulumi, doctl, and jq are needed when you move to VPS deployment.
+
+---
+
 ## Step 1 — DigitalOcean API Token
 
 DigitalOcean provisions the VPS where your app runs.
@@ -70,7 +217,7 @@ DigitalOcean provisions the VPS where your app runs.
 5. Click **Generate Token**
 6. **Copy the token immediately** — it is shown only
 
-### Verify
+### Verify token
 
 ```bash
 curl -s -H "Authorization: Bearer YOUR_TOKEN" \
@@ -78,6 +225,17 @@ curl -s -H "Authorization: Bearer YOUR_TOKEN" \
 ```
 
 Expected output: `"active"`
+
+### Verify doctl (optional)
+
+If you installed `doctl`, authenticate it with your token:
+
+```bash
+doctl auth init --access-token YOUR_TOKEN
+doctl account get
+```
+
+Expected: table showing your email, status `active`, and droplet limit.
 
 > **Alternative providers:** Hetzner and Vultr are also supported. The token setup is similar — create an API token with full permissions from their respective dashboards.
 
@@ -106,7 +264,7 @@ Cloudflare manages DNS records and provides free CDN + DDoS protection.
 4. Click **Continue to summary** → **Create Token**
 5. **Copy the token immediately**
 
-### Verify
+### Verify token
 
 ```bash
 curl -s -H "Authorization: Bearer YOUR_TOKEN" \
@@ -114,6 +272,20 @@ curl -s -H "Authorization: Bearer YOUR_TOKEN" \
 ```
 
 Expected output: `"active"`
+
+### Verify domain is active
+
+```bash
+# Check nameservers point to Cloudflare
+dig NS yourdomain.com +short
+# Expected: two Cloudflare NS records (e.g. ada.ns.cloudflare.com, bob.ns.cloudflare.com)
+
+# Check zone status via API
+curl -s -H "Authorization: Bearer YOUR_TOKEN" \
+  "https://api.cloudflare.com/client/v4/zones?name=yourdomain.com" \
+  | jq '.result[0].status'
+# Expected: "active"
+```
 
 > **Important:** Use a scoped API **Token** (not the Global API Key). Tokens follow least-privilege — they only access the zones you specify.
 
@@ -136,7 +308,7 @@ Pulumi manages infrastructure state and executes IaC deployments.
 3. Name it: `domainspec-infra`
 4. **Copy the token immediately**
 
-### Verify
+### Verify token
 
 ```bash
 export PULUMI_ACCESS_TOKEN=YOUR_TOKEN
@@ -145,11 +317,15 @@ pulumi whoami
 
 Expected output: your Pulumi username.
 
-> **Don't have Pulumi CLI?** Install it:
->
-> ```bash
-> curl -fsSL https://get.pulumi.com | sh
-> ```
+### Verify stack access
+
+Once the infra project is scaffolded, verify Pulumi can manage stacks:
+
+```bash
+cd infra
+pulumi stack ls
+# Expected: list of stacks (empty is fine for first setup)
+```
 
 ---
 
@@ -208,25 +384,62 @@ echo "infra/.env" >> .gitignore
 
 ## Step 5 — Verify Everything
 
-Run this checklist before starting infrastructure deployment:
+Run this full checklist before starting infrastructure deployment:
 
 ```bash
+echo "=== Tools ==="
+echo "Docker:  $(docker --version 2>/dev/null || echo 'MISSING')"
+echo "Compose: $(docker compose version 2>/dev/null || echo 'MISSING')"
+echo "Node:    $(node --version 2>/dev/null || echo 'MISSING')"
+echo "Pulumi:  $(pulumi version 2>/dev/null || echo 'MISSING')"
+echo "doctl:   $(doctl version 2>/dev/null | head -1 || echo 'MISSING (optional)')"
+echo "jq:      $(jq --version 2>/dev/null || echo 'MISSING')"
+
+echo ""
+echo "=== Tokens ==="
+
 # 1. DigitalOcean — should return "active"
+echo -n "DigitalOcean: "
 curl -s -H "Authorization: Bearer $DIGITALOCEAN_TOKEN" \
-  "https://api.digitalocean.com/v2/account" | jq .account.status
+  "https://api.digitalocean.com/v2/account" | jq -r .account.status
 
 # 2. Cloudflare — should return "active"
+echo -n "Cloudflare:   "
 curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-  "https://api.cloudflare.com/client/v4/user/tokens/verify" | jq .result.status
+  "https://api.cloudflare.com/client/v4/user/tokens/verify" | jq -r .result.status
 
 # 3. Pulumi — should return your username
-PULUMI_ACCESS_TOKEN=$PULUMI_ACCESS_TOKEN pulumi whoami
+echo -n "Pulumi:       "
+PULUMI_ACCESS_TOKEN=$PULUMI_ACCESS_TOKEN pulumi whoami 2>/dev/null || echo "FAILED"
 
-# 4. Domain nameservers — should show Cloudflare NS records
-dig NS yourdomain.com +short
+# 4. Domain DNS — should show Cloudflare NS records
+echo ""
+echo "=== Domain ==="
+echo -n "Nameservers: "
+dig NS yourdomain.com +short 2>/dev/null || echo "dig not available"
 ```
 
-All green? You're ready to deploy.
+**Expected output:**
+
+```
+=== Tools ===
+Docker:  Docker version 27.x.x
+Compose: Docker Compose version v2.x.x
+Node:    v22.x.x
+Pulumi:  v3.x.x
+doctl:   doctl version 1.x.x (optional)
+jq:      jq-1.x
+
+=== Tokens ===
+DigitalOcean: active
+Cloudflare:   active
+Pulumi:       your-username
+
+=== Domain ===
+Nameservers: ada.ns.cloudflare.com. bob.ns.cloudflare.com.
+```
+
+All showing version numbers and `active`? You're ready to deploy.
 
 ---
 
