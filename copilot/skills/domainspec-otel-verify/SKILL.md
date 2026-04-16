@@ -31,9 +31,10 @@ Inputs:
 - backend/src/infrastructure/http/routes/*.ts (route handlers)
 
 Outputs:
+
 - docs/features/{feature}/OBSERVABILITY-REPORT.md (one per feature)
 - Summary table when --all is used
-</context>
+  </context>
 
 <process>
 ## Single Feature Verification
@@ -73,16 +74,16 @@ Outputs:
 
 ## All Features (--all)
 
-16. Scan docs/features/*/observability.md to find all features with observability specs.
+16. Scan docs/features/\*/observability.md to find all features with observability specs.
 17. Run single-feature verification for each.
 18. Produce summary table:
 
-| Feature | Declared | Instrumented | Coverage | Verdict |
-|---------|---------|-------------|---------|---------|
-| {feature} | {n} | {n} | {%} | PASS/FLAG/BLOCK |
+| Feature   | Declared | Instrumented | Coverage | Verdict         |
+| --------- | -------- | ------------ | -------- | --------------- |
+| {feature} | {n}      | {n}          | {%}      | PASS/FLAG/BLOCK |
 
 19. If --fix is also set, run auto-fix loop for each FLAG/BLOCK feature.
-</process>
+    </process>
 
 <verdict-criteria>
 | Condition | Verdict |
@@ -92,12 +93,13 @@ Outputs:
 | <80% coverage OR any P0 instrument missing | BLOCK |
 
 P0 instruments (always BLOCK if missing):
+
 - O1: state.transition (for features with state machines)
 - O3: invariant.violation (for features with invariants)
 - O6: calculation.drift (for features with financial calculations)
 - O8: http.server.request.duration (handled by middleware — should always be PASS)
 - O15: reconciliation.mismatch (for finance pillar features)
-</verdict-criteria>
+  </verdict-criteria>
 
 <error-handling>
 - No observability.md for feature → BLOCK with message to run pipeline Step 7a

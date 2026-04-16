@@ -77,7 +77,7 @@ Core responsibilities:
 - Preserve functional style — use higher-order functions to wrap, not class decorators
 - Never modify domain logic — only add metric recording at use-case or infrastructure boundaries
 - Run `tsc --noEmit` after instrumentation to validate compilation
-</role>
+  </role>
 
 <context>
 Required inputs:
@@ -93,10 +93,11 @@ Required inputs:
 - backend/src/domain/{feature}/*.ts (entity and policy targets)
 
 Outputs:
+
 - Modified use-case files with metric recording
 - Optional feature-specific instruments in backend/src/infrastructure/telemetry/{feature}.ts
 - No new files for metrics that use shared instruments
-</context>
+  </context>
 
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.

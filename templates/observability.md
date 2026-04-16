@@ -1,6 +1,6 @@
 ---
-id: {feature-id}
-feature: {FeatureName}
+id: { feature-id }
+feature: { FeatureName }
 type: observability
 title: "{FeatureName} — Observability Spec"
 derived-from: OBSERVABILITY.md rules O1–O16
@@ -23,11 +23,12 @@ status: draft
 
 **Transition counters (O1):**
 
-| From | To | Event | Attributes |
-|------|-----|-------|-----------|
-| | | | `{feature, entity, from, to, event}` |
+| From | To  | Event | Attributes                           |
+| ---- | --- | ----- | ------------------------------------ |
+|      |     |       | `{feature, entity, from, to, event}` |
 
 **Invalid transition counter:**
+
 ```yaml
 # @source states.md#{EntityName}
 - name: state.invalid_transition
@@ -38,6 +39,7 @@ status: draft
 ```
 
 **State distribution (O2):**
+
 ```yaml
 - name: state.population
   instrument: UpDownCounter
@@ -49,9 +51,9 @@ status: draft
 
 **Invariant monitors (O3):**
 
-| ID | Invariant | Check | Alert |
-|----|-----------|-------|-------|
-| | | | P0 if violated |
+| ID  | Invariant | Check | Alert          |
+| --- | --------- | ----- | -------------- |
+|     |           |       | P0 if violated |
 
 ### Operation Metrics (O4–O7)
 
@@ -60,12 +62,13 @@ status: draft
 #### {OperationName}
 
 **Base metrics (O4):**
+
 ```yaml
 # @source operations.md#{OperationName}
 - name: operation.invocation
   instrument: Counter
   unit: "{invocation}"
-  attributes: [feature, operation, result]  # result: success | error
+  attributes: [feature, operation, result] # result: success | error
 
 - name: operation.duration
   instrument: Histogram
@@ -75,24 +78,24 @@ status: draft
 
 **Rule violation rates (O5):**
 
-| Rule | Expression | Instrument | Alert Threshold |
-|------|-----------|-----------|-----------------|
-| R1 | | `rule.violation` Counter `{feature, operation, rule_id="R1"}` | |
-| R2 | | `rule.violation` Counter `{feature, operation, rule_id="R2"}` | |
+| Rule | Expression | Instrument                                                    | Alert Threshold |
+| ---- | ---------- | ------------------------------------------------------------- | --------------- |
+| R1   |            | `rule.violation` Counter `{feature, operation, rule_id="R1"}` |                 |
+| R2   |            | `rule.violation` Counter `{feature, operation, rule_id="R2"}` |                 |
 
 **Calculation drift (O6):**
 
 <!-- Only if operation has calculations -->
 
-| Calc | Formula | Instrument | Frequency | Alert |
-|------|---------|-----------|-----------|-------|
-| C1 | | `calculation.drift` Histogram `{feature, calculation_id="C1"}` | | drift > 0 → P0 |
+| Calc | Formula | Instrument                                                     | Frequency | Alert          |
+| ---- | ------- | -------------------------------------------------------------- | --------- | -------------- |
+| C1   |         | `calculation.drift` Histogram `{feature, calculation_id="C1"}` |           | drift > 0 → P0 |
 
 **Postcondition verification (O7):**
 
-| Postcondition | Instrument | Alert |
-|--------------|-----------|-------|
-| | `postcondition.check` Counter `{feature, operation, postcondition_id, result}` | any result=violated → P1 |
+| Postcondition | Instrument                                                                     | Alert                    |
+| ------------- | ------------------------------------------------------------------------------ | ------------------------ |
+|               | `postcondition.check` Counter `{feature, operation, postcondition_id, result}` | any result=violated → P1 |
 
 ---
 
@@ -103,31 +106,31 @@ status: draft
 <!-- Uses OTel HTTP semantic conventions: http.server.request.duration + custom `feature` attribute -->
 
 | Endpoint | Availability SLO | Latency p99 SLO | Throughput Baseline |
-|----------|-----------------|-----------------|-------------------|
-| | ≥ 99.9% | ≤ ms | req/min |
+| -------- | ---------------- | --------------- | ------------------- |
+|          | ≥ 99.9%          | ≤ ms            | req/min             |
 
 ### Idempotency Monitors (O9)
 
 <!-- Only for operations with idempotency constraints -->
 
-| Rule | Constraint | Instrument | Alert |
-|------|-----------|-----------|-------|
-| | | `idempotency.violation` Gauge `{feature, operation, rule_id}` | any > 0 → P0 |
-| | | `idempotency.dedup` Counter `{feature, operation, rule_id}` | informational |
+| Rule | Constraint | Instrument                                                    | Alert         |
+| ---- | ---------- | ------------------------------------------------------------- | ------------- |
+|      |            | `idempotency.violation` Gauge `{feature, operation, rule_id}` | any > 0 → P0  |
+|      |            | `idempotency.dedup` Counter `{feature, operation, rule_id}`   | informational |
 
 ### Event Flow (O10)
 
 <!-- One row per event in events.md -->
 
 | Event | Producer | Consumers | Lag SLO |
-|-------|---------|-----------|---------|
-| | | | ≤ s |
+| ----- | -------- | --------- | ------- |
+|       |          |           | ≤ s     |
 
 ```yaml
 # @source events.md
-- name: event.emit      # Counter {feature, event_type, producer}
-- name: event.consume    # Counter {feature, event_type, consumer}
-- name: event.consumer.lag  # Histogram (s) {feature, event_type, consumer}
+- name: event.emit # Counter {feature, event_type, producer}
+- name: event.consume # Counter {feature, event_type, consumer}
+- name: event.consumer.lag # Histogram (s) {feature, event_type, consumer}
 ```
 
 ### Query Performance (O11)
@@ -135,8 +138,8 @@ status: draft
 <!-- One row per query in queries.md -->
 
 | Query | p95 Latency SLO | Max Result Size | Cache TTL |
-|-------|-----------------|----------------|-----------|
-| | ≤ ms | rows | s |
+| ----- | --------------- | --------------- | --------- |
+|       | ≤ ms            | rows            | s         |
 
 ---
 
@@ -164,16 +167,17 @@ status: draft
 
 #### {JourneyName} Funnel
 
-| Step | Instrument | Expected Conversion |
-|------|-----------|-------------------|
-| 1. | `funnel.step` Counter `{feature, journey, step_name="1", outcome}` | — |
-| 2. | `funnel.step` Counter `{feature, journey, step_name="2", outcome}` | ≥ % |
+| Step | Instrument                                                         | Expected Conversion |
+| ---- | ------------------------------------------------------------------ | ------------------- |
+| 1.   | `funnel.step` Counter `{feature, journey, step_name="1", outcome}` | —                   |
+| 2.   | `funnel.step` Counter `{feature, journey, step_name="2", outcome}` | ≥ %                 |
 
 **Conversion rate:**
+
 ```yaml
 - name: funnel.conversion_rate
   instrument: Gauge
-  unit: "1"  # ratio
+  unit: "1" # ratio
   attributes: [feature, journey]
   formula: step_N_completed / step_1_started
   window: 7d rolling
@@ -218,23 +222,23 @@ status: draft
 
 ```yaml
 # @rule O16: Settlement Cycle
-- name: settlement.cycle.invocations     # Counter {feature}
-- name: settlement.cycle.payout_amount   # Counter {currency_minor} {feature}
-- name: settlement.cycle.makeup_applied  # Counter {currency_minor} {feature}
-- name: settlement.cycle.avg_value       # Gauge {currency_minor} {feature}
-- name: settlement.cycle.error_rate      # Gauge (ratio) {feature}
-- name: settlement.recalculation.drift   # Gauge {currency_minor} {feature, calculation_id}
+- name: settlement.cycle.invocations # Counter {feature}
+- name: settlement.cycle.payout_amount # Counter {currency_minor} {feature}
+- name: settlement.cycle.makeup_applied # Counter {currency_minor} {feature}
+- name: settlement.cycle.avg_value # Gauge {currency_minor} {feature}
+- name: settlement.cycle.error_rate # Gauge (ratio) {feature}
+- name: settlement.recalculation.drift # Gauge {currency_minor} {feature, calculation_id}
 ```
 
 ---
 
 ## Alert Runbook Index
 
-| Alert | Severity | Investigation Steps | Source Doc |
-|-------|----------|-------------------|-----------|
-| | P0 | | operations.md# |
-| | P1 | | states.md# |
-| | P2 | | SPEC.md# |
+| Alert | Severity | Investigation Steps | Source Doc     |
+| ----- | -------- | ------------------- | -------------- |
+|       | P0       |                     | operations.md# |
+|       | P1       |                     | states.md#     |
+|       | P2       |                     | SPEC.md#       |
 
 ---
 

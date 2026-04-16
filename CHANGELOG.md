@@ -13,13 +13,30 @@ All notable changes to the DomainSpec framework are documented in this file.
 3. **One entry per version** — each `## [x.y.z]` block uses `### Added`, `### Changed`, `### Removed`, `### Fixed` at most once each. Never duplicate a section header.
 4. **Verbosity matches complexity** — simple changes get one-liners; complex changes (new subsystem, taxonomy expansion) may use sub-bullets. Default to concise; expand only when enumeration adds clarity.
 5. **Bold the key artifact** — start each bullet with `**artifact-or-concept**` followed by a dash and description.
-6. **No implementation details** — describe *what* changed and *why it matters*, not internal wiring.
+6. **No implementation details** — describe _what_ changed and _why it matters_, not internal wiring.
 
 **Versioning:**
 
 - **Major** — taxonomy or relationship semantics change that can alter interpretation of existing specs.
 - **Minor** — new templates, new framework capabilities, or additive guidance.
 - **Patch** — clarifications, wording improvements, and non-semantic fixes.
+
+---
+
+## [1.7.0] - 2026-04-16
+
+### Added
+
+- **`domainspec-infra-architect` agent** — defines and maintains infrastructure architecture constitution. Detects existing infra, recommends graduated presets (Dev → Single VPS → Split VPS → HA), asks maximum 3 questions, scaffolds IaC + CI/CD + monitoring stack.
+- **`domainspec-infra-architecture` skill** — interactive skill that produces `docs/INFRA-ARCHITECTURE.md` (infrastructure constitution), `docs/slos.md` (per-feature SLO targets), and scaffolds the `infra/` directory with Pulumi IaC, Docker Compose, Caddy, Prometheus, and GitHub Actions workflows. Automation-first: 3 manual inputs (VPS token, domain, DNS token), everything else generated. Default stack: DigitalOcean + Cloudflare + Pulumi (TypeScript) + Caddy (auto-TLS).
+- **`domainspec-infra-deploy` skill** — infrastructure sync tool (like `domainspec-sync-registry` for infra). Regenerates `prometheus.yml` and alert rules from observability specs and SLO targets. Supports `--preview`, `--alerts-only`, and `--prometheus-only` flags.
+- **`templates/infra-architecture.md`** — infrastructure constitution template with preset table, stack choices, networking, CI/CD pipeline, scaling roadmap with graduation triggers and migration checklists.
+- **`templates/slos.md`** — SLO template linking per-feature availability, latency, and error rate targets to O-rule metrics. Includes alert expressions and error budget calculations.
+
+### Changed
+
+- **`domainspec-pipeline` skill** — added Step 7d (infrastructure deploy sync) between OTel verification and registry sync. New flag: `--skip-infra`. Pipeline is now 12 stages: plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify.
+- **README.md** — added Stage 9 (Infrastructure & Deployment), updated pipeline diagram, project layout, skill/agent tables, and templates reference.
 
 ---
 

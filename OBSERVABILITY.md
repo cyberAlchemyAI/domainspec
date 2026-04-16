@@ -14,16 +14,17 @@ All metrics use the [OpenTelemetry API](https://opentelemetry.io/) for instrumen
 
 **Instruments:**
 
-| OTel Instrument | Use Case | DomainSpec Mapping |
-|-----------------|----------|-------------------|
-| `Counter` | Monotonically increasing count | Transitions, invocations, rule violations, events |
-| `UpDownCounter` | Value that goes up and down | State population, active workflows |
-| `Histogram` | Distribution of values | Duration, drift magnitude, result sizes |
-| `Gauge` | Point-in-time snapshot | Invariant violations, exposure amounts, reconciliation mismatches |
+| OTel Instrument | Use Case                       | DomainSpec Mapping                                                |
+| --------------- | ------------------------------ | ----------------------------------------------------------------- |
+| `Counter`       | Monotonically increasing count | Transitions, invocations, rule violations, events                 |
+| `UpDownCounter` | Value that goes up and down    | State population, active workflows                                |
+| `Histogram`     | Distribution of values         | Duration, drift magnitude, result sizes                           |
+| `Gauge`         | Point-in-time snapshot         | Invariant violations, exposure amounts, reconciliation mismatches |
 
 **Attributes** (not labels): Low-cardinality key-value pairs attached to each measurement. Feature, entity, operation, and rule are attributes — not embedded in the metric name.
 
 **Reuse OTel Semantic Conventions** where they exist:
+
 - HTTP: `http.server.request.duration`, `http.server.active_requests` ([HTTP semconv](https://opentelemetry.io/docs/specs/semconv/http/))
 - Messaging: `messaging.process.duration` ([Messaging semconv](https://opentelemetry.io/docs/specs/semconv/messaging/))
 - Custom domain metrics use the naming convention defined in [Metric Naming Convention](#metric-naming-convention).
@@ -52,11 +53,11 @@ graph LR
 
 Every DomainSpec feature produces metrics in three layers. Each layer answers a different question and has different consumers.
 
-| Layer | Question | Derived From | Consumer | Alert Threshold |
-|-------|----------|-------------|----------|-----------------|
-| **Domain Fidelity** | Does production behavior match the spec? | states.md, operations.md, events.md | Engineering | Any violation = P0 |
-| **Operational Health** | Is the system reliable and performant? | interfaces.md, queries.md, workflows.md | Platform/SRE | SLO breach = P1 |
-| **Business Effectiveness** | Is the feature achieving its goal? | SPEC.md capabilities, STORIES.md journeys | Product/Business | Trend degradation = P2 |
+| Layer                      | Question                                 | Derived From                              | Consumer         | Alert Threshold        |
+| -------------------------- | ---------------------------------------- | ----------------------------------------- | ---------------- | ---------------------- |
+| **Domain Fidelity**        | Does production behavior match the spec? | states.md, operations.md, events.md       | Engineering      | Any violation = P0     |
+| **Operational Health**     | Is the system reliable and performant?   | interfaces.md, queries.md, workflows.md   | Platform/SRE     | SLO breach = P1        |
+| **Business Effectiveness** | Is the feature achieving its goal?       | SPEC.md capabilities, STORIES.md journeys | Product/Business | Trend degradation = P2 |
 
 ### Why three layers
 
@@ -76,11 +77,12 @@ Every DomainSpec feature produces metrics in three layers. Each layer answers a 
 
 Each state machine transition documented in `states.md` produces a counter that tracks how often that transition occurs in production.
 
-| Transition Table Row | Metric |
-|---------------------|--------|
+| Transition Table Row                    | Metric                                                                                                          |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `Created → Processing (ProcessPayment)` | `state.transition` with attributes `{feature, entity, from="Created", to="Processing", event="ProcessPayment"}` |
 
 **Template:**
+
 ```yaml
 - name: state.transition
   instrument: Counter
@@ -90,6 +92,7 @@ Each state machine transition documented in `states.md` produces a counter that 
 ```
 
 **Derived monitors:**
+
 - **Invalid transition attempts** — counter for transitions NOT in the transition table. Any increment = domain fidelity violation.
 - **Terminal state re-entry** — counter for attempts to transition from terminal states. Must remain 0.
 
@@ -116,6 +119,7 @@ Track the current count of entities in each state. Validates that the system's p
 ```
 
 **Derived monitors:**
+
 - **State accumulation** — if entities pile up in a non-terminal state (e.g., PROCESSING grows unbounded), the system has a completion problem.
 - **Terminal state ratio** — track `failed / (completed + failed)` over time. Trend increase = systemic issue.
 
@@ -125,8 +129,8 @@ Track the current count of entities in each state. Validates that the system's p
 
 Invariants documented in `states.md` are checked at test time (TEST-PIPELINE rule 3), but they must also be monitored in production. Each invariant produces a gauge tracking violations.
 
-| Invariant | Monitor |
-|-----------|---------|
+| Invariant                                      | Monitor                                                                                   |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `I1: status == Completed → gatewayRef != null` | Periodic scan: count entities where `status=Completed AND gatewayRef IS NULL`. Must be 0. |
 
 ```yaml
@@ -148,11 +152,11 @@ Invariants documented in `states.md` are checked at test time (TEST-PIPELINE rul
 
 Each operation documented in `operations.md` produces:
 
-| Metric | Type | Purpose |
-|--------|------|---------|
-| `{feature}.{operation}.executed.total` | Counter | How often this operation runs |
-| `{feature}.{operation}.succeeded.total` | Counter | Successful completions |
-| `{feature}.{operation}.failed.total` | Counter | Failures by error code |
+| Metric                                   | Type      | Purpose                        |
+| ---------------------------------------- | --------- | ------------------------------ |
+| `{feature}.{operation}.executed.total`   | Counter   | How often this operation runs  |
+| `{feature}.{operation}.succeeded.total`  | Counter   | Successful completions         |
+| `{feature}.{operation}.failed.total`     | Counter   | Failures by error code         |
 | `{feature}.{operation}.duration.seconds` | Histogram | Execution latency distribution |
 
 ```yaml
@@ -160,7 +164,7 @@ Each operation documented in `operations.md` produces:
   instrument: Counter
   unit: "{invocation}"
   description: Operation execution count by result
-  attributes: [feature, operation, result]  # result: success | error
+  attributes: [feature, operation, result] # result: success | error
 
 - name: operation.duration
   instrument: Histogram
@@ -176,11 +180,12 @@ Each operation documented in `operations.md` produces:
 
 Each rule `R1`, `R2`, etc. documented in an operation produces a counter tracking how often it blocks execution in production. This validates that rules fire at expected rates.
 
-| Rule | Metric |
-|------|--------|
+| Rule                   | Metric                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
 | `R1: amount.value > 0` | `rule.violation` with attributes `{feature, operation, rule="R1", expression="amount.value > 0"}` |
 
 **Derived monitors:**
+
 - **Rule never fires** — if a documented rule has 0 violations over a sustained period, either the system perfectly prevents invalid input (good) or the rule is dead code (bad). Flag for review.
 - **Rule always fires** — if a rule has a violation rate > 50% of attempts, the upstream is sending invalid data consistently. Flag integration issue.
 
@@ -190,21 +195,21 @@ Each rule `R1`, `R2`, etc. documented in an operation produces a counter trackin
 
 Calculations (`C1`, `C2`, etc.) have documented formulas. The drift monitor compares the operation's computed result against a reference recalculation.
 
-| Calculation | Monitor |
-|-------------|---------|
-| `C1: totalProfit = sum(statRecords.profit)` | Periodic: recompute C1 from source data, compare with stored result. Difference > 0 = drift. |
-| `C4: makeup = applyMakeupPolicy(debt, profit, rakeback, split)` | Periodic: recompute makeup from inputs, compare with applied amount. |
+| Calculation                                                     | Monitor                                                                                      |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `C1: totalProfit = sum(statRecords.profit)`                     | Periodic: recompute C1 from source data, compare with stored result. Difference > 0 = drift. |
+| `C4: makeup = applyMakeupPolicy(debt, profit, rakeback, split)` | Periodic: recompute makeup from inputs, compare with applied amount.                         |
 
 ```yaml
 - name: calculation.drift
   instrument: Histogram
-  unit: "{unit}"  # currency unit for financial, raw for others
+  unit: "{unit}" # currency unit for financial, raw for others
   description: Absolute drift between computed and stored value
   attributes: [feature, calculation_id]
 
 - name: calculation.drift.alert
   instrument: Gauge
-  unit: "1"  # ratio
+  unit: "1" # ratio
   description: Percentage drift — triggers P0 when > 1%
   attributes: [feature, calculation_id]
 ```
@@ -217,17 +222,17 @@ Calculations (`C1`, `C2`, etc.) have documented formulas. The drift monitor comp
 
 Each postcondition bullet in an operation is verified after execution. This catches cases where the operation "succeeds" but leaves the system in an inconsistent state.
 
-| Postcondition | Monitor |
-|---------------|---------|
+| Postcondition              | Monitor                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------ |
 | "Settlement event created" | After GenerateSettlement: verify PAYOUT/MAKEUP_APPLIED record exists within 5s |
-| "Email sent to candidate" | After ReviewCandidate(APPROVE): verify notification dispatched |
+| "Email sent to candidate"  | After ReviewCandidate(APPROVE): verify notification dispatched                 |
 
 ```yaml
 - name: postcondition.check
   instrument: Counter
   unit: "{check}"
   description: Postcondition verification outcomes
-  attributes: [feature, operation, postcondition_id, result]  # result: verified | violated
+  attributes: [feature, operation, postcondition_id, result] # result: verified | violated
   alert: any result=violated increment triggers P1 alert
 ```
 
@@ -241,20 +246,21 @@ Each postcondition bullet in an operation is verified after execution. This catc
 
 Each API endpoint documented in `interfaces.md` produces standard RED (Rate, Errors, Duration) metrics.
 
-| Endpoint | Metrics |
-|----------|---------|
+| Endpoint            | Metrics                                                        |
+| ------------------- | -------------------------------------------------------------- |
 | `POST /settlements` | request_rate, error_rate (by status code), p50/p95/p99 latency |
 
 Reuse [OTel HTTP semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/) directly:
 
 ```yaml
 # Standard OTel HTTP semconv — no custom metrics needed
-- name: http.server.request.duration   # OTel semconv
+- name: http.server.request.duration # OTel semconv
   instrument: Histogram
   unit: "s"
-  attributes: [http.request.method, url.path, http.response.status_code, feature]
+  attributes:
+    [http.request.method, url.path, http.response.status_code, feature]
 
-- name: http.server.active_requests    # OTel semconv
+- name: http.server.active_requests # OTel semconv
   instrument: UpDownCounter
   unit: "{request}"
   attributes: [http.request.method, url.path, feature]
@@ -263,6 +269,7 @@ Reuse [OTel HTTP semantic conventions](https://opentelemetry.io/docs/specs/semco
 Add `feature` as a custom attribute to standard HTTP instruments for per-feature SLO slicing.
 
 **SLO template:**
+
 ```
 availability: success_rate >= 99.9% over 30d rolling window
 latency: p99 <= {threshold}ms (threshold per endpoint from interfaces.md)
@@ -274,10 +281,10 @@ latency: p99 <= {threshold}ms (threshold per endpoint from interfaces.md)
 
 When `operations.md` documents idempotency constraints (e.g., "at most one PAYOUT per player per period"), the observability pipeline produces specific monitors.
 
-| Idempotency Rule | Monitor |
-|-----------------|---------|
-| `R4: count(PAYOUT, playerId, endDate) <= 1` | Periodic scan: query for duplicates. Count > 0 = P0. |
-| `R5: count(MAKEUP_APPLIED, playerId, endDate) <= 1` | Same pattern. |
+| Idempotency Rule                                    | Monitor                                              |
+| --------------------------------------------------- | ---------------------------------------------------- |
+| `R4: count(PAYOUT, playerId, endDate) <= 1`         | Periodic scan: query for duplicates. Count > 0 = P0. |
+| `R5: count(MAKEUP_APPLIED, playerId, endDate) <= 1` | Same pattern.                                        |
 
 ```yaml
 - name: idempotency.violation
@@ -295,10 +302,11 @@ When `operations.md` documents idempotency constraints (e.g., "at most one PAYOU
 ```
 
 **Financial impact estimation:**
+
 ```yaml
 - name: exposure.amount
   instrument: Gauge
-  unit: "{currency_minor}"  # e.g. BRL cents
+  unit: "{currency_minor}" # e.g. BRL cents
   description: Estimated monetary exposure from idempotency violations
   attributes: [feature, operation]
   alert: value > 0 triggers P0 alert with estimated amount in alert body
@@ -314,8 +322,8 @@ When `operations.md` documents idempotency constraints (e.g., "at most one PAYOU
 
 Each domain event documented in `events.md` produces metrics tracking the full flow from emission to consumption.
 
-| Event | Metrics |
-|-------|---------|
+| Event              | Metrics                                             |
+| ------------------ | --------------------------------------------------- |
 | `PaymentCompleted` | emitted.total, consumed.total, consumer_lag.seconds |
 
 ```yaml
@@ -336,6 +344,7 @@ Each domain event documented in `events.md` produces metrics tracking the full f
 ```
 
 **Derived monitors:**
+
 - **Event loss** — `emitted.total - consumed.total > threshold` over time window. Events are being dropped.
 - **Consumer stall** — `consumer_lag.seconds > threshold`. Consumer is falling behind.
 - **Phantom events** — `consumed.total > emitted.total`. Events appearing without a known producer = data integrity issue.
@@ -362,10 +371,11 @@ Each domain event documented in `events.md` produces metrics tracking the full f
 - name: query.cache
   instrument: Counter
   unit: "{operation}"
-  attributes: [feature, query_name, result]  # result: hit | miss
+  attributes: [feature, query_name, result] # result: hit | miss
 ```
 
 **Derived monitors:**
+
 - **Query degradation** — p95 latency trend increase over 7 days.
 - **Result explosion** — result size growing beyond expected bounds (indicates missing pagination or filter).
 - **Stale read** — cache age exceeds TTL without refresh.
@@ -382,7 +392,7 @@ Each domain event documented in `events.md` produces metrics tracking the full f
 - name: workflow.invocation
   instrument: Counter
   unit: "{invocation}"
-  attributes: [feature, workflow, result]  # result: completed | failed | compensated
+  attributes: [feature, workflow, result] # result: completed | failed | compensated
 
 - name: workflow.duration
   instrument: Histogram
@@ -412,16 +422,17 @@ Each capability documented in SPEC.md represents a user-facing behavior. The obs
 
 The derivation follows the capability's **business intent** (from SPEC overview) and its **acceptance criteria** (from STORIES.md):
 
-| Capability Pattern | Metric Class | Derivation |
-|-------------------|-------------|------------|
-| Create/Submit (entity creation) | **Conversion funnel** | started → completed → rate |
-| Review/Approve (decision workflow) | **Decision throughput** | submitted → decided, median time-to-decision |
-| Calculate/Generate (computation) | **Accuracy & volume** | executions, drift from expected, monetary totals |
-| Get/List (read operations) | **Engagement** | unique users, frequency, empty-result rate |
-| Assign/Update (state modification) | **Churn & stability** | change frequency, reversal rate |
-| Check/Validate (eligibility) | **Pass rate & fairness** | eligible/ineligible ratio, criteria distribution |
+| Capability Pattern                 | Metric Class             | Derivation                                       |
+| ---------------------------------- | ------------------------ | ------------------------------------------------ |
+| Create/Submit (entity creation)    | **Conversion funnel**    | started → completed → rate                       |
+| Review/Approve (decision workflow) | **Decision throughput**  | submitted → decided, median time-to-decision     |
+| Calculate/Generate (computation)   | **Accuracy & volume**    | executions, drift from expected, monetary totals |
+| Get/List (read operations)         | **Engagement**           | unique users, frequency, empty-result rate       |
+| Assign/Update (state modification) | **Churn & stability**    | change frequency, reversal rate                  |
+| Check/Validate (eligibility)       | **Pass rate & fairness** | eligible/ineligible ratio, criteria distribution |
 
 **Template:**
+
 ```yaml
 # For each capability in SPEC.md:
 - name: business.{metric_name}
@@ -443,12 +454,12 @@ User stories in STORIES.md that describe multi-step flows produce funnel metrics
 - name: funnel.step
   instrument: Counter
   unit: "{step}"
-  attributes: [feature, journey, step_name, outcome]  # outcome: completed | abandoned | error
+  attributes: [feature, journey, step_name, outcome] # outcome: completed | abandoned | error
 
 # Derived:
 - name: funnel.conversion_rate
   instrument: Gauge
-  unit: "1"  # ratio
+  unit: "1" # ratio
   attributes: [feature, journey]
   formula: step_N_completed / step_1_started
   window: 7d rolling
@@ -523,7 +534,7 @@ Features that handle money (`pillar: finance` in SPEC frontmatter) have addition
 
 - name: settlement.cycle.error_rate
   instrument: Gauge
-  unit: "1"  # ratio: failed / total
+  unit: "1" # ratio: failed / total
   attributes: [feature]
 
 # Drift detection:
@@ -541,24 +552,24 @@ Features that handle money (`pillar: finance` in SPEC frontmatter) have addition
 
 ## Observability Derivation Summary
 
-| Source | Metric Rule | Layer | Count per Source Row |
-|--------|------------|-------|---------------------|
-| states.md transition row | O1: Transition Counter | Domain Fidelity | 1 counter + 1 invalid counter |
-| states.md (per entity) | O2: State Distribution | Domain Fidelity | 1 gauge per state |
-| states.md invariant row | O3: Invariant Monitor | Domain Fidelity | 1 gauge |
-| operations.md operation | O4: Execution Metrics | Operational Health | 4 metrics (executed, succeeded, failed, duration) |
-| operations.md rule | O5: Rule Violation Rate | Domain Fidelity | 1 counter |
-| operations.md calculation | O6: Calculation Drift | Domain Fidelity | 2 gauges (absolute, percentage) |
-| operations.md postcondition | O7: Postcondition Verification | Domain Fidelity | 2 counters (verified, violated) |
-| interfaces.md endpoint | O8: Endpoint SLOs | Operational Health | 2 metrics (request counter, latency histogram) |
-| interfaces.md idempotency rule | O9: Idempotency Monitor | Financial Integrity | 2 metrics (violation gauge, dedup counter) |
-| events.md event | O10: Event Flow | Operational Health | 3 metrics (emitted, consumed, lag) |
-| queries.md query | O11: Query Performance | Operational Health | 4 metrics (duration, result size, cache hit/miss) |
-| workflows.md workflow | O12: Workflow Completion | Operational Health | 5 metrics (started, completed, failed, compensated, duration) |
-| SPEC.md capability | O13: Business KPI | Business Effectiveness | 1+ per capability |
-| STORIES.md journey | O14: Funnel Metric | Business Effectiveness | 1 funnel per journey |
-| finance-pillar operations | O15: Transaction Integrity | Financial Integrity | 3 metrics (reconciliation, duplicate, exposure) |
-| finance-pillar settlements | O16: Settlement Cycle | Financial Integrity | 6+ metrics |
+| Source                         | Metric Rule                    | Layer                  | Count per Source Row                                          |
+| ------------------------------ | ------------------------------ | ---------------------- | ------------------------------------------------------------- |
+| states.md transition row       | O1: Transition Counter         | Domain Fidelity        | 1 counter + 1 invalid counter                                 |
+| states.md (per entity)         | O2: State Distribution         | Domain Fidelity        | 1 gauge per state                                             |
+| states.md invariant row        | O3: Invariant Monitor          | Domain Fidelity        | 1 gauge                                                       |
+| operations.md operation        | O4: Execution Metrics          | Operational Health     | 4 metrics (executed, succeeded, failed, duration)             |
+| operations.md rule             | O5: Rule Violation Rate        | Domain Fidelity        | 1 counter                                                     |
+| operations.md calculation      | O6: Calculation Drift          | Domain Fidelity        | 2 gauges (absolute, percentage)                               |
+| operations.md postcondition    | O7: Postcondition Verification | Domain Fidelity        | 2 counters (verified, violated)                               |
+| interfaces.md endpoint         | O8: Endpoint SLOs              | Operational Health     | 2 metrics (request counter, latency histogram)                |
+| interfaces.md idempotency rule | O9: Idempotency Monitor        | Financial Integrity    | 2 metrics (violation gauge, dedup counter)                    |
+| events.md event                | O10: Event Flow                | Operational Health     | 3 metrics (emitted, consumed, lag)                            |
+| queries.md query               | O11: Query Performance         | Operational Health     | 4 metrics (duration, result size, cache hit/miss)             |
+| workflows.md workflow          | O12: Workflow Completion       | Operational Health     | 5 metrics (started, completed, failed, compensated, duration) |
+| SPEC.md capability             | O13: Business KPI              | Business Effectiveness | 1+ per capability                                             |
+| STORIES.md journey             | O14: Funnel Metric             | Business Effectiveness | 1 funnel per journey                                          |
+| finance-pillar operations      | O15: Transaction Integrity     | Financial Integrity    | 3 metrics (reconciliation, duplicate, exposure)               |
+| finance-pillar settlements     | O16: Settlement Cycle          | Financial Integrity    | 6+ metrics                                                    |
 
 ---
 
@@ -601,6 +612,7 @@ Custom DomainSpec instruments:
 **Meter scope:** `{project-name}` (e.g., `poker-team`). Configured once in the OTel SDK setup. All instruments created from this Meter inherit the project identity.
 
 **Attribute conventions:**
+
 - `feature`: kebab-case feature ID from SPEC frontmatter (e.g., `financial-settlement`)
 - `operation`, `entity`, `workflow`, `query_name`: PascalCase concept name from docs (e.g., `GenerateSettlement`)
 - `rule_id`, `invariant_id`, `calculation_id`: doc reference ID (e.g., `R4`, `I1`, `C1`)
@@ -634,6 +646,7 @@ Metrics reference their documentation source, mirroring the test traceability in
 ```
 
 This enables:
+
 - **Doc change → find affected metrics** (grep for `@source`)
 - **Metric alert → find the spec** (follow `@source` + `@rule`)
 - **Coverage audit** — verify every critical doc row has an observability obligation
@@ -643,12 +656,12 @@ This enables:
 
 ## Alert Severity Mapping
 
-| Severity | Trigger | Response Time | Examples |
-|----------|---------|---------------|---------|
-| **P0** | Domain fidelity violation or financial exposure | < 15 minutes | Idempotency violation, invariant broken, calculation drift > 1%, duplicate transactions |
-| **P1** | Operational SLO breach or postcondition failure | < 1 hour | Availability < 99.9%, p99 > threshold, postcondition violated, event loss |
-| **P2** | Business effectiveness degradation | < 24 hours | Conversion rate drop > 10%, funnel abandonment spike, unusual rule violation pattern |
-| **P3** | Informational trend | Weekly review | Query latency trending up, cache hit ratio declining, state accumulation growing |
+| Severity | Trigger                                         | Response Time | Examples                                                                                |
+| -------- | ----------------------------------------------- | ------------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Domain fidelity violation or financial exposure | < 15 minutes  | Idempotency violation, invariant broken, calculation drift > 1%, duplicate transactions |
+| **P1**   | Operational SLO breach or postcondition failure | < 1 hour      | Availability < 99.9%, p99 > threshold, postcondition violated, event loss               |
+| **P2**   | Business effectiveness degradation              | < 24 hours    | Conversion rate drop > 10%, funnel abandonment spike, unusual rule violation pattern    |
+| **P3**   | Informational trend                             | Weekly review | Query latency trending up, cache hit ratio declining, state accumulation growing        |
 
 ---
 
@@ -661,7 +674,7 @@ flowchart TB
         TEST --> IMPL[Implementation]
         IMPL --> VERIFY[Verify Feature]
     end
-    
+
     subgraph Outer Loop — Runtime
         SPEC --> OBS[OBSERVABILITY.md]
         OBS --> INSTRUMENT[Instrument Code]
@@ -671,12 +684,13 @@ flowchart TB
         DRIFT -->|Operational| INSTRUMENT
         DRIFT -->|Business| SPEC
     end
-    
+
     VERIFY --> INSTRUMENT
     MONITOR --> VERIFY
 ```
 
 The outer loop feeds back into the inner loop:
+
 - **Domain fidelity violations** mean the spec or the code is wrong → update docs, re-derive tests, re-implement.
 - **Operational issues** mean the infrastructure needs attention → fix, re-verify.
 - **Business effectiveness gaps** mean the feature design is wrong → evolve the spec, re-plan.

@@ -29,10 +29,11 @@ Inputs:
 - docs/features/{feature}/OBSERVABILITY-REPORT.md (when --change-requests)
 
 Outputs:
+
 - Modified use-case and infrastructure files with OTel metric recording
 - Optional feature-specific instrument file at backend/src/infrastructure/telemetry/{feature}.ts
 - Compilation verification via `tsc --noEmit`
-</context>
+  </context>
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
@@ -70,21 +71,37 @@ Outputs:
 ### O4: Operation invocation + duration (wrap pattern)
 
 ```typescript
-import { operationInvocation, operationDuration } from "../../infrastructure/telemetry/instruments";
+import {
+  operationInvocation,
+  operationDuration,
+} from "../../infrastructure/telemetry/instruments";
 
-export const myOperation = (deps: Deps) => async (input: Input): Promise<Output> => {
-  const start = performance.now();
-  try {
-    // ... original logic ...
-    operationInvocation.add(1, { feature: "my-feature", operation: "MyOperation", result: "success" });
-    return result;
-  } catch (err) {
-    operationInvocation.add(1, { feature: "my-feature", operation: "MyOperation", result: "error" });
-    throw err;
-  } finally {
-    operationDuration.record((performance.now() - start) / 1000, { feature: "my-feature", operation: "MyOperation" });
-  }
-};
+export const myOperation =
+  (deps: Deps) =>
+  async (input: Input): Promise<Output> => {
+    const start = performance.now();
+    try {
+      // ... original logic ...
+      operationInvocation.add(1, {
+        feature: "my-feature",
+        operation: "MyOperation",
+        result: "success",
+      });
+      return result;
+    } catch (err) {
+      operationInvocation.add(1, {
+        feature: "my-feature",
+        operation: "MyOperation",
+        result: "error",
+      });
+      throw err;
+    } finally {
+      operationDuration.record((performance.now() - start) / 1000, {
+        feature: "my-feature",
+        operation: "MyOperation",
+      });
+    }
+  };
 ```
 
 ### O5: Rule violation (catch at use-case boundary)
@@ -93,7 +110,11 @@ export const myOperation = (deps: Deps) => async (input: Input): Promise<Output>
 import { ruleViolation } from "../../infrastructure/telemetry/instruments";
 
 // In the catch block or validation result check:
-ruleViolation.add(1, { feature: "my-feature", operation: "MyOperation", rule_id: "R1" });
+ruleViolation.add(1, {
+  feature: "my-feature",
+  operation: "MyOperation",
+  rule_id: "R1",
+});
 ```
 
 ### O1: State transition (after successful transition)
@@ -129,6 +150,7 @@ export const businessMyKpi = createCounter("business.my_kpi", {
   description: "What this KPI measures (O13)",
 });
 ```
+
 </instrument-patterns>
 
 <change-request-mode>

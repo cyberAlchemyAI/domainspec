@@ -1,7 +1,7 @@
 ---
 name: domainspec-pipeline
-description: End-to-end feature pipeline — from business idea to verified implementation in one command. Orchestrates planning, spec writing, story generation, test derivation, backend implementation, optional UI lifecycle, observability derivation, and verification.
-argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--skip-observability] [--skip-instrumentation] [--skip-otel-verify] [--spec-only] [--test-only] [--dry-run]"
+description: End-to-end feature pipeline — from business idea to verified implementation in one command. Orchestrates planning, spec writing, story generation, test derivation, backend implementation, optional UI lifecycle, observability derivation, infrastructure sync, and verification.
+argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--skip-observability] [--skip-instrumentation] [--skip-otel-verify] [--skip-infra] [--spec-only] [--test-only] [--dry-run]"
 agent: domainspec-planner
 allowed-tools: Read, Write, Bash, Glob, Grep, AskQuestions, WebFetch, Task
 ---
@@ -18,6 +18,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 - `--skip-observability`: Skip all observability steps (Steps 7a–7c).
 - `--skip-instrumentation`: Skip OTel code instrumentation (Step 7b). Generates spec only.
 - `--skip-otel-verify`: Skip OTel verification (Step 7c). Instruments without verifying.
+- `--skip-infra`: Skip infrastructure sync (Step 7d). No prometheus.yml or alert rule updates.
 - `--dry-run`: Show the execution plan without running any steps.
 </flags>
 
@@ -25,18 +26,20 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → registry-sync → verify
+plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
 This skill never bypasses delegate skills — it sequences them and propagates context.
 
 Prerequisites:
+
 - domainspec/ framework installed
 - Copilot agent pack installed (agents, skills, instructions)
 - docs/ directory exists (or domainspec-init will create it)
 
 Created/updated by this skill (cumulative):
+
 - docs/features/{feature}/SPEC.md
 - docs/features/{feature}/domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, etc.
 - docs/features/{feature}/STORIES.md
@@ -46,10 +49,12 @@ Created/updated by this skill (cumulative):
 - Frontend pages, components, hooks, E2E tests (if UI applies)
 - docs/features/{feature}/observability.md
 - docs/features/{feature}/OBSERVABILITY-REPORT.md (instrumentation verification)
+- infra/prometheus.yml (updated scrape config, if infra applies)
+- infra/alerts/{feature}.rules.yml (alert rules from slos.md, if infra applies)
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 - docs/features/{feature}/UI-REVIEW.md (if UI applies)
 - docs/registry.md, docs/glossary.md (synced)
-</context>
+  </context>
 
 <process>
 ## Pre-flight
@@ -163,31 +168,36 @@ Created/updated by this skill (cumulative):
     - Re-verify (max 3 iterations).
 27. Record observability verdict for final pipeline summary.
 
+## Step 7d — Infrastructure Deploy Sync (conditional)
+
+28. Check if infra sync applies:
+    - Skip if `--skip-infra`.
+    - Skip if `--spec-only` or `--test-only`.
+    - Skip if no docs/INFRA-ARCHITECTURE.md exists (infra not yet initialized).
+    - Requires: observability.md exists (from Step 7a or pre-existing).
+    - Otherwise, proceed.
+29. Delegate to `domainspec-infra-deploy {feature}`:
+    - Regenerates infra/prometheus.yml from all observability specs.
+    - Generates/updates infra/alerts/{feature}.rules.yml from docs/slos.md.
+    - Verifies docker-compose.prod.yml matches INFRA-ARCHITECTURE.md.
+    - Validates generated configs.
+30. If validation fails → FLAG infra sync, continue to registry.
+
 ## Step 8 — Registry Sync
 
-28. Delegate to `domainspec-sync-registry`:
+31. Delegate to `domainspec-sync-registry`:
     - Updates docs/registry.md and docs/glossary.md from all SPEC.md concept tables.
 
 ## Step 9 — Verify
 
-29. Delegate to `domainspec-verify-feature {feature}`:
+32. Delegate to `domainspec-verify-feature {feature}`:
     - Runs alignment audit, layering audit, test evidence check.
     - Returns PASS / FLAG / BLOCK verdict.
 
 ## Completion
 
-30. Return pipeline summary:
-    - Feature: name, new or evolved
-    - Artifacts created/updated (file paths by category: docs, backend, frontend, tests)
-    - Test results: count passed / failed / pending
-    - Build status: backend + frontend (if applicable)
-    - UI audit verdict (if applicable, or "skipped")
-    - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped")
-    - Instrumentation: files modified, instruments added, compilation status (or "skipped")
-    - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped")
-    - Verification verdict: PASS / FLAG / BLOCK with details
-    - Next actions (if FLAG or BLOCK)
-</process>
+33. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Next actions (if FLAG or BLOCK)
+    </process>
 
 <error-handling>
 - Pre-flight failures (no domainspec/, no docs/) → BLOCK with setup instructions.

@@ -81,7 +81,7 @@ Authority boundaries:
 - This agent READS code but DOES NOT modify it
 - Change requests are consumed by `domainspec-instrument-otel --change-requests`
 - When change requests involve domain logic changes, escalate to `domainspec-implement`
-</role>
+  </role>
 
 <context>
 Required inputs:
@@ -96,11 +96,13 @@ Required inputs:
 - backend/src/infrastructure/http/routes/*.routes.ts (route handlers to scan)
 
 Optional inputs (live verification):
+
 - MCP Prometheus/OTel connection (queries metric endpoints)
 
 Output:
+
 - docs/features/{feature}/OBSERVABILITY-REPORT.md
-</context>
+  </context>
 
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
@@ -199,4 +201,5 @@ When scanning code for OTel instruments, use these grep patterns:
 # Find feature attribute in recordings
 "feature:\s*[\"']{feature-id}[\"']"
 ```
+
 </search-patterns>

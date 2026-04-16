@@ -1,6 +1,6 @@
 ---
-id: {feature-id}
-feature: {FeatureName}
+id: { feature-id }
+feature: { FeatureName }
 type: observability-report
 title: "{FeatureName} — Observability Alignment Report"
 derived-from: observability.md
@@ -14,13 +14,13 @@ status: draft
 
 ## Summary
 
-| Metric | Status | Detail |
-|--------|--------|--------|
-| Total declared instruments | | From observability.md |
-| Instrumented in code | | ✅ Found in source |
-| Partially instrumented | | ⚠️ Name/type mismatch or missing attributes |
-| Missing from code | | ❌ Not found |
-| Extra (undeclared) | | 🔄 In code but not in observability.md |
+| Metric                     | Status | Detail                                      |
+| -------------------------- | ------ | ------------------------------------------- |
+| Total declared instruments |        | From observability.md                       |
+| Instrumented in code       |        | ✅ Found in source                          |
+| Partially instrumented     |        | ⚠️ Name/type mismatch or missing attributes |
+| Missing from code          |        | ❌ Not found                                |
+| Extra (undeclared)         |        | 🔄 In code but not in observability.md      |
 
 **Verdict:** `PASS` | `FLAG` | `BLOCK`
 
@@ -34,34 +34,34 @@ status: draft
 
 ### Domain Fidelity (O1–O7, O15–O16)
 
-| Rule | Declared | Instrumented | Status | Notes |
-|------|---------|-------------|--------|-------|
-| O1: Transition counters | | | | |
-| O2: State distribution | | | | |
-| O3: Invariant monitors | | | | |
-| O4: Operation base metrics | | | | |
-| O5: Rule violation rates | | | | |
-| O6: Calculation drift | | | | |
-| O7: Postconditions | | | | |
-| O15: Transaction integrity | | | | |
-| O16: Financial cycle | | | | |
+| Rule                       | Declared | Instrumented | Status | Notes |
+| -------------------------- | -------- | ------------ | ------ | ----- |
+| O1: Transition counters    |          |              |        |       |
+| O2: State distribution     |          |              |        |       |
+| O3: Invariant monitors     |          |              |        |       |
+| O4: Operation base metrics |          |              |        |       |
+| O5: Rule violation rates   |          |              |        |       |
+| O6: Calculation drift      |          |              |        |       |
+| O7: Postconditions         |          |              |        |       |
+| O15: Transaction integrity |          |              |        |       |
+| O16: Financial cycle       |          |              |        |       |
 
 ### Operational Health (O8–O12)
 
-| Rule | Declared | Instrumented | Status | Notes |
-|------|---------|-------------|--------|-------|
-| O8: Endpoint SLOs | | | | |
-| O9: Idempotency monitors | | | | |
-| O10: Event flow | | | | |
-| O11: Query performance | | | | |
-| O12: Workflow completion | | | | |
+| Rule                     | Declared | Instrumented | Status | Notes |
+| ------------------------ | -------- | ------------ | ------ | ----- |
+| O8: Endpoint SLOs        |          |              |        |       |
+| O9: Idempotency monitors |          |              |        |       |
+| O10: Event flow          |          |              |        |       |
+| O11: Query performance   |          |              |        |       |
+| O12: Workflow completion |          |              |        |       |
 
 ### Business Effectiveness (O13–O14)
 
-| Rule | Declared | Instrumented | Status | Notes |
-|------|---------|-------------|--------|-------|
-| O13: Capability KPIs | | | | |
-| O14: Funnel metrics | | | | |
+| Rule                 | Declared | Instrumented | Status | Notes |
+| -------------------- | -------- | ------------ | ------ | ----- |
+| O13: Capability KPIs |          |              |        |       |
+| O14: Funnel metrics  |          |              |        |       |
 
 ---
 
@@ -69,10 +69,10 @@ status: draft
 
 <!-- One row per declared instrument in observability.md -->
 
-| Instrument Name | Type | Source Rule | Code Location | Status | Issue |
-|----------------|------|------------|---------------|--------|-------|
-| `state.transition` | Counter | O1 | `{file}:{line}` | ✅ | — |
-| `operation.invocation` | Counter | O4 | — | ❌ | Not found in source |
+| Instrument Name        | Type    | Source Rule | Code Location   | Status | Issue               |
+| ---------------------- | ------- | ----------- | --------------- | ------ | ------------------- |
+| `state.transition`     | Counter | O1          | `{file}:{line}` | ✅     | —                   |
+| `operation.invocation` | Counter | O4          | —               | ❌     | Not found in source |
 
 ---
 
@@ -80,9 +80,9 @@ status: draft
 
 <!-- Populated only when domainspec-otel-verify runs with --live flag and MCP server is available -->
 
-| Instrument Name | Exists in Collector | Recent Value | SLO Check | Status |
-|----------------|-------------------|-------------|-----------|--------|
-| `http.server.request.duration` | ✅ | p99=42ms | ≤500ms | ✅ |
+| Instrument Name                | Exists in Collector | Recent Value | SLO Check | Status |
+| ------------------------------ | ------------------- | ------------ | --------- | ------ |
+| `http.server.request.duration` | ✅                  | p99=42ms     | ≤500ms    | ✅     |
 
 ---
 
@@ -90,11 +90,11 @@ status: draft
 
 <!-- Actionable items for the inner loop (domainspec-instrument-otel) -->
 
-| # | Priority | Action | Target File | Instrument | Detail |
-|---|----------|--------|------------|-----------|--------|
-| 1 | P0 | Add | `{file}` | `{name}` | {what to add and where} |
-| 2 | P1 | Fix | `{file}` | `{name}` | {attribute mismatch detail} |
-| 3 | P2 | Remove | `{file}` | `{name}` | {undeclared instrument — confirm or document} |
+| #   | Priority | Action | Target File | Instrument | Detail                                        |
+| --- | -------- | ------ | ----------- | ---------- | --------------------------------------------- |
+| 1   | P0       | Add    | `{file}`    | `{name}`   | {what to add and where}                       |
+| 2   | P1       | Fix    | `{file}`    | `{name}`   | {attribute mismatch detail}                   |
+| 3   | P2       | Remove | `{file}`    | `{name}`   | {undeclared instrument — confirm or document} |
 
 ---
 

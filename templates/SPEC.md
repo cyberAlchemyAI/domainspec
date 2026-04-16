@@ -25,8 +25,8 @@ Governance thresholds:
 - SPEC > 300 lines OR any capability section > 15 rows: create capabilities/{capability-name}.md and keep only summary links in SPEC.
 -->
 
-| Capability | What | Key Aspects | Detail |
-| ---------- | ---- | ----------- | ------ |
+| Capability                                            | What               | Key Aspects                               | Detail                      |
+| ----------------------------------------------------- | ------------------ | ----------------------------------------- | --------------------------- |
 | [{CapabilityName}](capabilities/{capability-name}.md) | {business outcome} | {main operations/queries + states/events} | {counts/complexity summary} |
 
 ### {Capability Name} (inline variant)
@@ -35,64 +35,64 @@ Governance thresholds:
 
 {One-sentence capability summary.}
 
-| Aspect | Concept | Summary |
-| ------ | ------- | ------- |
-| Operation | [{OperationName}](operations.md#{anchor}) | {what it changes} |
-| Query | [{QueryName}](queries.md#{anchor}) | {what it reads} |
-| Interface | [{Endpoint or Contract}](interfaces.md#{anchor}) | {how it is exposed} |
-| Mapping | [{MappingName}](mappings.md#{anchor}) | {data transformation} |
-| State/Event | [{StateOrEvent}](states.md#{anchor}) | {lifecycle effect} |
+| Aspect      | Concept                                          | Summary               |
+| ----------- | ------------------------------------------------ | --------------------- |
+| Operation   | [{OperationName}](operations.md#{anchor})        | {what it changes}     |
+| Query       | [{QueryName}](queries.md#{anchor})               | {what it reads}       |
+| Interface   | [{Endpoint or Contract}](interfaces.md#{anchor}) | {how it is exposed}   |
+| Mapping     | [{MappingName}](mappings.md#{anchor})            | {data transformation} |
+| State/Event | [{StateOrEvent}](states.md#{anchor})             | {lifecycle effect}    |
 
 ## Domain Concepts
 
 <!-- Structural concepts and key constraints for quick human understanding. -->
 
-| Concept | Type | Key Constraints |
-| ------- | ---- | --------------- |
-| [{EntityName}](domain.md#{anchor}) | Entity | {invariants, uniqueness, bounds} |
-| [{EnumOrType}](domain.md#{anchor}) | Enum / Type | {allowed values} |
+| Concept                            | Type        | Key Constraints                  |
+| ---------------------------------- | ----------- | -------------------------------- |
+| [{EntityName}](domain.md#{anchor}) | Entity      | {invariants, uniqueness, bounds} |
+| [{EnumOrType}](domain.md#{anchor}) | Enum / Type | {allowed values}                 |
 
 ## Concept Registry
 
 <!-- Source of truth for registry sync. Keep compact: no Description column. -->
 
-| Concept | ID | Type |
-| ------- | -- | ---- |
-| [{ConceptName}](domain.md#{anchor}) | {feature}.{ConceptName} | Entity |
+| Concept                                 | ID                      | Type      |
+| --------------------------------------- | ----------------------- | --------- |
+| [{ConceptName}](domain.md#{anchor})     | {feature}.{ConceptName} | Entity    |
 | [{ConceptName}](operations.md#{anchor}) | {feature}.{ConceptName} | Operation |
-| [{ConceptName}](queries.md#{anchor}) | {feature}.{ConceptName} | Query |
+| [{ConceptName}](queries.md#{anchor})    | {feature}.{ConceptName} | Query     |
 | [{ConceptName}](interfaces.md#{anchor}) | {feature}.{ConceptName} | Interface |
 
 ## Aspect Docs
 
 <!-- Link only to aspect files that exist for this feature. Delete unused lines. -->
 
-| Aspect | Contains | Key Concepts |
-| ------ | -------- | ------------ |
-| [Domain](domain.md) | Entities, value objects, enums | {top concepts} |
-| [Operations](operations.md) | Mutations, rules, calculations | {top concepts} |
-| [Interfaces](interfaces.md) | External/internal contracts | {top concepts} |
-| [Queries](queries.md) | Read models | {top concepts} |
-| [Mappings](mappings.md) | Data transformations | {top concepts} |
-| [Workflows](workflows.md) | Multi-step orchestrations and policies | {top concepts} |
-| [States](states.md) | State machines and transitions | {top concepts} |
-| [Events](events.md) | Domain events and consumers | {top concepts} |
+| Aspect                      | Contains                               | Key Concepts   |
+| --------------------------- | -------------------------------------- | -------------- |
+| [Domain](domain.md)         | Entities, value objects, enums         | {top concepts} |
+| [Operations](operations.md) | Mutations, rules, calculations         | {top concepts} |
+| [Interfaces](interfaces.md) | External/internal contracts            | {top concepts} |
+| [Queries](queries.md)       | Read models                            | {top concepts} |
+| [Mappings](mappings.md)     | Data transformations                   | {top concepts} |
+| [Workflows](workflows.md)   | Multi-step orchestrations and policies | {top concepts} |
+| [States](states.md)         | State machines and transitions         | {top concepts} |
+| [Events](events.md)         | Domain events and consumers            | {top concepts} |
 
 ## Cross-Feature Dependencies
 
 <!-- Capability-to-capability dependencies. -->
 
-| Capability | Depends On | Via | Why |
-| ---------- | ---------- | --- | --- |
+| Capability       | Depends On                                                      | Via                           | Why      |
+| ---------------- | --------------------------------------------------------------- | ----------------------------- | -------- |
 | {CapabilityName} | [{other-feature}.{OtherCapability}](../{other-feature}/SPEC.md) | Query / Operation / Interface | {reason} |
 
 ## Produces For
 
 <!-- Capability-aware outputs for downstream consumers. -->
 
-| Consumer | Consumes Capability | Via | What |
-| -------- | ------------------- | --- | ---- |
-| {consumer-feature or system} | {CapabilityName} | Query / Interface / Event | {artifact/value} |
+| Consumer                     | Consumes Capability | Via                       | What             |
+| ---------------------------- | ------------------- | ------------------------- | ---------------- |
+| {consumer-feature or system} | {CapabilityName}    | Query / Interface / Event | {artifact/value} |
 
 ## Stories
 
