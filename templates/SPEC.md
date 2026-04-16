@@ -98,6 +98,10 @@ Governance thresholds:
 
 See [User Stories](STORIES.md) for acceptance scenarios and BDD coverage.
 
+## Change History
+
+See [Changelog](CHANGELOG.md) for a dated record of domain-level changes to this feature.
+
 ## References
 
 - [Implementation tasks](tasks.en.md)
