@@ -70,82 +70,86 @@ Calls application functions; does not contain core business logic.
 
 ### Backend Concepts
 
-| DomainSpec Concept | Layer | Implementation Pattern (Functional) |
-| --- | --- | --- |
-| Entity | Domain | `type` + factory + transition functions |
-| Value Object | Domain | immutable `type` + constructor/factory validation |
-| Enum / Type | Domain | enum/union type |
-| State Machine | Domain | transition map + guard functions |
-| Rule | Domain | pure predicate function |
-| Calculation | Domain | pure deterministic function |
-| Policy | Domain | strategy selection function |
-| Event | Domain + Infrastructure | event type in domain, publisher adapter in infra |
-| Operation | Application | use-case factory returning `execute` function |
-| Query | Application | query factory returning `execute` function |
-| Workflow | Application | saga function with compensation stack |
-| Interface | Interface / Adapters | controllers + module contract |
-| Mapping | Infrastructure | pure mapping functions |
+| DomainSpec Concept | Layer                   | Implementation Pattern (Functional)               |
+| ------------------ | ----------------------- | ------------------------------------------------- |
+| Entity             | Domain                  | `type` + factory + transition functions           |
+| Value Object       | Domain                  | immutable `type` + constructor/factory validation |
+| Enum / Type        | Domain                  | enum/union type                                   |
+| State Machine      | Domain                  | transition map + guard functions                  |
+| Rule               | Domain                  | pure predicate function                           |
+| Calculation        | Domain                  | pure deterministic function                       |
+| Policy             | Domain                  | strategy selection function                       |
+| Event              | Domain + Infrastructure | event type in domain, publisher adapter in infra  |
+| Operation          | Application             | use-case factory returning `execute` function     |
+| Query              | Application             | query factory returning `execute` function        |
+| Workflow           | Application             | saga function with compensation stack             |
+| Interface          | Interface / Adapters    | controllers + module contract                     |
+| Mapping            | Infrastructure          | pure mapping functions                            |
 
 ### UI Concepts
 
-| DomainSpec Concept | Layer | Implementation Pattern |
-| --- | --- | --- |
-| Page | Pages (routes) | Astro `.astro` file importing layout + React island |
-| Layout | Layouts | Astro layout component with `<slot />` |
-| Component | Components | React function component with typed props |
-| View Model | Hooks / Components | TypeScript `type` exported from hook or co-located |
-| Hook | Hooks | `use{Name}()` custom React hook wrapping TanStack Query |
-| Form | Components | Zod schema + `useForm()` resolver + field render |
-| Action | Components | Event handler calling mutation hook or `navigate()` |
-| Guard | Components / Pages | Auth context check → redirect or `null` render |
-| Binding | Hooks | TanStack `useQuery()` / `useMutation()` call |
-| Adapter | Hooks / Lib | Pure function transforming API shape to view model |
-| State Indicator | Components | Badge/icon with `Record<Value, VisualConfig>` map |
+| DomainSpec Concept | Layer              | Implementation Pattern                                  |
+| ------------------ | ------------------ | ------------------------------------------------------- |
+| Page               | Pages (routes)     | Astro `.astro` file importing layout + React island     |
+| Layout             | Layouts            | Astro layout component with `<slot />`                  |
+| Component          | Components         | React function component with typed props               |
+| View Model         | Hooks / Components | TypeScript `type` exported from hook or co-located      |
+| Hook               | Hooks              | `use{Name}()` custom React hook wrapping TanStack Query |
+| Form               | Components         | Zod schema + `useForm()` resolver + field render        |
+| Action             | Components         | Event handler calling mutation hook or `navigate()`     |
+| Guard              | Components / Pages | Auth context check → redirect or `null` render          |
+| Binding            | Hooks              | TanStack `useQuery()` / `useMutation()` call            |
+| Adapter            | Hooks / Lib        | Pure function transforming API shape to view model      |
+| State Indicator    | Components         | Badge/icon with `Record<Value, VisualConfig>` map       |
 
 ## Functional Building Blocks
 
 ### Value Object Pattern
 
 ```typescript
-export type Money = { readonly amount: number; readonly currency: string }
+export type Money = { readonly amount: number; readonly currency: string };
 
 function assertValidMoney(m: Money): void {
-  if (m.amount < 0) throw new Error("amount must be non-negative")
+  if (m.amount < 0) throw new Error("amount must be non-negative");
 }
 
 export function createMoney(amount: number, currency: string): Money {
-  const money = { amount, currency }
-  assertValidMoney(money)
-  return money
+  const money = { amount, currency };
+  assertValidMoney(money);
+  return money;
 }
 ```
 
 ### Entity + State Transition Pattern
 
 ```typescript
-export type PaymentStatus = "Created" | "Processing" | "Completed" | "Failed"
+export type PaymentStatus = "Created" | "Processing" | "Completed" | "Failed";
 
 export type PaymentTransaction = {
-  readonly id: string
-  readonly amount: Money
-  readonly method: string
-  readonly status: PaymentStatus
-}
+  readonly id: string;
+  readonly amount: Money;
+  readonly method: string;
+  readonly status: PaymentStatus;
+};
 
 const ALLOWED: Record<PaymentStatus, readonly PaymentStatus[]> = {
   Created: ["Processing"],
   Processing: ["Completed", "Failed"],
   Completed: [],
   Failed: [],
-}
+};
 
 function assertCanTransition(from: PaymentStatus, to: PaymentStatus): void {
-  if (!ALLOWED[from].includes(to)) throw new Error(`invalid transition: ${from} -> ${to}`)
+  if (!ALLOWED[from].includes(to))
+    throw new Error(`invalid transition: ${from} -> ${to}`);
 }
 
-export function transitionStatus(tx: PaymentTransaction, to: PaymentStatus): PaymentTransaction {
-  assertCanTransition(tx.status, to)
-  return { ...tx, status: to }
+export function transitionStatus(
+  tx: PaymentTransaction,
+  to: PaymentStatus,
+): PaymentTransaction {
+  assertCanTransition(tx.status, to);
+  return { ...tx, status: to };
 }
 ```
 
@@ -153,11 +157,14 @@ export function transitionStatus(tx: PaymentTransaction, to: PaymentStatus): Pay
 
 ```typescript
 export function satisfiesMaxAmount(amount: Money): boolean {
-  return amount.amount <= 10_000
+  return amount.amount <= 10_000;
 }
 
 export function calculateFee(amount: Money, feeRate: number): Money {
-  return createMoney(Number((amount.amount * feeRate).toFixed(2)), amount.currency)
+  return createMoney(
+    Number((amount.amount * feeRate).toFixed(2)),
+    amount.currency,
+  );
 }
 ```
 
@@ -165,20 +172,22 @@ export function calculateFee(amount: Money, feeRate: number): Money {
 
 ```typescript
 type ProcessPaymentDeps = {
-  repo: PaymentRepository
-  gateway: PaymentGatewayPort
-  bus: EventBusPort
-}
+  repo: PaymentRepository;
+  gateway: PaymentGatewayPort;
+  bus: EventBusPort;
+};
 
 export function makeProcessPayment(deps: ProcessPaymentDeps) {
-  return async function processPayment(cmd: ProcessPaymentCommand): Promise<ProcessPaymentResult> {
+  return async function processPayment(
+    cmd: ProcessPaymentCommand,
+  ): Promise<ProcessPaymentResult> {
     // validate rules
     // compute fee
     // transition entity
     // persist
     // emit event
-    return { status: "accepted" }
-  }
+    return { status: "accepted" };
+  };
 }
 ```
 
@@ -187,20 +196,20 @@ export function makeProcessPayment(deps: ProcessPaymentDeps) {
 ```typescript
 export function makeOrderFulfillmentWorkflow(deps: WorkflowDeps) {
   return async function orderFulfillment(input: WorkflowInput): Promise<void> {
-    const compensation: Array<() => Promise<void>> = []
+    const compensation: Array<() => Promise<void>> = [];
     try {
-      await deps.processPayment(input)
-      compensation.push(() => deps.refundPayment(input))
+      await deps.processPayment(input);
+      compensation.push(() => deps.refundPayment(input));
 
-      await deps.reserveInventory(input)
-      compensation.push(() => deps.releaseInventory(input))
+      await deps.reserveInventory(input);
+      compensation.push(() => deps.releaseInventory(input));
     } catch (err) {
       for (const undo of compensation.reverse()) {
-        await undo().catch(() => {})
+        await undo().catch(() => {});
       }
-      throw err
+      throw err;
     }
-  }
+  };
 }
 ```
 
@@ -210,13 +219,13 @@ Use function-shaped contracts.
 
 ```typescript
 export type PaymentRepository = {
-  findById(id: string): Promise<PaymentTransaction | null>
-  save(tx: PaymentTransaction): Promise<void>
-}
+  findById(id: string): Promise<PaymentTransaction | null>;
+  save(tx: PaymentTransaction): Promise<void>;
+};
 
 export type EventBusPort = {
-  publish(event: DomainEvent): Promise<void>
-}
+  publish(event: DomainEvent): Promise<void>;
+};
 ```
 
 ## Module Boundary Guidelines

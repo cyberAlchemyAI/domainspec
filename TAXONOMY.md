@@ -24,19 +24,19 @@
 
 ### UI Meta-Concepts (11)
 
-| Category              | Meta-Concept    | Purpose                                                | Backend Counterpart |
-| --------------------- | --------------- | ------------------------------------------------------ | ------------------- |
-| **UI Structural**     | Page            | Routable URL view with layout + auth gate              | —                   |
-|                       | Layout          | Reusable page shell (sidebar, header, slot)            | —                   |
-|                       | Component       | Composable UI building block with typed props          | —                   |
-|                       | View Model      | Shaped data optimized for rendering                    | Value Object        |
-| **UI Behavioral**     | Hook            | Encapsulated reactive data/state logic                 | —                   |
-|                       | Form            | Schema-validated user input contract                   | —                   |
-|                       | Action          | User-triggered mutation or navigation                  | —                   |
-|                       | Guard           | Client-side access gate (auth, permissions)            | Rule                |
-| **UI Connective**     | Binding         | Named connection between hook and API endpoint         | Interface           |
-|                       | Adapter         | Data shape transformation at UI boundary               | Mapping             |
-| **UI Presentational** | State Indicator | Visual encoding of domain state (badge, icon, color)   | State Machine / Enum |
+| Category              | Meta-Concept    | Purpose                                              | Backend Counterpart  |
+| --------------------- | --------------- | ---------------------------------------------------- | -------------------- |
+| **UI Structural**     | Page            | Routable URL view with layout + auth gate            | —                    |
+|                       | Layout          | Reusable page shell (sidebar, header, slot)          | —                    |
+|                       | Component       | Composable UI building block with typed props        | —                    |
+|                       | View Model      | Shaped data optimized for rendering                  | Value Object         |
+| **UI Behavioral**     | Hook            | Encapsulated reactive data/state logic               | —                    |
+|                       | Form            | Schema-validated user input contract                 | —                    |
+|                       | Action          | User-triggered mutation or navigation                | —                    |
+|                       | Guard           | Client-side access gate (auth, permissions)          | Rule                 |
+| **UI Connective**     | Binding         | Named connection between hook and API endpoint       | Interface            |
+|                       | Adapter         | Data shape transformation at UI boundary             | Mapping              |
+| **UI Presentational** | State Indicator | Visual encoding of domain state (badge, icon, color) | State Machine / Enum |
 
 ---
 
@@ -537,19 +537,19 @@ _When to use:_ If a domain enum or state machine value needs a visual encoding (
 
 ### UI
 
-| If you're describing...                      | It's a...       | Document in...                  |
-| -------------------------------------------- | --------------- | ------------------------------- |
-| A URL the user can navigate to               | Page            | UI-SPEC.md → Route Table        |
-| A shared page shell (sidebar, header)        | Layout          | UI-SPEC.md → Route Table        |
-| A reusable visual building block             | Component       | UI-SPEC.md → Component Inventory|
-| Shaped data optimized for display            | View Model      | UI-SPEC.md → Data Flow          |
-| Reactive data/state logic for a component    | Hook            | UI-SPEC.md → Data Flow          |
-| Schema-validated user input                  | Form            | UI-SPEC.md → Form Contracts     |
-| A button/submit that changes state or navigates | Action       | UI-SPEC.md → Data Flow          |
-| Client-side auth/permission check            | Guard           | UI-SPEC.md → Route Table        |
-| A hook-to-API-endpoint connection            | Binding         | UI-SPEC.md → Data Flow          |
-| Data reshaping at API/component boundary     | Adapter         | UI-SPEC.md → Data Flow          |
-| Color/badge/icon encoding of domain state    | State Indicator | UI-SPEC.md → State-to-UI Mapping|
+| If you're describing...                         | It's a...       | Document in...                   |
+| ----------------------------------------------- | --------------- | -------------------------------- |
+| A URL the user can navigate to                  | Page            | UI-SPEC.md → Route Table         |
+| A shared page shell (sidebar, header)           | Layout          | UI-SPEC.md → Route Table         |
+| A reusable visual building block                | Component       | UI-SPEC.md → Component Inventory |
+| Shaped data optimized for display               | View Model      | UI-SPEC.md → Data Flow           |
+| Reactive data/state logic for a component       | Hook            | UI-SPEC.md → Data Flow           |
+| Schema-validated user input                     | Form            | UI-SPEC.md → Form Contracts      |
+| A button/submit that changes state or navigates | Action          | UI-SPEC.md → Data Flow           |
+| Client-side auth/permission check               | Guard           | UI-SPEC.md → Route Table         |
+| A hook-to-API-endpoint connection               | Binding         | UI-SPEC.md → Data Flow           |
+| Data reshaping at API/component boundary        | Adapter         | UI-SPEC.md → Data Flow           |
+| Color/badge/icon encoding of domain state       | State Indicator | UI-SPEC.md → State-to-UI Mapping |
 
 ## Common Confusion
 
@@ -567,17 +567,17 @@ _When to use:_ If a domain enum or state machine value needs a visual encoding (
 
 ### UI
 
-| Concept A       | vs. | Concept B       | How to tell apart                                                                        |
-| --------------- | --- | --------------- | ---------------------------------------------------------------------------------------- |
-| Page            | vs. | Layout          | Pages have **routes**. Layouts are **shells** that wrap pages.                           |
-| Component       | vs. | Page            | Components are **embedded**. Pages own a **URL**.                                        |
-| Hook            | vs. | Binding         | Hooks are the **consumer API**. Bindings are the **hook↔endpoint** connection.           |
-| Form            | vs. | Component       | Forms are components with **schema-validated input**. Not all components are forms.       |
-| View Model      | vs. | Value Object    | View models are **display-shaped** (UI). Value objects are **domain-shaped** (backend).  |
-| Adapter         | vs. | Mapping         | Adapters transform at the **UI boundary**. Mappings transform at the **API boundary**.   |
-| Guard           | vs. | Rule            | Guards are **client-side** access gates. Rules are **server-side** operation constraints. |
-| Action          | vs. | Hook            | Actions are **event triggers** (click → mutate). Hooks **encapsulate** the data logic.   |
-| State Indicator | vs. | Enum            | State indicators are **visual encodings**. Enums are **abstract value sets**.             |
+| Concept A       | vs. | Concept B    | How to tell apart                                                                         |
+| --------------- | --- | ------------ | ----------------------------------------------------------------------------------------- |
+| Page            | vs. | Layout       | Pages have **routes**. Layouts are **shells** that wrap pages.                            |
+| Component       | vs. | Page         | Components are **embedded**. Pages own a **URL**.                                         |
+| Hook            | vs. | Binding      | Hooks are the **consumer API**. Bindings are the **hook↔endpoint** connection.            |
+| Form            | vs. | Component    | Forms are components with **schema-validated input**. Not all components are forms.       |
+| View Model      | vs. | Value Object | View models are **display-shaped** (UI). Value objects are **domain-shaped** (backend).   |
+| Adapter         | vs. | Mapping      | Adapters transform at the **UI boundary**. Mappings transform at the **API boundary**.    |
+| Guard           | vs. | Rule         | Guards are **client-side** access gates. Rules are **server-side** operation constraints. |
+| Action          | vs. | Hook         | Actions are **event triggers** (click → mutate). Hooks **encapsulate** the data logic.    |
+| State Indicator | vs. | Enum         | State indicators are **visual encodings**. Enums are **abstract value sets**.             |
 
 ---
 
@@ -614,10 +614,10 @@ This appendix maps each meta-concept to an implementation pattern in a clean, la
 | Hook            | Hooks              | `use{Name}()` custom React hook wrapping TanStack Query             |
 | Form            | Components         | Zod schema + `useForm()` resolver + field render                    |
 | Action          | Components         | Event handler calling mutation hook or `navigate()`                 |
-| Guard           | Components / Pages | Auth context check → redirect or `null` render                     |
-| Binding         | Hooks              | TanStack `useQuery()` / `useMutation()` call configuration         |
+| Guard           | Components / Pages | Auth context check → redirect or `null` render                      |
+| Binding         | Hooks              | TanStack `useQuery()` / `useMutation()` call configuration          |
 | Adapter         | Hooks / Lib        | Pure function transforming API shape to view model shape            |
-| State Indicator | Components         | Badge/icon with `switch` / `Record<Value, VisualConfig>` color map |
+| State Indicator | Components         | Badge/icon with `switch` / `Record<Value, VisualConfig>` color map  |
 
 ### Layer Dependency Rule
 

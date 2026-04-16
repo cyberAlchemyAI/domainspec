@@ -22,25 +22,27 @@ Prerequisites (must already exist):
 - docs/features/{feature}/interfaces.md (HTTP endpoints — at least one with transport: http)
 
 Also reads (when present):
+
 - docs/features/{feature}/operations.md (user actions → forms, mutations)
 - docs/features/{feature}/queries.md (data views → tables, cards)
 - docs/features/{feature}/states.md (state transitions → conditional rendering)
 - docs/features/{feature}/events.md (real-time updates)
 - docs/features/{feature}/STORIES.md (user journeys → page flows)
-- docs/features/{feature}/capabilities/*.md (capability-driven features)
+- docs/features/{feature}/capabilities/\*.md (capability-driven features)
 
 Created/updated by this skill:
+
 - docs/UI-ARCHITECTURE.md (if missing — created via interactive questions)
 - docs/features/{feature}/UI-SPEC.md (per-feature design contract)
 - docs/features/{feature}/TEST-SPEC.md (E2E section appended)
-- {web-app}/e2e/{feature}/*.spec.ts (Playwright test scaffolds)
-- {web-app}/src/pages/{feature}/*.astro (page routes)
-- {web-app}/src/components/{feature}/*.tsx (React components)
+- {web-app}/e2e/{feature}/\*.spec.ts (Playwright test scaffolds)
+- {web-app}/src/pages/{feature}/\*.astro (page routes)
+- {web-app}/src/components/{feature}/\*.tsx (React components)
 - {web-app}/src/hooks/use-{resource}.ts (data hooks)
 - {web-app}/src/lib/query-keys.ts (updated with new keys)
 - {web-app}/src/components/layout/AppSidebar.tsx (updated navigation)
 - docs/features/{feature}/UI-REVIEW.md (visual audit report)
-</context>
+  </context>
 
 <process>
 ## Pre-flight checks
@@ -93,13 +95,8 @@ Created/updated by this skill:
 
 ## Completion
 
-14. Return pipeline summary:
-    - Artifacts created/updated (file paths)
-    - E2E test count (by category)
-    - Build status (pass/fail)
-    - Audit verdict (PASS/FLAG/BLOCK per pillar, or skipped)
-    - Concept coverage (which SPEC concepts now have UI representation)
-</process>
+14. Return pipeline summary: - Artifacts created/updated (file paths) - E2E test count (by category) - Build status (pass/fail) - Audit verdict (PASS/FLAG/BLOCK per pillar, or skipped) - Concept coverage (which SPEC concepts now have UI representation)
+    </process>
 
 <error-handling>
 - Missing SPEC.md or interfaces.md → BLOCK with clear message naming the missing file.

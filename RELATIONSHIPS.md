@@ -25,27 +25,27 @@ Every concept in the system connects to other concepts through typed relationshi
 
 ### Intra-UI Edges (8)
 
-| Edge        | From → To                       | Description                                                  |
-| ----------- | -------------------------------- | ------------------------------------------------------------ |
-| `renders`   | Page → Component[]               | A page renders components as interactive islands             |
-| `wraps`     | Layout → Page[]                  | A layout wraps pages providing the visual shell              |
-| `composes`  | Component → Component[]          | A component includes child components                        |
-| `consumes`  | Component → Hook                 | A component consumes a hook for data/state                   |
-| `submits`   | Form → Action                    | A form validates input then delegates to an action           |
-| `shapes`    | Adapter → View Model             | An adapter transforms API data into a view model             |
-| `protects`  | Guard → Page                     | A guard controls access to a page                            |
-| `displays`  | Component → View Model           | A component renders data from a view model                   |
+| Edge       | From → To               | Description                                        |
+| ---------- | ----------------------- | -------------------------------------------------- |
+| `renders`  | Page → Component[]      | A page renders components as interactive islands   |
+| `wraps`    | Layout → Page[]         | A layout wraps pages providing the visual shell    |
+| `composes` | Component → Component[] | A component includes child components              |
+| `consumes` | Component → Hook        | A component consumes a hook for data/state         |
+| `submits`  | Form → Action           | A form validates input then delegates to an action |
+| `shapes`   | Adapter → View Model    | An adapter transforms API data into a view model   |
+| `protects` | Guard → Page            | A guard controls access to a page                  |
+| `displays` | Component → View Model  | A component renders data from a view model         |
 
 ### Cross-Layer Edges: UI ↔ Backend (6)
 
-| Edge        | From → To                         | Description                                                  |
-| ----------- | --------------------------------- | ------------------------------------------------------------ |
-| `fetches`   | Binding → Query                   | A binding fetches data from a backend query                  |
-| `mutates`   | Binding → Operation               | A binding invokes a backend operation                        |
-| `reflects`  | State Indicator → State Machine   | A UI indicator mirrors a domain lifecycle state              |
-| `derives`   | View Model → Entity               | A view model is derived from entity fields                   |
-| `contracts` | Form → Interface                  | A form schema aligns with an interface endpoint              |
-| `mirrors`   | Guard → Rule                      | A client-side guard mirrors a backend access rule            |
+| Edge        | From → To                       | Description                                       |
+| ----------- | ------------------------------- | ------------------------------------------------- |
+| `fetches`   | Binding → Query                 | A binding fetches data from a backend query       |
+| `mutates`   | Binding → Operation             | A binding invokes a backend operation             |
+| `reflects`  | State Indicator → State Machine | A UI indicator mirrors a domain lifecycle state   |
+| `derives`   | View Model → Entity             | A view model is derived from entity fields        |
+| `contracts` | Form → Interface                | A form schema aligns with an interface endpoint   |
+| `mirrors`   | Guard → Rule                    | A client-side guard mirrors a backend access rule |
 
 ---
 
@@ -336,6 +336,7 @@ The edges form navigation paths that mirror how humans think about a system:
 ### Full-Stack Trace (End to End)
 
 **"Trace a user creating a player from click to database"**
+
 ```
 /players/new (Page)
   → renders CreatePlayerForm (Component / Form)
@@ -347,6 +348,7 @@ The edges form navigation paths that mirror how humans think about a system:
 ```
 
 **"Trace settlement data from database to screen"**
+
 ```
 Player + MakeupPolicy + Stats (Entities)
   → queries GetSettlementPreview (Query)
@@ -366,25 +368,25 @@ In `registry.md`, the concept graph lists all edges as a flat table:
 ```markdown
 ## Concept Graph
 
-| From                       | Edge      | To                       |
-| -------------------------- | --------- | ------------------------ |
-| payment.PaymentTransaction | contains  | shared.Money             |
-| payment.ProcessPayment     | produces  | payment.PaymentInitiated |
-| payment.MaxAmountRule      | enforces  | payment.ProcessPayment   |
-| payment.PaymentAPI         | exposes   | payment.ProcessPayment   |
+| From                       | Edge     | To                       |
+| -------------------------- | -------- | ------------------------ |
+| payment.PaymentTransaction | contains | shared.Money             |
+| payment.ProcessPayment     | produces | payment.PaymentInitiated |
+| payment.MaxAmountRule      | enforces | payment.ProcessPayment   |
+| payment.PaymentAPI         | exposes  | payment.ProcessPayment   |
 ```
 
 ### UI Concept Graph (same table, ui-prefixed IDs)
 
 ```markdown
-| From                                | Edge      | To                                |
-| ----------------------------------- | --------- | --------------------------------- |
-| ui.player-management./players       | renders   | ui.player-management.PlayersTable |
-| ui.player-management.PlayersTable   | consumes  | ui.player-management.usePlayers   |
-| ui.player-management.usePlayers     | fetches   | player-management.GetAllPlayers   |
-| ui.player-management.CreatePlayerForm | contracts | player-management.PlayerAPI       |
-| ui.player-management.PlayerStatusBadge | reflects | player-management.PlayerStatus   |
-| ui.DashboardLayout                  | wraps     | ui.player-management./players     |
+| From                                   | Edge      | To                                |
+| -------------------------------------- | --------- | --------------------------------- |
+| ui.player-management./players          | renders   | ui.player-management.PlayersTable |
+| ui.player-management.PlayersTable      | consumes  | ui.player-management.usePlayers   |
+| ui.player-management.usePlayers        | fetches   | player-management.GetAllPlayers   |
+| ui.player-management.CreatePlayerForm  | contracts | player-management.PlayerAPI       |
+| ui.player-management.PlayerStatusBadge | reflects  | player-management.PlayerStatus    |
+| ui.DashboardLayout                     | wraps     | ui.player-management./players     |
 ```
 
 Backend concepts use `{feature}.{Concept}` IDs. UI concepts use `ui.{feature}.{Concept}` IDs. Shared UI concepts (layouts, guards) use `ui.{Concept}` without a feature prefix.
