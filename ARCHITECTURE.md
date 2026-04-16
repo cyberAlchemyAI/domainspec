@@ -306,6 +306,6 @@ Production observability metrics are derived from the same documentation that dr
 - **Business Effectiveness**: capability KPIs, funnel metrics from user journeys
 - **Financial Integrity**: mandatory for `pillar: finance` — transaction reconciliation, duplicate detection
 
-Metrics use the naming convention `{feature}.{concept}.{metric_name}` with Prometheus-style labels.
+Metrics follow OpenTelemetry semantic conventions: dot-separated names (`{domain_area}.{semantic_name}`), typed instruments (Counter, Histogram, Gauge, UpDownCounter), and `feature` as an attribute — not a name prefix.
 
 Each metric carries `@source`, `@rule`, and `@constraint` annotations for traceability back to the doc section that mandates it.

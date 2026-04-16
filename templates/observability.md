@@ -10,7 +10,8 @@ status: draft
 # {FeatureName} — Observability Spec
 
 > Derived from feature docs using [OBSERVABILITY.md](../../domainspec/OBSERVABILITY.md) derivation rules.
-> Every metric traces to a specific doc section.
+> Every metric traces to a specific doc section. Instrumented via OpenTelemetry API.
+> Meter scope: `{project-name}`. All instruments carry `feature: {feature-id}` as an attribute.
 
 ## Domain Fidelity Metrics
 
@@ -22,24 +23,28 @@ status: draft
 
 **Transition counters (O1):**
 
-| From | To | Event | Metric |
-|------|-----|-------|--------|
-| | | | `{feature}.{Entity}.transition.total{from, to, event}` |
+| From | To | Event | Attributes |
+|------|-----|-------|-----------|
+| | | | `{feature, entity, from, to, event}` |
 
 **Invalid transition counter:**
 ```yaml
-metric: {feature}.{Entity}.invalid_transition.total
-labels: [from, attempted_event, error_code]
-alert: any increment → P0
-source: states.md#{EntityName}
+# @source states.md#{EntityName}
+- name: state.invalid_transition
+  instrument: Counter
+  unit: "{attempt}"
+  attributes: [feature, entity, from, attempted_event, error_code]
+  alert: any increment → P0
 ```
 
 **State distribution (O2):**
 ```yaml
-metric: {feature}.{Entity}.state_distribution
-labels: [state]
-states: [list all states from states.md]
-alert: accumulation in non-terminal state > {threshold} → P1
+- name: state.population
+  instrument: UpDownCounter
+  unit: "{entity}"
+  attributes: [feature, entity, state]
+  states: [list all states from states.md]
+  alert: accumulation in non-terminal state > {threshold} → P1
 ```
 
 **Invariant monitors (O3):**
@@ -56,32 +61,38 @@ alert: accumulation in non-terminal state > {threshold} → P1
 
 **Base metrics (O4):**
 ```yaml
-- {feature}.{Operation}.executed.total
-- {feature}.{Operation}.succeeded.total
-- {feature}.{Operation}.failed.total{error_code, rule_violated}
-- {feature}.{Operation}.duration.seconds  # histogram
+# @source operations.md#{OperationName}
+- name: operation.invocation
+  instrument: Counter
+  unit: "{invocation}"
+  attributes: [feature, operation, result]  # result: success | error
+
+- name: operation.duration
+  instrument: Histogram
+  unit: "s"
+  attributes: [feature, operation]
 ```
 
 **Rule violation rates (O5):**
 
-| Rule | Expression | Metric | Alert Threshold |
-|------|-----------|--------|-----------------|
-| R1 | | `rule_violation.total{rule="R1"}` | |
-| R2 | | `rule_violation.total{rule="R2"}` | |
+| Rule | Expression | Instrument | Alert Threshold |
+|------|-----------|-----------|-----------------|
+| R1 | | `rule.violation` Counter `{feature, operation, rule_id="R1"}` | |
+| R2 | | `rule.violation` Counter `{feature, operation, rule_id="R2"}` | |
 
 **Calculation drift (O6):**
 
 <!-- Only if operation has calculations -->
 
-| Calc | Formula | Drift Metric | Frequency | Alert |
-|------|---------|-------------|-----------|-------|
-| C1 | | `calculation_drift.percentage{calc="C1"}` | | drift > 1% → P0 |
+| Calc | Formula | Instrument | Frequency | Alert |
+|------|---------|-----------|-----------|-------|
+| C1 | | `calculation.drift` Histogram `{feature, calculation_id="C1"}` | | drift > 0 → P0 |
 
 **Postcondition verification (O7):**
 
-| Postcondition | Verified Metric | Violated Metric | Alert |
-|--------------|----------------|----------------|-------|
-| | `.postcondition.verified.total` | `.postcondition.violated.total` | any violated → P1 |
+| Postcondition | Instrument | Alert |
+|--------------|-----------|-------|
+| | `postcondition.check` Counter `{feature, operation, postcondition_id, result}` | any result=violated → P1 |
 
 ---
 
@@ -89,7 +100,7 @@ alert: accumulation in non-terminal state > {threshold} → P1
 
 ### Endpoint SLOs (O8)
 
-<!-- One row per endpoint in interfaces.md -->
+<!-- Uses OTel HTTP semantic conventions: http.server.request.duration + custom `feature` attribute -->
 
 | Endpoint | Availability SLO | Latency p99 SLO | Throughput Baseline |
 |----------|-----------------|-----------------|-------------------|
@@ -99,10 +110,10 @@ alert: accumulation in non-terminal state > {threshold} → P1
 
 <!-- Only for operations with idempotency constraints -->
 
-| Rule | Constraint | Metric | Alert |
-|------|-----------|--------|-------|
-| | | `idempotency_violation` | any > 0 → P0 |
-| | | `idempotency_deduplicated.total` | informational |
+| Rule | Constraint | Instrument | Alert |
+|------|-----------|-----------|-------|
+| | | `idempotency.violation` Gauge `{feature, operation, rule_id}` | any > 0 → P0 |
+| | | `idempotency.dedup` Counter `{feature, operation, rule_id}` | informational |
 
 ### Event Flow (O10)
 
@@ -111,6 +122,13 @@ alert: accumulation in non-terminal state > {threshold} → P1
 | Event | Producer | Consumers | Lag SLO |
 |-------|---------|-----------|---------|
 | | | | ≤ s |
+
+```yaml
+# @source events.md
+- name: event.emit      # Counter {feature, event_type, producer}
+- name: event.consume    # Counter {feature, event_type, consumer}
+- name: event.consumer.lag  # Histogram (s) {feature, event_type, consumer}
+```
 
 ### Query Performance (O11)
 
@@ -131,11 +149,13 @@ alert: accumulation in non-terminal state > {threshold} → P1
 #### {CapabilityName}
 
 ```yaml
-metric: {feature}.{capability}.{kpi_name}
-type: counter | gauge | histogram
-business_question: "What does this answer?"
-healthy_range: {range or trend direction}
-alert: deviation condition → P2
+- name: business.{kpi_name}
+  instrument: Counter | Gauge | Histogram
+  unit: "{unit}"
+  attributes: [feature, capability]
+  business_question: "What does this answer?"
+  healthy_range: "{range or trend direction}"
+  alert: deviation condition → P2
 ```
 
 ### Funnel Metrics (O14)
@@ -144,18 +164,20 @@ alert: deviation condition → P2
 
 #### {JourneyName} Funnel
 
-| Step | Metric | Expected Conversion |
-|------|--------|-------------------|
-| 1. | `funnel.{journey}.step.total{step="1", outcome}` | — |
-| 2. | `funnel.{journey}.step.total{step="2", outcome}` | ≥ % |
-| N. | | |
+| Step | Instrument | Expected Conversion |
+|------|-----------|-------------------|
+| 1. | `funnel.step` Counter `{feature, journey, step_name="1", outcome}` | — |
+| 2. | `funnel.step` Counter `{feature, journey, step_name="2", outcome}` | ≥ % |
 
 **Conversion rate:**
 ```yaml
-metric: {feature}.funnel.{journey}.conversion_rate
-formula: step_N_completed / step_1_started
-window: 7d rolling
-alert: rate drops > 10% from baseline → P2
+- name: funnel.conversion_rate
+  instrument: Gauge
+  unit: "1"  # ratio
+  attributes: [feature, journey]
+  formula: step_N_completed / step_1_started
+  window: 7d rolling
+  alert: rate drops > 10% from baseline → P2
 ```
 
 ---
@@ -167,20 +189,26 @@ alert: rate drops > 10% from baseline → P2
 ### Transaction Integrity (O15)
 
 ```yaml
-reconciliation:
-  metric: {feature}.reconciliation.balance_mismatch
+# @rule O15: Transaction Integrity
+- name: reconciliation.mismatch
+  instrument: Gauge
+  unit: "{currency_minor}"
+  attributes: [feature, entity]
   check: |computed - stored|
   frequency: hourly
   alert: mismatch > 0 → P0
 
-duplicate_detection:
-  metric: {feature}.transaction.duplicate.total
+- name: transaction.duplicate
+  instrument: Counter
+  unit: "{duplicate}"
+  attributes: [feature, transaction_type]
   check: group by idempotency_key, count > 1
   alert: any increment → P0
 
-monetary_exposure:
-  metric: {feature}.exposure.amount
-  unit: currency
+- name: exposure.amount
+  instrument: Gauge
+  unit: "{currency_minor}"
+  attributes: [feature]
   alert: exposure > 0 → P0
 ```
 
@@ -189,12 +217,13 @@ monetary_exposure:
 <!-- Only for settlement/payout features -->
 
 ```yaml
-total_settlements: counter
-total_payout_amount: counter (currency sum)
-total_makeup_applied: counter (currency sum)
-avg_settlement_value: gauge
-settlement_error_rate: ratio (failed / total)
-profit_recalculation_drift: gauge (recompute vs stored)
+# @rule O16: Settlement Cycle
+- name: settlement.cycle.invocations     # Counter {feature}
+- name: settlement.cycle.payout_amount   # Counter {currency_minor} {feature}
+- name: settlement.cycle.makeup_applied  # Counter {currency_minor} {feature}
+- name: settlement.cycle.avg_value       # Gauge {currency_minor} {feature}
+- name: settlement.cycle.error_rate      # Gauge (ratio) {feature}
+- name: settlement.recalculation.drift   # Gauge {currency_minor} {feature, calculation_id}
 ```
 
 ---

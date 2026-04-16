@@ -6,6 +6,28 @@
 The inner loop (tests) validates that code matches the spec at build time.
 The **outer loop** (observability) validates that the system behaves correctly in production — catching drift, business anomalies, and financial risk that tests cannot cover.
 
+## OTel Instrumentation Standard
+
+All metrics use the [OpenTelemetry API](https://opentelemetry.io/) for instrumentation. OTel is vendor-neutral — metrics export to Prometheus, Grafana, Datadog, or any OTLP-compatible backend without code changes.
+
+**Meter scope:** One Meter per project, named after the project (e.g., `poker-team`). The Meter carries the project identity; metric names carry feature/module identity.
+
+**Instruments:**
+
+| OTel Instrument | Use Case | DomainSpec Mapping |
+|-----------------|----------|-------------------|
+| `Counter` | Monotonically increasing count | Transitions, invocations, rule violations, events |
+| `UpDownCounter` | Value that goes up and down | State population, active workflows |
+| `Histogram` | Distribution of values | Duration, drift magnitude, result sizes |
+| `Gauge` | Point-in-time snapshot | Invariant violations, exposure amounts, reconciliation mismatches |
+
+**Attributes** (not labels): Low-cardinality key-value pairs attached to each measurement. Feature, entity, operation, and rule are attributes — not embedded in the metric name.
+
+**Reuse OTel Semantic Conventions** where they exist:
+- HTTP: `http.server.request.duration`, `http.server.active_requests` ([HTTP semconv](https://opentelemetry.io/docs/specs/semconv/http/))
+- Messaging: `messaging.process.duration` ([Messaging semconv](https://opentelemetry.io/docs/specs/semconv/messaging/))
+- Custom domain metrics use the naming convention defined in [Metric Naming Convention](#metric-naming-convention).
+
 ## Pipeline Overview
 
 ```mermaid
@@ -56,23 +78,27 @@ Each state machine transition documented in `states.md` produces a counter that 
 
 | Transition Table Row | Metric |
 |---------------------|--------|
-| `Created → Processing (ProcessPayment)` | `state_transition_total{feature, entity, from="Created", to="Processing", event="ProcessPayment"}` |
+| `Created → Processing (ProcessPayment)` | `state.transition` with attributes `{feature, entity, from="Created", to="Processing", event="ProcessPayment"}` |
 
 **Template:**
-```
-counter: {feature}.{entity}.transition.total
-labels: from, to, event
-increment: on every successful state transition
+```yaml
+- name: state.transition
+  instrument: Counter
+  unit: "{transition}"
+  description: Successful state transitions
+  attributes: [feature, entity, from, to, event]
 ```
 
 **Derived monitors:**
 - **Invalid transition attempts** — counter for transitions NOT in the transition table. Any increment = domain fidelity violation.
 - **Terminal state re-entry** — counter for attempts to transition from terminal states. Must remain 0.
 
-```
-counter: {feature}.{entity}.invalid_transition.total
-labels: from, attempted_event, error_code
-alert: any increment triggers P0 alert
+```yaml
+- name: state.invalid_transition
+  instrument: Counter
+  unit: "{attempt}"
+  attributes: [feature, entity, from, attempted_event, error_code]
+  alert: any increment triggers P0 alert
 ```
 
 #### Rule O2: State Distribution Gauge
@@ -81,9 +107,12 @@ alert: any increment triggers P0 alert
 
 Track the current count of entities in each state. Validates that the system's population distribution matches expected steady-state ratios.
 
-```
-gauge: {feature}.{entity}.state_distribution
-labels: state
+```yaml
+- name: state.population
+  instrument: UpDownCounter
+  unit: "{entity}"
+  description: Current count of entities per state
+  attributes: [feature, entity, state]
 ```
 
 **Derived monitors:**
@@ -100,10 +129,13 @@ Invariants documented in `states.md` are checked at test time (TEST-PIPELINE rul
 |-----------|---------|
 | `I1: status == Completed → gatewayRef != null` | Periodic scan: count entities where `status=Completed AND gatewayRef IS NULL`. Must be 0. |
 
-```
-gauge: {feature}.{entity}.invariant_violation
-labels: invariant_id, expression
-alert: any value > 0 triggers P0 alert
+```yaml
+- name: invariant.violation
+  instrument: Gauge
+  unit: "{entity}"
+  description: Count of entities violating invariant (must be 0)
+  attributes: [feature, entity, invariant_id, expression]
+  alert: any value > 0 triggers P0 alert
 ```
 
 ---
@@ -118,18 +150,24 @@ Each operation documented in `operations.md` produces:
 
 | Metric | Type | Purpose |
 |--------|------|---------|
-| `{feature}.{operation}.executed.total` | counter | How often this operation runs |
-| `{feature}.{operation}.succeeded.total` | counter | Successful completions |
-| `{feature}.{operation}.failed.total` | counter | Failures by error code |
-| `{feature}.{operation}.duration.seconds` | histogram | Execution latency distribution |
+| `{feature}.{operation}.executed.total` | Counter | How often this operation runs |
+| `{feature}.{operation}.succeeded.total` | Counter | Successful completions |
+| `{feature}.{operation}.failed.total` | Counter | Failures by error code |
+| `{feature}.{operation}.duration.seconds` | Histogram | Execution latency distribution |
 
-```
-counter: {feature}.{operation}.executed.total
-counter: {feature}.{operation}.succeeded.total
-counter: {feature}.{operation}.failed.total
-  labels: error_code, rule_violated
-histogram: {feature}.{operation}.duration.seconds
-  buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+```yaml
+- name: operation.invocation
+  instrument: Counter
+  unit: "{invocation}"
+  description: Operation execution count by result
+  attributes: [feature, operation, result]  # result: success | error
+
+- name: operation.duration
+  instrument: Histogram
+  unit: "s"
+  description: Operation execution latency
+  attributes: [feature, operation]
+  bucket_advisory: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
 ```
 
 #### Rule O5: Rule Violation Rates
@@ -140,7 +178,7 @@ Each rule `R1`, `R2`, etc. documented in an operation produces a counter trackin
 
 | Rule | Metric |
 |------|--------|
-| `R1: amount.value > 0` | `{feature}.{operation}.rule_violation.total{rule="R1", expression="amount.value > 0"}` |
+| `R1: amount.value > 0` | `rule.violation` with attributes `{feature, operation, rule="R1", expression="amount.value > 0"}` |
 
 **Derived monitors:**
 - **Rule never fires** — if a documented rule has 0 violations over a sustained period, either the system perfectly prevents invalid input (good) or the rule is dead code (bad). Flag for review.
@@ -157,14 +195,18 @@ Calculations (`C1`, `C2`, etc.) have documented formulas. The drift monitor comp
 | `C1: totalProfit = sum(statRecords.profit)` | Periodic: recompute C1 from source data, compare with stored result. Difference > 0 = drift. |
 | `C4: makeup = applyMakeupPolicy(debt, profit, rakeback, split)` | Periodic: recompute makeup from inputs, compare with applied amount. |
 
-```
-gauge: {feature}.{calculation}.drift.absolute
-  labels: calculation_id
-  alert: any value != 0 triggers P1 alert
+```yaml
+- name: calculation.drift
+  instrument: Histogram
+  unit: "{unit}"  # currency unit for financial, raw for others
+  description: Absolute drift between computed and stored value
+  attributes: [feature, calculation_id]
 
-gauge: {feature}.{calculation}.drift.percentage
-  labels: calculation_id
-  alert: value > 0.01 (1%) triggers P0 alert
+- name: calculation.drift.alert
+  instrument: Gauge
+  unit: "1"  # ratio
+  description: Percentage drift — triggers P0 when > 1%
+  attributes: [feature, calculation_id]
 ```
 
 **Why this matters:** Calculation drift catches the most dangerous class of production bugs — the system appears to work correctly, but the numbers are wrong. In financial systems, this directly causes monetary loss.
@@ -180,12 +222,13 @@ Each postcondition bullet in an operation is verified after execution. This catc
 | "Settlement event created" | After GenerateSettlement: verify PAYOUT/MAKEUP_APPLIED record exists within 5s |
 | "Email sent to candidate" | After ReviewCandidate(APPROVE): verify notification dispatched |
 
-```
-counter: {feature}.{operation}.postcondition.verified.total
-  labels: postcondition_id
-counter: {feature}.{operation}.postcondition.violated.total
-  labels: postcondition_id
-  alert: any increment triggers P1 alert
+```yaml
+- name: postcondition.check
+  instrument: Counter
+  unit: "{check}"
+  description: Postcondition verification outcomes
+  attributes: [feature, operation, postcondition_id, result]  # result: verified | violated
+  alert: any result=violated increment triggers P1 alert
 ```
 
 ---
@@ -202,13 +245,22 @@ Each API endpoint documented in `interfaces.md` produces standard RED (Rate, Err
 |----------|---------|
 | `POST /settlements` | request_rate, error_rate (by status code), p50/p95/p99 latency |
 
+Reuse [OTel HTTP semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/) directly:
+
+```yaml
+# Standard OTel HTTP semconv — no custom metrics needed
+- name: http.server.request.duration   # OTel semconv
+  instrument: Histogram
+  unit: "s"
+  attributes: [http.request.method, url.path, http.response.status_code, feature]
+
+- name: http.server.active_requests    # OTel semconv
+  instrument: UpDownCounter
+  unit: "{request}"
+  attributes: [http.request.method, url.path, feature]
 ```
-counter: http.request.total
-  labels: method, path, status_code, feature
-histogram: http.request.duration.seconds
-  labels: method, path, feature
-  buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
-```
+
+Add `feature` as a custom attribute to standard HTTP instruments for per-feature SLO slicing.
 
 **SLO template:**
 ```
@@ -227,20 +279,29 @@ When `operations.md` documents idempotency constraints (e.g., "at most one PAYOU
 | `R4: count(PAYOUT, playerId, endDate) <= 1` | Periodic scan: query for duplicates. Count > 0 = P0. |
 | `R5: count(MAKEUP_APPLIED, playerId, endDate) <= 1` | Same pattern. |
 
-```
-gauge: {feature}.{operation}.idempotency_violation
-  labels: rule_id, constraint
+```yaml
+- name: idempotency.violation
+  instrument: Gauge
+  unit: "{violation}"
+  description: Detected idempotency constraint breaches
+  attributes: [feature, operation, rule_id, constraint]
   alert: any value > 0 triggers P0 alert (indicates double-processing)
 
-counter: {feature}.{operation}.idempotency_deduplicated.total
-  labels: rule_id
-  purpose: tracks how often deduplication logic prevents a repeat
+- name: idempotency.dedup
+  instrument: Counter
+  unit: "{dedup}"
+  description: Deduplication logic prevented a repeat execution
+  attributes: [feature, operation, rule_id]
 ```
 
 **Financial impact estimation:**
-```
-monetary_exposure = idempotency_violation_count × avg_transaction_value
-alert: monetary_exposure > 0 triggers P0 alert with estimated dollar impact
+```yaml
+- name: exposure.amount
+  instrument: Gauge
+  unit: "{currency_minor}"  # e.g. BRL cents
+  description: Estimated monetary exposure from idempotency violations
+  attributes: [feature, operation]
+  alert: value > 0 triggers P0 alert with estimated amount in alert body
 ```
 
 ---
@@ -257,13 +318,21 @@ Each domain event documented in `events.md` produces metrics tracking the full f
 |-------|---------|
 | `PaymentCompleted` | emitted.total, consumed.total, consumer_lag.seconds |
 
-```
-counter: {feature}.event.emitted.total
-  labels: event_type, producer
-counter: {feature}.event.consumed.total
-  labels: event_type, consumer
-histogram: {feature}.event.consumer_lag.seconds
-  labels: event_type, consumer
+```yaml
+- name: event.emit
+  instrument: Counter
+  unit: "{event}"
+  attributes: [feature, event_type, producer]
+
+- name: event.consume
+  instrument: Counter
+  unit: "{event}"
+  attributes: [feature, event_type, consumer]
+
+- name: event.consumer.lag
+  instrument: Histogram
+  unit: "s"
+  attributes: [feature, event_type, consumer]
 ```
 
 **Derived monitors:**
@@ -279,13 +348,21 @@ histogram: {feature}.event.consumer_lag.seconds
 
 **Every query = latency + result size + cache hit metrics.**
 
-```
-histogram: {feature}.query.duration.seconds
-  labels: query_name, cache_hit
-gauge: {feature}.query.result_size
-  labels: query_name
-counter: {feature}.query.cache.hit.total
-counter: {feature}.query.cache.miss.total
+```yaml
+- name: query.duration
+  instrument: Histogram
+  unit: "s"
+  attributes: [feature, query_name, cache_hit]
+
+- name: query.result_size
+  instrument: Gauge
+  unit: "{row}"
+  attributes: [feature, query_name]
+
+- name: query.cache
+  instrument: Counter
+  unit: "{operation}"
+  attributes: [feature, query_name, result]  # result: hit | miss
 ```
 
 **Derived monitors:**
@@ -301,16 +378,26 @@ counter: {feature}.query.cache.miss.total
 
 **Every workflow = completion rate + step duration + compensation metrics.**
 
-```
-counter: {feature}.workflow.started.total
-counter: {feature}.workflow.completed.total
-counter: {feature}.workflow.failed.total
-  labels: failed_at_step
-counter: {feature}.workflow.compensated.total
-  labels: compensated_step
-histogram: {feature}.workflow.duration.seconds
-histogram: {feature}.workflow.step.duration.seconds
-  labels: step_name
+```yaml
+- name: workflow.invocation
+  instrument: Counter
+  unit: "{invocation}"
+  attributes: [feature, workflow, result]  # result: completed | failed | compensated
+
+- name: workflow.duration
+  instrument: Histogram
+  unit: "s"
+  attributes: [feature, workflow]
+
+- name: workflow.step.duration
+  instrument: Histogram
+  unit: "s"
+  attributes: [feature, workflow, step_name]
+
+- name: workflow.failed
+  instrument: Counter
+  unit: "{failure}"
+  attributes: [feature, workflow, failed_at_step]
 ```
 
 ---
@@ -335,12 +422,14 @@ The derivation follows the capability's **business intent** (from SPEC overview)
 | Check/Validate (eligibility) | **Pass rate & fairness** | eligible/ineligible ratio, criteria distribution |
 
 **Template:**
-```
+```yaml
 # For each capability in SPEC.md:
-business_metric: {feature}.{capability}.{metric_name}
-  type: counter | gauge | histogram
+- name: business.{metric_name}
+  instrument: Counter | Gauge | Histogram
+  unit: "{unit}"
+  attributes: [feature, capability]
   business_question: "What does this metric answer?"
-  healthy_range: {min}–{max} or trend direction
+  healthy_range: "{min}–{max} or trend direction"
   alert: deviation from healthy range
 ```
 
@@ -350,11 +439,17 @@ business_metric: {feature}.{capability}.{metric_name}
 
 User stories in STORIES.md that describe multi-step flows produce funnel metrics tracking drop-off at each step.
 
-```
-counter: {feature}.funnel.{journey}.step.total
-  labels: step_name, outcome={completed|abandoned|error}
+```yaml
+- name: funnel.step
+  instrument: Counter
+  unit: "{step}"
+  attributes: [feature, journey, step_name, outcome]  # outcome: completed | abandoned | error
 
-derived: {feature}.funnel.{journey}.conversion_rate
+# Derived:
+- name: funnel.conversion_rate
+  instrument: Gauge
+  unit: "1"  # ratio
+  attributes: [feature, journey]
   formula: step_N_completed / step_1_started
   window: 7d rolling
 ```
@@ -371,9 +466,11 @@ Features that handle money (`pillar: finance` in SPEC frontmatter) have addition
 
 ```yaml
 # Mandatory for finance-pillar features:
-reconciliation:
-  metric: {feature}.reconciliation.balance_mismatch
-  type: gauge
+- name: reconciliation.mismatch
+  instrument: Gauge
+  unit: "{currency_minor}"
+  description: Absolute difference between computed and stored balance
+  attributes: [feature, entity]
   check: |
     computed_balance = replay all transactions from event log
     stored_balance = current balance in database
@@ -381,20 +478,22 @@ reconciliation:
   frequency: hourly
   alert: mismatch > 0 → P0
 
-duplicate_detection:
-  metric: {feature}.transaction.duplicate.total
-  type: counter
+- name: transaction.duplicate
+  instrument: Counter
+  unit: "{duplicate}"
+  description: Detected duplicate transactions
+  attributes: [feature, transaction_type]
   check: |
     group transactions by idempotency_key
     count groups with size > 1
   alert: any increment → P0
 
-monetary_exposure:
-  metric: {feature}.exposure.amount
-  type: gauge
-  unit: currency
-  check: sum of potentially duplicated transaction amounts
-  alert: exposure > 0 → P0 with dollar amount in alert body
+- name: exposure.amount
+  instrument: Gauge
+  unit: "{currency_minor}"
+  description: Total monetary exposure from detected anomalies
+  attributes: [feature]
+  alert: exposure > 0 → P0 with amount in alert body
 ```
 
 ### Rule O16: Settlement Cycle Metrics
@@ -402,18 +501,40 @@ monetary_exposure:
 **Every settlement/payout operation = cycle-specific monitors.**
 
 ```yaml
-settlement_cycle:
-  total_settlements: counter
-  total_payout_amount: counter (sum of payouts)
-  total_makeup_applied: counter (sum of debt recovered)
-  avg_settlement_value: gauge
-  settlement_error_rate: ratio (failed / total)
-  
-  # Drift detection:
-  profit_recalculation_drift: gauge
-    check: recompute all C1-C4 calculations, compare with stored values
-    frequency: after each settlement batch
-    alert: drift > 0 → P0
+- name: settlement.cycle.invocations
+  instrument: Counter
+  unit: "{settlement}"
+  attributes: [feature]
+
+- name: settlement.cycle.payout_amount
+  instrument: Counter
+  unit: "{currency_minor}"
+  attributes: [feature]
+
+- name: settlement.cycle.makeup_applied
+  instrument: Counter
+  unit: "{currency_minor}"
+  attributes: [feature]
+
+- name: settlement.cycle.avg_value
+  instrument: Gauge
+  unit: "{currency_minor}"
+  attributes: [feature]
+
+- name: settlement.cycle.error_rate
+  instrument: Gauge
+  unit: "1"  # ratio: failed / total
+  attributes: [feature]
+
+# Drift detection:
+- name: settlement.recalculation.drift
+  instrument: Gauge
+  unit: "{currency_minor}"
+  description: Drift between recomputed and stored settlement values
+  attributes: [feature, calculation_id]
+  check: recompute all C1-C4 calculations, compare with stored values
+  frequency: after each settlement batch
+  alert: drift > 0 → P0
 ```
 
 ---
@@ -443,19 +564,50 @@ settlement_cycle:
 
 ## Metric Naming Convention
 
-```
-{feature}.{concept}.{metric_name}
+Metric names follow [OTel Naming Guidelines](https://opentelemetry.io/docs/specs/semconv/general/metrics/):
 
-Examples:
-  financial_settlement.GenerateSettlement.executed.total
-  financial_settlement.GenerateSettlement.rule_violation.total{rule="R4"}
-  financial_settlement.PayoutTransaction.idempotency_violation
-  player_onboarding.SubmitCandidate.funnel.conversion_rate
-  player_onboarding.CandidateStatus.state_distribution{state="SUBMITTED"}
-  player_stats.RecordPlayerStats.calculation_drift.absolute{calc="C1"}
+- **Dots as separators** — `state.transition`, not `state_transition`
+- **Singular nouns** — `event.emit`, not `events.emitted`
+- **No units in names** — unit is a separate field on the instrument
+- **No feature in name** — feature is an attribute, not a name prefix
+
+```
+Pattern: {domain_area}.{metric_semantic_name}
+
+Standard OTel (reused as-is):
+  http.server.request.duration           # OTel HTTP semconv
+  http.server.active_requests            # OTel HTTP semconv
+  messaging.process.duration             # OTel Messaging semconv
+
+Custom DomainSpec instruments:
+  state.transition                       # attrs: feature, entity, from, to, event
+  state.population                       # attrs: feature, entity, state
+  invariant.violation                    # attrs: feature, entity, invariant_id
+  operation.invocation                   # attrs: feature, operation, result
+  operation.duration                     # attrs: feature, operation
+  rule.violation                         # attrs: feature, operation, rule_id
+  calculation.drift                      # attrs: feature, calculation_id
+  postcondition.check                    # attrs: feature, operation, postcondition_id, result
+  idempotency.violation                  # attrs: feature, operation, rule_id
+  event.emit                             # attrs: feature, event_type
+  event.consume                          # attrs: feature, event_type, consumer
+  query.duration                         # attrs: feature, query_name
+  workflow.invocation                    # attrs: feature, workflow, result
+  funnel.step                            # attrs: feature, journey, step_name, outcome
+  reconciliation.mismatch                # attrs: feature, entity
+  exposure.amount                        # attrs: feature
 ```
 
-Labels follow Prometheus conventions: `snake_case`, low cardinality, bounded set.
+**Meter scope:** `{project-name}` (e.g., `poker-team`). Configured once in the OTel SDK setup. All instruments created from this Meter inherit the project identity.
+
+**Attribute conventions:**
+- `feature`: kebab-case feature ID from SPEC frontmatter (e.g., `financial-settlement`)
+- `operation`, `entity`, `workflow`, `query_name`: PascalCase concept name from docs (e.g., `GenerateSettlement`)
+- `rule_id`, `invariant_id`, `calculation_id`: doc reference ID (e.g., `R4`, `I1`, `C1`)
+- `result`: bounded enum — `success | error` for operations, `verified | violated` for postconditions, `hit | miss` for cache
+- `state`, `from`, `to`: exact state names from `states.md`
+
+All attributes are low-cardinality and bounded.
 
 ---
 
@@ -467,15 +619,18 @@ Metrics reference their documentation source, mirroring the test traceability in
 # @source features/financial-settlement/operations.md#GenerateSettlement
 # @rule O9: Idempotency Monitor
 # @constraint R4: count(PAYOUT, playerId, endDate) <= 1
-metric: financial_settlement.GenerateSettlement.idempotency_violation
-type: gauge
-labels:
-  rule_id: R4
-  constraint: "count(PAYOUT, playerId, endDate) <= 1"
-alert:
-  condition: value > 0
-  severity: P0
-  runbook: "Investigate duplicate payouts. Check settlement event table for matching (playerId, endDate) pairs."
+- name: idempotency.violation
+  instrument: Gauge
+  unit: \"{violation}\"
+  attributes:
+    feature: financial-settlement
+    operation: GenerateSettlement
+    rule_id: R4
+    constraint: \"count(PAYOUT, playerId, endDate) <= 1\"
+  alert:
+    condition: value > 0
+    severity: P0
+    runbook: \"Investigate duplicate payouts. Check settlement event table for matching (playerId, endDate) pairs.\"
 ```
 
 This enables:
