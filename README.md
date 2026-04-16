@@ -19,6 +19,7 @@ Most software problems are not caused by bad code. They are caused by building t
 - [Stage 5 — Implement Backend](#stage-5--implement-backend-from-formal-specifications)
 - [Stage 6 — Design & Build UI](#stage-6--design--build-ui)
 - [Stage 7 — Maintain the Global Registry](#stage-7--maintain-the-global-registry)
+- [Stage 8 — Derive Observability Metrics](#stage-8--derive-observability-metrics)
 - [Copilot Integration](#copilot-integration)
   - [Installation](#installation)
   - [Skills Reference](#skills-reference)
@@ -43,6 +44,8 @@ flowchart LR
     F --> D
     E --> G["7 Registry\n& Verify"]
     F --> G
+    G --> H["8 Observability\nMetrics"]
+    C --> H
 ```
 
 Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate.
@@ -56,6 +59,7 @@ Each stage depends on the previous. You cannot write meaningful tests without fo
 | 5. Implement Backend | TEST-SPEC + aspect docs       | Production code + passing tests                         |
 | 6. Design & Build UI | UI-ARCHITECTURE + aspect docs | UI-SPEC + frontend pages + E2E tests                    |
 | 7. Maintain Registry | All SPEC.md concept tables    | Global registry, glossary, verification verdicts        |
+| 8. Observability     | Aspect docs + pillar metadata | Per-feature observability specs, metric catalog, alerts  |
 
 ---
 
@@ -516,6 +520,23 @@ DomainSpec's installer configures the [Playwright MCP server](https://github.com
 
 ---
 
+## Stage 8 — Derive Observability Metrics
+
+After a feature is documented and implemented, derive **production observability obligations** from the same docs that generated your tests:
+
+- **Domain Fidelity** — state machine transition counters, invariant monitors, rule violation rates, calculation drift detection (rules O1–O7)
+- **Operational Health** — endpoint SLOs, idempotency monitors, event flow lag, query performance (rules O8–O12)
+- **Business Effectiveness** — capability KPIs, funnel metrics from STORIES.md (rules O13–O14)
+- **Financial Integrity** — mandatory for `pillar: finance` features: transaction reconciliation, duplicate detection, monetary exposure (rules O15–O16)
+
+Each metric traces to a specific doc section using `@source` and `@rule` annotations.
+
+The derivation rules live in [OBSERVABILITY.md](OBSERVABILITY.md). Use the [observability template](templates/observability.md) for each feature.
+
+> **Agent command:** `domainspec-pipeline <feature> --observability` or create `docs/features/<feature>/observability.md` directly from the template.
+
+---
+
 ## Stage 7 — Maintain the Global Registry
 
 As features accumulate, the concept table in each `SPEC.md` feeds a global index:
@@ -573,6 +594,7 @@ Short names within a feature's own files. Full namespace in registry entries and
 5. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
 6. **Implement backend** — write code against the documented contracts and derived tests
 7. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
+8. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
 8. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
 
 ---
@@ -737,7 +759,8 @@ Reference implementations showing complete feature slices:
 | [RELATIONSHIPS.md](RELATIONSHIPS.md)     | All 26 typed edge types (12 backend + 8 intra-UI + 6 cross-layer)            |
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)     |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                               |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.4.0)                   |
+| [OBSERVABILITY.md](OBSERVABILITY.md)     | 16 metric derivation rules across 3 layers + Financial Integrity          |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.5.0)                   |
 | [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                  |
 | [examples/](examples/)                   | 5 reference feature implementations                                       |
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                               |

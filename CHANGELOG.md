@@ -13,6 +13,26 @@ Versioning guidance:
 - Minor: new templates, new framework capabilities, or additive guidance.
 - Patch: clarifications, wording improvements, and non-semantic fixes.
 
+## [1.5.0] - 2026-04-15
+
+### Added
+
+- **OBSERVABILITY.md** — observability-as-code framework with 16 metric derivation rules (O1–O16):
+  - Domain Fidelity layer (O1–O7): state machine counters, invariant monitors, rule violation rates, calculation drift, postcondition verification.
+  - Operational Health layer (O8–O12): endpoint SLOs, idempotency monitors, event flow, query performance, workflow completion.
+  - Business Effectiveness layer (O13–O14): capability KPIs from SPEC, funnel metrics from STORIES.md.
+  - Financial Integrity layer (O15–O16): mandatory for `pillar: finance` features — transaction reconciliation, duplicate detection, monetary exposure, settlement cycle metrics.
+  - Metric naming convention: `{feature}.{concept}.{metric_name}` with Prometheus labels.
+  - Traceability annotations: `@source`, `@rule`, `@constraint`.
+  - Alert severity mapping: P0 (domain fidelity/financial, <15min) to P3 (informational, weekly).
+  - Relationship to TEST-PIPELINE.md: inner loop (tests) + outer loop (observability).
+
+- **templates/observability.md** — per-feature observability template with all 16 rules pre-structured.
+
+- **Stage 8 — Derive Observability Metrics** added to the pipeline in README.md.
+
+- **ARCHITECTURE.md** — Observability Layer section documenting metric derivation alignment.
+
 ## [1.0.0] - 2026-03-29
 
 ### Added

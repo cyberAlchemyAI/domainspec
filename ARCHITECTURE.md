@@ -296,3 +296,16 @@ Recommended static checks:
 - Interface tests: request/response contract tests.
 
 This aligns directly with `TEST-PIPELINE.md` and keeps specs executable.
+
+## Observability Layer
+
+Production observability metrics are derived from the same documentation that drives tests. The derivation rules in `OBSERVABILITY.md` convert aspect docs into metric obligations:
+
+- **Domain Fidelity**: state machine counters, invariant monitors, rule violation rates, calculation drift
+- **Operational Health**: endpoint SLOs (RED metrics), idempotency monitors, event flow, query performance
+- **Business Effectiveness**: capability KPIs, funnel metrics from user journeys
+- **Financial Integrity**: mandatory for `pillar: finance` — transaction reconciliation, duplicate detection
+
+Metrics use the naming convention `{feature}.{concept}.{metric_name}` with Prometheus-style labels.
+
+Each metric carries `@source`, `@rule`, and `@constraint` annotations for traceability back to the doc section that mandates it.
