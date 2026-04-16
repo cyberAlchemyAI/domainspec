@@ -2,214 +2,115 @@
 
 All notable changes to the DomainSpec framework are documented in this file.
 
-Scope:
+## Editing Policy
 
-- Track framework-level documentation and template evolution in this directory.
-- Do not track project-specific feature documentation here. Use ../docs/CHANGELOG.md instead.
+**Scope:** Track framework-level documentation and template evolution only. Project-specific feature docs belong in `../docs/CHANGELOG.md`.
 
-Versioning guidance:
+**Rules:**
 
-- Major: taxonomy or relationship semantics change that can alter interpretation of existing specs.
-- Minor: new templates, new framework capabilities, or additive guidance.
-- Patch: clarifications, wording improvements, and non-semantic fixes.
+1. **Reverse chronological order** — newest version is always the first `## [x.y.z]` heading after this policy section. Never append at the bottom.
+2. **Sequential versions** — increment from the latest version. Never skip numbers or insert between existing entries.
+3. **One entry per version** — each `## [x.y.z]` block uses `### Added`, `### Changed`, `### Removed`, `### Fixed` at most once each. Never duplicate a section header.
+4. **Verbosity matches complexity** — simple changes get one-liners; complex changes (new subsystem, taxonomy expansion) may use sub-bullets. Default to concise; expand only when enumeration adds clarity.
+5. **Bold the key artifact** — start each bullet with `**artifact-or-concept**` followed by a dash and description.
+6. **No implementation details** — describe *what* changed and *why it matters*, not internal wiring.
+
+**Versioning:**
+
+- **Major** — taxonomy or relationship semantics change that can alter interpretation of existing specs.
+- **Minor** — new templates, new framework capabilities, or additive guidance.
+- **Patch** — clarifications, wording improvements, and non-semantic fixes.
+
+---
 
 ## [1.5.0] - 2026-04-15
 
 ### Added
 
-- **OBSERVABILITY.md** — observability-as-code framework with 16 metric derivation rules (O1–O16):
-  - Domain Fidelity layer (O1–O7): state machine counters, invariant monitors, rule violation rates, calculation drift, postcondition verification.
-  - Operational Health layer (O8–O12): endpoint SLOs, idempotency monitors, event flow, query performance, workflow completion.
-  - Business Effectiveness layer (O13–O14): capability KPIs from SPEC, funnel metrics from STORIES.md.
-  - Financial Integrity layer (O15–O16): mandatory for `pillar: finance` features — transaction reconciliation, duplicate detection, monetary exposure, settlement cycle metrics.
-  - Metric naming convention: `{feature}.{concept}.{metric_name}` with Prometheus labels.
-  - Traceability annotations: `@source`, `@rule`, `@constraint`.
-  - Alert severity mapping: P0 (domain fidelity/financial, <15min) to P3 (informational, weekly).
-  - Relationship to TEST-PIPELINE.md: inner loop (tests) + outer loop (observability).
-
-- **templates/observability.md** — per-feature observability template with all 16 rules pre-structured.
-
-- **Stage 8 — Derive Observability Metrics** added to the pipeline in README.md.
-
-- **ARCHITECTURE.md** — Observability Layer section documenting metric derivation alignment.
-
-## [1.0.0] - 2026-03-29
-
-### Added
-
-- Framework foundation documents:
-  - TAXONOMY.md defining 13 meta-concept types for typed domain modeling.
-  - RELATIONSHIPS.md defining typed concept edges for a navigable concept graph.
-  - TEST-PIPELINE.md defining documentation-to-test transformation rules.
-- Reusable authoring templates under templates/:
-  - SPEC.md, domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, workflows.md, mappings.md, shared-value-object.md.
-- Starter scaffolding under starter/:
-  - registry.md and glossary.md seeds for project-level domain documentation.
-- Reference examples under examples/:
-  - Full payment-processing feature slice and shared money value object examples.
-- Copilot integration pack under copilot/:
-  - Installable commands, skills, and agents for DomainSpec-driven workflows.
-
-### Changed
-
-- README.md codifies the framework operating model:
-  - Domain docs first, then formal states, then tests, then implementation.
-  - Clear separation between framework assets (domainspec/) and project-owned docs (docs/).
-
-## [1.0.1] - 2026-03-29
-
-### Changed
-
-- Copilot agent pack updates under copilot/agents:
-  - All DomainSpec agents now treat CHANGELOG.md as a mandatory initial read.
-  - Agent execution steps now explicitly extract current-framework constraints from CHANGELOG.md before proceeding.
-
-## [1.0.2] - 2026-03-29
-
-### Changed
-
-- Copilot command skill updates under copilot/skills:
-  - All domainspec-\* skills now read CHANGELOG.md before running command workflows.
-  - Skill process steps now explicitly extract current-framework constraints from CHANGELOG.md prior to action.
-
-## [1.1.0] - 2026-04-08
-
-### Added
-
-- DomainSpec-GSD delegation contract support in the local `.github` integration layer:
-  - DomainSpec planner/implementer now support explicit execution mode selection (`native` or `gsd-phase`).
-  - Verification and alignment skills now recognize delegated GSD evidence artifacts under `.planning/phases/**`.
-
-### Changed
-
-- Delegation authority model is now explicit:
-  - DomainSpec artifacts remain source of truth for semantics and acceptance.
-  - GSD workflows provide orchestration (phase planning, execution ordering, checkpoints, summaries).
-
-## [1.2.0] - 2026-04-14
-
-### Added
-
-- Context search heuristic for intelligent discovery path selection:
-  - Agents now evaluate four strategies (`links-tags-first`, `broad-search-first`, `focused-researcher-first`, `capability-graph-first`) using a weighted scoring formula before gathering context.
-  - Pre-filter shortcut: when SPEC frontmatter `includes` and `dependencies` fully resolve the file graph, scoring is skipped.
-  - Tie-breaker defaults to `links-tags-first` (trust existing DomainSpec navigation).
-  - Validated by `tools/context-search-heuristic.test.mjs` with 9 representative scenarios at 100% accuracy.
-- New `domainspec-story-sync` agent for maintaining user-story files aligned with capability and aspect changes.
-- Structured output contract for researcher agent: callers receive `featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, and `recommendation`.
+- **OBSERVABILITY.md** — observability-as-code framework with 16 metric derivation rules (O1–O16) across 3 layers (Domain Fidelity, Operational Health, Business Effectiveness) plus a Financial Integrity layer mandatory for `pillar: finance` features. Includes metric naming convention, traceability annotations (`@source`, `@rule`, `@constraint`), and alert severity mapping (P0–P3).
+- **templates/observability.md** — per-feature observability spec template with all 16 rules pre-structured.
+- **Stage 8 — Derive Observability Metrics** — added to the pipeline in README.md and ARCHITECTURE.md.
 
 ## [1.4.0] - 2026-04-15
 
 ### Added
 
-- **`domainspec-pipeline` skill** — end-to-end feature lifecycle orchestrator:
-  - Single command runs: plan → spec → stories → tests → implement → UI → registry sync → verify.
-  - Delegates each stage to the specialist agent (planner, spec-writer, story-sync, test-designer, implementer, ui-architect, registry-sync, verifier).
-  - Flags: `--spec-only`, `--test-only`, `--backend-only`, `--skip-ui`, `--dry-run`.
-  - Auto-detects new vs existing features and selects `native` or `gsd-phase` execution mode.
-  - Returns pipeline summary with artifact inventory, test results, build status, and PASS/FLAG/BLOCK verdict.
-
-- UI Meta-Concept Taxonomy (11 types) extending the domain model to the frontend:
-  - **UI Structural:** Page, Layout, Component, View Model.
-  - **UI Behavioral:** Hook, Form, Action, Guard.
-  - **UI Connective:** Binding, Adapter.
-  - **UI Presentational:** State Indicator.
-  - Each UI meta-concept documents purpose, examples, when-to-use, template location, and typical structure.
-  - Backend counterpart column maps UI concepts to their domain equivalents (View Model ↔ Value Object, Guard ↔ Rule, Binding ↔ Interface, Adapter ↔ Mapping, State Indicator ↔ State Machine/Enum).
-
-- Intra-UI Relationship Edges (8 typed edges):
-  - `renders` (Page → Component[]), `wraps` (Layout → Page[]), `composes` (Component → Component[]), `consumes` (Component → Hook), `submits` (Form → Action), `shapes` (Adapter → View Model), `protects` (Guard → Page), `displays` (Component → View Model).
-
-- Cross-Layer Relationship Edges UI ↔ Backend (6 typed edges):
-  - `fetches` (Binding → Query), `mutates` (Binding → Operation), `reflects` (State Indicator → State Machine), `derives` (View Model → Entity), `contracts` (Form → Interface), `mirrors` (Guard → Rule).
-
-- Full-stack trace navigation examples showing end-to-end paths from user click to database and from database to screen.
-
-- `ui-spec.md` template under `templates/` with typed concept inventory, data flow, form contracts, state-to-UI mapping, and UI Concept Registry section.
-
-- UI concept sections in `docs/registry.md`: Pages, Layouts, Components, View Models, Hooks, Forms, Actions, Guards, Bindings, Adapters, State Indicators.
-
-- UI concept graph ID convention: `ui.{feature}.{Concept}` for feature-scoped, `ui.{Concept}` for shared.
+- **`domainspec-pipeline` skill** — end-to-end feature lifecycle orchestrator. Single command runs: plan → spec → stories → tests → implement → UI → registry sync → verify. Flags: `--spec-only`, `--test-only`, `--backend-only`, `--skip-ui`, `--dry-run`.
+- **UI Meta-Concept Taxonomy** — 11 new UI types (Page, Layout, Component, View Model, Hook, Form, Action, Guard, Binding, Adapter, State Indicator) extending TAXONOMY.md from 13 to 24 building blocks. Each maps to a backend counterpart.
+- **UI Relationship Edges** — 8 intra-UI edges (`renders`, `wraps`, `composes`, `consumes`, `submits`, `shapes`, `protects`, `displays`) + 6 cross-layer edges (`fetches`, `mutates`, `reflects`, `derives`, `contracts`, `mirrors`). RELATIONSHIPS.md grows from 12 to 26 typed edges.
+- **`ui-spec.md` template** — typed concept inventory, data flow, form contracts, state-to-UI mapping, and UI Concept Registry section.
 
 ### Changed
 
-- TAXONOMY.md:
-  - Title updated from 13 to 24 building blocks.
-  - Overview split into Backend (13) and UI (11) tables.
-  - Quick Reference split into Backend and UI sections.
-  - Common Confusion split into Backend and UI sections (9 new UI confusion pairs).
-  - Architecture Mapping appendix split into Backend Layer and UI Layer tables.
-
-- RELATIONSHIPS.md:
-  - Title updated from 12 to 26 typed edges.
-  - Overview split into Backend (12), Intra-UI (8), and Cross-Layer (6) tables.
-  - Navigation section split into Backend, UI, and Full-Stack Trace subsections.
-  - Registry Format updated with UI concept graph example and `ui.` prefix convention.
+- **TAXONOMY.md** — overview, quick reference, common confusion, and architecture mapping all split into Backend and UI sections.
+- **RELATIONSHIPS.md** — overview split into Backend, Intra-UI, and Cross-Layer tables; navigation section adds UI and full-stack trace subsections.
 
 ## [1.3.0] - 2026-04-15
 
 ### Added
 
-- UI architecture and frontend lifecycle support:
-  - New `ui-architecture.md` template for defining project-wide frontend constitution (stack, theme, layout, data patterns, form strategy).
-  - New `domainspec-ui-architect` agent for interactive frontend architecture definition.
-  - New `domainspec-ui-architecture` skill for creating or evolving UI-ARCHITECTURE.md from DomainSpec contracts.
-  - New `domainspec-ui-phase-bridge` skill for generating per-feature UI-SPEC.md design contracts via GSD UI workflow delegation.
-  - New `domainspec-ui-implement` skill for implementing frontend pages and components from UI-SPEC.md and UI-ARCHITECTURE.md.
-  - New `domainspec-ui-audit-bridge` skill for retroactive 6-pillar visual audits of implemented UI code.
-- Playwright E2E test generation pipeline:
-  - TEST-PIPELINE.md extended with UI E2E Test Generation Rules (rules 15–20): Navigation, Journey, Form Validation, State Reflection, Responsive Layout, Accessibility.
-  - `domainspec-generate-tests` skill now supports `--ui` and `--all` flags for Playwright E2E test scaffold generation from UI-SPEC.md.
-  - `domainspec-test-designer` agent updated with UI E2E test design capability and Playwright scaffold conventions.
-  - E2E scaffold convention: `{web-app}/e2e/{feature}/` with `.navigation.spec.ts`, `.journey.spec.ts`, `.forms.spec.ts`, `.states.spec.ts`, `.responsive.spec.ts`.
-  - Traceability format: `@source features/{feature}/UI-SPEC.md#{section}`, `@story {story-id}`, `@journey {journey-name}`.
-- MCP Playwright integration in installer:
-  - `install.sh` now auto-detects web app directory and optionally installs `@playwright/test`, Chromium, and generates `playwright.config.ts`.
-  - Creates `.vscode/mcp.json` with `@playwright/mcp@latest` server entry for browser-interactive agent workflows.
-  - Supports `DOMAINSPEC_SKIP_PLAYWRIGHT=1` environment variable for non-interactive skipping.
+- **UI architecture lifecycle** — new `ui-architecture.md` template, `domainspec-ui-architect` agent, and skills for UI-ARCHITECTURE, UI-SPEC generation (`domainspec-ui-phase-bridge`), frontend implementation (`domainspec-ui-implement`), and visual audit (`domainspec-ui-audit-bridge`).
+- **`domainspec-ui-pipeline` skill** — end-to-end UI lifecycle: architecture check → UI-SPEC → E2E tests → implement → audit. Flags: `--spec-only`, `--skip-audit`, `--dry-run`.
+- **Playwright E2E test generation** — TEST-PIPELINE.md extended with rules 15–20 (Navigation, Journey, Form Validation, State Reflection, Responsive, Accessibility). `domainspec-generate-tests` supports `--ui` and `--all` flags.
+- **MCP Playwright integration** — `install.sh` auto-detects web app, installs Playwright, and generates `.vscode/mcp.json`. Skippable via `DOMAINSPEC_SKIP_PLAYWRIGHT=1`.
 
 ### Changed
 
-- Planner agent now includes a **UI detection gate** (execution step 4):
-  - Auto-detects frontend aspects by checking for HTTP endpoints in `interfaces.md`, presence of `UI-ARCHITECTURE.md`, and `UI-SPEC.md`.
-  - Automatically includes UI architecture, UI-SPEC generation, UI implementation, UI audit, and Playwright E2E tasks based on detected state.
-  - Prefers `domainspec-ui-pipeline` as single orchestration task when backend specs are complete.
-  - `domainspec-ui-architect` added to planner's agent delegation list.
-- New `domainspec-ui-pipeline` skill for end-to-end UI lifecycle orchestration:
-  - Single command runs: architecture check → UI-SPEC generation → E2E test scaffolding → frontend implementation → visual audit.
-  - Flags: `--spec-only` (stop after UI-SPEC), `--skip-audit`, `--dry-run`.
-  - Pre-flight validates SPEC.md + interfaces.md with HTTP endpoints before proceeding.
-  - Delegates to existing UI skills sequentially; propagates interactive questions to user.
+- **Planner agent** — new UI detection gate (step 4) auto-includes UI architecture, UI-SPEC, implementation, audit, and E2E tasks based on feature state.
+- **Agent updates** — spec-writer (capability-driven structure, story coverage enforcement), planner (context heuristic, subagent delegation), researcher (DomainSpec-aware navigation, structured output), implementer (audit gates before edits).
+- **Heuristic weights** — tuned from `0.45/0.35/0.20` to `0.45/0.30/0.25` (signal/cost/ambiguity) to reflect cheaper search via index artifacts.
 
-### Changed
+## [1.2.0] - 2026-04-14
 
-- `domainspec-spec-writer` agent:
-  - Capability-driven SPEC structure (capabilities first, aspects second).
-  - Governance thresholds for SPEC size → STORIES.md / capabilities/ splits.
-  - Story coverage enforcement with `domainspec-story-sync` delegation.
-  - Context search heuristic with 4 strategies and pre-filter shortcut.
-- `domainspec-planner` agent:
-  - Context search heuristic with 4 strategies and pre-filter shortcut.
-  - Subagent delegation to `Explore`, `domainspec-researcher`, and audit agents.
-  - GSD phase delegation contract for medium/high complexity planning.
-- `domainspec-researcher` agent:
-  - DomainSpec-aware navigation using index artifacts, frontmatter signals, and capability anchors.
-  - `Explore` subagent delegation for broad discovery fallback.
-  - Structured output contract matching caller expectations.
-- `domainspec-implementer` agent:
-  - Audit gates (alignment + layering) before implementation edits.
-  - GSD execution delegation contract.
-  - Extended context inputs: STORIES.md, capabilities/\*.md.
-- Heuristic weights tuned from `signal:0.45 / cost:0.35 / ambiguity:0.20` to `signal:0.45 / cost:0.30 / ambiguity:0.25` to reflect cheaper search costs from index artifacts.
+### Added
+
+- **Context search heuristic** — agents evaluate 4 discovery strategies (`links-tags-first`, `broad-search-first`, `focused-researcher-first`, `capability-graph-first`) with weighted scoring. Pre-filter shortcut when SPEC frontmatter `includes`/`dependencies` resolve the file graph. Validated by 9 test scenarios at 100% accuracy.
+- **`domainspec-story-sync` agent** — maintains STORIES files aligned with capability and aspect changes.
+- **Researcher structured output** — callers receive `featureArtifacts`, `relevantContracts`, `namingConstraints`, `linkGraph`, `matchedTags`, `openQuestions`, `recommendation`.
 
 ## [1.1.1] - 2026-04-09
 
 ### Added
 
-- Layering enforcement artifacts in the local `.github` integration layer:
-  - New `domainspec-layering-auditor` agent to detect domain-logic drift into application/use-case layers.
-  - New `domainspec-audit-layering` skill to produce deterministic remediation plans tied to DomainSpec concepts.
+- **`domainspec-layering-auditor` agent** — detects domain-logic drift into application/use-case layers.
+- **`domainspec-audit-layering` skill** — produces deterministic remediation plans tied to DomainSpec concepts.
 
 ### Changed
 
-- DomainSpec planning and implementation workflows are expected to include a layering audit gate for features that already have production code.
+- **Planning/implementation workflows** — now expected to include a layering audit gate for features with existing code.
+
+## [1.1.0] - 2026-04-08
+
+### Added
+
+- **DomainSpec-GSD delegation contract** — planner/implementer support explicit mode selection (`native` or `gsd-phase`). Verification skills recognize GSD evidence artifacts under `.planning/phases/**`.
+
+### Changed
+
+- **Delegation authority model** — DomainSpec artifacts are source of truth for semantics; GSD provides orchestration only.
+
+## [1.0.2] - 2026-03-29
+
+### Changed
+
+- **Copilot skills** — all `domainspec-*` skills now read CHANGELOG.md before running workflows.
+
+## [1.0.1] - 2026-03-29
+
+### Changed
+
+- **Copilot agents** — all DomainSpec agents now treat CHANGELOG.md as a mandatory initial read.
+
+## [1.0.0] - 2026-03-29
+
+### Added
+
+- **Framework foundation** — TAXONOMY.md (13 meta-concept types), RELATIONSHIPS.md (typed concept edges), TEST-PIPELINE.md (doc-to-test transformation rules).
+- **Templates** — SPEC.md, domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, workflows.md, mappings.md, shared-value-object.md.
+- **Starter scaffolding** — registry.md and glossary.md seeds under `starter/`.
+- **Reference examples** — full payment-processing feature slice and shared money value object.
+- **Copilot integration pack** — installable commands, skills, and agents under `copilot/`.
+
+### Changed
+
+- **README.md** — codifies the framework operating model: domain docs → formal states → tests → implementation. Separates framework assets (`domainspec/`) from project docs (`docs/`).
