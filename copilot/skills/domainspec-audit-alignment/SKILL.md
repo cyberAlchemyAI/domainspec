@@ -14,7 +14,12 @@ Measure and report how closely implementation matches domain documentation contr
 Inputs:
 - domainspec/CHANGELOG.md
 - docs/features/{feature}/*.md
+- docs/features/{feature}/capabilities/*.md (if present)
 - related source and tests
+- delegated execution evidence when present:
+	- .planning/phases/**/**-PLAN.md
+	- .planning/phases/**/**-SUMMARY.md
+	- .planning/phases/**/VERIFICATION.md
 Output:
 - docs/features/{feature}/ALIGNMENT-REPORT.md
 </context>
@@ -24,5 +29,20 @@ Output:
 2. Extract expected behaviors and contracts from docs.
 3. Inspect implementation evidence in code and tests.
 4. Classify each item as compliant, partial, missing, or extra.
-5. Emit prioritized remediation actions.
+5. **Infrastructure Binding audit** — for each feature with implementation:
+   a. Identify all repository/gateway ports defined in domain layer (types, interfaces).
+   b. For each port, verify a real (DB-backed) adapter exists in `infrastructure/repositories/`.
+   c. Scan production-path wiring (route files, entry points) for stub/in-memory/mock bindings. Flag any non-test file that imports or instantiates a stub repo as **BLOCK**.
+   d. If `infrastructure/database/schema.ts` defines tables for this feature:
+      - Verify migration files exist in `drizzle/` (generated via `drizzle-kit generate`).
+      - Verify `infrastructure/database/migrate.ts` exists and is called from the app entry point.
+      - Verify CI workflow includes a migration step before tests.
+   e. If `operations.md` or `interfaces.md` defines lifecycle hooks (seed, bootstrap):
+      - Verify the hook is implemented and wired into the app startup sequence.
+6. **Cross-feature stub and dead code scan:**
+   a. Search all use-case and domain directories for the feature for files containing stub markers: empty function bodies, `TODO` comments, `// Stub` comments, or underscore-prefixed unused parameters (e.g., `_event`). Flag each as BLOCK with remediation: implement fully or delete.
+   b. Search for deprecated files: files with `@deprecated` JSDoc tags, imports from non-existent modules, or references to non-existent schema tables. Flag as HIGH with remediation: delete dead code.
+   c. Cross-reference `events.md` "Consumed by" tables: for each declared consumer, verify the consuming handler exists and is wired (not a stub). Flag missing handlers as BLOCK.
+   d. Cross-reference other features' `events.md` for events this feature should consume (check SPEC.md dependencies): verify handlers exist. Flag missing as HIGH.
+7. Emit prioritized remediation actions.
 </process>

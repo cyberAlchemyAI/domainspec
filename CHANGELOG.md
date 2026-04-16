@@ -23,6 +23,23 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [1.7.2] - 2026-04-16
+
+### Added
+
+- **Cross-feature stub prohibition (implement)** — `domainspec-implement` now explicitly forbids creating stub/placeholder files in another feature's directory. Cross-feature event-driven obligations must be documented in the consuming feature's SPEC.md under `## Deferred Obligations` instead of silently creating empty functions.
+- **Stub and dead code scan (alignment)** — `domainspec-audit-alignment` now scans for stub markers (empty bodies, TODO comments, `_event` parameters), deprecated files importing non-existent modules, and verifies all `events.md` "Consumed by" handlers actually exist and are wired. Stubs → BLOCK, dead code → HIGH.
+- **Cross-feature obligation check (verify)** — `domainspec-verify-feature` now scans for stub files in use-case/domain directories, checks `## Deferred Obligations` in SPEC.md, cross-references dependent features' event consumers, and flags dead code. Any stub → BLOCK.
+
+## [1.7.1] - 2026-04-16
+
+### Added
+
+- **Infrastructure Binding audit (alignment)** — `domainspec-audit-alignment` now checks that every domain port has a real DB-backed adapter in production-path code. Detects stub/in-memory repos in route files and entry points. Verifies migration files, migrate runner, CI migration step, lifecycle hook wiring, and Dockerfile migration inclusion.
+- **Production Readiness gate (verify)** — `domainspec-verify-feature` now includes a Production Readiness gate that BLOCKs when stub repos are bound in production code, migration infrastructure is missing, or lifecycle hooks are not wired into startup.
+- **Post-implementation binding check (implement)** — `domainspec-implement` now runs an infrastructure binding scan after code generation: verifies real adapters, migration completeness, and lifecycle hook wiring before marking implementation as done.
+- **Step 5b — Infrastructure Binding Gate (pipeline)** — `domainspec-pipeline` adds a mandatory gate between implementation and UI/observability steps. Scans for stub repos in production paths, validates migration file existence and CI/Dockerfile inclusion, and verifies seed/bootstrap hooks are wired into app startup.
+
 ## [1.7.0] - 2026-04-16
 
 ### Added

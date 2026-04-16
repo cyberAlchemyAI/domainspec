@@ -102,6 +102,14 @@ Created/updated by this skill (cumulative):
     - For existing features: runs alignment + layering audits first, then applies fixes.
 13. Run automated checks. If tests fail, attempt fix (max 2 iterations), then FLAG.
 
+## Step 5b — Infrastructure Binding Gate
+
+14. After implementation, verify production-readiness of infrastructure bindings:
+    a. **Repository binding scan**: grep all route files and the app entry point for stub/in-memory/mock repo imports. Any non-test file importing stubs → BLOCK with explicit remediation (create real DB-backed adapter, wire into routes).
+    b. **Migration completeness**: if `infrastructure/database/schema.ts` defines tables → verify `drizzle/` contains migration files, `migrate.ts` exists and is called from entry point, CI workflow runs `db:migrate` before tests, Dockerfile copies `drizzle/` to runtime image.
+    c. **Lifecycle hooks**: if `operations.md` or `interfaces.md` defines seed/bootstrap hooks → verify implementation exists and is wired into startup before `app.listen()`.
+    d. If any check fails, fix before proceeding to UI or observability steps.
+
 ## Step 6 — UI Pipeline (conditional)
 
 14. Check if UI applies:
