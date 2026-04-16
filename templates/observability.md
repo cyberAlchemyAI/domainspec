@@ -32,9 +32,11 @@ status: draft
 *@source [states.md#{EntityName}](states.md#{EntityName})*
 
 ```yaml
+# Counts rejected state transitions — any increment indicates a domain logic bug
 - name: state.invalid_transition
   instrument: Counter
   unit: "{attempt}"
+  description: "Counts rejected state transitions — any increment indicates a domain logic bug"
   attributes: [feature, entity, from, attempted_event, error_code]
   alert: any increment → P0
 ```
@@ -42,9 +44,11 @@ status: draft
 **State distribution (O2):**
 
 ```yaml
+# Tracks how many entities are currently in each {EntityName} state
 - name: state.population
   instrument: UpDownCounter
   unit: "{entity}"
+  description: "Tracks how many entities are currently in each {EntityName} state"
   attributes: [feature, entity, state]
   states: [list all states from states.md]
   alert: accumulation in non-terminal state > {threshold} → P1
@@ -67,14 +71,18 @@ status: draft
 *@source [operations.md#{OperationName}](operations.md#{OperationName})*
 
 ```yaml
+# Counts each call to {OperationName}, grouped by success or error outcome
 - name: operation.invocation
   instrument: Counter
   unit: "{invocation}"
+  description: "Counts each call to {OperationName}, grouped by success or error outcome"
   attributes: [feature, operation, result] # result: success | error
 
+# Measures execution time of {OperationName} in seconds
 - name: operation.duration
   instrument: Histogram
   unit: "s"
+  description: "Measures execution time of {OperationName} in seconds"
   attributes: [feature, operation]
 ```
 
@@ -131,8 +139,11 @@ status: draft
 *@source [events.md](events.md)*
 
 ```yaml
+# Counts domain events published by this feature
 - name: event.emit # Counter {feature, event_type, producer}
+# Counts domain events consumed by downstream listeners
 - name: event.consume # Counter {feature, event_type, consumer}
+# Measures delay in seconds between event publish time and consumer processing
 - name: event.consumer.lag # Histogram (s) {feature, event_type, consumer}
 ```
 
@@ -178,9 +189,11 @@ status: draft
 **Conversion rate:**
 
 ```yaml
+# Measures end-to-end conversion rate for the user journey
 - name: funnel.conversion_rate
   instrument: Gauge
   unit: "1" # ratio
+  description: "Measures end-to-end conversion rate for the user journey"
   attributes: [feature, journey]
   formula: step_N_completed / step_1_started
   window: 7d rolling
@@ -197,24 +210,30 @@ status: draft
 
 ```yaml
 # @rule O15: Transaction Integrity
+# Detects discrepancies between computed (from event replay) and stored financial values
 - name: reconciliation.mismatch
   instrument: Gauge
   unit: "{currency_minor}"
+  description: "Detects discrepancies between computed (from event replay) and stored financial values"
   attributes: [feature, entity]
   check: |computed - stored|
   frequency: hourly
   alert: mismatch > 0 → P0
 
+# Detects duplicate financial transactions that violate uniqueness constraints
 - name: transaction.duplicate
   instrument: Counter
   unit: "{duplicate}"
+  description: "Detects duplicate financial transactions that violate uniqueness constraints"
   attributes: [feature, transaction_type]
   check: group by idempotency_key, count > 1
   alert: any increment → P0
 
+# Estimates total monetary exposure from detected duplicate transactions
 - name: exposure.amount
   instrument: Gauge
   unit: "{currency_minor}"
+  description: "Estimates total monetary exposure from detected duplicate transactions"
   attributes: [feature]
   alert: exposure > 0 → P0
 ```

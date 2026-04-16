@@ -55,20 +55,20 @@ DigitalOcean provisions the VPS where your app runs.
 3. Name it: `domainspec-infra` (or your project name)
 4. Select **Custom scopes** and enable only what your preset needs:
 
-| Resource         | Permission | Needed for              | Preset          |
-| ---------------- | ---------- | ----------------------- | --------------- |
-| **Droplet**      | Read+Write | Provision/manage VPS    | All VPS presets |
-| **SSH Key**      | Read+Write | Add deploy key to VPS   | All VPS presets |
-| **Firewall**     | Read+Write | Manage port rules       | All VPS presets |
-| **VPC**          | Read       | Place droplet in a VPC  | All VPS presets |
-| **Project**      | Read       | Organize resources      | All VPS presets |
+| Resource          | Permission | Needed for             | Preset          |
+| ----------------- | ---------- | ---------------------- | --------------- |
+| **Droplet**       | Read+Write | Provision/manage VPS   | All VPS presets |
+| **SSH Key**       | Read+Write | Add deploy key to VPS  | All VPS presets |
+| **Firewall**      | Read+Write | Manage port rules      | All VPS presets |
+| **VPC**           | Read       | Place droplet in a VPC | All VPS presets |
+| **Project**       | Read       | Organize resources     | All VPS presets |
 | **Load Balancer** | Read+Write | Traffic distribution   | HA only         |
-| **Database**     | Read+Write | Managed PostgreSQL      | HA only         |
+| **Database**      | Read+Write | Managed PostgreSQL     | HA only         |
 
 **For Single VPS** — enable the first 5 rows. Skip Load Balancer and Database.
 
 5. Click **Generate Token**
-6. **Copy the token immediately** — it is shown only once
+6. **Copy the token immediately** — it is shown only
 
 ### Verify
 
