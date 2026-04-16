@@ -1,122 +1,129 @@
 ---
 name: domainspec-reflect
-description: "Generate a PIPELINE-REPORT.md with economy of action metrics (G7) and structured reflection (G8) after a pipeline run. Can be invoked standalone for retrospective analysis of any completed feature work."
-argument-hint: "<feature-name> [--from-session] [--standalone]"
+description: "Generate a TUNING-REPORT.md from accumulated pipeline signals. Detects cross-run patterns, computes aggregate metrics, and proposes skill/agent improvements. Runs async (GitHub Action) or manually."
+argument-hint: "<feature-name | --all> [--from-signals] [--since <date>] [--min-signals <n>] [--dry-run]"
 agent: domainspec-planner
 allowed-tools: Read, Write, Bash, Glob, Grep, AskQuestions, Task
 ---
 
 <objective>
-Produce a structured PIPELINE-REPORT.md that captures:
-1. **Economy of Action (G7):** Quantified metrics of pipeline cost — steps, delegations, questions, retries, overhead ratio.
-2. **Reflection (G8):** What worked, what didn't, governance gaps found, skill improvement proposals, and patterns to persist.
+Analyze accumulated pipeline signals across multiple runs to:
+1. **Detect patterns** — recurring governance gaps, repeated rework, persistent spec gaps, low-confidence decisions.
+2. **Compute aggregate metrics** — overhead trends, rework hotspots, coverage evolution.
+3. **Propose tuning** — concrete, evidence-backed changes to skills, agents, templates, or instructions.
+4. **Track progress** — compare current signal patterns against previous tuning reports.
 
-This skill is the framework's learning mechanism. It turns every pipeline run into a tuning opportunity.
+This skill is the **outer loop** of the DomainSpec learning system. It transforms raw observations into structural improvements.
 </objective>
 
 <flags>
-- `--from-session`: Analyze the current conversation context to extract metrics (default when called from pipeline).
-- `--standalone`: Prompt user for metrics when no pipeline context is available (manual retrospective).
+- `--from-signals`: Read from `docs/signals/pipeline-signals.jsonl` (default).
+- `--all`: Analyze signals across all features (default when run from CI).
+- `--since <date>`: Only analyze signals after this ISO date.
+- `--min-signals <n>`: Minimum signal count required before producing a report (default: 10).
+- `--dry-run`: Show what analysis would be performed without writing output.
 </flags>
 
 <context>
-Template: `domainspec/templates/PIPELINE-REPORT.md`
-Output: `docs/features/{feature}/PIPELINE-REPORT.md`
+**Input:** `docs/signals/pipeline-signals.jsonl` — append-only JSONL with structured observations from pipeline runs.
+**Schema:** `domainspec/templates/SIGNAL-SCHEMA.md` — defines signal types, envelopes, and threshold definitions.
+**Output:** `docs/signals/TUNING-REPORT.md` — analysis report with proposals.
+**Template:** `domainspec/templates/PIPELINE-REPORT.md` — format reference for the report.
 
-The reflection step sits after verification (Step 9) and before the final pipeline summary.
-It does NOT change the verification verdict — it augments it with learning.
+This skill runs **asynchronously** — either triggered by GitHub Action when signal thresholds are met, or manually invoked for retrospective analysis. It is NOT part of the pipeline's synchronous flow.
 </context>
 
 <process>
 
-## Step 1 — Gather Metrics
+## Step 1 — Load and Parse Signals
 
-1. If invoked from pipeline (default):
-   a. Count steps executed vs skipped from the pipeline run context.
-   b. Count agent/skill delegations made (each `Delegate to X` invocation).
-   c. Count human questions asked (each `AskQuestions` call or interactive prompt).
-   d. Count files created and files modified (from pipeline artifacts tracking).
-   e. Count tests added and total test results (from test run output).
-   f. Count retries (fix iterations after failures).
-   g. Record context discovery strategy used and files read for context.
-   h. Count Explore and Researcher subagent calls.
+1. Read `docs/signals/pipeline-signals.jsonl`.
+2. Parse each line as JSON, validate against the signal envelope schema.
+3. Apply `--since` filter if provided.
+4. If signal count < `--min-signals`, return "Insufficient signals for analysis (have {n}, need {min})". Do not produce a report.
+5. Group signals by: feature, type, session, severity.
 
-2. If `--standalone`:
-   a. Read existing `docs/features/{feature}/` artifacts to infer scope.
-   b. Ask user for missing metrics that cannot be inferred.
+## Step 2 — Cross-Run Pattern Detection
 
-## Step 2 — Compute Overhead Assessment
+6. **Recurring governance gaps:** Group `governance-gap` signals by `data.description` similarity (fuzzy match on description, exact match on `shouldHaveBeenCaughtBy`). If same gap appears in 3+ signals → threshold TH1 met.
+7. **Persistent spec gaps:** Group `spec-gap` signals by `data.missingDetail` pattern across features. If same pattern in 2+ features → threshold TH3 met.
+8. **Rework hotspots:** Group `rework` signals by `data.stepName`. If same step has rework in 5+ signals → threshold TH4 met.
+9. **Overhead trends:** Extract `overhead` signals, compute rolling average of `overheadRatio`. If > 0.5 for last 3 runs → threshold TH2 met.
+10. **Proposal clustering:** Group `proposal` signals by `data.targetFile`. If 3+ proposals target same file → threshold TH5 met.
+11. **Alignment drift:** Count `alignment-gap` signals across last 5 runs. If > 10 → threshold TH6 met.
+12. **Critical gaps:** Any `governance-gap` with severity CRITICAL → threshold TH7 met (immediate).
+13. **Decision uncertainty:** Group `decision` signals with `confidence: low`. If 3+ low-confidence decisions → threshold TH8 met.
 
-3. Calculate overhead ratio:
-   - **Governance artifacts** = count of docs files that are NOT domain behavior (PIPELINE-REPORT, ALIGNMENT-REPORT, OBSERVABILITY-REPORT, TEST-SPEC, UI-REVIEW).
-   - **Domain artifacts** = count of domain files (SPEC, aspect files, STORIES, source code, test files).
-   - **Overhead ratio** = governance artifacts ÷ domain artifacts.
-4. Assess:
-   - ≤ 0.3 → "acceptable" — governance is proportionate.
-   - 0.3–0.6 → "moderate" — review if all governance artifacts added value.
-   - > 0.6 → "high" — governance may be creating more friction than value. Flag for review.
+## Step 3 — Compute Aggregate Metrics
 
-## Step 3 — Reflect on Run
+14. **Economy of Action trends:**
+    - Average overhead ratio across all runs.
+    - Total agent delegations, human questions, retries.
+    - Rework rate: rework signals ÷ total step-verdict signals.
+    - Discovery efficiency: average context files read per run.
+15. **Quality trends:**
+    - Alignment gap rate: gaps ÷ runs.
+    - Spec gap rate: gaps ÷ runs.
+    - First-pass success rate: steps with 0 retries ÷ total steps.
+16. **Governance effectiveness:**
+    - Governance gaps detected vs. addressed (compare against previous tuning reports).
+    - Time from governance-gap signal to skill update (if trackable from git history).
 
-5. Analyze **what went well**:
-   - Steps that produced correct output on first attempt.
-   - Context discovery that found the right files efficiently.
-   - Specifications that were complete enough for direct implementation.
+## Step 4 — Generate Tuning Proposals
 
-6. Analyze **what required rework**:
-   - Steps that needed retries — count iterations and what caused failure.
-   - Human corrections — what did the user have to fix manually.
-   - Backtracking — steps where output from an earlier step was wrong and needed revision.
-   - For each: document root cause, iteration count, and what resolved it.
+17. For each threshold met, generate a concrete proposal:
+    - **TH1 (recurring governance gap):** Propose specific skill update with the evidence chain (3+ occurrences, affected features, root cause pattern).
+    - **TH2 (high overhead):** Analyze which governance artifacts contributed most. Propose simplification or consolidation.
+    - **TH3 (persistent spec gap):** Propose template addition or enhancement to prevent the gap.
+    - **TH4 (rework hotspot):** Propose skill hardening — add validation, better context gathering, or error handling to the affected step.
+    - **TH5 (proposal cluster):** Bundle clustered proposals into a single coherent change.
+    - **TH6 (alignment drift):** Recommend full cross-feature alignment audit.
+    - **TH7 (critical gap):** Immediate action required — propose PR with fix.
+    - **TH8 (decision uncertainty):** Flag ambiguous domain areas for human clarification.
 
-7. Identify **governance gaps discovered**:
-   - Blind spots: things this run exposed that no existing skill, audit, or template catches.
-   - Missing templates or aspect file coverage.
-   - Cross-feature interactions that weren't accounted for.
-   - For each: what was missed, which skill should have caught it, severity (LOW/MEDIUM/HIGH/CRITICAL).
+18. Each proposal must include:
+    - **Evidence:** Signal IDs, dates, features, counts.
+    - **Target:** Exact file path(s) to modify.
+    - **Change:** What to add/modify/remove.
+    - **Rationale:** Why this change would prevent the observed signals.
+    - **Priority:** P0 (immediate), P1 (next session), P2 (next sprint), P3 (backlog).
 
-8. Formulate **skill improvement proposals**:
-   - Concrete, actionable changes to specific DomainSpec skills, agents, or instructions.
-   - Each proposal: target file path, what to change, why (grounded in this run's evidence), priority (P0–P3).
-   - Proposals must be specific enough to implement without further analysis.
+## Step 5 — Write Tuning Report
 
-9. Extract **patterns for memory**:
-   - Reusable insights worth persisting to repo or user memory.
-   - Only include non-obvious patterns — things that would save time if known in advance.
-   - Each pattern: one-liner summary, context in which it applies.
+19. Generate `docs/signals/TUNING-REPORT.md` with sections:
+    - **Signal Summary:** Count by type, severity, feature. Date range covered.
+    - **Thresholds Triggered:** Which thresholds met, with evidence.
+    - **Aggregate Metrics:** Economy, quality, governance trends.
+    - **Tuning Proposals:** Ordered by priority, each with full evidence chain.
+    - **Patterns Persisted:** Insights worth adding to repo memory.
+    - **Comparison:** If previous TUNING-REPORT exists, compare metrics (improving/stable/degrading).
+20. Archive previous TUNING-REPORT.md to `docs/signals/archive/TUNING-REPORT-{date}.md` (keep last 5).
 
-## Step 4 — Write Report
+## Step 6 — Actionable Output
 
-10. Load template from `domainspec/templates/PIPELINE-REPORT.md`.
-11. Populate all sections with gathered data.
-12. Write to `docs/features/{feature}/PIPELINE-REPORT.md`.
-13. If a previous PIPELINE-REPORT.md exists, archive it by prepending a `## Previous Run — {date}` section at the bottom (keep only last 3 runs).
-
-## Step 5 — Surface Actionable Items
-
-14. If governance gaps with severity ≥ HIGH exist:
-    - List them prominently in the return summary.
-    - Recommend specific follow-up actions (skill update, template addition, audit rule).
-15. If skill improvement proposals exist with priority P0 or P1:
-    - Flag them as "recommended immediate action" in the summary.
-16. If overhead ratio > 0.6:
-    - Flag as "governance overhead review needed" in the summary.
+21. If running in GitHub Action context:
+    - For P0 proposals: create GitHub Issue with `domainspec-tuning` label and proposal details.
+    - For P1 proposals: create a single bundled Issue.
+    - For TH7 (critical): create Issue with `urgent` label.
+22. If running manually:
+    - Return summary to the user with proposal list and recommended next actions.
+23. Optionally persist key patterns to `/memories/repo/` for agent context in future sessions.
 
 </process>
 
 <output-contract>
-Return to the pipeline (or user if standalone):
-- Economy of Action summary (one-line per metric category).
-- Governance gaps count by severity.
-- Skill improvement proposals count by priority.
-- Overhead ratio and assessment.
-- List of patterns persisted to memory (if any).
-- Actionable follow-up items (if any).
+Return:
+- Signal count analyzed (by type).
+- Thresholds triggered (list with evidence summary).
+- Proposals generated (count by priority).
+- Aggregate metrics (overhead ratio trend, rework rate, first-pass success).
+- Comparison vs. previous report (if available).
+- Action items created (issues/PRs if in CI, recommendations if manual).
 </output-contract>
 
 <authority-rule>
-- This skill NEVER changes the verification verdict.
-- This skill NEVER modifies source code or spec files.
-- This skill only writes PIPELINE-REPORT.md and optionally persists patterns to memory.
-- Skill improvement proposals are recommendations — they require human approval before implementation.
+- This skill NEVER modifies source code, spec files, or skill files directly.
+- Proposals are recommendations — they require human approval or a follow-up agent invocation to implement.
+- This skill only writes TUNING-REPORT.md and optionally creates GitHub Issues.
+- When run from GitHub Action, it operates within the permissions of the workflow token.
 </authority-rule>

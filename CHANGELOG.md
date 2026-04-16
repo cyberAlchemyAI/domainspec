@@ -27,14 +27,17 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ### Added
 
-- **PIPELINE-REPORT.md template** — new template capturing economy of action metrics (G7) and structured reflection (G8) per pipeline run. Tracks steps executed, agent delegations, human questions, retries, overhead ratio, governance gaps, and skill improvement proposals.
-- **`domainspec-reflect` skill** — dedicated skill for pipeline retrospection. Produces PIPELINE-REPORT.md with quantified costs and actionable learning. Can run standalone for manual retrospectives.
-- **Pipeline Step 10 (Reflect)** — `domainspec-pipeline` now ends with a reflection step after verification. Pipeline flow: `plan → spec → stories → tests → implement → ui-pipeline → observability → instrument → otel-verify → infra-deploy → registry-sync → verify → reflect`.
+- **PIPELINE-REPORT.md template** — template for economy of action metrics and reflection reports, used as format reference for tuning output.
+- **SIGNAL-SCHEMA.md** — defines 8 signal types (step-verdict, alignment-gap, spec-gap, governance-gap, rework, overhead, decision, proposal, pattern) with JSON envelopes and 8 threshold conditions (TH1–TH8) for triggering async reflection.
+- **`domainspec-reflect` skill** — evolved from synchronous pipeline step to asynchronous signal analyzer. Reads accumulated JSONL signals, detects cross-run patterns, and produces TUNING-REPORT.md with evidence-backed tuning proposals.
+- **Pipeline Step 10 (Emit Signals)** — lightweight signal emission replaces synchronous reflection. Pipeline appends structured observations to `docs/signals/pipeline-signals.jsonl` without blocking.
+- **`analyze-signals.ts` tool** — CLI tool that reads JSONL signals, computes aggregate metrics (overhead ratio, rework rate, first-pass rate), and checks thresholds. Exit code 1 = thresholds triggered. Supports `--json`, `--since`, `--min` flags.
+- **`domainspec-tuning.yml` GitHub Action** — CI workflow triggered when signals are committed. Runs signal analysis, creates GitHub Issues when thresholds are met. Stubbed agent-reflection job for future cloud-based LLM analysis.
 
 ### Changed
 
-- **ADLC-ALIGNMENT.md** — G7 (Economy of Action) and G8 (Reflection) marked as implemented. G8 pulled forward from v2.0 to v1.8 roadmap. Tasks T3, T4, T4b, T19 updated.
-- **Pipeline completion summary** — now includes economy of action metrics, reflection summary, and governance gap follow-up items.
+- **Pipeline flow** — now: `plan → spec → stories → tests → implement → ui-pipeline → observability → instrument → otel-verify → infra-deploy → registry-sync → verify → emit-signals`.
+- **ADLC-ALIGNMENT.md** — G2 (tuning loop) partially addressed with signal infrastructure. G4 (automated governance) partially addressed with threshold-based CI. G7/G8 updated to reflect async architecture. M-006 now tracked via overhead signals.
 
 ## [1.7.2] - 2026-04-16
 

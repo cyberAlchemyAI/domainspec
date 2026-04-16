@@ -26,7 +26,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → reflect
+plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → emit-signals
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
@@ -203,24 +203,22 @@ Created/updated by this skill (cumulative):
     - Runs alignment audit, layering audit, test evidence check.
     - Returns PASS / FLAG / BLOCK verdict.
 
-## Step 10 — Reflect (Economy of Action + Auto-Tuning)
+## Step 10 — Emit Signals (Async Feedback Loop)
 
-33. After verification verdict, produce `docs/features/{feature}/PIPELINE-REPORT.md` using `domainspec/templates/PIPELINE-REPORT.md`:
-    a. **Economy of Action counters (G7):** Populate all metrics from the run — steps executed/skipped, agent delegations, human questions asked, files created/modified, tests added, retries, context discovery strategy and cost.
-    b. **Step verdicts table:** Record per-step verdict, duration estimate, and notes.
-    c. **Reflection (G8):** Analyze the run and populate:
-       - **What went well:** Steps that produced correct output first try.
-       - **What required rework:** Steps needing retries or human correction, with root cause.
-       - **Governance gaps discovered:** Blind spots this run exposed that existing skills missed. For each: what was missed, which skill should have caught it, severity.
-       - **Skill improvement proposals:** Concrete changes to skills/agents/instructions, with rationale from this run and priority.
-       - **Patterns for memory:** Reusable insights to persist to repo/user memory.
-    d. **Artifacts table:** List all files created/modified by category.
-34. If the reflection identifies governance gaps (severity ≥ HIGH), append them as action items to the pipeline summary and recommend a follow-up skill update.
-35. Save the report to `docs/features/{feature}/PIPELINE-REPORT.md`.
+33. After verification verdict, emit structured signals to `docs/signals/pipeline-signals.jsonl`:
+    a. **Per-step signals:** For each step executed, emit a `step-verdict` signal with verdict, retries, files touched, tests added.
+    b. **Economy signal:** Emit one `overhead` signal with aggregate counters — steps executed/skipped, agent delegations, human questions, retries, overhead ratio.
+    c. **Quality signals:** For each alignment gap, spec gap, or governance gap found during the run, emit the corresponding signal type (`alignment-gap`, `spec-gap`, `governance-gap`).
+    d. **Rework signals:** For each step that required retries or human correction, emit a `rework` signal with root cause and iteration count.
+    e. **Decision signals:** For significant design decisions made during the run (confidence < high), emit a `decision` signal.
+    f. **Proposal signals:** For each skill improvement idea identified, emit a `proposal` signal with target file and rationale.
+    g. **Pattern signals:** For reusable insights worth tracking, emit a `pattern` signal.
+34. Signal format follows `domainspec/templates/SIGNAL-SCHEMA.md`. Each signal is one JSON line appended to the JSONL file.
+35. This step is intentionally lightweight — no analysis, no report generation. Deep reflection happens asynchronously via the tuning workflow (GitHub Action or manual `domainspec-reflect --from-signals`).
 
 ## Completion
 
-36. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Economy of Action: steps executed, agent delegations, human questions, retries, overhead ratio - Reflection: governance gaps found (count + severity), skill improvement proposals (count), patterns persisted - Next actions (if FLAG or BLOCK or governance gaps found)
+36. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Signals emitted: count by type (overhead, gaps, rework, proposals, patterns) - Next actions (if FLAG or BLOCK)
     </process>
 
 <error-handling>
