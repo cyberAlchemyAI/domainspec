@@ -26,7 +26,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → emit-signals
+plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → emit-signals → observer
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
@@ -64,6 +64,10 @@ Created/updated by this skill (cumulative):
 2. Check if docs/features/{feature}/ exists:
    - If exists → this is an **evolution** of an existing feature. Load SPEC.md and all aspect files.
    - If missing → this is a **new feature**. Ensure docs/ directory exists (run `domainspec-init` if needed).
+2b. Validate governance baseline before feature execution:
+    - Preferred baseline file: `docs/shared/governance-baseline.md`.
+    - Compatibility fallback accepted: `docs/shared/cash-game-management-governance.md`.
+    - If neither file exists, return BLOCK and require `domainspec-init` (or copy `domainspec/templates/governance-baseline.md` manually) before continuing.
 3. If --dry-run, output the execution plan (which steps apply, which delegate skills) and stop.
 
 ## Step 1 — Plan
@@ -203,22 +207,38 @@ Created/updated by this skill (cumulative):
     - Runs alignment audit, layering audit, test evidence check.
     - Returns PASS / FLAG / BLOCK verdict.
 
-## Step 10 — Emit Signals (Async Feedback Loop)
+## Step 10 — Emit Signals (Session Epilogue)
 
 33. After verification verdict, emit structured signals to `docs/signals/pipeline-signals.jsonl`:
     a. **Per-step signals:** For each step executed, emit a `step-verdict` signal with verdict, retries, files touched, tests added.
     b. **Economy signal:** Emit one `overhead` signal with aggregate counters — steps executed/skipped, agent delegations, human questions, retries, overhead ratio.
     c. **Quality signals:** For each alignment gap, spec gap, or governance gap found during the run, emit the corresponding signal type (`alignment-gap`, `spec-gap`, `governance-gap`).
     d. **Rework signals:** For each step that required retries or human correction, emit a `rework` signal with root cause and iteration count.
-    e. **Decision signals:** For significant design decisions made during the run (confidence < high), emit a `decision` signal.
+    e. **Decision signals:** For significant design decisions made during the run, emit a `decision` signal.
     f. **Proposal signals:** For each skill improvement idea identified, emit a `proposal` signal with target file and rationale.
     g. **Pattern signals:** For reusable insights worth tracking, emit a `pattern` signal.
-34. Signal format follows `domainspec/templates/SIGNAL-SCHEMA.md`. Each signal is one JSON line appended to the JSONL file.
-35. This step is intentionally lightweight — no analysis, no report generation. Deep reflection happens asynchronously via the tuning workflow (GitHub Action or manual `domainspec-reflect --from-signals`).
+34. Signal format follows `domainspec/templates/SIGNAL-SCHEMA.md`. Each signal is one JSON line appended to the JSONL file with `source: "session-epilogue"`.
+35. Enforce session completeness invariants before completion:
+    - If any `step-verdict` exists, emit exactly one `overhead` signal.
+    - If any `step-verdict` has `retriesNeeded > 0`, emit at least one `rework` signal.
+
+## Step 11 — Dual-Phase Observer
+
+36. Run fast observer (blocking):
+    - Execute deterministic detector and signal validator to emit `source: "fast-observer"` signals.
+    - If critical/high governance violations are found, return BLOCK.
+37. Build telemetry bundle for deep analysis:
+    - Ordered tool/command events.
+    - Incremental diff snapshots.
+    - Test output chronology with timestamps.
+38. Dispatch async deep observer (non-blocking):
+    - Analyze telemetry bundle and emit behavior-level signals with `source: "async-observer"`.
+    - Append to same JSONL log.
+39. Deep reflection remains asynchronous via tuning workflow or manual `domainspec-reflect --from-signals`.
 
 ## Completion
 
-36. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Signals emitted: count by type (overhead, gaps, rework, proposals, patterns) - Next actions (if FLAG or BLOCK)
+40. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Signals emitted by source (session-epilogue, fast-observer, async-observer) - Next actions (if FLAG or BLOCK)
     </process>
 
 <error-handling>

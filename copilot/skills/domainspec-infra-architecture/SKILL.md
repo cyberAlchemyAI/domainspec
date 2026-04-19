@@ -76,6 +76,20 @@ The skill recommends a preset based on detection signals, then asks the user to 
   - .github/workflows/ci.yml (PR checks + pulumi preview)
   - .github/workflows/deploy.yml (push to main → deploy)
 
+### Add-on: Agent Runner (optional, preset >= single-vps)
+
+Available when the project uses the DomainSpec tuning loop. Adds:
+
+- Self-hosted GitHub Actions runner on the VPS (systemd service)
+- Sandboxed container image for agent execution (no production secrets)
+- Copilot CLI for automated reflection and tuning proposals
+- infra/agent-runner-setup.sh (idempotent runner registration + auth)
+- infra/agent-runner/Dockerfile (sandboxed execution environment)
+- .github/workflows/domainspec-tuning.yml agent-reflect job
+- Additional secrets: GH_PAT_AGENT (repo + workflow scope)
+
+Enable when: project has `docs/signals/pipeline-signals.jsonl` and `domainspec/copilot/skills/domainspec-reflect/SKILL.md`.
+
 ## Preset: Split VPS
 
 - Extends Single VPS with:

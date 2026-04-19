@@ -39,4 +39,5 @@ Output:
 3. Inspect implementation and tests for evidence.
 4. Classify each requirement status with file references.
 5. Generate actionable remediation items.
+6. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any alignment gaps, governance gaps, or patterns discovered during the audit to `docs/signals/pipeline-signals.jsonl`.
 </execution>

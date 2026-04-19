@@ -52,4 +52,5 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
 5. Add formal rules, transitions, and invariants where applicable.
 6. Run a consistency pass for links and concept naming, including referenced field names.
 7. If key decisions are undefined, use question prompts before finalizing specs.
+8. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, decisions, or patterns discovered during spec writing to `docs/signals/pipeline-signals.jsonl`.
 </execution>

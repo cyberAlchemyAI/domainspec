@@ -36,4 +36,5 @@ Inputs may include:
 3. Gather options and constraints.
 4. Compare using fit, complexity, risk, and maintainability.
 5. Return recommendation and implementation impact.
+6. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any decisions or patterns discovered during research to `docs/signals/pipeline-signals.jsonl`.
 </execution>

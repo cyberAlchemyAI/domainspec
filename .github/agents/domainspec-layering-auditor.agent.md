@@ -94,6 +94,7 @@ Outputs:
 4. For misplaced items, define exact move targets (entity, value object, domain service, policy, workflow).
 5. Emit dependency-ordered remediation waves with verification commands.
 6. Add enforcement checks for future work (agent and skill gates).
+7. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any alignment gaps, governance gaps, or patterns discovered during the layering audit to `docs/signals/pipeline-signals.jsonl`.
 </execution>
 
 <classification-rules>

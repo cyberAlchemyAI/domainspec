@@ -37,4 +37,5 @@ Primary files:
 3. Compare with current registry and identify drift.
 4. Update registry sections and concept graph edges.
 5. Produce a short sync report with added, updated, and suspicious entries.
+6. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps or patterns discovered during registry sync to `docs/signals/pipeline-signals.jsonl`.
 </execution>

@@ -115,7 +115,7 @@ Navigational artifacts for context discovery:
   - Prefer `Explore` for broad codebase discovery (quick/medium/thorough as needed).
   - Use `domainspec-researcher` for focused implementation feasibility and dependency impact research.
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
-3. If the feature already has implementation, run both `domainspec-alignment-auditor` and `domainspec-layering-auditor` and consolidate remediation obligations.
+3. If the feature already has implementation, run `domainspec-alignment-auditor` and `domainspec-layering-auditor` as **parallel subagents** and consolidate remediation obligations from both results.
 4. **UI detection gate**: Check if the feature has frontend aspects:
    a. Does `interfaces.md` declare HTTP endpoints (transport: http)?
    b. Does `docs/UI-ARCHITECTURE.md` exist?
@@ -125,18 +125,29 @@ Navigational artifacts for context discovery:
    - If UI-ARCHITECTURE.md exists but no UI-SPEC.md → include `domainspec-ui-pipeline` task.
    - If UI-SPEC.md already exists → include `domainspec-generate-tests --ui` and `domainspec-ui-implement` tasks individually.
    - If UI implementation exists → include `domainspec-ui-audit-bridge` task in verification wave.
-5. Classify planning complexity.
-6. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
-7. For medium/high complexity, delegate orchestration to GSD plan-phase flow and map resulting tasks back to DomainSpec concepts.
-8. Ensure every task maps to one or more documented capabilities/concepts.
-9. For features with UI aspects, include Playwright E2E test generation and scaffold tasks in the plan.
-10. Return assumptions explicitly when docs are incomplete.
+5. **Interactive architecture-decision round** (MANDATORY before task breakdown):
+  - Enumerate every architectural decision discovered in steps 1-4 that has more than one viable option (e.g., isolation strategy, auth model, lifecycle, failure handling, concurrency).
+  - Ask the user to choose for each decision using `vscode/askQuestions` with concrete options and trade-off descriptions.
+  - If the user's answers surface new decisions, ask follow-up questions before proceeding.
+  - Do NOT produce tasks until all multi-option decisions are resolved.
+  - If the planner skips this step, emit a `governance-gap` signal with `shouldHaveBeenCaughtBy: domainspec-planner`.
+6. **Spec-compliance self-check**: Before producing the plan, verify the planner followed steps 1-5. If any step was skipped, emit a `spec-compliance` signal and remediate before continuing.
+7. Classify planning complexity.
+8. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
+9. For medium/high complexity, delegate orchestration to GSD plan-phase flow via `.github/skills/domainspec-plan-phase-bridge/SKILL.md` and map resulting tasks back to DomainSpec concepts.
+10. Ensure every task maps to one or more documented capabilities/concepts.
+11. For features with UI aspects, include Playwright E2E test generation and scaffold tasks in the plan.
+12. Return assumptions explicitly when docs are incomplete.
 </execution>
 
 <delegation-contract>
 Mode selection:
 - `native`: Use DomainSpec-only planning.
 - `gsd-phase`: Use GSD phase planning orchestration and then normalize output back to DomainSpec terminology.
+
+Delegation references:
+- DomainSpec bridge: `.github/skills/domainspec-plan-phase-bridge/SKILL.md`
+- GSD planner: `.github/skills/gsd-plan-phase/SKILL.md`
 
 Delegation trigger:
 

@@ -37,4 +37,5 @@ Inputs:
 3. Evaluate verification evidence.
 4. Evaluate unresolved drift or risk.
 5. Return decision and required next actions.
+6. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any alignment gaps, governance gaps, or patterns discovered during verification to `docs/signals/pipeline-signals.jsonl`.
 </execution>

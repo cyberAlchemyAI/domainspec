@@ -90,17 +90,23 @@ Required inputs:
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load feature docs and identify required implementation units.
-3. If feature code already exists, run both `domainspec-alignment-auditor` and `domainspec-layering-auditor` and consolidate findings into an implementation backlog.
+3. If feature code already exists, run `domainspec-alignment-auditor` and `domainspec-layering-auditor` as **parallel subagents** and consolidate findings into an implementation backlog.
 4. Select execution mode (`native` or `gsd-phase`).
+  - If `gsd-phase`, delegate via `.github/skills/domainspec-execute-phase-bridge/SKILL.md`, which maps DomainSpec tasks into GSD phase execution and preserves concept-level traceability.
 5. Implement in dependency order: contracts, core logic, adapters.
 6. Add or update tests linked to source clauses.
 7. Run automated checks and summarize results with traceability.
+8. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any alignment gaps, spec gaps, rework, decisions, or patterns discovered during implementation to `docs/signals/pipeline-signals.jsonl`.
 </execution>
 
 <delegation-contract>
 Execution modes:
 - `native`: implement directly from DomainSpec artifacts.
 - `gsd-phase`: use GSD phase execution orchestration for task flow, checkpoints, and summaries.
+
+Delegation references:
+- DomainSpec bridge: `.github/skills/domainspec-execute-phase-bridge/SKILL.md`
+- GSD executor: `.github/skills/gsd-execute-phase/SKILL.md`
 
 Authority rule:
 

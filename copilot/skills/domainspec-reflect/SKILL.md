@@ -12,6 +12,7 @@ Analyze accumulated pipeline signals across multiple runs to:
 2. **Compute aggregate metrics** — overhead trends, rework hotspots, coverage evolution.
 3. **Propose tuning** — concrete, evidence-backed changes to skills, agents, templates, or instructions.
 4. **Track progress** — compare current signal patterns against previous tuning reports.
+5. **Measure governance health** — compute M-001..M-006 indicators and identify pruning candidates.
 
 This skill is the **outer loop** of the DomainSpec learning system. It transforms raw observations into structural improvements.
 </objective>
@@ -68,10 +69,19 @@ This skill runs **asynchronously** — either triggered by GitHub Action when si
 16. **Governance effectiveness:**
     - Governance gaps detected vs. addressed (compare against previous tuning reports).
     - Time from governance-gap signal to skill update (if trackable from git history).
+    - M-001 Orphan Rate (from registry/orphan signals).
+    - M-002 L6 Friction Rate (BLOCK ratio).
+    - M-004 L4 Volatility (axiom/constitution change cadence).
+    - M-005 Governance Ratio (anchored concepts / total concepts).
+    - M-006 Overhead Ratio trend.
+
+17. Execute governance pruning support scripts when available:
+    - `domainspec/tools/prune-governance.ts`
+    - `domainspec/tools/generate-meta-health.ts`
 
 ## Step 4 — Generate Tuning Proposals
 
-17. For each threshold met, generate a concrete proposal:
+18. For each threshold met, generate a concrete proposal:
     - **TH1 (recurring governance gap):** Propose specific skill update with the evidence chain (3+ occurrences, affected features, root cause pattern).
     - **TH2 (high overhead):** Analyze which governance artifacts contributed most. Propose simplification or consolidation.
     - **TH3 (persistent spec gap):** Propose template addition or enhancement to prevent the gap.
@@ -81,7 +91,7 @@ This skill runs **asynchronously** — either triggered by GitHub Action when si
     - **TH7 (critical gap):** Immediate action required — propose PR with fix.
     - **TH8 (decision uncertainty):** Flag ambiguous domain areas for human clarification.
 
-18. Each proposal must include:
+19. Each proposal must include:
     - **Evidence:** Signal IDs, dates, features, counts.
     - **Target:** Exact file path(s) to modify.
     - **Change:** What to add/modify/remove.
@@ -90,24 +100,26 @@ This skill runs **asynchronously** — either triggered by GitHub Action when si
 
 ## Step 5 — Write Tuning Report
 
-19. Generate `docs/signals/TUNING-REPORT.md` with sections:
+20. Generate `docs/signals/TUNING-REPORT.md` with sections:
     - **Signal Summary:** Count by type, severity, feature. Date range covered.
     - **Thresholds Triggered:** Which thresholds met, with evidence.
     - **Aggregate Metrics:** Economy, quality, governance trends.
+    - **Governance Health:** M-001..M-006 values and interpretation.
     - **Tuning Proposals:** Ordered by priority, each with full evidence chain.
+    - **Pruning Candidates:** Rules with weak/no evidence over rolling windows.
     - **Patterns Persisted:** Insights worth adding to repo memory.
     - **Comparison:** If previous TUNING-REPORT exists, compare metrics (improving/stable/degrading).
-20. Archive previous TUNING-REPORT.md to `docs/signals/archive/TUNING-REPORT-{date}.md` (keep last 5).
+21. Archive previous TUNING-REPORT.md to `docs/signals/archive/TUNING-REPORT-{date}.md` (keep last 5).
 
 ## Step 6 — Actionable Output
 
-21. If running in GitHub Action context:
+22. If running in GitHub Action context:
     - For P0 proposals: create GitHub Issue with `domainspec-tuning` label and proposal details.
     - For P1 proposals: create a single bundled Issue.
     - For TH7 (critical): create Issue with `urgent` label.
-22. If running manually:
+23. If running manually:
     - Return summary to the user with proposal list and recommended next actions.
-23. Optionally persist key patterns to `/memories/repo/` for agent context in future sessions.
+24. Optionally persist key patterns to `/memories/repo/` for agent context in future sessions.
 
 </process>
 

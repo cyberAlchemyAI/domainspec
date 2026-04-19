@@ -41,4 +41,5 @@ Feature inputs:
 3. Build TEST-SPEC.md with one row per derived test obligation.
 4. Optionally scaffold test files with source annotations.
 5. Report uncovered areas where docs are insufficiently formal.
+6. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, governance gaps, or proposals discovered during test design to `docs/signals/pipeline-signals.jsonl`.
 </execution>

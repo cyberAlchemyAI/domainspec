@@ -88,8 +88,45 @@ Use these artifacts as contracts:
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load existing feature docs and source code scope.
-3. If the feature already has implementation, run both `domainspec-alignment-auditor` and `domainspec-layering-auditor` and consolidate remediation obligations.
-4. Produce a short plan with deterministic tasks and checks.
-5. Ensure every task maps to one or more documented concepts.
-6. Return assumptions explicitly when docs are incomplete.
+3. If the feature already has implementation, run `domainspec-alignment-auditor` and `domainspec-layering-auditor` as **parallel subagents** and consolidate remediation obligations from both results.
+4. **Interactive architecture-decision round** (MANDATORY before task breakdown):
+  - Enumerate every architectural decision discovered in steps 1-3 that has more than one viable option.
+  - Ask the user to choose for each decision using `vscode/askQuestions` with concrete options and trade-off descriptions.
+  - Do NOT produce tasks until all multi-option decisions are resolved.
+  - If skipped, emit a `governance-gap` signal with `shouldHaveBeenCaughtBy: domainspec-planner`.
+5. **Spec-compliance self-check**: Verify the planner followed steps 1-4 before producing the plan. If any step was skipped, emit a `spec-compliance` signal and remediate.
+6. Produce a short plan with deterministic tasks and checks.
+7. Ensure every task maps to one or more documented concepts.
+8. Classify planning complexity.
+9. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
+10. For medium/high complexity, delegate orchestration to GSD plan-phase flow via `.github/skills/domainspec-plan-phase-bridge/SKILL.md` and map resulting tasks back to DomainSpec concepts.
+11. Return assumptions explicitly when docs are incomplete.
+12. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, decisions, governance gaps, or proposals discovered during planning to `docs/signals/pipeline-signals.jsonl`.
 </execution>
+
+<delegation-contract>
+Mode selection:
+- `native`: Use DomainSpec-only planning.
+- `gsd-phase`: Use GSD phase planning orchestration and then normalize output back to DomainSpec terminology.
+
+Delegation references:
+- DomainSpec bridge: `.github/skills/domainspec-plan-phase-bridge/SKILL.md`
+- GSD planner: `.github/skills/gsd-plan-phase/SKILL.md`
+
+Delegation trigger:
+
+- Prefer `gsd-phase` when at least one is true:
+  - Feature requires cross-cutting docs/tests/implementation sequencing.
+  - Feature has explicit dependencies across multiple aspect files.
+  - Work is expected to require checkpointed execution or wave planning.
+
+Authority rule:
+
+- DomainSpec docs remain source of truth for behavior and acceptance.
+- GSD provides orchestration only (task decomposition, wave/dependency ordering, checkpoints).
+
+Output rule:
+
+- Always return a DomainSpec-readable plan even when delegated.
+- Include explicit mapping from GSD tasks to DomainSpec concept IDs.
+  </delegation-contract>

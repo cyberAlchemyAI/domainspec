@@ -23,7 +23,7 @@ Inputs:
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Resolve execution mode (`native` by default, `gsd-phase` when explicitly requested).
-3. If feature code already exists, run `domainspec-audit-alignment` and `domainspec-audit-layering`, then convert combined findings to explicit tasks before edits.
+3. If feature code already exists, run `domainspec-audit-alignment` and `domainspec-audit-layering` as **parallel subagents**, then convert combined findings to explicit tasks before edits.
 4. Build implementation task list from documented concepts and behaviors.
 5. In `gsd-phase` mode, delegate orchestration to GSD execution flow and normalize outputs back to DomainSpec traceability.
 6. Implement code and tests in small verifiable increments.

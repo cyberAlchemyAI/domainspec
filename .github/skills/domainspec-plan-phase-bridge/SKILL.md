@@ -23,7 +23,7 @@ Inputs:
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Resolve mode: `native` by default, `gsd-phase` when requested.
-3. If the feature already has implementation files, run `domainspec-audit-alignment` and `domainspec-audit-layering`, then consolidate obligations into a single remediation backlog.
+3. If the feature already has implementation files, run `domainspec-audit-alignment` and `domainspec-audit-layering` as **parallel subagents**, then consolidate obligations into a single remediation backlog.
 4. In `native`, produce DomainSpec plan directly.
 5. In `gsd-phase`, run GSD plan-phase orchestration and collect PLAN artifacts.
 6. Map each delegated task back to DomainSpec concept IDs and acceptance obligations, including both semantic and layering findings.
