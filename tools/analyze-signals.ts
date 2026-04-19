@@ -56,6 +56,13 @@ interface AnalysisResult {
     reworkRate: number;
     firstPassRate: number;
     totalRuns: number;
+    agentCost: {
+      totalPremiumRequests: number;
+      totalDurationSeconds: number;
+      agentRuns: number;
+      successRate: number | null;
+      last7dPremiumRequests: number;
+    };
   };
 }
 
@@ -243,6 +250,38 @@ if (lowConfDecisions.length >= 3) {
   });
 }
 
+// TH9: spec-compliance violation by same agent in 2+ signals
+const specCompliance = signals.filter((s) => s.type === "spec-compliance");
+const complianceByAgent = groupBy(specCompliance, (s) => String(s.data.agentName || ""));
+for (const [agent, group] of Object.entries(complianceByAgent)) {
+  if (group.length >= 2) {
+    thresholds.push({
+      id: "TH9",
+      description: `Spec-compliance violation by ${agent} (${group.length}x)`,
+      met: true,
+      evidence: `Violations: ${group.map((s) => String(s.data.violationType || "")).join(", ")}. Spec: ${group[0]?.data.specFile || "unknown"}`,
+      count: group.length,
+    });
+  }
+}
+
+// TH10: agent-cost premiumRequests > 50 in rolling 7 days
+const agentCosts = signals.filter((s) => s.type === "agent-cost");
+const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+const recentCosts = agentCosts.filter((s) => s.timestamp >= sevenDaysAgo);
+const totalPremiumRequests = recentCosts.reduce(
+  (sum, s) => sum + ((s.data.premiumRequests as number) || 0), 0
+);
+if (totalPremiumRequests > 50) {
+  thresholds.push({
+    id: "TH10",
+    description: `Agent cost threshold: ${totalPremiumRequests} premium requests in 7 days`,
+    met: true,
+    evidence: `${recentCosts.length} agent runs, ${totalPremiumRequests} premium requests. Agents: ${[...new Set(recentCosts.map((s) => String(s.data.agentName || "")))].join(", ")}`,
+    count: totalPremiumRequests,
+  });
+}
+
 // --- Compute aggregates ---
 
 const overheadRatios = overheadSignals.map((s) => s.data.overheadRatio as number).filter(Boolean);
@@ -257,6 +296,17 @@ const reworkRate = stepVerdicts.length > 0 ? reworkCount / stepVerdicts.length :
 const firstPassSteps = stepVerdicts.filter((s) => (s.data.retriesNeeded as number) === 0);
 const firstPassRate = stepVerdicts.length > 0 ? firstPassSteps.length / stepVerdicts.length : 0;
 const totalRuns = overheadSignals.length;
+
+// Agent cost aggregation
+const totalAgentCost = agentCosts.reduce(
+  (sum, s) => sum + ((s.data.premiumRequests as number) || 0), 0
+);
+const totalAgentDuration = agentCosts.reduce(
+  (sum, s) => sum + ((s.data.durationSeconds as number) || 0), 0
+);
+const agentSuccessRate = agentCosts.length > 0
+  ? agentCosts.filter((s) => s.data.success === true).length / agentCosts.length
+  : null;
 
 // --- Output ---
 
@@ -278,6 +328,13 @@ const result: AnalysisResult = {
     reworkRate: Math.round(reworkRate * 100) / 100,
     firstPassRate: Math.round(firstPassRate * 100) / 100,
     totalRuns,
+    agentCost: {
+      totalPremiumRequests: totalAgentCost,
+      totalDurationSeconds: totalAgentDuration,
+      agentRuns: agentCosts.length,
+      successRate: agentSuccessRate !== null ? Math.round(agentSuccessRate * 100) / 100 : null,
+      last7dPremiumRequests: totalPremiumRequests,
+    },
   },
 };
 
@@ -295,6 +352,14 @@ if (jsonOutput) {
   console.log(`  Rework rate: ${(reworkRate * 100).toFixed(0)}%`);
   console.log(`  First-pass rate: ${(firstPassRate * 100).toFixed(0)}%`);
   console.log(`  Total runs: ${totalRuns}`);
+  if (agentCosts.length > 0) {
+    console.log(`\nAgent Cost:`);
+    console.log(`  Total premium requests: ${totalAgentCost}`);
+    console.log(`  Last 7d premium requests: ${totalPremiumRequests}`);
+    console.log(`  Agent runs: ${agentCosts.length}`);
+    console.log(`  Success rate: ${agentSuccessRate !== null ? (agentSuccessRate * 100).toFixed(0) + "%" : "N/A"}`);
+    console.log(`  Total duration: ${Math.round(totalAgentDuration / 60)}m`);
+  }
   console.log(`\nThresholds triggered: ${triggeredThresholds.length}`);
   for (const t of triggeredThresholds) {
     console.log(`  [${t.id}] ${t.description}`);
