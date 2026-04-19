@@ -1,7 +1,7 @@
-# Pipeline Signals — Schema Reference
+# Pipeline Signals - Schema Reference
 
-> Structured observations emitted during pipeline runs. Accumulated in `docs/signals/pipeline-signals.jsonl`.
-> Each line is a self-contained JSON object. The file is append-only during sessions, committed at session end.
+> Structured observations emitted during pipeline runs. Accumulated in docs/signals/pipeline-signals.jsonl.
+> Each line is a self-contained JSON object. The file is append-only during sessions.
 
 ---
 
@@ -11,27 +11,35 @@ Every signal shares this envelope:
 
 ```jsonc
 {
-  "id": "uuid-v4",                          // unique signal ID
+  "id": "uuid-v4",                          // unique signal ID (canonical)
   "timestamp": "2026-04-16T14:30:00Z",      // ISO 8601
   "session": "session-identifier",           // conversation/session ID (opaque)
   "feature": "player-management",            // feature-id from SPEC frontmatter
-  "features": ["player-management"],         // array when signal spans multiple features
-  "domainspecVersion": "1.8.0",              // framework version from CHANGELOG
-  "pipelineMode": "new | evolution | audit", // how the pipeline was invoked
-  "type": "signal-type",                     // see Signal Types below
+  "features": ["player-management"],         // optional array when signal spans multiple features
+  "domainspecVersion": "1.8.3",              // framework version from CHANGELOG
+  "pipelineMode": "new | evolution | audit", // invocation mode
+  "source": "session-epilogue | fast-observer | async-observer | ci-detector",
+  "type": "signal-type",
   "severity": "LOW | MEDIUM | HIGH | CRITICAL",
-  "category": "economy | governance | pattern | quality",
-  "data": { }                                // type-specific payload
+  "category": "economy | governance | pattern | quality | operations",
+  "data": { }
 }
 ```
+
+### Canonical Constraints
+
+1. id must be UUID v4.
+2. source must be one of the listed values.
+3. category must match allowed values and type mapping.
+4. session-level completeness invariants must hold (see below).
 
 ---
 
 ## Signal Types
 
-### `step-verdict`
+### step-verdict
 
-Emitted once per pipeline step executed.
+Emitted once per executed step.
 
 ```jsonc
 {
@@ -51,7 +59,7 @@ Emitted once per pipeline step executed.
 }
 ```
 
-### `alignment-gap`
+### alignment-gap
 
 Code drifted from spec or spec is incomplete for code.
 
@@ -70,9 +78,9 @@ Code drifted from spec or spec is incomplete for code.
 }
 ```
 
-### `spec-gap`
+### spec-gap
 
-Specification was insufficient for implementation — required human clarification or assumption.
+Specification was insufficient for implementation.
 
 ```jsonc
 {
@@ -89,9 +97,9 @@ Specification was insufficient for implementation — required human clarificati
 }
 ```
 
-### `governance-gap`
+### governance-gap
 
-A blind spot — something the framework should have caught but didn't.
+Framework blind spot.
 
 ```jsonc
 {
@@ -108,9 +116,9 @@ A blind spot — something the framework should have caught but didn't.
 }
 ```
 
-### `rework`
+### rework
 
-A step that required retries or human correction.
+A step required retries or human correction.
 
 ```jsonc
 {
@@ -128,9 +136,9 @@ A step that required retries or human correction.
 }
 ```
 
-### `overhead`
+### overhead
 
-Economy of Action snapshot for the full pipeline run.
+Economy of Action snapshot for a full session/run.
 
 ```jsonc
 {
@@ -156,9 +164,9 @@ Economy of Action snapshot for the full pipeline run.
 }
 ```
 
-### `decision`
+### decision
 
-A significant decision made during the pipeline that might recur or be worth reviewing.
+A significant design or execution decision.
 
 ```jsonc
 {
@@ -175,9 +183,9 @@ A significant decision made during the pipeline that might recur or be worth rev
 }
 ```
 
-### `proposal`
+### proposal
 
-A concrete skill/agent improvement proposal generated during the run.
+A concrete improvement proposal.
 
 ```jsonc
 {
@@ -194,9 +202,9 @@ A concrete skill/agent improvement proposal generated during the run.
 }
 ```
 
-### `pattern`
+### pattern
 
-A reusable insight discovered during the run.
+Reusable insight.
 
 ```jsonc
 {
@@ -211,31 +219,88 @@ A reusable insight discovered during the run.
 }
 ```
 
+### spec-compliance
+
+An agent deviated from its own documented specification.
+
+```jsonc
+{
+  "type": "spec-compliance",
+  "category": "governance",
+  "severity": "HIGH",
+  "data": {
+    "agentName": "domainspec-planner",
+    "specFile": "domainspec/copilot/agents/domainspec-planner.md",
+    "violationType": "step-skipped | step-reordered | output-malformed | contract-violated",
+    "skippedStep": "5",
+    "description": "Planner skipped interactive architecture-decision round and produced task breakdown directly from intake answers",
+    "detectedBy": "human | self-check | audit",
+    "impact": "Plan contained assumptions that should have been validated via user questions"
+  }
+}
+```
+
+### agent-cost
+
+Resource consumption of automated agent runs.
+
+```jsonc
+{
+  "type": "agent-cost",
+  "category": "operations",
+  "severity": "LOW",
+  "data": {
+    "agentName": "domainspec-reflect",
+    "model": "codex",
+    "premiumRequests": 3,
+    "durationSeconds": 120,
+    "taskType": "reflection | implementation | audit",
+    "inputTokens": 8500,
+    "outputTokens": 2100,
+    "success": true,
+    "triggerWorkflow": "domainspec-tuning.yml"
+  }
+}
+```
+
+---
+
+## Session Completeness Invariants
+
+1. C1: Any session emitting step-verdict must emit exactly one overhead signal.
+2. C2: If any step-verdict has retriesNeeded > 0, the same session must emit at least one rework signal.
+3. C3: Duplicate protection: same (session, type, feature, description) should not be emitted twice.
+4. C4: A signal must provide feature or features. Empty scope is invalid.
+5. C5: Type-category mapping must be valid:
+   1. step-verdict, rework, overhead -> economy
+   2. alignment-gap, spec-gap -> quality
+   3. governance-gap, proposal, spec-compliance -> governance
+   4. decision, pattern -> pattern
+   5. agent-cost -> operations
+
 ---
 
 ## Threshold Definitions
 
-These thresholds trigger async reflection when the GitHub Action reads accumulated signals:
+These thresholds trigger async reflection when accumulated signals are analyzed:
 
-| ID  | Condition                                              | Action                                       |
-| --- | ------------------------------------------------------ | -------------------------------------------- |
-| TH1 | Same `governance-gap` description in 3+ signals        | Auto-propose skill update PR                 |
-| TH2 | `overhead.overheadRatio` > 0.5 for 3 consecutive runs  | Flag governance overhead review               |
-| TH3 | Same `spec-gap.missingDetail` pattern in 2+ features   | Propose template improvement                  |
-| TH4 | `rework` on same `stepName` in 5+ signals              | Flag skill for hardening                      |
-| TH5 | 3+ `proposal` signals with same `targetFile`           | Bundle proposals into single tuning PR        |
-| TH6 | `alignment-gap` count > 10 across last 5 runs          | Trigger full cross-feature alignment audit    |
-| TH7 | New `governance-gap` with severity CRITICAL             | Immediate issue creation (no threshold wait)  |
-| TH8 | `decision` with `confidence: low` in 3+ runs           | Flag domain ambiguity for human clarification |
+| ID | Condition | Action |
+|---|---|---|
+| TH1 | Same governance-gap description in 3+ signals | Auto-propose skill update PR |
+| TH2 | overhead.overheadRatio > 0.5 for 3 consecutive runs | Flag governance overhead review |
+| TH3 | Same spec-gap.missingDetail pattern in 2+ features | Propose template improvement |
+| TH4 | rework on same stepName in 5+ signals | Flag skill for hardening |
+| TH5 | 3+ proposal signals with same targetFile | Bundle proposals into single tuning PR |
+| TH6 | alignment-gap count > 10 across last 5 runs | Trigger full cross-feature alignment audit |
+| TH7 | New governance-gap with severity CRITICAL | Immediate issue creation (no threshold wait) |
+| TH8 | decision with confidence low in 3+ runs | Flag domain ambiguity for clarification |
+| TH9 | spec-compliance violation by same agent in 2+ signals | Flag agent spec for hardening and emit proposal |
+| TH10 | agent-cost premiumRequests > 50 in rolling 7 days | Alert cost threshold and review efficiency |
 
 ---
 
 ## File Location
 
-```
-docs/signals/pipeline-signals.jsonl    # append-only signal log
-docs/signals/TUNING-REPORT.md          # output of async reflection (written by CI agent)
-```
+docs/signals/pipeline-signals.jsonl
 
-The signals file is committed to the repository. It is append-only during sessions.
-Periodic compaction (archiving old signals) is handled by the tuning workflow.
+The signals file is append-only during sessions. Deep analysis and proposal generation happen asynchronously via reflect and tuning workflows.
