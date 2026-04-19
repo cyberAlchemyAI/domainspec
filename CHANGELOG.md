@@ -23,6 +23,36 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [1.8.2] - 2026-04-18
+
+### Added
+
+- **governance-baseline template** — new `templates/governance-baseline.md` for cross-feature day-0 governance defaults in project docs bootstrap.
+
+### Changed
+
+- **domainspec-init skill** — now bootstraps `docs/shared/governance-baseline.md` as part of initial project setup while keeping domain-specific governance blueprints as companion artifacts.
+- **domainspec-pipeline skill** — pre-flight now validates governance baseline presence before feature execution, with compatibility fallback for existing `cash-game-management-governance.md` projects.
+- **README and copilot docs** — quick start, workflow, and template references now include governance baseline as a first-class setup step.
+
+## [1.8.1] - 2025-07-27
+
+### Added
+
+- **agent-runner template** — portable pattern for self-hosted GitHub Actions runner with Copilot CLI on VPS (sandboxed container, systemd service, setup script).
+- **agent-cost signal type** — tracks premium requests, duration, and success rate for automated agent runs.
+- **TH9 threshold** — flags agent spec for hardening when same agent has 2+ spec-compliance violations.
+- **TH10 threshold** — alerts when agent-cost premiumRequests exceeds 50 in rolling 7-day window.
+- **validate-tuning-report.ts** — CLI tool to validate TUNING-REPORT.md structure before PR creation.
+- **Agent Runner add-on** — added to infra-architecture skill as optional add-on for single-vps+ presets.
+
+### Changed
+
+- **domainspec-tuning.yml** — replaced stubbed agent-reflect job with live self-hosted runner implementation using Copilot CLI, validation gate, and PR creation.
+- **TUNING-LOOP.md** — replaced "Future: Cloud Agent Reflection" section with implemented architecture, security model, and cost tracking documentation.
+- **analyze-signals.ts** — added TH9 (spec-compliance), TH10 (agent-cost) checks and agent-cost aggregation to output.
+- **INFRA-SETUP.md** — added Agent Runner prerequisites section.
+
 ## [1.8.0] - 2026-04-16
 
 ### Added

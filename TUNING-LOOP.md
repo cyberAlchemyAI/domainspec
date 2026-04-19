@@ -153,6 +153,8 @@ Every signal shares a common envelope. See `domainspec/templates/SIGNAL-SCHEMA.m
 | `decision` | pattern | Significant design choice made | description, alternatives, rationale, confidence |
 | `proposal` | governance | Skill improvement idea identified | targetFile, changeDescription, rationale, priority |
 | `pattern` | pattern | Reusable insight discovered | summary, context, applicability |
+| `spec-compliance` | governance | Agent deviated from its own spec | agentName, specFile, violationType, skippedStep, description, detectedBy, impact |
+| `agent-cost` | operations | Agent run resource consumption | agentName, model, premiumRequests, durationSeconds, taskType, success, triggerWorkflow |
 
 ### Adding a New Signal Type
 
@@ -188,6 +190,8 @@ Thresholds define when accumulated signals warrant action. They convert raw obse
 | TH6 | `alignment-gap` count > 10 across last 5 sessions | 10 | Trigger full alignment audit |
 | TH7 | `governance-gap` with severity CRITICAL | 1 | Immediate issue (no threshold wait) |
 | TH8 | `decision` with `confidence: low` in 3+ signals | 3 | Flag domain ambiguity |
+| TH9 | `spec-compliance` violation by same agent in 2+ signals | 2 | Flag agent spec for hardening + emit proposal |
+| TH10 | `agent-cost` total premiumRequests > 50 in rolling 7 days | 50 | Alert cost threshold, review agent efficiency |
 
 ### Threshold Design Guidelines
 
@@ -310,19 +314,38 @@ The workflow supports `workflow_dispatch` with inputs:
 - `since` — Only analyze signals after this date
 - `min_signals` — Override minimum signal count
 
-### Future: Cloud Agent Reflection
+### Cloud Agent Reflection
 
-The workflow has a stubbed `agent-reflect` job (currently commented) for when GitHub Models API or Copilot Extensions support LLM invocation in CI:
+The workflow includes a live `agent-reflect` job that runs on a self-hosted VPS runner with Copilot CLI. When thresholds are triggered:
 
-```yaml
-# When available:
-# 1. Run domainspec-reflect as an LLM agent in CI
-# 2. Agent reads signals + SIGNAL-SCHEMA + reflect skill
-# 3. Agent produces TUNING-REPORT.md with proposals
-# 4. Create PR with the report and proposed changes
-```
+1. **Context preparation** — Analysis JSON and threshold summaries are written to temp files
+2. **Copilot CLI invocation** — Agent reads signals, schema, and reflect skill instructions
+3. **Report generation** — Produces `docs/signals/TUNING-REPORT.md` with evidence-backed proposals
+4. **Validation gate** — Required sections checked, forbidden path modifications reverted
+5. **PR creation** — Branch `domainspec/auto-tuning-{sha}`, requires human review before merge
+6. **Failure fallback** — Creates GitHub Issue with manual steps if agent fails
 
-This would close the full loop: signals → analysis → agent reflection → PR → human review → merge → improved pipeline.
+#### Security Model
+
+| Layer | Constraint |
+|-------|-----------|
+| Container | Agent runs in sandboxed `agent-runner:latest` (no production secrets) |
+| Tools | Copilot CLI with deny-list (no Bash, Terminal, Network, Browser) |
+| Paths | Only `docs/signals/` and `domainspec/templates/` writable |
+| Review | PRs require manual approval — no auto-merge |
+| Concurrency | `cancel-in-progress: true` — one reflection at a time |
+
+#### Cost Tracking
+
+Agent runs emit `agent-cost` signals tracking premium requests, duration, and success rate. Threshold TH10 alerts when usage exceeds 50 premium requests in a rolling 7-day window.
+
+#### Infrastructure
+
+- Self-hosted runner: `/opt/actions-runner` with `[self-hosted, agent]` labels
+- Systemd service: `actions-runner.service` (always-on, auto-restart)
+- Setup: `infra/agent-runner-setup.sh` (idempotent)
+- Container: `infra/agent-runner/Dockerfile`
+- Auth: `GH_PAT_AGENT` secret (repo + workflow scope)
 
 ---
 

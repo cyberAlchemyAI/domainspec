@@ -45,7 +45,26 @@ bash domainspec/copilot/install.sh --tools-profile custom --custom-tools "[read,
 
 1. Confirm agent files exist under .github/agents with names domainspec-\*.agent.md
 2. Confirm skill directories exist under .github/skills/domainspec-\*
-3. Run /domainspec-help to verify command discovery
+3. Confirm GSD agents exist under .github/agents with names gsd-\*.agent.md
+4. Confirm GSD skills exist under .github/skills/gsd-\*
+5. Run /domainspec-help to verify command discovery
+
+## GSD Phase Orchestration
+
+The installer includes the GSD (Get Shit Done) framework — phase-based planning and execution agents used by DomainSpec bridge skills (`domainspec-plan-phase-bridge`, `domainspec-execute-phase-bridge`, `domainspec-ui-phase-bridge`).
+
+GSD is installed by default. To skip:
+
+```bash
+DOMAINSPEC_SKIP_GSD=1 bash domainspec/copilot/install.sh --tools-profile full --yes
+```
+
+### What gets installed
+
+- GSD agents (gsd-\*.agent.md) — planning, execution, research, verification, UI design
+- GSD skills (gsd-\*/SKILL.md) — phase orchestration, milestone management, session tracking
+- GSD runtime (.github/get-shit-done/) — CLI tools, references, templates
+- GSD file manifest (.github/gsd-file-manifest.json) — integrity checksums
 
 ## Notes
 

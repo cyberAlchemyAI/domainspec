@@ -87,7 +87,7 @@ For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
 @domainspec-spec-writer domainspec-init
 ```
 
-Creates `docs/registry.md`, `docs/glossary.md`, and the `docs/features/` directory.
+Creates `docs/registry.md`, `docs/glossary.md`, `docs/shared/governance-baseline.md`, and the `docs/features/` directory.
 
 ### 3. Build a feature — one command
 
@@ -489,7 +489,9 @@ your-project/
 │   ├── UI-ARCHITECTURE.md    # Global frontend constitution
 │   ├── INFRA-ARCHITECTURE.md # Global infrastructure constitution
 │   ├── slos.md               # Service level objectives per feature
-│   ├── shared/           # Cross-feature value objects
+│   ├── shared/
+│   │   ├── governance-baseline.md # Cross-feature governance defaults (G0)
+│   │   └── ...                    # Cross-feature value objects and blueprints
 │   └── features/
 │       ├── payments/
 │       │   ├── SPEC.md
@@ -524,16 +526,17 @@ Short names within a feature's own files. Full namespace in registry entries and
 
 ### Workflow per feature
 
-1. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
-2. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
-3. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
-4. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
-5. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
-6. **Implement backend** — write code against the documented contracts and derived tests
-7. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
-8. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
-9. **Infrastructure sync** — update prometheus.yml and alert rules from observability specs + SLOs
-10. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
+1. **Confirm governance baseline** — keep `docs/shared/governance-baseline.md` present before feature work
+2. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
+3. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
+4. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
+5. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
+6. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
+7. **Implement backend** — write code against the documented contracts and derived tests
+8. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
+9. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
+10. **Infrastructure sync** — update prometheus.yml and alert rules from observability specs + SLOs
+11. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
 
 ---
 
@@ -552,7 +555,7 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 | Skill                           | Stage | Purpose                                                                                    |
 | ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
 | `domainspec-pipeline`           | 1–9   | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
-| `domainspec-init`               | Setup | Create `docs/` structure and first feature skeleton                                        |
+| `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
 | `domainspec-spec-feature`       | 3     | Author or update a feature specification (SPEC + aspects)                                  |
 | `domainspec-sync-user-stories`  | 3     | Generate/refresh STORIES.md from aspect docs                                               |
 | `domainspec-sync-registry`      | 7     | Sync registry and glossary from all SPEC.md concept tables                                 |
@@ -613,6 +616,7 @@ All templates live in [templates/](templates/):
 | [workflows.md](templates/workflows.md)                     | Multi-step orchestrations                             |
 | [mappings.md](templates/mappings.md)                       | Data transformations at boundaries                    |
 | [shared-value-object.md](templates/shared-value-object.md) | Cross-feature value objects                           |
+| [governance-baseline.md](templates/governance-baseline.md) | Cross-feature governance defaults                     |
 | [ui-architecture.md](templates/ui-architecture.md)         | Frontend architecture constitution                    |
 | [ui-spec.md](templates/ui-spec.md)                         | Per-feature UI design contract                        |
 | [infra-architecture.md](templates/infra-architecture.md)   | Infrastructure constitution with presets              |
@@ -642,7 +646,7 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)     | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.7.0)                      |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.8.1)                      |
 | [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                   | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                                  |

@@ -8,6 +8,14 @@ SKILLS_SRC="$PACK_DIR/skills"
 AGENTS_DST="$ROOT/.github/agents"
 SKILLS_DST="$ROOT/.github/skills"
 
+# GSD (Get Shit Done) framework sources — lives in domainspec/.github/
+GSD_ROOT="$ROOT/domainspec/.github"
+GSD_AGENTS_SRC="$GSD_ROOT/agents"
+GSD_SKILLS_SRC="$GSD_ROOT/skills"
+GSD_RUNTIME_SRC="$GSD_ROOT/get-shit-done"
+GSD_MANIFEST_SRC="$GSD_ROOT/gsd-file-manifest.json"
+GSD_RUNTIME_DST="$ROOT/.github/get-shit-done"
+
 FULL_TOOLS='[vscode/extensions, vscode/askQuestions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubRepo, todo]'
 STANDARD_TOOLS='[read, edit, search, execute, web, ask-questions, agent, todo]'
 MINIMAL_TOOLS='[read, search]'
@@ -170,6 +178,113 @@ done
 
 echo "Installed DomainSpec Copilot pack into .github/agents and .github/skills"
 echo "Applied tools profile '$TOOLS_PROFILE' to domainspec-* agents"
+
+# --- GSD framework install ---
+
+SKIP_GSD="${DOMAINSPEC_SKIP_GSD:-}"
+if [[ "$SKIP_GSD" == "1" ]]; then
+  echo "Skipping GSD install (DOMAINSPEC_SKIP_GSD=1)"
+else
+  INSTALL_GSD=0
+  if [[ $NON_INTERACTIVE -eq 1 ]]; then
+    INSTALL_GSD=1
+  else
+    read -r -p "Install GSD (Get Shit Done) phase orchestration agents and skills? [Y/n]: " gsd_choice
+    case "${gsd_choice:-y}" in
+      [nN]*) ;;
+      *) INSTALL_GSD=1 ;;
+    esac
+  fi
+
+  if [[ $INSTALL_GSD -eq 1 ]]; then
+    # Copy GSD agents
+    if [[ -d "$GSD_AGENTS_SRC" ]]; then
+      for agent_file in "$GSD_AGENTS_SRC"/gsd-*.agent.md; do
+        [[ -f "$agent_file" ]] && cp -f "$agent_file" "$AGENTS_DST"/
+      done
+      GSD_AGENT_COUNT=$(ls -1 "$AGENTS_DST"/gsd-*.agent.md 2>/dev/null | wc -l)
+      echo "Installed $GSD_AGENT_COUNT GSD agents"
+
+      # Apply tools profile to GSD agents
+      node - "$AGENTS_DST" "$TOOLS_VALUE" <<'GSDNODE'
+const fs = require('fs');
+const path = require('path');
+
+const agentsDir = process.argv[2];
+const toolsValue = process.argv[3];
+const files = fs.readdirSync(agentsDir).filter((name) => name.startsWith('gsd-') && name.endsWith('.agent.md'));
+
+for (const fileName of files) {
+  const filePath = path.join(agentsDir, fileName);
+  const text = fs.readFileSync(filePath, 'utf8');
+  const lines = text.split('\n');
+
+  let fmStart = -1;
+  let fmEnd = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim() === '---') {
+      if (fmStart === -1) fmStart = i;
+      else {
+        fmEnd = i;
+        break;
+      }
+    }
+  }
+
+  if (fmStart === -1 || fmEnd === -1) continue;
+
+  let toolsIdx = -1;
+  for (let i = fmStart + 1; i < fmEnd; i++) {
+    if (lines[i].startsWith('tools:')) {
+      toolsIdx = i;
+      break;
+    }
+  }
+  if (toolsIdx === -1) continue;
+
+  let endIdx = toolsIdx + 1;
+  while (endIdx < fmEnd) {
+    if (/^[A-Za-z][A-Za-z0-9_-]*:/.test(lines[endIdx])) break;
+    endIdx++;
+  }
+
+  lines.splice(toolsIdx, endIdx - toolsIdx, `tools: ${toolsValue}`);
+  fs.writeFileSync(filePath, lines.join('\n'));
+}
+GSDNODE
+      echo "Applied tools profile '$TOOLS_PROFILE' to gsd-* agents"
+    fi
+
+    # Copy GSD skills
+    if [[ -d "$GSD_SKILLS_SRC" ]]; then
+      for skill_dir in "$GSD_SKILLS_SRC"/gsd-*; do
+        [[ -d "$skill_dir" ]] || continue
+        skill_name="$(basename "$skill_dir")"
+        mkdir -p "$SKILLS_DST/$skill_name"
+        [[ -f "$skill_dir/SKILL.md" ]] && cp -f "$skill_dir"/SKILL.md "$SKILLS_DST/$skill_name"/
+      done
+      GSD_SKILL_COUNT=$(ls -1d "$SKILLS_DST"/gsd-*/ 2>/dev/null | wc -l)
+      echo "Installed $GSD_SKILL_COUNT GSD skills"
+    fi
+
+    # Copy GSD runtime (get-shit-done/ directory)
+    if [[ -d "$GSD_RUNTIME_SRC" ]]; then
+      mkdir -p "$GSD_RUNTIME_DST"
+      cp -rf "$GSD_RUNTIME_SRC"/* "$GSD_RUNTIME_DST"/
+      echo "Installed GSD runtime into .github/get-shit-done/"
+    fi
+
+    # Copy GSD file manifest
+    if [[ -f "$GSD_MANIFEST_SRC" ]]; then
+      cp -f "$GSD_MANIFEST_SRC" "$ROOT/.github/"
+      echo "Installed GSD file manifest"
+    fi
+
+    echo "GSD framework installed successfully"
+  else
+    echo "Skipped GSD install"
+  fi
+fi
 
 # --- Playwright E2E setup (optional) ---
 

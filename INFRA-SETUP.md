@@ -183,6 +183,33 @@ echo "jq:      $(jq --version 2>/dev/null || echo 'NOT INSTALLED')"
 
 > **Dev preset only needs Docker.** Node.js, Pulumi, doctl, and jq are needed when you move to VPS deployment.
 
+### Agent Runner (optional)
+
+Required only if you want automated Copilot CLI reflection on the VPS (tuning loop agent).
+
+**Additional prerequisite:**
+
+- GitHub Copilot Pro+ plan
+- A Personal Access Token with `repo` + `workflow` scopes (`GH_PAT_AGENT`)
+
+**Setup:**
+
+```bash
+# After VPS is provisioned and running:
+export GH_PAT_AGENT="ghp_your_token_here"
+ssh deploy@<vps-ip> 'bash -s' < infra/agent-runner-setup.sh
+```
+
+**Verify:**
+
+```bash
+# Check runner appears in GitHub Settings → Actions → Runners
+# Or verify on VPS:
+ssh deploy@<vps-ip> 'systemctl status actions-runner'
+```
+
+See `infra/agent-runner-setup.sh` and `domainspec/templates/agent-runner.md` for details.
+
 ---
 
 ## Step 1 — DigitalOcean API Token

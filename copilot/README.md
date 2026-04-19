@@ -34,7 +34,7 @@ Validated by `tools/context-search-heuristic.test.mjs` (9 scenarios, 100% accura
 ### Commands
 
 - /domainspec-pipeline (full lifecycle — plan → spec → stories → tests → implement → UI → observability → verify)
-- /domainspec-init
+- /domainspec-init (bootstraps docs structure + docs/shared/governance-baseline.md)
 - /domainspec-spec-feature
 - /domainspec-sync-user-stories
 - /domainspec-sync-registry
@@ -52,6 +52,8 @@ One command runs the entire pipeline:
 ```
 @domainspec-planner domainspec-pipeline <feature>
 ```
+
+Pipeline preflight requires a governance baseline (`docs/shared/governance-baseline.md`, with compatibility fallback to `docs/shared/cash-game-management-governance.md`).
 
 Or run each stage individually:
 
