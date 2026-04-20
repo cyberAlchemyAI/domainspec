@@ -24,6 +24,30 @@ Three fundamental problems remain unsolved:
 
 3. **The Meta-Circular Problem.** Who governs the governance? Frameworks that constrain agent behavior must themselves be constrained, creating an infinite regress that existing approaches resolve by fiat (a human reviews everything) rather than by structure.
 
+### 1.1 Core Hypothesis & Research Questions
+
+DomainSpec is grounded in three intertwined hypotheses:
+
+**H1 — Domain Structure Determines Test Completeness:** If domain concepts (entities, rules, events, calculations, workflows, policies) and their relationships (references, produces-for, triggers, enforces) are formally modeled, then test obligations can be *deterministically derived* with coverage traceable to business requirements. The hypothesis predicts that typed domain models are both *necessary* (informal models produce incomplete, non-reproducible tests) and *sufficient* (typed models produce comprehensive, derivable tests).
+
+**H2 — Governance Layers Have Attenuation Bounds:** As multi-agent systems add decision-making layers (specify → derive → verify → enforce → tune), per-layer compliance fidelity decreases in a measurable pattern bounded by Shannon channel capacity and the cognitive load on agents. The hypothesis predicts that naive layer stacking yields exponential attenuation, but *structural interventions* (observer-executor separation, deterministic signal detection) can invert the trend without removing layers.
+
+**H3 — Self-Improving Systems Require Meta-Circular Governance:** Systems that improve themselves need mechanisms to improve those improvement mechanisms, which creates an infinite regress. The hypothesis predicts that a bounded strange loop — where the framework's constitution axioms govern how the constitution itself evolves — can resolve this without external authority.
+
+These hypotheses drive four research questions:
+
+**RQ1:** Can we derive deterministic, complete, and traceable test suites from domain models without manual test authoring? (→ C2)
+
+**RQ2:** Does adding governance layers to multi-agent systems decrease fidelity predictably, and can structural interventions restore fidelity without removing layers? (→ C3)
+
+**RQ3:** Can agent roles (PO, QA, Dev, Stakeholder) make better decisions if they share a common domain model and governance signals? (→ C1)
+
+**RQ4:** Can a system govern its own governance through axioms and tuning loops, achieving self-improvement without infinite regress? (→ C4)
+
+These questions map to experiments E1-E10 (RQ1-RQ3) and E11-E20 (meta-meta framework generalization of RQ2-RQ4).
+
+---
+
 This paper presents **DomainSpec**, a layered meta-architecture that addresses all three problems through a unified structural approach. Rather than treating specification, derivation, governance, and self-improvement as orthogonal concerns, DomainSpec organizes them as emergent properties of a seven-layer hierarchy:
 
 - **Layers 0–1** define the domain ontology — a closed vocabulary of 24 meta-types and 26 typed relationships that capture business semantics.
