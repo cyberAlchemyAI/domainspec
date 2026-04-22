@@ -1,17 +1,6 @@
 # Install DomainSpec Copilot Pack
 
-## Target folders
-
-- .github/agents/
-- .github/skills/
-
-## Option 1: Manual copy
-
-1. Copy all files from domainspec/copilot/agents to .github/agents
-2. Copy each directory from domainspec/copilot/skills to .github/skills
-3. Restart chat session so command discovery refreshes
-
-## Option 2: Scripted copy
+## Scripted Install (Recommended)
 
 Run:
 
@@ -19,112 +8,106 @@ Run:
 bash domainspec/copilot/install.sh
 ```
 
-The installer now asks which tool-permission profile should be applied to `domainspec-*` agents.
+The installer applies a tools profile to installed `domainspec-*` and `gsd-*` agents, installs DomainSpec pack assets, and can optionally install GSD runtime plus Playwright.
 
-### Non-interactive examples
+### Non-Interactive Examples
 
-Use full repository permissions:
+Full profile:
 
 ```bash
 bash domainspec/copilot/install.sh --tools-profile full --yes
 ```
 
-Use standard coding permissions:
+Standard coding profile:
 
 ```bash
 bash domainspec/copilot/install.sh --tools-profile standard --yes
 ```
 
-Use a custom tools list:
+Custom tools profile:
 
 ```bash
 bash domainspec/copilot/install.sh --tools-profile custom --custom-tools "[read, edit, search, agent]" --yes
 ```
 
-## Post-install checks
-
-1. Confirm agent files exist under .github/agents with names domainspec-\*.agent.md
-2. Confirm skill directories exist under .github/skills/domainspec-\*
-3. Confirm GSD agents exist under .github/agents with names gsd-\*.agent.md
-4. Confirm GSD skills exist under .github/skills/gsd-\*
-5. Run /domainspec-help to verify command discovery
-
-## GSD Phase Orchestration
-
-The installer includes the GSD (Get Shit Done) framework — phase-based planning and execution agents used by DomainSpec bridge skills (`domainspec-plan-phase-bridge`, `domainspec-execute-phase-bridge`, `domainspec-ui-phase-bridge`).
-
-GSD is installed by default. To skip:
+Skip GSD runtime installation:
 
 ```bash
 DOMAINSPEC_SKIP_GSD=1 bash domainspec/copilot/install.sh --tools-profile full --yes
 ```
 
-### What gets installed
-
-- GSD agents (gsd-\*.agent.md) — planning, execution, research, verification, UI design
-- GSD skills (gsd-\*/SKILL.md) — phase orchestration, milestone management, session tracking
-- GSD runtime (.github/get-shit-done/) — CLI tools, references, templates
-- GSD file manifest (.github/gsd-file-manifest.json) — integrity checksums
-
-## Notes
-
-- This v1 pack targets Copilot custom agents/skills only.
-- The package is source-controlled in domainspec/copilot and can be copied to other repositories.
-
-## Playwright MCP Integration (UI E2E Testing)
-
-The installer can optionally set up Playwright for UI E2E test generation derived from DomainSpec UI-SPEC.md documents.
-
-### What gets installed
-
-1. **`@playwright/test`** — dev dependency in detected web app directory
-2. **Chromium browser** — via `npx playwright install chromium`
-3. **`playwright.config.ts`** — base config with desktop + mobile projects
-4. **`e2e/` directory** — test file target for generated Playwright specs
-5. **`.vscode/mcp.json`** — MCP server config for Playwright browser tools
-
-### Interactive install
-
-The installer prompts for Playwright setup by default. Say `y` to enable.
-
-### Non-interactive install
-
-```bash
-bash domainspec/copilot/install.sh --tools-profile full --yes
-```
-
-This installs Playwright automatically. To skip:
+Skip Playwright setup:
 
 ```bash
 DOMAINSPEC_SKIP_PLAYWRIGHT=1 bash domainspec/copilot/install.sh --tools-profile full --yes
 ```
 
-### Manual Playwright setup
+## Manual Copy (Fallback)
 
-If the web app wasn't detected or you want to install manually:
+1. Copy `domainspec/copilot/agents/*.agent.md` into `.github/agents/`.
+2. Copy each `domainspec/copilot/skills/*` directory into `.github/skills/`.
+3. If GSD is required, also copy `domainspec/.github/agents/gsd-*.agent.md`, `domainspec/.github/skills/gsd-*`, `domainspec/.github/get-shit-done/`, and `domainspec/.github/gsd-file-manifest.json` into `.github/`.
+4. Restart the chat session so command discovery refreshes.
+
+## Installed Assets and Boundaries
+
+### Shipped Copilot Pack Assets (`domainspec/copilot/*`)
+
+- `domainspec-*` agents into `.github/agents/`
+- `domainspec-*` skills into `.github/skills/`
+- Bridge skills shipped in this pack:
+  - `.github/skills/domainspec-ui-phase-bridge/SKILL.md`
+  - `.github/skills/domainspec-ui-audit-bridge/SKILL.md`
+  - `.github/skills/domainspec-plan-phase-bridge/SKILL.md`
+  - `.github/skills/domainspec-execute-phase-bridge/SKILL.md`
+
+### Internal GSD Runtime Assets (`domainspec/.github/*`)
+
+- `gsd-*` agents into `.github/agents/`
+- `gsd-*` skills into `.github/skills/`
+- Runtime files under `.github/get-shit-done/`
+- Integrity manifest at `.github/gsd-file-manifest.json`
+
+## Post-Install Checks
+
+Run these checks from repository root:
 
 ```bash
-cd apps/web  # or your web app directory
+test -n "$(ls .github/agents/domainspec-*.agent.md 2>/dev/null)"
+test -d .github/skills/domainspec-pipeline
+test -d .github/skills/domainspec-plan-phase-bridge
+test -d .github/skills/domainspec-execute-phase-bridge
+test -d .github/skills/domainspec-ui-phase-bridge
+test -d .github/skills/domainspec-ui-audit-bridge
+```
+
+If GSD was not skipped:
+
+```bash
+test -n "$(ls .github/agents/gsd-*.agent.md 2>/dev/null)"
+test -d .github/get-shit-done
+test -f .github/gsd-file-manifest.json
+```
+
+Validation commands:
+
+1. Run `domainspec-help` to verify command discovery.
+2. Run `bash domainspec/tools/check_docs_sync.sh` to verify docs-versus-assets sync.
+
+## Playwright MCP Integration (UI E2E Testing)
+
+When enabled, installer behavior is:
+
+1. Install `@playwright/test` in detected app directory (`apps/web`, `web`, or `frontend`)
+2. Install Chromium (`npx playwright install chromium`)
+3. Create `playwright.config.ts` if absent
+4. Ensure `e2e/` directory exists
+5. Create `.vscode/mcp.json` with Playwright MCP config if absent
+
+Manual setup fallback:
+
+```bash
+cd apps/web
 npm install --save-dev @playwright/test
 npx playwright install chromium
 ```
-
-Then add the MCP server to `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
-    }
-  }
-}
-```
-
-### How it works with DomainSpec
-
-1. **`domainspec-generate-tests --ui`** reads `UI-SPEC.md` and `STORIES.md` to derive E2E test obligations
-2. **`domainspec-generate-tests --scaffold --ui`** creates Playwright test stubs under `e2e/{feature}/`
-3. **Playwright MCP** enables agents to run browser interactions, capture screenshots, and validate UI rendering
-4. **`domainspec-ui-audit-bridge`** uses Playwright for visual regression and 6-pillar auditing

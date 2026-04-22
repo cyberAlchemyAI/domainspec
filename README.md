@@ -550,9 +550,9 @@ bash domainspec/copilot/install.sh
 
 The installer copies agents, skills, and instructions into `.github/`. Optionally installs Playwright + MCP for E2E tests. See [copilot/INSTALL.md](copilot/INSTALL.md). Use `DOMAINSPEC_SKIP_PLAYWRIGHT=1` to skip Playwright.
 
-### Skills Reference
+### Public Commands
 
-| Skill                           | Stage | Purpose                                                                                    |
+| Command                         | Stage | Purpose                                                                                    |
 | ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
 | `domainspec-pipeline`           | 1–9   | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
 | `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
@@ -573,6 +573,22 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 | `domainspec-verify-feature`     | 7     | PASS / FLAG / BLOCK verdict on feature readiness                                           |
 | `domainspec-pilot-readiness`    | 7     | Prepare a feature for pilot testing                                                        |
 | `domainspec-help`               | —     | Show command reference and recommend next step                                             |
+
+### Advanced Commands
+
+| Command                       | Stage  | Purpose                                                                 |
+| ----------------------------- | ------ | ----------------------------------------------------------------------- |
+| `domainspec-reflect`          | 10     | Summarize implementation outcomes and emit iterative tuning directives  |
+| `domainspec-signal-observer`  | Post   | Aggregate signal quality and detect drift during async review windows   |
+
+### Appendix: Internal and Bridge Commands
+
+| Command                       | Scope         | Purpose                                                                 |
+| ----------------------------- | ------------- | ----------------------------------------------------------------------- |
+| `domainspec-ui-phase-bridge`  | Internal      | Bridge UI execution to GSD phase plans when phase orchestration is used |
+| `domainspec-ui-audit-bridge`  | Internal      | Bridge UI evidence into GSD UI audit flow                               |
+| `domainspec-plan-phase-bridge` | Internal      | Bridge planner orchestration into GSD plan-phase workflows              |
+| `domainspec-execute-phase-bridge` | Internal  | Bridge implementer execution into GSD execute-phase workflows           |
 
 ### Agents Reference
 
@@ -607,6 +623,7 @@ All templates live in [templates/](templates/):
 | ---------------------------------------------------------- | ----------------------------------------------------- |
 | [SPEC.md](templates/SPEC.md)                               | Feature index — overview, concept table, aspect links |
 | [STORIES.md](templates/STORIES.md)                         | User stories in classic + BDD format                  |
+| [CHANGELOG.md](templates/CHANGELOG.md)                     | Per-feature changelog updates and release notes        |
 | [domain.md](templates/domain.md)                           | Entities, value objects, enums                        |
 | [operations.md](templates/operations.md)                   | Operations with rules, calculations, transitions      |
 | [states.md](templates/states.md)                           | State machines — mermaid + transition tables          |
@@ -622,6 +639,12 @@ All templates live in [templates/](templates/):
 | [infra-architecture.md](templates/infra-architecture.md)   | Infrastructure constitution with presets              |
 | [slos.md](templates/slos.md)                               | Per-feature SLO targets                               |
 | [observability.md](templates/observability.md)             | Per-feature OTel metric obligations                   |
+| [OBSERVABILITY-REPORT.md](templates/OBSERVABILITY-REPORT.md) | OTel audit output report template                    |
+| [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)         | End-to-end pipeline execution report                  |
+| [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)             | Signal contract documentation schema                  |
+| [agent-runner.md](templates/agent-runner.md)               | Self-hosted agent runner architecture                 |
+| [use-case.md](templates/use-case.md)                       | Use-case decomposition and boundaries                 |
+| [setup.sh](templates/setup.sh)                             | Setup helper scaffold                                 |
 
 ---
 
@@ -646,12 +669,13 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)     | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.8.1)                      |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.8.2)                      |
 | [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                   | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                                  |
 | [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup)                           |
 | [tools/](tools/)                         | Framework validation and index generation tools                              |
+| [tools/check_docs_sync.sh](tools/check_docs_sync.sh) | Deterministic docs-versus-assets drift guard for maintainers     |
 
 ---
 
