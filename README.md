@@ -599,6 +599,7 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 | `domainspec-audit-layering`     | 5–7   | Detect domain-logic drift into application layers                                          |
 | `domainspec-verify-feature`     | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                           |
 | `domainspec-pilot-readiness`    | 10    | Prepare a feature for pilot testing                                                        |
+| `domainspec-interview-scope`    | Setup | Capture project context before first feature planning                                      |
 | `domainspec-help`               | —     | Show command reference and recommend next step                                             |
 
 ### Advanced Commands
@@ -671,6 +672,10 @@ All templates live in [templates/](templates/):
 | [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)             | Signal contract documentation schema                  |
 | [agent-runner.md](templates/agent-runner.md)               | Self-hosted agent runner architecture                 |
 | [use-case.md](templates/use-case.md)                       | Use-case decomposition and boundaries                 |
+| [project-overview.md](templates/project-overview.md)       | Initial project context summary                       |
+| [initial-definitions.md](templates/initial-definitions.md) | Initial bounded context and concept definitions       |
+| [hypotheses.md](templates/hypotheses.md)                   | Research hypotheses and validation framing            |
+| [experiment-candidates.md](templates/experiment-candidates.md) | Candidate experiment backlog and triage           |
 | [setup.sh](templates/setup.sh)                             | Setup helper scaffold                                 |
 
 ---

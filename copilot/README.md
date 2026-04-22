@@ -10,6 +10,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | --- | --- |
 | `domainspec-help` | Show command reference and recommend the next step |
 | `domainspec-init` | Bootstrap docs structure and governance baseline |
+| `domainspec-interview-scope` | Run greenfield or brownfield discovery interviews before specification starts |
 | `domainspec-pipeline` | Run the full lifecycle: plan -> spec -> stories -> tests -> implementation -> verify |
 | `domainspec-spec-feature` | Author or evolve feature specs and aspect documents |
 | `domainspec-sync-user-stories` | Sync `STORIES.md` from capability and aspect docs |
@@ -40,6 +41,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | Agent | Role |
 | --- | --- |
 | `domainspec-planner` | Builds dependency-ordered plans and orchestrates lifecycle delegation |
+| `domainspec-interviewer` | Interviews operators and audits brownfield context to produce discovery baselines |
 | `domainspec-spec-writer` | Authors capability-driven specs and enforces story coverage |
 | `mars-researcher` | Navigates DomainSpec artifacts with structured research output |
 | `domainspec-test-designer` | Derives executable test obligations from formal docs |
