@@ -14,6 +14,7 @@ The framework is designed to converge with the [Agentic Delivery Lifecycle (ADLC
 
 - [The Pipeline at a Glance](#the-pipeline-at-a-glance)
 - [Quick Start](#quick-start)
+- [Interview-First Discovery](#interview-first-discovery)
 - [A Feature from Start to Finish](#a-feature-from-start-to-finish)
 - [Stage 1 — Classify Concepts (Taxonomy)](#stage-1--classify-concepts-with-the-taxonomy)
 - [Stage 2 — Connect Concepts (Relationships)](#stage-2--connect-concepts-with-relationships)
@@ -143,6 +144,35 @@ Each pipeline stage can also be run independently:
 | OTel Verify   | `@domainspec-planner domainspec-otel-verify <feature>`          | otel-verifier     |
 | Infra         | `@domainspec-infra-architect domainspec-infra-deploy <feature>` | infra-architect   |
 | Verify        | `@domainspec-verifier domainspec-verify-feature <feature>`      | verifier          |
+
+## Interview-First Discovery
+
+Before drafting a feature SPEC, you can run a guided domain interview in either greenfield or brownfield mode:
+
+```
+@domainspec-interviewer domainspec-interview-scope [greenfield|brownfield|auto] [scope]
+```
+
+What this adds:
+
+- Repository-aware brownfield discovery (inspect first, then ask focused questions)
+- Structured domain baseline for actors, boundaries, workflows, rules, constraints, and success signals
+- Falsifiable hypotheses with explicit counterarguments and disconfirming outcomes
+- Experiment candidates to validate business direction before implementation planning
+
+Default artifact outputs:
+
+- `docs/PROJECT-OVERVIEW.md`
+- `docs/INITIAL-DEFINITIONS.md`
+- `docs/HYPOTHESES.md`
+- `docs/EXPERIMENT-CANDIDATES.md`
+
+Template sources:
+
+- `templates/project-overview.md`
+- `templates/initial-definitions.md`
+- `templates/hypotheses.md`
+- `templates/experiment-candidates.md`
 
 ---
 
