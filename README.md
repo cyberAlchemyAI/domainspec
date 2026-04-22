@@ -24,6 +24,7 @@ The framework is designed to converge with the [Agentic Delivery Lifecycle (ADLC
 - [Stage 7 — Maintain the Global Registry](#stage-7--maintain-the-global-registry)
 - [Stage 8 — Derive Observability Metrics](#stage-8--derive-observability-metrics)
 - [Stage 9 — Infrastructure & Deployment](#stage-9--infrastructure--deployment)
+- [Stage 10 — Verify & Readiness](#stage-10--verify--readiness)
 - [Copilot Integration](#copilot-integration)
 - [Templates](#templates)
 - [Examples](#examples)
@@ -43,12 +44,13 @@ flowchart LR
     D --> E["5 Implement<br>Backend"]
     C --> F["6 Design &<br>Build UI"]
     F --> D
-    E --> G["7 Registry<br>& Verify"]
+    E --> G["7 Registry"]
     F --> G
     G --> H["8 Observability<br>Metrics"]
     C --> H
     H --> I["9 Infrastructure<br>& Deploy"]
     G --> I
+    I --> J["10 Verify<br>& Readiness"]
 ```
 
 Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate.
@@ -61,9 +63,10 @@ Each stage depends on the previous. You cannot write meaningful tests without fo
 | 4. Derive Tests      | Aspect docs + UI-SPEC                     | Backend TEST-SPEC + Playwright E2E scaffold             |
 | 5. Implement Backend | TEST-SPEC + aspect docs                   | Production code + passing tests                         |
 | 6. Design & Build UI | UI-ARCHITECTURE + aspect docs             | UI-SPEC + frontend pages + E2E tests                    |
-| 7. Maintain Registry | All SPEC.md concept tables                | Global registry, glossary, verification verdicts        |
+| 7. Maintain Registry | All SPEC.md concept tables                | Global registry and glossary synchronization             |
 | 8. Observability     | Aspect docs + pillar metadata             | Per-feature observability specs, metric catalog, alerts |
 | 9. Infrastructure    | INFRA-ARCHITECTURE + observability + SLOs | IaC, CI/CD, monitoring stack, auto-deploy               |
+| 10. Verify           | Backend + UI + observability + infra evidence | PASS / FLAG / BLOCK verdict + pilot readiness report |
 
 ---
 
@@ -478,6 +481,30 @@ The `domainspec-infra-deploy` skill keeps infrastructure configs in sync — reg
 
 ---
 
+## Stage 10 — Verify & Readiness
+
+Verification is a distinct final stage. Once registry, observability, and infrastructure sync are complete, run end-to-end verification to produce an explicit release-readiness verdict.
+
+Primary command:
+
+```
+@domainspec-verifier domainspec-verify-feature <feature-name>
+```
+
+Readiness command:
+
+```
+@domainspec-verifier domainspec-pilot-readiness <feature-name>
+```
+
+Expected outputs:
+
+- PASS / FLAG / BLOCK verdict with evidence links
+- alignment and layering findings (or explicit no-drift result)
+- pilot-readiness checklist for rollout
+
+---
+
 ## Project Layout
 
 ```
@@ -554,7 +581,7 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 
 | Command                         | Stage | Purpose                                                                                    |
 | ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
-| `domainspec-pipeline`           | 1–9   | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
+| `domainspec-pipeline`           | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
 | `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
 | `domainspec-spec-feature`       | 3     | Author or update a feature specification (SPEC + aspects)                                  |
 | `domainspec-sync-user-stories`  | 3     | Generate/refresh STORIES.md from aspect docs                                               |
@@ -570,8 +597,8 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 | `domainspec-infra-deploy`       | 9     | Sync prometheus.yml, alerts, and compose from current state                                |
 | `domainspec-audit-alignment`    | 5–7   | Alignment report comparing docs vs code                                                    |
 | `domainspec-audit-layering`     | 5–7   | Detect domain-logic drift into application layers                                          |
-| `domainspec-verify-feature`     | 7     | PASS / FLAG / BLOCK verdict on feature readiness                                           |
-| `domainspec-pilot-readiness`    | 7     | Prepare a feature for pilot testing                                                        |
+| `domainspec-verify-feature`     | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                           |
+| `domainspec-pilot-readiness`    | 10    | Prepare a feature for pilot testing                                                        |
 | `domainspec-help`               | —     | Show command reference and recommend next step                                             |
 
 ### Advanced Commands
