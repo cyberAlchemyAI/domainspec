@@ -1,5 +1,5 @@
 ---
-name: domainspec-researcher
+name: mars-researcher
 description: Researches technical decisions needed to implement DomainSpec-defined behavior using structured domain navigation.
 tools:
   [

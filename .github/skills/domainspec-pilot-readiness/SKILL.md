@@ -28,7 +28,7 @@ Framework constraints:
 1. Research phase
 - Run `domainspec-spec-writer` read-only audit for SPEC/story gaps.
 - Run `domainspec-test-designer` read-only audit for test derivation gaps.
-- Run `domainspec-researcher` read-only for operational risk and mitigations.
+- Run `mars-researcher` read-only for operational risk and mitigations.
 - Optionally run `domainspec-layering-auditor` for implemented features.
 
 2. First plan phase

@@ -53,7 +53,7 @@ tools:
     web/githubRepo,
     todo,
   ]
-agents: ["Explore", "domainspec-researcher", "domainspec-story-sync"]
+agents: ["Explore", "mars-researcher", "domainspec-story-sync"]
 color: blue
 ---
 
@@ -103,7 +103,7 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
   - When efficiency is equal or uncertain, default to DomainSpec-first navigation: (a) links from SPEC.md and aspect docs, (b) docs index artifacts and tags, (c) broader repository search.
   - For this efficiency pass, prioritize existing navigational artifacts: docs/index/feature-map.md, docs/index/features-index.json, docs/index/tag-index.json, and frontmatter tags (status/pillar/domain/audience/priority/lang/owners/dependencies/includes).
   - Prefer `Explore` for broad codebase discovery (quick/medium/thorough as needed).
-  - Use `domainspec-researcher` for focused domain decision research.
+  - Use `mars-researcher` for focused domain decision research.
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
 3. Build capability inventory first (what users/systems can do), then map aspects to each capability.
 4. Create or refresh SPEC.md as capability-driven index: What This Module Owns, Module Map, Capabilities, Domain Concepts, Concept Registry, Aspect Docs, Cross-Feature Dependencies, Produces For, Stories link, References.

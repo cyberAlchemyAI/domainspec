@@ -625,7 +625,7 @@ Each agent handles a specific concern autonomously:
 | ------------------------------ | ---------------------------------------------------------------- |
 | `domainspec-planner`           | Converts goals into dependency-ordered plans                     |
 | `domainspec-spec-writer`       | Authors/evolves feature specs with research and story coverage   |
-| `domainspec-researcher`        | Investigates implementation decisions via domain navigation      |
+| `mars-researcher`        | Investigates implementation decisions via domain navigation      |
 | `domainspec-test-designer`     | Derives test specs and Playwright E2E scaffolds from docs        |
 | `domainspec-implementer`       | Implements production code and tests from approved artifacts     |
 | `domainspec-registry-sync`     | Synchronizes registry and glossary from SPEC concept tables      |

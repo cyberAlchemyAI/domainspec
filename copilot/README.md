@@ -41,7 +41,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | --- | --- |
 | `domainspec-planner` | Builds dependency-ordered plans and orchestrates lifecycle delegation |
 | `domainspec-spec-writer` | Authors capability-driven specs and enforces story coverage |
-| `domainspec-researcher` | Navigates DomainSpec artifacts with structured research output |
+| `mars-researcher` | Navigates DomainSpec artifacts with structured research output |
 | `domainspec-test-designer` | Derives executable test obligations from formal docs |
 | `domainspec-implementer` | Implements from approved specs with audit and verification gates |
 | `domainspec-registry-sync` | Synchronizes registry and glossary from concept inventories |

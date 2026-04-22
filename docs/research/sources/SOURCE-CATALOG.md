@@ -2,7 +2,7 @@
 
 Master catalog of validated external data sources used across experiments.
 
-**Maintained by:** `domainspec-research-sources` skill
+**Maintained by:** `mars-research-sources` skill
 **Last updated:** 2026-04-20
 
 ---

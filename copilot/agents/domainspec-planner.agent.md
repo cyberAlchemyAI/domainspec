@@ -56,7 +56,7 @@ tools:
 agents:
   [
     "Explore",
-    "domainspec-researcher",
+    "mars-researcher",
     "domainspec-alignment-auditor",
     "domainspec-layering-auditor",
     "domainspec-ui-architect",
@@ -113,7 +113,7 @@ Navigational artifacts for context discovery:
   - If the top two scores differ by <= 0.03, treat as uncertain and choose `links-tags-first`.
   - When efficiency is equal or uncertain, default to DomainSpec-first navigation: (a) links from SPEC.md and aspect docs, (b) docs index artifacts and tags, (c) broader repository search.
   - Prefer `Explore` for broad codebase discovery (quick/medium/thorough as needed).
-  - Use `domainspec-researcher` for focused implementation feasibility and dependency impact research.
+  - Use `mars-researcher` for focused implementation feasibility and dependency impact research.
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
 3. If the feature already has implementation, run `domainspec-alignment-auditor` and `domainspec-layering-auditor` as **parallel subagents** and consolidate remediation obligations from both results.
 4. **UI detection gate**: Check if the feature has frontend aspects:
