@@ -44,6 +44,7 @@ Created/updated by this skill (cumulative):
 - docs/features/{feature}/domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, etc.
 - docs/features/{feature}/STORIES.md
 - docs/features/{feature}/TEST-SPEC.md
+- docs/features/{feature}/DECISIONS.md (when unresolved multi-option decisions exist)
 - Backend source files (entities, operations, use-cases, adapters, tests)
 - docs/features/{feature}/UI-SPEC.md (if UI applies)
 - Frontend pages, components, hooks, E2E tests (if UI applies)
@@ -77,6 +78,14 @@ Created/updated by this skill (cumulative):
    - For existing features: load current docs and identify what needs to change.
    - Output: execution plan with dependency-ordered tasks, complexity assessment, and identified risks.
 5. If complexity is medium/high, auto-select `gsd-phase` execution mode for task orchestration.
+
+## Step 1b — Decision Gate (hard gate)
+
+- If Step 1 output includes unresolved multi-option decisions, delegate to `domainspec-decision-gate {feature} --profile pipeline`.
+- Required artifact for continuation: `docs/features/{feature}/DECISIONS.md`.
+- Re-run `domainspec-planner` after the decision artifact is created.
+- If unresolved decisions still remain after re-planning, return BLOCK and stop before Step 2.
+- If AskQuestions tooling is unavailable, collect equivalent decisions in plain conversation and write the artifact before continuing.
 
 ## Step 2 — Spec
 
@@ -244,6 +253,7 @@ Created/updated by this skill (cumulative):
 <error-handling>
 - Pre-flight failures (no domainspec/, no docs/) → BLOCK with setup instructions.
 - Planner questions unanswered → cannot proceed, re-prompt user.
+- Decision gate unresolved or missing decisions artifact → BLOCK before step 2; do not generate specs, tests, or code.
 - Spec generation fails → BLOCK at step 2, report what is missing.
 - Test derivation finds incomplete docs → FLAG with specific gaps, continue to implement what is derivable.
 - Backend implementation test failures after 2 retries → FLAG, continue to UI if applicable.
@@ -258,5 +268,6 @@ Created/updated by this skill (cumulative):
 - DomainSpec artifacts (SPEC, aspects, STORIES) define behavior — they are the source of truth.
 - This skill orchestrates the pipeline sequence — it never overrides delegate skill decisions.
 - When delegate skills ask interactive questions (planner, ui-architecture), those propagate to the user.
+- No downstream mutation step (SPEC, TEST-SPEC, implementation) may run while decision gate status is unresolved.
 - If a delegate skill produces a FLAG or BLOCK, this skill records it and decides whether to continue or stop based on severity.
 </authority-rule>

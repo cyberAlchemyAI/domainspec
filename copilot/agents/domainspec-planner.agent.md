@@ -1,58 +1,7 @@
 ---
 name: domainspec-planner
 description: Builds executable DomainSpec implementation plans from feature goals and documentation artifacts.
-tools:
-  [
-    vscode/extensions,
-    vscode/askQuestions,
-    vscode/getProjectSetupInfo,
-    vscode/installExtension,
-    vscode/memory,
-    vscode/newWorkspace,
-    vscode/resolveMemoryFileUri,
-    vscode/runCommand,
-    vscode/vscodeAPI,
-    execute/getTerminalOutput,
-    execute/killTerminal,
-    execute/sendToTerminal,
-    execute/createAndRunTask,
-    execute/runNotebookCell,
-    execute/testFailure,
-    execute/runInTerminal,
-    read/terminalSelection,
-    read/terminalLastCommand,
-    read/getNotebookSummary,
-    read/problems,
-    read/readFile,
-    read/viewImage,
-    agent,
-    agent/runSubagent,
-    browser/openBrowserPage,
-    browser/readPage,
-    browser/screenshotPage,
-    browser/navigatePage,
-    browser/clickElement,
-    browser/dragElement,
-    browser/hoverElement,
-    browser/typeInPage,
-    browser/runPlaywrightCode,
-    browser/handleDialog,
-    edit/createDirectory,
-    edit/createFile,
-    edit/createJupyterNotebook,
-    edit/editFiles,
-    edit/editNotebook,
-    edit/rename,
-    search/changes,
-    search/codebase,
-    search/fileSearch,
-    search/listDirectory,
-    search/textSearch,
-    search/usages,
-    web/fetch,
-    web/githubRepo,
-    todo,
-  ]
+tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/askQuestions, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, web/fetch, web/githubRepo, todo]
 agents:
   [
     "Explore",
@@ -128,10 +77,14 @@ Navigational artifacts for context discovery:
 5. **Interactive architecture-decision round** (MANDATORY before task breakdown):
   - Enumerate every architectural decision discovered in steps 1-4 that has more than one viable option (e.g., isolation strategy, auth model, lifecycle, failure handling, concurrency).
   - Ask the user to choose for each decision using `vscode/askQuestions` with concrete options and trade-off descriptions.
+  - If `vscode/askQuestions` is unavailable in the current runtime, ask the same questions in plain conversation and require explicit option selection.
+  - Prefer delegating this round to `.github/skills/domainspec-decision-gate/SKILL.md` when available so decisions are persisted as an artifact.
   - If the user's answers surface new decisions, ask follow-up questions before proceeding.
   - Do NOT produce tasks until all multi-option decisions are resolved.
-  - If the planner skips this step, emit a `governance-gap` signal with `shouldHaveBeenCaughtBy: domainspec-planner`.
-6. **Spec-compliance self-check**: Before producing the plan, verify the planner followed steps 1-5. If any step was skipped, emit a `spec-compliance` signal and remediate before continuing.
+  - Planning is BLOCKED until all multi-option decisions are resolved and recorded.
+  - Emit a `Resolved Decision Gate` section in the plan output listing each decision, selected option, and rationale.
+  - If the planner skips this step, emit a `governance-gap` signal with `shouldHaveBeenCaughtBy: domainspec-planner` and return BLOCK.
+6. **Spec-compliance self-check**: Before producing the plan, verify the planner followed steps 1-5 and produced decision-gate evidence. If any step was skipped, emit a `spec-compliance` signal and remediate before continuing.
 7. Classify planning complexity.
 8. For low complexity, produce a native DomainSpec plan with deterministic tasks and checks.
 9. For medium/high complexity, delegate orchestration to GSD plan-phase flow via `.github/skills/domainspec-plan-phase-bridge/SKILL.md` and map resulting tasks back to DomainSpec concepts.

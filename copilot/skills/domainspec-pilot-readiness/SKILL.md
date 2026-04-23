@@ -35,9 +35,12 @@ Framework constraints:
 - Produce dependency-ordered plan with blockers vs non-blockers.
 - Keep DomainSpec semantics authoritative.
 
-3. Interactive questions phase (required)
-- Ask focused decision questions only after research and first plan.
-- Capture at minimum: scope, visibility, policy, rounding, auth gate, dedupe gate, audit metadata, failure policy, decision model.
+3. Interactive questions phase (required, hard gate)
+- Delegate to `domainspec-decision-gate {feature-name} --profile pilot` after research and first plan.
+- Required artifact: `docs/features/{feature-name}/PILOT-DECISIONS.md`.
+- Decision set must include at minimum: scope, visibility, policy, rounding, auth gate, dedupe gate, audit metadata, failure policy, decision model.
+- If AskQuestions tooling is unavailable, run the same decision round in plain conversation and record choices in the artifact.
+- If any blocker-level decision remains unresolved, return BLOCK and stop before spec/test updates.
 
 4. Spec and test updates phase
 - Update source first:
@@ -46,6 +49,7 @@ Framework constraints:
 - Then sync project docs:
   - `docs/features/{feature-name}/SPEC.md`
   - `docs/features/{feature-name}/TEST-SPEC.md`
+- Reference `PILOT-DECISIONS.md` in updated SPEC and TEST-SPEC sections so pilot policy provenance remains explicit.
 - Ensure SPEC has `## User Stories` and `## Story Coverage Matrix`.
 - Ensure TEST-SPEC has pilot must-pass subset, story-to-test mapping, execution checklist, blockers register, and evidence package.
 

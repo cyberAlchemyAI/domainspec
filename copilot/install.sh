@@ -16,12 +16,14 @@ GSD_RUNTIME_SRC="$GSD_ROOT/get-shit-done"
 GSD_MANIFEST_SRC="$GSD_ROOT/gsd-file-manifest.json"
 GSD_RUNTIME_DST="$ROOT/.github/get-shit-done"
 
-FULL_TOOLS='[vscode/extensions, vscode/askQuestions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubRepo, todo]'
+FULL_TOOLS='[vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/askQuestions, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, web/fetch, web/githubRepo, todo]'
 STANDARD_TOOLS='[read, edit, search, execute, web, ask-questions, agent, todo]'
 MINIMAL_TOOLS='[read, search]'
 
 TOOLS_PROFILE="${DOMAINSPEC_TOOLS_PROFILE:-}"
 CUSTOM_TOOLS="${DOMAINSPEC_CUSTOM_TOOLS:-}"
+GSD_TOOLS_PROFILE="${DOMAINSPEC_GSD_TOOLS_PROFILE:-standard}"
+GSD_CUSTOM_TOOLS="${DOMAINSPEC_GSD_CUSTOM_TOOLS:-}"
 NON_INTERACTIVE=0
 
 usage() {
@@ -30,9 +32,13 @@ Usage: bash domainspec/copilot/install.sh [options]
 
 Options:
   --tools-profile <full|standard|minimal|custom>
-      Select built-in tool profile for installed agents.
+    Select built-in tool profile for DomainSpec agents (domainspec-* and mars).
   --custom-tools "[tool/a, tool/b, ...]"
       Explicit tools list to use when --tools-profile custom is selected.
+  --gsd-tools-profile <full|standard|minimal|custom>
+    Select built-in tool profile for installed gsd-* agents. Default: standard.
+  --gsd-custom-tools "[tool/a, tool/b, ...]"
+    Explicit tools list to use when --gsd-tools-profile custom is selected.
   --yes
       Non-interactive mode. Falls back to full profile when not specified.
   --help
@@ -41,6 +47,8 @@ Options:
 Env vars:
   DOMAINSPEC_TOOLS_PROFILE
   DOMAINSPEC_CUSTOM_TOOLS
+  DOMAINSPEC_GSD_TOOLS_PROFILE
+  DOMAINSPEC_GSD_CUSTOM_TOOLS
 EOF
 }
 
@@ -52,6 +60,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --custom-tools)
       CUSTOM_TOOLS="${2:-}"
+      shift 2
+      ;;
+    --gsd-tools-profile)
+      GSD_TOOLS_PROFILE="${2:-}"
+      shift 2
+      ;;
+    --gsd-custom-tools)
+      GSD_CUSTOM_TOOLS="${2:-}"
       shift 2
       ;;
     --yes)
@@ -94,29 +110,39 @@ if [[ -z "$TOOLS_PROFILE" && $NON_INTERACTIVE -eq 0 ]]; then
 fi
 
 TOOLS_PROFILE="${TOOLS_PROFILE:-full}"
+GSD_TOOLS_PROFILE="${GSD_TOOLS_PROFILE:-standard}"
 
-case "$TOOLS_PROFILE" in
-  full)
-    TOOLS_VALUE="$FULL_TOOLS"
-    ;;
-  standard)
-    TOOLS_VALUE="$STANDARD_TOOLS"
-    ;;
-  minimal)
-    TOOLS_VALUE="$MINIMAL_TOOLS"
-    ;;
-  custom)
-    if [[ -z "$CUSTOM_TOOLS" ]]; then
-      echo "--custom-tools is required when --tools-profile custom is used." >&2
+resolve_tools_value() {
+  local profile="$1"
+  local custom_value="$2"
+  local custom_flag="$3"
+
+  case "$profile" in
+    full)
+      printf '%s' "$FULL_TOOLS"
+      ;;
+    standard)
+      printf '%s' "$STANDARD_TOOLS"
+      ;;
+    minimal)
+      printf '%s' "$MINIMAL_TOOLS"
+      ;;
+    custom)
+      if [[ -z "$custom_value" ]]; then
+        echo "$custom_flag is required when profile=custom." >&2
+        exit 1
+      fi
+      printf '%s' "$custom_value"
+      ;;
+    *)
+      echo "Invalid profile: $profile" >&2
       exit 1
-    fi
-    TOOLS_VALUE="$CUSTOM_TOOLS"
-    ;;
-  *)
-    echo "Invalid --tools-profile: $TOOLS_PROFILE" >&2
-    exit 1
-    ;;
-esac
+      ;;
+  esac
+}
+
+TOOLS_VALUE="$(resolve_tools_value "$TOOLS_PROFILE" "$CUSTOM_TOOLS" "--custom-tools")"
+GSD_TOOLS_VALUE="$(resolve_tools_value "$GSD_TOOLS_PROFILE" "$GSD_CUSTOM_TOOLS" "--gsd-custom-tools")"
 
 mkdir -p "$AGENTS_DST"
 mkdir -p "$SKILLS_DST"
@@ -129,7 +155,9 @@ const path = require('path');
 
 const agentsDir = process.argv[2];
 const toolsValue = process.argv[3];
-const files = fs.readdirSync(agentsDir).filter((name) => name.startsWith('domainspec-') && name.endsWith('.agent.md'));
+const files = fs
+  .readdirSync(agentsDir)
+  .filter((name) => (name.startsWith('domainspec-') || name === 'mars-researcher.agent.md') && name.endsWith('.agent.md'));
 
 for (const fileName of files) {
   const filePath = path.join(agentsDir, fileName);
@@ -177,7 +205,7 @@ for skill_dir in "$SKILLS_SRC"/*; do
 done
 
 echo "Installed DomainSpec Copilot pack into .github/agents and .github/skills"
-echo "Applied tools profile '$TOOLS_PROFILE' to domainspec-* agents"
+echo "Applied tools profile '$TOOLS_PROFILE' to domainspec-* and mars-researcher agents"
 
 # --- GSD framework install ---
 
@@ -206,7 +234,7 @@ else
       echo "Installed $GSD_AGENT_COUNT GSD agents"
 
       # Apply tools profile to GSD agents
-      node - "$AGENTS_DST" "$TOOLS_VALUE" <<'GSDNODE'
+      node - "$AGENTS_DST" "$GSD_TOOLS_VALUE" <<'GSDNODE'
 const fs = require('fs');
 const path = require('path');
 
@@ -252,7 +280,7 @@ for (const fileName of files) {
   fs.writeFileSync(filePath, lines.join('\n'));
 }
 GSDNODE
-      echo "Applied tools profile '$TOOLS_PROFILE' to gsd-* agents"
+  echo "Applied tools profile '$GSD_TOOLS_PROFILE' to gsd-* agents"
     fi
 
     # Copy GSD skills
