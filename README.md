@@ -612,7 +612,6 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 | Command                         | Stage | Purpose                                                                                    |
 | ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
 | `domainspec-pipeline`           | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
-| `domainspec-decision-gate`      | 1b    | Resolve and persist blocker-level multi-option decisions before downstream mutations          |
 | `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
 | `domainspec-spec-feature`       | 3     | Author or update a feature specification (SPEC + aspects)                                  |
 | `domainspec-sync-user-stories`  | 3     | Generate/refresh STORIES.md from aspect docs                                               |

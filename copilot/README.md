@@ -11,7 +11,6 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-help` | Show command reference and recommend the next step |
 | `domainspec-init` | Bootstrap docs structure and governance baseline |
 | `domainspec-interview-scope` | Run greenfield or brownfield discovery interviews before specification starts |
-| `domainspec-decision-gate` | Resolve and persist blocker-level multi-option decisions before downstream mutations |
 | `domainspec-pipeline` | Run the full lifecycle: plan -> spec -> stories -> tests -> implementation -> verify |
 | `domainspec-spec-feature` | Author or evolve feature specs and aspect documents |
 | `domainspec-sync-user-stories` | Sync `STORIES.md` from capability and aspect docs |

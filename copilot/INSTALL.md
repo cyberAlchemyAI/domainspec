@@ -8,12 +8,7 @@ Run:
 bash domainspec/copilot/install.sh
 ```
 
-The installer applies separate tool profiles:
-
-- `domainspec-*` and `mars-researcher` default to `full`
-- `gsd-*` defaults to `standard`
-
-It also installs DomainSpec pack assets and can optionally install GSD runtime plus Playwright.
+The installer applies a tools profile to installed `domainspec-*` and `gsd-*` agents, installs DomainSpec pack assets, and can optionally install GSD runtime plus Playwright.
 
 ### Non-Interactive Examples
 
@@ -21,12 +16,6 @@ Full profile:
 
 ```bash
 bash domainspec/copilot/install.sh --tools-profile full --yes
-```
-
-Full profile for both DomainSpec and GSD agents:
-
-```bash
-bash domainspec/copilot/install.sh --tools-profile full --gsd-tools-profile full --yes
 ```
 
 Standard coding profile:
@@ -39,12 +28,6 @@ Custom tools profile:
 
 ```bash
 bash domainspec/copilot/install.sh --tools-profile custom --custom-tools "[read, edit, search, agent]" --yes
-```
-
-Custom GSD tools profile:
-
-```bash
-bash domainspec/copilot/install.sh --gsd-tools-profile custom --gsd-custom-tools "[read, search, execute]" --yes
 ```
 
 Skip GSD runtime installation:
