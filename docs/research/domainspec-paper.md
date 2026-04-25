@@ -6,7 +6,7 @@
 
 ## Abstract
 
-Large language model (LLM) agents can now generate code, tests, and infrastructure from natural-language specifications. Yet without formal structure, their outputs remain stochastic — non-reproducible, non-auditable, and ungovernable at scale. We present **DomainSpec**, a layered meta-architecture (L0–L7) that bridges domain knowledge to verified software through deterministic derivation rules and self-regulating governance. The framework introduces four contributions: **(C1)** a dual-track meta-model spanning business semantics and operational enforcement across seven layers; **(C2)** a typed domain ontology of 24 meta-types and 26 typed relationships that enables a deterministic derivation calculus $T = f(C, R, \Delta)$ mapping domain concepts to test obligations, observability metrics, and implementation contracts; **(C3)** a governance attenuation theory explaining why adding governance layers to multi-agent systems *decreases* per-layer fidelity, bounded by Shannon channel capacity; and **(C4)** a meta-circular self-governance mechanism where the framework's axioms, constitution, and tuning loop govern — and prune — themselves. We validate DomainSpec on a production system with 7 features across 3 business pillars, deriving 445 test obligations and 146 observability metrics from 89 domain concepts. Results show that typed ontologies eliminate the stochastic gap between specification and implementation, while structural governance interventions (observer-executor separation, deterministic signal detection, via negativa pruning) restore enforcement fidelity without adding layers. DomainSpec is open-source and available as a replication package.
+Large language model (LLM) agents can now generate code, tests, and infrastructure from natural-language specifications. Yet without formal structure, their outputs remain stochastic — non-reproducible, non-auditable, and ungovernable at scale. We present **DomainSpec**, a layered meta-architecture (L0–L7) that bridges domain knowledge to verified software through deterministic derivation rules and self-regulating governance. The framework introduces four contributions: **(C1)** a dual-track meta-model spanning business semantics and operational enforcement across seven layers; **(C2)** a typed domain ontology of 25 meta-types and 29 typed relationships that enables deterministic derivation both per feature ($T = f(C, R, \Delta)$) and across feature composition ($T_{composed} = f(C, R, \Delta) + f_{cross}(E_{AB}, \Delta_{cross})$), mapping domain concepts to test obligations, observability metrics, and implementation contracts; **(C3)** a governance attenuation theory explaining why adding governance layers to multi-agent systems *decreases* per-layer fidelity, bounded by Shannon channel capacity; and **(C4)** a meta-circular self-governance mechanism where the framework's axioms, constitution, and tuning loop govern — and prune — themselves. We validate DomainSpec on a production system with 7 features across 3 business pillars, deriving 445 test obligations and 146 observability metrics from 89 domain concepts. Results show that typed ontologies eliminate the stochastic gap between specification and implementation, while structural governance interventions (observer-executor separation, deterministic signal detection, via negativa pruning) restore enforcement fidelity without adding layers. DomainSpec is open-source and available as a replication package.
 
 **Keywords:** domain-driven design, meta-modeling, deterministic test derivation, LLM agents, governance attenuation, multi-agent systems, specification-first development
 
@@ -50,7 +50,7 @@ These questions map to experiments E1-E10 (RQ1-RQ3) and E11-E20 (meta-meta frame
 
 This paper presents **DomainSpec**, a layered meta-architecture that addresses all three problems through a unified structural approach. Rather than treating specification, derivation, governance, and self-improvement as orthogonal concerns, DomainSpec organizes them as emergent properties of a seven-layer hierarchy:
 
-- **Layers 0–1** define the domain ontology — a closed vocabulary of 24 meta-types and 26 typed relationships that capture business semantics.
+- **Layers 0–1** define the domain ontology — a closed vocabulary of 25 meta-types and 29 typed relationships that capture business semantics, including cross-feature composition edges.
 - **Layer 2** hosts the derived software — tests, code, and metrics produced by deterministic rules applied to L1 concepts.
 - **Layers 3–4** encode governance — a formal constitution (L3) grounded in epistemic axioms (L4), each rule traceable to the harm its absence causes.
 - **Layer 5** provides navigation — structured discovery of concepts across the knowledge graph.
@@ -63,7 +63,7 @@ We make four contributions:
 
 - **C1: Meta-Architecture.** A dual-track (business × operational) seven-layer model where each layer governs the layer below and is governed by the layer above, with formal derivation chains traceable from epistemic axioms to enforcement gates.
 
-- **C2: Deterministic Derivation Calculus.** A function $T = f(C, R, \Delta)$ that maps domain concepts $C$, typed relationships $R$, and 20 derivation rules $\Delta$ to a deterministic set of test obligations — plus 16 symmetric observability rules that derive production metrics from the same specification documents.
+- **C2: Deterministic Derivation Calculus.** A per-feature function $T = f(C, R, \Delta)$ plus a system-level composition extension $T_{composed} = f(C, R, \Delta) + f_{cross}(E_{AB}, \Delta_{cross})$ that map domain concepts $C$, typed relationships $R$, and derivation rules to deterministic test obligations — plus 16 symmetric observability rules that derive production metrics from the same specification documents.
 
 - **C3: Governance Attenuation Theory.** A formal model of why governance fidelity decreases as layers accumulate in multi-agent systems, grounded in Shannon channel capacity [5], Ashby's Law of Requisite Variety [6], and empirical evidence from LLM instruction-following behavior.
 
@@ -123,7 +123,7 @@ Table 1 summarizes the landscape. No existing approach combines a typed domain o
 | Constitutional AI [18] | — | — | Principles | — | High |
 | ADLC [19] | — | — | Lifecycle | — | Medium |
 | Meta-Track [23] | Annotations | — | Health metrics | — | Medium |
-| **DomainSpec** | **24 types × 26 edges** | **Tests + Metrics** | **Attenuation theory** | **Strange loop** | **High (Markdown)** |
+| **DomainSpec** | **25 types × 29 edges** | **Tests + Metrics** | **Attenuation theory** | **Strange loop** | **High (Markdown)** |
 
 ---
 
@@ -135,7 +135,7 @@ DomainSpec organizes knowledge, software, and governance into a seven-layer dual
 
 **Layer 0 — Domain Reality.** The actual business domain as it exists independent of software. This is the territory, not the map. L0 is the ultimate source of truth against which all other layers are validated.
 
-**Layer 1 — Ontology.** A typed vocabulary of 24 meta-types and 26 relationships (Section 4) that captures domain semantics. L1 transforms the informal domain reality into a navigable knowledge graph documented in Markdown files (`SPEC.md`, `domain.md`, `operations.md`, `states.md`, etc.).
+**Layer 1 — Ontology.** A typed vocabulary of 25 meta-types and 29 relationships (Section 4) that captures domain semantics, including cross-feature composition semantics. L1 transforms the informal domain reality into a navigable knowledge graph documented in Markdown files (`SPEC.md`, `domain.md`, `operations.md`, `states.md`, etc.).
 
 **Layer 2 — Software.** Executable artifacts derived from L1: implementation code, test suites, observability instrumentation, and infrastructure configuration. L2 artifacts are *derived*, not authored — they are the output of applying derivation rules (Section 5) to L1 concepts.
 
@@ -218,12 +218,12 @@ This structure resolves the infinite regress problem: rather than requiring an e
 
 ### 4.1 Meta-Types
 
-DomainSpec defines a closed vocabulary of 24 meta-types organized into three categories: 13 backend types, 11 UI types. Every domain concept documented in a feature specification must declare exactly one meta-type.
+DomainSpec defines a closed vocabulary of 25 meta-types organized into three categories: 14 backend types, 11 UI types. Every domain concept documented in a feature specification must declare exactly one meta-type.
 
 **Definition 1** (Meta-Type System). Let $\mathcal{M} = \mathcal{M}_B \cup \mathcal{M}_U$ be the set of meta-types, where:
 
 $$\mathcal{M}_B = \{\text{Entity}, \text{ValueObject}, \text{Enum}, \text{Operation}, \text{Query}, \text{Calculation},$$
-$$\text{Rule}, \text{Policy}, \text{Workflow}, \text{Interface}, \text{Event}, \text{Mapping}, \text{StateMachine}\}$$
+$$\text{Rule}, \text{Policy}, \text{Workflow}, \text{Saga}, \text{Interface}, \text{Event}, \text{Mapping}, \text{StateMachine}\}$$
 
 $$\mathcal{M}_U = \{\text{Page}, \text{Layout}, \text{Component}, \text{ViewModel}, \text{Hook},$$
 $$\text{Form}, \text{Action}, \text{Guard}, \text{Binding}, \text{Adapter}, \text{StateIndicator}\}$$
@@ -231,9 +231,9 @@ $$\text{Form}, \text{Action}, \text{Guard}, \text{Binding}, \text{Adapter}, \tex
 The backend types organize into four functional groups:
 
 - **Structural** (what things are): Entity, Value Object, Enum
-- **Behavioral** (what happens): Operation, Query, Calculation
+- **Behavioral** (what happens): Operation, Query, Calculation, Workflow, Saga
 - **Governing** (what constrains): Rule, Policy
-- **Connective** (what connects): Workflow, Interface, Event, Mapping, State Machine
+- **Connective** (what connects): Interface, Event, Mapping, State Machine
 
 The UI types mirror this organization:
 
@@ -244,16 +244,18 @@ The UI types mirror this organization:
 
 ### 4.2 Typed Relationships
 
-**Definition 2** (Relationship System). Let $\mathcal{R} = \mathcal{R}_B \cup \mathcal{R}_U \cup \mathcal{R}_X$ be the set of typed relationships:
+**Definition 2** (Relationship System). Let $\mathcal{R} = \mathcal{R}_B \cup \mathcal{R}_{CF} \cup \mathcal{R}_U \cup \mathcal{R}_X$ be the set of typed relationships:
 
 $$\mathcal{R}_B = \{\text{performs}, \text{produces}, \text{enforces}, \text{calculates}, \text{transitions},$$
 $$\text{exposes}, \text{orchestrates}, \text{applies}, \text{maps}, \text{contains}, \text{queries}, \text{emits}\}$$
+
+$$\mathcal{R}_{CF} = \{\text{produces-for}, \text{triggers-cross}, \text{enforces-cross}\}$$
 
 $$\mathcal{R}_U = \{\text{renders}, \text{wraps}, \text{composes}, \text{consumes}, \text{submits}, \text{shapes}, \text{protects}, \text{displays}\}$$
 
 $$\mathcal{R}_X = \{\text{fetches}, \text{mutates}, \text{reflects}, \text{derives}, \text{contracts}, \text{mirrors}\}$$
 
-where $\mathcal{R}_B$ contains 12 backend edges, $\mathcal{R}_U$ contains 8 intra-UI edges, and $\mathcal{R}_X$ contains 6 cross-layer edges connecting UI concepts to backend concepts.
+where $\mathcal{R}_B$ contains 12 intra-feature backend edges, $\mathcal{R}_{CF}$ contains 3 cross-feature backend edges, $\mathcal{R}_U$ contains 8 intra-UI edges, and $\mathcal{R}_X$ contains 6 cross-layer edges connecting UI concepts to backend concepts.
 
 Each relationship has a typed signature constraining its source and target:
 
@@ -273,6 +275,14 @@ Each relationship has a typed signature constraining its source and target:
 | `contains` | Entity | ValueObject | Composition |
 | `queries` | Query | Entity | Read dependency |
 | `emits` | Entity | Event | Source of domain signal |
+
+**Table 3b.** Relationship type signatures (cross-feature backend edges).
+
+| Edge | Source Type | Target Type | Semantics |
+|---|---|---|---|
+| `produces-for` | Operation@A | Entity@B | Operation in A mutates or projects state into B-owned entity |
+| `triggers-cross` | Event@A | Operation@B | Event in A triggers operation execution in B |
+| `enforces-cross` | Rule@A | Operation@B | Rule in A constrains operation in B |
 
 **Table 4.** Relationship type signatures (cross-layer edges).
 
@@ -295,7 +305,9 @@ The ontology satisfies three structural properties:
 
 **Property 3** (Cross-Layer Bridging). Every edge in $\mathcal{R}_X$ has source type in $\mathcal{M}_U$ and target type in $\mathcal{M}_B$. Cross-layer relationships are unidirectional: UI depends on backend, never the reverse.
 
-These properties ensure that the concept graph is well-formed: no relationship can connect incompatible concept types, and the dependency direction between frontend and backend is structurally enforced.
+**Property 4** (Cross-Feature Boundary Discipline). Every edge in $\mathcal{R}_{CF}$ crosses ownership boundaries. If $(u, v)$ has label in $\mathcal{R}_{CF}$, then $u$ and $v$ belong to distinct feature or bounded-context owners.
+
+These properties ensure that the concept graph is well-formed: no relationship can connect incompatible concept types, cross-feature edges are explicit, and the dependency direction between frontend and backend is structurally enforced.
 
 ### 4.4 The Concept Graph
 
@@ -322,7 +334,7 @@ The central claim of DomainSpec is that verification obligations — test cases 
 
 ### 5.1 The Derivation Function
 
-**Definition 4** (Derivation Function). Let $G = (V, E, \tau, \lambda)$ be a concept graph (Definition 3). The derivation function is:
+**Definition 4** (Per-Feature Derivation Function). Let $G = (V, E, \tau, \lambda)$ be a concept graph (Definition 3). The per-feature derivation function is:
 
 $$T = f(G, \Delta) = \bigcup_{i=1}^{|\Delta|} \delta_i(G)$$
 
@@ -330,9 +342,17 @@ where $\Delta = \{\delta_1, \ldots, \delta_{|\Delta|}\}$ is the set of derivatio
 
 The derivation is deterministic: given the same concept graph $G$ and the same rule set $\Delta$, the function produces the identical set of test obligations $T$ on every invocation. This eliminates the stochastic gap — LLM agents execute derivation *rules*, not stochastic generation.
 
+**Definition 5** (Composed Derivation Function). For a system composed of feature graphs $\{G_1, \ldots, G_n\}$ and cross-feature edge set $E_{AB}$:
+
+$$T_{composed} = \sum_{k=1}^{n} f(G_k, \Delta) + f_{cross}(E_{AB}, \Delta_{cross})$$
+
+where $\Delta_{cross} = \{\delta_{produces\text{-}for}, \delta_{triggers\text{-}cross}, \delta_{enforces\text{-}cross}\}$.
+
+The composed function preserves determinism while making cross-feature integration obligations explicit and derivable.
+
 ### 5.2 Test Derivation Rules
 
-DomainSpec defines 14 backend test derivation rules and 6 UI test derivation rules. Each rule specifies its source (which documentation section), its trigger (which concept types), and its output (which test types with what cardinality).
+DomainSpec defines 14 backend test derivation rules and 6 UI test derivation rules for per-feature graphs. For composed systems, 3 additional cross-feature derivation rules are applied through $f_{cross}$. Each rule specifies its source (which documentation section), its trigger (which concept types), and its output (which test types with what cardinality).
 
 **Table 5.** Backend test derivation rules.
 
@@ -461,7 +481,7 @@ Three theoretical results suggest that $k^* \approx 6$–$7$ for bounded-capacit
 
 **Miller's Law** [27]. The number of objects a bounded-capacity information processor can maintain simultaneously is $7 \pm 2$. LLMs exhibit analogous capacity limits in instruction-following tasks.
 
-**Ashby's Requisite Variety** [6]. A controller must have at least as much variety as the system it controls. For a system with 24 concept types and 26 edge types: $\log_2(50) \approx 6$ governance dimensions are theoretically sufficient. At 7, returns are diminishing.
+**Ashby's Requisite Variety** [6]. A controller must have at least as much variety as the system it controls. For a system with 25 concept types and 29 edge types: $\log_2(54) \approx 5.75$ governance dimensions are theoretically sufficient. At 7, returns are diminishing.
 
 **Gödel's Incompleteness** (informal application). No sufficiently complex formal system can prove all true statements about itself. The meta-system cannot fully observe itself — there will always be governance gaps that the system is structurally incapable of detecting from within.
 
@@ -671,17 +691,23 @@ Total for one operation: 23 test obligations + 22 observability metrics, all det
 
 ### 9.1 Vocabulary Completeness
 
-The strongest claim of this paper — that 24 meta-types and 26 relationships are *sufficient* to capture business domain semantics — is also the most vulnerable. Our evidence is empirical: the vocabulary covers all concepts encountered across 7 features in 3 business pillars. We do not claim universal sufficiency. Different domains (embedded systems, scientific computing, real-time control) may require additional meta-types.
+The strongest claim of this paper — that the extended 25 meta-types and 29 relationships are *sufficient* to capture business domain semantics including cross-feature composition — is also the most vulnerable. Our evidence is empirical: the vocabulary covers all concepts encountered across 7 features in 3 business pillars plus E9 cross-feature composition runs. We do not claim universal sufficiency. Different domains (embedded systems, scientific computing, real-time control) may require additional meta-types.
 
 However, the architecture is designed for extension: adding a meta-type requires specifying its derivation rules and relationship signatures, after which the derivation calculus incorporates it automatically. The question is not whether the vocabulary is complete, but whether the *mechanism* for extending it preserves the formal properties (type safety, deterministic derivation, governance traceability).
 
 ### 9.2 Cross-Feature Composition
 
-The current ontology treats features as independent concept graphs. Cross-feature relationships (a concept in feature A depends on a concept in feature B) are handled through shared concepts and cross-references but lack formal composition operators. Future work should define a feature composition algebra:
+E9 established that per-feature coverage alone is insufficient at system composition boundaries. Under the original ontology, 74.5% of cross-context edges were strained or broken in the rerun dataset (94 edges across 6 domains). Incorporating three cross-feature edges (`produces-for`, `triggers-cross`, `enforces-cross`) and one additional meta-type (`Saga`) resolved this gap to 100% modeled coverage with no extra edge types required in the studied domains.
+
+The composition algebra is now treated as an incorporated extension to the base derivation model:
 
 $$G_{A \oplus B} = (V_A \cup V_B, E_A \cup E_B \cup E_{AB}, \tau_A \cup \tau_B, \lambda_A \cup \lambda_B \cup \lambda_{AB})$$
 
-where $E_{AB}$ and $\lambda_{AB}$ are cross-feature edges with their own type signatures.
+where $E_{AB}$ and $\lambda_{AB}$ are typed cross-feature edges. The corresponding derivation extension is:
+
+$$T_{composed} = f(C, R, \Delta) + f_{cross}(E_{AB}, \Delta_{cross})$$
+
+with $\Delta_{cross} = \{\delta_{produces\text{-}for}, \delta_{triggers\text{-}cross}, \delta_{enforces\text{-}cross}\}$. This extension qualifies C2: deterministic derivation remains complete within feature boundaries under $f$, and complete at system level under $f + f_{cross}$.
 
 ### 9.3 Formal Semantics
 
@@ -697,11 +723,15 @@ Our case study demonstrates feasibility on a production system, but controlled e
 
 **External validity.** Seven features in one domain (team management) may not generalize. The business pillars (product, operations, finance) provide some diversity, but different industries may require different meta-type distributions.
 
+E9 external-domain composition evidence draws heavily from DDD literature and reference architectures; broader industrial replication remains necessary for non-DDD-heavy ecosystems.
+
 **Construct validity.** Test obligation counts measure *derivation output*, not *test effectiveness*. A derived test that never catches a bug is less valuable than the count suggests. Mutation testing could validate that derived tests have meaningful fault-detection capability.
+
+For E9 rerun specifically, deterministic edge-type-to-status mapping improved reproducibility but introduces definitional circularity risk in gap-rate interpretation; this is mitigated by convergence with run-1 and the original run-2 analysis.
 
 ### 9.6 Conclusion
 
-DomainSpec demonstrates that the gap between domain knowledge and verified software can be bridged through structure rather than stochastic generation. A typed domain ontology (24 meta-types, 26 relationships) enables a deterministic derivation calculus that produces 445 test obligations and 146 observability metrics from 89 domain concepts. Governance attenuation — the systematic loss of enforcement fidelity as rules accumulate — is bounded by channel capacity and addressed through structural interventions rather than additional layers. Meta-circular self-governance resolves the infinite regress through bounded self-reference.
+DomainSpec demonstrates that the gap between domain knowledge and verified software can be bridged through structure rather than stochastic generation. A typed domain ontology (25 meta-types, 29 relationships) enables a deterministic derivation calculus that produces 445 test obligations and 146 observability metrics from 89 domain concepts, with composed-system derivation extended through explicit cross-feature edges. Governance attenuation — the systematic loss of enforcement fidelity as rules accumulate — is bounded by channel capacity and addressed through structural interventions rather than additional layers. Meta-circular self-governance resolves the infinite regress through bounded self-reference.
 
 The framework is open-source, production-validated, and available as a replication package. We believe that the transition from stochastic to deterministic agent governance is both necessary and achievable — and that the path runs through typed domain ontologies.
 

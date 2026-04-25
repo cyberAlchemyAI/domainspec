@@ -1,17 +1,20 @@
 # Relationship Types
 
-> The 26 typed edges that connect domain concepts into a navigable knowledge graph — 12 backend, 8 intra-UI, and 6 cross-layer.
+> The 29 typed edges that connect domain concepts into a navigable knowledge graph — 15 backend, 8 intra-UI, and 6 cross-layer.
 
 ## Overview
 
 Every concept in the system connects to other concepts through typed relationships. These edges make the knowledge graph navigable — from any concept, you can follow edges to understand what it touches.
 
-### Backend Edges (12)
+### Backend Edges (15)
 
 | Edge           | From → To                   | Description                                         |
 | -------------- | --------------------------- | --------------------------------------------------- |
 | `performs`     | Entity → Operation          | An entity initiates or is the actor of an operation |
 | `produces`     | Operation → Event           | An operation emits an event upon completion         |
+| `produces-for` | Operation@A → Entity@B      | An operation in A mutates or projects data into an entity owned by B |
+| `triggers-cross` | Event@A → Operation@B    | An event in A triggers an operation owned by B      |
+| `enforces-cross` | Rule@A → Operation@B     | A rule in A constrains whether B can execute an operation |
 | `enforces`     | Rule → Operation            | A rule constrains when an operation can execute     |
 | `calculates`   | Calculation → Operation     | A calculation derives values used by an operation   |
 | `transitions`  | Event → State Machine       | An event triggers a state transition                |
@@ -68,6 +71,33 @@ When an operation completes successfully, it emits one or more domain events.
 > CreateOrder **produces** OrderCreated
 
 _In the registry:_ Traces cause → effect. Follow this edge to answer "What happens after {Operation} runs?"
+
+### `produces-for` — Operation@A → Entity@B
+
+An operation in one feature or bounded context writes or projects data into an entity owned by another feature or bounded context.
+
+> GenerateSettlement **produces-for** Player (bankroll/makeup updates)
+> Routing.ComputeItinerary **produces-for** Booking.Cargo
+
+_In the registry:_ Captures cross-feature write-back and projection flows. Follow this edge to answer "Which foreign entity does {Operation} update?"
+
+### `triggers-cross` — Event@A → Operation@B
+
+An event produced in one feature or bounded context triggers an operation in another.
+
+> OnboardingCompleted **triggers-cross** CreatePlayer
+> PaymentCompleted **triggers-cross** ScheduleShipment
+
+_In the registry:_ Captures event-driven cross-feature activation. Follow this edge to answer "Which operation is activated by {Event} outside the source feature?"
+
+### `enforces-cross` — Rule@A → Operation@B
+
+A rule defined in one feature or bounded context constrains operation execution in another.
+
+> KYCVerificationRule **enforces-cross** OpenAccount
+> PermissionRule **enforces-cross** AssignCoach
+
+_In the registry:_ Captures cross-feature governance dependencies. Follow this edge to answer "Which external rule gates {Operation}?"
 
 ### `enforces` — Rule → Operation
 

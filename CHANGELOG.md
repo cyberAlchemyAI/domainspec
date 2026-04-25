@@ -23,6 +23,18 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.0] - 2026-04-25
+
+### Added
+
+- **Saga meta-concept** — promoted to a first-class backend meta-type for cross-feature transactional coordination with compensation.
+- **Cross-feature relationship edges** — added `produces-for`, `triggers-cross`, and `enforces-cross` to model write-back, event-driven activation, and rule governance across feature boundaries.
+
+### Changed
+
+- **Derivation framing** — deterministic derivation is now explicitly scoped as per-feature for base ontology and extended with composition semantics for system-level cross-feature obligations.
+- **Cross-feature composition guidance** — taxonomy, relationship guidance, and research paper framing now treat composition as incorporated evidence-backed capability rather than future-only conjecture.
+
 ## [1.8.2] - 2026-04-18
 
 ### Added
