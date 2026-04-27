@@ -161,6 +161,107 @@ timeline
 
 ---
 
+## Actionable Completion Plan (ADLC + Harness + Pending Implementation)
+
+This section is the execution board for finishing ADLC alignment with the Harness principle as first-class scope.
+It combines:
+
+- ADLC and Meta-Track gaps (G1-G20)
+- Open roadmap gates from `PHASED-PLAN.md`
+- Pending governance, tuning, and infrastructure tasks found across implementation docs
+
+Canonical split task structure lives in `plan/index.md` with one task per markdown file grouped by `context`, `infra`, `harness`, `agentic`, and `governance`.
+Use `plan/VISION.md` for layer-level context and `plan/TRACEABILITY.md` for task-to-alignment trace-back (problem solved + whole-project contribution).
+
+### Current Context Objectives
+
+1. Finish ADLC alignment with measurable closure evidence.
+2. Deliver the Harness human-system interface (orchestrator + role-aware visualization + interview + metrics).
+3. Shift enforcement and tuning from manual/post-hoc to automated/continuous CI loops.
+
+### Prioritization Policy
+
+Tasks are prioritized by:
+
+- ADLC closure risk (does it block G2/G3/G4/G11/G12/G15?)
+- Dependency unlock (does it unblock multiple downstream tasks?)
+- User impact (does it improve PO/stakeholder/QA/dev usability?)
+- Metric deficit (is there a known weakness in M-001..M-006 or Saturn L-system telemetry?)
+
+### Harness Program Task Board
+
+| ID | Priority | Task | ADLC/Meta Gap Coverage | Depends On | Main Deliverables | Exit Criteria |
+| --- | --- | --- | --- | --- | --- | --- |
+| H1 | P0 | Build interactive domain graph UI where clicking any concept shows full relationship chain and transformation across workflows. | G12, G1 | H11 | Graph explorer UI, chain panel, workflow-transform timeline view | Users can trace any concept end-to-end (concept -> operation -> event -> state -> interface) in <=3 clicks |
+| H2 | P0 | Build role-based harness workspace (PO, stakeholder, QA, dev) with role-specific lenses over the same graph and task set. | G5, G1 | H1 | Role presets, filtered views, role permissions matrix | Each role sees tailored workflow actions without losing cross-role traceability |
+| H3 | P0 | Implement context-prioritized task queue for project owners: domain decisions, governance tradeoffs, timeline/role impacts, metric-driven direction. | G5, G7, G15 | H2, H12 | Priority engine, task model, decision cards, objective-aware sorting | Queue order updates from context objectives + metric trends, with explicit rationale per task |
+| H4 | P0 | Deliver interviewer system for greenfield domain discovery and business pain/value framing. | G1, G5 | H8 | Guided interview flows, outputs for project overview/definitions/decisions | Interview outputs are directly consumable by spec/planning skills |
+| H5 | P0 | Deliver interviewer system for brownfield mapping of already implemented domains. | G11, G12 | H4 | Brownfield audit mode, code/doc evidence mapper, gap summary | Brownfield run generates mapped concepts + gaps + recommended actions |
+| H6 | P1 | Add knowledge-mapping tutorial inside harness (how concepts, tags, relationships, and governance map to implementation). | G1, G15 | H1 | Interactive tutorial, examples, quick-start walkthrough | New user can complete mapping tutorial and produce first valid concept map |
+| H7 | P0 | Add initiatives/experiments/visions tracker in harness with status and evidence links. | G2, G15 | H3 | Portfolio tracker UI + model | Initiative -> experiment -> evidence chain is visible and queryable |
+| H8 | P0 | Implement orchestrator-first human interface: prompt in, orchestrator selects agent/skill sets (interviewer, MARS, spec, tests, implement, verify). | G3, G5 | H11 | Orchestrator routing UI/API, execution plans, selected agent set trace | Every user request shows selected skills/agents + execution trace |
+| H9 | P1 | Build cross-project skills knowledge repository (not single-project bound). | G10, G12 | H8 | Skill catalog, metadata index, reuse policy | Skills are discoverable/reusable across multiple repositories |
+| H10 | P0 | Implement frontend prototyping selector using Victor's Godel machine implementation as the prototyping engine. | G1, G12 | H1, H8 | Prototyping UI, renderer adapters, integration contract | User can choose display strategy and preview graph/workflow representations |
+| H11 | P0 | Build harness runtime gateway: each input dispatches to an agent runtime (local/VPS/cloud) and returns typed output (task/decision/metric/code). | G3, G4, G5 | - | Runtime router, execution adapters, typed output contract | Every request is executed by runtime adapter with auditable execution record |
+| H12 | P0 | Instrument agent telemetry for Saturn L-system governance metrics and cost tracking. | G2, G3, G7, G15 | H11 | Telemetry schema, spans/events, Saturn dashboard blocks | Cost/governance metrics are emitted per agent invocation |
+| H13 | P0 | Validate existing metrics pipeline and add closed-loop CI process: threshold trigger -> suggestion -> governance evaluation. | G2, G4, G8, G15 | H12 | CI workflow updates, suggestion generator, review protocol | Threshold breaches auto-open actionable recommendations with evidence |
+| H14 | P0 | Consolidate axioms, constitutions, and tags into executable governance: agents/skills/scripts that enforce and validate. | G13, G14, G16, G11 | H12 | Tagging conventions, validator scripts, governance skill updates | L4 -> L3 -> L6 chain is machine-validated and enforced in CI |
+| H15 | P1 | Add automatic mutation pipeline for agent and skill definitions plus governance verification gates before adoption. | G2, G4, G9, G10 | H14 | Mutation engine, mutation policy, safety gates, evaluation harness | Mutations are auto-generated, scored, and blocked unless governance checks pass |
+| H16 | P1 | Add placeholder and integration point for Victor material link (house project) and migrate external references into this execution flow. | G10, G12 | H9 | Reference registry section, migration checklist | External material is linked, versioned, and mapped to tasks |
+| H17 | P0 | Implement dynamic goal amendment and downstream re-derivation control so goals can evolve safely during execution. | G6, T18 | H8, H14 | Goal amendment contract, impact analyzer, re-derivation flow, approval policy | Goal updates propagate with explicit impact and governance-safe re-derivation |
+
+### Pending Task Intake From Implementation Docs
+
+| Intake ID | Source | Pending Item | Mapped Plan Task(s) |
+| --- | --- | --- | --- |
+| P1 | `PHASED-PLAN.md` | Open Phase 1-3 gates (E1-E10 validation and approvals) | H13, H14 |
+| P2 | `PHASED-PLAN.md` | Open Phase 4 gate (role contracts, feature audit, disagreement protocol) | H2, H8 |
+| P3 | `PHASED-PLAN.md` | Open Phase 5-6 gates (feature discovery pilot + multi-agent autonomy validation) | H4, H5, H8, H11 |
+| P4 | `PHASED-PLAN.md` | Open Phase 7-8 gates (autonomous optimization + self-tuning governance loop) | H12, H13, H15 |
+| P5 | `TUNING-LOOP.md` | Future cloud reflection agent step still pending | H13, H15 |
+| P6 | `GOVERNANCE-ATTENUATION-EXECUTION-BOARD.md` | Wave execution for blocking governance gates and dual-phase observer rollout | H12, H13, H14 |
+| P7 | `INFRA-SETUP.md` | Open security/operations checklist (secrets, token scope, ssh hardening) | H11, H12 |
+| P8 | `ADLC-ALIGNMENT.md` | Remaining unresolved gaps (notably G2/G3/G4/G5/G11/G12/G15/G16) | H1-H17 |
+
+### Delivery Waves (Execution Order)
+
+| Wave | Duration | Focus | Task IDs |
+| --- | --- | --- | --- |
+| W1 | Weeks 1-2 | Runtime and observability foundation | H11, H12, H13, P7 |
+| W2 | Weeks 3-4 | Human knowledge transfer UX (graph + role views + task prioritization) | H1, H2, H3, H6 |
+| W3 | Weeks 5-6 | Interviewer and orchestration interface | H4, H5, H8, H17 |
+| W4 | Weeks 7-8 | Governance codification (axioms/constitution/tags validators) | H14, P6 |
+| W5 | Weeks 9-10 | Skills repository + prototyping + external material integration | H9, H10, H16 |
+| W6 | Weeks 11-12 | Mutation loop + ADLC closure evidence + remaining phase gate closure | H15, P1, P2, P3, P4, P5 |
+
+### Immediate Next 12 Tasks (Do First)
+
+- [ ] H11 runtime gateway contract and adapters (local/VPS/cloud)
+- [ ] H12 Saturn telemetry schema and dashboard wiring
+- [ ] H13 CI closed-loop suggestions from threshold triggers
+- [ ] H1 concept graph click-through chain view (relationship + transformation)
+- [ ] H2 role-specific workspace lenses (PO/stakeholder/QA/dev)
+- [ ] H3 objective-aware prioritization engine for project-owner task queue
+- [ ] H4 interviewer greenfield flow and artifact outputs
+- [ ] H5 interviewer brownfield mapping flow and gap generation
+- [ ] H8 orchestrator execution trace panel (selected agents/skills per request)
+- [ ] H17 dynamic goal amendment flow with impact-aware re-derivation
+- [ ] H14 tags + axioms + constitution validation scripts in CI
+- [ ] P5 cloud reflection step implementation from tuning loop
+- [ ] P7 infrastructure security checklist closure and verification evidence
+
+### ADLC Alignment Completion Criteria
+
+ADLC alignment is considered complete when all are true:
+
+1. G1-G20 have explicit status, evidence links, and no unresolved blocker gaps.
+2. Harness capabilities H1-H17 are delivered or explicitly waived with rationale.
+3. `PHASED-PLAN.md` Phase gates are either passed or formally deferred with decision records.
+4. Tuning loop runs closed-loop automatically (threshold detection -> recommendation -> evaluated change).
+5. Governance chain validation passes for L4 -> L3 -> L6 and tag/orphan checks are blocking in CI.
+
+---
+
 ## Philosophical Grounding (Meta-Track Pillars)
 
 The Meta-Track framework synthesizes three intellectual traditions that should inform DomainSpec evolution:
