@@ -1,6 +1,6 @@
 ---
 name: domainspec-help
-description: Show DomainSpec command reference, unified startpoint workflow, and recommended next step.
+description: Show DomainSpec command reference, orchestrator-first workflow, and recommended next step.
 argument-hint: "[command-name]"
 agent: domainspec-planner
 allowed-tools: Read, Glob
@@ -16,10 +16,10 @@ Read command definitions under domainspec/copilot/skills/, package docs under do
 
 <process>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
-2. List available domainspec-* commands and one-line purpose, with `domainspec-start` as the default first command.
+2. List available domainspec-* commands and one-line purpose, with `domainspec-orchestrate` as the default user-facing first command. Mark direct specialist commands as advanced/internal direct paths.
 3. If a command-name is provided, show detailed usage and prerequisites.
 4. Recommend next command based on detected docs and feature readiness.
-	- If `docs/PROJECT-OVERVIEW.md`, `docs/INITIAL-DEFINITIONS.md`, or `docs/PROJECT-DECISIONS.md` is missing, recommend `domainspec-start`.
-	- If baseline exists but docs scaffolding is incomplete, recommend `domainspec-init`.
-	- If baseline and scaffolding exist, recommend `domainspec-pipeline <feature>` or the specific stage command requested.
+	- If `docs/PROJECT-OVERVIEW.md`, `docs/INITIAL-DEFINITIONS.md`, or `docs/PROJECT-DECISIONS.md` is missing, recommend `domainspec-orchestrate "start DomainSpec for this repository"` and include `domainspec-start` as the advanced direct equivalent.
+	- If baseline exists but docs scaffolding is incomplete, recommend `domainspec-orchestrate "initialize DomainSpec docs scaffold"` and include `domainspec-init` as the advanced direct equivalent.
+	- If baseline and scaffolding exist, recommend `domainspec-orchestrate "run pipeline for <feature>"` and include `domainspec-pipeline <feature>` (or the specific stage command requested) as the advanced direct equivalent.
 </process>

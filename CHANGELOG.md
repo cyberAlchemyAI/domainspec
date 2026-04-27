@@ -23,6 +23,19 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.2] - 2026-04-27
+
+### Added
+
+- **`domainspec-orchestrator` agent** — single user-facing DomainSpec entrypoint router that classifies natural-language intent and dispatches to specialist commands.
+- **`domainspec-orchestrate` skill** — unified DomainSpec orchestration entry command with DomainSpec-only routing guardrails and advanced direct-command compatibility.
+
+### Changed
+
+- **Routing guidance** — copilot instruction routing now defaults natural-language DomainSpec requests to `domainspec-orchestrate` while preserving explicit `domainspec-*` behavior and existing GSD behavior.
+- **Help and package docs** — `domainspec-help`, framework README, copilot README, and INSTALL guidance now recommend orchestrator-first usage and label direct stage commands as advanced/internal.
+- **Installer messaging** — install script now prints orchestrator-first quick-start hints without changing install semantics.
+
 ## [2.0.1] - 2026-04-27
 
 ### Added

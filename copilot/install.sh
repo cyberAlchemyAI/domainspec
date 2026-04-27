@@ -109,6 +109,10 @@ if [[ -z "$TOOLS_PROFILE" && $NON_INTERACTIVE -eq 0 ]]; then
   esac
 fi
 
+echo "DomainSpec quick start:"
+echo "  - Recommended entrypoint: domainspec-orchestrate \"<request>\""
+echo "  - Advanced direct commands remain available (domainspec-start, domainspec-pipeline, and other domainspec-* specialist commands)"
+
 TOOLS_PROFILE="${TOOLS_PROFILE:-full}"
 GSD_TOOLS_PROFILE="${GSD_TOOLS_PROFILE:-standard}"
 

@@ -85,13 +85,13 @@ bash domainspec/copilot/install.sh
 
 For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
 
-### 2. Run the unified startpoint
+### 2. Run the unified orchestration entrypoint
 
 ```
-@domainspec-interviewer domainspec-start [greenfield|brownfield|auto] [scope]
+@domainspec-orchestrator domainspec-orchestrate "start DomainSpec in auto mode for this repository"
 ```
 
-Creates discovery baseline artifacts and enforces brownfield scope gates before pipeline execution:
+The orchestrator is the default user-facing entrypoint. For this request, it routes to `domainspec-start`, creates discovery baseline artifacts, and enforces brownfield scope gates before pipeline execution:
 
 - `docs/PROJECT-OVERVIEW.md`
 - `docs/INITIAL-DEFINITIONS.md`
@@ -99,7 +99,7 @@ Creates discovery baseline artifacts and enforces brownfield scope gates before 
 - `docs/HYPOTHESES.md`
 - `docs/EXPERIMENT-CANDIDATES.md`
 
-### 3. Bootstrap docs structure (if you used `--no-init`)
+### 3. Bootstrap docs structure (advanced direct command, optional)
 
 ```
 @domainspec-spec-writer domainspec-init
@@ -108,6 +108,12 @@ Creates discovery baseline artifacts and enforces brownfield scope gates before 
 Creates `docs/registry.md`, `docs/glossary.md`, `docs/shared/governance-baseline.md`, and the `docs/features/` directory.
 
 ### 4. Build a feature — one command
+
+```
+@domainspec-orchestrator domainspec-orchestrate "run pipeline for <feature-name>"
+```
+
+Advanced direct equivalent (unchanged):
 
 ```
 @domainspec-planner domainspec-pipeline <feature-name>
@@ -128,7 +134,7 @@ flowchart LR
     I --> J["Verify"]
 ```
 
-The planner asks clarifying questions about the business domain, then delegates to specialist agents for each stage — spec writing, story generation, test derivation, backend implementation, UI lifecycle, observability instrumentation, infrastructure sync, registry sync, and verification. It returns a final PASS / FLAG / BLOCK verdict.
+For full delivery requests, the orchestrator routes to `domainspec-pipeline`. The planner asks clarifying questions about the business domain, then delegates to specialist agents for each stage — spec writing, story generation, test derivation, backend implementation, UI lifecycle, observability instrumentation, infrastructure sync, registry sync, and verification. It returns a final PASS / FLAG / BLOCK verdict.
 
 Use flags to control scope:
 
@@ -143,7 +149,7 @@ Use flags to control scope:
 | `--skip-infra`           | Skip infrastructure sync                                           |
 | `--dry-run`              | Show the execution plan without running any steps                  |
 
-### Running individual stages
+### Advanced: running individual stages directly
 
 Each pipeline stage can also be run independently:
 
@@ -161,7 +167,13 @@ Each pipeline stage can also be run independently:
 
 ## Interview-First Discovery
 
-Before drafting a feature SPEC, use the unified startpoint:
+Before drafting a feature SPEC, use the orchestrator entrypoint:
+
+```
+@domainspec-orchestrator domainspec-orchestrate "start DomainSpec for this repository"
+```
+
+Advanced direct commands are still available when you want explicit discovery mode:
 
 ```
 @domainspec-interviewer domainspec-start [greenfield|brownfield|auto] [scope]
@@ -606,7 +618,7 @@ Short names within a feature's own files. Full namespace in registry entries and
 
 ### Workflow per feature
 
-1. **Run startpoint** — execute `domainspec-start` to establish project baseline and scope gates
+1. **Run orchestrator** — execute `domainspec-orchestrate` to classify intent and route baseline setup (`domainspec-start`) with scope gates
 2. **Confirm governance baseline** — keep `docs/shared/governance-baseline.md` present before feature work
 3. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
 4. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
@@ -633,8 +645,12 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 
 ### Public Commands
 
+Default user-facing entrypoint: `domainspec-orchestrate`.
+Direct specialist commands remain callable as advanced/internal invocations.
+
 | Command                         | Stage | Purpose                                                                                    |
 | ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
+| `domainspec-orchestrate`        | Entry | Unified user-facing entrypoint: route natural-language DomainSpec intent to the right specialist command |
 | `domainspec-start`              | Setup | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, optional init |
 | `domainspec-pipeline`           | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
 | `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
@@ -657,7 +673,7 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 | `domainspec-verify-feature`     | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                           |
 | `domainspec-pilot-readiness`    | 10    | Prepare a feature for pilot testing                                                        |
 | `domainspec-interview-scope`    | Setup | Capture project context before first feature planning                                      |
-| `domainspec-help`               | —     | Show command reference and recommend next step                                             |
+| `domainspec-help`               | —     | Show command reference and recommend next step (orchestrator-first guidance)              |
 
 ### Advanced Commands
 
@@ -681,6 +697,7 @@ Each agent handles a specific concern autonomously:
 
 | Agent                          | Role                                                             |
 | ------------------------------ | ---------------------------------------------------------------- |
+| `domainspec-orchestrator`      | Single user-facing intent router for DomainSpec workflows        |
 | `domainspec-planner`           | Converts goals into dependency-ordered plans                     |
 | `domainspec-spec-writer`       | Authors/evolves feature specs with research and story coverage   |
 | `mars-researcher`        | Investigates implementation decisions via domain navigation      |
@@ -759,7 +776,7 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)     | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v2.0.1)                      |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v2.0.2)                      |
 | [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                   | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                                  |

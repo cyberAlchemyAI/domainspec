@@ -10,6 +10,8 @@ bash domainspec/copilot/install.sh
 
 The installer applies a tools profile to installed `domainspec-*` and `gsd-*` agents, installs DomainSpec pack assets, and can optionally install GSD runtime plus Playwright.
 
+After install, the recommended user-facing DomainSpec entrypoint is `domainspec-orchestrate`; direct specialist commands remain available for advanced/internal use.
+
 ### Non-Interactive Examples
 
 Full profile:
@@ -74,6 +76,8 @@ Run these checks from repository root:
 
 ```bash
 test -n "$(ls .github/agents/domainspec-*.agent.md 2>/dev/null)"
+test -f .github/agents/domainspec-orchestrator.agent.md
+test -d .github/skills/domainspec-orchestrate
 test -d .github/skills/domainspec-pipeline
 test -d .github/skills/domainspec-plan-phase-bridge
 test -d .github/skills/domainspec-execute-phase-bridge
@@ -91,8 +95,9 @@ test -f .github/gsd-file-manifest.json
 
 Validation commands:
 
-1. Run `domainspec-help` to verify command discovery.
-2. Run `bash domainspec/tools/check_docs_sync.sh` to verify docs-versus-assets sync.
+1. Run `domainspec-orchestrate "show DomainSpec commands"` to verify unified entrypoint routing.
+2. Run `domainspec-help` to verify advanced direct command guidance.
+3. Run `bash domainspec/tools/check_docs_sync.sh` to verify docs-versus-assets sync.
 
 ## Playwright MCP Integration (UI E2E Testing)
 

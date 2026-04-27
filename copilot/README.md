@@ -1,6 +1,6 @@
 # DomainSpec Copilot Agent Pack
 
-This package provides reusable agents and commands for DomainSpec-driven development. It ships public lifecycle commands, advanced tuning commands, and internal bridge commands used by planner and implementer delegation flows.
+This package provides reusable agents and commands for DomainSpec-driven development. It ships a unified user-facing orchestrator entrypoint, specialist lifecycle commands (still callable directly), advanced tuning commands, and internal bridge commands used by planner and implementer delegation flows.
 
 ## What Is Included
 
@@ -8,6 +8,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 
 | Command | Purpose |
 | --- | --- |
+| `domainspec-orchestrate` | Unified user-facing entrypoint: interpret natural-language DomainSpec intent and route to the correct specialist command |
 | `domainspec-start` | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, and optional init |
 | `domainspec-help` | Show command reference and recommend the next step |
 | `domainspec-init` | Bootstrap docs structure and governance baseline |
@@ -32,6 +33,8 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-verify-feature` | Produce PASS/FLAG/BLOCK readiness verdict |
 | `domainspec-pilot-readiness` | Prepare a feature for pilot rollout |
 
+Recommended default: start from `domainspec-orchestrate`. All other `domainspec-*` specialist commands remain fully supported as advanced/internal direct invocations.
+
 ### Advanced Commands
 
 | Command | Purpose |
@@ -43,6 +46,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 
 | Agent | Role |
 | --- | --- |
+| `domainspec-orchestrator` | Single user-facing intent router for DomainSpec workflows |
 | `domainspec-planner` | Builds dependency-ordered plans and orchestrates lifecycle delegation |
 | `domainspec-interviewer` | Interviews operators and audits brownfield context to produce discovery baselines |
 | `domainspec-spec-writer` | Authors capability-driven specs and enforces story coverage |
@@ -82,11 +86,17 @@ Strategies evaluated: `links-tags-first`, `broad-search-first`, `focused-researc
 
 ## Workflow
 
-Run the unified startpoint first:
+Run the unified orchestrator first:
 
 ```
-@domainspec-interviewer domainspec-start [greenfield|brownfield|auto] [scope]
+@domainspec-orchestrator domainspec-orchestrate "<what you want to do>"
 ```
+
+Common examples:
+
+- `@domainspec-orchestrator domainspec-orchestrate "start DomainSpec in auto mode"`
+- `@domainspec-orchestrator domainspec-orchestrate "run pipeline for payment-processing"`
+- `@domainspec-orchestrator domainspec-orchestrate "generate tests for settlement-recovery"`
 
 Then run the full pipeline:
 
@@ -94,7 +104,7 @@ Then run the full pipeline:
 @domainspec-planner domainspec-pipeline <feature>
 ```
 
-Or run stages individually:
+Advanced direct stage commands (unchanged):
 
 1. `domainspec-start [greenfield|brownfield|auto] [scope]`
 2. `domainspec-init`
