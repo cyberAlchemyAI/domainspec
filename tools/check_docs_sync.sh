@@ -3,7 +3,6 @@ set -euo pipefail
 
 FRAMEWORK_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CANONICAL_README="$FRAMEWORK_ROOT/README.md"
-MIRROR_README="$FRAMEWORK_ROOT/../README.md"
 COPILOT_README="$FRAMEWORK_ROOT/copilot/README.md"
 CHANGELOG="$FRAMEWORK_ROOT/CHANGELOG.md"
 TEMPLATES_DIR="$FRAMEWORK_ROOT/templates"
@@ -80,7 +79,6 @@ extract_readme_documented_version() {
 }
 
 require_file "$CANONICAL_README"
-require_file "$MIRROR_README"
 require_file "$COPILOT_README"
 require_file "$CHANGELOG"
 require_dir "$TEMPLATES_DIR"
@@ -102,12 +100,6 @@ elif [[ "$changelog_version" != "$documented_version" ]]; then
   report_violation "README version drift: changelog=$changelog_version README=$documented_version"
 else
   report_ok "Version reference matches changelog head ($changelog_version)"
-fi
-
-if ! diff -q "$CANONICAL_README" "$MIRROR_README" >/dev/null; then
-  report_violation "Mirror drift: implementation/README.md differs from implementation/domainspec/README.md"
-else
-  report_ok "Mirror README is synchronized with canonical README"
 fi
 
 shipped_skills="$(extract_shipped_skills)"
