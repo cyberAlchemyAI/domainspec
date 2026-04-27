@@ -23,6 +23,20 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.1] - 2026-04-27
+
+### Added
+
+- **`domainspec-start` skill** — unified DomainSpec entrypoint for discovery, brownfield scope gating, project decision capture, and optional init delegation.
+- **`project-decisions.md` template** — new project-level decision register for blocker-level choices required before feature pipelines.
+
+### Changed
+
+- **Interviewer wiring** — `domainspec-interviewer` now routes start-intent requests through `domainspec-start` and includes `PROJECT-DECISIONS.md` in discovery outputs.
+- **Brownfield scope gates** — `domainspec-interview-scope`, `domainspec-init`, and `domainspec-pipeline` now enforce baseline artifact and blocker-decision checks for brownfield execution.
+- **Command guidance** — `domainspec-help` now prioritizes `domainspec-start` when project baseline artifacts are missing.
+- **README and copilot docs** — quick-start, workflow, command tables, and template references now include unified startpoint and project decisions baseline.
+
 ## [2.0.0] - 2026-04-25
 
 ### Added

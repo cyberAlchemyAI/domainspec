@@ -8,9 +8,12 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 
 | Command | Purpose |
 | --- | --- |
+| `domainspec-start` | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, and optional init |
 | `domainspec-help` | Show command reference and recommend the next step |
 | `domainspec-init` | Bootstrap docs structure and governance baseline |
 | `domainspec-interview-scope` | Run greenfield or brownfield discovery interviews before specification starts |
+| `domainspec-brownfield-translation` | Translate an implemented project into as-is DomainSpec feature specs plus governance and ontology gap artifacts |
+| `domainspec-decision-gate` | Resolve blocker-level multi-option decisions and persist a decisions artifact before downstream mutation |
 | `domainspec-pipeline` | Run the full lifecycle: plan -> spec -> stories -> tests -> implementation -> verify |
 | `domainspec-spec-feature` | Author or evolve feature specs and aspect documents |
 | `domainspec-sync-user-stories` | Sync `STORIES.md` from capability and aspect docs |
@@ -79,7 +82,13 @@ Strategies evaluated: `links-tags-first`, `broad-search-first`, `focused-researc
 
 ## Workflow
 
-Run the full pipeline:
+Run the unified startpoint first:
+
+```
+@domainspec-interviewer domainspec-start [greenfield|brownfield|auto] [scope]
+```
+
+Then run the full pipeline:
 
 ```
 @domainspec-planner domainspec-pipeline <feature>
@@ -87,13 +96,14 @@ Run the full pipeline:
 
 Or run stages individually:
 
-1. `domainspec-init`
-2. `domainspec-spec-feature <feature>`
-3. `domainspec-sync-user-stories <feature>`
-4. `domainspec-generate-tests <feature>`
-5. `domainspec-implement <feature>`
-6. `domainspec-ui-pipeline <feature>`
-7. `domainspec-verify-feature <feature>`
+1. `domainspec-start [greenfield|brownfield|auto] [scope]`
+2. `domainspec-init`
+3. `domainspec-spec-feature <feature>`
+4. `domainspec-sync-user-stories <feature>`
+5. `domainspec-generate-tests <feature>`
+6. `domainspec-implement <feature>`
+7. `domainspec-ui-pipeline <feature>`
+8. `domainspec-verify-feature <feature>`
 
 ## Installation
 

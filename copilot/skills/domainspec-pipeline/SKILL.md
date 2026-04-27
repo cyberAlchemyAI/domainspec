@@ -65,7 +65,17 @@ Created/updated by this skill (cumulative):
 2. Check if docs/features/{feature}/ exists:
    - If exists → this is an **evolution** of an existing feature. Load SPEC.md and all aspect files.
    - If missing → this is a **new feature**. Ensure docs/ directory exists (run `domainspec-init` if needed).
-2b. Validate governance baseline before feature execution:
+2a. Determine scope mode for this repository:
+    - Treat as brownfield when implementation directories such as `src/`, `apps/`, `backend/`, `frontend/`, or `services/` already exist.
+    - Treat as greenfield when repository is docs-first and implementation has not started.
+2b. Brownfield scope gate (hard gate):
+    - Required artifacts for brownfield execution:
+      - `docs/PROJECT-OVERVIEW.md`
+      - `docs/INITIAL-DEFINITIONS.md`
+      - `docs/PROJECT-DECISIONS.md`
+    - If any artifact is missing, return BLOCK and require `domainspec-start brownfield` (or `domainspec-start auto`) before pipeline execution.
+    - If `docs/PROJECT-DECISIONS.md` contains blocker-level unresolved decisions, return BLOCK and request closure before Step 1.
+2c. Validate governance baseline before feature execution:
     - Preferred baseline file: `docs/shared/governance-baseline.md`.
     - Compatibility fallback accepted: `docs/shared/cash-game-management-governance.md`.
     - If neither file exists, return BLOCK and require `domainspec-init` (or copy `domainspec/templates/governance-baseline.md` manually) before continuing.
@@ -81,6 +91,7 @@ Created/updated by this skill (cumulative):
 
 ## Step 1b — Decision Gate (hard gate)
 
+- Load `docs/PROJECT-DECISIONS.md` first (if present) so feature-level decisions stay consistent with project-level constraints.
 - If Step 1 output includes unresolved multi-option decisions, delegate to `domainspec-decision-gate {feature} --profile pipeline`.
 - Required artifact for continuation: `docs/features/{feature}/DECISIONS.md`.
 - Re-run `domainspec-planner` after the decision artifact is created.
@@ -252,6 +263,7 @@ Created/updated by this skill (cumulative):
 
 <error-handling>
 - Pre-flight failures (no domainspec/, no docs/) → BLOCK with setup instructions.
+- Brownfield scope gate failure (missing startpoint artifacts or blocked project decisions) → BLOCK with `domainspec-start` remediation.
 - Planner questions unanswered → cannot proceed, re-prompt user.
 - Decision gate unresolved or missing decisions artifact → BLOCK before step 2; do not generate specs, tests, or code.
 - Spec generation fails → BLOCK at step 2, report what is missing.
@@ -268,6 +280,7 @@ Created/updated by this skill (cumulative):
 - DomainSpec artifacts (SPEC, aspects, STORIES) define behavior — they are the source of truth.
 - This skill orchestrates the pipeline sequence — it never overrides delegate skill decisions.
 - When delegate skills ask interactive questions (planner, ui-architecture), those propagate to the user.
+- For brownfield scope, no downstream mutation step may run until the brownfield scope gate passes.
 - No downstream mutation step (SPEC, TEST-SPEC, implementation) may run while decision gate status is unresolved.
 - If a delegate skill produces a FLAG or BLOCK, this skill records it and decides whether to continue or stop based on severity.
 </authority-rule>

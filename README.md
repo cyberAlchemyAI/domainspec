@@ -85,7 +85,21 @@ bash domainspec/copilot/install.sh
 
 For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
 
-### 2. Bootstrap docs structure
+### 2. Run the unified startpoint
+
+```
+@domainspec-interviewer domainspec-start [greenfield|brownfield|auto] [scope]
+```
+
+Creates discovery baseline artifacts and enforces brownfield scope gates before pipeline execution:
+
+- `docs/PROJECT-OVERVIEW.md`
+- `docs/INITIAL-DEFINITIONS.md`
+- `docs/PROJECT-DECISIONS.md`
+- `docs/HYPOTHESES.md`
+- `docs/EXPERIMENT-CANDIDATES.md`
+
+### 3. Bootstrap docs structure (if you used `--no-init`)
 
 ```
 @domainspec-spec-writer domainspec-init
@@ -93,7 +107,7 @@ For full installation details, see [copilot/INSTALL.md](copilot/INSTALL.md).
 
 Creates `docs/registry.md`, `docs/glossary.md`, `docs/shared/governance-baseline.md`, and the `docs/features/` directory.
 
-### 3. Build a feature — one command
+### 4. Build a feature — one command
 
 ```
 @domainspec-planner domainspec-pipeline <feature-name>
@@ -147,7 +161,13 @@ Each pipeline stage can also be run independently:
 
 ## Interview-First Discovery
 
-Before drafting a feature SPEC, you can run a guided domain interview in either greenfield or brownfield mode:
+Before drafting a feature SPEC, use the unified startpoint:
+
+```
+@domainspec-interviewer domainspec-start [greenfield|brownfield|auto] [scope]
+```
+
+Direct interview mode is still available when you only want discovery:
 
 ```
 @domainspec-interviewer domainspec-interview-scope [greenfield|brownfield|auto] [scope]
@@ -157,6 +177,7 @@ What this adds:
 
 - Repository-aware brownfield discovery (inspect first, then ask focused questions)
 - Structured domain baseline for actors, boundaries, workflows, rules, constraints, and success signals
+- Project-level decision baseline (`docs/PROJECT-DECISIONS.md`) for blocker-level choices before feature execution
 - Falsifiable hypotheses with explicit counterarguments and disconfirming outcomes
 - Experiment candidates to validate business direction before implementation planning
 
@@ -164,6 +185,7 @@ Default artifact outputs:
 
 - `docs/PROJECT-OVERVIEW.md`
 - `docs/INITIAL-DEFINITIONS.md`
+- `docs/PROJECT-DECISIONS.md`
 - `docs/HYPOTHESES.md`
 - `docs/EXPERIMENT-CANDIDATES.md`
 
@@ -171,6 +193,7 @@ Template sources:
 
 - `templates/project-overview.md`
 - `templates/initial-definitions.md`
+- `templates/project-decisions.md`
 - `templates/hypotheses.md`
 - `templates/experiment-candidates.md`
 
@@ -583,17 +606,18 @@ Short names within a feature's own files. Full namespace in registry entries and
 
 ### Workflow per feature
 
-1. **Confirm governance baseline** — keep `docs/shared/governance-baseline.md` present before feature work
-2. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
-3. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
-4. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
-5. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
-6. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
-7. **Implement backend** — write code against the documented contracts and derived tests
-8. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
-9. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
-10. **Infrastructure sync** — update prometheus.yml and alert rules from observability specs + SLOs
-11. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
+1. **Run startpoint** — execute `domainspec-start` to establish project baseline and scope gates
+2. **Confirm governance baseline** — keep `docs/shared/governance-baseline.md` present before feature work
+3. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
+4. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
+5. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
+6. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
+7. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
+8. **Implement backend** — write code against the documented contracts and derived tests
+9. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
+10. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
+11. **Infrastructure sync** — update prometheus.yml and alert rules from observability specs + SLOs
+12. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
 
 ---
 
@@ -611,8 +635,11 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 
 | Command                         | Stage | Purpose                                                                                    |
 | ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
+| `domainspec-start`              | Setup | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, optional init |
 | `domainspec-pipeline`           | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
 | `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
+| `domainspec-brownfield-translation` | Setup | Translate an implemented project into as-is DomainSpec artifacts with governance and ontology gap reports |
+| `domainspec-decision-gate`      | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation |
 | `domainspec-spec-feature`       | 3     | Author or update a feature specification (SPEC + aspects)                                  |
 | `domainspec-sync-user-stories`  | 3     | Generate/refresh STORIES.md from aspect docs                                               |
 | `domainspec-sync-registry`      | 7     | Sync registry and glossary from all SPEC.md concept tables                                 |
@@ -704,6 +731,7 @@ All templates live in [templates/](templates/):
 | [use-case.md](templates/use-case.md)                       | Use-case decomposition and boundaries                 |
 | [project-overview.md](templates/project-overview.md)       | Initial project context summary                       |
 | [initial-definitions.md](templates/initial-definitions.md) | Initial bounded context and concept definitions       |
+| [project-decisions.md](templates/project-decisions.md)     | Project-level blocker decisions and scope baselines   |
 | [hypotheses.md](templates/hypotheses.md)                   | Research hypotheses and validation framing            |
 | [experiment-candidates.md](templates/experiment-candidates.md) | Candidate experiment backlog and triage           |
 | [setup.sh](templates/setup.sh)                             | Setup helper scaffold                                 |
@@ -731,7 +759,7 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)     | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v1.8.2)                      |
+| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v2.0.1)                      |
 | [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                   | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                                  |
