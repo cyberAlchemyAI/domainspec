@@ -100,6 +100,13 @@ Use this scoring model to rank tasks every planning cycle:
 
 Priority Score = (impact x 0.30) + (risk_reduction x 0.25) + (dependency_unlock x 0.20) + (time_criticality x 0.15) + (readiness x 0.10)
 
+Kanban objective execution profile (Saturn/ADLC convergence mode):
+
+- For profile `saturn-l-adlc-convergence`, use the CTX-01 operational score defined in [context/CTX-01-prioritization-spec.md](context/CTX-01-prioritization-spec.md).
+- This profile disables deadline weighting and prioritizes Saturn impact plus ADLC convergence.
+- Explainability notes for current top-10 cycle are published in [context/CTX-01-priority-notes-cycle-001.md](context/CTX-01-priority-notes-cycle-001.md).
+- Precedence rule: for day-to-day Kanban ordering under this profile, CTX-01 operational score overrides the generic formula while Saturn critical overrides remain in force.
+
 Dimension scale:
 
 - 1 = low
