@@ -47,11 +47,13 @@ Return:
 
 ```markdown
 ## DomainSpec Route Decision
+
 - Request class: <intent>
-- Routed command: <domainspec-* command>
+- Routed command: <domainspec-\* command>
 - Mode: default-entrypoint | direct-advanced
 - Notes: <why this route>
 ```
+
 </output-contract>
 
 <examples>

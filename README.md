@@ -56,18 +56,18 @@ flowchart LR
 
 Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate.
 
-| Stage                | Input                                     | Output                                                  |
-| -------------------- | ----------------------------------------- | ------------------------------------------------------- |
-| 1. Classify          | Business knowledge                        | Typed concept inventory                                 |
-| 2. Connect           | Concept inventory                         | Navigable knowledge graph                               |
-| 3. Document          | Knowledge graph                           | Feature vertical slices (SPEC + aspect files + stories) |
-| 4. Derive Tests      | Aspect docs + UI-SPEC                     | Backend TEST-SPEC + Playwright E2E scaffold             |
-| 5. Implement Backend | TEST-SPEC + aspect docs                   | Production code + passing tests                         |
-| 6. Design & Build UI | UI-ARCHITECTURE + aspect docs             | UI-SPEC + frontend pages + E2E tests                    |
-| 7. Maintain Registry | All SPEC.md concept tables                | Global registry and glossary synchronization             |
-| 8. Observability     | Aspect docs + pillar metadata             | Per-feature observability specs, metric catalog, alerts |
-| 9. Infrastructure    | INFRA-ARCHITECTURE + observability + SLOs | IaC, CI/CD, monitoring stack, auto-deploy               |
-| 10. Verify           | Backend + UI + observability + infra evidence | PASS / FLAG / BLOCK verdict + pilot readiness report |
+| Stage                | Input                                         | Output                                                  |
+| -------------------- | --------------------------------------------- | ------------------------------------------------------- |
+| 1. Classify          | Business knowledge                            | Typed concept inventory                                 |
+| 2. Connect           | Concept inventory                             | Navigable knowledge graph                               |
+| 3. Document          | Knowledge graph                               | Feature vertical slices (SPEC + aspect files + stories) |
+| 4. Derive Tests      | Aspect docs + UI-SPEC                         | Backend TEST-SPEC + Playwright E2E scaffold             |
+| 5. Implement Backend | TEST-SPEC + aspect docs                       | Production code + passing tests                         |
+| 6. Design & Build UI | UI-ARCHITECTURE + aspect docs                 | UI-SPEC + frontend pages + E2E tests                    |
+| 7. Maintain Registry | All SPEC.md concept tables                    | Global registry and glossary synchronization            |
+| 8. Observability     | Aspect docs + pillar metadata                 | Per-feature observability specs, metric catalog, alerts |
+| 9. Infrastructure    | INFRA-ARCHITECTURE + observability + SLOs     | IaC, CI/CD, monitoring stack, auto-deploy               |
+| 10. Verify           | Backend + UI + observability + infra evidence | PASS / FLAG / BLOCK verdict + pilot readiness report    |
 
 ---
 
@@ -648,48 +648,48 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 Default user-facing entrypoint: `domainspec-orchestrate`.
 Direct specialist commands remain callable as advanced/internal invocations.
 
-| Command                         | Stage | Purpose                                                                                    |
-| ------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
-| `domainspec-orchestrate`        | Entry | Unified user-facing entrypoint: route natural-language DomainSpec intent to the right specialist command |
-| `domainspec-start`              | Setup | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, optional init |
-| `domainspec-pipeline`           | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify |
-| `domainspec-init`               | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton |
+| Command                             | Stage | Purpose                                                                                                   |
+| ----------------------------------- | ----- | --------------------------------------------------------------------------------------------------------- |
+| `domainspec-orchestrate`            | Entry | Unified user-facing entrypoint: route natural-language DomainSpec intent to the right specialist command  |
+| `domainspec-start`                  | Setup | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, optional init          |
+| `domainspec-pipeline`               | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify                |
+| `domainspec-init`                   | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton              |
 | `domainspec-brownfield-translation` | Setup | Translate an implemented project into as-is DomainSpec artifacts with governance and ontology gap reports |
-| `domainspec-decision-gate`      | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation |
-| `domainspec-spec-feature`       | 3     | Author or update a feature specification (SPEC + aspects)                                  |
-| `domainspec-sync-user-stories`  | 3     | Generate/refresh STORIES.md from aspect docs                                               |
-| `domainspec-sync-registry`      | 7     | Sync registry and glossary from all SPEC.md concept tables                                 |
-| `domainspec-generate-tests`     | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                    |
-| `domainspec-implement`          | 5     | Implement backend code from documented contracts                                           |
-| `domainspec-ui-pipeline`        | 6     | Full UI lifecycle — spec → tests → implement → audit                                       |
-| `domainspec-ui-architecture`    | 6     | Create or evolve project-wide UI-ARCHITECTURE.md                                           |
-| `domainspec-ui-implement`       | 6     | Implement frontend pages from UI-SPEC + UI-ARCHITECTURE                                    |
-| `domainspec-instrument-otel`    | 8     | Instrument backend with OTel metrics from observability specs                              |
-| `domainspec-otel-verify`        | 8     | Verify OTel coverage → OBSERVABILITY-REPORT.md                                             |
-| `domainspec-infra-architecture` | 9     | Create INFRA-ARCHITECTURE.md + scaffold IaC                                                |
-| `domainspec-infra-deploy`       | 9     | Sync prometheus.yml, alerts, and compose from current state                                |
-| `domainspec-audit-alignment`    | 5–7   | Alignment report comparing docs vs code                                                    |
-| `domainspec-audit-layering`     | 5–7   | Detect domain-logic drift into application layers                                          |
-| `domainspec-verify-feature`     | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                           |
-| `domainspec-pilot-readiness`    | 10    | Prepare a feature for pilot testing                                                        |
-| `domainspec-interview-scope`    | Setup | Capture project context before first feature planning                                      |
-| `domainspec-help`               | —     | Show command reference and recommend next step (orchestrator-first guidance)              |
+| `domainspec-decision-gate`          | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation           |
+| `domainspec-spec-feature`           | 3     | Author or update a feature specification (SPEC + aspects)                                                 |
+| `domainspec-sync-user-stories`      | 3     | Generate/refresh STORIES.md from aspect docs                                                              |
+| `domainspec-sync-registry`          | 7     | Sync registry and glossary from all SPEC.md concept tables                                                |
+| `domainspec-generate-tests`         | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                                   |
+| `domainspec-implement`              | 5     | Implement backend code from documented contracts                                                          |
+| `domainspec-ui-pipeline`            | 6     | Full UI lifecycle — spec → tests → implement → audit                                                      |
+| `domainspec-ui-architecture`        | 6     | Create or evolve project-wide UI-ARCHITECTURE.md                                                          |
+| `domainspec-ui-implement`           | 6     | Implement frontend pages from UI-SPEC + UI-ARCHITECTURE                                                   |
+| `domainspec-instrument-otel`        | 8     | Instrument backend with OTel metrics from observability specs                                             |
+| `domainspec-otel-verify`            | 8     | Verify OTel coverage → OBSERVABILITY-REPORT.md                                                            |
+| `domainspec-infra-architecture`     | 9     | Create INFRA-ARCHITECTURE.md + scaffold IaC                                                               |
+| `domainspec-infra-deploy`           | 9     | Sync prometheus.yml, alerts, and compose from current state                                               |
+| `domainspec-audit-alignment`        | 5–7   | Alignment report comparing docs vs code                                                                   |
+| `domainspec-audit-layering`         | 5–7   | Detect domain-logic drift into application layers                                                         |
+| `domainspec-verify-feature`         | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                                          |
+| `domainspec-pilot-readiness`        | 10    | Prepare a feature for pilot testing                                                                       |
+| `domainspec-interview-scope`        | Setup | Capture project context before first feature planning                                                     |
+| `domainspec-help`                   | —     | Show command reference and recommend next step (orchestrator-first guidance)                              |
 
 ### Advanced Commands
 
-| Command                       | Stage  | Purpose                                                                 |
-| ----------------------------- | ------ | ----------------------------------------------------------------------- |
-| `domainspec-reflect`          | 10     | Summarize implementation outcomes and emit iterative tuning directives  |
-| `domainspec-signal-observer`  | Post   | Aggregate signal quality and detect drift during async review windows   |
+| Command                      | Stage | Purpose                                                                |
+| ---------------------------- | ----- | ---------------------------------------------------------------------- |
+| `domainspec-reflect`         | 10    | Summarize implementation outcomes and emit iterative tuning directives |
+| `domainspec-signal-observer` | Post  | Aggregate signal quality and detect drift during async review windows  |
 
 ### Appendix: Internal and Bridge Commands
 
-| Command                       | Scope         | Purpose                                                                 |
-| ----------------------------- | ------------- | ----------------------------------------------------------------------- |
-| `domainspec-ui-phase-bridge`  | Internal      | Bridge UI execution to GSD phase plans when phase orchestration is used |
-| `domainspec-ui-audit-bridge`  | Internal      | Bridge UI evidence into GSD UI audit flow                               |
-| `domainspec-plan-phase-bridge` | Internal      | Bridge planner orchestration into GSD plan-phase workflows              |
-| `domainspec-execute-phase-bridge` | Internal  | Bridge implementer execution into GSD execute-phase workflows           |
+| Command                           | Scope    | Purpose                                                                 |
+| --------------------------------- | -------- | ----------------------------------------------------------------------- |
+| `domainspec-ui-phase-bridge`      | Internal | Bridge UI execution to GSD phase plans when phase orchestration is used |
+| `domainspec-ui-audit-bridge`      | Internal | Bridge UI evidence into GSD UI audit flow                               |
+| `domainspec-plan-phase-bridge`    | Internal | Bridge planner orchestration into GSD plan-phase workflows              |
+| `domainspec-execute-phase-bridge` | Internal | Bridge implementer execution into GSD execute-phase workflows           |
 
 ### Agents Reference
 
@@ -700,7 +700,7 @@ Each agent handles a specific concern autonomously:
 | `domainspec-orchestrator`      | Single user-facing intent router for DomainSpec workflows        |
 | `domainspec-planner`           | Converts goals into dependency-ordered plans                     |
 | `domainspec-spec-writer`       | Authors/evolves feature specs with research and story coverage   |
-| `mars-researcher`        | Investigates implementation decisions via domain navigation      |
+| `mars-researcher`              | Investigates implementation decisions via domain navigation      |
 | `domainspec-test-designer`     | Derives test specs and Playwright E2E scaffolds from docs        |
 | `domainspec-implementer`       | Implements production code and tests from approved artifacts     |
 | `domainspec-registry-sync`     | Synchronizes registry and glossary from SPEC concept tables      |
@@ -721,37 +721,37 @@ Agents use a weighted heuristic to choose the most efficient context discovery p
 
 All templates live in [templates/](templates/):
 
-| Template                                                   | Purpose                                               |
-| ---------------------------------------------------------- | ----------------------------------------------------- |
-| [SPEC.md](templates/SPEC.md)                               | Feature index — overview, concept table, aspect links |
-| [STORIES.md](templates/STORIES.md)                         | User stories in classic + BDD format                  |
-| [CHANGELOG.md](templates/CHANGELOG.md)                     | Per-feature changelog updates and release notes        |
-| [domain.md](templates/domain.md)                           | Entities, value objects, enums                        |
-| [operations.md](templates/operations.md)                   | Operations with rules, calculations, transitions      |
-| [states.md](templates/states.md)                           | State machines — mermaid + transition tables          |
-| [interfaces.md](templates/interfaces.md)                   | API contracts — endpoints, request/response           |
-| [events.md](templates/events.md)                           | Domain events — payload, producer, consumers          |
-| [queries.md](templates/queries.md)                         | Read models — input, output, auth rules               |
-| [workflows.md](templates/workflows.md)                     | Multi-step orchestrations                             |
-| [mappings.md](templates/mappings.md)                       | Data transformations at boundaries                    |
-| [shared-value-object.md](templates/shared-value-object.md) | Cross-feature value objects                           |
-| [governance-baseline.md](templates/governance-baseline.md) | Cross-feature governance defaults                     |
-| [ui-architecture.md](templates/ui-architecture.md)         | Frontend architecture constitution                    |
-| [ui-spec.md](templates/ui-spec.md)                         | Per-feature UI design contract                        |
-| [infra-architecture.md](templates/infra-architecture.md)   | Infrastructure constitution with presets              |
-| [slos.md](templates/slos.md)                               | Per-feature SLO targets                               |
-| [observability.md](templates/observability.md)             | Per-feature OTel metric obligations                   |
-| [OBSERVABILITY-REPORT.md](templates/OBSERVABILITY-REPORT.md) | OTel audit output report template                    |
-| [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)         | End-to-end pipeline execution report                  |
-| [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)             | Signal contract documentation schema                  |
-| [agent-runner.md](templates/agent-runner.md)               | Self-hosted agent runner architecture                 |
-| [use-case.md](templates/use-case.md)                       | Use-case decomposition and boundaries                 |
-| [project-overview.md](templates/project-overview.md)       | Initial project context summary                       |
-| [initial-definitions.md](templates/initial-definitions.md) | Initial bounded context and concept definitions       |
-| [project-decisions.md](templates/project-decisions.md)     | Project-level blocker decisions and scope baselines   |
-| [hypotheses.md](templates/hypotheses.md)                   | Research hypotheses and validation framing            |
-| [experiment-candidates.md](templates/experiment-candidates.md) | Candidate experiment backlog and triage           |
-| [setup.sh](templates/setup.sh)                             | Setup helper scaffold                                 |
+| Template                                                       | Purpose                                               |
+| -------------------------------------------------------------- | ----------------------------------------------------- |
+| [SPEC.md](templates/SPEC.md)                                   | Feature index — overview, concept table, aspect links |
+| [STORIES.md](templates/STORIES.md)                             | User stories in classic + BDD format                  |
+| [CHANGELOG.md](templates/CHANGELOG.md)                         | Per-feature changelog updates and release notes       |
+| [domain.md](templates/domain.md)                               | Entities, value objects, enums                        |
+| [operations.md](templates/operations.md)                       | Operations with rules, calculations, transitions      |
+| [states.md](templates/states.md)                               | State machines — mermaid + transition tables          |
+| [interfaces.md](templates/interfaces.md)                       | API contracts — endpoints, request/response           |
+| [events.md](templates/events.md)                               | Domain events — payload, producer, consumers          |
+| [queries.md](templates/queries.md)                             | Read models — input, output, auth rules               |
+| [workflows.md](templates/workflows.md)                         | Multi-step orchestrations                             |
+| [mappings.md](templates/mappings.md)                           | Data transformations at boundaries                    |
+| [shared-value-object.md](templates/shared-value-object.md)     | Cross-feature value objects                           |
+| [governance-baseline.md](templates/governance-baseline.md)     | Cross-feature governance defaults                     |
+| [ui-architecture.md](templates/ui-architecture.md)             | Frontend architecture constitution                    |
+| [ui-spec.md](templates/ui-spec.md)                             | Per-feature UI design contract                        |
+| [infra-architecture.md](templates/infra-architecture.md)       | Infrastructure constitution with presets              |
+| [slos.md](templates/slos.md)                                   | Per-feature SLO targets                               |
+| [observability.md](templates/observability.md)                 | Per-feature OTel metric obligations                   |
+| [OBSERVABILITY-REPORT.md](templates/OBSERVABILITY-REPORT.md)   | OTel audit output report template                     |
+| [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)             | End-to-end pipeline execution report                  |
+| [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)                 | Signal contract documentation schema                  |
+| [agent-runner.md](templates/agent-runner.md)                   | Self-hosted agent runner architecture                 |
+| [use-case.md](templates/use-case.md)                           | Use-case decomposition and boundaries                 |
+| [project-overview.md](templates/project-overview.md)           | Initial project context summary                       |
+| [initial-definitions.md](templates/initial-definitions.md)     | Initial bounded context and concept definitions       |
+| [project-decisions.md](templates/project-decisions.md)         | Project-level blocker decisions and scope baselines   |
+| [hypotheses.md](templates/hypotheses.md)                       | Research hypotheses and validation framing            |
+| [experiment-candidates.md](templates/experiment-candidates.md) | Candidate experiment backlog and triage               |
+| [setup.sh](templates/setup.sh)                                 | Setup helper scaffold                                 |
 
 ---
 
@@ -769,20 +769,20 @@ All templates live in [templates/](templates/):
 
 ## Reference
 
-| File                                     | Contents                                                                     |
-| ---------------------------------------- | ---------------------------------------------------------------------------- |
-| [TAXONOMY.md](TAXONOMY.md)               | Full 24-type reference (13 backend + 11 UI) with examples and disambiguation |
-| [RELATIONSHIPS.md](RELATIONSHIPS.md)     | All 26 typed edge types (12 backend + 8 intra-UI + 6 cross-layer)            |
-| [TEST-PIPELINE.md](TEST-PIPELINE.md)     | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
-| [ARCHITECTURE.md](ARCHITECTURE.md)       | Framework architecture and design decisions                                  |
-| [OBSERVABILITY.md](OBSERVABILITY.md)     | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)             | Versioned record of framework updates (current: v2.0.2)                      |
-| [templates/](templates/SPEC.md)          | All aspect templates including ui-spec.md, ready to copy                     |
-| [examples/](examples/)                   | 5 reference feature implementations                                          |
-| [copilot/README.md](copilot/README.md)   | Copilot agent pack overview                                                  |
-| [copilot/INSTALL.md](copilot/INSTALL.md) | Installation guide (includes Playwright MCP setup)                           |
-| [tools/](tools/)                         | Framework validation and index generation tools                              |
-| [tools/check_docs_sync.sh](tools/check_docs_sync.sh) | Deterministic docs-versus-assets drift guard for maintainers     |
+| File                                                 | Contents                                                                     |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [TAXONOMY.md](TAXONOMY.md)                           | Full 24-type reference (13 backend + 11 UI) with examples and disambiguation |
+| [RELATIONSHIPS.md](RELATIONSHIPS.md)                 | All 26 typed edge types (12 backend + 8 intra-UI + 6 cross-layer)            |
+| [TEST-PIPELINE.md](TEST-PIPELINE.md)                 | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                   | Framework architecture and design decisions                                  |
+| [OBSERVABILITY.md](OBSERVABILITY.md)                 | 16 metric derivation rules across 3 layers + Financial Integrity             |
+| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.0.2)                      |
+| [templates/](templates/SPEC.md)                      | All aspect templates including ui-spec.md, ready to copy                     |
+| [examples/](examples/)                               | 5 reference feature implementations                                          |
+| [copilot/README.md](copilot/README.md)               | Copilot agent pack overview                                                  |
+| [copilot/INSTALL.md](copilot/INSTALL.md)             | Installation guide (includes Playwright MCP setup)                           |
+| [tools/](tools/)                                     | Framework validation and index generation tools                              |
+| [tools/check_docs_sync.sh](tools/check_docs_sync.sh) | Deterministic docs-versus-assets drift guard for maintainers                 |
 
 ---
 

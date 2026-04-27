@@ -1,4 +1,5 @@
 <!-- GSD Configuration — managed by get-shit-done installer -->
+
 # Instructions for GSD
 
 - Use the get-shit-done skill when the user asks for GSD or uses a `gsd-*` command.

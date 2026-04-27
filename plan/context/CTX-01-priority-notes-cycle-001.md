@@ -10,18 +10,18 @@
 
 Formula source: `CTX-01-prioritization-spec.md`
 
-| Task | Saturn L Impact | ADLC Impact | Dependency Unlock | Governance Risk Reduction | Readiness | Penalty | Score | One-Sentence Rationale |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| INF-03 | 5 | 5 | 5 | 5 | 4 | 0.00 | 4.95 | INF-03 is first because it directly closes the Saturn governance loop while unlocking multiple downstream controls. |
-| GOV-01 | 5 | 5 | 4 | 5 | 4 | 0.00 | 4.75 | GOV-01 stays near the top because executable governance semantics are required before reliable enforcement can scale. |
-| GOV-02 | 5 | 5 | 4 | 5 | 4 | 0.00 | 4.75 | GOV-02 ties with GOV-01 because validator operationalization is the enforcement mechanism for governance intent. |
-| GOV-03 | 5 | 4 | 4 | 5 | 4 | 0.00 | 4.45 | GOV-03 ranks above closure reporting because blocking/escalation policy prevents unsafe merge behavior immediately. |
-| INF-02 | 5 | 4 | 4 | 4 | 4 | 0.00 | 4.35 | INF-02 remains high since telemetry is required to measure and steer Saturn/ADLC convergence objectively. |
-| GOV-04 | 4 | 5 | 4 | 4 | 4 | 0.00 | 4.30 | GOV-04 is high but below enforcement tasks because scorecards report progress after controls exist. |
-| AGT-01 | 4 | 3 | 4 | 3 | 4 | 0.00 | 3.60 | AGT-01 ranks above mutation because transparent orchestration is needed before safe large-scale automation changes. |
-| AGT-06 | 3 | 4 | 3 | 4 | 3 | 0.00 | 3.40 | AGT-06 is important but follows core orchestration and governance enforcement to reduce mutation risk. |
-| AGT-05 | 2 | 3 | 2 | 2 | 3 | 0.00 | 2.35 | AGT-05 is deferred because cross-project reuse does not currently unlock Saturn L-system closure directly. |
-| HAR-05 | 1 | 2 | 1 | 2 | 3 | 0.40 | 1.10 | HAR-05 is intentionally deprioritized in this cycle because harness outcomes are deferred unless they unlock Saturn/ADLC goals. |
+| Task   | Saturn L Impact | ADLC Impact | Dependency Unlock | Governance Risk Reduction | Readiness | Penalty | Score | One-Sentence Rationale                                                                                                          |
+| ------ | --------------- | ----------- | ----------------- | ------------------------- | --------- | ------- | ----- | ------------------------------------------------------------------------------------------------------------------------------- |
+| INF-03 | 5               | 5           | 5                 | 5                         | 4         | 0.00    | 4.95  | INF-03 is first because it directly closes the Saturn governance loop while unlocking multiple downstream controls.             |
+| GOV-01 | 5               | 5           | 4                 | 5                         | 4         | 0.00    | 4.75  | GOV-01 stays near the top because executable governance semantics are required before reliable enforcement can scale.           |
+| GOV-02 | 5               | 5           | 4                 | 5                         | 4         | 0.00    | 4.75  | GOV-02 ties with GOV-01 because validator operationalization is the enforcement mechanism for governance intent.                |
+| GOV-03 | 5               | 4           | 4                 | 5                         | 4         | 0.00    | 4.45  | GOV-03 ranks above closure reporting because blocking/escalation policy prevents unsafe merge behavior immediately.             |
+| INF-02 | 5               | 4           | 4                 | 4                         | 4         | 0.00    | 4.35  | INF-02 remains high since telemetry is required to measure and steer Saturn/ADLC convergence objectively.                       |
+| GOV-04 | 4               | 5           | 4                 | 4                         | 4         | 0.00    | 4.30  | GOV-04 is high but below enforcement tasks because scorecards report progress after controls exist.                             |
+| AGT-01 | 4               | 3           | 4                 | 3                         | 4         | 0.00    | 3.60  | AGT-01 ranks above mutation because transparent orchestration is needed before safe large-scale automation changes.             |
+| AGT-06 | 3               | 4           | 3                 | 4                         | 3         | 0.00    | 3.40  | AGT-06 is important but follows core orchestration and governance enforcement to reduce mutation risk.                          |
+| AGT-05 | 2               | 3           | 2                 | 2                         | 3         | 0.00    | 2.35  | AGT-05 is deferred because cross-project reuse does not currently unlock Saturn L-system closure directly.                      |
+| HAR-05 | 1               | 2           | 1                 | 2                         | 3         | 0.40    | 1.10  | HAR-05 is intentionally deprioritized in this cycle because harness outcomes are deferred unless they unlock Saturn/ADLC goals. |
 
 ## Pairwise Explanation Statements
 

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mapfile -t files < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(md|mdx|json|ya?ml|css|scss|html|js|jsx|ts|tsx)$' || true)
+
+if [[ ${#files[@]} -eq 0 ]]; then
+  exit 0
+fi
+
+echo "pre-commit: formatting staged files with prettier"
+npx --yes prettier --write "${files[@]}"
+
+git add -- "${files[@]}"

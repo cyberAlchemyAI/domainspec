@@ -11,34 +11,34 @@
 
 ## Objective Schema
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| objective_id | string | yes | Unique objective identifier. |
-| objective_name | string | yes | Human-readable objective title. |
-| objective_profile | enum | yes | `saturn-l-adlc-convergence` for this cycle. |
-| owner_role | enum | yes | Owner role accountable for prioritization decisions. |
-| kanban_lane | enum | yes | `backlog`, `ready`, `in-progress`, `blocked`, `review`, `done`. |
-| saturn_l_impact | integer (0-5) | yes | Expected contribution to Saturn L-system convergence. |
-| adlc_convergence_impact | integer (0-5) | yes | Expected contribution to ADLC gap/task closure. |
-| dependency_unlock | integer (0-5) | yes | Degree of downstream unblock value. |
-| governance_risk_reduction | integer (0-5) | yes | Reduction of governance and merge risk. |
-| implementation_readiness | integer (0-5) | yes | Current readiness to execute without rework. |
-| blocker_count | integer | yes | Number of unresolved blockers. |
-| blockers | list | yes | Blockers with id, type, owner, and status. |
-| rationale | string | yes | One-sentence explanation for current priority rank. |
-| evidence_links | list | yes | Supporting links to docs, decisions, metrics, or checks. |
+| Field                     | Type          | Required | Description                                                     |
+| ------------------------- | ------------- | -------- | --------------------------------------------------------------- |
+| objective_id              | string        | yes      | Unique objective identifier.                                    |
+| objective_name            | string        | yes      | Human-readable objective title.                                 |
+| objective_profile         | enum          | yes      | `saturn-l-adlc-convergence` for this cycle.                     |
+| owner_role                | enum          | yes      | Owner role accountable for prioritization decisions.            |
+| kanban_lane               | enum          | yes      | `backlog`, `ready`, `in-progress`, `blocked`, `review`, `done`. |
+| saturn_l_impact           | integer (0-5) | yes      | Expected contribution to Saturn L-system convergence.           |
+| adlc_convergence_impact   | integer (0-5) | yes      | Expected contribution to ADLC gap/task closure.                 |
+| dependency_unlock         | integer (0-5) | yes      | Degree of downstream unblock value.                             |
+| governance_risk_reduction | integer (0-5) | yes      | Reduction of governance and merge risk.                         |
+| implementation_readiness  | integer (0-5) | yes      | Current readiness to execute without rework.                    |
+| blocker_count             | integer       | yes      | Number of unresolved blockers.                                  |
+| blockers                  | list          | yes      | Blockers with id, type, owner, and status.                      |
+| rationale                 | string        | yes      | One-sentence explanation for current priority rank.             |
+| evidence_links            | list          | yes      | Supporting links to docs, decisions, metrics, or checks.        |
 
 ## Priority Scoring Module
 
 ### Base Formula
 
 PriorityScore =
-  (saturn_l_impact x 0.35) +
-  (adlc_convergence_impact x 0.30) +
-  (dependency_unlock x 0.20) +
-  (governance_risk_reduction x 0.10) +
-  (implementation_readiness x 0.05) -
-  harness_only_penalty
+(saturn_l_impact x 0.35) +
+(adlc_convergence_impact x 0.30) +
+(dependency_unlock x 0.20) +
+(governance_risk_reduction x 0.10) +
+(implementation_readiness x 0.05) -
+harness_only_penalty
 
 Where:
 
@@ -58,18 +58,18 @@ Where:
 
 Use this template when selecting among implementation options:
 
-| Field | Description |
-| --- | --- |
-| Decision ID | Stable identifier for audit traceability. |
-| Decision Question | The exact choice being made. |
-| Option | Candidate option label. |
-| Entails | What implementation work the option requires. |
-| Short-term Consequences | Immediate effects in delivery speed/quality/risk. |
-| Long-term Consequences | Maintainability, scalability, governance, and adaptation impact. |
-| Trade-offs | Explicit pros and cons across speed, complexity, risk, governance, and maintenance. |
-| Recommended? | yes/no with objective rationale. |
-| Selected Option | Final chosen option. |
-| Selection Rationale | Why this option was chosen for current objective profile. |
+| Field                   | Description                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| Decision ID             | Stable identifier for audit traceability.                                           |
+| Decision Question       | The exact choice being made.                                                        |
+| Option                  | Candidate option label.                                                             |
+| Entails                 | What implementation work the option requires.                                       |
+| Short-term Consequences | Immediate effects in delivery speed/quality/risk.                                   |
+| Long-term Consequences  | Maintainability, scalability, governance, and adaptation impact.                    |
+| Trade-offs              | Explicit pros and cons across speed, complexity, risk, governance, and maintenance. |
+| Recommended?            | yes/no with objective rationale.                                                    |
+| Selected Option         | Final chosen option.                                                                |
+| Selection Rationale     | Why this option was chosen for current objective profile.                           |
 
 ## Reprioritization Trigger Policy
 

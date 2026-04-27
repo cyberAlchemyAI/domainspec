@@ -139,18 +139,18 @@ Saturn-critical tasks:
 
 - `INF-02`, `INF-03`, `GOV-01`, `GOV-02`, `GOV-03`, `GOV-04`
 
-| Rank | Task | Weight | Why now |
-| --- | --- | --- | --- |
-| 1 | [infra/INF-03-ci-governance-loop.md](infra/INF-03-ci-governance-loop.md) | 24 | Closes the threshold -> suggestion -> governance evaluation loop and covers T1/T15/T20. |
-| 2 | [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md) | 22 | Makes the L4 -> L3 -> L6 governance chain executable with direct ADLC gate impact. |
-| 3 | [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md) | 22 | Operationalizes validator coverage and blocking enforcement for T1/T9/T20. |
-| 4 | [governance/GOV-04-adlc-closure-scorecard.md](governance/GOV-04-adlc-closure-scorecard.md) | 22 | Provides the single closure surface for ADLC status, evidence, and blockers. |
-| 5 | [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md) | 20 | Enforces merge-time blocking and escalation behavior for governance safety. |
-| 6 | [infra/INF-02-agent-telemetry-saturn.md](infra/INF-02-agent-telemetry-saturn.md) | 15 | Establishes Saturn telemetry and cost visibility required by governance and owner decisions. |
-| 7 | [agentic/AGT-06-agent-skill-mutation-pipeline.md](agentic/AGT-06-agent-skill-mutation-pipeline.md) | 14 | Enables controlled agent evolution with governance gates and rollback safety. |
-| 8 | [agentic/AGT-01-orchestrator-interface.md](agentic/AGT-01-orchestrator-interface.md) | 12 | Makes orchestration routing transparent and auditable for all intent classes. |
-| 9 | [agentic/AGT-05-cross-project-skills-repository.md](agentic/AGT-05-cross-project-skills-repository.md) | 10 | Unlocks reusable cross-project capability packs and reduces skill duplication. |
-| 10 | [harness/HAR-05-org-metrics-dashboard.md](harness/HAR-05-org-metrics-dashboard.md) | 9 | Connects role-based metrics directly to active decisions and objective steering. |
+| Rank | Task                                                                                                               | Weight | Why now                                                                                      |
+| ---- | ------------------------------------------------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------- |
+| 1    | [infra/INF-03-ci-governance-loop.md](infra/INF-03-ci-governance-loop.md)                                           | 24     | Closes the threshold -> suggestion -> governance evaluation loop and covers T1/T15/T20.      |
+| 2    | [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md) | 22     | Makes the L4 -> L3 -> L6 governance chain executable with direct ADLC gate impact.           |
+| 3    | [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md)           | 22     | Operationalizes validator coverage and blocking enforcement for T1/T9/T20.                   |
+| 4    | [governance/GOV-04-adlc-closure-scorecard.md](governance/GOV-04-adlc-closure-scorecard.md)                         | 22     | Provides the single closure surface for ADLC status, evidence, and blockers.                 |
+| 5    | [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md)                           | 20     | Enforces merge-time blocking and escalation behavior for governance safety.                  |
+| 6    | [infra/INF-02-agent-telemetry-saturn.md](infra/INF-02-agent-telemetry-saturn.md)                                   | 15     | Establishes Saturn telemetry and cost visibility required by governance and owner decisions. |
+| 7    | [agentic/AGT-06-agent-skill-mutation-pipeline.md](agentic/AGT-06-agent-skill-mutation-pipeline.md)                 | 14     | Enables controlled agent evolution with governance gates and rollback safety.                |
+| 8    | [agentic/AGT-01-orchestrator-interface.md](agentic/AGT-01-orchestrator-interface.md)                               | 12     | Makes orchestration routing transparent and auditable for all intent classes.                |
+| 9    | [agentic/AGT-05-cross-project-skills-repository.md](agentic/AGT-05-cross-project-skills-repository.md)             | 10     | Unlocks reusable cross-project capability packs and reduces skill duplication.               |
+| 10   | [harness/HAR-05-org-metrics-dashboard.md](harness/HAR-05-org-metrics-dashboard.md)                                 | 9      | Connects role-based metrics directly to active decisions and objective steering.             |
 
 Refresh rule:
 
@@ -189,49 +189,49 @@ WIP rule:
 
 ## Context
 
-| ID | Priority | Task | File |
-| --- | --- | --- | --- |
-| CTX-01 | P0 | Context-objective prioritization model | [context/CTX-01-context-objective-prioritization.md](context/CTX-01-context-objective-prioritization.md) |
-| CTX-02 | P1 | Knowledge mapping tutorial | [context/CTX-02-knowledge-mapping-tutorial.md](context/CTX-02-knowledge-mapping-tutorial.md) |
-| CTX-03 | P0 | Initiatives, visions, and execution tracker | [context/CTX-03-initiative-vision-tracker.md](context/CTX-03-initiative-vision-tracker.md) |
+| ID     | Priority | Task                                        | File                                                                                                     |
+| ------ | -------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| CTX-01 | P0       | Context-objective prioritization model      | [context/CTX-01-context-objective-prioritization.md](context/CTX-01-context-objective-prioritization.md) |
+| CTX-02 | P1       | Knowledge mapping tutorial                  | [context/CTX-02-knowledge-mapping-tutorial.md](context/CTX-02-knowledge-mapping-tutorial.md)             |
+| CTX-03 | P0       | Initiatives, visions, and execution tracker | [context/CTX-03-initiative-vision-tracker.md](context/CTX-03-initiative-vision-tracker.md)               |
 
 ## Infra
 
-| ID | Priority | Task | File |
-| --- | --- | --- | --- |
-| INF-01 | P0 | Runtime dispatch gateway (local/VPS/cloud) | [infra/INF-01-runtime-dispatch-gateway.md](infra/INF-01-runtime-dispatch-gateway.md) |
-| INF-02 | P0 | Agent telemetry for Saturn L-system metrics and costs | [infra/INF-02-agent-telemetry-saturn.md](infra/INF-02-agent-telemetry-saturn.md) |
-| INF-03 | P0 | CI governance loop (threshold -> suggestion -> evaluation) | [infra/INF-03-ci-governance-loop.md](infra/INF-03-ci-governance-loop.md) |
-| INF-04 | P0 | Infrastructure security baseline closure | [infra/INF-04-infra-security-baseline.md](infra/INF-04-infra-security-baseline.md) |
+| ID     | Priority | Task                                                       | File                                                                                 |
+| ------ | -------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| INF-01 | P0       | Runtime dispatch gateway (local/VPS/cloud)                 | [infra/INF-01-runtime-dispatch-gateway.md](infra/INF-01-runtime-dispatch-gateway.md) |
+| INF-02 | P0       | Agent telemetry for Saturn L-system metrics and costs      | [infra/INF-02-agent-telemetry-saturn.md](infra/INF-02-agent-telemetry-saturn.md)     |
+| INF-03 | P0       | CI governance loop (threshold -> suggestion -> evaluation) | [infra/INF-03-ci-governance-loop.md](infra/INF-03-ci-governance-loop.md)             |
+| INF-04 | P0       | Infrastructure security baseline closure                   | [infra/INF-04-infra-security-baseline.md](infra/INF-04-infra-security-baseline.md)   |
 
 ## Harness
 
-| ID | Priority | Task | File |
-| --- | --- | --- | --- |
-| HAR-01 | P0 | Interactive domain graph and transformation chain | [harness/HAR-01-domain-graph-chain-explorer.md](harness/HAR-01-domain-graph-chain-explorer.md) |
-| HAR-02 | P0 | Role-based harness workspaces | [harness/HAR-02-role-workspace-views.md](harness/HAR-02-role-workspace-views.md) |
-| HAR-03 | P0 | Project-owner prioritized task board | [harness/HAR-03-owner-task-board.md](harness/HAR-03-owner-task-board.md) |
-| HAR-04 | P1 | Frontend prototyping selector with Godel integration | [harness/HAR-04-prototyping-selector-godel.md](harness/HAR-04-prototyping-selector-godel.md) |
-| HAR-05 | P0 | Organizational metrics cockpit | [harness/HAR-05-org-metrics-dashboard.md](harness/HAR-05-org-metrics-dashboard.md) |
+| ID     | Priority | Task                                                 | File                                                                                           |
+| ------ | -------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| HAR-01 | P0       | Interactive domain graph and transformation chain    | [harness/HAR-01-domain-graph-chain-explorer.md](harness/HAR-01-domain-graph-chain-explorer.md) |
+| HAR-02 | P0       | Role-based harness workspaces                        | [harness/HAR-02-role-workspace-views.md](harness/HAR-02-role-workspace-views.md)               |
+| HAR-03 | P0       | Project-owner prioritized task board                 | [harness/HAR-03-owner-task-board.md](harness/HAR-03-owner-task-board.md)                       |
+| HAR-04 | P1       | Frontend prototyping selector with Godel integration | [harness/HAR-04-prototyping-selector-godel.md](harness/HAR-04-prototyping-selector-godel.md)   |
+| HAR-05 | P0       | Organizational metrics cockpit                       | [harness/HAR-05-org-metrics-dashboard.md](harness/HAR-05-org-metrics-dashboard.md)             |
 
 ## Agentic
 
-| ID | Priority | Task | File |
-| --- | --- | --- | --- |
-| AGT-01 | P0 | Orchestrator interface for prompt-to-pipeline routing | [agentic/AGT-01-orchestrator-interface.md](agentic/AGT-01-orchestrator-interface.md) |
-| AGT-02 | P0 | Interviewer flow for greenfield mapping | [agentic/AGT-02-interviewer-greenfield.md](agentic/AGT-02-interviewer-greenfield.md) |
-| AGT-03 | P0 | Interviewer flow for brownfield mapping | [agentic/AGT-03-interviewer-brownfield.md](agentic/AGT-03-interviewer-brownfield.md) |
-| AGT-04 | P1 | Agent-skill composition matrix | [agentic/AGT-04-agent-skill-composition-matrix.md](agentic/AGT-04-agent-skill-composition-matrix.md) |
-| AGT-05 | P1 | Cross-project skills knowledge repository | [agentic/AGT-05-cross-project-skills-repository.md](agentic/AGT-05-cross-project-skills-repository.md) |
-| AGT-06 | P1 | Automatic mutation pipeline for agents and skills | [agentic/AGT-06-agent-skill-mutation-pipeline.md](agentic/AGT-06-agent-skill-mutation-pipeline.md) |
-| AGT-07 | P0 | Dynamic goal amendment and re-derivation | [agentic/AGT-07-dynamic-goal-amendment.md](agentic/AGT-07-dynamic-goal-amendment.md) |
+| ID     | Priority | Task                                                  | File                                                                                                   |
+| ------ | -------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| AGT-01 | P0       | Orchestrator interface for prompt-to-pipeline routing | [agentic/AGT-01-orchestrator-interface.md](agentic/AGT-01-orchestrator-interface.md)                   |
+| AGT-02 | P0       | Interviewer flow for greenfield mapping               | [agentic/AGT-02-interviewer-greenfield.md](agentic/AGT-02-interviewer-greenfield.md)                   |
+| AGT-03 | P0       | Interviewer flow for brownfield mapping               | [agentic/AGT-03-interviewer-brownfield.md](agentic/AGT-03-interviewer-brownfield.md)                   |
+| AGT-04 | P1       | Agent-skill composition matrix                        | [agentic/AGT-04-agent-skill-composition-matrix.md](agentic/AGT-04-agent-skill-composition-matrix.md)   |
+| AGT-05 | P1       | Cross-project skills knowledge repository             | [agentic/AGT-05-cross-project-skills-repository.md](agentic/AGT-05-cross-project-skills-repository.md) |
+| AGT-06 | P1       | Automatic mutation pipeline for agents and skills     | [agentic/AGT-06-agent-skill-mutation-pipeline.md](agentic/AGT-06-agent-skill-mutation-pipeline.md)     |
+| AGT-07 | P0       | Dynamic goal amendment and re-derivation              | [agentic/AGT-07-dynamic-goal-amendment.md](agentic/AGT-07-dynamic-goal-amendment.md)                   |
 
 ## Governance
 
-| ID | Priority | Task | File |
-| --- | --- | --- | --- |
-| GOV-01 | P0 | Axioms, constitution, and tags execution model | [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md) |
-| GOV-02 | P0 | Governance validation scripts and automation | [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md) |
-| GOV-03 | P0 | Blocking gates and escalation policy | [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md) |
-| GOV-04 | P0 | ADLC implementation closure scorecard | [governance/GOV-04-adlc-closure-scorecard.md](governance/GOV-04-adlc-closure-scorecard.md) |
-| GOV-05 | P1 | Victor material intake and linkage placeholder | [governance/GOV-05-victor-material-intake.md](governance/GOV-05-victor-material-intake.md) |
+| ID     | Priority | Task                                           | File                                                                                                               |
+| ------ | -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| GOV-01 | P0       | Axioms, constitution, and tags execution model | [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md) |
+| GOV-02 | P0       | Governance validation scripts and automation   | [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md)           |
+| GOV-03 | P0       | Blocking gates and escalation policy           | [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md)                           |
+| GOV-04 | P0       | ADLC implementation closure scorecard          | [governance/GOV-04-adlc-closure-scorecard.md](governance/GOV-04-adlc-closure-scorecard.md)                         |
+| GOV-05 | P1       | Victor material intake and linkage placeholder | [governance/GOV-05-victor-material-intake.md](governance/GOV-05-victor-material-intake.md)                         |
