@@ -4,8 +4,11 @@ This plan is implementation focused.
 
 Core orientation artifacts:
 
+- [../AUTHORITY-MAP.md](../AUTHORITY-MAP.md) - canonical source map for major system pieces and document precedence.
+- [../DRIFT-CONVERGENCE.md](../DRIFT-CONVERGENCE.md) - canonical operational definition of drift, convergence, and related control surfaces.
 - [VISION.md](VISION.md) - north star and layer model for the implementation program.
 - [TRACEABILITY.md](TRACEABILITY.md) - explicit mapping from task -> problem solved -> project contribution -> ADLC alignment.
+- [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md) - canonical definition of Saturn L-system, why it is critical, and which tasks make it operational.
 - [DOMAINSPEC-UNIFIED-PRODUCT-VISION.md](DOMAINSPEC-UNIFIED-PRODUCT-VISION.md) - unified product narrative across all system contexts and value-chain sequence.
 - [DOMAINSPEC-PITCH-SCRIPTS.md](DOMAINSPEC-PITCH-SCRIPTS.md) - ready-to-use 60-second, 3-minute, and 10-minute speaking scripts.
 

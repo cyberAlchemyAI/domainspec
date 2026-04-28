@@ -8,6 +8,11 @@ Most software problems are not caused by bad code — they are caused by buildin
 
 The framework is designed to converge with the [Agentic Delivery Lifecycle (ADLC)](https://caseywest.com/the-agentic-manifesto/) — where agents operate under domain governance, enforcement is automated, and production behavior feeds back into continuous tuning. See the [ADLC alignment roadmap](ADLC-ALIGNMENT.md) for the full convergence plan.
 
+Canonical orientation references:
+
+- [AUTHORITY-MAP.md](AUTHORITY-MAP.md) — canonical source map for each major system piece.
+- [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md) — canonical operational definition of drift, convergence, and how related control docs fit together.
+
 ---
 
 ## Table of Contents

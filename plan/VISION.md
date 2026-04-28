@@ -98,6 +98,11 @@ Primary tasks:
 
 ## Saturn L-System Critical Path
 
+Canonical definition and importance:
+
+- [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md)
+- [../DRIFT-CONVERGENCE.md](../DRIFT-CONVERGENCE.md)
+
 Execution order for Saturn completion:
 
 1. `INF-02` telemetry foundation

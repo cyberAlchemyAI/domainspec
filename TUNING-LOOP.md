@@ -8,6 +8,10 @@
 
 The tuning loop is DomainSpec's self-improvement mechanism. It separates **observation** (fast, in-pipeline) from **analysis** (async, cross-run) to avoid blocking feature work while still accumulating the evidence needed for structural learning.
 
+Canonical drift/convergence reference:
+
+- [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md)
+
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        PIPELINE RUN (sync)                            │
@@ -60,16 +64,16 @@ The tuning loop is DomainSpec's self-improvement mechanism. It separates **obser
 
 ### Components
 
-| Component | Location | Role | Execution |
-|-----------|----------|------|-----------|
-| **Signal Schema** | `domainspec/templates/SIGNAL-SCHEMA.md` | Defines signal types, envelope format, and threshold conditions | Reference doc |
-| **Pipeline Step 10** | `domainspec-pipeline` SKILL.md, Step 10 | Emits structured signals to JSONL after each pipeline run | Sync, in-pipeline |
-| **Signal File** | `docs/signals/pipeline-signals.jsonl` | Append-only accumulation of all pipeline observations | File, git-tracked |
-| **Analyzer Tool** | `domainspec/tools/analyze-signals.ts` | Reads JSONL, computes aggregates, checks thresholds | CLI, CI or manual |
-| **Tuning Workflow** | `.github/workflows/domainspec-tuning.yml` | Runs analyzer on signal commits, creates Issues | GitHub Action |
-| **Reflect Skill** | `domainspec-reflect` SKILL.md | Deep analysis of accumulated signals, produces TUNING-REPORT | Agent skill |
-| **Tuning Report** | `docs/signals/TUNING-REPORT.md` | Output of reflection — proposals, metrics, comparisons | Generated doc |
-| **Report Archive** | `docs/signals/archive/` | Previous tuning reports for trend comparison | Historical |
+| Component            | Location                                  | Role                                                            | Execution         |
+| -------------------- | ----------------------------------------- | --------------------------------------------------------------- | ----------------- |
+| **Signal Schema**    | `domainspec/templates/SIGNAL-SCHEMA.md`   | Defines signal types, envelope format, and threshold conditions | Reference doc     |
+| **Pipeline Step 10** | `domainspec-pipeline` SKILL.md, Step 10   | Emits structured signals to JSONL after each pipeline run       | Sync, in-pipeline |
+| **Signal File**      | `docs/signals/pipeline-signals.jsonl`     | Append-only accumulation of all pipeline observations           | File, git-tracked |
+| **Analyzer Tool**    | `domainspec/tools/analyze-signals.ts`     | Reads JSONL, computes aggregates, checks thresholds             | CLI, CI or manual |
+| **Tuning Workflow**  | `.github/workflows/domainspec-tuning.yml` | Runs analyzer on signal commits, creates Issues                 | GitHub Action     |
+| **Reflect Skill**    | `domainspec-reflect` SKILL.md             | Deep analysis of accumulated signals, produces TUNING-REPORT    | Agent skill       |
+| **Tuning Report**    | `docs/signals/TUNING-REPORT.md`           | Output of reflection — proposals, metrics, comparisons          | Generated doc     |
+| **Report Archive**   | `docs/signals/archive/`                   | Previous tuning reports for trend comparison                    | Historical        |
 
 ### Data Flow
 
@@ -136,25 +140,27 @@ Every signal shares a common envelope. See `domainspec/templates/SIGNAL-SCHEMA.m
   "type": "signal-type",
   "severity": "LOW | MEDIUM | HIGH | CRITICAL",
   "category": "economy | governance | pattern | quality",
-  "data": { /* type-specific payload */ }
+  "data": {
+    /* type-specific payload */
+  },
 }
 ```
 
 ### Current Signal Types
 
-| Type | Category | Emitted When | Key Data Fields |
-|------|----------|-------------|-----------------|
-| `step-verdict` | economy | Each pipeline step completes | step, stepName, verdict, retriesNeeded, filesCreated/Modified, testsAdded |
-| `alignment-gap` | quality | Alignment audit finds drift | gapType, conceptId, specFile, codeFile, description |
-| `spec-gap` | quality | Spec insufficient for implementation | aspectFile, missingDetail, resolution, impactedStep |
-| `governance-gap` | governance | Framework blind spot discovered | description, shouldHaveBeenCaughtBy, skillFile, suggestedFix |
-| `rework` | economy | Step needs retries or human correction | step, stepName, iterations, rootCause, resolution |
-| `overhead` | economy | Pipeline run completes (once per run) | stepsExecuted/Skipped, agentDelegations, humanQuestions, overheadRatio |
-| `decision` | pattern | Significant design choice made | description, alternatives, rationale, confidence |
-| `proposal` | governance | Skill improvement idea identified | targetFile, changeDescription, rationale, priority |
-| `pattern` | pattern | Reusable insight discovered | summary, context, applicability |
-| `spec-compliance` | governance | Agent deviated from its own spec | agentName, specFile, violationType, skippedStep, description, detectedBy, impact |
-| `agent-cost` | operations | Agent run resource consumption | agentName, model, premiumRequests, durationSeconds, taskType, success, triggerWorkflow |
+| Type              | Category   | Emitted When                           | Key Data Fields                                                                        |
+| ----------------- | ---------- | -------------------------------------- | -------------------------------------------------------------------------------------- |
+| `step-verdict`    | economy    | Each pipeline step completes           | step, stepName, verdict, retriesNeeded, filesCreated/Modified, testsAdded              |
+| `alignment-gap`   | quality    | Alignment audit finds drift            | gapType, conceptId, specFile, codeFile, description                                    |
+| `spec-gap`        | quality    | Spec insufficient for implementation   | aspectFile, missingDetail, resolution, impactedStep                                    |
+| `governance-gap`  | governance | Framework blind spot discovered        | description, shouldHaveBeenCaughtBy, skillFile, suggestedFix                           |
+| `rework`          | economy    | Step needs retries or human correction | step, stepName, iterations, rootCause, resolution                                      |
+| `overhead`        | economy    | Pipeline run completes (once per run)  | stepsExecuted/Skipped, agentDelegations, humanQuestions, overheadRatio                 |
+| `decision`        | pattern    | Significant design choice made         | description, alternatives, rationale, confidence                                       |
+| `proposal`        | governance | Skill improvement idea identified      | targetFile, changeDescription, rationale, priority                                     |
+| `pattern`         | pattern    | Reusable insight discovered            | summary, context, applicability                                                        |
+| `spec-compliance` | governance | Agent deviated from its own spec       | agentName, specFile, violationType, skippedStep, description, detectedBy, impact       |
+| `agent-cost`      | operations | Agent run resource consumption         | agentName, model, premiumRequests, durationSeconds, taskType, success, triggerWorkflow |
 
 ### Adding a New Signal Type
 
@@ -180,18 +186,18 @@ Thresholds define when accumulated signals warrant action. They convert raw obse
 
 ### Current Thresholds
 
-| ID | Condition | Min Signals | Action |
-|----|-----------|-------------|--------|
-| TH1 | Same `governance-gap.shouldHaveBeenCaughtBy` in 3+ signals | 3 | Auto-propose skill update |
-| TH2 | `overhead.overheadRatio` > 0.5 for 3 consecutive runs | 3 overhead signals | Flag governance overhead review |
-| TH3 | Same `spec-gap.missingDetail` pattern in 2+ features | 2 | Propose template improvement |
-| TH4 | `rework` on same `stepName` in 5+ signals | 5 | Flag skill for hardening |
-| TH5 | 3+ `proposal` signals targeting same file | 3 | Bundle proposals into single PR |
-| TH6 | `alignment-gap` count > 10 across last 5 sessions | 10 | Trigger full alignment audit |
-| TH7 | `governance-gap` with severity CRITICAL | 1 | Immediate issue (no threshold wait) |
-| TH8 | `decision` with `confidence: low` in 3+ signals | 3 | Flag domain ambiguity |
-| TH9 | `spec-compliance` violation by same agent in 2+ signals | 2 | Flag agent spec for hardening + emit proposal |
-| TH10 | `agent-cost` total premiumRequests > 50 in rolling 7 days | 50 | Alert cost threshold, review agent efficiency |
+| ID   | Condition                                                  | Min Signals        | Action                                        |
+| ---- | ---------------------------------------------------------- | ------------------ | --------------------------------------------- |
+| TH1  | Same `governance-gap.shouldHaveBeenCaughtBy` in 3+ signals | 3                  | Auto-propose skill update                     |
+| TH2  | `overhead.overheadRatio` > 0.5 for 3 consecutive runs      | 3 overhead signals | Flag governance overhead review               |
+| TH3  | Same `spec-gap.missingDetail` pattern in 2+ features       | 2                  | Propose template improvement                  |
+| TH4  | `rework` on same `stepName` in 5+ signals                  | 5                  | Flag skill for hardening                      |
+| TH5  | 3+ `proposal` signals targeting same file                  | 3                  | Bundle proposals into single PR               |
+| TH6  | `alignment-gap` count > 10 across last 5 sessions          | 10                 | Trigger full alignment audit                  |
+| TH7  | `governance-gap` with severity CRITICAL                    | 1                  | Immediate issue (no threshold wait)           |
+| TH8  | `decision` with `confidence: low` in 3+ signals            | 3                  | Flag domain ambiguity                         |
+| TH9  | `spec-compliance` violation by same agent in 2+ signals    | 2                  | Flag agent spec for hardening + emit proposal |
+| TH10 | `agent-cost` total premiumRequests > 50 in rolling 7 days  | 50                 | Alert cost threshold, review agent efficiency |
 
 ### Threshold Design Guidelines
 
@@ -218,29 +224,29 @@ The analyzer computes three categories of aggregate metrics from accumulated sig
 
 ### Economy of Action
 
-| Metric | Formula | Purpose |
-|--------|---------|---------|
-| **Average overhead ratio** | mean of all `overhead.overheadRatio` values | Is governance cost proportionate to domain work? |
-| **Rework rate** | `rework` signals ÷ `step-verdict` signals | How often do steps need retries? |
-| **First-pass success rate** | steps with `retriesNeeded=0` ÷ total steps | How reliable is first-attempt output? |
-| **Agent delegation count** | sum of `overhead.agentDelegations` | How much orchestration is needed? |
-| **Human question count** | sum of `overhead.humanQuestions` | How much human input is the pipeline consuming? |
+| Metric                      | Formula                                     | Purpose                                          |
+| --------------------------- | ------------------------------------------- | ------------------------------------------------ |
+| **Average overhead ratio**  | mean of all `overhead.overheadRatio` values | Is governance cost proportionate to domain work? |
+| **Rework rate**             | `rework` signals ÷ `step-verdict` signals   | How often do steps need retries?                 |
+| **First-pass success rate** | steps with `retriesNeeded=0` ÷ total steps  | How reliable is first-attempt output?            |
+| **Agent delegation count**  | sum of `overhead.agentDelegations`          | How much orchestration is needed?                |
+| **Human question count**    | sum of `overhead.humanQuestions`            | How much human input is the pipeline consuming?  |
 
 ### Quality
 
-| Metric | Formula | Purpose |
-|--------|---------|---------|
-| **Alignment gap rate** | `alignment-gap` signals ÷ total runs | How fast does code drift from spec? |
-| **Spec gap rate** | `spec-gap` signals ÷ total runs | How complete are specs before implementation? |
+| Metric                  | Formula                               | Purpose                                       |
+| ----------------------- | ------------------------------------- | --------------------------------------------- |
+| **Alignment gap rate**  | `alignment-gap` signals ÷ total runs  | How fast does code drift from spec?           |
+| **Spec gap rate**       | `spec-gap` signals ÷ total runs       | How complete are specs before implementation? |
 | **Governance gap rate** | `governance-gap` signals ÷ total runs | How many blind spots does the framework have? |
 
 ### Governance Effectiveness
 
-| Metric | Formula | Purpose |
-|--------|---------|---------|
-| **Gaps addressed** | governance gaps in previous report that no longer recur | Are tuning proposals actually fixing problems? |
-| **Time to fix** | days from governance-gap signal to skill update commit | How fast does the framework self-correct? |
-| **Proposal acceptance rate** | proposals applied ÷ proposals generated | Are proposals useful and actionable? |
+| Metric                       | Formula                                                 | Purpose                                        |
+| ---------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| **Gaps addressed**           | governance gaps in previous report that no longer recur | Are tuning proposals actually fixing problems? |
+| **Time to fix**              | days from governance-gap signal to skill update commit  | How fast does the framework self-correct?      |
+| **Proposal acceptance rate** | proposals applied ÷ proposals generated                 | Are proposals useful and actionable?           |
 
 ### Adding a New Metric
 
@@ -295,6 +301,7 @@ The signals file will grow over time. Compaction rules:
 **Trigger:** Push to `main` that modifies `docs/signals/pipeline-signals.jsonl`.
 
 **Flow:**
+
 1. Checkout + install dependencies
 2. Run `analyze-signals.ts --json`
 3. If exit code 1 (thresholds triggered):
@@ -304,6 +311,7 @@ The signals file will grow over time. Compaction rules:
 4. If exit code 0 (no thresholds): silent, no action
 
 **Issue Management:**
+
 - One open issue at a time — new analysis updates the existing issue via comment
 - `urgent` label added when TH7 (critical gap) is triggered
 - Issue body includes: signal summary, thresholds triggered, aggregate metrics, next steps
@@ -311,6 +319,7 @@ The signals file will grow over time. Compaction rules:
 ### Manual Trigger
 
 The workflow supports `workflow_dispatch` with inputs:
+
 - `since` — Only analyze signals after this date
 - `min_signals` — Override minimum signal count
 
@@ -327,13 +336,13 @@ The workflow includes a live `agent-reflect` job that runs on a self-hosted VPS 
 
 #### Security Model
 
-| Layer | Constraint |
-|-------|-----------|
-| Container | Agent runs in sandboxed `agent-runner:latest` (no production secrets) |
-| Tools | Copilot CLI with deny-list (no Bash, Terminal, Network, Browser) |
-| Paths | Only `docs/signals/` and `domainspec/templates/` writable |
-| Review | PRs require manual approval — no auto-merge |
-| Concurrency | `cancel-in-progress: true` — one reflection at a time |
+| Layer       | Constraint                                                            |
+| ----------- | --------------------------------------------------------------------- |
+| Container   | Agent runs in sandboxed `agent-runner:latest` (no production secrets) |
+| Tools       | Copilot CLI with deny-list (no Bash, Terminal, Network, Browser)      |
+| Paths       | Only `docs/signals/` and `domainspec/templates/` writable             |
+| Review      | PRs require manual approval — no auto-merge                           |
+| Concurrency | `cancel-in-progress: true` — one reflection at a time                 |
 
 #### Cost Tracking
 
@@ -355,16 +364,17 @@ Agent runs emit `agent-cost` signals tracking premium requests, duration, and su
 
 Not all signals need to come from the pipeline. Future sources:
 
-| Source | Trigger | Signal Types |
-|--------|---------|-------------|
-| **Alignment audit** (standalone) | Manual or CI | `alignment-gap`, `governance-gap` |
-| **Layering audit** (standalone) | Manual or CI | `alignment-gap`, `governance-gap` |
-| **Test runs** (CI) | Every PR | `step-verdict` (test step only), `rework` |
-| **Production incidents** | Alert fires | New: `incident` signal with SLO violation data |
-| **PR review comments** | PR merged | New: `review-feedback` signal with reviewer notes |
-| **SPEC changes** | Docs committed | New: `spec-evolution` signal tracking concept additions/removals |
+| Source                           | Trigger        | Signal Types                                                     |
+| -------------------------------- | -------------- | ---------------------------------------------------------------- |
+| **Alignment audit** (standalone) | Manual or CI   | `alignment-gap`, `governance-gap`                                |
+| **Layering audit** (standalone)  | Manual or CI   | `alignment-gap`, `governance-gap`                                |
+| **Test runs** (CI)               | Every PR       | `step-verdict` (test step only), `rework`                        |
+| **Production incidents**         | Alert fires    | New: `incident` signal with SLO violation data                   |
+| **PR review comments**           | PR merged      | New: `review-feedback` signal with reviewer notes                |
+| **SPEC changes**                 | Docs committed | New: `spec-evolution` signal tracking concept additions/removals |
 
 To add a new source:
+
 1. Define what signals it emits (use existing types or propose new ones)
 2. Determine the emission point (which skill, CI step, or hook)
 3. Ensure the signals follow the envelope format
@@ -383,13 +393,13 @@ The `analyze-signals.ts` tool and `domainspec-reflect` skill can compute new met
 
 Beyond GitHub Issues, thresholds can trigger:
 
-| Action Type | Implementation | When to Use |
-|-------------|----------------|-------------|
-| **GitHub Issue** | Current (via `actions/github-script`) | Default action for all thresholds |
-| **PR with fix** | Agent produces fix + creates PR | When proposal is fully automatable |
-| **Slack/Discord notification** | Webhook in workflow | For team visibility |
-| **Block merge** | Required status check | When threshold indicates critical drift |
-| **Auto-invoke audit** | Dispatch alignment audit workflow | When TH6 alignment drift is severe |
+| Action Type                    | Implementation                        | When to Use                             |
+| ------------------------------ | ------------------------------------- | --------------------------------------- |
+| **GitHub Issue**               | Current (via `actions/github-script`) | Default action for all thresholds       |
+| **PR with fix**                | Agent produces fix + creates PR       | When proposal is fully automatable      |
+| **Slack/Discord notification** | Webhook in workflow                   | For team visibility                     |
+| **Block merge**                | Required status check                 | When threshold indicates critical drift |
+| **Auto-invoke audit**          | Dispatch alignment audit workflow     | When TH6 alignment drift is severe      |
 
 ---
 
@@ -397,12 +407,12 @@ Beyond GitHub Issues, thresholds can trigger:
 
 The tuning loop contributes to Meta-Track health metrics (from ADLC-ALIGNMENT.md):
 
-| Meta-Track Metric | Signal Source | Computation |
-|-------------------|--------------|-------------|
-| M-001 Orphan Rate | `alignment-gap` (gapType: code-without-spec, spec-without-code) | orphan gaps ÷ total concepts |
-| M-003 Time-to-Alignment | `overhead.timestamp` - SPEC.md last-modified | Average across features |
-| M-005 Governance Ratio | `overhead.overheadRatio` | Direct mapping |
-| M-006 Overhead Ratio | `overhead.overheadRatio` | Direct mapping |
+| Meta-Track Metric       | Signal Source                                                   | Computation                  |
+| ----------------------- | --------------------------------------------------------------- | ---------------------------- |
+| M-001 Orphan Rate       | `alignment-gap` (gapType: code-without-spec, spec-without-code) | orphan gaps ÷ total concepts |
+| M-003 Time-to-Alignment | `overhead.timestamp` - SPEC.md last-modified                    | Average across features      |
+| M-005 Governance Ratio  | `overhead.overheadRatio`                                        | Direct mapping               |
+| M-006 Overhead Ratio    | `overhead.overheadRatio`                                        | Direct mapping               |
 
 Metrics M-002 (L6 Friction Rate) and M-004 (L4 Volatility) require enforcement hooks and an axiom layer that don't exist yet (see ADLC-ALIGNMENT.md G13, G14).
 
@@ -468,11 +478,11 @@ grep '"player-management"' docs/signals/pipeline-signals.jsonl | jq .type | sort
 
 This tuning loop system evolves with DomainSpec:
 
-| Version | Capability |
-|---------|-----------|
+| Version              | Capability                                                                                                     |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- |
 | **v1.8.0** (current) | Signal emission (Step 10), analyzer tool, threshold-based CI, Issue creation, reflect skill reads from signals |
-| **v1.8.x** (planned) | Signal compaction tool, additional signal types from standalone audits |
-| **v1.9.x** (planned) | Integration with code-to-spec binding (G11) — new signal types for orphan detection |
-| **v2.0** (planned) | Cloud agent reflection in CI, closed-loop auto-tuning, production incident signals |
+| **v1.8.x** (planned) | Signal compaction tool, additional signal types from standalone audits                                         |
+| **v1.9.x** (planned) | Integration with code-to-spec binding (G11) — new signal types for orphan detection                            |
+| **v2.0** (planned)   | Cloud agent reflection in CI, closed-loop auto-tuning, production incident signals                             |
 
 Changes to the tuning loop itself follow DomainSpec's own Via Negativa principle: add complexity only when its absence has caused measurable harm. If a threshold produces false positives, adjust it. If a signal type is never emitted, remove it. The loop should be as lean as the codebase it governs.

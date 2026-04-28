@@ -6,6 +6,10 @@
 The inner loop (tests) validates that code matches the spec at build time.
 The **outer loop** (observability) validates that the system behaves correctly in production — catching drift, business anomalies, and financial risk that tests cannot cover.
 
+Canonical drift/convergence reference:
+
+- [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md)
+
 ## OTel Instrumentation Standard
 
 All metrics use the [OpenTelemetry API](https://opentelemetry.io/) for instrumentation. OTel is vendor-neutral — metrics export to Prometheus, Grafana, Datadog, or any OTLP-compatible backend without code changes.

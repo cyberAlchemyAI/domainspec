@@ -6,9 +6,13 @@ This file provides three speaking scripts based on the unified product vision:
 - 3 minutes: concise product and value walkthrough.
 - 10 minutes: full narrative with context-by-context progression.
 
+Canonical Saturn reference:
+
+- [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md)
+
 ## Core Message (Use in All Versions)
 
-DomainSpec is a closed-loop execution system. Taxonomy and relationship edges create a shared semantic model. That model is formalized into feature and aspect contracts. Contracts generate deterministic tests and monitoring obligations. Monitoring reveals drift. Context and governance convert drift into prioritized action. Saturn loops operationalize correction. Harness turns all of this into role-aware human decisions.
+DomainSpec is a closed-loop execution system. Taxonomy and relationship edges create a shared semantic model. That model is formalized into feature and aspect contracts. Contracts generate deterministic tests and monitoring obligations. Monitoring reveals drift. Context and governance convert drift into prioritized action. Saturn L-system is the observe-evaluate-decide-act-verify loop that operationalizes that correction. Harness turns all of this into role-aware human decisions.
 
 ## 60-Second Script
 
@@ -16,7 +20,7 @@ DomainSpec is how we make strategy, implementation, and operations behave as one
 
 We start with taxonomy and relationship edges so the domain language is explicit and shared. That foundation lets us formalize behavior into specs and aspect contracts. From those contracts we derive tests and monitoring, so quality is not manual or opinion-based.
 
-In production, observability signals show where behavior drifts from intent. Governance and context then convert those signals into prioritized, enforceable actions. Saturn loops keep this correction continuous. Finally, Harness gives every role one operational cockpit for graph understanding, priorities, metrics, and decision traceability.
+In production, observability signals show where behavior drifts from intent. Governance and context then convert those signals into prioritized, enforceable actions. Saturn L-system keeps this correction continuous through an observe-evaluate-decide-act-verify loop. Finally, Harness gives every role one operational cockpit for graph understanding, priorities, metrics, and decision traceability.
 
 The result is faster alignment, safer execution, and less rework because the system can explain what it is doing, why it is doing it, and what to do next.
 
@@ -34,7 +38,7 @@ Third, those contracts derive deterministic tests and observability requirements
 
 Fourth, once the system runs, we detect semantic or behavioral drift early. Drift is then handled through two control layers: context for objective-based prioritization and governance for enforceable gate decisions.
 
-Fifth, Saturn operationalizes this as a continuous correction loop with runtime telemetry, policy checks, and closure tracking.
+Fifth, Saturn L-system operationalizes this as a continuous observe-evaluate-decide-act-verify loop with runtime telemetry, policy checks, and closure tracking.
 
 Sixth, Harness makes this usable by humans across roles. Product owners see objective-grounded priorities, engineers see transformation chains and execution evidence, governance owners see risk and closure status.
 
@@ -68,7 +72,7 @@ Detected drift does not help unless action is clear. Context translates strategi
 
 ### 7:45-8:45 Saturn L-System Loop
 
-Saturn operationalizes correction loops using runtime telemetry, governance thresholds, and closure status. This is where the model becomes self-correcting at organizational scale.
+Saturn L-system is the control loop of DomainSpec. It observes runtime behavior, evaluates that behavior against governance rules and active objectives, decides the next response, acts through the operational stack, and verifies whether drift is being reduced. This is where the model becomes self-correcting at organizational scale.
 
 ### 8:45-9:45 Harness: Human Execution Cockpit
 

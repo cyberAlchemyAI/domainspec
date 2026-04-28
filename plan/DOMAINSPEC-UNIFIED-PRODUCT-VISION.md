@@ -6,6 +6,10 @@ DomainSpec is a formal execution system that connects domain modeling, implement
 
 It is not only documentation and not only orchestration. It is a closed-loop system where structure, behavior, quality, telemetry, governance, and user-facing execution continuously reinforce each other.
 
+Canonical operating-loop definition:
+
+- [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md) defines Saturn L-system as the observe-evaluate-decide-act-verify loop that keeps DomainSpec aligned in live operation.
+
 ## Product Contexts (Unified)
 
 1. Foundation semantics: taxonomy and relationship edges define the language of the system.
@@ -59,8 +63,10 @@ Outcome:
 
 ### Step 5 - Initial DomainSpec Model Enables Saturn L-System
 
+- Saturn L-system is DomainSpec's continuous control loop: it observes runtime behavior, evaluates it against domain intent, governance rules, and active objectives, decides the next action, executes that action, and verifies convergence.
 - The initial model provides typed outputs, traceability, and measurable contracts.
 - Saturn-focused telemetry and loop controls (INF-02, INF-03, GOV-01..GOV-04) become viable only when those foundations exist.
+- Canonical reference: [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md).
 
 Outcome:
 
@@ -94,7 +100,7 @@ Outcome:
 
 ## Strategic Narrative for Pitching
 
-DomainSpec starts by formalizing domain language and relationships. That formalization deterministically produces tests and monitoring obligations. Monitoring exposes drift, and governance plus context convert drift into prioritized action. Saturn L-system operationalizes this loop at scale, and Harness makes it usable by humans across roles. The result is a product where strategy, implementation, quality, and operations are continuously aligned.
+DomainSpec starts by formalizing domain language and relationships. That formalization deterministically produces tests and monitoring obligations. Monitoring exposes drift, and governance plus context convert drift into prioritized action. Saturn L-system, the continuous observe-evaluate-decide-act-verify loop of the system, operationalizes this correction at scale, and Harness makes it usable by humans across roles. The result is a product where strategy, implementation, quality, and operations are continuously aligned.
 
 ## North-Star Success Criteria
 
