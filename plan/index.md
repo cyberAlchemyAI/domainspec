@@ -6,6 +6,16 @@ Core orientation artifacts:
 
 - [VISION.md](VISION.md) - north star and layer model for the implementation program.
 - [TRACEABILITY.md](TRACEABILITY.md) - explicit mapping from task -> problem solved -> project contribution -> ADLC alignment.
+- [DOMAINSPEC-UNIFIED-PRODUCT-VISION.md](DOMAINSPEC-UNIFIED-PRODUCT-VISION.md) - unified product narrative across all system contexts and value-chain sequence.
+- [DOMAINSPEC-PITCH-SCRIPTS.md](DOMAINSPEC-PITCH-SCRIPTS.md) - ready-to-use 60-second, 3-minute, and 10-minute speaking scripts.
+
+Layer product overviews:
+
+- [context/CONTEXT-PRODUCT-OVERVIEW.md](context/CONTEXT-PRODUCT-OVERVIEW.md)
+- [infra/INFRA-PRODUCT-OVERVIEW.md](infra/INFRA-PRODUCT-OVERVIEW.md)
+- [agentic/AGENTIC-PRODUCT-OVERVIEW.md](agentic/AGENTIC-PRODUCT-OVERVIEW.md)
+- [governance/GOVERNANCE-PRODUCT-OVERVIEW.md](governance/GOVERNANCE-PRODUCT-OVERVIEW.md)
+- [harness/HARNESS-PRODUCT-OVERVIEW.md](harness/HARNESS-PRODUCT-OVERVIEW.md)
 
 ## Start Here (Initial Organization Workflow Entrypoint)
 

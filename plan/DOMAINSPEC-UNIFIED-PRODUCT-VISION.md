@@ -1,0 +1,105 @@
+# DomainSpec Unified Product Vision
+
+## Executive Positioning
+
+DomainSpec is a formal execution system that connects domain modeling, implementation quality, governance enforcement, and human decision operations into one coherent product.
+
+It is not only documentation and not only orchestration. It is a closed-loop system where structure, behavior, quality, telemetry, governance, and user-facing execution continuously reinforce each other.
+
+## Product Contexts (Unified)
+
+1. Foundation semantics: taxonomy and relationship edges define the language of the system.
+2. Formalization layer: feature and aspect documents encode executable behavior contracts.
+3. Quality layer: deterministic test derivation validates contract fidelity in build-time.
+4. Observability and drift layer: production metrics validate real behavior and reveal divergence.
+5. Context layer: objective-driven prioritization aligns execution with strategic value.
+6. Infrastructure layer: runtime, telemetry, security, and CI loops provide operational substrate.
+7. Agentic layer: intent routing and capability composition execute work with adaptive control.
+8. Governance layer: rule-to-gate enforcement constrains risk and verifies closure evidence.
+9. Harness layer: role-aware interface turns complexity into coordinated human decisions.
+
+## Sequential and Related Vision (Causal Chain)
+
+### Step 1 - Taxonomy and Edges Enable Formalization
+
+- `TAXONOMY.md` defines what kinds of concepts exist.
+- `RELATIONSHIPS.md` defines how those concepts connect.
+- Together they form the semantic graph grammar used by specs.
+
+Outcome:
+
+- Teams describe domains with shared, unambiguous structure.
+
+### Step 2 - Formalization Enables Deterministic Quality
+
+- `SPEC.md` plus aspect docs (`operations.md`, `states.md`, `interfaces.md`, `events.md`, `queries.md`, `workflows.md`) formalize behavior.
+- `TEST-PIPELINE.md` derives tests directly from those formal contracts.
+
+Outcome:
+
+- Quality is not ad hoc; it is generated from formalized domain intent.
+
+### Step 3 - Monitoring Extends Quality into Production
+
+- `OBSERVABILITY.md` derives production metrics from the same formal artifacts.
+- Runtime instrumentation verifies whether behavior remains faithful after deployment.
+
+Outcome:
+
+- Quality moves from build-only checks to continuous operational verification.
+
+### Step 4 - Drift Becomes Detectable and Actionable
+
+- Alignment and layering audits plus telemetry signals reveal divergence.
+- Drift can be prioritized through objective and governance views.
+
+Outcome:
+
+- The system can detect and correct semantic, behavioral, and operational drift early.
+
+### Step 5 - Initial DomainSpec Model Enables Saturn L-System
+
+- The initial model provides typed outputs, traceability, and measurable contracts.
+- Saturn-focused telemetry and loop controls (INF-02, INF-03, GOV-01..GOV-04) become viable only when those foundations exist.
+
+Outcome:
+
+- Saturn L-system can operate as a measurable governance and adaptation loop, not just a conceptual goal.
+
+### Step 6 - Saturn Enables Harness at Product Scale
+
+- Harness requires reliable runtime data, governance outcomes, and objective context.
+- Saturn delivers these as continuous signals and control points.
+
+Outcome:
+
+- Harness becomes an execution cockpit with trusted graph, priorities, metrics, and decisions.
+
+### Step 7 - Harness Feeds Back into Better Strategy and Formalization
+
+- Human decisions in Harness generate new priorities, clarifications, and constraints.
+- These feed back into context, formalization, tests, observability, and governance.
+
+Outcome:
+
+- DomainSpec behaves as a learning execution system with compounding improvement.
+
+## Layer Product Views
+
+- Context: [context/CONTEXT-PRODUCT-OVERVIEW.md](context/CONTEXT-PRODUCT-OVERVIEW.md)
+- Infrastructure: [infra/INFRA-PRODUCT-OVERVIEW.md](infra/INFRA-PRODUCT-OVERVIEW.md)
+- Agentic: [agentic/AGENTIC-PRODUCT-OVERVIEW.md](agentic/AGENTIC-PRODUCT-OVERVIEW.md)
+- Governance: [governance/GOVERNANCE-PRODUCT-OVERVIEW.md](governance/GOVERNANCE-PRODUCT-OVERVIEW.md)
+- Harness: [harness/HARNESS-PRODUCT-OVERVIEW.md](harness/HARNESS-PRODUCT-OVERVIEW.md)
+
+## Strategic Narrative for Pitching
+
+DomainSpec starts by formalizing domain language and relationships. That formalization deterministically produces tests and monitoring obligations. Monitoring exposes drift, and governance plus context convert drift into prioritized action. Saturn L-system operationalizes this loop at scale, and Harness makes it usable by humans across roles. The result is a product where strategy, implementation, quality, and operations are continuously aligned.
+
+## North-Star Success Criteria
+
+- Domain language remains consistent across planning, implementation, and operations.
+- Quality and observability obligations are derived rather than manually improvised.
+- Drift is detected early and routed through objective and governance controls.
+- Saturn loops produce measurable correction instead of reactive firefighting.
+- Harness users can explain and act on system state with confidence.
