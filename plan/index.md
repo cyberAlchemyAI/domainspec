@@ -11,6 +11,7 @@ Core reference artifacts:
 - [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md) - canonical definition of Saturn L-system and the tasks that make it operational.
 - [DOMAINSPEC-UNIFIED-PRODUCT-VISION.md](DOMAINSPEC-UNIFIED-PRODUCT-VISION.md) - reference narrative across system contexts and causal sequence.
 - [DOMAINSPEC-PITCH-SCRIPTS.md](DOMAINSPEC-PITCH-SCRIPTS.md) - speaking-script reference for 60-second, 3-minute, and 10-minute presentations.
+- [COMPLETENESS-DASHBOARD.md](COMPLETENESS-DASHBOARD.md) - visual tracking surface for plan completion status.
 
 Layer overview artifacts:
 
