@@ -31,6 +31,10 @@ Use this index as the implementation-program entrypoint for organizing work.
 2. Complete [context/CTX-03-initiative-vision-tracker.md](context/CTX-03-initiative-vision-tracker.md).
 3. Assign owner roles for each active stream: PO, stakeholder, QA, dev, governance owner.
 
+Step 1 owner-role assignment artifact:
+
+- [context/CTX-03-owner-role-assignment-cycle-001.md](context/CTX-03-owner-role-assignment-cycle-001.md)
+
 Expected output:
 
 - Active objective set.

@@ -12,22 +12,22 @@ Provide a single visual status surface for implementation-plan completion.
 
 ## Overall Completion
 
-- Completed done-criteria items: 3
-- Remaining done-criteria items: 70
-- Overall completion: 4%
+- Completed done-criteria items: 6
+- Remaining done-criteria items: 67
+- Overall completion: 8%
 
 ```mermaid
 pie showData
     title Primary Task Done-Criteria Completion
-    "Completed" : 3
-    "Remaining" : 70
+    "Completed" : 6
+    "Remaining" : 67
 ```
 
 ## Step Progress
 
 ```mermaid
 flowchart LR
-    S1["Step 1\nSet Context and Ownership\n1/3 complete (33%)"]
+    S1["Step 1\nSet Context and Ownership\n3/3 complete (100%)"]
     S2["Step 2\nRuntime and Telemetry Baseline\n0/3 complete (0%)"]
     S3["Step 3\nGovernance by Default\n0/3 complete (0%)"]
     S4["Step 4\nClose Saturn Governance Loop\n0/2 complete (0%)"]
@@ -36,10 +36,11 @@ flowchart LR
 
     S1 --> S2 --> S3 --> S4 --> S5 --> S6
 
+    classDef complete fill:#1f5a2e,stroke:#52c174,color:#ffffff
     classDef inprogress fill:#7a5d14,stroke:#d6b655,color:#ffffff
     classDef notstarted fill:#6b1f1f,stroke:#d77a7a,color:#ffffff
 
-    class S1 inprogress
+    class S1 complete
     class S2,S3,S4,S5,S6 notstarted
 ```
 
@@ -47,7 +48,7 @@ Step details:
 
 | Step   | Items complete | Total items | Completion |
 | ------ | -------------- | ----------- | ---------- |
-| Step 1 | 1              | 3           | 33%        |
+| Step 1 | 3              | 3           | 100%       |
 | Step 2 | 0              | 3           | 0%         |
 | Step 3 | 0              | 3           | 0%         |
 | Step 4 | 0              | 2           | 0%         |
@@ -56,13 +57,13 @@ Step details:
 
 Notes:
 
-- Step 1 item `Assign owner roles for each active stream` is currently open (no explicit owner-role assignment artifact found).
+- Step 1 owner-role assignment artifact: [context/CTX-03-owner-role-assignment-cycle-001.md](context/CTX-03-owner-role-assignment-cycle-001.md).
 
 ## Stream Progress
 
 | Stream     | Completed criteria | Total criteria | Completion |
 | ---------- | ------------------ | -------------- | ---------- |
-| Context    | 3                  | 9              | 33%        |
+| Context    | 6                  | 9              | 66%        |
 | Infra      | 0                  | 12             | 0%         |
 | Harness    | 0                  | 15             | 0%         |
 | Agentic    | 0                  | 22             | 0%         |
@@ -74,7 +75,7 @@ Notes:
 | ----------------------------------------------------------------- | ----------- | ------------- |
 | [CTX-01](context/CTX-01-context-objective-prioritization.md)      | complete    | 3/3           |
 | [CTX-02](context/CTX-02-knowledge-mapping-tutorial.md)            | not-started | 0/3           |
-| [CTX-03](context/CTX-03-initiative-vision-tracker.md)             | not-started | 0/3           |
+| [CTX-03](context/CTX-03-initiative-vision-tracker.md)             | complete    | 3/3           |
 | [INF-01](infra/INF-01-runtime-dispatch-gateway.md)                | not-started | 0/3           |
 | [INF-02](infra/INF-02-agent-telemetry-saturn.md)                  | not-started | 0/3           |
 | [INF-03](infra/INF-03-ci-governance-loop.md)                      | not-started | 0/3           |
