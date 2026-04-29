@@ -1,28 +1,28 @@
 # Harness Product Overview
 
-## One-Line Positioning
+## Summary
 
 Harness is the human execution surface for DomainSpec: a role-aware system that turns complex domain logic, governance rules, and agent outputs into clear decisions and coordinated action.
 
-## What Problem Harness Solves
+## Problem Scope
 
-Teams building agentic systems often fail at execution because:
+Common execution failures in agentic systems include:
 
 - Domain knowledge is fragmented across docs, code, and people.
 - Different roles (product, engineering, QA, governance) see different truths.
 - Priorities are hard to justify when objectives and telemetry are disconnected.
 - Governance signals arrive too late to prevent bad merges and costly drift.
 
-Harness solves this by giving everyone one shared operational map, one decision queue, and one context-aware control surface.
+Harness addresses these conditions through one shared operational map, one decision queue, and one context-aware control surface.
 
-## Who It Is For
+## Primary Stakeholders
 
 - Project owners who need objective-based prioritization and fast trade-off decisions.
 - Engineering and QA teams who need traceable workflow and domain behavior visibility.
 - Governance owners who need early signals and enforceable quality boundaries.
 - Stakeholders who need confidence that execution aligns with strategy.
 
-## Product Vision
+## System Role
 
 Harness is Layer 3 of the implementation vision: the human interface where complex execution becomes understandable, collaborative, and governable.
 
@@ -92,14 +92,14 @@ Value:
 4. Validate current signals in the metrics cockpit before decision.
 5. Execute or re-prioritize with explicit trade-off and audit trace.
 
-## Why This Is Different
+## Distinguishing Characteristics
 
-- Not just a graph viewer: it is execution-linked and role-aware.
-- Not just a backlog board: priorities are objective and governance grounded.
-- Not just a dashboard: metrics are decision-coupled and workflow-native.
-- Not just an agent shell: human and agent workflows share one operational context.
+- Differs from a graph viewer because it is execution-linked and role-aware.
+- Differs from a backlog board because priorities are objective- and governance-grounded.
+- Differs from a dashboard because metrics are decision-coupled and workflow-native.
+- Differs from an agent shell because human and agent workflows share one operational context.
 
-## Business Impact (Expected)
+## Expected Operational Impact
 
 - Faster onboarding and less interpretation friction.
 - Shorter time from objective change to queue adaptation.
@@ -137,6 +137,6 @@ Value:
 - Governance issues detected pre-merge vs post-merge.
 - Cross-role handoff clarity and rework rate.
 
-## Pitch Summary (Short)
+## Condensed Summary
 
-Harness is the operational cockpit for DomainSpec execution. It unifies graph-level domain understanding, role-aware collaboration, objective-prioritized decision flow, and governance-linked telemetry in one interface. The result is faster alignment, better decisions, and safer execution at scale.
+Harness unifies domain graph navigation, role-aware collaboration, priority control, and governance-linked telemetry in one operational surface.

@@ -1,10 +1,10 @@
 # Governance Product Overview
 
-## One-Line Positioning
+## Summary
 
 Governance is the trust and control layer of DomainSpec: it converts principles into executable policy, validates behavior continuously, and makes closure status explicit.
 
-## What Problem Governance Solves
+## Problem Scope
 
 - Rules exist in documents but are not enforceable by default.
 - Validation scripts are fragmented and inconsistently applied.
@@ -44,21 +44,21 @@ Governance is the trust and control layer of DomainSpec: it converts principles 
 - Maps external assets to local task scope and ownership.
 - Improves provenance and update auditability.
 
-## Who It Is For
+## Primary Stakeholders
 
 - Governance owners responsible for policy integrity.
 - Engineering leaders responsible for safe delivery gates.
 - Stakeholders who need confidence in closure evidence quality.
 
-## Why It Matters for the Whole System
+## System Role
 
-Governance is the system's reliability contract:
+Governance provides enforceable decision criteria for infrastructure, agentic adaptation, and Harness status interpretation:
 
 - It gives infrastructure loops enforceable decision criteria.
 - It constrains agentic mutation and adaptation risk.
 - It ensures Harness surfaces trustworthy status and risk signals.
 
-Without Governance, speed increases while trust decreases.
+If absent, execution speed can increase while policy integrity and trust decline.
 
 ## Success Signals
 
@@ -67,6 +67,6 @@ Without Governance, speed increases while trust decreases.
 - Block/advisory behavior is consistent across teams and runs.
 - ADLC closure status is evidence-backed and trendable.
 
-## Pitch Summary (Short)
+## Condensed Summary
 
-Governance makes DomainSpec credible in production. It operationalizes policy, standardizes validation, controls risk escalation, and provides measurable closure evidence for strategic trust.
+Governance operationalizes policy, validation, escalation, and closure evidence.

@@ -1,10 +1,10 @@
 # DomainSpec Unified Product Vision
 
-## Executive Positioning
+## Purpose
 
 DomainSpec is a formal execution system that connects domain modeling, implementation quality, governance enforcement, and human decision operations into one coherent product.
 
-It is not only documentation and not only orchestration. It is a closed-loop system where structure, behavior, quality, telemetry, governance, and user-facing execution continuously reinforce each other.
+DomainSpec combines structural modeling, formal behavior definition, quality derivation, telemetry, governance, and human decision surfaces in one closed operational loop.
 
 Canonical operating-loop definition:
 
@@ -22,7 +22,7 @@ Canonical operating-loop definition:
 8. Governance layer: rule-to-gate enforcement constrains risk and verifies closure evidence.
 9. Harness layer: role-aware interface turns complexity into coordinated human decisions.
 
-## Sequential and Related Vision (Causal Chain)
+## Causal Sequence
 
 ### Step 1 - Taxonomy and Edges Enable Formalization
 
@@ -98,11 +98,11 @@ Outcome:
 - Governance: [governance/GOVERNANCE-PRODUCT-OVERVIEW.md](governance/GOVERNANCE-PRODUCT-OVERVIEW.md)
 - Harness: [harness/HARNESS-PRODUCT-OVERVIEW.md](harness/HARNESS-PRODUCT-OVERVIEW.md)
 
-## Strategic Narrative for Pitching
+## Condensed Narrative
 
-DomainSpec starts by formalizing domain language and relationships. That formalization deterministically produces tests and monitoring obligations. Monitoring exposes drift, and governance plus context convert drift into prioritized action. Saturn L-system, the continuous observe-evaluate-decide-act-verify loop of the system, operationalizes this correction at scale, and Harness makes it usable by humans across roles. The result is a product where strategy, implementation, quality, and operations are continuously aligned.
+DomainSpec formalizes domain language and relationships first. That formalization deterministically produces test and monitoring obligations. Monitoring exposes drift, and governance plus context convert detected drift into prioritized action. Saturn L-system operationalizes corrective control at scale, and Harness exposes the resulting priorities, metrics, and decisions to human roles. The resulting operating model aligns strategy, implementation, quality, and operations continuously.
 
-## North-Star Success Criteria
+## Success Criteria
 
 - Domain language remains consistent across planning, implementation, and operations.
 - Quality and observability obligations are derived rather than manually improvised.

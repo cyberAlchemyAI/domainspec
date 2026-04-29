@@ -2,7 +2,7 @@
 
 This document traces implementation tasks to ADLC gaps and ADLC roadmap tasks so it is clear what each task solves and how it contributes to the whole project.
 
-## How To Read
+## Field Definitions
 
 - `Solves` = immediate problem this task removes.
 - `Project contribution` = why this matters to system-level outcomes.

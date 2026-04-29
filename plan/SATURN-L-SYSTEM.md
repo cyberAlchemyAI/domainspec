@@ -10,7 +10,7 @@ Canonical related operational reference:
 
 It observes runtime behavior, evaluates that behavior against formal domain intent, governance rules, and active objectives, decides what must happen next, executes that response through the operational stack, and verifies whether the system is converging or drifting.
 
-In short:
+Loop stages:
 
 - Observe
 - Evaluate
@@ -19,7 +19,59 @@ In short:
 - Verify
 - Repeat
 
-## Why It Exists
+## Visual Model
+
+This section documents the Saturn operational loop as a dedicated control-flow view.
+
+Scope:
+
+- formal intent as the reference baseline
+- runtime behavior and telemetry as observed evidence
+- governance rules and active objectives as evaluation inputs
+- decision, action, and verification as the control sequence
+- Harness as the downstream decision surface and feedback path
+
+Relationship to broader architecture diagrams:
+
+- [../docs/meta-model.mmd](../docs/meta-model.mmd) describes the business-side layer model.
+- [../docs/meta-model-operational.mmd](../docs/meta-model-operational.mmd) describes the operational-side layer model.
+- The diagram below isolates Saturn specifically, so the control loop can be read without traversing the full layer topology.
+
+```mermaid
+flowchart LR
+	Intent["Formal intent\nL1 ontology + specs + derived obligations"]
+	Runtime["Runtime behavior\nL2 execution + events + outputs"]
+	Telemetry["Observe\ntelemetry + traces + typed outputs"]
+	Evaluation["Evaluate\ncompare against rules, thresholds, and objectives"]
+	Decision["Decide\ncontinue | reprioritize | block | escalate | amend"]
+	Action["Act\nCI responses + queue updates + remediation routing"]
+	Verification["Verify\ncheck whether drift shrank and closure improved"]
+	Governance["Governance and objectives\nGOV-01..04 + CTX-01"]
+	Harness["Harness\nhuman-visible priorities, metrics, decisions, closures"]
+
+	Intent --> Evaluation
+	Runtime --> Telemetry
+	Telemetry --> Evaluation
+	Governance --> Evaluation
+	Evaluation --> Decision
+	Decision --> Action
+	Action --> Verification
+	Verification -->|loop continues| Telemetry
+	Action --> Runtime
+	Action --> Harness
+	Harness -->|human decisions and new priorities| Governance
+```
+
+Element Definitions:
+
+- `Intent` is the formal source of truth Saturn is trying to preserve in operation.
+- `Runtime` and `Telemetry` are the live evidence Saturn observes.
+- `Evaluation` is where live evidence meets governance rules and active objectives.
+- `Decision` and `Action` are where Saturn becomes operational instead of descriptive.
+- `Verification` determines whether the response actually reduced drift.
+- `Harness` is downstream of Saturn, but also feeds new human decisions back into the loop.
+
+## Purpose
 
 DomainSpec can formalize domain meaning and derive tests, but without Saturn L-system those artifacts remain mostly static.
 
@@ -32,11 +84,11 @@ It turns:
 - decisions into prioritized action
 - prioritized action into measurable closure
 
-## Why It Is Important
+## Operational Significance
 
 Saturn L-system is important because it is the bridge between specification and operational control.
 
-Without it:
+If absent:
 
 - drift can be detected but not consistently corrected
 - telemetry remains informational instead of actionable
@@ -44,7 +96,7 @@ Without it:
 - prioritization is weaker because it is not continuously informed by live system evidence
 - Harness becomes a surface over disconnected signals rather than a trustworthy execution cockpit
 
-With it:
+When active:
 
 - DomainSpec becomes a self-correcting execution system
 - objective changes can influence execution order through real signals
@@ -98,11 +150,11 @@ With it:
 
 These tasks make Saturn measurable, enforceable, and operational.
 
-## Why Saturn Is on the Critical Path
+## Critical-Path Status
 
 Saturn is not a secondary reporting feature. It is the mechanism that makes DomainSpec adaptive in real operation.
 
-That is why the plan treats Saturn-related tasks as critical:
+The implementation plan treats Saturn-related tasks as critical because:
 
 - they unlock trustworthy governance enforcement
 - they make telemetry decision-relevant
@@ -128,13 +180,13 @@ Saturn makes those surfaces trustworthy by continuously generating the signals a
 
 In this plan, Saturn is paired with ADLC convergence because both require explicit evidence, controlled closure, and measurable progress.
 
-Saturn answers:
+Saturn addresses:
 
-- is the system staying aligned in operation?
+- operational alignment in live execution
 
-ADLC convergence answers:
+ADLC convergence addresses:
 
-- are the required implementation gaps being closed with evidence?
+- evidence-backed closure of required implementation gaps
 
 Together they create the current execution profile: `saturn-l-adlc-convergence`.
 

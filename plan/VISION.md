@@ -1,12 +1,12 @@
 # Implementation Vision
 
-## North Star
+## Program Objective
 
 Build a governance-first implementation system where humans and agents share one domain map, one execution queue, and one enforceable quality boundary.
 
-## Why This Exists
+## Purpose
 
-The project must do three things at the same time:
+The implementation program must satisfy three simultaneous requirements:
 
 1. Transfer domain knowledge clearly to humans.
 2. Execute implementation tasks through orchestrated agents.
@@ -98,7 +98,7 @@ Primary tasks:
 
 ## Saturn L-System Critical Path
 
-Canonical definition and importance:
+Canonical references:
 
 - [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md)
 - [../DRIFT-CONVERGENCE.md](../DRIFT-CONVERGENCE.md)
@@ -116,7 +116,7 @@ Execution order for Saturn completion:
 
 Each completed task must improve at least one of these project-level outcomes:
 
-- Faster understanding of domain and workflow intent.
+- Reduced time required to understand domain and workflow intent.
 - Better prioritization and owner decision quality.
 - Lower governance drift and clearer accountability.
 - Higher reliability of agent execution and telemetry.

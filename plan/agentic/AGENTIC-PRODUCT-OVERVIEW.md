@@ -1,10 +1,10 @@
 # Agentic Product Overview
 
-## One-Line Positioning
+## Summary
 
 Agentic is the orchestration intelligence of DomainSpec: it turns user intent into explicit execution paths, selected capabilities, and governed adaptation.
 
-## What Problem Agentic Solves
+## Problem Scope
 
 - Users do not know which specialized flow to run.
 - Similar intents produce inconsistent execution paths.
@@ -44,22 +44,22 @@ Agentic is the orchestration intelligence of DomainSpec: it turns user intent in
 - Re-derives impacted artifacts with controlled sequencing.
 - Adds auditability for amendment rationale and effects.
 
-## Who It Is For
+## Primary Stakeholders
 
 - Teams that need reliable AI orchestration across heterogeneous tasks.
 - Product and engineering leads who need transparent routing and capability governance.
 - Platform owners who need reusable agent and skill assets.
 
-## Why It Matters for the Whole System
+## System Role
 
-Agentic is the system's coordination engine:
+Agentic provides coordination across context, infrastructure, governance, and Harness surfaces:
 
 - It consumes context priorities and objective constraints.
 - It executes on infrastructure runtime and telemetry contracts.
 - It feeds governance with decision trace and mutation evidence.
 - It enables Harness to display understandable human-facing execution flow.
 
-Without Agentic, DomainSpec remains structured but operationally manual.
+If absent, DomainSpec remains documented and structured but depends on manual execution coordination.
 
 ## Success Signals
 
@@ -68,6 +68,6 @@ Without Agentic, DomainSpec remains structured but operationally manual.
 - Reuse of shared skills increases while duplication declines.
 - Mutation adoption occurs only through governed pass criteria.
 
-## Pitch Summary (Short)
+## Condensed Summary
 
-Agentic transforms DomainSpec from static documentation into executable intelligence. It routes intent, composes capabilities, and evolves safely under governance, enabling scalable, explainable automation.
+Agentic routes intent, composes capabilities, and constrains adaptation through governance.

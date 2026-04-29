@@ -1,10 +1,10 @@
 # Context Product Overview
 
-## One-Line Positioning
+## Summary
 
 Context is the strategic control layer of DomainSpec: it decides what matters now, why it matters, and how execution priority changes as reality changes.
 
-## What Problem Context Solves
+## Problem Scope
 
 - Teams execute tasks without clear objective hierarchy.
 - Priority queues drift from business intent.
@@ -31,21 +31,21 @@ Context is the strategic control layer of DomainSpec: it decides what matters no
 - Connects vision to execution artifacts and outcomes.
 - Makes stale or drifting initiatives visible.
 
-## Who It Is For
+## Primary Stakeholders
 
 - Project owners who need objective-grounded prioritization.
 - Stakeholders who need visibility from strategy to delivery.
 - Delivery leads who need clear owner, status, and blocker context.
 
-## Why It Matters for the Whole System
+## System Role
 
-Context is the system's prioritization brain:
+Context provides system-level prioritization control:
 
 - It defines which infrastructure and governance work is urgent.
 - It determines when harness investments should be accelerated or deferred.
 - It provides the decision frame used by agentic orchestration.
 
-Without Context, every other layer can work technically while still moving in the wrong direction.
+If absent, technical execution can continue while work drifts from active objectives.
 
 ## Success Signals
 
@@ -53,6 +53,6 @@ Without Context, every other layer can work technically while still moving in th
 - Priority shifts when objectives or blocker states change.
 - Initiative-to-outcome trace is available without manual reconstruction.
 
-## Pitch Summary (Short)
+## Condensed Summary
 
-Context turns DomainSpec from a task collection into a strategy execution system. It continuously aligns priorities, ownership, and evidence so delivery stays tied to objective value.
+Context aligns priorities, ownership, and evidence so execution remains tied to objective value.

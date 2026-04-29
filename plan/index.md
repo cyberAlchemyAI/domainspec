@@ -2,17 +2,17 @@
 
 This plan is implementation focused.
 
-Core orientation artifacts:
+Core reference artifacts:
 
 - [../AUTHORITY-MAP.md](../AUTHORITY-MAP.md) - canonical source map for major system pieces and document precedence.
 - [../DRIFT-CONVERGENCE.md](../DRIFT-CONVERGENCE.md) - canonical operational definition of drift, convergence, and related control surfaces.
-- [VISION.md](VISION.md) - north star and layer model for the implementation program.
+- [VISION.md](VISION.md) - reference layer model for the implementation program.
 - [TRACEABILITY.md](TRACEABILITY.md) - explicit mapping from task -> problem solved -> project contribution -> ADLC alignment.
-- [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md) - canonical definition of Saturn L-system, why it is critical, and which tasks make it operational.
-- [DOMAINSPEC-UNIFIED-PRODUCT-VISION.md](DOMAINSPEC-UNIFIED-PRODUCT-VISION.md) - unified product narrative across all system contexts and value-chain sequence.
-- [DOMAINSPEC-PITCH-SCRIPTS.md](DOMAINSPEC-PITCH-SCRIPTS.md) - ready-to-use 60-second, 3-minute, and 10-minute speaking scripts.
+- [SATURN-L-SYSTEM.md](SATURN-L-SYSTEM.md) - canonical definition of Saturn L-system and the tasks that make it operational.
+- [DOMAINSPEC-UNIFIED-PRODUCT-VISION.md](DOMAINSPEC-UNIFIED-PRODUCT-VISION.md) - reference narrative across system contexts and causal sequence.
+- [DOMAINSPEC-PITCH-SCRIPTS.md](DOMAINSPEC-PITCH-SCRIPTS.md) - speaking-script reference for 60-second, 3-minute, and 10-minute presentations.
 
-Layer product overviews:
+Layer overview artifacts:
 
 - [context/CONTEXT-PRODUCT-OVERVIEW.md](context/CONTEXT-PRODUCT-OVERVIEW.md)
 - [infra/INFRA-PRODUCT-OVERVIEW.md](infra/INFRA-PRODUCT-OVERVIEW.md)
@@ -20,9 +20,9 @@ Layer product overviews:
 - [governance/GOVERNANCE-PRODUCT-OVERVIEW.md](governance/GOVERNANCE-PRODUCT-OVERVIEW.md)
 - [harness/HARNESS-PRODUCT-OVERVIEW.md](harness/HARNESS-PRODUCT-OVERVIEW.md)
 
-## Start Here (Initial Organization Workflow Entrypoint)
+## Initial Organization Sequence
 
-Use this index as the operational entrypoint for organizing implementation work from day 0.
+Use this index as the implementation-program entrypoint for organizing work.
 
 ### Step 1 - Set Context and Ownership
 

@@ -1,10 +1,10 @@
 # Infrastructure Product Overview
 
-## One-Line Positioning
+## Summary
 
 Infrastructure is the execution substrate of DomainSpec: it runs every request through reliable runtime paths, captures operational evidence, and closes governance loops in CI.
 
-## What Problem Infrastructure Solves
+## Problem Scope
 
 - Runtime behavior differs by environment and breaks consistency.
 - Telemetry is partial, making governance decisions blind.
@@ -37,21 +37,21 @@ Infrastructure is the execution substrate of DomainSpec: it runs every request t
 - Verifies SSH and repository hardening controls.
 - Produces rerunnable security evidence.
 
-## Who It Is For
+## Primary Stakeholders
 
 - Platform and engineering leads who need deterministic runtime behavior.
 - Governance owners who require trustworthy telemetry and policy feedback loops.
 - Delivery teams who depend on stable, auditable execution.
 
-## Why It Matters for the Whole System
+## System Role
 
-Infrastructure is the system's operational backbone:
+Infrastructure provides the operational substrate required by orchestration, governance, and Harness surfaces:
 
 - Agentic orchestration depends on INF-01 for consistent execution routing.
 - Governance depends on INF-02 and INF-03 for measurable policy enforcement.
 - Harness depends on telemetry completeness for role-aware metrics and decision cues.
 
-Without Infrastructure, higher layers become opinionated dashboards over unreliable signals.
+If absent, higher layers lose reliable runtime evidence and operational control.
 
 ## Success Signals
 
@@ -60,6 +60,6 @@ Without Infrastructure, higher layers become opinionated dashboards over unrelia
 - Threshold breaches produce governed actions with auditable outcomes.
 - Security checks remain closed with reproducible evidence.
 
-## Pitch Summary (Short)
+## Condensed Summary
 
-Infrastructure gives DomainSpec execution integrity: one runtime path, one telemetry contract, one governance loop, and one security baseline. It is the prerequisite for trustworthy automation at scale.
+Infrastructure standardizes runtime execution, telemetry, governance feedback loops, and security evidence.
