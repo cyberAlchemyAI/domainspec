@@ -1,0 +1,1 @@
+specialization/generalization how to create signals from any agentic system that will create metrics for generic governance renforced loop.
