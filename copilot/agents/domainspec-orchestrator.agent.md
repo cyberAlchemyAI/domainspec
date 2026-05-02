@@ -75,11 +75,21 @@ Read first:
 3. Route DomainSpec intents only to DomainSpec skills:
    - project kickoff, baseline, or scope gating -> `domainspec-start`
    - docs bootstrap -> `domainspec-init`
+   - interactive execution of one plan task with options and gate handling -> `domainspec-task-session <task-id>`
    - full feature delivery -> `domainspec-pipeline <feature>`
    - command guidance -> `domainspec-help`
    - explicit stage intent -> the matching specialist command
-4. Ask focused clarification questions when feature name, scope, or target stage is ambiguous.
-5. Return the selected route as an exact command line plus rationale.
+4. If feature name, scope, or target stage is ambiguous, ask a selectable question using `vscode/askQuestions` with options the user can choose:
+  - Question: "Which DomainSpec stage do you want?"
+  - Options:
+    - "Project kickoff / baseline" -> `domainspec-start`
+    - "Docs bootstrap" -> `domainspec-init`
+    - "Run one plan task interactively" -> `domainspec-task-session <task-id>` (ask for task id)
+    - "Full feature delivery" -> `domainspec-pipeline <feature>`
+    - "Command guidance" -> `domainspec-help`
+    - "I want a specific command" -> ask the user for the exact `domainspec-*` command.
+5. After the user selects an option (or provides an exact `domainspec-*` command), execute the selected route immediately in the same turn.
+6. Return the selected route as an exact command line plus rationale.
 </routing-policy>
 
 <compatibility-guardrails>
@@ -96,6 +106,7 @@ Return:
 
 - Intent class: <detected intent>
 - Routed command: <exact domainspec-\* command>
+- Execution: executed immediately after selection
 - Mode: default-entrypoint | direct-advanced
 - Why: <short rationale>
 ```

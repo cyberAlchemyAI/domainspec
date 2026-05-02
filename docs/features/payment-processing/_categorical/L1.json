@@ -1,0 +1,488 @@
+{
+  "feature": "payment-processing",
+  "source_commit": "dea952a96154b0989bfa556affe215cbe4a57622",
+  "objects": [
+    {
+      "id": "payment.PaymentTransaction",
+      "meta_type": "Entity",
+      "anchor": "docs/features/payment-processing/domain.md#paymenttransaction",
+      "fields": [
+        { "name": "id", "type_ref": "TransactionId", "required": true },
+        { "name": "amount", "type_ref": "shared.Money", "required": true },
+        { "name": "fee", "type_ref": "shared.Money", "required": true },
+        { "name": "totalCharged", "type_ref": "shared.Money", "required": true },
+        { "name": "method", "type_ref": "payment.PaymentMethod", "required": true },
+        { "name": "status", "type_ref": "payment.PaymentStatus", "required": true },
+        { "name": "orderId", "type_ref": "OrderId", "required": true },
+        { "name": "userId", "type_ref": "UserId", "required": true },
+        { "name": "gatewayRef", "type_ref": "string", "required": false },
+        { "name": "retryCount", "type_ref": "integer", "required": true },
+        { "name": "refundedAmount", "type_ref": "shared.Money", "required": false },
+        { "name": "createdAt", "type_ref": "DateTime", "required": true },
+        { "name": "updatedAt", "type_ref": "DateTime", "required": true }
+      ],
+      "invariants": [
+        "status == Completed -> gatewayRef != null",
+        "refundedAmount <= amount",
+        "retryCount <= maxRetries",
+        "status in {Failed, Refunded, RefundFailed} -> no transitions",
+        "status != Created -> fee != null",
+        "createdAt is immutable across transitions"
+      ]
+    },
+    {
+      "id": "shared.Money",
+      "meta_type": "ValueObject",
+      "anchor": "docs/shared/money.md#money",
+      "external": true,
+      "fields": [
+        { "name": "amount", "type_ref": "Decimal", "required": true },
+        { "name": "currency", "type_ref": "CurrencyCode", "required": true }
+      ],
+      "invariants": [
+        "amount > 0",
+        "amount has max 2 decimal places",
+        "currency is ISO 4217"
+      ]
+    },
+    {
+      "id": "payment.PaymentMethod",
+      "meta_type": "Enum",
+      "anchor": "docs/features/payment-processing/domain.md#paymentmethod",
+      "values": ["CREDIT_CARD", "BANK_TRANSFER", "WALLET"]
+    },
+    {
+      "id": "payment.PaymentStatus",
+      "meta_type": "StateMachine",
+      "anchor": "docs/features/payment-processing/states.md#paymentstatus",
+      "states": [
+        { "name": "Created", "terminal": false },
+        { "name": "Processing", "terminal": false },
+        { "name": "Completed", "terminal": false },
+        { "name": "Failed", "terminal": true },
+        { "name": "FailedRetryable", "terminal": false },
+        { "name": "Refunding", "terminal": false },
+        { "name": "Refunded", "terminal": true },
+        { "name": "RefundFailed", "terminal": true }
+      ],
+      "invariants": [
+        "I1: status == Completed -> gatewayRef != null",
+        "I2: refundedAmount <= amount",
+        "I3: retryCount <= maxRetries",
+        "I4: status in {Failed, Refunded, RefundFailed} -> no transitions",
+        "I5: status != Created -> fee != null",
+        "I6: createdAt is immutable"
+      ]
+    },
+    {
+      "id": "payment.ProcessPayment",
+      "meta_type": "Operation",
+      "anchor": "docs/features/payment-processing/operations.md#processpayment",
+      "actor": "Authenticated User",
+      "rules_inline": ["R1", "R2", "R3", "R4", "R5"],
+      "calculations_inline": ["C1", "C2"],
+      "state_transition": "PaymentTransaction: [new] -> Created -> Processing"
+    },
+    {
+      "id": "payment.RefundPayment",
+      "meta_type": "Operation",
+      "anchor": "docs/features/payment-processing/operations.md#refundpayment",
+      "actor": "Admin or System",
+      "rules_inline": ["R6", "R7", "R8"],
+      "calculations_inline": ["C3"],
+      "state_transition": "PaymentTransaction: Completed -> Refunding"
+    },
+    {
+      "id": "payment.RetryPayment",
+      "meta_type": "Operation",
+      "anchor": "docs/features/payment-processing/operations.md#retrypayment",
+      "actor": "System",
+      "rules_inline": ["R9", "R10"],
+      "state_transition": "PaymentTransaction: FailedRetryable -> Processing"
+    },
+    {
+      "id": "payment.FeeCalculation",
+      "meta_type": "Calculation",
+      "anchor": "docs/features/payment-processing/operations.md#feecalculation",
+      "formula": "fee = max(amount * rate(method), minimumFee(method))",
+      "properties": [
+        "fee >= 0",
+        "fee <= amount",
+        "deterministic"
+      ]
+    },
+    {
+      "id": "payment.MaxAmountRule",
+      "meta_type": "Rule",
+      "anchor": "docs/features/payment-processing/operations.md#processpayment",
+      "formal": "amount.value <= 10000"
+    },
+    {
+      "id": "payment.MethodAvailabilityRule",
+      "meta_type": "Rule",
+      "anchor": "docs/features/payment-processing/operations.md#processpayment",
+      "formal": "method in enabledMethods(user.country)"
+    },
+    {
+      "id": "payment.RetryPolicy",
+      "meta_type": "Policy",
+      "anchor": "docs/features/payment-processing/SPEC.md#concepts",
+      "applies_to": "payment.RetryPayment",
+      "logic": "Decides retry timing and max attempts"
+    },
+    {
+      "id": "payment.PaymentInitiated",
+      "meta_type": "Event",
+      "anchor": "docs/features/payment-processing/events.md#paymentinitiated",
+      "fields": [
+        { "name": "transactionId", "type_ref": "TransactionId", "required": true },
+        { "name": "amount", "type_ref": "shared.Money", "required": true },
+        { "name": "fee", "type_ref": "shared.Money", "required": true },
+        { "name": "method", "type_ref": "payment.PaymentMethod", "required": true },
+        { "name": "orderId", "type_ref": "OrderId", "required": true },
+        { "name": "userId", "type_ref": "UserId", "required": true },
+        { "name": "timestamp", "type_ref": "DateTime", "required": true }
+      ]
+    },
+    {
+      "id": "payment.PaymentCompleted",
+      "meta_type": "Event",
+      "anchor": "docs/features/payment-processing/events.md#paymentcompleted",
+      "fields": [
+        { "name": "transactionId", "type_ref": "TransactionId", "required": true },
+        { "name": "amount", "type_ref": "shared.Money", "required": true },
+        { "name": "fee", "type_ref": "shared.Money", "required": true },
+        { "name": "totalCharged", "type_ref": "shared.Money", "required": true },
+        { "name": "gatewayRef", "type_ref": "string", "required": true },
+        { "name": "orderId", "type_ref": "OrderId", "required": true },
+        { "name": "timestamp", "type_ref": "DateTime", "required": true }
+      ]
+    },
+    {
+      "id": "payment.PaymentFailed",
+      "meta_type": "Event",
+      "anchor": "docs/features/payment-processing/events.md#paymentfailed",
+      "fields": [
+        { "name": "transactionId", "type_ref": "TransactionId", "required": true },
+        { "name": "amount", "type_ref": "shared.Money", "required": true },
+        { "name": "reason", "type_ref": "string", "required": true },
+        { "name": "errorCode", "type_ref": "payment.PaymentErrorCode", "required": true },
+        { "name": "orderId", "type_ref": "OrderId", "required": true },
+        { "name": "retryCount", "type_ref": "integer", "required": true },
+        { "name": "timestamp", "type_ref": "DateTime", "required": true }
+      ]
+    },
+    {
+      "id": "payment.RefundCompleted",
+      "meta_type": "Event",
+      "anchor": "docs/features/payment-processing/events.md#refundcompleted",
+      "fields": [
+        { "name": "transactionId", "type_ref": "TransactionId", "required": true },
+        { "name": "refundAmount", "type_ref": "shared.Money", "required": true },
+        { "name": "totalRefunded", "type_ref": "shared.Money", "required": true },
+        { "name": "reason", "type_ref": "string", "required": true },
+        { "name": "orderId", "type_ref": "OrderId", "required": true },
+        { "name": "timestamp", "type_ref": "DateTime", "required": true }
+      ]
+    },
+    {
+      "id": "payment.GetPaymentStatus",
+      "meta_type": "Query",
+      "anchor": "docs/features/payment-processing/queries.md#getpaymentstatus",
+      "actor": "Authenticated User (owner) or Admin",
+      "reads_from": ["payment.PaymentTransaction"]
+    },
+    {
+      "id": "payment.GetPaymentHistory",
+      "meta_type": "Query",
+      "anchor": "docs/features/payment-processing/queries.md#getpaymenthistory",
+      "actor": "Authenticated User or Admin",
+      "reads_from": ["payment.PaymentTransaction"]
+    },
+    {
+      "id": "payment.PaymentAPI",
+      "meta_type": "Interface",
+      "anchor": "docs/features/payment-processing/interfaces.md#external-payment-api-rest",
+      "interface_type": "External REST",
+      "endpoints": [
+        "POST /payments",
+        "POST /payments/{id}/refund",
+        "GET /payments/{id}",
+        "GET /payments"
+      ]
+    },
+    {
+      "id": "payment.PaymentModule",
+      "meta_type": "Interface",
+      "anchor": "docs/features/payment-processing/interfaces.md#internal-paymentmodule-interface",
+      "interface_type": "Internal Module",
+      "methods": [
+        "processPayment(input)",
+        "refundPayment(input)",
+        "getPaymentStatus(txId)",
+        "getPaymentHistory(filters)"
+      ]
+    },
+    {
+      "id": "payment.RequestToTransaction",
+      "meta_type": "Mapping",
+      "anchor": "docs/features/payment-processing/mappings.md#requesttotransaction",
+      "direction": "inbound",
+      "from": "REST API Request (POST /payments)",
+      "to": "payment.PaymentTransaction"
+    },
+    {
+      "id": "payment.TransactionToResponse",
+      "meta_type": "Mapping",
+      "anchor": "docs/features/payment-processing/mappings.md#transactiontoresponse",
+      "direction": "outbound",
+      "from": "payment.PaymentTransaction",
+      "to": "REST API Response"
+    }
+  ],
+  "morphisms": [
+    {
+      "id": "payment.ProcessPayment::produces::PaymentInitiated",
+      "source": "payment.ProcessPayment",
+      "target": "payment.PaymentInitiated",
+      "rel_type": "produces",
+      "anchor": "docs/features/payment-processing/operations.md#processpayment",
+      "evidence": "ProcessPayment postcondition: 'payment.PaymentInitiated event emitted'"
+    },
+    {
+      "id": "payment.MaxAmountRule::enforces::ProcessPayment",
+      "source": "payment.MaxAmountRule",
+      "target": "payment.ProcessPayment",
+      "rel_type": "enforces",
+      "anchor": "docs/features/payment-processing/operations.md#processpayment",
+      "evidence": "Rule R2 (MaxAmountRule) listed in ProcessPayment Rules table; registry confirms enforces edge"
+    },
+    {
+      "id": "payment.MethodAvailabilityRule::enforces::ProcessPayment",
+      "source": "payment.MethodAvailabilityRule",
+      "target": "payment.ProcessPayment",
+      "rel_type": "enforces",
+      "anchor": "docs/features/payment-processing/operations.md#processpayment",
+      "evidence": "Rule R3 (MethodAvailabilityRule) listed in ProcessPayment Rules table; registry confirms enforces edge"
+    },
+    {
+      "id": "payment.FeeCalculation::calculates::ProcessPayment",
+      "source": "payment.FeeCalculation",
+      "target": "payment.ProcessPayment",
+      "rel_type": "calculates",
+      "anchor": "docs/features/payment-processing/operations.md#feecalculation",
+      "evidence": "FeeCalculation 'Used by: ProcessPayment (C1)'"
+    },
+    {
+      "id": "payment.RetryPolicy::applies::RetryPayment",
+      "source": "payment.RetryPolicy",
+      "target": "payment.RetryPayment",
+      "rel_type": "applies",
+      "anchor": "docs/features/payment-processing/SPEC.md#concepts",
+      "evidence": "RetryPolicy 'Decides retry timing and max attempts' for RetryPayment; registry confirms applies edge"
+    },
+    {
+      "id": "payment.PaymentInitiated::transitions::PaymentStatus",
+      "source": "payment.PaymentInitiated",
+      "target": "payment.PaymentStatus",
+      "rel_type": "transitions",
+      "anchor": "docs/features/payment-processing/events.md#paymentinitiated",
+      "evidence": "PaymentInitiated 'Triggers transition: Created -> Processing'"
+    },
+    {
+      "id": "payment.PaymentCompleted::transitions::PaymentStatus",
+      "source": "payment.PaymentCompleted",
+      "target": "payment.PaymentStatus",
+      "rel_type": "transitions",
+      "anchor": "docs/features/payment-processing/events.md#paymentcompleted",
+      "evidence": "PaymentCompleted 'Triggers transition: Processing -> Completed'"
+    },
+    {
+      "id": "payment.PaymentFailed::transitions::PaymentStatus",
+      "source": "payment.PaymentFailed",
+      "target": "payment.PaymentStatus",
+      "rel_type": "transitions",
+      "anchor": "docs/features/payment-processing/events.md#paymentfailed",
+      "evidence": "PaymentFailed 'Triggers transition: Processing -> Failed or FailedRetryable -> Failed'"
+    },
+    {
+      "id": "payment.RefundCompleted::transitions::PaymentStatus",
+      "source": "payment.RefundCompleted",
+      "target": "payment.PaymentStatus",
+      "rel_type": "transitions",
+      "anchor": "docs/features/payment-processing/events.md#refundcompleted",
+      "evidence": "RefundCompleted 'Triggers transition: Refunding -> Refunded'"
+    },
+    {
+      "id": "payment.PaymentAPI::exposes::ProcessPayment",
+      "source": "payment.PaymentAPI",
+      "target": "payment.ProcessPayment",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#post-payments",
+      "evidence": "POST /payments 'Exposes: ProcessPayment'"
+    },
+    {
+      "id": "payment.PaymentAPI::exposes::RefundPayment",
+      "source": "payment.PaymentAPI",
+      "target": "payment.RefundPayment",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#post-paymentsidrefund",
+      "evidence": "POST /payments/{id}/refund 'Exposes: RefundPayment'"
+    },
+    {
+      "id": "payment.PaymentAPI::exposes::GetPaymentStatus",
+      "source": "payment.PaymentAPI",
+      "target": "payment.GetPaymentStatus",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#get-paymentsid",
+      "evidence": "GET /payments/{id} 'Exposes: GetPaymentStatus'"
+    },
+    {
+      "id": "payment.PaymentAPI::exposes::GetPaymentHistory",
+      "source": "payment.PaymentAPI",
+      "target": "payment.GetPaymentHistory",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#get-payments",
+      "evidence": "GET /payments 'Exposes: GetPaymentHistory'"
+    },
+    {
+      "id": "payment.PaymentModule::exposes::ProcessPayment",
+      "source": "payment.PaymentModule",
+      "target": "payment.ProcessPayment",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#internal-paymentmodule-interface",
+      "evidence": "PaymentModule.processPayment 'Maps To: ProcessPayment'"
+    },
+    {
+      "id": "payment.PaymentModule::exposes::RefundPayment",
+      "source": "payment.PaymentModule",
+      "target": "payment.RefundPayment",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#internal-paymentmodule-interface",
+      "evidence": "PaymentModule.refundPayment 'Maps To: RefundPayment'"
+    },
+    {
+      "id": "payment.PaymentModule::exposes::GetPaymentStatus",
+      "source": "payment.PaymentModule",
+      "target": "payment.GetPaymentStatus",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#internal-paymentmodule-interface",
+      "evidence": "PaymentModule.getPaymentStatus 'Maps To: GetPaymentStatus'"
+    },
+    {
+      "id": "payment.PaymentModule::exposes::GetPaymentHistory",
+      "source": "payment.PaymentModule",
+      "target": "payment.GetPaymentHistory",
+      "rel_type": "exposes",
+      "anchor": "docs/features/payment-processing/interfaces.md#internal-paymentmodule-interface",
+      "evidence": "PaymentModule.getPaymentHistory 'Maps To: GetPaymentHistory'"
+    },
+    {
+      "id": "payment.RequestToTransaction::maps::PaymentTransaction",
+      "source": "payment.RequestToTransaction",
+      "target": "payment.PaymentTransaction",
+      "rel_type": "maps",
+      "anchor": "docs/features/payment-processing/mappings.md#requesttotransaction",
+      "evidence": "RequestToTransaction 'To: PaymentTransaction Entity (initial creation)'"
+    },
+    {
+      "id": "payment.TransactionToResponse::maps::PaymentTransaction",
+      "source": "payment.TransactionToResponse",
+      "target": "payment.PaymentTransaction",
+      "rel_type": "maps",
+      "anchor": "docs/features/payment-processing/mappings.md#transactiontoresponse",
+      "evidence": "TransactionToResponse 'From: PaymentTransaction Entity'"
+    },
+    {
+      "id": "payment.PaymentTransaction::contains::Money(amount)",
+      "source": "payment.PaymentTransaction",
+      "target": "shared.Money",
+      "rel_type": "contains",
+      "anchor": "docs/features/payment-processing/domain.md#paymenttransaction",
+      "evidence": "PaymentTransaction.amount: Money (field table)"
+    },
+    {
+      "id": "payment.GetPaymentStatus::queries::PaymentTransaction",
+      "source": "payment.GetPaymentStatus",
+      "target": "payment.PaymentTransaction",
+      "rel_type": "queries",
+      "anchor": "docs/features/payment-processing/queries.md#getpaymentstatus",
+      "evidence": "GetPaymentStatus 'Reads From: PaymentTransaction'"
+    },
+    {
+      "id": "payment.GetPaymentHistory::queries::PaymentTransaction",
+      "source": "payment.GetPaymentHistory",
+      "target": "payment.PaymentTransaction",
+      "rel_type": "queries",
+      "anchor": "docs/features/payment-processing/queries.md#getpaymenthistory",
+      "evidence": "GetPaymentHistory 'Reads From: PaymentTransaction'"
+    },
+    {
+      "id": "payment.PaymentTransaction::emits::PaymentInitiated",
+      "source": "payment.PaymentTransaction",
+      "target": "payment.PaymentInitiated",
+      "rel_type": "emits",
+      "anchor": "docs/registry.md#concept-graph",
+      "evidence": "Registry concept graph: payment.PaymentTransaction emits payment.PaymentInitiated"
+    },
+    {
+      "id": "payment.PaymentTransaction::emits::PaymentCompleted",
+      "source": "payment.PaymentTransaction",
+      "target": "payment.PaymentCompleted",
+      "rel_type": "emits",
+      "anchor": "docs/registry.md#concept-graph",
+      "evidence": "Registry concept graph: payment.PaymentTransaction emits payment.PaymentCompleted"
+    },
+    {
+      "id": "payment.PaymentTransaction::emits::PaymentFailed",
+      "source": "payment.PaymentTransaction",
+      "target": "payment.PaymentFailed",
+      "rel_type": "emits",
+      "anchor": "docs/registry.md#concept-graph",
+      "evidence": "Registry concept graph: payment.PaymentTransaction emits payment.PaymentFailed"
+    },
+    {
+      "id": "payment.PaymentTransaction::emits::RefundCompleted",
+      "source": "payment.PaymentTransaction",
+      "target": "payment.RefundCompleted",
+      "rel_type": "emits",
+      "anchor": "docs/registry.md#concept-graph",
+      "evidence": "Registry concept graph: payment.PaymentTransaction emits payment.RefundCompleted"
+    }
+  ],
+  "composition": [
+    {
+      "id": "payment.ProcessPayment::produces+transitions::PaymentStatus",
+      "of": [
+        "payment.ProcessPayment::produces::PaymentInitiated",
+        "payment.PaymentInitiated::transitions::PaymentStatus"
+      ],
+      "evidence": "ProcessPayment produces PaymentInitiated, which transitions PaymentStatus (Created -> Processing)"
+    },
+    {
+      "id": "payment.PaymentAPI::exposes+queries::PaymentTransaction(via-GetPaymentStatus)",
+      "of": [
+        "payment.PaymentAPI::exposes::GetPaymentStatus",
+        "payment.GetPaymentStatus::queries::PaymentTransaction"
+      ],
+      "evidence": "GET /payments/{id} -> GetPaymentStatus -> PaymentTransaction"
+    },
+    {
+      "id": "payment.PaymentAPI::exposes+queries::PaymentTransaction(via-GetPaymentHistory)",
+      "of": [
+        "payment.PaymentAPI::exposes::GetPaymentHistory",
+        "payment.GetPaymentHistory::queries::PaymentTransaction"
+      ],
+      "evidence": "GET /payments -> GetPaymentHistory -> PaymentTransaction"
+    },
+    {
+      "id": "payment.PaymentTransaction::emits+transitions::PaymentStatus(via-PaymentInitiated)",
+      "of": [
+        "payment.PaymentTransaction::emits::PaymentInitiated",
+        "payment.PaymentInitiated::transitions::PaymentStatus"
+      ],
+      "evidence": "PaymentTransaction emits PaymentInitiated which transitions its own PaymentStatus state machine"
+    }
+  ],
+  "identities_implicit": true
+}
