@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário — Swiss Minimalism</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --text-secondary: #555555;
+    --text-muted: #999999;
+    --border: #e0e0e0;
+    --border-light: #f0f0f0;
+    --accent: #d92b2b;
+    --accent-subtle: rgba(217, 43, 43, 0.06);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+
+  /* === MASTHEAD === */
+  .masthead {
+    padding: 48px 0 20px;
+    border-bottom: 3px solid var(--text);
+  }
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .masthead-title {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .masthead-date {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+  .masthead-sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* === STATS === */
+  .stats {
+    display: flex;
+    gap: 32px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .stat-value { font-weight: 700; color: var(--text); }
+
+  /* === GRID === */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+    padding-top: 32px;
+  }
+
+  /* === STORIES === */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .story {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .story:last-of-type { border-bottom: none; }
+
+  .story-priority {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+  }
+  .story.p0 .story-priority,
+  .story.p1 .story-priority { color: var(--accent); }
+
+  .story-headline {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .story.p0 .story-headline { font-size: 28px; }
+
+  .story-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+  .story-body code {
+    font-size: 12px;
+    background: var(--border-light);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-family: 'SF Mono', Monaco, monospace;
+  }
+
+  .story-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    align-items: center;
+  }
+  .story-meta .tag {
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  /* === SIDEBAR === */
+  .sidebar-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .sidebar-item:last-child { border-bottom: none; }
+  .sidebar-item-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+  .sidebar-item-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .dot-high { background: var(--accent); }
+  .dot-med { background: var(--text-muted); }
+  .dot-low { background: var(--border); }
+
+  /* === DOMAIN SUMMARY === */
+  .domain-section { margin-top: 28px; }
+  .domain-item {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .domain-item:last-child { border-bottom: none; }
+  .domain-item-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .domain-item-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* === ARCHIVE === */
+  .archive {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 3px solid var(--text);
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-top: 12px;
+    max-width: 240px;
+  }
+  .cal-header {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    padding-bottom: 4px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-radius: 2px;
+    font-weight: 400;
+  }
+  .cal-day.empty { visibility: hidden; }
+  .cal-day.has-edition {
+    background: var(--text);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .cal-day.has-edition:hover { background: var(--accent); }
+  .cal-day.today { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .footer {
+    padding: 32px 0;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="masthead">
+      <div class="masthead-top">
+        <div class="masthead-title">O Grafo Diário</div>
+        <div class="masthead-date">24 de Março de 2026<br>Segunda-feira · Edição #001</div>
+      </div>
+      <div class="masthead-sub">Boletim Epistemológico do Vault</div>
+    </header>
+
+    <div class="stats">
+      <div><span class="stat-value">25</span> sessões</div>
+      <div><span class="stat-value">12</span> decisões</div>
+      <div><span class="stat-value">8</span> specs</div>
+      <div><span class="stat-value">0</span> contradições</div>
+      <div><span class="stat-value">3</span> promovidos</div>
+    </div>
+
+    <main class="grid">
+      <div>
+        <div class="section-label">Primeira Página</div>
+
+        <article class="story p1">
+          <div class="story-priority">P1 · Mudança Fundacional</div>
+          <h2 class="story-headline">Biblioteconomia Integrada à Constituição do Vault</h2>
+          <p class="story-body">
+            A classificação facetada de Ranganathan (1933) foi formalmente reconhecida como o quarto pilar intelectual do sistema, ao lado de Zettelkasten, Evergreen Notes e Epistemologia Bayesiana. A convergência entre os axiomas de ortogonalidade (AX-ONT-2) e a ciência da informação de 95 anos foi documentada.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#ontology</span>
+            <span class="tag">#vault</span>
+            <span>Importância: 8/10</span>
+          </div>
+        </article>
+
+        <article class="story p2">
+          <div class="story-priority">P2 · Alta Importância</div>
+          <h2 class="story-headline">Pipeline de Migração CCB: Scaffolding Completo</h2>
+          <p class="story-body">
+            A migração lift-and-shift do pipeline de validação CCB do domínio <code>aquisicao</code> para <code>documents_validation</code> progrediu com scaffolding completo da estrutura de domínio, relocação de serviços e use cases, e atualização de referências.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#ccb</span>
+            <span class="tag">#migration</span>
+            <span>Importância: 7/10</span>
+          </div>
+        </article>
+
+        <article class="story p3">
+          <div class="story-priority">P3 · Direção Estratégica</div>
+          <h2 class="story-headline">O Grafo Diário: Discovery do Jornal Interno</h2>
+          <p class="story-body">
+            Iniciada a exploração conceitual de um serviço de jornal diário que sintetiza atividade do vault. Identidade, critérios de relevância, naming e estética foram definidos antes de qualquer implementação.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#ontology</span>
+            <span>Importância: 6/10</span>
+          </div>
+        </article>
+
+        <article class="story p2">
+          <div class="story-priority">P2 · Alta Importância</div>
+          <h2 class="story-headline">Kit Matching: Quality Gate Refinado</h2>
+          <p class="story-body">
+            Implementada gate de qualidade stricta para o counter <code>documents_matched</code> no bulk import — documentos CCB agora exigem match de contrato no banco além da extração de campos obrigatórios.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#pipeline</span>
+            <span>Importância: 7/10</span>
+          </div>
+        </article>
+      </div>
+
+      <aside class="sidebar">
+        <div class="section-label">Abaixo da Dobra</div>
+
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-med"></span>Ontology Visualization Corrigido</div>
+          <div class="sidebar-item-meta">Imp. 5 · Restaurado após reestruturação</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-med"></span>CCB Spec Audit</div>
+          <div class="sidebar-item-meta">Imp. 5 · Auditoria das specs de validação</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-med"></span>Document Merge: Edge Cases</div>
+          <div class="sidebar-item-meta">Imp. 5 · Edge cases na fusão</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-low"></span>Deferred Save Merge Plan</div>
+          <div class="sidebar-item-meta">Imp. 4 · Merge com save diferido</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-low"></span>Document Merge Implementation</div>
+          <div class="sidebar-item-meta">Imp. 4 · Implementação do merge</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-low"></span>Migration Test Safety Net</div>
+          <div class="sidebar-item-meta">Imp. 3 · Cobertura de teste</div>
+        </div>
+
+        <div class="domain-section">
+          <div class="section-label">Por Domínio</div>
+          <div class="domain-item">
+            <div class="domain-item-title">Ontologia & Vault</div>
+            <div class="domain-item-meta">4 sessões · Constituição, governance, newspaper</div>
+          </div>
+          <div class="domain-item">
+            <div class="domain-item-title">CCB & Migration</div>
+            <div class="domain-item-meta">8 sessões · Scaffolding, lift-and-shift</div>
+          </div>
+          <div class="domain-item">
+            <div class="domain-item-title">Pipeline & Quality</div>
+            <div class="domain-item-meta">6 sessões · Quality gate, merge fixes</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <section class="archive">
+      <div class="section-label">Arquivo · Março 2026</div>
+      <div class="calendar-grid">
+        <div class="cal-header">S</div><div class="cal-header">T</div><div class="cal-header">Q</div><div class="cal-header">Q</div><div class="cal-header">S</div><div class="cal-header">S</div><div class="cal-header">D</div>
+        <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day">1</div>
+        <div class="cal-day has-edition">2</div><div class="cal-day has-edition">3</div><div class="cal-day has-edition">4</div><div class="cal-day has-edition">5</div><div class="cal-day has-edition">6</div><div class="cal-day has-edition">7</div><div class="cal-day">8</div>
+        <div class="cal-day has-edition">9</div><div class="cal-day has-edition">10</div><div class="cal-day has-edition">11</div><div class="cal-day has-edition">12</div><div class="cal-day has-edition">13</div><div class="cal-day has-edition">14</div><div class="cal-day">15</div>
+        <div class="cal-day has-edition">16</div><div class="cal-day has-edition">17</div><div class="cal-day has-edition">18</div><div class="cal-day has-edition">19</div><div class="cal-day has-edition">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+        <div class="cal-day has-edition">23</div><div class="cal-day has-edition today">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+        <div class="cal-day">30</div><div class="cal-day">31</div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      O Grafo Diário · Edição #001 · Gerado automaticamente a partir do Knowledge Graph do ZefraHub
+    </footer>
+  </div>
+
+</body>
+</html>

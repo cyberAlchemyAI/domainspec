@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "date": "2026-04-11",
+    "generated_at": "2026-04-13T01:20:29.272023+00:00",
+    "editorial_vectors": {
+      "form": "narrative",
+      "tone": "clinical",
+      "structure": "hierarchical"
+    },
+    "stats": {
+      "sessions": 9,
+      "decisions": 6,
+      "spec_changes": 7
+    }
+  },
+  "articles": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      "type": "architectural_decision",
+      "tag": "Ontology | Pipeline",
+      "title": "Ontology Extraction Pipeline V2 Goes Live, Automating Code-to-Knowledge-Graph Translation",
+      "body": "<p><strong>The system can now automatically read business concepts directly from the codebase and persist them as a queryable knowledge graph, making our architecture self-documenting.</strong> Four sessions culminated in a fully operational V2 extraction pipeline, which ran end-to-end to process 141 concepts into domain-specific <code>spec.yaml</code> files and persist 207 embeddings into the database. This is underpinned by a critical architectural decision: the <code>spec.yaml</code> files are always generated from code tags and dictionaries, never maintained by hand, ensuring the graph is a direct reflection of reality. This unlocks the next layer of agent capabilities, enabling semantic search and direct code-base analysis, and formally deprecates the old <code>ontology-registry.json</code> system.</p>",
+      "meta": {
+        "impact": 9.2,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/constitution/domain-tagging-constitution.md",
+          "docs/vault/axiom/ontology-axioms.md"
+        ]
+      }
+    },
+    {
+      "id": "b2c3d4e5-f6a7-8901-2345-67890abcdef1",
+      "type": "risk_alert",
+      "tag": "Risk | Concurrency",
+      "title": "Audit Uncovers Critical Concurrency Gaps; Data Corruption Path Open in Production Code",
+      "body": "<p><strong>A test audit identified four critical, untested execution paths in production code that create a direct risk of data corruption, specifically duplicating financial records or emitting double events.</strong> The gaps center on Celery task redelivery and concurrent database writes (<code>select_for_update</code>) during the remessa approval lifecycle. An event that causes a task to be re-run could bypass idempotency checks, leading to severe financial reconciliation failures. <strong>This is a high-priority risk requiring immediate implementation of integration tests to cover these concurrency scenarios before the related feature branch is merged.</strong> A separate red test suite in the semantic index (5 failures) should also be treated as a release gate.</p>",
+      "meta": {
+        "impact": 8.5,
+        "risk": "high",
+        "source_files": [
+          "docs/vault/domain/aquisicao-liquidacao/context-installment-upload.md",
+          "docs/vault/constitution/development-practices-constitution.md"
+        ]
+      }
+    },
+    {
+      "id": "c3d4e5f6-a7b8-9012-3456-7890abcdef12",
+      "type": "progress",
+      "tag": "Ontology | Foundation",
+      "title": "Foundational Domain Tagging Pass Completed, Making the Entire Codebase Semantically Legible",
+      "body": "<p><strong>The entire codebase is now mapped to the business ontology, providing the essential raw data for the new V2 extraction pipeline.</strong> This session executed the first full-codebase tagging plan, adding 64 new <code>@biz</code> and <code>@sys</code> tags across all five business domains and infrastructure code. Before this, large sections of the system were effectively dark to automated analysis. <strong>This work transforms the codebase from opaque source files into a structured, machine-readable asset, a non-negotiable prerequisite for all current and future knowledge graph capabilities.</strong></p>",
+      "meta": {
+        "impact": 7.8,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/constitution/domain-tagging-constitution.md",
+          "docs/vault/dictionary-business.md"
+        ]
+      }
+    },
+    {
+      "id": "d4e5f6a7-b8c9-0123-4567-890abcdef123",
+      "type": "progress",
+      "tag": "Acquisition | Testing",
+      "title": "Remessa Test Suites Stabilized, Unblocking Core Financial Operations Feature Path",
+      "body": "<p><strong>A series of failing frontend and backend tests that were blocking the `remessa` implementation plan have been resolved, turning the entire suite green.</strong> The session addressed a range of issues from migration wiring and test-contract drift to an environment-specific failure in the Vitest runner related to `globalThis.crypto`. <strong>The immediate business result is that development and validation of core acquisition and liquidation features can now proceed without impediment, removing a key blocker from the critical path.</strong></p>",
+      "meta": {
+        "impact": 6.5,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/domain/aquisicao-liquidacao/architecture-installment-upload.md",
+          "docs/vault/constitution/frontend-constitution.md"
+        ]
+      }
+    },
+    {
+      "id": "e5f6a7b8-c9d0-1234-5678-90abcdef1234",
+      "type": "decision",
+      "tag": "Operations | Performance",
+      "title": "Unusable 'Check Status' Page Restored via Gunicorn and Query Optimization",
+      "body": "<p><strong>The previously non-functional 'Check Status' page is now fully operational for developers, with load times reduced from over 100 seconds to under 3 seconds.</strong> An investigation revealed the root cause was not a token or CORS issue as previously suspected, but a misconfigured development server (<code>docker-compose.dev.yml</code>) running Gunicorn with a single synchronous worker thread, causing requests to time out under minimal load. <strong>This fix restores a key operational view for monitoring contract status in the development environment.</strong></p>",
+      "meta": {
+        "impact": 4.5,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/constitution/development-practices-constitution.md"
+        ]
+      }
+    }
+  ]
+}

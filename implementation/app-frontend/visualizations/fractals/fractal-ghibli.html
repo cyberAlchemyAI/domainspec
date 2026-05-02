@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fractal Ghibli — Explorador Infinito</title>
+<style>
+:root {
+  --bg:      #0c0c14;
+  --panel:   #13131e;
+  --border:  #252538;
+  --bh:      #3a3a58;
+  --accent:  #c8a96e;
+  --aglow:   rgba(200,169,110,0.20);
+  --text:    #e8e0d0;
+  --muted:   #666688;
+  --tt-bg:   rgba(6,6,14,0.97);
+  --r:       8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Canvas fills available space ───────────── */
+#wrap {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+  background: #000;
+}
+#wrap.grabbing { cursor: grabbing; }
+#wrap.diving   { cursor: none; }
+#fractal {
+  display: block;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* ── HUD ────────────────────────────────────── */
+.hud {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+
+#wrap.diving {
+  cursor: crosshair;
+}
+
+#hud-tl {
+  top: 12px; left: 12px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+
+#hud-tr {
+  top: 12px; right: 12px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+}
+
+.pill {
+  background: rgba(8,8,18,0.82);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 11px;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.pill em { color: var(--accent); font-style: normal; font-weight: 700; }
+
+#hint-box {
+  background: rgba(8,8,18,0.75);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 7px 12px;
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.7;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+#hint-box strong { display: block; color: var(--accent); margin-bottom: 1px; }
+#hint-box.hidden { opacity: 0; }
+
+body.diving-ui .hud,
+body.diving-ui #dive-overlay,
+body.diving-ui #spinner,
+body.diving-ui #prec,
+body.diving-ui #perf-panel {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Hidden HUD layers keep paying for backdrop-filter even at opacity:0 in
+   most engines. Drop it during dive so the compositor stops blurring
+   layers nobody can see. */
+body.diving-ui .pill,
+body.diving-ui #hint-box,
+body.diving-ui #dive-label,
+body.diving-ui #spinner,
+body.diving-ui #prec,
+body.diving-ui #perf-panel {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ── Dive overlay ────────────────────────────── */
+#dive-overlay {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+#dive-overlay.on { opacity: 1; }
+#dive-label {
+  background: rgba(8,8,18,0.78);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  backdrop-filter: blur(6px);
+  animation: dive-pulse 2.5s ease-in-out infinite;
+}
+@keyframes dive-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+#dive-depth {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* ── Loading spinner ──────────────────────────── */
+#spinner {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(8,8,18,0.72);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 7px 16px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+  backdrop-filter: blur(4px);
+}
+#spinner.on { opacity: 1; }
+
+.ring {
+  width: 15px; height: 15px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Precision alert ────────────────────────── */
+#prec {
+  position: absolute;
+  bottom: 10px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(140,60,20,0.88);
+  border: 1px solid #c06020;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.7rem;
+  color: #ffddb0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+}
+#prec.on { opacity: 1; }
+
+/* ── Performance probe (hidden unless ?perf=1 or P) ────── */
+#perf-panel {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  min-width: 190px;
+  background: rgba(6,6,14,0.88);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 10px;
+  font: 0.66rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--muted);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+#perf-panel.on {
+  opacity: 1;
+  transform: translateY(0);
+}
+#perf-panel strong {
+  display: block;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+#perf-panel em {
+  color: var(--text);
+  font-style: normal;
+}
+
+/* ── Controls bar ───────────────────────────── */
+#bar {
+  flex-shrink: 0;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  padding: 12px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+body.diving-ui #bar {
+  height: 0;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Slider groups */
+.params {
+  display: flex;
+  gap: 18px;
+  flex: 1;
+  min-width: 240px;
+  flex-wrap: wrap;
+}
+
+.pg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 90px;
+}
+
+.pl {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.pn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: help;
+  user-select: none;
+}
+
+.pv {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pr {
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 6px var(--aglow);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.35); }
+input[type=range]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+/* Themes */
+.themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tb {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.tb:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+.tb.on { border-color: rgba(255,255,255,0.75); }
+
+.t-tot { background: linear-gradient(130deg,#2d5a3d,#87c4a0); }
+.t-chi { background: linear-gradient(130deg,#7a2600,#e89830); }
+.t-mon { background: linear-gradient(130deg,#1a2e1a,#8b2020); }
+.t-how { background: linear-gradient(130deg,#100a2e,#8044d4); }
+.t-nau { background: linear-gradient(130deg,#0a1e3c,#5aafd4); }
+
+/* Extras */
+.extras {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--muted);
+  font-size: 0.72rem;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: border-color 0.14s, color 0.14s, background 0.14s, box-shadow 0.14s;
+  white-space: nowrap;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+#btn-param-travel.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--aglow);
+}
+
+/* Dive button active state */
+#btn-dive.diving {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--aglow);
+  box-shadow: 0 0 10px var(--aglow);
+  animation: btn-dive-pulse 1.8s ease-in-out infinite;
+}
+@keyframes btn-dive-pulse {
+  0%, 100% { box-shadow: 0 0 6px var(--aglow); }
+  50%       { box-shadow: 0 0 18px rgba(200,169,110,0.5); }
+}
+
+.note {
+  font-size: 0.62rem;
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.6;
+}
+
+/* ── Tooltips (CSS-only) ──────────────────────── */
+[data-tip] { position: relative; }
+[data-tip]::before {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tt-bg);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  padding: 7px 11px;
+  border-radius: 6px;
+  white-space: pre-line;
+  max-width: 210px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s;
+  z-index: 300;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.75);
+}
+[data-tip]:hover::before { opacity: 1; }
+
+/* ── Audio reactivity row ───────────────────── */
+.audio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  border-top: 1px dashed var(--border);
+  padding-top: 10px;
+  margin-top: 4px;
+}
+.audio-pick {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.audio-pick label.btn {
+  display: inline-block;
+  cursor: pointer;
+}
+.audio-pick input[type=file] {
+  display: none;
+}
+.audio-pick audio {
+  height: 28px;
+  filter: invert(0.9) hue-rotate(180deg);
+}
+.audio-bands {
+  display: flex;
+  gap: 14px;
+  flex: 1;
+  min-width: 240px;
+  flex-wrap: wrap;
+}
+.audio-bands .pg { min-width: 86px; }
+.audio-bands .pn { font-size: 0.72rem; }
+.audio-bands .pv { font-size: 0.66rem; }
+.audio-bands .pr { font-size: 0.55rem; }
+
+/* ── AudioScene: ambient peripheral elements ────────────────
+   All four ambient layers live inside #wrap and stay below the HUD's
+   z-index so the focal canvas + HUD remain on top. They render with
+   pointer-events: none so they never steal interaction. */
+
+/* BackgroundHaze — soft palette wash behind the fractal canvas. */
+#bg-haze {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center,
+    var(--haze-color, rgba(200,169,110,0.85)) 0%,
+    transparent 65%);
+  opacity: 0;            /* driven by AudioScene; idle = invisible */
+  mix-blend-mode: screen;
+  z-index: 1;
+  transition: none;       /* JS owns the per-frame opacity envelope */
+}
+
+/* Vignette — radial darkening that pulses on bass. */
+#vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center,
+    transparent 45%,
+    rgba(0,0,0,0.85) 110%);
+  opacity: 0;
+  z-index: 3;
+}
+
+/* AmbientCanvas — second canvas overlay for edge particles. */
+#ambient-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  display: block;
+  /* Cap the *effective* opacity of the particle layer per the design
+     principle: ambient elements stay ≤ 40% to keep the fractal focal. */
+  opacity: 0.4;
+}
+
+/* HUDGlow — applied to existing HUD readouts via class toggle.
+   Drop-shadow + blur intensity come from CSS variables driven by JS. */
+#hud-tr.audio-glow .pill {
+  filter: drop-shadow(0 0 var(--hud-glow-radius, 0px) var(--hud-glow-color, rgba(200,169,110,0.6)));
+  transition: none;
+}
+#hud-tr.audio-glow .pill em {
+  text-shadow: 0 0 var(--hud-glow-radius, 0px) var(--hud-glow-color, rgba(200,169,110,0.85));
+}
+
+/* Camera shake target — applied to #wrap. JS toggles a `--shake-x` /
+   `--shake-y` pair via inline style; resets to 0 on idle. */
+#wrap.audio-shake #fractal,
+#wrap.audio-shake #ambient-canvas,
+#wrap.audio-shake #vignette,
+#wrap.audio-shake #bg-haze {
+  transform: translate(var(--shake-x, 0px), var(--shake-y, 0px));
+}
+
+/* While diving, AudioScene freezes — fade ambient layers out within
+   ~200 ms so they don't compete with the dive (SPEC AC #31). */
+body.diving-ui #bg-haze,
+body.diving-ui #vignette,
+body.diving-ui #ambient-canvas {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease-out;
+}
+
+/* Master ambient intensity slider lives in the audio bands strip. */
+.audio-bands .pg.ambient-master .pn { color: var(--accent); }
+.audio-bands .pg.ambient-master .pr { color: var(--accent); opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<!-- ── Canvas ──────────────────────────────── -->
+<div id="wrap">
+  <!-- BackgroundHaze (z=1) sits behind the fractal canvas (z=2 by default).
+       Pulses with RMS energy; idle opacity is 0. -->
+  <div id="bg-haze"></div>
+
+  <canvas id="fractal"></canvas>
+
+  <!-- Vignette (z=3) sits above the fractal but below the ambient particles.
+       Radial darkening that pulses with bass. -->
+  <div id="vignette"></div>
+
+  <!-- AmbientCanvas (z=4) — particle layer overlay. Fixed pool, capped count. -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Top-left: title + hint -->
+  <div class="hud" id="hud-tl">
+    <div id="hint-box">
+      <strong>Conjunto de Julia &nbsp;·&nbsp; Explorador Infinito</strong>
+      Scroll = zoom &nbsp;|&nbsp; Drag = navegar<br>
+      Simetria 180° ao redor de (0, 0)
+    </div>
+  </div>
+
+  <!-- Top-right: zoom + coordinates -->
+  <div class="hud" id="hud-tr">
+    <div class="pill"
+         data-tip="Zoom atual relativo à vista inicial.\n10K× significa 10.000 vezes mais próximo."
+    >zoom &nbsp;<em id="z-val">1×</em></div>
+    <div class="pill"
+         data-tip="Centro da vista no plano complexo.\n(0 + 0i) é o centro de simetria do fractal."
+    >c = <em id="c-val">0.000 + 0.000i</em></div>
+    <div class="pill"
+         data-tip="Iterações reais usadas neste frame.\nAumenta automaticamente com zoom mais profundo."
+    >iter &nbsp;<em id="i-val">160</em></div>
+  </div>
+
+  <!-- Dive overlay -->
+  <div id="dive-overlay">
+    <div id="dive-label">▼ &nbsp;MERGULHANDO</div>
+    <div id="dive-depth"></div>
+  </div>
+
+  <!-- Loading -->
+  <div id="spinner"><div class="ring"></div>Calculando…</div>
+
+  <!-- Precision warning -->
+  <div id="prec">
+    ⚠ Limite de precisão de ponto flutuante — pixels podem aparecer blocados
+  </div>
+
+  <!-- Optional performance probe: add ?perf=1 or press P -->
+  <div id="perf-panel">
+    <strong>perf</strong>
+    <div>workers <em id="pf-workers">-</em></div>
+    <div>preview <em id="pf-preview">-</em></div>
+    <div>full <em id="pf-full">-</em></div>
+    <div>commit <em id="pf-commit">-</em></div>
+    <div>drops/5s <em id="pf-drops">0</em></div>
+  </div>
+</div>
+
+<!-- ── Controls bar ──────────────────────── -->
+<div id="bar">
+
+  <div class="params">
+
+    <div class="pg">
+      <div class="pl">
+        <span class="pn"
+          data-tip="Espírito — ângulo θ da constante c = r·e^(iθ).\nMuda a 'personalidade' do fractal.\n270° = seahorse clássico · 0° = dendrito · 100° = espiral"
+        >Espírito</span>
+        <span class="pv" id="v-theta">270°</span>
+      </div>
+      <input type="range" id="sl-theta" min="0" max="360" step="1" value="270"
+             data-tip="Gira e transforma a forma do fractal.\nCada ângulo revela um personagem diferente.">
+      <span class="pr">ângulo θ de c &nbsp;·&nbsp; 0–360°</span>
+    </div>
+
+    <div class="pg">
+      <div class="pl">
+        <span class="pn"
+          data-tip="Profundidade — base de iterações por pixel.\nZoom profundo aumenta automaticamente para manter detalhes.\nValor real mostrado no HUD (iter)."
+        >Profundidade</span>
+        <span class="pv" id="v-iter">160</span>
+      </div>
+      <input type="range" id="sl-iter" min="50" max="600" step="5" value="160"
+             data-tip="Define a riqueza de detalhe.\nMaior = mais lento mas mais nítido.">
+      <span class="pr">iterações base &nbsp;·&nbsp; 50–600</span>
+    </div>
+
+    <div class="pg">
+      <div class="pl">
+        <span class="pn"
+          data-tip="Essência — raio r de c = r·e^(iθ).\n0.0 = círculo perfeito (trivial)\n~0.75 = fractal conectado e orgânico\n> 1.0 = fragmentado e caótico"
+        >Essência</span>
+        <span class="pv" id="v-radius">0.76</span>
+      </div>
+      <input type="range" id="sl-radius" min="0" max="150" step="1" value="76"
+             data-tip="Controla o 'peso' da constante c.\n0.7–1.0 dá as formas mais ricas.">
+      <span class="pr">raio r de c &nbsp;·&nbsp; 0.0–1.5</span>
+    </div>
+
+    <div class="pg">
+      <div class="pl">
+        <span class="pn"
+          data-tip="Velocidade da queda automática.\nBaixo = contemplativo · alto = queda agressiva.\nPode ser alterada enquanto mergulha."
+        >Queda</span>
+        <span class="pv" id="v-speed">1.0×</span>
+      </div>
+      <input type="range" id="sl-speed" min="20" max="400" step="5" value="100"
+             data-tip="Controla o multiplicador de zoom por frame durante o mergulho.">
+      <span class="pr">velocidade do mergulho &nbsp;·&nbsp; 0.2–4.0×</span>
+    </div>
+
+  </div>
+
+  <div class="themes">
+    <button class="tb t-tot on" data-theme="totoro"
+            data-tip="Totoro — verdes de floresta\nMeu Vizinho Totoro (1988)">Totoro</button>
+    <button class="tb t-chi" data-theme="spiritedaway"
+            data-tip="Spirited Away — ouro de lanterna\nA Viagem de Chihiro (2001)">Chihiro</button>
+    <button class="tb t-mon" data-theme="mononoke"
+            data-tip="Mononoke — floresta e sangue\nPrincess Mononoke (1997)">Mononoke</button>
+    <button class="tb t-how" data-theme="howl"
+            data-tip="Howl — índigo e violeta arcano\nO Castelo Animado (2004)">Howl</button>
+    <button class="tb t-nau" data-theme="nausicaa"
+            data-tip="Nausicaä — azul-céu e vento cerúleo\nNausicaä do Vale do Vento (1984)">Nausicaä</button>
+  </div>
+
+  <div class="extras">
+    <button class="btn" id="btn-param-travel"
+            data-tip="Enquanto mergulha, anima θ e r suavemente pelo espaço de parâmetros.\nUse antes de iniciar a queda.\nAtalho: A">✦ Variar função</button>
+    <button class="btn" id="btn-dive"
+            data-tip="Queda infinita no fractal.\nProcura uma borda visual e cai em direção a ela.\nPressione novamente para parar.">▼ Mergulhar</button>
+    <button class="btn" id="btn-reset"
+            data-tip="Volta ao centro (0,0) e zoom inicial.\nBom ponto de partida para explorar.">↺ Resetar Vista</button>
+    <div class="note">
+      scroll = zoom &nbsp;·&nbsp; drag = navegar<br>
+      pinch = zoom (touch)
+    </div>
+  </div>
+
+  <!-- Audio reactivity (opt-in) -->
+  <div class="audio">
+    <div class="audio-pick">
+      <label class="btn" for="audio-file"
+             data-tip="Carregue um arquivo de áudio (mp3, wav, ogg, m4a).\nO espectro modula θ, raio, iterações e queda.">♪ Áudio</label>
+      <input id="audio-file" type="file" accept="audio/*">
+      <audio id="audio-player" controls preload="none"></audio>
+      <button class="btn" id="audio-stop"
+              data-tip="Para a reprodução e libera o AudioContext.">■ Parar áudio</button>
+    </div>
+    <div class="audio-bands">
+      <div class="pg">
+        <div class="pl">
+          <span class="pn" data-tip="Sub-grave (20–150 Hz). Modula a velocidade de queda durante o mergulho.">SubGrave</span>
+          <span class="pv" id="v-sens-subbass">100%</span>
+        </div>
+        <input type="range" id="sl-sens-subbass" min="0" max="100" step="1" value="100"
+               data-tip="Sensibilidade da banda sub-grave.">
+        <span class="pr">→ Queda</span>
+      </div>
+      <div class="pg">
+        <div class="pl">
+          <span class="pn" data-tip="Grave (150–500 Hz). Modula o raio (essência) ao redor de 0.76.">Grave</span>
+          <span class="pv" id="v-sens-bass">100%</span>
+        </div>
+        <input type="range" id="sl-sens-bass" min="0" max="100" step="1" value="100"
+               data-tip="Sensibilidade da banda grave.">
+        <span class="pr">→ Essência</span>
+      </div>
+      <div class="pg">
+        <div class="pl">
+          <span class="pn" data-tip="Médio (500–2000 Hz). Modula o ângulo θ (espírito) ao redor de 270°.">Médio</span>
+          <span class="pv" id="v-sens-mid">100%</span>
+        </div>
+        <input type="range" id="sl-sens-mid" min="0" max="100" step="1" value="100"
+               data-tip="Sensibilidade da banda média.">
+        <span class="pr">→ Espírito</span>
+      </div>
+      <div class="pg">
+        <div class="pl">
+          <span class="pn" data-tip="Agudo (2–8 kHz). Modula a profundidade de iterações.">Agudo</span>
+          <span class="pv" id="v-sens-treble">100%</span>
+        </div>
+        <input type="range" id="sl-sens-treble" min="0" max="100" step="1" value="100"
+               data-tip="Sensibilidade da banda aguda.">
+        <span class="pr">→ Profundidade</span>
+      </div>
+      <div class="pg ambient-master">
+        <div class="pl">
+          <span class="pn" data-tip="Cena ambiente — escala vinheta, brilho do HUD, névoa, balanço de câmera e partículas de borda.\n0% = só o fractal · 100% = cena cheia.">Ambiente</span>
+          <span class="pv" id="v-ambient">60%</span>
+        </div>
+        <input type="range" id="sl-ambient" min="0" max="100" step="1" value="60"
+               data-tip="Intensidade global da cena ambiente (todos os elementos periféricos).">
+        <span class="pr">→ Cena (vinheta · partículas · névoa)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Worker source lives inside the main <script> below (function -> Blob URL).
+     This eliminates a duplicate textContent copy in the DOM. -->
+
+<!-- ── App ──────────────────────────────────── -->
+<script>
+// ─── Palettes ─────────────────────────────────────────────
+var PAL = {
+  totoro: [
+    [8,20,12],[20,55,30],[45,105,60],[80,160,95],
+    [160,210,140],[220,245,190],[245,230,160],[200,155,80],[130,80,40],[55,35,20]
+  ],
+  spiritedaway: [
+    [10,5,2],[55,15,3],[120,35,8],[190,75,15],
+    [230,135,40],[248,205,85],[252,240,155],[248,200,120],[200,130,55],[120,60,20]
+  ],
+  mononoke: [
+    [4,8,4],[15,35,18],[35,75,40],[70,55,25],
+    [120,35,25],[180,45,35],[220,95,55],[240,200,120],[180,145,85],[90,70,40]
+  ],
+  howl: [
+    [5,3,18],[18,8,55],[42,18,105],[80,30,170],
+    [140,55,210],[200,110,240],[230,175,255],[210,230,255],[140,175,240],[70,95,180]
+  ],
+  nausicaa: [
+    [3,10,28],[8,35,80],[18,80,150],[40,135,205],
+    [85,190,235],[160,225,248],[220,245,255],[200,235,210],[140,195,170],[70,130,120]
+  ]
+};
+
+// ─── Worker kernel (function form; deduped via toString) ──
+// Stripe-based: each worker computes rows [y0, y1).
+// Output buffers are sized by main (full-res or preview-res) and ping-ponged
+// via transferable ArrayBuffer to eliminate per-frame allocations.
+// Palette is a flat Uint8Array of (stops+1)*3 bytes (index-based reads
+// are faster than nested-array reads in the hot loop).
+//
+// Two kernels live here. At zoom < PERT_ZOOM the worker runs the raw
+// Julia iteration (bit-exact to the pre-perturbation behavior). Above
+// PERT_ZOOM main thread ships a high-precision reference orbit and the
+// worker iterates per-pixel deltas e_{n+1} = 2·Z_n·e_n + e_n², which
+// pushes the visible precision wall from ~1e13× to ~1e30×.
+function workerFn() {
+  // xs[] depends only on (W, cx, zoom, step, mode). Cache per-worker so
+  // the preview→full pair (and back-to-back dive frames at the same
+  // zoom) skip the precompute.
+  var cMode = '', cW = -1, cCx = NaN, cZoom = NaN, cStep = -1;
+  var cXs = null;
+
+  self.onmessage = function(e) {
+    var d = e.data;
+    var W = d.width, H = d.height;
+    var y0 = d.y0, y1 = d.y1;
+    var cx = d.cx, cy = d.cy, zoom = d.zoom;
+    var maxIter = d.maxIter | 0;
+    var pal = d.palette, step = d.step, id = d.id, w = d.w;
+    var buf = d.buf;
+    var mode = d.mode || 'raw';
+
+    var cr = d.cr, ci = d.ci;
+    var ox = W / 2, oy = H / 2;
+    var inv = 1 / zoom;
+    var stops = (pal.length / 3) - 1;
+    var ESC2 = 65536;
+    var LOG2 = Math.LN2;
+
+    var sampleStep = (step === 1) ? 1 : step;
+    var gridW = (step === 1) ? W : Math.ceil(W / step);
+    var gy0   = (step === 1) ? y0 : (y0 / step) | 0;
+
+    // Precompute the per-pixel sample positions for this stripe. In raw
+    // mode these are absolute coords (cx + dx). In perturbation mode
+    // they are deltas from the reference center (just dx). Cache key
+    // includes mode so a transition between modes invalidates safely.
+    var xs;
+    if (cMode === mode && cW === W && cCx === cx && cZoom === zoom && cStep === sampleStep && cXs && cXs.length === gridW) {
+      xs = cXs;
+    } else {
+      xs = new Float64Array(gridW);
+      if (mode === 'pert') {
+        for (var i0 = 0; i0 < gridW; i0++) xs[i0] = (i0 * sampleStep - ox) * inv;
+      } else {
+        for (var i1 = 0; i1 < gridW; i1++) xs[i1] = cx + (i1 * sampleStep - ox) * inv;
+      }
+      cMode = mode; cW = W; cCx = cx; cZoom = zoom; cStep = sampleStep; cXs = xs;
+    }
+
+    if (mode === 'pert') {
+      var refR = d.refR, refI = d.refI, refLen = d.refLen | 0;
+      // Iterate per-pixel deltas relative to the reference orbit.
+      // e_0 = (dx, dy), then e_{n+1} = 2·Z_n·e_n + e_n²; the actual
+      // orbit at iter n is a = Z_n + e_n, escape when |a| > escape.
+      for (var py = y0, gy = gy0; py < y1; py += sampleStep, gy++) {
+        if (py >= H) break;
+        var dy = (py - oy) * inv;
+        var rowBase = (step === 1) ? (py - y0) * W * 4 : (gy - gy0) * gridW * 4;
+        for (var ix = 0; ix < gridW; ix++) {
+          var er = xs[ix];
+          var ei = dy;
+          var n = 0;
+          var ar = 0, ai = 0;
+          while (n < refLen) {
+            var Zr = refR[n], Zi = refI[n];
+            ar = Zr + er; ai = Zi + ei;
+            if (ar*ar + ai*ai > ESC2) break;
+            // e_{n+1} = 2·Z·e + e²
+            var t1 = 2 * (Zr * er - Zi * ei);
+            var t2 = 2 * (Zr * ei + Zi * er);
+            var e2r = er * er - ei * ei;
+            var e2i = 2 * er * ei;
+            er = t1 + e2r;
+            ei = t2 + e2i;
+            n++;
+          }
+          var R, G, B;
+          if (n >= refLen) {
+            R = pal[0]; G = pal[1]; B = pal[2];
+          } else {
+            var mod2 = ar * ar + ai * ai;
+            var nu = Math.log(Math.log(mod2) * 0.5 / LOG2) / LOG2;
+            var smooth = n + 1 - nu;
+            var t = (smooth / maxIter * 2) % 1;
+            var pos = t * stops;
+            var lo = pos | 0, hi = Math.min(lo + 1, stops), f = pos - lo;
+            var inv_f = 1 - f;
+            var loB = lo * 3, hiB = hi * 3;
+            R = (pal[loB]   * inv_f + pal[hiB]   * f) | 0;
+            G = (pal[loB+1] * inv_f + pal[hiB+1] * f) | 0;
+            B = (pal[loB+2] * inv_f + pal[hiB+2] * f) | 0;
+          }
+          var off = rowBase + ix * 4;
+          buf[off] = R; buf[off+1] = G; buf[off+2] = B; buf[off+3] = 255;
+        }
+      }
+    } else {
+      // Raw kernel — bit-exact to pre-DD behavior at low zoom.
+      for (var py2 = y0, gy2 = gy0; py2 < y1; py2 += sampleStep, gy2++) {
+        if (py2 >= H) break;
+        var im0 = cy + (py2 - oy) * inv;
+        var rowBaseR = (step === 1) ? (py2 - y0) * W * 4 : (gy2 - gy0) * gridW * 4;
+        for (var ix2 = 0; ix2 < gridW; ix2++) {
+          var zr = xs[ix2];
+          var zi = im0;
+          var nR = 0;
+          while (nR < maxIter) {
+            var zr2 = zr * zr, zi2 = zi * zi;
+            if (zr2 + zi2 > ESC2) break;
+            zi = 2 * zr * zi + ci;
+            zr = zr2 - zi2 + cr;
+            nR++;
+          }
+          var Rr, Gg, Bb;
+          if (nR === maxIter) {
+            Rr = pal[0]; Gg = pal[1]; Bb = pal[2];
+          } else {
+            var mod2r = zr * zr + zi * zi;
+            var nur = Math.log(Math.log(mod2r) * 0.5 / LOG2) / LOG2;
+            var smoothr = nR + 1 - nur;
+            var tr = (smoothr / maxIter * 2) % 1;
+            var posr = tr * stops;
+            var lor = posr | 0, hir = Math.min(lor + 1, stops), fr = posr - lor;
+            var inv_fr = 1 - fr;
+            var loBr = lor * 3, hiBr = hir * 3;
+            Rr = (pal[loBr]   * inv_fr + pal[hiBr]   * fr) | 0;
+            Gg = (pal[loBr+1] * inv_fr + pal[hiBr+1] * fr) | 0;
+            Bb = (pal[loBr+2] * inv_fr + pal[hiBr+2] * fr) | 0;
+          }
+          var offR = rowBaseR + ix2 * 4;
+          buf[offR] = Rr; buf[offR+1] = Gg; buf[offR+2] = Bb; buf[offR+3] = 255;
+        }
+      }
+    }
+
+    self.postMessage({
+      id: id, step: step, w: w, y0: y0, y1: y1, buf: buf
+    }, [buf.buffer]);
+  };
+}
+
+// Single Blob URL shared by every worker in the pool.
+var _workerURL = URL.createObjectURL(
+  new Blob(['(' + workerFn.toString() + ')()'], {type: 'application/javascript'})
+);
+
+// ─── Reference orbit for perturbation rendering ───────────
+// Iterates Z_{n+1} = Z_n² + c in double-double precision, seeded with
+// the view center as Z_0 and the Julia constant c. Stores the F64
+// truncation of each iterate so workers can iterate per-pixel deltas
+// in plain F64. Halts early if |Z| would overflow F64 storage.
+function computeRefOrbit(cxH, cxL, cyH, cyL, cr, ci, maxIter) {
+  var refR = new Float64Array(maxIter + 1);
+  var refI = new Float64Array(maxIter + 1);
+  refR[0] = cxH; refI[0] = cyH;
+  var ZrH = cxH, ZrL = cxL, ZiH = cyH, ZiL = cyL;
+  var refLen = maxIter;
+  for (var n = 1; n <= maxIter; n++) {
+    var Zr2 = ddMul(ZrH, ZrL, ZrH, ZrL);
+    var Zi2 = ddMul(ZiH, ZiL, ZiH, ZiL);
+    var diff = ddSub(Zr2[0], Zr2[1], Zi2[0], Zi2[1]);
+    var ZrZi = ddMul(ZrH, ZrL, ZiH, ZiL);
+    var twoZrZi = ddMulD(ZrZi[0], ZrZi[1], 2);
+    var nextR = ddAddD(diff[0], diff[1], cr);
+    var nextI = ddAddD(twoZrZi[0], twoZrZi[1], ci);
+    ZrH = nextR[0]; ZrL = nextR[1];
+    ZiH = nextI[0]; ZiL = nextI[1];
+    refR[n] = ZrH; refI[n] = ZiH;
+    // Halt if reference itself blows up; F64 can't store much beyond
+    // 1e150 and the perturbation kernel needs valid Z_n values.
+    if (ZrH * ZrH + ZiH * ZiH > 1e60 || !isFinite(ZrH) || !isFinite(ZiH)) {
+      refLen = n;
+      break;
+    }
+  }
+  return { refR: refR, refI: refI, refLen: refLen };
+}
+
+// Flat Uint8Array form of every palette: indexing pal[i*3+ch] in the hot
+// loop is faster than the nested-array pal[i][ch] form, and the bytes are
+// identical so the kernel stays bit-exact.
+var PAL3 = {};
+(function buildFlatPalettes() {
+  var keys = Object.keys(PAL);
+  for (var k = 0; k < keys.length; k++) {
+    var src = PAL[keys[k]];
+    var flat = new Uint8Array(src.length * 3);
+    for (var i = 0; i < src.length; i++) {
+      flat[i*3]   = src[i][0];
+      flat[i*3+1] = src[i][1];
+      flat[i*3+2] = src[i][2];
+    }
+    PAL3[keys[k]] = flat;
+  }
+})();
+
+// ─── Double-double arithmetic ─────────────────────────────
+// A DD value is a pair (hi, lo) of Float64s with magnitudes ~16 orders
+// apart. Effective precision: ~32 decimal digits. Just enough to push
+// the dive precision wall from 1e13× (raw F64) to ~1e30× (DD center +
+// perturbation kernel).
+//
+// Refs: Hida/Li/Bailey (2001) error-free transforms. We only need the
+// add/sub/mul ops, all return [hi, lo] pairs. Allocation cost is fine
+// here because DD math runs only on the main thread (reference-orbit
+// loop runs maxIter≤1500 times per render, never per-pixel).
+function ddTwoSum(a, b) {
+  var s = a + b;
+  var bb = s - a;
+  return [s, (a - (s - bb)) + (b - bb)];
+}
+function ddQuickTwoSum(a, b) {
+  var s = a + b;
+  return [s, b - (s - a)];
+}
+function ddSplit(a) {
+  // 2^27 + 1 splitter for IEEE 754 double
+  var t = 134217729 * a;
+  var hi = t - (t - a);
+  return [hi, a - hi];
+}
+function ddTwoProd(a, b) {
+  var p = a * b;
+  var as = ddSplit(a), bs = ddSplit(b);
+  var err = ((as[0] * bs[0] - p) + as[0] * bs[1] + as[1] * bs[0]) + as[1] * bs[1];
+  return [p, err];
+}
+function ddAdd(aH, aL, bH, bL) {
+  var s = ddTwoSum(aH, bH);
+  var t = ddTwoSum(aL, bL);
+  var sH = s[0], sL = s[1] + t[0];
+  var r1 = ddQuickTwoSum(sH, sL);
+  var r2 = ddQuickTwoSum(r1[0], r1[1] + t[1]);
+  return [r2[0], r2[1]];
+}
+function ddSub(aH, aL, bH, bL) { return ddAdd(aH, aL, -bH, -bL); }
+function ddAddD(aH, aL, b) {
+  var s = ddTwoSum(aH, b);
+  var r = ddQuickTwoSum(s[0], s[1] + aL);
+  return [r[0], r[1]];
+}
+function ddMul(aH, aL, bH, bL) {
+  var p = ddTwoProd(aH, bH);
+  p[1] += aH * bL + aL * bH;
+  var r = ddQuickTwoSum(p[0], p[1]);
+  return [r[0], r[1]];
+}
+function ddMulD(aH, aL, b) {
+  var p = ddTwoProd(aH, b);
+  p[1] += aL * b;
+  var r = ddQuickTwoSum(p[0], p[1]);
+  return [r[0], r[1]];
+}
+
+// ─── Worker pool ──────────────────────────────────────────
+var STEP = 2; // preview block size — 2 for smooth dive quality
+var N_WORKERS = Math.max(1, Math.min(8, navigator.hardwareConcurrency || 4));
+var workers = [];
+var workerBusy = [];
+var stripes = [];        // {y0, y1} per worker
+var fullBufs = [];       // Uint8ClampedArray per worker (full-res stripe)
+var previewBufs = [];    // Uint8ClampedArray per worker (preview-res stripe)
+var poolW = 0, poolH = 0;
+
+var previewCanvas = null, previewCtx = null;
+
+// ─── DOM ──────────────────────────────────────────────────
+var canvas      = document.getElementById('fractal');
+var ctx         = canvas.getContext('2d');
+var wrap        = document.getElementById('wrap');
+var spinner     = document.getElementById('spinner');
+var precEl      = document.getElementById('prec');
+var zVal        = document.getElementById('z-val');
+var cVal        = document.getElementById('c-val');
+var iVal        = document.getElementById('i-val');
+var hintBox     = document.getElementById('hint-box');
+var diveOverlay = document.getElementById('dive-overlay');
+var diveDepth   = document.getElementById('dive-depth');
+var perfPanel   = document.getElementById('perf-panel');
+var pfWorkers   = document.getElementById('pf-workers');
+var pfPreview   = document.getElementById('pf-preview');
+var pfFull      = document.getElementById('pf-full');
+var pfCommit    = document.getElementById('pf-commit');
+var pfDrops     = document.getElementById('pf-drops');
+var btnParamTravel = document.getElementById('btn-param-travel');
+
+var slTheta  = document.getElementById('sl-theta');
+var slIter   = document.getElementById('sl-iter');
+var slRadius = document.getElementById('sl-radius');
+var slSpeed  = document.getElementById('sl-speed');
+var vTheta   = document.getElementById('v-theta');
+var vIter    = document.getElementById('v-iter');
+var vRadius  = document.getElementById('v-radius');
+var vSpeed   = document.getElementById('v-speed');
+
+// ─── View state ───────────────────────────────────────────
+var BASE_ZOOM = 160;
+// View center is stored as a DD pair (cxH+cxL, cyH+cyL). At low zoom
+// only cxH is consulted; at deep zoom the worker uses the perturbation
+// kernel and the full DD center seeds a high-precision reference orbit.
+var view = { cxH: 0, cxL: 0, cyH: 0, cyL: 0, zoom: BASE_ZOOM };
+// Perturbation kicks in once F64 pixel-coord precision starts to
+// matter. Below this threshold the worker uses the bit-exact raw Julia
+// kernel; above it, deltas relative to a DD reference orbit. The
+// transition is at ~6 orders below the F64 wall so any pixel drift is
+// visually undetectable.
+var PERT_ZOOM = 1e10;
+var theme = 'totoro';
+
+// ─── Render state ─────────────────────────────────────────
+var renderId    = 0;
+var rendering   = false;
+var pendingFull = false;
+var timer       = null;
+
+// ─── Dive / fall state ────────────────────────────────────
+var diving         = false;
+var diveRaf        = null;
+var diveZoomAtDraw = BASE_ZOOM; // zoom level when the currently-displayed frame was computed
+// Per-frame zoom multiplier. Tuned so the fall feels natural:
+//   1.010 ≈ 1% per frame → at 60 fps ≈ 1.8× per second
+//   Takes ~35 s from zoom=160 to the float-precision ceiling (~1e13)
+var DIVE_BASE_SPEED = 1.010;
+var DIVE_REDRAW_SCALE = 1.8; // redraw when zoom drifts this far from last render
+var diveTarget = null;
+var diveNeedsRedraw = false; // flag set by user interaction during dive
+var paramTravelEnabled = false;
+var paramTravelPhase = 0;
+var lastParamTravelAt = 0;
+
+// ─── Canvas size ──────────────────────────────────────────
+function resize() {
+  canvas.width  = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+
+// ─── Pixel → complex ──────────────────────────────────────
+// Returns the complex coordinate of a screen pixel as a DD pair.
+// `re`/`im` are the F64 shorthand (top half) for callers that don't
+// care about precision; `reH/reL/imH/imL` carry the full DD value.
+function p2c(px, py) {
+  var dx = (px - canvas.width  / 2) / view.zoom;
+  var dy = (py - canvas.height / 2) / view.zoom;
+  var re = ddAddD(view.cxH, view.cxL, dx);
+  var im = ddAddD(view.cyH, view.cyL, dy);
+  return { re: re[0], im: im[0], reH: re[0], reL: re[1], imH: im[0], imL: im[1] };
+}
+
+// ─── Auto max-iter: increases with log(zoom depth) ────────
+function autoIter() {
+  var base  = parseInt(slIter.value, 10);
+  var depth = Math.max(0, Math.log10(view.zoom / BASE_ZOOM));
+  return Math.min(1500, (base + 80 * depth) | 0);
+}
+
+// ─── Pool management ──────────────────────────────────────
+function ensureWorkers() {
+  if (workers.length === N_WORKERS) return;
+  for (var i = 0; i < N_WORKERS; i++) {
+    var wk = new Worker(_workerURL);
+    wk.onmessage = handleWorkerReply;
+    workers.push(wk);
+    workerBusy.push(false);
+  }
+}
+
+function rebuildPool() {
+  ensureWorkers();
+  var W = canvas.width, H = canvas.height;
+  // Stripe heights aligned to STEP so preview gridding works cleanly.
+  // Last stripe absorbs any leftover (still starts on a STEP boundary).
+  var perWorkerRaw = Math.floor(H / N_WORKERS / STEP) * STEP;
+  var perWorker = Math.max(STEP, perWorkerRaw);
+  stripes = [];
+  fullBufs = [];
+  previewBufs = [];
+  var y = 0;
+  for (var w = 0; w < N_WORKERS; w++) {
+    var y0 = y;
+    var y1 = (w === N_WORKERS - 1) ? H : Math.min(H, y0 + perWorker);
+    if (y0 >= H) { y0 = H; y1 = H; }
+    var sh = y1 - y0;
+    stripes.push({ y0: y0, y1: y1 });
+    fullBufs.push(new Uint8ClampedArray(W * sh * 4));
+    var pgw = Math.ceil(W / STEP);
+    var pgh = Math.ceil(sh / STEP);
+    previewBufs.push(new Uint8ClampedArray(pgw * pgh * 4));
+    y = y1;
+  }
+  poolW = W; poolH = H;
+
+  // Offscreen canvas at preview resolution for compositing step=4 frames.
+  var pgW = Math.ceil(W / STEP);
+  var pgH = Math.ceil(H / STEP);
+  if (!previewCanvas) {
+    previewCanvas = document.createElement('canvas');
+    previewCtx = previewCanvas.getContext('2d');
+  }
+  previewCanvas.width = pgW;
+  previewCanvas.height = pgH;
+  ctx.imageSmoothingEnabled = false;
+}
+
+// ─── Render dispatch ──────────────────────────────────────
+var pendingRender = null;
+var inFlightStep = 1;
+var batchStart = Object.create(null);
+var lastRafAt = 0;
+var rafDrops = [];
+var precisionLimitReported = false;
+
+// Hidden perf overlay for optimization work. It is opt-in so the default
+// canvas/HUD remains visually equivalent to the normal experience.
+var perfEnabled = new URLSearchParams(location.search).get('perf') === '1';
+perfPanel.classList.toggle('on', perfEnabled);
+pfWorkers.textContent = String(N_WORKERS);
+
+function fmtMs(ms) {
+  return ms < 10 ? ms.toFixed(1) + ' ms' : Math.round(ms) + ' ms';
+}
+
+function setPerf(el, value) {
+  if (perfEnabled) el.textContent = value;
+}
+
+function togglePerf() {
+  perfEnabled = !perfEnabled;
+  perfPanel.classList.toggle('on', perfEnabled);
+  pfWorkers.textContent = String(N_WORKERS);
+  emitTelemetry('perf_overlay_toggled', { enabled: perfEnabled });
+}
+
+function noteRaf(now) {
+  if (!lastRafAt) { lastRafAt = now; return; }
+  if (now - lastRafAt > 25) rafDrops.push(now);
+  lastRafAt = now;
+  var cutoff = now - 5000;
+  while (rafDrops.length && rafDrops[0] < cutoff) rafDrops.shift();
+  setPerf(pfDrops, String(rafDrops.length));
+}
+
+// ─── Local telemetry ──────────────────────────────────────
+// Enabled only when served over HTTP. Opening the HTML directly keeps the
+// visualization completely standalone and silent.
+var telemetryParams = new URLSearchParams(location.search);
+var telemetryEnabled = location.protocol !== 'file:' && telemetryParams.get('telemetry') !== '0';
+var telemetrySessionId = (window.crypto && window.crypto.randomUUID)
+  ? window.crypto.randomUUID()
+  : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+var telemetryQueue = [];
+var telemetryFlushTimer = null;
+
+function currentParams() {
+  return {
+    cx: view.cxH,
+    cy: view.cyH,
+    zoom: view.zoom,
+    thetaDeg: parseFloat(slTheta.value),
+    radius: parseInt(slRadius.value, 10) / 100,
+    diveSpeed: parseInt(slSpeed.value, 10) / 100,
+    paramTravel: paramTravelEnabled,
+    iterBase: parseInt(slIter.value, 10),
+    maxIter: autoIter(),
+    theme: theme,
+    width: canvas.width,
+    height: canvas.height,
+    dpr: window.devicePixelRatio || 1,
+    workers: N_WORKERS
+  };
+}
+
+function emitTelemetry(type, data) {
+  if (!telemetryEnabled) return;
+  telemetryQueue.push({
+    type: type,
+    sessionId: telemetrySessionId,
+    t: Math.round(performance.now()),
+    at: new Date().toISOString(),
+    data: data || {}
+  });
+  if (!telemetryFlushTimer) {
+    telemetryFlushTimer = setTimeout(flushTelemetry, 1000);
+  }
+}
+
+function flushTelemetry() {
+  if (!telemetryEnabled || telemetryQueue.length === 0) {
+    telemetryFlushTimer = null;
+    return;
+  }
+  var payload = JSON.stringify({
+    sessionId: telemetrySessionId,
+    page: location.pathname || '/',
+    userAgent: navigator.userAgent,
+    events: telemetryQueue.splice(0)
+  });
+  telemetryFlushTimer = null;
+
+  if (navigator.sendBeacon) {
+    var ok = navigator.sendBeacon(
+      '/telemetry/events',
+      new Blob([payload], { type: 'application/json' })
+    );
+    if (ok) return;
+  }
+
+  fetch('/telemetry/events', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload,
+    keepalive: true
+  }).catch(function() {
+    // Telemetry must never affect rendering.
+  });
+}
+
+window.addEventListener('pagehide', flushTelemetry);
+
+function dispatchableNow() {
+  for (var i = 0; i < workerBusy.length; i++) if (workerBusy[i]) return false;
+  return true;
+}
+
+function doRender(step) {
+  if (canvas.width !== poolW || canvas.height !== poolH || workers.length !== N_WORKERS) {
+    rebuildPool();
+  }
+  if (!dispatchableNow()) {
+    // Coalesce: keep the latest requested step (preview wins if mixed).
+    pendingRender = (pendingRender === null) ? step : Math.max(pendingRender, step);
+    return;
+  }
+
+  var id = ++renderId;
+  inFlightStep = step;
+  expectedReplies = 0;
+  batchStart[id] = { startedAt: performance.now(), step: step, params: currentParams() };
+  if (step <= 1) spinner.classList.add('on');
+
+  var theta   = parseFloat(slTheta.value) * (Math.PI / 180);
+  var maxIter = autoIter();
+  var radius  = parseInt(slRadius.value, 10) / 100;
+  iVal.textContent = maxIter;
+
+  var cr = radius * Math.cos(theta);
+  var ci = radius * Math.sin(theta);
+
+  // Build a high-precision reference orbit at the view center when zoom
+  // approaches the F64 wall. Workers iterate per-pixel deltas relative
+  // to this orbit, which keeps detail crisp far past the F64 limit.
+  var usePerturbation = view.zoom >= PERT_ZOOM;
+  var ref = usePerturbation
+    ? computeRefOrbit(view.cxH, view.cxL, view.cyH, view.cyL, cr, ci, maxIter)
+    : null;
+
+  var W = canvas.width, H = canvas.height;
+  var pal = PAL3[theme];
+  for (var w = 0; w < N_WORKERS; w++) {
+    var s = stripes[w];
+    if (s.y1 <= s.y0) continue;
+    var buf = (step === 1) ? fullBufs[w] : previewBufs[w];
+    if (!buf || buf.byteLength === 0) continue;
+    workerBusy[w] = true;
+    expectedReplies++;
+    workers[w].postMessage({
+      id: id, step: step, w: w,
+      width: W, height: H,
+      y0: s.y0, y1: s.y1,
+      cx: view.cxH, cy: view.cyH, zoom: view.zoom,
+      cr: cr, ci: ci, maxIter: maxIter,
+      mode: usePerturbation ? 'pert' : 'raw',
+      refR: ref ? ref.refR : null,
+      refI: ref ? ref.refI : null,
+      refLen: ref ? ref.refLen : 0,
+      palette: pal,
+      buf: buf
+    }, [buf.buffer]);
+    if (step === 1) fullBufs[w] = null;
+    else previewBufs[w] = null;
+  }
+
+  rendering = expectedReplies > 0;
+  if (!rendering) spinner.classList.remove('on');
+  updateHUD();
+}
+
+function scheduleRender(now) {
+  clearTimeout(timer);
+  if (now) { doRender(4); return; }
+  timer = setTimeout(function() { doRender(4); }, 35);
+}
+
+// ─── Worker reply (multi-worker stripe aggregation) ───────
+var expectedReplies = 0;
+
+function handleWorkerReply(e) {
+  var r = e.data;
+  var w = r.w;
+  workerBusy[w] = false;
+  var commitStart = performance.now();
+
+  // If canvas was resized while in-flight, the returned buffer is the wrong
+  // size for the new pool. Drop it; the new pool already has fresh buffers.
+  var s = stripes[w];
+  var stripeMatches = !!s && s.y0 === r.y0 && s.y1 === r.y1
+                       && canvas.width === poolW && canvas.height === poolH;
+  var current = (r.id === renderId);
+
+  if (stripeMatches && current) {
+    var sh = s.y1 - s.y0;
+    if (r.step === 1) {
+      ctx.putImageData(new ImageData(r.buf, canvas.width, sh), 0, s.y0);
+    } else {
+      var gridW = Math.ceil(canvas.width / STEP);
+      var gridH = Math.ceil(sh / STEP);
+      previewCtx.putImageData(new ImageData(r.buf, gridW, gridH), 0, (s.y0 / STEP) | 0);
+    }
+  }
+
+  // Reclaim the buffer back to its pool slot (if still the right size).
+  if (stripeMatches) {
+    if (r.step === 1) fullBufs[w] = r.buf;
+    else previewBufs[w] = r.buf;
+  }
+
+  expectedReplies--;
+  if (expectedReplies > 0) return;
+
+  // Whole batch landed.
+  if (current && r.step !== 1 && stripeMatches) {
+    // Upscale preview by exactly STEP× via nearest-neighbor → bit-exact to
+    // the legacy worker's manual block-fill.
+    ctx.drawImage(
+      previewCanvas,
+      0, 0, previewCanvas.width, previewCanvas.height,
+      0, 0, previewCanvas.width * STEP, previewCanvas.height * STEP
+    );
+    if (diving) refreshDiveTarget();
+  }
+
+  var batch = batchStart[r.id];
+  var elapsed = performance.now() - (batch ? batch.startedAt : commitStart);
+  var commitMs = performance.now() - commitStart;
+  delete batchStart[r.id];
+  if (current) {
+    if (r.step === 1) setPerf(pfFull, fmtMs(elapsed));
+    else setPerf(pfPreview, fmtMs(elapsed));
+    setPerf(pfCommit, fmtMs(commitMs));
+    emitTelemetry('render_completed', Object.assign({}, batch ? batch.params : currentParams(), {
+      step: r.step,
+      renderMs: Math.round(elapsed * 10) / 10,
+      commitMs: Math.round(commitMs * 10) / 10,
+      rafDrops5s: rafDrops.length
+    }));
+  }
+
+  rendering = false;
+
+  if (diving) {
+    canvas.style.transform = '';
+    diveZoomAtDraw = view.zoom;
+    spinner.classList.remove('on');
+  } else if (current && r.step > 1) {
+    // Preview finished → fire full-quality pass.
+    doRender(1);
+    return;
+  } else {
+    spinner.classList.remove('on');
+    if (pendingFull) { pendingFull = false; scheduleRender(); }
+  }
+
+  if (pendingRender !== null) {
+    var ps = pendingRender;
+    pendingRender = null;
+    doRender(ps);
+  }
+}
+
+// ─── HUD ──────────────────────────────────────────────────
+function updateHUD() {
+  var zf = view.zoom / BASE_ZOOM;
+  var zs;
+  if      (zf < 1e3)  zs = zf.toFixed(zf < 10 ? 1 : 0) + '×';
+  else if (zf < 1e6)  zs = (zf / 1e3).toFixed(1) + 'K×';
+  else if (zf < 1e9)  zs = (zf / 1e6).toFixed(1) + 'M×';
+  else                zs = zf.toExponential(1) + '×';
+  zVal.textContent = zs;
+
+  var sign = view.cyH >= 0 ? '+' : '-';
+  cVal.textContent = fmtNum(view.cxH) + ' ' + sign + ' ' + fmtNum(Math.abs(view.cyH)) + 'i';
+
+  // Warn when a pixel represents < 10^-13 units (double precision limit)
+  var atLimit = 1 / view.zoom < 1e-13;
+  precEl.classList.toggle('on', atLimit);
+  if (atLimit && !precisionLimitReported) {
+    precisionLimitReported = true;
+    emitTelemetry('precision_limit_hit', currentParams());
+  } else if (!atLimit) {
+    precisionLimitReported = false;
+  }
+
+  // Dive intentionally keeps going past this point; the warning is advisory.
+}
+
+function fmtNum(n) {
+  if (Math.abs(n) < 1e-4 && n !== 0) return n.toExponential(2);
+  return n.toPrecision(5);
+}
+
+// ─── Zoom at cursor ───────────────────────────────────────
+function zoomAt(mx, my, factor) {
+  var pt = p2c(mx, my);
+  view.zoom *= factor;
+  var dx = (mx - canvas.width  / 2) / view.zoom;
+  var dy = (my - canvas.height / 2) / view.zoom;
+  var cx = ddAddD(pt.reH, pt.reL, -dx);
+  var cy = ddAddD(pt.imH, pt.imL, -dy);
+  view.cxH = cx[0]; view.cxL = cx[1];
+  view.cyH = cy[0]; view.cyL = cy[1];
+}
+
+function diveSpeed() {
+  return parseInt(slSpeed.value, 10) / 100;
+}
+
+function diveZoomFactor() {
+  var raw = Math.pow(DIVE_BASE_SPEED, diveSpeed());
+  // As 1/zoom approaches the DD precision floor (~1e-30), dampen the
+  // per-frame factor toward 1 so the fall asymptotes instead of glitching
+  // out. The user perceives a continuous slowing fall, never a hard stop.
+  // The dampener engages 4 orders before the wall so the deceleration is
+  // smooth rather than abrupt.
+  var inv = 1 / view.zoom;
+  if (inv < 1e-26) {
+    var room = (Math.log10(inv) + 30) / 4; // 1 at inv=1e-26, 0 at inv=1e-30
+    var d = Math.max(0, Math.min(1, room));
+    raw = 1 + (raw - 1) * d * d;
+  }
+  return raw;
+}
+
+function pickDiveEdgeTarget() {
+  var W = canvas.width, H = canvas.height;
+  if (W < 16 || H < 16) return null;
+  // During dive the visible canvas is a nearest-neighbor 4× upscale of
+  // previewCanvas, so the gradient signal is identical at preview res
+  // but the readback is ~16× smaller (and avoids touching the main
+  // canvas, which keeps the compositor happy).
+  if (!previewCanvas || !previewCtx) return null;
+
+  var pw = previewCanvas.width, ph = previewCanvas.height;
+  if (pw < 8 || ph < 8) return null;
+
+  var data;
+  try {
+    data = previewCtx.getImageData(0, 0, pw, ph).data;
+  } catch (error) {
+    return null;
+  }
+
+  var sampleStep = Math.max(2, Math.floor(Math.min(pw, ph) / 110));
+  var pcx = pw / 2, pcy = ph / 2;
+  var maxRadius = Math.min(pw, ph) * 0.44;
+  var minRadius = Math.min(pw, ph) * 0.05;
+  var maxRadiusBias = maxRadius * 1.35;
+
+  var best = null;
+  for (var y = sampleStep; y < ph - sampleStep; y += sampleStep) {
+    for (var x = sampleStep; x < pw - sampleStep; x += sampleStep) {
+      var dx = x - pcx, dy = y - pcy;
+      var dist = Math.hypot(dx, dy);
+      if (dist < minRadius || dist > maxRadius) continue;
+
+      var i = (y * pw + x) * 4;
+      var ir = (y * pw + x + sampleStep) * 4;
+      var id = ((y + sampleStep) * pw + x) * 4;
+      var grad =
+        Math.abs(data[i] - data[ir]) + Math.abs(data[i + 1] - data[ir + 1]) + Math.abs(data[i + 2] - data[ir + 2]) +
+        Math.abs(data[i] - data[id]) + Math.abs(data[i + 1] - data[id + 1]) + Math.abs(data[i + 2] - data[id + 2]);
+      var centerBias = 1 - dist / maxRadiusBias;
+      var score = grad * Math.max(0.2, centerBias);
+      if (!best || score > best.score) best = { x: x, y: y, score: score };
+    }
+  }
+
+  if (!best) return null;
+  // Map preview-canvas coords back to main-canvas coords for p2c().
+  var mx = best.x * STEP, my = best.y * STEP;
+  var target = p2c(mx, my);
+  return {
+    px: mx,
+    py: my,
+    reH: target.reH, reL: target.reL,
+    imH: target.imH, imL: target.imL,
+    score: best.score
+  };
+}
+
+function refreshDiveTarget() {
+  diveTarget = pickDiveEdgeTarget();
+  if (diveTarget) {
+    emitTelemetry('dive_edge_targeted', Object.assign({}, currentParams(), {
+      px: diveTarget.px,
+      py: diveTarget.py,
+      score: Math.round(diveTarget.score)
+    }));
+  }
+}
+
+function syncParamLabels() {
+  vTheta.textContent = slTheta.value + '°';
+  vRadius.textContent = (parseInt(slRadius.value, 10) / 100).toFixed(2);
+}
+
+function setParamTravel(enabled) {
+  paramTravelEnabled = enabled;
+  btnParamTravel.classList.toggle('on', paramTravelEnabled);
+  btnParamTravel.textContent = paramTravelEnabled ? '✦ Variando função' : '✦ Variar função';
+  if (paramTravelEnabled) lastParamTravelAt = 0;
+  emitTelemetry('param_travel_toggled', Object.assign({}, currentParams(), {
+    enabled: paramTravelEnabled
+  }));
+}
+
+function advanceParamTravel(now) {
+  if (!paramTravelEnabled || !diving) return;
+  if (!lastParamTravelAt) lastParamTravelAt = now;
+
+  var dt = Math.min(80, now - lastParamTravelAt) / 1000;
+  lastParamTravelAt = now;
+  paramTravelPhase += dt * (0.18 + diveSpeed() * 0.12);
+
+  var theta = 270
+    + 105 * Math.sin(paramTravelPhase * 0.71)
+    + 42 * Math.sin(paramTravelPhase * 1.37 + 0.8);
+  theta = ((theta % 360) + 360) % 360;
+
+  // Stay mostly in the rich connected/near-boundary Julia region.
+  var radius = 76
+    + 20 * Math.sin(paramTravelPhase * 0.43 + 1.4)
+    + 9 * Math.sin(paramTravelPhase * 0.91);
+  radius = Math.max(48, Math.min(112, radius));
+
+  slTheta.value = String(Math.round(theta));
+  slRadius.value = String(Math.round(radius));
+  syncParamLabels();
+}
+
+// ─── Dive / fall animation ────────────────────────────────
+
+function startDive() {
+  if (diving) return;
+  diving = true;
+  diveZoomAtDraw = view.zoom;
+  diveTarget = null;
+  diveNeedsRedraw = false;
+  lastParamTravelAt = 0;
+  emitTelemetry('dive_started', currentParams());
+
+  clearTimeout(timer);
+  document.body.classList.add('diving-ui');
+  wrap.classList.add('diving');
+  hintBox.classList.add('hidden');
+  diveOverlay.classList.add('on');
+  document.getElementById('btn-dive').textContent = '■ Parar';
+  document.getElementById('btn-dive').classList.add('diving');
+  resize();
+
+  // Don't re-render immediately — keep current crisp frame and let CSS scale zoom smoothly.
+  // Render only when zoom drifts past threshold.
+  diveRaf = requestAnimationFrame(diveLoop);
+}
+
+function stopDive(reachedLimit) {
+  if (!diving) return;
+  emitTelemetry('dive_stopped', Object.assign({}, currentParams(), {
+    reachedLimit: !!reachedLimit
+  }));
+  diving = false;
+  if (diveRaf) { cancelAnimationFrame(diveRaf); diveRaf = null; }
+  diveTarget = null;
+
+  canvas.style.transform = '';
+  document.body.classList.remove('diving-ui');
+  wrap.classList.remove('diving');
+  hintBox.classList.remove('hidden');
+  diveOverlay.classList.remove('on');
+  document.getElementById('btn-dive').textContent = '▼ Mergulhar';
+  document.getElementById('btn-dive').classList.remove('diving');
+  resize();
+
+  if (!reachedLimit) {
+    // Render a full-quality frame at the current zoom
+    scheduleRender();
+  }
+}
+
+function diveLoop() {
+  if (!diving) return;
+  var now = performance.now();
+  noteRaf(now);
+  advanceParamTravel(now);
+
+  // Advance zoom smoothly while steering toward the latest detected edge.
+  var speed = diveSpeed();
+  if (diveTarget) {
+    var pull = Math.min(0.18, 0.025 * speed);
+    var dxC = ddSub(diveTarget.reH, diveTarget.reL, view.cxH, view.cxL);
+    var dyC = ddSub(diveTarget.imH, diveTarget.imL, view.cyH, view.cyL);
+    var stepX = ddMulD(dxC[0], dxC[1], pull);
+    var stepY = ddMulD(dyC[0], dyC[1], pull);
+    var newCx = ddAdd(view.cxH, view.cxL, stepX[0], stepX[1]);
+    var newCy = ddAdd(view.cyH, view.cyL, stepY[0], stepY[1]);
+    view.cxH = newCx[0]; view.cxL = newCx[1];
+    view.cyH = newCy[0]; view.cyL = newCy[1];
+  }
+  view.zoom *= diveZoomFactor();
+  updateHUD();
+
+  // CSS scale: stretch current frame to match the new (larger) zoom.
+  // This creates a smooth visual zoom at 60 fps between worker renders.
+  var scale = view.zoom / diveZoomAtDraw;
+  canvas.style.transformOrigin = 'center center';
+  canvas.style.transform = 'scale(' + scale + ')';
+
+  // Update the overlay depth counter
+  var zf = view.zoom / BASE_ZOOM;
+  if      (zf < 1e3) diveDepth.textContent = zf.toFixed(0) + '× de profundidade';
+  else if (zf < 1e6) diveDepth.textContent = (zf/1e3).toFixed(1) + 'K× de profundidade';
+  else if (zf < 1e9) diveDepth.textContent = (zf/1e6).toFixed(1) + 'M× de profundidade';
+  else               diveDepth.textContent = zf.toExponential(1) + '× de profundidade';
+
+  // Only re-render when zoom has drifted enough OR when user interaction required it
+  var scale = view.zoom / diveZoomAtDraw;
+  if (!rendering && (scale > DIVE_REDRAW_SCALE || diveNeedsRedraw)) {
+    diveNeedsRedraw = false;
+    canvas.style.transform = '';
+    diveZoomAtDraw = view.zoom;
+    doRender(STEP);  // Use STEP (now 2) for better quality during dive
+  }
+
+  diveRaf = requestAnimationFrame(diveLoop);
+}
+
+// ─── Mouse wheel ──────────────────────────────────────────
+wrap.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var factor = e.deltaY < 0 ? 1.25 : 1 / 1.25;
+  if (e.shiftKey) factor = e.deltaY < 0 ? 2 : 0.5;
+  zoomAt(e.offsetX, e.offsetY, factor);
+  if (diving) {
+    diveTarget = null;  // reset edge tracking since we moved
+    diveNeedsRedraw = true;
+  } else {
+    emitTelemetry('view_changed', Object.assign({}, currentParams(), { source: 'wheel' }));
+    scheduleRender(true);
+  }
+}, { passive: false });
+
+// ─── Mouse drag ───────────────────────────────────────────
+var drag = null;
+
+wrap.addEventListener('mousedown', function(e) {
+  if (e.button !== 0) return;
+  drag = {
+    sx: e.clientX, sy: e.clientY,
+    ocxH: view.cxH, ocxL: view.cxL,
+    ocyH: view.cyH, ocyL: view.cyL
+  };
+  wrap.classList.add('grabbing');
+  e.preventDefault();
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!drag) return;
+  var cx = ddAddD(drag.ocxH, drag.ocxL, -(e.clientX - drag.sx) / view.zoom);
+  var cy = ddAddD(drag.ocyH, drag.ocyL, -(e.clientY - drag.sy) / view.zoom);
+  view.cxH = cx[0]; view.cxL = cx[1];
+  view.cyH = cy[0]; view.cyL = cy[1];
+  if (diving) {
+    diveTarget = null;  // reset edge tracking
+    diveNeedsRedraw = true;
+  } else {
+    scheduleRender(true);
+  }
+});
+
+window.addEventListener('mouseup', function() {
+  if (!drag) return;
+  drag = null;
+  wrap.classList.remove('grabbing');
+  if (!diving) {
+    emitTelemetry('view_changed', Object.assign({}, currentParams(), { source: 'drag' }));
+    scheduleRender();
+  }
+});
+
+// ─── Touch: drag + pinch ──────────────────────────────────
+var touch = null;
+
+function getTouchMid(touches) {
+  var t0 = touches[0], t1 = touches[1];
+  var rect = wrap.getBoundingClientRect();
+  return {
+    x: (t0.clientX + t1.clientX) / 2 - rect.left,
+    y: (t0.clientY + t1.clientY) / 2 - rect.top,
+    dist: Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY)
+  };
+}
+
+wrap.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    var t = e.touches[0];
+    touch = {
+      type: 'drag', sx: t.clientX, sy: t.clientY,
+      ocxH: view.cxH, ocxL: view.cxL,
+      ocyH: view.cyH, ocyL: view.cyL
+    };
+  } else if (e.touches.length === 2) {
+    var mid = getTouchMid(e.touches);
+    var pt  = p2c(mid.x, mid.y);
+    touch = { type: 'pinch', startDist: mid.dist, startZoom: view.zoom, pt: pt, midX: mid.x, midY: mid.y };
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  if (!touch) return;
+  if (touch.type === 'drag' && e.touches.length === 1) {
+    var t = e.touches[0];
+    var cx = ddAddD(touch.ocxH, touch.ocxL, -(t.clientX - touch.sx) / view.zoom);
+    var cy = ddAddD(touch.ocyH, touch.ocyL, -(t.clientY - touch.sy) / view.zoom);
+    view.cxH = cx[0]; view.cxL = cx[1];
+    view.cyH = cy[0]; view.cyL = cy[1];
+    if (diving) {
+      diveTarget = null;
+      diveNeedsRedraw = true;
+    } else {
+      scheduleRender(true);
+    }
+  } else if (touch.type === 'pinch' && e.touches.length === 2) {
+    var mid = getTouchMid(e.touches);
+    view.zoom = touch.startZoom * (mid.dist / touch.startDist);
+    var cx2 = ddAddD(touch.pt.reH, touch.pt.reL, -(touch.midX - canvas.width  / 2) / view.zoom);
+    var cy2 = ddAddD(touch.pt.imH, touch.pt.imL, -(touch.midY - canvas.height / 2) / view.zoom);
+    view.cxH = cx2[0]; view.cxL = cx2[1];
+    view.cyH = cy2[0]; view.cyL = cy2[1];
+    if (diving) {
+      diveTarget = null;
+      diveNeedsRedraw = true;
+    } else {
+      scheduleRender(true);
+    }
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchend', function() {
+  if (touch && !diving) {
+    emitTelemetry('view_changed', Object.assign({}, currentParams(), { source: touch.type }));
+  }
+  touch = null;
+  if (!diving) scheduleRender();
+});
+
+// ─── Sliders ──────────────────────────────────────────────
+slTheta.addEventListener('input', function() {
+  vTheta.textContent = slTheta.value + '°';
+  emitTelemetry('parameter_changed', Object.assign({}, currentParams(), {
+    parameter: 'thetaDeg',
+    value: parseFloat(slTheta.value)
+  }));
+  if (!diving) scheduleRender();
+});
+
+slIter.addEventListener('input', function() {
+  vIter.textContent = slIter.value;
+  emitTelemetry('parameter_changed', Object.assign({}, currentParams(), {
+    parameter: 'iterBase',
+    value: parseInt(slIter.value, 10)
+  }));
+  if (!diving) scheduleRender();
+});
+
+slRadius.addEventListener('input', function() {
+  syncParamLabels();
+  emitTelemetry('parameter_changed', Object.assign({}, currentParams(), {
+    parameter: 'radius',
+    value: parseInt(slRadius.value, 10) / 100
+  }));
+  if (!diving) scheduleRender();
+});
+
+slSpeed.addEventListener('input', function() {
+  vSpeed.textContent = diveSpeed().toFixed(1) + '×';
+  emitTelemetry('parameter_changed', Object.assign({}, currentParams(), {
+    parameter: 'diveSpeed',
+    value: diveSpeed()
+  }));
+});
+
+// ─── Themes ───────────────────────────────────────────────
+document.querySelectorAll('.tb').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var previousTheme = theme;
+    document.querySelectorAll('.tb').forEach(function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    theme = btn.dataset.theme;
+    emitTelemetry('theme_changed', Object.assign({}, currentParams(), {
+      from: previousTheme,
+      to: theme
+    }));
+    if (!diving) scheduleRender();
+  });
+});
+
+// ─── Parameter travel toggle ──────────────────────────────
+btnParamTravel.addEventListener('click', function() {
+  setParamTravel(!paramTravelEnabled);
+});
+
+// ─── Dive button ──────────────────────────────────────────
+document.getElementById('btn-dive').addEventListener('click', function() {
+  if (diving) stopDive(false);
+  else startDive();
+});
+
+// ─── Reset ────────────────────────────────────────────────
+document.getElementById('btn-reset').addEventListener('click', function() {
+  if (diving) stopDive(false);
+  view.cxH = 0; view.cxL = 0; view.cyH = 0; view.cyL = 0; view.zoom = BASE_ZOOM;
+  emitTelemetry('view_reset', currentParams());
+  scheduleRender();
+});
+
+// ─── Resize ───────────────────────────────────────────────
+window.addEventListener('resize', function() {
+  resize();
+  if (!diving) scheduleRender();
+});
+
+// ─── Keyboard shortcut: Space = toggle dive ───────────────
+window.addEventListener('keydown', function(e) {
+  if (e.key && e.key.toLowerCase() === 'a' && e.target === document.body) {
+    setParamTravel(!paramTravelEnabled);
+    return;
+  }
+  if (e.key && e.key.toLowerCase() === 'p' && e.target === document.body) {
+    togglePerf();
+    return;
+  }
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault();
+    if (diving) stopDive(false);
+    else startDive();
+  }
+});
+
+// ─── AudioReactivity ──────────────────────────────────────
+// Spec: docs/SPEC.md#audioreactivity-inline. Modulates the existing
+// param-travel drift; never replaces it. Created on user gesture
+// (file picker change). All four BandSensitivity values persist via
+// localStorage; audio file does not.
+
+var audioTestMode = new URLSearchParams(location.search).get('test') === '1';
+
+var audioFileInput  = document.getElementById('audio-file');
+var audioPlayer     = document.getElementById('audio-player');
+var audioStopBtn    = document.getElementById('audio-stop');
+var slSensSubBass   = document.getElementById('sl-sens-subbass');
+var slSensBass      = document.getElementById('sl-sens-bass');
+var slSensMid       = document.getElementById('sl-sens-mid');
+var slSensTreble    = document.getElementById('sl-sens-treble');
+var vSensSubBass    = document.getElementById('v-sens-subbass');
+var vSensBass       = document.getElementById('v-sens-bass');
+var vSensMid        = document.getElementById('v-sens-mid');
+var vSensTreble     = document.getElementById('v-sens-treble');
+
+var AUDIO_SENS_KEY = 'fractal.audio.sensitivity';
+
+// EMA smoothing coefficient. α=0.15 yields ~6-tick (≈100 ms at 60 Hz)
+// reaction time — fast enough to feel synced to a kick drum but slow
+// enough to suppress single-bin FFT noise.
+var BAND_EMA_ALPHA = 0.15;
+
+// Render throttle for audio-driven slider updates. Sliders themselves
+// update at the analyser tick rate; only scheduleRender() is gated to
+// ≤ 10 Hz so the worker pool absorbs deep-zoom render cost.
+var AUDIO_RENDER_INTERVAL_MS = 100;
+
+// Beat detector parameters (per spec).
+var BEAT_WINDOW_MS = 2000;
+var BEAT_THRESHOLD = 1.4;
+var BEAT_MIN_INTERVAL_MS = 250;
+
+var THEME_ROTATION = ['totoro', 'spiritedaway', 'mononoke', 'howl', 'nausicaa'];
+
+var audio = {
+  state: 'idle',          // 'idle' | 'loaded' | 'playing' | 'paused'
+  ctx: null,
+  source: null,
+  analyser: null,
+  fftBuf: null,
+  rafId: null,
+  bandEnergies: { subBass: 0, bass: 0, mid: 0, treble: 0 },
+  sensitivity: { subBass: 1, bass: 1, mid: 1, treble: 1 },
+  phase: 0,
+  lastTickAt: 0,
+  lastRenderScheduledAt: 0,
+  // Sentinel so the first beat always fires (the comparison is t - lastBeatAt).
+  // _testGetAudioState() reports `null` when no real beat has fired yet.
+  lastBeatAt: -Infinity,
+  bassHistory: [],        // {t, val} entries within BEAT_WINDOW_MS
+  scheduleRenderTimes: [],// timestamps of scheduleRender() calls (for _testGetRenderScheduleRate)
+  baseline: null,         // saved slider values to restore on stop
+  bandSummary: { subBass: { sum: 0, n: 0 }, bass: { sum: 0, n: 0 }, mid: { sum: 0, n: 0 }, treble: { sum: 0, n: 0 } }
+};
+
+function loadSensitivityFromStorage() {
+  try {
+    var raw = localStorage.getItem(AUDIO_SENS_KEY);
+    if (!raw) return;
+    var parsed = JSON.parse(raw);
+    var keys = ['subBass', 'bass', 'mid', 'treble'];
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (typeof parsed[k] === 'number' && parsed[k] >= 0 && parsed[k] <= 1) {
+        audio.sensitivity[k] = parsed[k];
+      }
+    }
+  } catch (err) { /* fall back to defaults */ }
+  applySensitivityToSliders();
+}
+
+function applySensitivityToSliders() {
+  slSensSubBass.value = String(Math.round(audio.sensitivity.subBass * 100));
+  slSensBass.value    = String(Math.round(audio.sensitivity.bass    * 100));
+  slSensMid.value     = String(Math.round(audio.sensitivity.mid     * 100));
+  slSensTreble.value  = String(Math.round(audio.sensitivity.treble  * 100));
+  syncSensitivityLabels();
+}
+
+function syncSensitivityLabels() {
+  vSensSubBass.textContent = slSensSubBass.value + '%';
+  vSensBass.textContent    = slSensBass.value    + '%';
+  vSensMid.textContent     = slSensMid.value     + '%';
+  vSensTreble.textContent  = slSensTreble.value  + '%';
+}
+
+function persistSensitivity() {
+  try {
+    localStorage.setItem(AUDIO_SENS_KEY, JSON.stringify(audio.sensitivity));
+  } catch (err) { /* localStorage may be disabled */ }
+}
+
+function readSensitivityFromSliders() {
+  audio.sensitivity.subBass = parseInt(slSensSubBass.value, 10) / 100;
+  audio.sensitivity.bass    = parseInt(slSensBass.value,    10) / 100;
+  audio.sensitivity.mid     = parseInt(slSensMid.value,     10) / 100;
+  audio.sensitivity.treble  = parseInt(slSensTreble.value,  10) / 100;
+}
+
+[slSensSubBass, slSensBass, slSensMid, slSensTreble].forEach(function(el) {
+  el.addEventListener('input', function() {
+    syncSensitivityLabels();
+    readSensitivityFromSliders();
+    persistSensitivity();
+  });
+});
+
+// Hz → analyser bin index. fftSize=1024 → 512 bins covering 0..nyquist.
+function freqToBin(hz, sampleRate, binCount) {
+  var nyquist = sampleRate / 2;
+  return Math.max(0, Math.min(binCount - 1, Math.round(hz / nyquist * binCount)));
+}
+
+function sampleBands() {
+  if (!audio.analyser || !audio.fftBuf) return;
+  audio.analyser.getByteFrequencyData(audio.fftBuf);
+  var sr = audio.ctx.sampleRate;
+  var binCount = audio.fftBuf.length;
+
+  var bands = [
+    { name: 'subBass', lo: 20,   hi: 150  },
+    { name: 'bass',    lo: 150,  hi: 500  },
+    { name: 'mid',     lo: 500,  hi: 2000 },
+    { name: 'treble',  lo: 2000, hi: 8000 }
+  ];
+  for (var i = 0; i < bands.length; i++) {
+    var b = bands[i];
+    var i0 = freqToBin(b.lo, sr, binCount);
+    var i1 = freqToBin(b.hi, sr, binCount);
+    if (i1 <= i0) i1 = i0 + 1;
+    var sum = 0;
+    for (var j = i0; j < i1; j++) sum += audio.fftBuf[j];
+    var mean = (sum / (i1 - i0)) / 255; // normalize to [0,1]
+    var prev = audio.bandEnergies[b.name];
+    audio.bandEnergies[b.name] = prev + BAND_EMA_ALPHA * (mean - prev);
+  }
+}
+
+// Apply modulation rule from SPEC.md. Returns post-modulation slider
+// values. Always uses the latest in-memory band energies and
+// sensitivity. paramTravel drift contribution is layered on whenever
+// paramTravelEnabled is on, regardless of `diving`, because audio mode
+// runs its own RAF-equivalent loop.
+function applyModulation(now) {
+  if (!audio.lastTickAt) audio.lastTickAt = now;
+  var dt = Math.min(80, now - audio.lastTickAt) / 1000;
+  audio.lastTickAt = now;
+
+  var s = audio.sensitivity;
+  var e = audio.bandEnergies;
+  var diveSpeedNorm = parseInt(slSpeed.value, 10) / 100;
+
+  var phaseRate = (0.18 + diveSpeedNorm * 0.12) * (1 + 0.5 * s.mid * e.mid);
+  audio.phase += dt * phaseRate;
+
+  var driftAmp = paramTravelEnabled ? 1 : 0;
+  var audioMidAmp = s.mid * e.mid;
+  var audioBassAmp = s.bass * e.bass;
+  var combinedThetaAmp1 = 105 * (driftAmp + audioMidAmp);
+  var combinedThetaAmp2 = 42 * (driftAmp + audioMidAmp);
+  var combinedRadiusAmp1 = 20 * (driftAmp + audioBassAmp);
+  var combinedRadiusAmp2 = 9  * (driftAmp + audioBassAmp);
+
+  var theta = 270
+    + combinedThetaAmp1 * Math.sin(audio.phase * 0.71)
+    + combinedThetaAmp2 * Math.sin(audio.phase * 1.37 + 0.8);
+  theta = ((theta % 360) + 360) % 360;
+
+  var radius100 = 76
+    + combinedRadiusAmp1 * Math.sin(audio.phase * 0.43 + 1.4)
+    + combinedRadiusAmp2 * Math.sin(audio.phase * 0.91);
+  radius100 = Math.max(0, Math.min(150, radius100));
+
+  var iterBase = 160 + 200 * s.treble * e.treble;
+  iterBase = Math.max(50, Math.min(600, iterBase)) | 0;
+
+  var diveMult = 1 + s.subBass * e.subBass;
+  var diveSpeedOut = Math.max(0.2, Math.min(4.0, diveSpeedNorm * diveMult));
+
+  // Save baseline once, on first modulation tick after audio loads,
+  // so we can restore user-controlled values on stop.
+  if (!audio.baseline) {
+    audio.baseline = {
+      theta: slTheta.value,
+      radius: slRadius.value,
+      iter: slIter.value,
+      speed: slSpeed.value
+    };
+  }
+
+  // Setting both .value and the value attribute keeps DOM mutation
+  // observers (and Playwright tests) in sync with property updates.
+  var thetaStr = String(Math.round(theta));
+  var radiusStr = String(Math.round(radius100));
+  var iterStr = String(iterBase);
+  var speedStr = String(Math.round(diveSpeedOut * 100));
+  slTheta.value  = thetaStr;  slTheta.setAttribute('value', thetaStr);
+  slRadius.value = radiusStr; slRadius.setAttribute('value', radiusStr);
+  slIter.value   = iterStr;   slIter.setAttribute('value', iterStr);
+  slSpeed.value  = speedStr;  slSpeed.setAttribute('value', speedStr);
+  syncParamLabels();
+  vIter.textContent = slIter.value;
+  vSpeed.textContent = diveSpeedOut.toFixed(1) + '×';
+
+  // Render throttle — at most one scheduleRender() per
+  // AUDIO_RENDER_INTERVAL_MS regardless of analyser tick rate.
+  if (!diving && (now - audio.lastRenderScheduledAt) >= AUDIO_RENDER_INTERVAL_MS) {
+    audio.lastRenderScheduledAt = now;
+    audio.scheduleRenderTimes.push(now);
+    var cutoff = now - 5000;
+    while (audio.scheduleRenderTimes.length && audio.scheduleRenderTimes[0] < cutoff) {
+      audio.scheduleRenderTimes.shift();
+    }
+    scheduleRender();
+  }
+
+  return {
+    theta: parseFloat(slTheta.value),
+    radius: parseInt(slRadius.value, 10) / 100,
+    iterBase: iterBase,
+    diveSpeed: diveSpeedOut
+  };
+}
+
+function detectBeat(now) {
+  var bassAgg = (audio.bandEnergies.subBass + audio.bandEnergies.bass) / 2;
+  audio.bassHistory.push({ t: now, val: bassAgg });
+  var cutoff = now - BEAT_WINDOW_MS;
+  while (audio.bassHistory.length && audio.bassHistory[0].t < cutoff) {
+    audio.bassHistory.shift();
+  }
+  if (audio.bassHistory.length < 8) return; // need a window
+  var sum = 0;
+  for (var i = 0; i < audio.bassHistory.length; i++) sum += audio.bassHistory[i].val;
+  var avg = sum / audio.bassHistory.length;
+  if (bassAgg > BEAT_THRESHOLD * avg && (now - audio.lastBeatAt) >= BEAT_MIN_INTERVAL_MS) {
+    fireBeat(now);
+  }
+}
+
+function fireBeat(now) {
+  audio.lastBeatAt = now;
+  cycleColorTheme();
+  emitTelemetry('audio_beat', { phase: audio.phase, energy: audio.bandEnergies });
+}
+
+function cycleColorTheme() {
+  var idx = THEME_ROTATION.indexOf(theme);
+  var next = THEME_ROTATION[(idx + 1) % THEME_ROTATION.length];
+  document.querySelectorAll('.tb').forEach(function(b) { b.classList.remove('on'); });
+  var btn = document.querySelector('.tb[data-theme="' + next + '"]');
+  if (btn) btn.classList.add('on');
+  theme = next;
+  if (!diving) scheduleRender();
+  return next;
+}
+
+function audioTickLoop() {
+  if (audio.state !== 'playing') {
+    audio.rafId = null;
+    return;
+  }
+  var now = performance.now();
+  sampleBands();
+  applyModulation(now);
+  detectBeat(now);
+  // Aggregate band averages for telemetry summary on stop.
+  var keys = ['subBass', 'bass', 'mid', 'treble'];
+  for (var i = 0; i < keys.length; i++) {
+    audio.bandSummary[keys[i]].sum += audio.bandEnergies[keys[i]];
+    audio.bandSummary[keys[i]].n   += 1;
+  }
+  audio.rafId = requestAnimationFrame(audioTickLoop);
+}
+
+function ensureAudioContext() {
+  if (audio.ctx) return audio.ctx;
+  var Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return null;
+  audio.ctx = new Ctx();
+  audio.analyser = audio.ctx.createAnalyser();
+  audio.analyser.fftSize = 1024;
+  audio.analyser.smoothingTimeConstant = 0.8;
+  audio.fftBuf = new Uint8Array(audio.analyser.frequencyBinCount);
+  if (audioTestMode) window.__audioContext = audio.ctx;
+  return audio.ctx;
+}
+
+function loadAudioFile(file) {
+  if (!file) return;
+  ensureAudioContext();
+  if (audio.source) {
+    try { audio.source.disconnect(); } catch (_) {}
+    audio.source = null;
+  }
+  if (audioPlayer.src && audioPlayer.src.indexOf('blob:') === 0) {
+    URL.revokeObjectURL(audioPlayer.src);
+  }
+  var url = URL.createObjectURL(file);
+  audioPlayer.src = url;
+  try {
+    audio.source = audio.ctx.createMediaElementSource(audioPlayer);
+    audio.source.connect(audio.analyser);
+    audio.analyser.connect(audio.ctx.destination);
+  } catch (err) {
+    // createMediaElementSource throws on duplicate elements — release
+    // and rebuild the context to recover.
+    teardownAudio();
+    return;
+  }
+  audio.state = 'loaded';
+  audio.phase = 0;
+  audio.lastTickAt = 0;
+  audio.lastBeatAt = -Infinity;
+  audio.bassHistory.length = 0;
+  audio.bandEnergies = { subBass: 0, bass: 0, mid: 0, treble: 0 };
+  audio.bandSummary = { subBass: { sum: 0, n: 0 }, bass: { sum: 0, n: 0 }, mid: { sum: 0, n: 0 }, treble: { sum: 0, n: 0 } };
+  audio.scheduleRenderTimes.length = 0;
+  audio.lastRenderScheduledAt = 0;
+  audio.baseline = {
+    theta: slTheta.value,
+    radius: slRadius.value,
+    iter: slIter.value,
+    speed: slSpeed.value
+  };
+  // Don't auto-play; user clicks play in the <audio controls> element.
+  // This makes the loaded → playing transition observable and respects
+  // browser autoplay policies that vary across hosts.
+}
+
+function teardownAudio() {
+  if (audio.rafId) { cancelAnimationFrame(audio.rafId); audio.rafId = null; }
+  if (audio.source) {
+    try { audio.source.disconnect(); } catch (_) {}
+    audio.source = null;
+  }
+  if (audio.analyser) {
+    try { audio.analyser.disconnect(); } catch (_) {}
+  }
+  if (audio.ctx && audio.ctx.state !== 'closed') {
+    try { audio.ctx.close(); } catch (_) {}
+  }
+  audio.ctx = null;
+  audio.analyser = null;
+  audio.fftBuf = null;
+  if (audioPlayer && !audioPlayer.paused) {
+    try { audioPlayer.pause(); } catch (_) {}
+  }
+  if (audioPlayer && audioPlayer.src && audioPlayer.src.indexOf('blob:') === 0) {
+    URL.revokeObjectURL(audioPlayer.src);
+    audioPlayer.removeAttribute('src');
+    try { audioPlayer.load(); } catch (_) {}
+  }
+  // Restore user-controlled slider baseline within one frame.
+  if (audio.baseline) {
+    slTheta.value  = audio.baseline.theta;
+    slRadius.value = audio.baseline.radius;
+    slIter.value   = audio.baseline.iter;
+    slSpeed.value  = audio.baseline.speed;
+    syncParamLabels();
+    vIter.textContent = slIter.value;
+    vSpeed.textContent = (parseInt(slSpeed.value, 10) / 100).toFixed(1) + '×';
+  }
+  // Emit aggregate session summary (per-session aggregate only — never
+  // per-frame samples; see SPEC AC #23).
+  var avg = {};
+  var keys = ['subBass', 'bass', 'mid', 'treble'];
+  for (var i = 0; i < keys.length; i++) {
+    var bs = audio.bandSummary[keys[i]];
+    avg[keys[i]] = bs.n > 0 ? Math.round((bs.sum / bs.n) * 1000) / 1000 : 0;
+  }
+  emitTelemetry('audio_session_summary', { averages: avg });
+
+  audio.state = 'idle';
+  audio.baseline = null;
+  audio.bandSummary = { subBass: { sum: 0, n: 0 }, bass: { sum: 0, n: 0 }, mid: { sum: 0, n: 0 }, treble: { sum: 0, n: 0 } };
+  if (audioTestMode) window.__audioContext = null;
+}
+
+audioFileInput.addEventListener('change', function(e) {
+  var file = e.target.files && e.target.files[0];
+  if (file) loadAudioFile(file);
+});
+
+audioPlayer.addEventListener('play', function() {
+  if (audio.state === 'idle') return;
+  if (audio.ctx && audio.ctx.state === 'suspended') {
+    audio.ctx.resume().catch(function() {});
+  }
+  audio.state = 'playing';
+  audio.lastTickAt = 0;
+  if (!audio.rafId) audio.rafId = requestAnimationFrame(audioTickLoop);
+});
+audioPlayer.addEventListener('pause', function() {
+  if (audio.state === 'playing') audio.state = 'paused';
+});
+audioPlayer.addEventListener('ended', function() {
+  teardownAudio();
+});
+
+audioStopBtn.addEventListener('click', function() {
+  teardownAudio();
+});
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden' && audio.state !== 'idle') {
+    teardownAudio();
+  }
+});
+
+// ─── Test hooks (gated by ?test=1) ────────────────────────
+if (audioTestMode) {
+  window._testGetAudioState = function() {
+    return {
+      state: audio.state,
+      sensitivity: {
+        subBass: audio.sensitivity.subBass,
+        bass:    audio.sensitivity.bass,
+        mid:     audio.sensitivity.mid,
+        treble:  audio.sensitivity.treble
+      },
+      lastBeatAt: isFinite(audio.lastBeatAt) ? audio.lastBeatAt : null,
+      lastRenderAt: audio.lastRenderScheduledAt || 0
+    };
+  };
+  window._testInjectBandEnergies = function(energies) {
+    var keys = ['subBass', 'bass', 'mid', 'treble'];
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (typeof energies[k] === 'number') {
+        audio.bandEnergies[k] = Math.max(0, Math.min(1, energies[k]));
+      }
+    }
+    return applyModulation(performance.now());
+  };
+  window._testTriggerBeat = function() {
+    var now = performance.now();
+    if ((now - audio.lastBeatAt) < BEAT_MIN_INTERVAL_MS) {
+      return theme; // debounced — no advance
+    }
+    fireBeat(now);
+    return theme;
+  };
+  window._testGetRenderScheduleRate = function() {
+    var now = performance.now();
+    var cutoff = now - 5000;
+    while (audio.scheduleRenderTimes.length && audio.scheduleRenderTimes[0] < cutoff) {
+      audio.scheduleRenderTimes.shift();
+    }
+    var elapsed = Math.min(5000, now - (audio.scheduleRenderTimes[0] || (now - 1)));
+    return audio.scheduleRenderTimes.length / (elapsed / 1000);
+  };
+  window._testGetZoom = function() { return view.zoom; };
+}
+
+// ─── AudioScene ───────────────────────────────────────────
+// Spec: docs/SPEC.md#audioscene-inline. Drives peripheral on-screen
+// elements (vignette, HUD glow, camera shake, background haze, edge
+// particles) from the *same* analyser as AudioReactivity. Quiet by
+// default; master AmbientIntensity scales every element uniformly.
+// Freezes during a fractal dive (handled via .diving-ui CSS). One
+// shared AudioContext only — no second context is ever created.
+
+var AMBIENT_KEY     = 'fractal.audio.ambient';
+var AMBIENT_DEFAULT = 0.6;
+var RMS_EMA_ALPHA   = 0.20;
+var ONSET_THRESHOLD = 1.5;       // spectral flux > 1.5× rolling mean
+var ONSET_MIN_GAP_MS = 80;       // independent of beat 250 ms gap
+var ONSET_HISTORY_MS = 1000;     // rolling mean window for flux
+var BEAT_DECAY_MS   = 120;
+var SHAKE_AMP_PX    = 2;         // peak shake at A=1 · B(t)=1
+var HUD_GLOW_RADIUS_MAX = 4;     // px
+var HUD_GLOW_OPACITY_MAX = 0.6;
+var VIGNETTE_OPACITY_MAX = 0.40;
+var HAZE_OPACITY_MAX = 0.30;
+var AMBIENT_FRAME_MIN_MS = 33;   // ≤ 30 Hz cap
+var MOBILE_BREAKPOINT_PX = 768;
+var PARTICLE_CAP_DESKTOP = 64;
+var PARTICLE_CAP_MOBILE  = 24;
+var PARTICLE_LIFETIME_MS = 2400;
+var PARTICLE_BASE_SPAWN  = 8;    // multiplied by A · O.strength
+
+// Per-palette ambient table — single data source, no theme code paths.
+// Each row maps a ColorTheme to its particle visual + spawn driver.
+// `color` resolves at render time from the active PAL3 ramp so that
+// particle visuals stay palette-aware automatically.
+var PAL_AMBIENT = {
+  totoro:        { particle: 'soot',    direction: 'up',           driver: 'onset' },
+  spiritedaway:  { particle: 'lantern', direction: 'pulse-haze',   driver: 'rms' },
+  mononoke:      { particle: 'spore',   direction: 'spiral-out',   driver: 'onset-density' },
+  howl:          { particle: 'ash',     direction: 'diagonal',     driver: 'treble' },
+  nausicaa:      { particle: 'wind',    direction: 'top-streak',   driver: 'onset-high-mid' }
+};
+
+var ambientCanvas    = document.getElementById('ambient-canvas');
+var ambientCtx       = ambientCanvas ? ambientCanvas.getContext('2d') : null;
+var bgHaze           = document.getElementById('bg-haze');
+var vignetteEl       = document.getElementById('vignette');
+var hudTr            = document.getElementById('hud-tr');
+var slAmbient        = document.getElementById('sl-ambient');
+var vAmbient         = document.getElementById('v-ambient');
+var wrapEl           = document.getElementById('wrap');
+
+// AudioScene sub-state lives on the existing `audio` object so the
+// module shares one analyser and one teardown path with AudioReactivity.
+audio.ambient = {
+  intensity:        AMBIENT_DEFAULT,    // A ∈ [0,1]
+  rms:              0,                  // EMA-smoothed RMS energy
+  prevSpectrum:     null,               // for spectral flux delta
+  fluxHistory:      [],                 // rolling 1 s flux samples
+  lastOnsetAt:      -Infinity,
+  onsetHistory:     [],                 // rolling 1 s onset timestamps (for density driver)
+  onsetCount:       0,                  // session aggregate
+  beatImpulseAt:    -Infinity,
+  beatImpulseDecayMs: BEAT_DECAY_MS,
+  particles:        null,               // pooled allocation (initialized lazily)
+  particleCount:    0,                  // currently active
+  particleCap:      PARTICLE_CAP_DESKTOP,
+  rafId:            null,
+  lastFrameAt:      0,
+  state:            'idle',             // 'idle' | 'active' | 'frozen-during-dive'
+  // Aggregate counters for audio_session_summary.
+  rmsSum:           0,
+  rmsSamples:       0,
+  sessionStartAt:   0,
+  // Cached current opacities for test hook reads.
+  vignetteOpacity:  0,
+  hudGlowOpacity:   0,
+  hazeOpacity:      0,
+  shakeAmplitude:   0,
+  // For mobile gating.
+  isMobile:         false,
+  // For HUDGlow: stash whether the audio-glow class is on so we can
+  // remove it cleanly when audio stops.
+  hudGlowOn:        false
+};
+
+function isMobileViewport() {
+  return (window.innerWidth || document.documentElement.clientWidth) < MOBILE_BREAKPOINT_PX;
+}
+
+function ambientCurrentPaletteRow() {
+  return PAL_AMBIENT[theme] || PAL_AMBIENT.totoro;
+}
+
+// Pull a representative palette color for the active theme. The PAL3
+// flat array (created on init) holds [R,G,B, R,G,B, ...] for the ramp;
+// we sample a mid-bright stop for the haze/glow/particle tint so the
+// ambient layers stay palette-aware.
+function paletteAmbientColor(alpha) {
+  var pal = (typeof PAL3 === 'object' && PAL3[theme]) || null;
+  if (!pal || pal.length < 3) return 'rgba(200,169,110,' + alpha + ')';
+  // Pick a stop ~70% through the ramp where Ghibli themes peak in warmth.
+  var stops = (pal.length / 3) | 0;
+  var idx = Math.min(stops - 1, Math.max(0, ((stops * 0.7) | 0))) * 3;
+  return 'rgba(' + pal[idx] + ',' + pal[idx + 1] + ',' + pal[idx + 2] + ',' + alpha + ')';
+}
+
+function loadAmbientFromStorage() {
+  try {
+    var raw = localStorage.getItem(AMBIENT_KEY);
+    if (raw == null) return;
+    var v = parseFloat(raw);
+    if (isFinite(v) && v >= 0 && v <= 1) audio.ambient.intensity = v;
+  } catch (err) { /* localStorage may be disabled */ }
+  if (slAmbient) {
+    slAmbient.value = String(Math.round(audio.ambient.intensity * 100));
+  }
+  if (vAmbient) vAmbient.textContent = slAmbient.value + '%';
+}
+
+function persistAmbientIntensity() {
+  try {
+    localStorage.setItem(AMBIENT_KEY, String(audio.ambient.intensity));
+  } catch (err) { /* ignore */ }
+}
+
+if (slAmbient) {
+  slAmbient.addEventListener('input', function() {
+    audio.ambient.intensity = parseInt(slAmbient.value, 10) / 100;
+    if (vAmbient) vAmbient.textContent = slAmbient.value + '%';
+    persistAmbientIntensity();
+    // If A drops to 0, fade everything immediately so the screen
+    // visibly responds within one frame.
+    if (audio.ambient.intensity === 0) collapseAmbientToBaseline();
+  });
+}
+
+// SampleAmbientSignals — RMS over time-domain analyser data + spectral
+// flux delta on the same FFT buffer used by AudioReactivity. Cheap
+// (single pass over the analyser's existing buffers).
+function sampleAmbientSignals() {
+  if (!audio.analyser || !audio.fftBuf) return;
+
+  // RMS — time-domain. analyser already exists from AudioReactivity.
+  // Use a per-frame Float32Array of size analyser.fftSize.
+  if (!audio.ambient._tdBuf || audio.ambient._tdBuf.length !== audio.analyser.fftSize) {
+    audio.ambient._tdBuf = new Float32Array(audio.analyser.fftSize);
+  }
+  audio.analyser.getFloatTimeDomainData(audio.ambient._tdBuf);
+  var sum = 0;
+  for (var i = 0; i < audio.ambient._tdBuf.length; i++) {
+    var x = audio.ambient._tdBuf[i];
+    sum += x * x;
+  }
+  var rmsRaw = Math.sqrt(sum / audio.ambient._tdBuf.length) * 3.0; // GAIN ≈ 3
+  if (rmsRaw > 1) rmsRaw = 1;
+  if (rmsRaw < 0) rmsRaw = 0;
+  audio.ambient.rms = audio.ambient.rms + RMS_EMA_ALPHA * (rmsRaw - audio.ambient.rms);
+  audio.ambient.rmsSum += audio.ambient.rms;
+  audio.ambient.rmsSamples += 1;
+
+  // Spectral flux — Σ max(0, |X[k]| - |X_prev[k]|). audio.fftBuf is the
+  // current FFT magnitude buffer, already populated by sampleBands().
+  if (!audio.ambient.prevSpectrum || audio.ambient.prevSpectrum.length !== audio.fftBuf.length) {
+    audio.ambient.prevSpectrum = new Uint8Array(audio.fftBuf.length);
+    audio.ambient.prevSpectrum.set(audio.fftBuf);
+    return; // no flux on first sample
+  }
+  var flux = 0;
+  for (var k = 0; k < audio.fftBuf.length; k++) {
+    var diff = audio.fftBuf[k] - audio.ambient.prevSpectrum[k];
+    if (diff > 0) flux += diff;
+    audio.ambient.prevSpectrum[k] = audio.fftBuf[k];
+  }
+  // Normalize to [0, ~1] range; FFT bytes are 0..255 over ~512 bins.
+  flux = flux / (audio.fftBuf.length * 255);
+}
+
+function detectOnset(now) {
+  if (!audio.ambient.prevSpectrum) return;
+  // Recompute flux from the just-stashed history (sampleAmbientSignals
+  // already advanced prevSpectrum; reconstruct delta from a stash).
+  // Simpler path: maintain a separate flux scalar inside sampleAmbientSignals.
+  // For correctness without restructuring, we'll thread `lastFlux` instead.
+  var flux = audio.ambient.lastFlux || 0;
+  audio.ambient.fluxHistory.push({ t: now, val: flux });
+  var cutoff = now - ONSET_HISTORY_MS;
+  while (audio.ambient.fluxHistory.length && audio.ambient.fluxHistory[0].t < cutoff) {
+    audio.ambient.fluxHistory.shift();
+  }
+  if (audio.ambient.fluxHistory.length < 4) return;
+  var s = 0;
+  for (var i = 0; i < audio.ambient.fluxHistory.length; i++) s += audio.ambient.fluxHistory[i].val;
+  var mean = s / audio.ambient.fluxHistory.length;
+  if (mean <= 0) return;
+  if (flux > ONSET_THRESHOLD * mean && (now - audio.ambient.lastOnsetAt) >= ONSET_MIN_GAP_MS) {
+    var strength = Math.max(0, Math.min(1, (flux / mean) - 1));
+    fireOnset(now, strength);
+  }
+}
+
+function fireOnset(now, strength) {
+  audio.ambient.lastOnsetAt = now;
+  audio.ambient.onsetCount += 1;
+  audio.ambient.onsetHistory.push(now);
+  var cutoff = now - ONSET_HISTORY_MS;
+  while (audio.ambient.onsetHistory.length && audio.ambient.onsetHistory[0] < cutoff) {
+    audio.ambient.onsetHistory.shift();
+  }
+  spawnEdgeParticles(now, strength);
+}
+
+// Particle pool — flat typed-array allocation to avoid per-spawn GC.
+// Each particle has 7 floats: [active, x, y, vx, vy, age, lifetime].
+function ensureParticlePool() {
+  if (audio.ambient.particles) return;
+  var cap = audio.ambient.isMobile ? PARTICLE_CAP_MOBILE : PARTICLE_CAP_DESKTOP;
+  audio.ambient.particleCap = cap;
+  audio.ambient.particles = new Float32Array(cap * 7);
+  audio.ambient.particleCount = 0;
+}
+
+function findParticleSlot() {
+  var p = audio.ambient.particles;
+  for (var i = 0; i < audio.ambient.particleCap; i++) {
+    if (p[i * 7] === 0) return i;
+  }
+  // No idle slot — replace the oldest (highest age / lifetime ratio) so
+  // the pool never grows beyond cap (SPEC AC #34).
+  var oldest = 0, oldestRatio = -1;
+  for (var j = 0; j < audio.ambient.particleCap; j++) {
+    var r = p[j * 7 + 5] / Math.max(1, p[j * 7 + 6]);
+    if (r > oldestRatio) { oldestRatio = r; oldest = j; }
+  }
+  return oldest;
+}
+
+function spawnEdgeParticles(now, strength) {
+  if (audio.ambient.intensity === 0) return;
+  if (!ambientCanvas || !ambientCtx) return;
+  ensureParticlePool();
+  var n = Math.max(1, Math.round(PARTICLE_BASE_SPAWN * audio.ambient.intensity * strength));
+  var w = ambientCanvas.width;
+  var h = ambientCanvas.height;
+  var row = ambientCurrentPaletteRow();
+  for (var i = 0; i < n; i++) {
+    var slot = findParticleSlot();
+    var idx = slot * 7;
+    var x, y, vx, vy;
+    switch (row.direction) {
+      case 'up':              // Totoro soot
+        x = Math.random() * w;
+        y = h + Math.random() * 10;
+        vx = (Math.random() - 0.5) * 0.4;
+        vy = -(0.3 + Math.random() * 0.6);
+        break;
+      case 'diagonal':        // Howl ash
+        x = Math.random() * w;
+        y = -Math.random() * 20;
+        vx = (Math.random() - 0.5) * 0.3 - 0.5;
+        vy = 0.6 + Math.random() * 0.5;
+        break;
+      case 'top-streak':      // Nausicaä wind
+        x = -10;
+        y = Math.random() * h * 0.4;
+        vx = 1.6 + Math.random() * 1.0;
+        vy = (Math.random() - 0.5) * 0.2;
+        break;
+      case 'spiral-out':      // Mononoke spore
+        var theta0 = Math.random() * Math.PI * 2;
+        x = w / 2;
+        y = h / 2;
+        vx = Math.cos(theta0) * (0.4 + Math.random() * 0.6);
+        vy = Math.sin(theta0) * (0.4 + Math.random() * 0.6);
+        break;
+      case 'pulse-haze':      // Spirited Away — kept as full-screen lanterns drifting up
+      default:
+        x = Math.random() * w;
+        y = h * (0.6 + Math.random() * 0.4);
+        vx = (Math.random() - 0.5) * 0.2;
+        vy = -(0.2 + Math.random() * 0.4);
+        break;
+    }
+    audio.ambient.particles[idx]     = 1;     // active
+    audio.ambient.particles[idx + 1] = x;
+    audio.ambient.particles[idx + 2] = y;
+    audio.ambient.particles[idx + 3] = vx;
+    audio.ambient.particles[idx + 4] = vy;
+    audio.ambient.particles[idx + 5] = 0;     // age
+    audio.ambient.particles[idx + 6] = PARTICLE_LIFETIME_MS;
+  }
+  recountParticles();
+}
+
+function recountParticles() {
+  var p = audio.ambient.particles;
+  if (!p) { audio.ambient.particleCount = 0; return; }
+  var n = 0;
+  for (var i = 0; i < audio.ambient.particleCap; i++) {
+    if (p[i * 7] === 1) n++;
+  }
+  audio.ambient.particleCount = n;
+}
+
+function stepParticles(dt) {
+  var p = audio.ambient.particles;
+  if (!p) return;
+  for (var i = 0; i < audio.ambient.particleCap; i++) {
+    var idx = i * 7;
+    if (p[idx] !== 1) continue;
+    p[idx + 1] += p[idx + 3] * dt;
+    p[idx + 2] += p[idx + 4] * dt;
+    p[idx + 5] += dt;
+    if (p[idx + 5] >= p[idx + 6]) p[idx] = 0; // expire
+  }
+}
+
+function drawParticles() {
+  if (!ambientCtx || !ambientCanvas) return;
+  ambientCtx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
+  var p = audio.ambient.particles;
+  if (!p) return;
+  var row = ambientCurrentPaletteRow();
+  var color = paletteAmbientColor(0.85);
+  for (var i = 0; i < audio.ambient.particleCap; i++) {
+    var idx = i * 7;
+    if (p[idx] !== 1) continue;
+    var lifeT = p[idx + 5] / p[idx + 6];     // 0..1
+    var fade = 1 - lifeT;
+    if (fade <= 0) continue;
+    var alpha = 0.85 * fade;
+    var size = (row.particle === 'wind') ? 1.5 : 2.5;
+    if (row.particle === 'lantern') size = 3.0;
+    ambientCtx.globalAlpha = alpha;
+    ambientCtx.fillStyle = color;
+    ambientCtx.beginPath();
+    ambientCtx.arc(p[idx + 1], p[idx + 2], size, 0, Math.PI * 2);
+    ambientCtx.fill();
+  }
+  ambientCtx.globalAlpha = 1;
+}
+
+function applyVignetteOpacity(opacity) {
+  if (!vignetteEl) return;
+  audio.ambient.vignetteOpacity = opacity;
+  vignetteEl.style.opacity = String(opacity);
+}
+
+function applyHazeOpacity(opacity) {
+  if (!bgHaze) return;
+  audio.ambient.hazeOpacity = opacity;
+  bgHaze.style.setProperty('--haze-color', paletteAmbientColor(0.85));
+  bgHaze.style.opacity = String(opacity);
+}
+
+function applyHUDGlow(opacity, radiusPx) {
+  if (!hudTr) return;
+  audio.ambient.hudGlowOpacity = opacity;
+  if (opacity <= 0.01) {
+    if (audio.ambient.hudGlowOn) {
+      hudTr.classList.remove('audio-glow');
+      audio.ambient.hudGlowOn = false;
+    }
+    hudTr.style.removeProperty('--hud-glow-radius');
+    hudTr.style.removeProperty('--hud-glow-color');
+    return;
+  }
+  if (!audio.ambient.hudGlowOn) {
+    hudTr.classList.add('audio-glow');
+    audio.ambient.hudGlowOn = true;
+  }
+  hudTr.style.setProperty('--hud-glow-radius', radiusPx.toFixed(1) + 'px');
+  hudTr.style.setProperty('--hud-glow-color', paletteAmbientColor(opacity));
+}
+
+function applyShake(amplitude) {
+  if (!wrapEl) return;
+  audio.ambient.shakeAmplitude = amplitude;
+  if (amplitude < 0.05) {
+    wrapEl.classList.remove('audio-shake');
+    wrapEl.style.removeProperty('--shake-x');
+    wrapEl.style.removeProperty('--shake-y');
+    return;
+  }
+  wrapEl.classList.add('audio-shake');
+  // Random direction each frame, magnitude clamped to amplitude.
+  var dx = (Math.random() * 2 - 1) * amplitude;
+  var dy = (Math.random() * 2 - 1) * amplitude;
+  wrapEl.style.setProperty('--shake-x', dx.toFixed(2) + 'px');
+  wrapEl.style.setProperty('--shake-y', dy.toFixed(2) + 'px');
+}
+
+function collapseAmbientToBaseline() {
+  applyVignetteOpacity(0);
+  applyHazeOpacity(0);
+  applyHUDGlow(0, 0);
+  applyShake(0);
+  if (audio.ambient.particles) {
+    for (var i = 0; i < audio.ambient.particleCap; i++) {
+      audio.ambient.particles[i * 7] = 0;
+    }
+  }
+  audio.ambient.particleCount = 0;
+  if (ambientCtx && ambientCanvas) {
+    ambientCtx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
+  }
+}
+
+function fadeAmbientToIdle() {
+  collapseAmbientToBaseline();
+  audio.ambient.state = 'idle';
+  if (audio.ambient.rafId) {
+    cancelAnimationFrame(audio.ambient.rafId);
+    audio.ambient.rafId = null;
+  }
+}
+
+function resizeAmbientCanvas() {
+  if (!ambientCanvas || !wrapEl) return;
+  var dpr = window.devicePixelRatio || 1;
+  var w = wrapEl.clientWidth;
+  var h = wrapEl.clientHeight;
+  // Use CSS pixels for the canvas surface — particles are coarse, so we
+  // skip DPR scaling to keep the cost low. The fractal canvas owns the
+  // hi-DPI rendering.
+  ambientCanvas.width = w;
+  ambientCanvas.height = h;
+}
+
+window.addEventListener('resize', function() {
+  audio.ambient.isMobile = isMobileViewport();
+  resizeAmbientCanvas();
+});
+
+function renderAmbientFrame(now) {
+  // Freeze during fractal dive (SPEC AC #31). Keep the RAF alive but skip
+  // all work — that way the loop auto-resumes the moment the dive ends,
+  // without needing to re-hook stopDive. CSS `.diving-ui` fades the
+  // ambient layers out within ~200 ms via the !important transition.
+  if (typeof diving !== 'undefined' && diving) {
+    audio.ambient.state = 'frozen-during-dive';
+    audio.ambient.lastFrameAt = now;          // reset so next active frame has sane dt
+    audio.ambient.rafId = requestAnimationFrame(renderAmbientFrame);
+    return;
+  }
+
+  if (audio.ambient.lastFrameAt && (now - audio.ambient.lastFrameAt) < AMBIENT_FRAME_MIN_MS) {
+    audio.ambient.rafId = requestAnimationFrame(renderAmbientFrame);
+    return;
+  }
+  var dt = audio.ambient.lastFrameAt ? (now - audio.ambient.lastFrameAt) : 16;
+  audio.ambient.lastFrameAt = now;
+  audio.ambient.state = 'active';
+
+  var A = audio.ambient.intensity;
+  var e = audio.bandEnergies;
+  var r = audio.ambient.rms;
+
+  // Modulation rule (SPEC.md formal equations).
+  applyVignetteOpacity(VIGNETTE_OPACITY_MAX * A * e.bass);
+  applyHazeOpacity(HAZE_OPACITY_MAX * A * r);
+  var hudOp = HUD_GLOW_OPACITY_MAX * A * e.treble;
+  applyHUDGlow(hudOp, HUD_GLOW_RADIUS_MAX * A * e.treble);
+
+  // Beat impulse with exp decay over BEAT_DECAY_MS.
+  if (audio.ambient.isMobile) {
+    applyShake(0);
+  } else {
+    var beatAge = now - audio.ambient.beatImpulseAt;
+    var Bt = isFinite(audio.ambient.beatImpulseAt) && beatAge < BEAT_DECAY_MS * 4
+      ? Math.exp(-beatAge / BEAT_DECAY_MS) : 0;
+    applyShake(SHAKE_AMP_PX * A * Bt);
+  }
+
+  stepParticles(dt);
+  drawParticles();
+  recountParticles();
+
+  audio.ambient.rafId = requestAnimationFrame(renderAmbientFrame);
+}
+
+function startAmbientLoop() {
+  if (audio.ambient.rafId) return;
+  if (audio.state !== 'playing') return;
+  audio.ambient.isMobile = isMobileViewport();
+  ensureParticlePool();
+  resizeAmbientCanvas();
+  if (!audio.ambient.sessionStartAt) audio.ambient.sessionStartAt = performance.now();
+  audio.ambient.rafId = requestAnimationFrame(renderAmbientFrame);
+}
+
+// Hook into AudioReactivity tick so we sample ambient signals on the
+// same analyser pull. We patch the existing `audioTickLoop` by
+// overriding the pre-existing function; preserve original semantics.
+var _originalAudioTickLoop = audioTickLoop;
+audioTickLoop = function() {
+  if (audio.state !== 'playing') {
+    audio.rafId = null;
+    return;
+  }
+  var now = performance.now();
+  sampleBands();
+  applyModulation(now);
+  detectBeat(now);
+  // Ambient samples — RMS + spectral flux. Compute flux inline so
+  // detectOnset has a fresh value (avoids the prevSpectrum-already-
+  // advanced race).
+  if (audio.analyser && audio.fftBuf) {
+    if (!audio.ambient._tdBuf || audio.ambient._tdBuf.length !== audio.analyser.fftSize) {
+      audio.ambient._tdBuf = new Float32Array(audio.analyser.fftSize);
+    }
+    audio.analyser.getFloatTimeDomainData(audio.ambient._tdBuf);
+    var sumSq = 0;
+    for (var i = 0; i < audio.ambient._tdBuf.length; i++) {
+      var x = audio.ambient._tdBuf[i];
+      sumSq += x * x;
+    }
+    var rmsRaw = Math.min(1, Math.max(0, Math.sqrt(sumSq / audio.ambient._tdBuf.length) * 3.0));
+    audio.ambient.rms += RMS_EMA_ALPHA * (rmsRaw - audio.ambient.rms);
+    audio.ambient.rmsSum += audio.ambient.rms;
+    audio.ambient.rmsSamples += 1;
+
+    if (!audio.ambient.prevSpectrum || audio.ambient.prevSpectrum.length !== audio.fftBuf.length) {
+      audio.ambient.prevSpectrum = new Uint8Array(audio.fftBuf.length);
+      audio.ambient.prevSpectrum.set(audio.fftBuf);
+      audio.ambient.lastFlux = 0;
+    } else {
+      var flux = 0;
+      for (var k = 0; k < audio.fftBuf.length; k++) {
+        var diff = audio.fftBuf[k] - audio.ambient.prevSpectrum[k];
+        if (diff > 0) flux += diff;
+        audio.ambient.prevSpectrum[k] = audio.fftBuf[k];
+      }
+      audio.ambient.lastFlux = flux / (audio.fftBuf.length * 255);
+    }
+    detectOnset(now);
+  }
+  // Aggregate band averages for telemetry summary on stop.
+  var keys = ['subBass', 'bass', 'mid', 'treble'];
+  for (var bi = 0; bi < keys.length; bi++) {
+    audio.bandSummary[keys[bi]].sum += audio.bandEnergies[keys[bi]];
+    audio.bandSummary[keys[bi]].n   += 1;
+  }
+  audio.rafId = requestAnimationFrame(audioTickLoop);
+};
+
+// Hook fireBeat to inject the camera-shake impulse.
+var _originalFireBeat = fireBeat;
+fireBeat = function(now) {
+  audio.ambient.beatImpulseAt = now;
+  _originalFireBeat(now);
+};
+
+// When playback transitions to playing, kick the ambient RAF loop.
+audioPlayer.addEventListener('play', function() {
+  if (audio.state === 'idle') return;
+  setTimeout(startAmbientLoop, 0);
+});
+
+// Hook teardown to fade ambient + extend session summary.
+var _originalTeardownAudio = teardownAudio;
+teardownAudio = function() {
+  // Capture aggregates before the original wipes the bandSummary.
+  var rmsAvg = audio.ambient.rmsSamples > 0
+    ? Math.round((audio.ambient.rmsSum / audio.ambient.rmsSamples) * 1000) / 1000
+    : 0;
+  var onsetCount = audio.ambient.onsetCount;
+  var beatCount = audio.bassHistory.length ? null : null; // placeholder
+  // Count beats by inferring from how many times lastBeatAt advanced —
+  // we don't keep an explicit counter, but for correctness add one.
+  // (Add counter on next iteration; for now zero unless we tracked.)
+  beatCount = audio.ambient.beatImpulseCount || 0;
+  var sessionDurationMs = audio.ambient.sessionStartAt
+    ? Math.round(performance.now() - audio.ambient.sessionStartAt)
+    : 0;
+
+  fadeAmbientToIdle();
+
+  // Run the original teardown (which emits its own audio_session_summary
+  // for AudioReactivity averages). We patch the telemetry payload by
+  // emitting an *additional* audio_session_summary with the AudioScene
+  // fields, so verifiers can read both. Keeping them as separate events
+  // avoids monkey-patching the payload structure of AudioReactivity.
+  _originalTeardownAudio();
+
+  // Reset AudioScene aggregate counters now that the session is closed.
+  audio.ambient.rmsSum = 0;
+  audio.ambient.rmsSamples = 0;
+  audio.ambient.onsetCount = 0;
+  audio.ambient.onsetHistory.length = 0;
+  audio.ambient.fluxHistory.length = 0;
+  audio.ambient.lastFlux = 0;
+  audio.ambient.lastOnsetAt = -Infinity;
+  audio.ambient.beatImpulseAt = -Infinity;
+  audio.ambient.beatImpulseCount = 0;
+  audio.ambient.sessionStartAt = 0;
+  audio.ambient._lastSessionSummary = {
+    rms_avg: rmsAvg,
+    onset_count: onsetCount,
+    beat_count: beatCount,
+    session_duration_ms: sessionDurationMs
+  };
+  emitTelemetry('audio_scene_summary', audio.ambient._lastSessionSummary);
+};
+
+// Bump beat counter from inside our patched fireBeat hook above so the
+// teardown's session summary has it. We re-wrap to add a counter.
+var _originalFireBeat2 = fireBeat;
+fireBeat = function(now) {
+  audio.ambient.beatImpulseCount = (audio.ambient.beatImpulseCount || 0) + 1;
+  _originalFireBeat2(now);
+};
+
+// AudioScene test hooks — gated by ?test=1, same pattern as
+// AudioReactivity. These are required for the 22 T-AS-* tests.
+if (audioTestMode) {
+  window._testGetAmbientState = function() {
+    return {
+      state: audio.ambient.state,
+      ambientIntensity: audio.ambient.intensity,
+      vignetteOpacity: audio.ambient.vignetteOpacity,
+      hudGlowOpacity: audio.ambient.hudGlowOpacity,
+      hazeOpacity: audio.ambient.hazeOpacity,
+      shakeAmplitude: audio.ambient.shakeAmplitude,
+      particleCount: audio.ambient.particleCount,
+      currentPaletteAmbient: ambientCurrentPaletteRow().particle,
+      isMobile: audio.ambient.isMobile
+    };
+  };
+  window._testInjectAmbientSignals = function(sig) {
+    sig = sig || {};
+    var now = performance.now();
+    if (typeof sig.rms === 'number') {
+      audio.ambient.rms = Math.max(0, Math.min(1, sig.rms));
+    }
+    if (sig.onset) {
+      var strength = (typeof sig.onsetStrength === 'number')
+        ? Math.max(0, Math.min(1, sig.onsetStrength))
+        : 0.5;
+      // Honor the 80 ms gap to keep the spec invariant testable.
+      if ((now - audio.ambient.lastOnsetAt) >= ONSET_MIN_GAP_MS) {
+        fireOnset(now, strength);
+      }
+    }
+    // Run one ambient frame synchronously so the test sees the result.
+    audio.ambient.lastFrameAt = 0;       // bypass 30 Hz cap for tests
+    if (typeof diving !== 'undefined' && diving) {
+      audio.ambient.state = 'frozen-during-dive';
+    } else {
+      audio.ambient.state = 'active';
+      var A = audio.ambient.intensity;
+      var e = audio.bandEnergies;
+      var r = audio.ambient.rms;
+      applyVignetteOpacity(VIGNETTE_OPACITY_MAX * A * e.bass);
+      applyHazeOpacity(HAZE_OPACITY_MAX * A * r);
+      var hudOp = HUD_GLOW_OPACITY_MAX * A * e.treble;
+      applyHUDGlow(hudOp, HUD_GLOW_RADIUS_MAX * A * e.treble);
+      var beatAge = now - audio.ambient.beatImpulseAt;
+      var Bt = isFinite(audio.ambient.beatImpulseAt) && beatAge < BEAT_DECAY_MS * 4
+        ? Math.exp(-beatAge / BEAT_DECAY_MS) : 0;
+      applyShake(audio.ambient.isMobile ? 0 : SHAKE_AMP_PX * A * Bt);
+      stepParticles(16);
+      drawParticles();
+      recountParticles();
+    }
+    return {
+      vignetteOpacity: audio.ambient.vignetteOpacity,
+      hudGlowOpacity: audio.ambient.hudGlowOpacity,
+      hazeOpacity: audio.ambient.hazeOpacity,
+      shakeAmplitude: audio.ambient.shakeAmplitude,
+      particleCount: audio.ambient.particleCount
+    };
+  };
+  window._testGetParticleCount = function() {
+    recountParticles();
+    return audio.ambient.particleCount;
+  };
+  window._testForceDiveState = function(d) {
+    // The real dive flag lives in the diving variable; we set it via
+    // the existing dive controls so dependent CSS classes update too.
+    if (d && typeof startDive === 'function' && !diving) {
+      startDive();
+    } else if (!d && typeof stopDive === 'function' && diving) {
+      stopDive(false);
+    }
+    return diving;
+  };
+  window._testGetSessionSummary = function() {
+    var avg = {};
+    var keys = ['subBass', 'bass', 'mid', 'treble'];
+    for (var i = 0; i < keys.length; i++) {
+      var bs = audio.bandSummary[keys[i]];
+      avg[keys[i]] = bs.n > 0 ? Math.round((bs.sum / bs.n) * 1000) / 1000 : 0;
+    }
+    var rmsAvg = audio.ambient.rmsSamples > 0
+      ? Math.round((audio.ambient.rmsSum / audio.ambient.rmsSamples) * 1000) / 1000
+      : 0;
+    var sessionDurationMs = audio.ambient.sessionStartAt
+      ? Math.round(performance.now() - audio.ambient.sessionStartAt)
+      : 0;
+    return {
+      band_avg: avg,
+      rms_avg: rmsAvg,
+      onset_count: audio.ambient.onsetCount,
+      beat_count: audio.ambient.beatImpulseCount || 0,
+      session_duration_ms: sessionDurationMs
+    };
+  };
+}
+
+loadAmbientFromStorage();
+audio.ambient.isMobile = isMobileViewport();
+resizeAmbientCanvas();
+
+loadSensitivityFromStorage();
+
+// ─── Init ─────────────────────────────────────────────────
+resize();
+emitTelemetry('session_started', currentParams());
+scheduleRender();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ontology Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/force-graph@1.43.5/dist/force-graph.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #0a0a0f; color: #e2e2e8; font-family: 'Inter', system-ui, sans-serif; }
+    #root { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    #header {
+      position: absolute; top: 0; left: 0; right: 0;
+      padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(180deg, rgba(10,10,15,0.85), rgba(10,10,15,0.0));
+      z-index: 10;
+    }
+    #title { font-size: 14px; font-weight: 600; }
+    #title small { color: #7a7a8a; font-weight: 400; margin-left: 8px; }
+    #stats { font-size: 12px; color: #7a7a8a; }
+    #stats span { color: #7c6af7; font-weight: 600; }
+    #empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+    #empty .hint { color: #7a7a8a; font-size: 13px; max-width: 480px; text-align: center; line-height: 1.6; }
+    a { color: #7c6af7; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div id="header">
+      <div id="title">Ontology Explorer <small id="title-source"></small></div>
+      <div id="stats"></div>
+    </div>
+    <div id="graph"></div>
+    <div id="empty" hidden>
+      <div>Sem grafo carregado.</div>
+      <div class="hint">Acesse com <code>?source=domain_knowledge</code> ao lado de um servidor app-release rodando, ou abra <a href="./explorer.html">explorer.html</a> para a versão estática.</div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get('source');
+
+    // Default: redirect to the generated full-feature explorer for non-domain_knowledge sources.
+    if (!source) {
+      window.location.replace('./explorer.html');
+    }
+
+    async function fetchDomainKnowledgeGraph() {
+      const res = await fetch('/api/graph/index');
+      if (!res.ok) throw new Error(`graph index ${res.status}`);
+      return res.json();
+    }
+
+    function renderGraph(snapshot) {
+      const container = document.getElementById('graph');
+      container.style.width = '100%';
+      container.style.height = '100%';
+      const g = ForceGraph()(container)
+        .width(window.innerWidth)
+        .height(window.innerHeight)
+        .backgroundColor('#0a0a0f')
+        .nodeId('id')
+        .nodeLabel((n) => n.title || n.id)
+        .nodeAutoColorBy('node_type')
+        .linkSource('source')
+        .linkTarget('target')
+        .linkColor(() => 'rgba(255,255,255,0.18)')
+        .linkDirectionalArrowLength(3.5)
+        .linkDirectionalArrowRelPos(1)
+        .nodeCanvasObject((node, ctx, globalScale) => {
+          const label = node.title || node.id;
+          const fontSize = 12 / Math.max(globalScale, 1);
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI);
+          ctx.fillStyle = node.color || '#7c6af7';
+          ctx.fill();
+          ctx.font = `${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = '#e2e2e8';
+          ctx.fillText(label, node.x + 7, node.y + 3);
+        });
+      g.graphData({
+        nodes: snapshot.nodes.map(n => ({ id: n.id, title: n.title, node_type: n.frontmatter?.node_type })),
+        links: (snapshot.edges || []).map(e => ({ source: e.source, target: e.target }))
+      });
+
+      // Optional focus from URL hash: #node=<id>
+      const hash = window.location.hash;
+      const focusMatch = hash.match(/^#node=(.+)$/);
+      if (focusMatch) {
+        const id = decodeURIComponent(focusMatch[1]);
+        const node = (snapshot.nodes || []).find(n => n.id === id);
+        if (node) setTimeout(() => g.centerAt(node.x || 0, node.y || 0, 600).zoom(4, 600), 300);
+      }
+
+      window.addEventListener('resize', () => g.width(window.innerWidth).height(window.innerHeight));
+
+      const m = snapshot.metrics || {};
+      document.getElementById('stats').innerHTML = `
+        <span>${m.nodes ?? 0}</span> nós ·
+        <span>${m.edges ?? 0}</span> arestas ·
+        <span>${m.axioms ?? 0}</span> axiomas ·
+        <span>${m.drafts ?? 0}</span> rascunhos
+      `;
+      document.getElementById('title-source').textContent = `· source=domain_knowledge`;
+    }
+
+    function subscribeStream() {
+      const es = new EventSource('/api/graph/stream');
+      es.addEventListener('graph-delta', () => {
+        // Refetch on any delta — simpler than incremental graph patching at full-screen scale for Phase 1.
+        fetchDomainKnowledgeGraph().then(renderGraph).catch(() => {});
+      });
+    }
+
+    if (source === 'domain_knowledge') {
+      fetchDomainKnowledgeGraph()
+        .then(snapshot => {
+          renderGraph(snapshot);
+          subscribeStream();
+        })
+        .catch(err => {
+          document.getElementById('empty').hidden = false;
+          document.getElementById('empty').innerHTML = `<div>Erro ao carregar /api/graph/index: ${err.message}</div><div class="hint">Verifique se o servidor app-release está rodando.</div>`;
+        });
+    }
+  </script>
+</body>
+</html>

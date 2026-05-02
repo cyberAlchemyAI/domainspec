@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário: Antropofagia Epistêmica</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=IBM+Plex+Mono:ital@0;1&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111111;
+    --text: #f0f0f0;
+    --brand-magenta: #e91e63;
+    --brand-cyan: #00bcd4;
+  }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 0; margin: 0;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 800px; margin: 60px auto; padding: 0 20px; }
+
+  header { position: relative; margin-bottom: 60px; }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    line-height: 0.9;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .glitch-text {
+    position: absolute;
+    top: 0; left: -2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 5rem;
+    line-height: 0.9;
+    color: var(--brand-magenta);
+    z-index: 1;
+    mix-blend-mode: screen;
+    opacity: 0.8;
+  }
+  .glitch-2 {
+    left: 2px;
+    top: 2px;
+    color: var(--brand-cyan);
+  }
+
+  /* Progressive Disclosure */
+  details.devour {
+    margin-bottom: 40px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 20px 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  summary::-webkit-details-marker { display: none; }
+  
+  summary:hover { color: var(--brand-cyan); }
+  details.devour[open] summary { color: var(--brand-magenta); }
+
+  .content-digest {
+    padding: 0 0 40px 0;
+  }
+
+  .philosophy {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: 24px;
+    border-left: 2px solid var(--brand-magenta);
+    padding-left: 20px;
+  }
+
+  .data-stream {
+    font-size: 0.85rem;
+  }
+  
+  .stream-item {
+    display: grid;
+    grid-template-columns: 40px 1fr 60px;
+    border-bottom: 1px dashed rgba(255,255,255,0.2);
+    padding: 12px 0;
+  }
+  .stream-item:hover { background: rgba(0, 188, 212, 0.1); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="glitch-text">O Grafo Diário</div>
+    <div class="glitch-text glitch-2">O Grafo Diário</div>
+    <h1>O Grafo Diário</h1>
+  </header>
+
+  <details class="devour" open>
+    <summary>I / ASSIMILAÇÃO ONTOLÓGICA <span>+</span></summary>
+    <div class="content-digest">
+      <div class="philosophy">
+        "Só a antropofagia nos une. Socialmente. Economicamente. Filosoficamente." O vault devora a Biblioteconomia de Ranganathan de 1933 e a digere em automação algorítmica.
+      </div>
+      <div class="data-stream">
+        <div class="stream-item">
+          <span>[P1]</span>
+          <span>Biblioteconomia Integrada à Constituição do Vault</span>
+          <span>/ 8.0</span>
+        </div>
+        <div class="stream-item">
+          <span>[P2]</span>
+          <span>Governance Workflows: Backlog & README Patterns</span>
+          <span>/ 8.0</span>
+        </div>
+        <div class="stream-item">
+          <span>[P3]</span>
+          <span>O Grafo Diário: Discovery do Jornal Interno</span>
+          <span>/ 6.0</span>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="devour">
+    <summary>II / MIGRAÇÃO CCB <span>+</span></summary>
+    <div class="content-digest">
+      <div class="philosophy">
+        A estrutura é deslocada. O domínio validation recebe o código legado, purificando-o através de scaffolding estrito, mas as feridas fiduciárias (testes) permanecem abertas.
+      </div>
+      <div class="data-stream">
+        <div class="stream-item">
+          <span>[P2]</span>
+          <span>Domain Scaffolding & Relocação Completa</span>
+          <span>/ 7.0</span>
+        </div>
+        <div class="stream-item">
+          <span>[P4]</span>
+          <span>CCB Spec Audit: Gaps Identificados</span>
+          <span>/ 5.0</span>
+        </div>
+      </div>
+    </div>
+  </details>
+</div>
+</body>
+</html>

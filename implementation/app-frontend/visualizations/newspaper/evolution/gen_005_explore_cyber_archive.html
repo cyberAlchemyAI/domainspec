@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 005: Explore (Cyber-Archive Botanico)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* MISTURA EXPLORE: Fundo quase negro/pantano, neon cítrico, branco translúcido */
+    --bg-swamp: #0a110e;      
+    --bg-glass: rgba(18, 33, 27, 0.7); 
+    --text-bright: #e2f5ee;    
+    --text-dim: #608678;   
+    --accent-acid: #b4eb34; /* Neon lime for high contrast technicality */
+    --border-tech: rgba(180, 235, 52, 0.2);
+  }
+
+  body {
+    background-color: var(--bg-swamp);
+    color: var(--text-bright);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 40px 20px 100px 20px;
+    -webkit-font-smoothing: antialiased;
+    /* Linhas de scan sútis para textura "Terminal" */
+    background-image: linear-gradient(0deg, rgba(255,255,255,0.01) 50%, transparent 50%);
+    background-size: 100% 4px;
+  }
+
+  .wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* TECHNICAL HEADER */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid var(--accent-acid);
+    padding-bottom: 12px;
+    margin-bottom: 40px;
+  }
+  
+  .brand { display: flex; flex-direction: column; }
+  h1 { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--accent-acid); letter-spacing: -0.5px; }
+  .brand-sub { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
+  
+  .tech-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-align: right;
+  }
+  .tech-meta span { color: var(--text-bright); }
+
+  /* ========================================= */
+  /* NOVIDADE: O Ranker de Fitness (Genético)  */
+  /* ========================================= */
+  .fitness-ranker {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--bg-swamp);
+    border: 1px solid var(--accent-acid);
+    padding: 16px 24px;
+    color: var(--accent-acid);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    box-shadow: 0 0 20px rgba(180, 235, 52, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .ranker-title { font-weight: 700; text-transform: uppercase; }
+  .ranker-btn {
+    background: transparent;
+    border: 1px solid var(--border-tech);
+    color: var(--text-bright);
+    font-family: inherit;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ranker-btn:hover { background: var(--accent-acid); color: var(--bg-swamp); }
+
+  /* ========================================= */
+  /* EDITORIAL                                 */
+  /* ========================================= */
+  .editorial {
+    background: var(--bg-glass);
+    padding: 24px 32px;
+    margin-bottom: 40px;
+    border-left: 4px solid var(--accent-acid);
+    backdrop-filter: blur(10px);
+  }
+  
+  .editorial-tag {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-acid);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .editorial-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .editorial-body {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-bright);
+    opacity: 0.9;
+  }
+  .editorial-body p { margin-bottom: 16px; margin-top: 0;}
+  .editorial-body p:last-child { margin-bottom: 0; }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-dim); text-decoration: none; border: 1px dashed var(--border-tech); padding: 2px 8px; border-radius: 2px; }
+  .source-link:hover { color: var(--accent-acid); border-color: var(--accent-acid); }
+
+  /* ========================================= */
+  /* ARCOS COMO PLANILHAS (TABULAR / 90s CLUB) */
+  /* ========================================= */
+  .arc {
+    margin-bottom: 40px;
+  }
+
+  .arc-header {
+    background: rgba(255,255,255,0.03);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-tech);
+    border-bottom: 1px solid var(--border-tech);
+    cursor: pointer;
+  }
+  .arc-header:hover { background: rgba(180, 235, 52, 0.05); }
+
+  .arc-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .arc-title::before {
+    content: 'ARC_';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent-acid);
+  }
+
+  .content { padding: 24px 0; }
+  .content p { 
+    margin: 0 0 24px 16px; 
+    font-size: 0.95rem; 
+    color: var(--text-dim); 
+    max-width: 600px; 
+    border-left: 1px solid var(--border-tech);
+    padding-left: 16px;
+  }
+
+  /* TOOLTIPS NATIVOS (Retido das gerações anteriores) */
+  .intent-tip {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dashed var(--accent-acid);
+  }
+  .intent-tip::before {
+    content: attr(data-intent);
+    position: absolute;
+    bottom: 150%; left: 0;
+    background: var(--accent-acid);
+    color: var(--bg-swamp);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    z-index: 10;
+  }
+  .intent-tip:hover::before { opacity: 1; transform: translateY(0); }
+
+  /* TABULAR NODES */
+  .node-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+  .node-table th {
+    text-align: left;
+    color: var(--text-dim);
+    font-weight: 400;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .node-table td {
+    padding: 12px 16px;
+    border-bottom: 1px dashed rgba(255,255,255,0.05);
+    color: var(--text-bright);
+    vertical-align: middle;
+  }
+  .node-table tr:hover td {
+    background: rgba(180, 235, 52, 0.05);
+    color: var(--accent-acid);
+  }
+  
+  .col-id { width: 60px; color: var(--accent-acid); }
+  .col-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 500; }
+  .col-score { width: 80px; text-align: right; }
+
+</style>
+</head>
+<body>
+
+<!-- GLOBAL FITNESS (NOVO PADRAO) -->
+<div class="fitness-ranker" style="flex-direction: column; align-items: flex-end; gap: 8px;">
+  <span class="ranker-title" style="margin-bottom: 4px;">GLOBAL FITNESS</span>
+  <div class="vote-group" id="vote_global_page" style="display:flex; gap:4px;"></div>
+  <input type="text" class="comment-input" id="input_global_page" placeholder="Reason..." style="display:none; width: 150px; padding: 4px; border: 1px solid var(--border-tech); background: var(--bg-swamp); color: var(--accent-acid); font-family: inherit; font-size: 0.75rem; margin-top: 4px; outline: none;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+</div>
+
+<div class="wrapper">
+  
+  <header>
+    <div class="brand">
+      <h1>O_GRAFO_DIARIO</h1>
+      <span class="brand-sub">Ecossistema ZefraHub</span>
+    </div>
+    <div class="tech-meta">
+      GEN: <span>005 [EXPLORE]</span><br>
+      DATE: <span>2026.03.24</span>
+    </div>
+  </header>
+
+  <main id="reader-container">
+    <!-- JS Injected Content -->
+  </main>
+
+<script>
+  const mockPayload = {
+    metadata: { date: "2026-03-24", stats: { sessions: 25, decisions: 12, specChanges: 8 } },
+    articles: [
+      { id: 'art1', tag: 'P1 • ARQUITETURA', title: 'Integração de Ranganathan',
+        body: '<p>Adotamos oficialmente a Classificação Facetada de S. R. Ranganathan, forçando o Grafo Diário a ler os dados por atributos multidimensionais.</p>',
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload = (window.parent && window.parent.currentPayload) ? window.parent.currentPayload : mockPayload;
+
+  function renderUI() {
+    if (payload && payload.metadata) {
+      document.querySelector('.tech-meta span:last-child').innerText = payload.metadata.date;
+    }
+    
+    if (payload && payload.articles) {
+      let html = '';
+      
+      payload.articles.forEach((art, index) => {
+        let bodyHtml = art.body || '';
+        let sourceFiles = (art.meta && art.meta.source_files) || [];
+        let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+          let name = f.split('/').pop();
+          return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+        }).join('') + '</div>' : '';
+
+        html += `
+          <div class="editorial" style="margin-bottom: 60px;">
+            <div class="editorial-tag">${art.tag || 'DYNAMIC'}</div>
+            <h2 class="editorial-title">${art.title}</h2>
+            <div class="editorial-body">
+              ${bodyHtml}
+              ${sourceLinksHtml}
+            </div>
+            
+            <!-- ATOMIC EVALUATORS -->
+            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px dashed var(--border-tech);">
+              <div style="font-size: 0.70rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 16px;">ATOMIC EVALUATORS</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">EDITORIAL DENSITY</span>
+                      <div class="vote-group" id="vote_den_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_den_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('editorial_density', '${art.id}', 'vote_den_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">STRUCTURE</span>
+                      <div class="vote-group" id="vote_str_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_str_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('structure', '${art.id}', 'vote_str_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">TONE</span>
+                      <div class="vote-group" id="vote_ton_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_ton_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('tone', '${art.id}', 'vote_ton_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">FORM</span>
+                      <div class="vote-group" id="vote_for_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_for_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('form', '${art.id}', 'vote_for_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">TOPOLOGY</span>
+                      <div class="vote-group" id="vote_top_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_top_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('topology', '${art.id}', 'vote_top_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">VISUAL ENTROPY</span>
+                      <div class="vote-group" id="vote_vis_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_vis_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('visual_entropy', '${art.id}', 'vote_vis_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                  <div class="eval-row" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-bright);">INTERACTION MECHANICS</span>
+                      <div class="vote-group" id="vote_int_${art.id}" style="display:flex; gap:2px;"></div>
+                    </div>
+                    <input type="text" class="comment-input" id="input_int_${art.id}" placeholder="Note..." onkeydown="if(event.key==='Enter') commitVote('interaction_mechanics', '${art.id}', 'vote_int_${art.id}')" style="display:none; width:100%; padding:6px; background:transparent; border:1px solid var(--border-tech); color:var(--accent-acid); font-family:inherit; font-size:0.8rem; outline:none;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      });
+      
+      document.getElementById('reader-container').innerHTML = html;
+      initVoteButtons();
+    }
+  }
+
+  let pendingVotes = {};
+
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      const id = container.id;
+      const parts = id.replace('vote_', '').split('_');
+      const articleId = parts.pop();
+      const metricKey = parts.join('_');
+      let metricName = metricKey;
+      
+      if (metricKey === 'den') metricName = 'editorial_density';
+      else if (metricKey === 'str') metricName = 'structure';
+      else if (metricKey === 'ton') metricName = 'tone';
+      else if (metricKey === 'top') metricName = 'topology';
+      else if (metricKey === 'vis') metricName = 'visual_entropy';
+      else if (metricKey === 'int') metricName = 'interaction_mechanics';
+      else if (metricKey === 'for') metricName = 'form';
+      else if (metricKey === 'global') metricName = 'global_fitness';
+      
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button style="border: 1px solid var(--border-tech); background: transparent; color: var(--text-bright); font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; padding: 4px 10px; cursor: pointer; transition: all 0.2s;" class="vote-btn-scale" onmouseover="this.style.background='var(--text-bright)'; this.style.color='var(--bg-swamp)';" onmouseout="if(!this.classList.contains('active')){this.style.background='transparent'; this.style.color='var(--text-bright)';}" onclick="registerVote('${metricName}', '${articleId === 'global' ? '' : articleId}', ${n}, '${id}')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = 'transparent'; btn.style.color = 'var(--text-bright)';
+        if (parseInt(btn.innerText) === score) {
+          btn.classList.add('active');
+          btn.style.background = 'var(--text-bright)'; btn.style.color = 'var(--bg-swamp)';
+        }
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      let componentContext = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[${componentContext}] ${reason}` : `[${componentContext}] No comment`
+      });
+    }
+    
+    if(container) {
+      container.innerHTML = `<span class="vote-success-msg" style="display:inline-block; margin-top:2px; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--accent-acid); font-weight:700;">✓ SECURED: ${state.score}/5</span>`;
+    }
+    if (inputEl) inputEl.style.display = 'none';
+  }
+
+  window.onload = () => {
+    renderUI();
+  };
+</script>
+</div>
+</body>
+</html>

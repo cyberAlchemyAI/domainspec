@@ -1,0 +1,200 @@
+{
+  "metadata": {
+    "edition": "O Grafo Diário — Edição 001",
+    "date": "2026-03-25",
+    "epoch": 2,
+    "generated_by": "editor-in-chief-agent",
+    "stats": {
+      "sessions": 43,
+      "decisions": 28,
+      "specChanges": 17,
+      "contradictions_found": 0,
+      "contradictions_resolved": 1,
+      "files_moved": 24,
+      "tests_passing": 1795,
+      "agents_active": 5
+    }
+  },
+  "articles": [
+    {
+      "id": "ed001_condensation_business",
+      "type": "constitutional_rule",
+      "tag": "P0 • ZEFRAHUB OBSER",
+      "title": "The Condensation Law: Restoring Signal-to-Noise in the Ontology",
+      "content": {
+        "exec": "<p><strong>ZefraHub Business Context:</strong> ZefraHub’s core thesis relies on operational clarity and frictionless information flow. The ecosystem was accumulating 'debt' in its communication logs, creating noise over signal. In a business context, when the 'Cost of Reading' exceeds the 'Value of Information,' the system grinds to a halt. For the Knowledge Ontology, this meant our Vault was becoming bloated and difficult to extract intelligence from.</p><p><strong>Action Taken:</strong> The Orchestrator mapped 'The Condensation Law' to enforce strict signal-to-noise ratios. By maintaining only three active state documents, ZefraHub ensures that business intelligence remains immediately accessible without the drag of dead history.</p>",
+        "tech": "<div class='tech-block'>FLUSH PROTOCOL DEPLOYED:\n\nTrigger: ~50 entries OR ~30KB limit.\nArchitecture:\n• system-state.md → state dashboard\n• evolution-wall.md → immutable decision log\n• info-exchange.md → ephemeral comms channel\n\nSTATUS: Epoch 1 archive flushed. Ecosystem reset to Epoch 2.</div>",
+        "graph": "<div class='graph-block'>EDGE CONSTITUTIONAL: [Condensation Law] --governs--> [info-exchange.md lifecycle]\nEDGE VERIFIED: [Orchestrator] --has-exclusive-authority--> [flush operations]</div>"
+      },
+      "meta": { "impact": 9.5, "risk": "low" }
+    },
+    {
+      "id": "ed001_protocol_v1_business",
+      "type": "feature_evolution",
+      "tag": "P0 • ZEFRAHUB TELEM",
+      "title": "Protocol v1.0.0: Telemetry as the Foundation of Market Adaptation",
+      "content": {
+        "exec": "<p><strong>ZefraHub Business Context:</strong> In ZefraHub, telemetry is the lifeblood of product iteration and market adaptation. Qualitative feedback is slow and ambiguous. If we cannot measure user interactions accurately, we cannot adapt the business platform. In the Ontology, untracked interactions mean a failure to learn from the operator's mental models, leaving us blind to actual platform value.</p><p><strong>Action Taken:</strong> The ecosystem deployed Protocol v1.0.0, establishing a rigorous 8-axis telemetry evaluator. Every UI generation now feeds mathematically structured data directly into the Darwin Engine, allowing ZefraHub to iterate and optimize its product delivery in a fully deterministic feedback loop.</p>",
+        "tech": "<div class='tech-block'>PROTOCOL v1.0.0 ENFORCEMENT:\n\n• Schema: metric_name (8 canonical), score (1-5), comment\n• UI Evolution Agent: mandated to embed full evaluator grid\n• Backend: Automatic Template Transition mechanic deployed.\n\nRESULT: Frictionless queue for Darwin Engine telemetry.</div>",
+        "graph": "<div class='graph-block'>EDGE EVOLVED: [Voting Modals] --standardized-to--> [Protocol v1.0.0 Grid]\nEDGE VERIFIED: [telemetry_db.json] --consumed-by--> [Darwin-Gödel Engine]</div>"
+      },
+      "meta": { "impact": 9.0, "risk": "low" }
+    },
+    {
+      "id": "ed001_context_first_business",
+      "type": "meta_reflection",
+      "tag": "P0 • META STRATEGY",
+      "title": "The Business 'Context-First' Editorial Structure",
+      "content": {
+        "exec": "<p><strong>ZefraHub Business Context:</strong> The ZefraHub Newspaper exists to surface strategic intelligence. Checklists of engineering commits do not drive business decisions. To truly leverage the Knowledge Vault, executives and operators need to know <em>why</em> an update matters to the bottom line or the strategic vision before diving into technical details.</p><p><strong>Action Taken:</strong> The Editor-in-Chief has strictly adopted the 'Business Context & Implications First' structural taxonomy. All future strategic updates will explicitly bridge technical execution with ZefraHub's broader market and ontological objectives.</p>",
+        "tech": "<div class='tech-block'>EDITORIAL TAXONOMY SHIFT:\n\n• Old format: action-driven changelogs\n• New format: business-context-led synthesis\n\nImpacts HTML elements:\n• ZefraHub Business Context \n• Action Taken</div>",
+        "graph": "<div class='graph-block'>EDGE STRUCTURAL: [Editor-in-Chief] --adopts--> [Business-First Taxonomy]\nSTATUS: Implemented across all active payloads.</div>"
+      },
+      "meta": { "impact": 8.5, "risk": "low" }
+    },
+    {
+      "id": "ed001_headline",
+      "type": "architectural_decision",
+      "tag": "P0 • MANCHETE",
+      "title": "A Grande Migração: 24 Arquivos, Zero Falhas",
+      "content": {
+        "exec": "<p>O pipeline de validação de CCB — a espinha dorsal que garante a legitimidade legal de cada ativo adquirido — foi inteiramente migrado do domínio <code>aquisicao</code> para um novo domínio dedicado: <code>documents_validation</code>. A operação envolveu 24 arquivos, 14 módulos-fonte e 612 testes. O resultado: <strong>1795 testes passando, zero falhas, zero erros.</strong></p><p>A migração não foi apenas logística. Ela representa uma decisão arquitetural irreversível: validação de documentos não é um subproduto da aquisição — é um domínio com fronteiras, regras e responsabilidades próprias. A partir de agora, qualquer evolução no pipeline de OCR, cross-check e kit matching acontece dentro de um perímetro limpo, desacoplado das operações CRUD e de estado do lote.</p>",
+        "tech": "<div class='tech-block'>MIGRAÇÃO EXECUTADA VIA SCRIPT ATÔMICO (/tmp/migrate_ccb.py)\n\n• Fase 1: Movimentação física de 24 arquivos (3 use cases, 3 services, 5 domain modules + 7 JSON configs, 1 task, 2 management commands, 8 test files)\n• Fase 2: Reescrita de 21 arquivos para import paths (from domains.aquisicao → from domains.documents_validation)\n• Fase 3: Reescrita de 8 arquivos com mock.patch string literals — invisíveis para ferramentas de import\n• Extração cirúrgica de testes embedados: 12 classes de cross-check extraídas, 2 classes de kit matching (17 métodos)\n• Infra: INSTALLED_APPS, Celery autodiscover, conftest.py — todos atualizados\n\nDÉBITO TÉCNICO ACEITO: documents_validation ainda importa de aquisicao.repositories.models (resolvido na Fase 2)</div>",
+        "graph": "<div class='graph-block'>EDGE CREATED: [documents_validation] --decouples-from--> [aquisicao]\nEDGE VERIFIED: [process_bulk_import] --orchestrates--> [cross_check, kit_matching, template_matching]\nEDGE PENDING: [documents_validation] --depends-on--> [aquisicao.repositories.models] (Phase 2 target)\nNODE STATUS: documents-validation-migration-implementation.md → status: completed (v2.0.0)</div>"
+      },
+      "meta": { "impact": 9.5, "risk": "low" }
+    },
+    {
+      "id": "ed001_philosophy",
+      "type": "philosophical_foundation",
+      "tag": "P1 • FILOSOFIA",
+      "title": "Elegância Estrutural: O Quinto Princípio Epistêmico",
+      "content": {
+        "exec": "<p>O vault ganhou uma nova lei fundamental. <strong>Elegância Estrutural</strong> — a ideia de que complexidade não pode ser destruída, apenas transferida para dentro da arquitetura — foi ratificada como o 5º Princípio Epistêmico do repositório, ao lado de Occam, Lindy, Event Sourcing e Ortogonalidade.</p><p>O axioma central: <em>\"Absorvemos a complexidade na estrutura para que as pessoas que interagem com ela não precisem carregar esse peso.\"</em> Não se trata de simplicidade ingênua. Trata-se de sofisticação invisível.</p>",
+        "tech": "<div class='tech-block'>PRINCÍPIO FORMALIZADO EM: docs/vault/conceptual/epistemic-principles.md\n\nLINHAGEM:\n• Tesler's Law (1984) — Conservation of Complexity → Lindy: 40+ anos\n• Estoicismo Pragmático → Lindy: 2000+ anos\n• Conceito do \"Nudge\" — guiar comportamento por curadoria, não por burocracia\n\nCRITÉRIOS DE ADMISSÃO:\n1. Teste Lindy: sobreviveu 50+ anos? ✓ (Tesler: 42, Estoicismo: 2000+)\n2. Teste de Aplicação: decisão concreta no projeto? ✓ (O Grafo Diário, mandato arquitetural)\n3. Teste de Não-Redundância: informação nova? ✓ (nenhum princípio existente cobre absorção de complexidade)</div>",
+        "graph": "<div class='graph-block'>EDGE CREATED: [Elegância Estrutural] --added-to--> [epistemic-principles.md]\nEDGE VERIFIED: [Stoic Empiricism] --derives-from--> [Tesler's Law, Stoicism]\nEDGE SEMANTIC: [O Grafo Diário] --exemplifies--> [Elegância Estrutural]\nNODE PROMOTED: business-philosopher/manifesto.md → rewritten from scratch</div>"
+      },
+      "meta": { "impact": 8.0, "risk": "low" }
+    },
+    {
+      "id": "ed001_godel",
+      "type": "system_architecture",
+      "tag": "P1 • MÁQUINA",
+      "title": "A Máquina de Gödel Encontra Sua Forma: 5 Agentes, 1 Orquestrador",
+      "content": {
+        "exec": "<p>O ecossistema do jornal foi fragmentado em <strong>5 agentes especializados</strong> sob um Orquestrador central. Cada agente opera com um manifesto constitucional próprio e nunca cruza as fronteiras de outro domínio. O Orquestrador funciona como um roteador de contexto — ele coloca uma \"máscara\" por vez, executa no domínio correto, e remove a máscara ao terminar.</p><p>Os 5 agentes: <strong>Platform Architect</strong> (infraestrutura do dashboard), <strong>Darwin-Gödel Engine</strong> (matemática evolutiva), <strong>Data & Backend</strong> (persistência e telemetria), <strong>UI Evolution</strong> (layouts mutáveis) e <strong>Editor-in-Chief</strong> (síntese textual). A separação é absoluta: o agente de UI muda o HTML, o Editor produz o JSON. Eles nunca se fundem.</p>",
+        "tech": "<div class='tech-block'>PROTOCOLO DE MÁSCARA (MASK PROTOCOL)\n\nFluxo do Orquestrador:\n1. Recebe comando do Operador\n2. Identifica domínio-alvo\n3. Carrega APENAS o manifesto do agente correspondente\n4. Executa com persona isolada\n5. Reporta resultado e descarta contexto do agente\n\nCONVENÇÕES EMERGENTES:\n• Atomic Telemetry: todo voto é numérico (1-5), não qualitativo\n• Daily Payload Contract: Editor produz JSON, UI Templates consomem cegamente\n• Context Provisioning: todo botão/trigger tem tooltip explicativo\n• Condensation Law: info-exchange.md é canal efêmero, flush obrigatório a cada ~50 entradas</div>",
+        "graph": "<div class='graph-block'>EDGE CREATED: [Orchestrator] --dispatches--> [Platform Architect, Darwin-Gödel, Backend, UI Evolution, Editor-in-Chief]\nEDGE VERIFIED: [UI Evolution Agent] --produces--> [gen_*.html layouts]\nEDGE VERIFIED: [Editor-in-Chief] --produces--> [daily_payload.json]\nEDGE CONSTITUTIONAL: [Mask Protocol] --governs--> [Orchestrator context switching]\nTOPOLOGY: Star graph with Orchestrator as hub. Zero inter-agent direct communication.</div>"
+      },
+      "meta": { "impact": 9.0, "risk": "low" }
+    },
+    {
+      "id": "ed001_ranganathan",
+      "type": "intellectual_foundation",
+      "tag": "P2 • BIBLIOTECONOMIA",
+      "title": "Ranganathan Tinha Razão em 1931",
+      "content": {
+        "exec": "<p>A Classificação Facetada de S. R. Ranganathan — proposta em 1931 — foi formalmente integrada como o quarto pilar intelectual do vault, ao lado de Zettelkasten, Evergreen Notes e Epistemologia Bayesiana. A análise revelou que o sistema de 7 labels do vault (<code>node_type</code>, <code>layer</code>, <code>nature</code>, <code>status</code>, <code>veracidade</code>, <code>convicção</code>, <code>tags</code>) é <strong>estruturalmente isomórfico</strong> à classificação de facetas: cada label é uma dimensão independente, sem redundância.</p><p>Noventa e cinco anos depois, o princípio permanece imbatível. É o Lindy Effect operando em tempo real.</p>",
+        "tech": "<div class='tech-block'>ISOMORFISMO VERIFICADO:\n\nRanganathan (1931):          Vault (2026):\n• Personalidade           →  node_type\n• Matéria                 →  layer\n• Energia                 →  nature\n• Espaço                  →  status + veracidade\n• Tempo                   →  convicção + tags\n\nGOVERNANÇA PROPOSTA (specs/ontology/library-science-foundations-discovery.md):\n1. Authority Files — vocabulário controlado para tags\n2. Graph Health Lints — detecção de nós isolados sem conexões\n3. Tag Thesauri — mapeamento de sinônimos e termos proibidos\n\nAGENT WORKFLOWS CRIADOS:\n• .agent/workflows/backlog-pattern.md\n• .agent/workflows/readme-pattern.md\n• AGENTS.md atualizado com mandatos obrigatórios</div>",
+        "graph": "<div class='graph-block'>EDGE VALIDATED: [AX-ONT-2 (Orthogonality)] --is-isomorphic-to--> [Ranganathan Faceted Classification]\nEDGE CREATED: [ontology-constitution.md] --4th-pillar--> [Ranganathan / Biblioteconomia]\nEDGE CREATED: [library-science-foundations-discovery.md] --proposes--> [Authority Files, Graph Lints]\nLINDY SCORE: 95 anos → alta probabilidade de sobrevivência futura</div>"
+      },
+      "meta": { "impact": 8.0, "risk": "low" }
+    },
+    {
+      "id": "ed001_condensation",
+      "type": "constitutional_rule",
+      "tag": "P1 • OBSERVABILIDADE",
+      "title": "A Lei da Condensação: Como Manter a Máquina Magra",
+      "content": {
+        "exec": "<p>O arquivo <code>info-exchange.md</code> acumulou 909 linhas de conversas históricas entre agentes — 62KB de contexto morto que cada agente pagava para recarregar. O Orquestrador executou um flush completo, condensando informações relevantes em <code>system-state.md</code> e registrando decisões em <code>evolution-wall.md</code>.</p><p>Mais importante: o flush deixou de ser um evento isolado. Agora é <strong>lei constitucional</strong>. A Lei da Condensação exige flush obrigatório quando o arquivo excede ~50 entradas ou ~30KB. Autoridade exclusiva do Orquestrador.</p>",
+        "tech": "<div class='tech-block'>ARQUITETURA DE OBSERVABILIDADE (3 ARQUIVOS):\n\n┌─────────────────────┬──────────────────┬──────────────────────┐\n│  system-state.md    │ evolution-wall.md│   info-exchange.md   │\n│  O QUE É            │ O QUE FOI DECIDIDO│  O QUE ESTÁ          │\n│  (estado atual)     │ (histórico)      │  ACONTECENDO (live)  │\n│  Orquestrador only  │ Append-only      │  Todos os agentes    │\n│  Mutável            │ Imutável         │  Efêmero (flush)     │\n└─────────────────────┴──────────────────┴──────────────────────┘\n\nTRIGGERS DE FLUSH:\n• ~50 entradas OU ~30KB → flush obrigatório\n• 4 etapas: scan actions → condensar em system-state → logar em evolution-wall → truncar\n• Numeração de épocas: Epoch 1 (fundação) → Epoch 2 (operacional)</div>",
+        "graph": "<div class='graph-block'>EDGE CONSTITUTIONAL: [Condensation Law] --governs--> [info-exchange.md lifecycle]\nEDGE CREATED: [newspaper-communication-protocol.md §5-6] --codifies--> [flush procedure]\nEDGE VERIFIED: [Orchestrator] --has-exclusive-authority--> [flush operations]\nSTATE CHANGE: info-exchange.md → 909 lines → ~50 lines (Epoch 2)</div>"
+      },
+      "meta": { "impact": 7.5, "risk": "low" }
+    },
+    {
+      "id": "ed001_god_file",
+      "type": "technical_debt",
+      "tag": "⚠️ P2 • DÍVIDA TÉCNICA",
+      "title": "O God File de 1800 Linhas Ainda Respira",
+      "content": {
+        "exec": "<p><code>process_bulk_import.py</code> tem ~1800 linhas e orquestra sozinho todo o pipeline de validação: classificação, template matching, extração OCR, avaliação de kit, e matching de contrato. A Fase 1 da migração moveu este arquivo intacto — uma decisão deliberada para preservar integridade funcional.</p><p>A Fase 2, ainda não iniciada, prevê a decomposição cirúrgica deste monolito em funções-passo independentes, cada uma com seus próprios testes e contratos de entrada/saída.</p>",
+        "tech": "<div class='tech-block'>DECOMPOSIÇÃO PROPOSTA (Fase 2, Step 2.1):\n\nprocess_bulk_import.py (~1800 linhas) →\n  ├── _step_classify_dvs       → módulo de classificação\n  ├── find_matching_template    → módulo de template matching\n  ├── _step_extract_fields      → orquestração de extração\n  ├── _step_kit_evaluation      → módulo de avaliação de kit\n  └── _step_contract_matching   → módulo de matching de contrato\n\nDEPENDÊNCIA CRÍTICA:\n• documents_validation importa de aquisicao.repositories.models → resolvido via Repository pattern (Fase 2, Step 2.3)\n• Ports: DocumentStore, TemplateStore, BatchStore (interfaces abstratas)\n• aquisicao fornece implementações concretas via dependency injection\n\nSTATUS: Spec de implementação (documents-validation-refactoring-implementation.md) ainda não escrita</div>",
+        "graph": "<div class='graph-block'>EDGE CRITICAL: [process_bulk_import.py] --couples-to--> [aquisicao.repositories.models] (TECH DEBT)\nEDGE PLANNED: [God File] --decomposes-into--> [5 step modules]\nEDGE PLANNED: [Repository Pattern] --decouples--> [documents_validation ↔ aquisicao]\nRISK: HIGH — monolito bloqueia evolução independente do pipeline</div>"
+      },
+      "meta": { "impact": 7.0, "risk": "high" }
+    },
+    {
+      "id": "ed001_voting",
+      "type": "feature_evolution",
+      "tag": "P1 • EVOLUÇÃO",
+      "title": "O Voto Saiu do Modal e Entrou na Página",
+      "content": {
+        "exec": "<p>O sistema de feedback da Plataforma Genética sofreu uma transformação radical. Os modais desconectados de votação foram substituídos por <strong>componentes imersivos de avaliação diretamente dentro das páginas geradas</strong>. Agora, ao ler uma notícia, o operador avalia cada artigo em 4 eixos atômicos — Densidade Editorial, Tom, Estrutura e Topologia — sem sair do fluxo de leitura.</p><p>Cada voto é uma escala de 1 a 5 com campo de comentário opcional, registrado via telemetria e transmitido ao backend para consumo pela Darwin-Gödel Engine.</p>",
+        "tech": "<div class='tech-block'>TAXONOMIA DE VOTAÇÃO (8 EIXOS):\n\nPOR ARTIGO (4 métricas atômicas):\n1. Editorial Density  — profundidade exec/tech/graph adequada?\n2. Tone Fidelity      — tom editorial consistente?\n3. Structure Clarity  — estrutura do texto legível?\n4. Topology & Layout  — navegabilidade do componente?\n\nPOR PÁGINA (4 métricas globais):\n5. Overall Generation Fitness — qualidade geral da geração\n6. Visual Coherence   — coerência estética\n7. Information Load   — carga cognitiva\n8. Navigation Flow    — fluxo de navegação\n\nIMPLEMENTAÇÃO:\n• registerScaleVote(blockId, componentId, metricName, score)\n• commitScaleVote() → transmite ao parent frame via registerAtomicVote()\n• Backend: evolution_server.py → telemetry_db.json</div>",
+        "graph": "<div class='graph-block'>EDGE EVOLVED: [Voting Modal] --replaced-by--> [Page-Level Immersive Voting]\nEDGE VERIFIED: [registerAtomicVote()] --transmits-to--> [evolution_server.py]\nEDGE VERIFIED: [telemetry_db.json] --consumed-by--> [Darwin-Gödel Engine]\nPATTERN: Trait Lab (desconectado) → DEPRECATED. Page-Level (contextual) → ACTIVE.</div>"
+      },
+      "meta": { "impact": 8.5, "risk": "low" }
+    },
+    {
+      "id": "ed001_knowledge_graph",
+      "type": "discovery",
+      "tag": "P3 • EXPLORATÓRIO",
+      "title": "O Grafo Não se Traversa Sozinho",
+      "content": {
+        "exec": "<p>Uma descoberta importante emergiu da análise de topologia: ter um knowledge graph rico não garante que os agentes LLM o traversem. A <strong>gravidade informacional</strong> — a tendência de um nó ser encontrado — depende da qualidade dos entry points, não da existência dos nós. Um grafo com portas de entrada erradas é como uma biblioteca sem catálogo.</p><p>Cinco hipóteses foram documentadas. A mais provocativa: embeddings contextuais com grafo ao redor capturam posição semântica, não apenas conteúdo textual — permitindo retrieval que respeita a hierarquia de confiança do vault.</p>",
+        "tech": "<div class='tech-block'>HIPÓTESES DOCUMENTADAS:\n\nH1: Entry points determinam alcance do traversal (confiança: alta)\nH2: Triggers contextuais > carga upfront (confiança: alta)\nH3: Embeddings com grafo ao redor resolvem o handoff (confiança: média)\nH4: Vocabulário compartilhado é pré-requisito (confiança: alta)\nH5: Vault + GitNexus precisam de ponte, não fusão (confiança: média)\n\nINCERTEZAS REAIS:\n• Não sabemos se o agente traversa espontaneamente\n• Cada hop = 1 tool call (latência acumulativa)\n• Triggers contextuais requerem classificação de intenção\n\nFERRAMENTAS CANDIDATAS:\n• Neo4j (grafos tipados) → futuro\n• Google text-embedding-004 + Vertex AI (embeddings com contexto)\n• LangGraph (orquestração de agentes com estado)</div>",
+        "graph": "<div class='graph-block'>EDGE SEMANTIC: [knowledge-graph-topology.md] --explores--> [Informational Gravity]\nEDGE DEPENDENCY: [Graph-Dropping RAG] --requires--> [contextual embeddings]\nEDGE BRIDGE: [Vault nodes] --implements/violates/tests--> [GitNexus code symbols]\nRISK: Entropia do grafo — nós se acumulam sem curadoria, arestas ficam obsoletas</div>"
+      },
+      "meta": { "impact": 6.5, "risk": "medium" }
+    },
+    {
+      "id": "ed001_aesthetics",
+      "type": "creative_direction",
+      "tag": "P3 • ESTÉTICA",
+      "title": "Sépia Escuro, Bloomberg e Tropicália: A Busca pela Voz Visual",
+      "content": {
+        "exec": "<p>A identidade visual d'O Grafo Diário convergiu para o conceito de <strong>Dark Sepia Editorial</strong> — uma estética que comunica autoridade, densidade e permanência, alinhada ao contexto profissional do mercado FIDC. Quatro alternativas foram documentadas como referências de mutação para o UI Evolution Agent: <strong>Swiss Minimalism</strong>, <strong>Terminal Green</strong>, <strong>Bauhaus Funcional</strong> e <strong>Modernismo Brasileiro</strong>.</p><p>O jornal já atingiu a geração 014, com variantes exploit (consolidação do melhor) e explore (experimentação radical). Cada geração é uma página HTML completa que consome o payload JSON do Editor e é avaliada atomicamente pelo operador.</p>",
+        "tech": "<div class='tech-block'>GENEALOGIA DE GERAÇÕES:\n\ngen_005 → Cyber Archive (exploratório)\ngen_007 → Structural Split Pane\ngen_008 → Solarpunk Complete\ngen_009a → Brutalist | gen_009b → Editorial\ngen_010 → Exploit Solarpunk | Explore Focus\ngen_011a → Exploit | gen_011b → Explore\ngen_012a → Clarity | gen_012b → Entropy\ngen_013a → Responsive News\ngen_014a → Exploit Dynamic | gen_014b → Explore Horizontal\n\nPATTERN: cada geração produz variante A (exploit) e B (explore)\nESTRATÉGIA DARWINIANA: exploit = refinar o que funciona, explore = mutação radical\nFONTES: Inter (headings), JetBrains Mono (code/meta), Dark Sepia palette</div>",
+        "graph": "<div class='graph-block'>EDGE EVOLUTIONARY: [gen_013] --mutates-into--> [gen_014a (exploit), gen_014b (explore)]\nEDGE AESTHETIC: [Dark Sepia Editorial] --primary-reference--> [O Grafo Diário]\nEDGE ALTERNATIVE: [Swiss Minimalism, Terminal Green, Bauhaus, Modernismo Brasileiro] --candidate-mutations-->\nNODE: README_AESTHETICS.md → referência de tom editorial</div>"
+      },
+      "meta": { "impact": 5.5, "risk": "low" }
+    },
+    {
+      "id": "ed001_fidc",
+      "type": "domain_context",
+      "tag": "P2 • MERCADO",
+      "title": "A Tese Central: Informação de Alta Qualidade Perto da Origem",
+      "content": {
+        "exec": "<p>A missão do ZefraHub pode ser comprimida em uma frase: <strong>quem tem informação melhor, mais perto da origem, processada de forma confiável, tem vantagem estrutural</strong>. O mercado brasileiro de direitos creditórios é historicamente concentrado, ineficiente e opaco. A plataforma ataca essa opacidade em três camadas — operacional, controle e inteligência analítica — num ciclo que se retroalimenta.</p><p>A Fase 1 (atual) resolve a rastreabilidade entre parcelas e CCBs. A Fase 2 busca proximidade com a origem da dívida. A Fase 3 — a mais hipotética — prevê estruturação e negociação de dívida com vantagem informacional.</p>",
+        "tech": "<div class='tech-block'>CICLO DE RETROALIMENTAÇÃO:\n\nOperacional → Controle → Inteligência Analítica\n     ↑________________________________↓\n\nFASE 1 (ATUAL):\n• Rastreabilidade parcela ↔ CCB\n• Automação de triagem de remessa\n• Fundação de dados confiável (event sourcing, log imutável)\n\nCRITÉRIO DE SUCESSO: um agente ou auditor pode, a partir de qualquer parcela, verificar sua legitimidade legal e o histórico completo de decisões.\n\nMVP ENTREGUE:\n• Conversor CNAB/XML (operacional)\n• Database + rotina de atualização (controle)\n• Dashboard de performance vs CDI (analítico)\n• Double-check de informações do administrador (validação)</div>",
+        "graph": "<div class='graph-block'>EDGE STRATEGIC: [mission.md] --derives-from--> [business-premises P-BIZ-1, P-BIZ-2]\nEDGE STRATEGIC: [mission.md] --derives-from--> [business-axioms AX-BIZ-1, AX-BIZ-2]\nEDGE CONTEXTUAL: [FIDC market] --contextualizes--> [mission.md]\nSTATUS: Phase 1 in progress. Phase 2-3 remain hypothetical.</div>"
+      },
+      "meta": { "impact": 7.0, "risk": "low" }
+    },
+    {
+      "id": "ed001_test_gap",
+      "type": "risk_alert",
+      "tag": "⚠️ P3 • RISCO",
+      "title": "extract_id_gemini.py: O Módulo Sem Testes",
+      "content": {
+        "exec": "<p>A auditoria de cobertura pós-migração confirmou que todos os 14 módulos-fonte no novo domínio <code>documents_validation</code> têm cobertura de testes — exceto um. <code>extract_id_gemini.py</code>, um comando de management que utiliza a API Gemini para extração de identidade, opera sem qualquer teste unitário.</p><p>A lacuna é <strong>pré-existente</strong> — não foi introduzida pela migração. Mas agora que o módulo vive em um domínio isolado e auditável, a ausência fica mais visível. Está no backlog como prioridade média.</p>",
+        "tech": "<div class='tech-block'>MÓDULO: domains/documents_validation/repositories/management/commands/extract_id_gemini.py\n\nCOBERTURA: 0%\nORIGEM DA LACUNA: pré-existente (herdada de aquisicao)\nAPI DEPENDENCY: Google Gemini (extração de campos de identidade)\n\nRISCO:\n• Módulo interage com API externa — sem mock de fallback\n• Sem teste, regressões em mudanças de prompt passam silenciosamente\n• Não bloqueia pipeline principal, mas afeta fluxo de enriquecimento de dados\n\nBACKLOG: Prioridade MÉDIA — não crítico para operação, mas necessário para confiança</div>",
+        "graph": "<div class='graph-block'>EDGE RISK: [extract_id_gemini.py] --has-zero-coverage--> [test suite]\nEDGE DEPENDENCY: [extract_id_gemini.py] --calls--> [Google Gemini API]\nNODE STATUS: backlog item, priority MEDIUM\nSOURCE: Phase 1 test coverage audit</div>"
+      },
+      "meta": { "impact": 4.5, "risk": "medium" }
+    },
+    {
+      "id": "ed001_editorial_meta",
+      "type": "meta_reflection",
+      "tag": "P4 • META",
+      "title": "Este Jornal Existe Porque Lorem Ipsum Não Testa Nada",
+      "content": {
+        "exec": "<p>A razão de existência deste payload não é nostálgica — é funcional. As gerações de UI da Plataforma Genética precisam de <strong>texto real</strong> para serem avaliadas com precisão. Lorem Ipsum não testa carga cognitiva. Não testa densidade editorial. Não testa se o layout suporta artigos de 3 parágrafos e artigos de 15. Este jornal é, acima de tudo, um instrumento de calibragem.</p><p>O Editor-in-Chief é o quinto agente do ecossistema. Sua responsabilidade é sintetizar os dados brutos do vault em JSON estruturado com três camadas de densidade: <code>exec</code> para quem toma decisões, <code>tech</code> para quem implementa, <code>graph</code> para quem navega o grafo. O UI Template consome este JSON sem saber quem o escreveu.</p>",
+        "tech": "<div class='tech-block'>PIPELINE DO EDITOR-IN-CHIEF:\n\n1. SCRAPING (determinístico)\n   → Parser em docs/vault/conversations/ (últimas 24h)\n   → Extrai frontmatter, ## Objective, outputs\n\n2. ASSEMBLY (determinístico)\n   → Monta contexto com expected_importance, contradictions_found\n   → Ordena por hierarquia de relevância P0-P5\n\n3. SYNTHESIS (LLM)\n   → System prompt: \"Você é o Editor de O Grafo Diário\"\n   → Output: JSON puro no News Object Schema\n\n4. PUBLISHING (determinístico)\n   → Salva daily_payload_YYYY-MM-DD.json\n   → Acessível via Genetic Platform (iframe)\n\nSCHEMA: { metadata: { date, stats }, articles: [{ id, type, tag, title, content: { exec, tech, graph }, meta: { impact, risk } }] }</div>",
+        "graph": "<div class='graph-block'>EDGE SELF-REFERENTIAL: [daily_payload_2026-03-25.json] --generated-by--> [Editor-in-Chief Agent]\nEDGE CONTRACTUAL: [News Object Schema] --consumed-by--> [gen_*.html templates]\nEDGE VERIFIED: [Editor Agent] --implements--> [News Object Schema]\nPRINCIPLE: Daily Payload Contract — JSON producer and HTML consumer are strictly decoupled</div>"
+      },
+      "meta": { "impact": 6.0, "risk": "low" }
+    }
+  ]
+}

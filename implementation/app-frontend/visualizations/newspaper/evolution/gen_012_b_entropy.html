@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 012 B: Data-Dense & Low Entropy</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #111111;
+    --text-primary: #f8f8f8;
+    --text-dim: #888888;
+    --line: #333333;
+    --accent: #eab308; /* Yellow alert */
+    --hover: #1a1a1a;
+  }
+
+  body {
+    background-color: var(--bg-base); color: var(--text-primary); 
+    font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    margin: 0; padding: 20px 40px; height: 100vh; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* Structural elements */
+  .grid-container {
+    display: grid; grid-template-columns: 350px 1fr; gap: 40px; height: 100%; border-top: 2px solid var(--line); margin-top: 20px; padding-top: 20px;
+  }
+
+  .col-header {
+    font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; color: var(--text-dim);
+    margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* List items */
+  .data-row {
+    padding: 12px 0; border-bottom: 1px dashed var(--line); display: flex; flex-direction: column; gap: 8px;
+    cursor: pointer; transition: 0.1s;
+  }
+  .data-row:hover { background-color: var(--hover); padding-left: 8px;}
+  .data-row.active { border-left: 2px solid var(--accent); padding-left: 12px; }
+  
+  .row-title { font-weight: 700; font-size: 13px;}
+  .row-meta { font-size: 11px; color: var(--text-dim); display: flex; gap: 12px; }
+  .lang-pt { color: #3b82f6; }
+  .lang-en { color: #ef4444; }
+
+  /* Reading Mode */
+  .reading-pane { overflow-y: auto; padding-right: 20px; }
+  .article { margin-bottom: 60px; max-width: 800px; }
+  
+  .article-meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 12px; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 24px;
+  }
+  
+  .article h1 { font-size: 24px; font-weight: 800; text-transform: uppercase; margin: 0 0 20px 0; line-height: 1.1; letter-spacing: -1px;}
+  .article p { line-height: 1.6; margin-bottom: 20px; color: #cccccc;}
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-dim); text-decoration: none; border: 1px dashed var(--line); padding: 2px 8px; }
+  .source-link:hover { color: #fff; border-color: #fff; }
+
+  /* 8-AXIS VOTING GRID (Protocol v1.0.0) */
+  .atomic-vote-panel { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px dashed var(--line); }
+  .vote-label { font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+  .eval-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+  .eval-row { display: flex; justify-content: space-between; align-items: center; }
+  .vote-group { display: flex; gap: 4px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--bg-base); }
+  .vote-actions { margin-top: 8px; }
+  .vote-btn-scale { border: none; background: transparent; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 0.80rem; padding: 4px 10px; cursor: pointer; border-right: 1px solid var(--line); font-weight: 700; transition: background-color 0.2s, color 0.2s; }
+  .vote-btn-scale:last-child { border-right: none; }
+  .vote-btn-scale:hover { background: var(--hover); }
+  .vote-btn-scale.active { background: var(--accent); color: #000; }
+  .vote-success-msg { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #10b981; font-weight: 700; }
+
+</style>
+</head>
+<body>
+
+<header style="display: flex; justify-content: space-between; align-items: center;">
+  <div>
+    <h1 style="margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: -1px;">ZEFRAHUB // GRAFO DIÁRIO</h1>
+    <span style="font-size: 11px; color: var(--text-dim);">GEN 012 B - DATA-DENSE & ATOMIC EVAL</span>
+  </div>
+  
+  <div style="display:flex; flex-direction:column; align-items:flex-end;">
+    <span class="vote-label" style="color:var(--text-primary); margin-bottom:4px;">GLOBAL METRIC: GENERATION FITNESS</span>
+    <div class="vote-group" id="vote_global_page"></div>
+    <input type="text" class="comment-input" id="input_global_page" placeholder="Final Reason..." style="display:none; width: 250px; padding: 6px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-top: 4px; outline: none;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+  </div>
+</header>
+
+<div class="grid-container">
+  
+  <aside id="navContainer">
+    <div class="col-header">
+      <span>INDEX DIRECTORY</span>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; transform: scale(0.9); transform-origin: right;">
+        <span class="vote-label" style="color:var(--text-dim); margin-bottom:4px;">NAV MATRIX EVAL</span>
+        <div class="vote-group" id="vote_top_nav"></div>
+        <input type="text" class="comment-input" id="input_top_nav" placeholder="Nav Reason..." style="display:none; width: 100%; padding: 6px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-top: 4px; outline: none;" onkeydown="if(event.key==='Enter') commitVote('topology', 'nav_matrix', 'vote_top_nav')">
+      </div>
+    </div>
+    <!-- Injected via JS -->
+  </aside>
+
+  <main class="reading-pane" id="contentContainer">
+    <div class="col-header">
+      <span>SYNTHESIS VIEW</span>
+    </div>
+    <!-- Injected via JS -->
+  </main>
+</div>
+
+<script>
+  let pendingVotes = {};
+
+  const mockPayload = {
+    metadata: { date: "2026-03-24", stats: { sessions: 25, decisions: 12, specChanges: 8 } },
+    articles: [
+      {
+        id: "item_gen014", type: "architectural_decision", tag: "P1 • ACADEMIC STYLE", title: "Integração de S. R. Ranganathan",
+        body: "<p>A transição epistemológica do nosso Cofre impôs a Classificação Facetada.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload = (window.parent && window.parent.currentPayload) ? window.parent.currentPayload : mockPayload;
+
+  function renderUI() {
+    let navHTML = `
+      <div class="col-header">
+        <span>INDEX DIRECTORY</span>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; transform: scale(0.9); transform-origin: right;">
+          <span class="vote-label" style="color:var(--text-dim); margin-bottom:4px;">NAV MATRIX EVAL</span>
+          <div class="vote-group" id="vote_top_nav"></div>
+          <input type="text" class="comment-input" id="input_top_nav" placeholder="Nav Reason..." style="display:none; width: 100%; padding: 6px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-top: 4px; outline: none;" onkeydown="if(event.key==='Enter') commitVote('topology', 'nav_matrix', 'vote_top_nav')">
+        </div>
+      </div>
+    `;
+    let contentHTML = `
+      <div class="col-header">
+        <span>SYNTHESIS VIEW</span>
+      </div>
+    `;
+
+    payload.articles.forEach((art, idx) => {
+      // NAV NODE
+      navHTML += `
+        <div class="data-row ${idx === 0 ? 'active' : ''}" id="nav_${art.id}" onclick="activateArticle('${art.id}')">
+          <div class="row-title">${art.title}</div>
+          <div class="row-meta">
+            <span class="lang-pt">[DYNAMIC]</span>
+            <span>IMPACT: ${art.meta.impact}</span>
+            <span>ID: ${art.tag}</span>
+          </div>
+        </div>
+      `;
+      // ARTICLE BLOCK
+      let bodyText = art.body || '';
+      let sourceFiles = (art.meta && art.meta.source_files) || [];
+      let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+        let name = f.split('/').pop();
+        return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+      }).join('') + '</div>' : '';
+      contentHTML += `
+        <article class="article" id="art_${art.id}" style="display: ${idx === 0 ? 'block' : 'none'};">
+          <div class="article-meta">
+            <span class="lang-pt">LANG: DYNAMIC</span>
+          </div>
+          <h1>${art.title}</h1>
+          ${bodyText}
+          ${sourceLinksHtml}
+          
+          <div class="atomic-vote-panel">
+            <div class="vote-label">ATOMIC EVALUATORS</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <!-- Left Column -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <!-- DENSITY -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">EDITORIAL DENSITY</span>
+                    <div class="vote-group" id="vote_den_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_den_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('editorial_density', '${art.id}', 'vote_den_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+                <!-- STRUCTURE -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">STRUCTURE</span>
+                    <div class="vote-group" id="vote_str_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_str_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('structure', '${art.id}', 'vote_str_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+                <!-- TONE -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">TONE</span>
+                    <div class="vote-group" id="vote_ton_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_ton_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('tone', '${art.id}', 'vote_ton_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+                <!-- FORM -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">FORM</span>
+                    <div class="vote-group" id="vote_for_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_for_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('form', '${art.id}', 'vote_for_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+              </div>
+              
+              <!-- Right Column -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <!-- TOPOLOGY -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">TOPOLOGY</span>
+                    <div class="vote-group" id="vote_top_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_top_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('topology', '${art.id}', 'vote_top_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+                <!-- ENTROPY -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">VISUAL ENTROPY</span>
+                    <div class="vote-group" id="vote_vis_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_vis_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('visual_entropy', '${art.id}', 'vote_vis_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+                <!-- MECHANICS -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">INTERACTION MECHANICS</span>
+                    <div class="vote-group" id="vote_int_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_int_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('interaction_mechanics', '${art.id}', 'vote_int_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--text-primary); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 8px; outline: none;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    document.getElementById('navContainer').innerHTML = navHTML;
+    document.getElementById('contentContainer').innerHTML = contentHTML;
+    
+    // Global Vote
+    const globContainer = document.getElementById('vote_global_page');
+    let btns = '';
+    for(let n=1; n<=5; n++) {
+      btns += `<button class="vote-btn-scale" onclick="registerVote('global_fitness', '', ${n}, 'vote_global_page')">${n}</button>`;
+    }
+    globContainer.innerHTML = btns;
+  }
+
+  function activateArticle(id) {
+    document.querySelectorAll('.data-row').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav_' + id).classList.add('active');
+    document.querySelectorAll('.article').forEach(el => el.style.display = 'none');
+    document.getElementById('art_' + id).style.display = 'block';
+  }
+
+  // Initialize the 1-5 scale buttons inside elements with class 'vote-group'
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      if(container.innerHTML !== '') return;
+      const id = container.id;
+      const parts = id.replace('vote_', '').split('_');
+      const articleId = parts.pop();
+      const metricKey = parts.join('_');
+      let metricName = metricKey;
+      
+      // Map shorthand to canonical names
+      if (metricKey === 'den') metricName = 'editorial_density';
+      else if (metricKey === 'str') metricName = 'structure';
+      else if (metricKey === 'ton') metricName = 'tone';
+      else if (metricKey === 'top') metricName = 'topology';
+      else if (metricKey === 'vis') metricName = 'visual_entropy';
+      else if (metricKey === 'int') metricName = 'interaction_mechanics';
+      else if (metricKey === 'for') metricName = 'form';
+      
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button class="vote-btn-scale" onclick="registerVote('${metricName}', '${articleId}', ${n}, '${id}')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.innerText) === score) btn.classList.add('active');
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const commentId = blockId.replace('vote_', 'comment_');
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      let componentContext = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[${componentContext}] ${reason}` : `[${componentContext}] No comment`
+      });
+    }
+    
+    if(container) {
+      container.innerHTML = `<span class="vote-success-msg" style="display:inline-block; margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:#10b981; font-weight:700;">✓ SYNCED: ${state.score}/5</span>`;
+    }
+    if (inputEl) inputEl.style.display = 'none';
+  }
+  
+  // Initialize on load
+  document.addEventListener("DOMContentLoaded", () => {
+    renderUI();
+    initVoteButtons();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genetic Control Center (Newspaper Evolution)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* === DESIGN TOKENS === */
+  :root {
+    --bg-dark: #07080b; /* Even darker, deeper space */
+    --bg-panel: rgba(20, 21, 31, 0.7); /* Translucent for blur */
+    --border: rgba(255,255,255,0.08); /* More subtle */
+    --text-main: #f1f5f9;
+    --text-muted: #64748b;
+    --accent: #38bdf8;
+    --accent-explore: #f43f5e;
+    --accent-exploit: #10b981;
+    --glow: 0 0 15px rgba(56, 189, 248, 0.3);
+  }
+  
+  body, html { 
+    margin: 0; padding: 0; height: 100vh; 
+    font-family: 'Inter', sans-serif; 
+    background: radial-gradient(circle at 15% 10%, #151828, var(--bg-dark) 80%);
+    color: var(--text-main); overflow: hidden; 
+  }
+
+  /* CUSTOM SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  
+  /* === BASE LAYOUT === */
+  .layout { display: flex; height: 100vh; width: 100vw; position: relative;}
+
+  /* === LEFT TAB BAR === */
+  .left-tabs {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 48px;
+    background: rgba(10, 11, 16, 0.8); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; padding-top: 80px; gap: 4px;
+    z-index: 70; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .tab-btn {
+    width: 40px; height: 40px; border: 1px solid transparent; border-radius: 8px;
+    background: transparent; color: var(--text-muted); font-size: 1.1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s ease; position: relative;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-main); border-color: rgba(255,255,255,0.1); }
+  .tab-btn.active { background: rgba(56, 189, 248, 0.1); color: var(--accent); border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 12px rgba(56, 189, 248, 0.15); }
+  .tab-btn .tab-label {
+    position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+    background: rgba(15, 17, 26, 0.98); border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; padding: 6px 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    white-space: nowrap; border-radius: 4px; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s; z-index: 999;
+  }
+  .tab-btn:hover .tab-label { opacity: 1; }
+  .tab-divider { width: 28px; height: 1px; background: var(--border); margin: 8px 0; }
+
+  /* === CATALOG DRAWER === */
+  .catalog { 
+    position: absolute; top: 0; left: 48px; bottom: 0; width: 340px; 
+    background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    z-index: 60; box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+    transform: translateX(-388px); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  .catalog.drawer-active { transform: translateX(0); }
+  
+  .catalog-header { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+  .catalog-header h1 { 
+    font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; margin: 0; 
+    font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px;
+    text-shadow: var(--glow); display: flex; align-items: center; gap: 8px;
+  }
+  .catalog-header h1::after {
+    content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-exploit); box-shadow: 0 0 10px var(--accent-exploit);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+  .catalog-header p { font-size: 0.75rem; color: var(--text-muted); margin: 6px 0 0 0; }
+  
+  .catalog-list { padding: 20px 16px; overflow-y: auto; flex: 1; }
+  .group-title { 
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); 
+    text-transform: uppercase; margin-bottom: 12px; margin-top: 28px; letter-spacing: 1.5px;
+  }
+  .group-title:first-child { margin-top: 0; }
+  
+  .sidebar-item {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; margin-bottom: 12px;
+    display: flex; flex-direction: column; gap: 10px; transition: 0.2s;
+  }
+  .sidebar-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
+  .sidebar-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.05); }
+  .sidebar-head { display: flex; justify-content: space-between; align-items: center; }
+  .sidebar-gen { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; }
+  .sidebar-title { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+  .sidebar-meta { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); }
+  .sidebar-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .sb-btn { flex: 1; padding: 6px 0; border: 1px solid var(--border); background: transparent; color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; border-radius: 4px; cursor: pointer; font-weight: 600; text-align: center; transition: 0.2s;}
+  .sb-btn.primary { background: rgba(255,255,255,0.05); }
+  .sb-btn.primary:hover { background: var(--accent); border-color: var(--accent); color: #000; }
+  .sb-btn.secondary:hover { background: rgba(255,255,255,0.1); }
+  
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; font-weight: 700; margin-right: 8px; display: inline-block; }
+  .tag.exploit { background: rgba(16, 185, 129, 0.15); color: var(--accent-exploit); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .tag.explore { background: rgba(244, 63, 94, 0.15); color: var(--accent-explore); border: 1px solid rgba(244, 63, 94, 0.3); }
+  .tag.fossil { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
+
+  /* LORE PANEL */
+  .lore-panel {
+    background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);
+    padding: 24px; font-size: 0.8rem; color: #a1a1aa; line-height: 1.6;
+    height: 180px; overflow-y: auto; flex-shrink: 0;
+  }
+  .lore-title {
+    font-family: 'JetBrains Mono', monospace; color: var(--text-main); font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  #lore-content { transition: opacity 0.2s; }
+
+  /* EVOLUTION WALL (LEFT DRAWER - TOGGLE) */
+  .evolution-drawer { 
+    position: absolute; top: 0; left: 48px; bottom: 0; width: 400px; 
+    background: var(--bg-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    z-index: 60; box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+    transform: translateX(-448px); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  .evolution-drawer.drawer-active { transform: translateX(0); }
+
+  .evo-log-item {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; margin-bottom: 12px; cursor: pointer;
+    transition: 0.2s;
+  }
+  .evo-log-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(56, 189, 248, 0.4); transform: translateX(-2px); }
+  .evo-log-date { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+  .evo-log-title { font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; line-height: 1.4; }
+  .evo-log-preview { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* EVOLUTION MODAL */
+  .evo-modal-body {
+    padding: 32px 40px; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #cbd5e1; line-height: 1.7; height: 500px; overflow-y: auto;
+  }
+  .evo-modal-body h1 { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: #fff; margin-top: 0; margin-bottom: 16px; letter-spacing: -1px; }
+  .evo-modal-body h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: var(--text-main); margin-top: 24px; margin-bottom: 12px; }
+  .evo-modal-body p { margin-bottom: 16px; }
+  .evo-modal-body ul { margin-bottom: 16px; padding-left: 20px; }
+  .evo-modal-body li { margin-bottom: 8px; }
+
+  /* === MAIN CONTENT === */
+  .workspace { flex: 1; display: flex; flex-direction: column; background: transparent; position: relative; height: 100%;}
+
+  /* TOP CONTROL BAR */
+  .top-bar { 
+    height: 64px; background: rgba(10, 11, 16, 0.6); border-bottom: 1px solid var(--border); 
+    display: flex; justify-content: space-between; align-items: center; padding: 0 24px 0 24px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    z-index: 20; position: relative;
+  }
+  
+  .data-context { display: flex; align-items: center; gap: 16px; }
+  .data-context label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
+  .data-context select { 
+    background: rgba(0,0,0,0.6); color: var(--text-main); border: 1px solid var(--border); 
+    padding: 8px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; outline: none; cursor: pointer; transition: 0.2s;
+  }
+  .data-context select:hover { border-color: rgba(255,255,255,0.2); }
+
+  .vote-controls { display: flex; align-items: center; gap: 16px; }
+  
+  button.btn-outline {
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+    padding: 8px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: 0.2s; font-weight: 600;
+  }
+  button.btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+  
+  .btn-matrix { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3) !important; }
+  .btn-matrix:hover { background: rgba(56, 189, 248, 0.2) !important; color: #fff !important; }
+
+  button.btn-primary { 
+    background: var(--accent-explore); color: #fff; border: none; padding: 8px 20px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; cursor: pointer; font-size: 0.75rem; font-weight: 700; 
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); transition: 0.2s;
+  }
+  button.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 20px rgba(244, 63, 94, 0.5); }
+  
+  .input-group { display: flex; align-items: center; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .input-label { padding: 8px 12px; background: rgba(255,255,255,0.05); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); border-right: 1px solid var(--border); text-transform: uppercase;}
+  .input-group input { 
+    background: transparent; border: none; color: var(--accent); padding: 8px 12px; width: 45px; text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; outline: none;
+  }
+  .input-group input::placeholder { color: rgba(255,255,255,0.2); }
+  
+  .btn-commit {
+    border: 1px solid rgba(16, 185, 129, 0.5); color: var(--text-main); background: transparent; padding: 8px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: 0.2s; font-weight: 600;
+  }
+  .btn-commit:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--accent-exploit); }
+  .btn-commit.committed { background: var(--accent-exploit); color: #000; border-color: var(--accent-exploit); }
+
+  /* IFRAME CONTAINER */
+  .iframe-container { flex: 1; position: absolute; top: 64px; left: 0; right: 0; bottom: 0; background: #000; overflow: hidden; z-index: 5; display: none; }
+  .iframe-container.active { display: block; }
+  .fader { 
+    position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; 
+    background: #000; opacity: 0; transition: opacity 0.4s ease; z-index: 5;
+  }
+  .fader.active { opacity: 1; }
+  iframe { width: 100%; height: 100%; border: none; background: #000; transition: filter 0.4s ease; }
+  .watermark { position: absolute; bottom: 16px; right: 24px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.25); pointer-events: none; z-index: 10;}
+
+  /* === MATRIX VIEW === */
+  .matrix-view {
+    flex: 1; position: absolute; top: 64px; left: 0; right: 0; bottom: 0; 
+    background: transparent; overflow-y: auto; z-index: 1; padding: 60px 80px; box-sizing: border-box; display: none;
+  }
+  .matrix-view.active { display: block; }
+  
+  .matrix-hero {
+    background: rgba(20, 21, 31, 0.4); border: 1px dashed var(--border);
+    border-radius: 12px; padding: 32px 40px; margin-bottom: 40px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .matrix-hero-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+  .matrix-hero h1 { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; color: #fff; margin:0; letter-spacing: -1px;}
+  .matrix-hero-text { font-size: 1rem; color: var(--text-muted); line-height: 1.6; max-width: 900px;}
+  .matrix-hero-text strong { color: var(--text-main); }
+  .matrix-hero-text ul { padding-left: 20px; margin-top: 12px; }
+  .matrix-hero-text li { margin-bottom: 8px; }
+
+  .matrix-stats { margin-top: auto; display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 20px; }
+  .matrix-stat-item { background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;}
+  
+  .matrix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 28px; padding-bottom: 80px;}
+  
+  .matrix-card {
+    background: rgba(20, 21, 31, 0.4); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px; display: flex; flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1); cursor: pointer; backdrop-filter: blur(8px);
+    position: relative; overflow: hidden;
+  }
+  .matrix-card:hover { 
+    background: rgba(20, 21, 31, 0.8); transform: translateY(-4px); 
+    border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 15px 40px rgba(0,0,0,0.6); 
+  }
+  .matrix-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: transparent; transition: 0.3s;
+  }
+  .matrix-card:hover::before { background: var(--accent); }
+  
+  .matrix-card .tag { margin-bottom: 20px; align-self: flex-start; }
+  .matrix-title { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: var(--text-main); margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px;}
+  .matrix-lore { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; flex: 1;}
+  .matrix-action { margin-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent); font-weight: 700; display: flex; align-items: center; gap: 8px; opacity: 0; transition: 0.2s;}
+  .matrix-card:hover .matrix-action { opacity: 1; }
+
+  /* === MODALS === */
+  .modal-overlay {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; justify-content: center; align-items: center; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  
+  .telemetry-modal {
+    background: #0a0b10; border: 1px solid var(--accent-explore); width: 700px; max-width: 90%; 
+    border-radius: 8px; box-shadow: 0 0 30px rgba(244, 63, 94, 0.2); display: flex; flex-direction: column; 
+    overflow: hidden; transform: translateY(20px); transition: transform 0.3s; max-height: 80vh;
+  }
+  .modal-overlay.active .telemetry-modal { transform: translateY(0); }
+  .telemetry-header {
+    background: rgba(244, 63, 94, 0.1); border-bottom: 1px solid rgba(244, 63, 94, 0.3);
+    padding: 10px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; 
+    color: var(--accent-explore); text-transform: uppercase; font-weight: 700;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .telemetry-body { padding: 24px; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-main); overflow-y: auto; flex: 1;}
+  
+  .vote-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;}
+  .vote-card-info { flex: 1; }
+  .vote-card-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; margin-top: 6px;}
+  .vote-card-title { font-weight: 600; margin-bottom: 4px; display:flex; align-items:center; gap: 8px;}
+  .vote-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .vote-badge.positive { background: rgba(16, 185, 129, 0.2); color: var(--accent-exploit); }
+  .vote-badge.negative { background: rgba(244, 63, 94, 0.2); color: var(--accent-explore); }
+  
+  .telemetry-actions { padding: 16px 24px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.5); display: flex; justify-content: flex-end; gap: 12px;}
+  
+  /* TERMINAL MODAL */
+  .terminal-modal {
+    background: #0a0b10; border: 1px solid rgba(56, 189, 248, 0.5); width: 600px; max-width: 90%; 
+    border-radius: 8px; box-shadow: 0 0 30px rgba(56, 189, 248, 0.1); display: flex; flex-direction: column; overflow: hidden;
+    transform: translateY(20px); transition: transform 0.3s;
+  }
+  .modal-overlay.active .terminal-modal { transform: translateY(0); }
+  .terminal-header {
+    background: rgba(56, 189, 248, 0.1); border-bottom: 1px solid rgba(56, 189, 248, 0.3); padding: 10px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; 
+    color: var(--accent); text-transform: uppercase; font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+  }
+  .terminal-close { background: transparent; border: none; color: var(--accent); cursor: pointer; font-size: 1rem; padding: 0; line-height: 1; opacity: 0.7; font-weight: bold;}
+  .terminal-close:hover { opacity: 1; }
+  .terminal-body { padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-main); white-space: pre-wrap; line-height: 1.6; height: 300px; overflow-y: auto; text-shadow: 0 0 5px rgba(255,255,255,0.2);}
+  .terminal-body .highlight { color: var(--accent-exploit); }
+  .cursor::after { content: '_'; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* === ANIMATIONS === */
+  /* CUSTOM TOOLTIP */
+  [data-tooltip] { position: relative; }
+  button[data-tooltip], .matrix-card[data-tooltip], .tab-btn[data-tooltip] { cursor: pointer; }
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%) translateY(-10px);
+    background: rgba(15, 17, 26, 0.98); border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; padding: 10px 14px; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500;
+    white-space: pre-wrap; width: max-content; max-width: 250px; text-align: center; line-height: 1.4;
+    border-radius: 6px; pointer-events: none; text-shadow: none;
+    opacity: 0; transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 9999;
+  }
+  [data-tooltip]::after {
+    content: '';
+    position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%) translateY(-10px);
+    border-width: 6px; border-style: solid; border-color: transparent transparent rgba(15, 17, 26, 0.98) transparent;
+    opacity: 0; transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1); pointer-events: none; z-index: 9999;
+  }
+  [data-tooltip]:hover::before, [data-tooltip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* GENEALOGY VIEW */
+  .genealogy-timeline { display: flex; flex-direction: column; gap: 0; padding-bottom: 80px; position: relative; }
+  .genealogy-timeline::before {
+    content: ''; position: absolute; left: 32px; top: 0; bottom: 80px; width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent-exploit), var(--accent-explore));
+    opacity: 0.3;
+  }
+  .gen-epoch {
+    position: relative; padding-left: 72px; margin-bottom: 40px;
+  }
+  .gen-epoch-dot {
+    position: absolute; left: 24px; top: 8px; width: 18px; height: 18px;
+    border-radius: 50%; border: 2px solid var(--accent); background: var(--bg-dark);
+    z-index: 2;
+  }
+  .gen-epoch-dot.survived { background: var(--accent-exploit); border-color: var(--accent-exploit); box-shadow: 0 0 12px rgba(16, 185, 129, 0.5); }
+  .gen-epoch-dot.extinct { background: rgba(100,116,139,0.4); border-color: var(--text-muted); }
+  .gen-epoch-dot.current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 16px rgba(56, 189, 248, 0.6); animation: pulse 2s infinite; }
+  .gen-epoch-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent);
+    font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px;
+  }
+  .gen-branches { display: flex; gap: 16px; flex-wrap: wrap; }
+  .gen-branch-card {
+    background: rgba(20, 21, 31, 0.5); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 20px; min-width: 260px; max-width: 360px; flex: 1;
+    transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;
+  }
+  .gen-branch-card:hover { border-color: rgba(56, 189, 248, 0.4); transform: translateY(-2px); background: rgba(20, 21, 31, 0.8); }
+  .gen-branch-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: transparent; transition: 0.3s;
+  }
+  .gen-branch-card.survived::before { background: var(--accent-exploit); }
+  .gen-branch-card.extinct { opacity: 0.5; }
+  .gen-branch-card.extinct:hover { opacity: 0.8; }
+  .gen-branch-title { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+  .gen-branch-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+  .gen-branch-status {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700;
+    display: flex; gap: 12px; align-items: center;
+  }
+  .status-survived { color: var(--accent-exploit); }
+  .status-extinct { color: var(--text-muted); }
+  .status-current { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ====== SECTION: LEFT TAB BAR ====== -->
+  <div class="left-tabs">
+    <button class="tab-btn" id="tab-templates" onclick="toggleDrawer('catalog')" data-tooltip="Browse all genetic templates">
+      📋
+      <span class="tab-label">TEMPLATES</span>
+    </button>
+    <button class="tab-btn" id="tab-logs" onclick="toggleDrawer('evolution')" data-tooltip="View Evolution Wall system logs">
+      📜
+      <span class="tab-label">EVOLUTION WALL</span>
+    </button>
+    <div class="tab-divider"></div>
+    <button class="tab-btn" id="tab-matrix" onclick="showMatrixView()" data-tooltip="Return to the Matrix overview">
+      ⊞
+      <span class="tab-label">THE MATRIX</span>
+    </button>
+    <button class="tab-btn" id="tab-agents" onclick="showAgentsView()" data-tooltip="View agent ecosystem status">
+      🤖
+      <span class="tab-label">AGENTS D0</span>
+    </button>
+    <button class="tab-btn" id="tab-genealogy" onclick="showGenealogyView()" data-tooltip="View evolutionary lineage of surviving templates">
+      🧬
+      <span class="tab-label">GENEALOGY</span>
+    </button>
+  </div>
+
+  <!-- ====== SECTION: CATALOG DRAWER ====== -->
+  <aside class="catalog" id="catalog-drawer">
+    <div class="catalog-header">
+      <h1>Genetic Platform</h1>
+      <p>Terminal de Controle de Mutações</p>
+    </div>
+    
+    <div class="catalog-filters" style="display:flex; justify-content:space-around; background: rgba(0,0,0,0.5); border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 8px;">
+       <button class="sb-btn secondary filter-btn" onclick="setTemplateFilter('unvoted')" id="filter-unvoted" style="flex:1; margin:0 4px; padding: 4px 0; font-size: 0.65rem;">UNVOTED</button>
+       <button class="sb-btn secondary filter-btn" onclick="setTemplateFilter('voted')" id="filter-voted" style="flex:1; margin:0 4px; padding: 4px 0; font-size: 0.65rem;">VOTED</button>
+       <button class="sb-btn secondary filter-btn active" onclick="setTemplateFilter('all')" id="filter-all" style="flex:1; margin:0 4px; padding: 4px 0; font-size: 0.65rem;">ALL</button>
+    </div>
+    
+    <div class="catalog-list" id="sidebar-list">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- LORE PANEL -->
+    <div class="lore-panel">
+      <div class="lore-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        Metadados / Lore
+      </div>
+      <div id="lore-content">Carregando lore genético...</div>
+    </div>
+  </aside>
+
+  <!-- Evolution drawer is now toggled by the tab bar button above -->
+
+  <!-- ====== SECTION: EVOLUTION WALL DRAWER ====== -->
+  <aside class="evolution-drawer" id="evolution-drawer">
+    <div class="catalog-header" style="border-bottom-color: rgba(56, 189, 248, 0.3);">
+      <h1 style="color: var(--accent);">Evolution Wall</h1>
+      <p>System Decisions & Macro Interventions</p>
+    </div>
+    
+    <div class="catalog-list" id="evolution-list">
+      <div style="color:var(--text-muted); font-size:0.8rem; text-align:center; margin-top: 40px;">Loading logs...</div>
+    </div>
+  </aside>
+
+  <!-- ====== SECTION: MAIN CONTENT ====== -->
+  <main class="workspace" style="margin-left: 48px;">
+
+    <!-- ====== SECTION: TOPBAR ====== -->
+    <header class="top-bar">
+      <div class="data-context">
+        <label>Data Context</label>
+        <select id="daySelector" onchange="refreshIframeContext()">
+          <option value="" disabled>Loading editions…</option>
+        </select>
+      </div>
+
+      <div class="vote-controls">
+        <button class="btn-outline btn-matrix" data-tooltip="View global genetic iterations" onclick="showMatrixView()">⊞ THE MATRIX</button>
+        <button class="btn-outline btn-matrix" data-tooltip="View real-time agent status & logs" style="color: var(--accent-exploit); border-color: rgba(16, 185, 129, 0.4) !important;" onclick="showAgentsView()">🤖 AGENTS D0</button>
+        <span id="style-mab-badge" data-tooltip="Active writing style selected by the Content MAB. Changes on every template load. Vote to train which style works best." style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color: var(--accent-explore); border: 1px solid rgba(139,92,246,0.35); border-radius: 4px; padding: 4px 8px; opacity: 0; transition: opacity 0.4s ease;"></span>
+        <button class="btn-outline" data-tooltip="Open current mutation in a separate full window" onclick="openFullscreen()">↗ FULLSCREEN</button>
+        <button class="btn-outline" data-tooltip="Export or analyze cumulative voting data" style="border-color: var(--accent-explore); color: var(--accent-explore);" onclick="openTelemetry()">📊 TELEMETRY</button>
+        <button class="btn-primary" data-tooltip="Force an ontological metadata refresh" onclick="syncKnowledge()">⚡ SYNC KNOWLEDGE</button>
+      </div>
+    </header>
+
+    <!-- MATRIX OVERVIEW -->
+    <div class="matrix-view" id="matrixView">
+      <div class="matrix-hero">
+        <div class="matrix-hero-label">ONBOARDING ZEFRAHUB // GÖDEL MACHINE</div>
+        <h1>Evolução Estética e Topológica</h1>
+        <div class="matrix-hero-text">
+          <p>O <strong>Grafo Diário</strong> não é apenas um jornal interno. É um mecanismo de feedback ontológico projetado para refletir a atividade do Cofre de Conhecimento em tempo real.</p>
+          <p>Nesta matriz evolutiva, testamos diferentes topologias de UI (mutações genéticas) para encontrar a forma mais eficiente de transmitir informações de alta densidade sem causar fadiga visual severa. O sistema avalia duas premissas genéticas principais:</p>
+          <ul>
+            <li><strong style="color:var(--accent-exploit)">EXPLOIT (Baseline):</strong> Refinamento agressivo de padrões já provados. Retirada de atrito e eficiência máxima.</li>
+            <li><strong style="color:var(--accent-explore)">EXPLORE (Mutação Crítica):</strong> Introdução deliberada de mutações arquiteturais disruptivas para combater a saturação heurística do usuário (ex: Cyber-Terminal, Brutalismo Atômico, Editorial Narrativo).</li>
+          </ul>
+        </div>
+        <div class="matrix-stats">
+          <div class="matrix-stat-item" style="border-color: var(--accent); gap: 4px;">
+            <span style="color:var(--text-muted);">VIEW</span>
+            <button class="sb-btn secondary filter-btn" id="matrix-filter-unvoted" onclick="setTemplateFilter('unvoted')" style="padding: 2px 8px; font-size: 0.6rem; margin: 0;">UNVOTED</button>
+            <button class="sb-btn secondary filter-btn" id="matrix-filter-voted" onclick="setTemplateFilter('voted')" style="padding: 2px 8px; font-size: 0.6rem; margin: 0;">VOTED</button>
+            <button class="sb-btn secondary filter-btn" id="matrix-filter-all" onclick="setTemplateFilter('all')" style="padding: 2px 8px; font-size: 0.6rem; margin: 0;">ALL</button>
+          </div>
+        </div>
+      </div>
+      <div class="matrix-grid" id="matrixGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- GENEALOGY VIEW -->
+    <div class="matrix-view" id="genealogyView">
+      <div class="matrix-hero" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.05);">
+        <div class="matrix-hero-label" style="color: #a78bfa;">EVOLUTIONARY LINEAGE</div>
+        <h1>Genealogy of Surviving Mutations</h1>
+        <div class="matrix-hero-text">
+          <p>Visual timeline of every generation tested by the Gödel Machine. <strong style="color:var(--accent-exploit)">Green nodes</strong> indicate templates whose traits survived into the next generation. <strong style="color:var(--text-muted)">Grey nodes</strong> are extinct branches that were evaluated but not selected for continuation.</p>
+          <p style="margin-top:8px;">The <strong>surviving lineage</strong> shows the evolutionary pressure path: which design decisions persisted and which were abandoned by operator feedback.</p>
+        </div>
+        <div class="matrix-stats">
+          <div class="matrix-stat-item" style="border-color: var(--accent-exploit);">
+            <span style="color:var(--text-muted);">SURVIVED</span> <strong id="genealogySurvivedCount" style="color:var(--accent-exploit);">0</strong>
+          </div>
+          <div class="matrix-stat-item">
+            <span style="color:var(--text-muted);">EXTINCT</span> <strong id="genealogyExtinctCount" style="color:var(--text-muted);">0</strong>
+          </div>
+          <div class="matrix-stat-item" style="border-color: var(--accent);">
+            <span style="color:var(--text-muted);">CURRENT</span> <strong id="genealogyCurrentCount" style="color:var(--accent);">0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="genealogy-timeline" id="genealogyTimeline">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- AGENTS OVERVIEW (D0 STATE) -->
+    <div class="matrix-view" id="agentsView">
+      <div class="matrix-hero" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05);">
+        <div class="matrix-hero-label" style="color: var(--accent-exploit);">SYSTEM ORCHESTRATION</div>
+        <h1>Ecosystem Agents Map</h1>
+        <div class="matrix-hero-text">
+          <p>Visão de Estado (d0) dos 5 agentes especializados responsáveis pela evolução contínua da Máquina de Gödel e do Grafo Diário.</p>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 32px;">
+        <div class="matrix-grid" style="flex: 2; padding-bottom: 40px;">
+          
+          <div class="matrix-card" style="border-color: rgba(255,255,255,0.2);" data-tooltip="Click to view detailed Orchestrator context" onclick="openAgentModal('orchestrator')">
+            <span class="tag exploit" style="color: #fff; border-color: #fff; background: rgba(255,255,255,0.1);">DISPATCHER</span>
+            <div class="matrix-title">Orchestrator (Router)</div>
+            <div class="matrix-lore">Gerencia o roteamento de contexto. Recebe comandos do Operador e aciona Personas.</div>
+            <div class="matrix-stats" style="border-top: 1px dashed rgba(255,255,255,0.1);">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-main);">
+                <strong style="color:var(--text-muted)">LAST ACTION:</strong> Formalized Architecture.
+              </div>
+            </div>
+          </div>
+
+          <div class="matrix-card" data-tooltip="Click to view Platform Architect context" onclick="openAgentModal('platform')">
+            <span class="tag explore">INFRASTRUCTURE</span>
+            <div class="matrix-title">Platform Architect Agent</div>
+            <div class="matrix-lore">Constrói este terminal (index.html), The Matrix, Iframes e captura os votos atômicos.</div>
+            <div class="matrix-stats">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-main);">
+                <strong style="color:var(--text-muted)">LAST ACTION:</strong> Built Matrix models.
+              </div>
+            </div>
+          </div>
+
+          <div class="matrix-card" data-tooltip="Click to view Engine calculation context" onclick="openAgentModal('darwin')">
+            <span class="tag explore">MATHEMATICIAN</span>
+            <div class="matrix-title">Darwin-Gödel Engine</div>
+            <div class="matrix-lore">Processa matemática evolutiva (Exploit/Explore) com base na telemetria. Define a Fitness.</div>
+            <div class="matrix-stats">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-main);">
+                <strong style="color:var(--text-muted)">LAST ACTION:</strong> Awaiting variables.
+              </div>
+            </div>
+          </div>
+
+          <div class="matrix-card" data-tooltip="Click to view Data piping logs" onclick="openAgentModal('backend')">
+            <span class="tag explore">PLUMBER</span>
+            <div class="matrix-title">Data & Backend Engineer</div>
+            <div class="matrix-lore">Gerencia persistência (`evolution_server.py`) e tráfego JSON no sistema.</div>
+            <div class="matrix-stats">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-main);">
+                <strong style="color:var(--text-muted)">LAST ACTION:</strong> Booted server.
+              </div>
+            </div>
+          </div>
+
+          <div class="matrix-card" style="border-color: var(--accent-exploit);" data-tooltip="Click to view UI Generation stats" onclick="openAgentModal('ui')">
+            <span class="tag exploit">AESTHETICS</span>
+            <div class="matrix-title">UI Evolution Agent</div>
+            <div class="matrix-lore">Produz e mutaciona templates de interface. Curador explícito de referências visuais de design.</div>
+            <div class="matrix-stats">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-main);">
+                <strong style="color:var(--accent-exploit)">LAST ACTION:</strong> Injected Aesthetics.
+              </div>
+            </div>
+          </div>
+
+          <div class="matrix-card" style="border-color: rgba(245, 158, 11, 0.4);" data-tooltip="Click to view NLP Pipeline stats" onclick="openAgentModal('editor')">
+            <span class="tag" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">LLM SYNTHESIS</span>
+            <div class="matrix-title">Editor-in-Chief Agent</div>
+            <div class="matrix-lore">Raspa o Vault e usa IA para gerar o JSON Payload final de texto legível.</div>
+            <div class="matrix-stats">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-main);">
+                <strong style="color:#f59e0b">LAST ACTION:</strong> Setting up prompt pipeline.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="flex: 1; background: rgba(20, 21, 31, 0.4); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 600px; backdrop-filter: blur(8px);">
+        <div style="flex: 1; background: rgba(20, 21, 31, 0.4); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; height: 600px; backdrop-filter: blur(8px);">
+            <div style="padding: 16px 20px; border-bottom: 1px dashed rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--accent); display:flex; justify-content:space-between; align-items:center;">
+               <span>AGENT METRIC RESPONSIBILITIES (TRAITS)</span>
+            </div>
+            <div id="agentMetricsOverview" style="padding: 20px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+               <!-- Metrics will be inserted here -->
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IFRAME CONTAINER -->
+    <div class="iframe-container" id="iframeContainer">
+      <div class="fader" id="fader"></div>
+      <iframe id="viewer"></iframe>
+      <div class="watermark">ZEFRAHUB // EVOLUTION PLATFORM V2.0</div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- ====== SECTION: MODALS ====== -->
+<!-- TELEMETRY MODAL -->
+<div class="modal-overlay" id="telemetryModal" onclick="if(event.target===this) closeTelemetry()">
+  <div class="telemetry-modal">
+    <div class="telemetry-header">
+      <span>Zefracorp // Atomic Feedback Data</span>
+      <button class="terminal-close" onclick="closeTelemetry()">✕</button>
+    </div>
+    <div class="telemetry-body" id="telemetryList"></div>
+    <div class="telemetry-actions">
+      <button class="btn-outline" style="color: var(--accent-explore); border-color: var(--accent-explore);" onclick="clearTelemetry()">PURGE DATA</button>
+      <button class="btn-primary" onclick="exportTelemetry()">⬇ EXPORT JSON</button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMINAL MODAL -->
+<div class="modal-overlay" id="terminalModal" onclick="if(event.target===this) closeTerminal()">
+  <div class="terminal-modal">
+    <div class="terminal-header">
+      <span>Zefracorp // Evolutionary Report</span>
+      <button class="terminal-close" onclick="closeTerminal()">✕</button>
+    </div>
+    <div class="terminal-body" id="terminalBody"></div>
+  </div>
+</div>
+
+<!-- NODE STATS MODAL -->
+<div class="modal-overlay" id="nodeStatsModal" onclick="if(event.target===this) closeNodeStats()">
+  <div class="telemetry-modal" style="width: 800px;">
+    <div class="telemetry-header">
+      <span id="nodeStatsHeaderLabel">NODE STATISTICS</span>
+      <button class="terminal-close" onclick="closeNodeStats()">✕</button>
+    </div>
+    <div class="telemetry-body" style="padding: 32px 40px;">
+      <div style="display:flex; justify-content: space-between; align-items:flex-start; margin-bottom: 24px;">
+        <div>
+           <div id="nodeStatsGen" style="font-family:'JetBrains Mono', monospace; color:var(--accent); font-size: 0.8rem; margin-bottom: 8px;">GEN 000</div>
+           <h1 id="nodeStatsTitle" style="margin:0; font-size: 1.8rem; font-family:'JetBrains Mono', monospace; letter-spacing:-1px;">Template Title</h1>
+        </div>
+        <div style="text-align:right;">
+           <div style="font-family:'JetBrains Mono', monospace; color:var(--text-muted); font-size: 0.7rem; margin-bottom: 4px;">LIFESPAN</div>
+           <strong id="nodeStatsAge" style="font-size: 1.2rem; color:#fff;">0 CYCLES</strong>
+        </div>
+      </div>
+      
+      <div id="nodeStatsLore" style="background: rgba(255,255,255,0.03); border-left: 3px solid var(--accent); padding: 16px 20px; font-size: 0.95rem; line-height: 1.6; margin-bottom: 32px; color: #cbd5e1;"></div>
+      
+      <div style="font-family:'JetBrains Mono', monospace; font-size: 0.8rem; color: #fff; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">VOTING TOPOLOGY</div>
+      <div id="nodeStatsMetrics"></div>
+
+      <div style="margin-top: 32px; display:flex; gap: 16px;">
+        <button class="btn-primary" style="flex:1; padding: 12px; text-align:center;" id="nodeStatsRenderBtn">RENDER MUTATION NOW ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENT STATS MODAL -->
+<div class="modal-overlay" id="agentStatsModal" onclick="if(event.target===this) closeAgentModal()">
+  <div class="telemetry-modal" style="width: 800px;">
+    <div class="telemetry-header">
+      <span id="agentModalTag">SYSTEM AGENT</span>
+      <button class="terminal-close" onclick="closeAgentModal()">✕</button>
+    </div>
+    <div class="telemetry-body" style="padding: 32px 40px;">
+      <div style="margin-bottom: 24px;">
+         <div id="agentModalManifesto" style="font-family:'JetBrains Mono', monospace; color:var(--accent); font-size: 0.8rem; margin-bottom: 8px;">Manifesto: file.md</div>
+         <h1 id="agentModalTitle" style="margin:0; font-size: 1.8rem; font-family:'JetBrains Mono', monospace; letter-spacing:-1px;">Agent Name</h1>
+      </div>
+      
+      <div id="agentModalDesc" style="font-size: 0.95rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border);"></div>
+      
+      <div style="font-family:'JetBrains Mono', monospace; font-size: 0.8rem; color: #fff; margin-bottom: 16px; display:flex; gap:8px; align-items:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        ACTIVITY LOG (SYSTEM TELEMETRY)
+      </div>
+      <div id="agentModalLog" style="display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAIT LAB DEPRECATED: Voting now happens immersively on each gen_*.html page via 1-5 metric evaluators -->
+
+<!-- EVOLUTION LOG MODAL -->
+<div class="modal-overlay" id="evoLogModal" onclick="if(event.target===this) closeEvoModal()">
+  <div class="telemetry-modal" style="width: 800px;">
+    <div class="telemetry-header" style="background: rgba(56, 189, 248, 0.1); border-bottom: 1px solid rgba(56, 189, 248, 0.3); color: var(--accent);">
+      <span id="evoModalDate">SYSTEM LOG</span>
+      <button class="terminal-close" onclick="closeEvoModal()">✕</button>
+    </div>
+    <div class="evo-modal-body" id="evoModalContent"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// MODULE: StateManager — owns all mutable state
+// ============================================================
+const StateManager = (() => {
+  let _currentFile = null;
+  let _generationsData = [];
+  let _atomicVotes = [];
+  let _currentTemplateFilter = 'all';
+  let _activeDrawer = null;
+  let _typeInterval = null;
+  let _parsedEvoLogs = [];
+
+  return {
+    getCurrentFile: () => _currentFile,
+    setCurrentFile: (v) => { _currentFile = v; },
+    getGenerationsData: () => _generationsData,
+    setGenerationsData: (v) => { _generationsData = v; },
+    getAtomicVotes: () => _atomicVotes,
+    setAtomicVotes: (v) => { _atomicVotes = v; },
+    getCurrentTemplateFilter: () => _currentTemplateFilter,
+    setCurrentTemplateFilter: (v) => { _currentTemplateFilter = v; },
+    getActiveDrawer: () => _activeDrawer,
+    setActiveDrawer: (v) => { _activeDrawer = v; },
+    getTypeInterval: () => _typeInterval,
+    setTypeInterval: (v) => { _typeInterval = v; },
+    getParsedEvoLogs: () => _parsedEvoLogs,
+    setParsedEvoLogs: (v) => { _parsedEvoLogs = v; }
+  };
+})();
+
+// ============================================================
+// MODULE: Logger — UI feedback
+// ============================================================
+const Logger = (() => {
+  function addRealtimeLog(message, type = 'default') {
+    console.log("[TELEMETRY]", message, type);
+    const container = document.getElementById('realtimeLogs');
+    if (!container) return;
+
+    const time = new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    let colorHex = 'var(--text-main)';
+    let badgeHtml = '';
+
+    if (type === 'exploit') { colorHex = 'var(--accent-exploit)'; badgeHtml = '<span style="background:rgba(16,185,129,0.2); color:var(--accent-exploit); padding:2px 4px; border-radius:2px; margin-right:6px; font-weight:700;">OK</span>'; }
+    if (type === 'explore') { colorHex = 'var(--accent-explore)'; badgeHtml = '<span style="background:rgba(244,63,94,0.2); color:var(--accent-explore); padding:2px 4px; border-radius:2px; margin-right:6px; font-weight:700;">WARN</span>'; }
+    if (type === 'system') { colorHex = 'var(--accent)'; badgeHtml = '<span style="background:rgba(56,189,248,0.2); color:var(--accent); padding:2px 4px; border-radius:2px; margin-right:6px; font-weight:700;">SYS</span>'; }
+
+    const newEl = document.createElement('div');
+    newEl.style.cssText = `font-family: 'Inter', sans-serif; font-size: 0.8rem; line-height: 1.4; color: #a1a1aa; border-left: 2px solid ${colorHex}; padding-left: 10px; opacity: 0; transform: translateY(-5px); transition: 0.3s;`;
+    newEl.innerHTML = `
+      <div style="font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--text-muted); margin-bottom:4px;">${time}</div>
+      <div style="color: #fff;">${badgeHtml} ${message}</div>
+    `;
+
+    container.prepend(newEl);
+    setTimeout(() => { newEl.style.opacity = '1'; newEl.style.transform = 'translateY(0)'; }, 50);
+    container.scrollTop = 0;
+    if (container.children.length > 50) { container.removeChild(container.lastChild); }
+  }
+
+  function showQuickToast(msg) {
+    let t = document.createElement('div');
+    t.style.position = 'fixed'; t.style.bottom = '20px'; t.style.left = '50%'; t.style.transform = 'translateX(-50%)';
+    t.style.background = 'var(--accent-explore)'; t.style.color = '#fff'; t.style.padding = '8px 16px'; t.style.borderRadius = '20px';
+    t.style.fontFamily = "'JetBrains Mono', monospace"; t.style.fontSize = '0.75rem'; t.style.fontWeight = 'bold'; t.style.zIndex = '9999'; t.style.boxShadow = '0 4px 12px rgba(244,63,94,0.3)';
+    t.innerText = msg; document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.4s'; setTimeout(() => t.remove(), 400); }, 2000);
+  }
+
+  return { addRealtimeLog, showQuickToast };
+})();
+
+// ============================================================
+// MODULE: DataLayer — all API fetch calls
+// ============================================================
+const DataLayer = (() => {
+  const STORAGE_KEY = 'zefracorp_evolution_data_v1';
+
+  /**
+   * @contract GET /api/manifest
+   * @response { generations: Array<{ id: string, title: string, type: string, created_at: string }> }
+   */
+  function fetchManifest() {
+    return fetch('/api/manifest').then(r => r.json()).catch(() => null);
+  }
+
+  /**
+   * @contract GET /api/telemetry
+   * @response Array<{ id: string, template: string, generation_id: string, metric_name: string, score: number, comment: string, timestamp: string }>
+   */
+  function fetchTelemetry() {
+    return fetch('/api/telemetry').then(r => r.json()).catch(() => null);
+  }
+
+  /**
+   * @contract GET /api/payload?day={date}
+   * @request { day: string } (query param, e.g. "2026-03-25")
+   * @response { metadata: { date: string, stats: object }, articles: Array<{ id: string, type: string, tag: string, title: string, content: object, meta: object }> }
+   */
+  function fetchPayload(day) {
+    return fetch('/api/payload?day=' + day).then(res => {
+      if (!res.ok) throw new Error('No payload found for day');
+      return res.json();
+    });
+  }
+
+  /**
+   * @contract POST /api/vote
+   * @request { id: string, template: string, generation_id: string, metric_name: string, score: number, comment: string, timestamp: string }
+   * @response { synced: boolean }
+   */
+  function postVote(voteRecord) {
+    return fetch('/api/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(voteRecord)
+    }).then(r => r.json());
+  }
+
+  /**
+   * @contract GET ../agents/evolution-wall.md
+   * @response Raw Markdown text with ## [timestamp] Title entries
+   */
+  function fetchEvolutionWall() {
+    return fetch('../agents/evolution-wall.md').then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    });
+  }
+
+  function fetchPublications() {
+    return fetch('/api/publications').then(r => r.json()).catch(() => []);
+  }
+
+  function init() {
+    return Promise.all([fetchManifest(), fetchTelemetry()]).then(([manifestData, telemetryData]) => {
+      if (telemetryData) {
+        StateManager.setAtomicVotes(telemetryData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(telemetryData));
+      } else {
+        StateManager.setAtomicVotes(JSON.parse(localStorage.getItem(STORAGE_KEY)) || []);
+      }
+
+      if (manifestData && manifestData.generations) {
+        UIRenderer.buildGenerationsData(manifestData.generations);
+      } else {
+        UIRenderer.buildGenerationsData([]);
+      }
+
+      UIRenderer.initUI();
+    });
+  }
+
+  return { fetchManifest, fetchTelemetry, fetchPayload, postVote, fetchEvolutionWall, fetchPublications, init, STORAGE_KEY };
+})();
+
+// ============================================================
+// MODULE: UIRenderer — HTML generation and DOM injection
+// ============================================================
+const UIRenderer = (() => {
+  // 1. DATA SOURCE (Powers both Matrix and Sidebar)
+  const agentsDatabase = {
+    'orchestrator': {
+      title: 'Orchestrator (Context Router)',
+      tag: 'DISPATCHER',
+      manifesto: 'newspaper-orchestrator-manifesto.md',
+      desc: 'The master dispatcher of the Gödel Machine. Interfaces with the System Operator, decodes intent, and routes execution to the specific sub-agent required. It enforces the "Mask Protocol," ensuring agents never hallucinate outside their domains.',
+      metrics: [
+        { name: 'Context Purity', desc: 'Ensures agents do not hallucinate outside their specific domains.' }
+      ],
+      logs: [
+        { time: '2026-03-25T01:32:33', text: 'Implementing interactive detailed Agent Logs (d0 visibility).' },
+        { time: '2026-03-25T00:50:11', text: 'Issued system-wide directive standardizing all manifestos.' },
+        { time: '2026-03-25T00:27:14', text: 'Initialized new 5-Agent Architecture and assumed Context Router control.' }
+      ]
+    },
+    'platform': {
+      title: 'Platform Architect Agent',
+      tag: 'INFRASTRUCTURE',
+      manifesto: 'newspaper-platform-manifesto.md',
+      desc: 'The engineer of the Genetic Control Center (<code>index.html</code>). Builds the macroscopic Matrix view, the Render iframes, and the telemetry feedback widgets that capture atomic votes (+1/-1). Requires strict architectural constraints to avoid polluting the template testing loops.',
+      metrics: [
+        { name: 'Interaction Mechanics', desc: 'Friction and triggers (e.g., hover delays, panel dismissal, tooltips).' }
+      ],
+      logs: [
+        { time: '2026-03-25T01:28:14', text: 'Received system orchestration data array payload requests.' },
+        { time: '2026-03-25T00:15:30', text: 'Established the Matrix and Telemetry UI Modals.' },
+        { time: '2026-03-24T23:55:00', text: 'Engineered the 3-Second Delayed Hover catalog drawer.' }
+      ]
+    },
+    'darwin': {
+      title: 'Darwin-Gödel Engine',
+      tag: 'MATHEMATICIAN',
+      manifesto: 'newspaper-darwin-engine-manifesto.md',
+      desc: 'The algorithmic entity calculating numerical telemetry fitness across all iterations. Evaluates Exploit vs Explore mechanic signals from the votes. Ultimately dictates which aesthetic/functional mutations survive to the next cycle.',
+      metrics: [
+        { name: 'Mathematical Convergence', desc: 'Calculates global generation fitness from all atomic telemetry votes.' }
+      ],
+      logs: [
+        { time: '2026-03-25T00:41:00', text: 'Awaiting closed-loop mathematics to forcibly auto-mutate UI templates based on telemetry parameters.' }
+      ]
+    },
+    'backend': {
+      title: 'Data & Backend Engineer',
+      tag: 'PLUMBER',
+      manifesto: 'newspaper-backend-manifesto.md',
+      desc: 'Manages the persistent data state (<code>evolution_server.py</code>, <code>telemetry_db.json</code>). Responsible for catching the JSON payloads generated by the Editor-in-Chief and piping them perfectly into the HTML UI iframes.',
+      metrics: [
+        { name: 'Telemetry Fidelity', desc: 'Ensures zero data loss in the voting pipelines and payload delivery.' }
+      ],
+      logs: [
+        { time: '2026-03-25T02:59:52', text: 'Acknowledged final Architecture patterns.' },
+        { time: '2026-03-25T03:11:45', text: 'Transitioned from volatile localStorage to Python evolution_server.py backend persistency.' }
+      ]
+    },
+    'ui': {
+      title: 'UI Evolution Agent',
+      tag: 'AESTHETICS',
+      manifesto: 'newspaper-frontend-manifesto.md',
+      desc: 'Produces and mutates the visual <code>gen_*.html</code> templates. Tasked with reducing UI entropy, implementing pure typography, and formally citing explicit aesthetic schools (The Fashion Board) for each mutation.',
+      metrics: [
+        { name: 'Topology & Navigation', desc: 'Vertical Feed vs. Horizontal Timeline. How easily can the user navigate?' },
+        { name: 'Visual Entropy (Aesthetics)', desc: 'Brutalist vs. Ambient. Measures visual clarity and reading fatigue.' }
+      ],
+      logs: [
+        { time: '2026-03-25T01:12:20', text: 'Developed pure Typography Brutalism.' },
+        { time: '2026-03-25T02:01:58', text: 'Added Kinetic Print hover logic.' },
+        { time: '2026-03-25T03:52:00', text: 'Created Tropical Cybernetics paradigm integration.' }
+      ]
+    },
+    'editor': {
+      title: 'Editor-in-Chief Agent',
+      tag: 'LLM SYNTHESIS',
+      manifesto: 'newspaper-editor-manifesto.md',
+      desc: 'Extracts concepts from Vault archives and synthesizes them into highly dense, multi-language JSON text payloads. Responsible for tone-matching, clarity, and tech/exec depth adjustments.',
+      metrics: [
+        { name: 'Editorial Density (Structure)', desc: 'Executive vs. Technical vs. Graph depth. Measures cognitive load from text.' },
+        { name: 'Tone', desc: 'Objective/Technical vs. Narrative/Editorial voice.' },
+        { name: 'Form', desc: 'Prose vs. Bullet Points vs. Keywords formatting.' }
+      ],
+      logs: [
+        { time: '2026-03-25T00:17:51', text: 'Formalized publication protocols.' },
+        { time: '2026-03-25T04:10:00', text: 'Preparing the prompt matrices to evolve LLM writing based on user density votes.' }
+      ]
+    }
+  };
+
+  function openAgentModal(agentKey) {
+    const data = agentsDatabase[agentKey];
+    if(!data) return;
+    document.getElementById('agentModalTag').innerText = data.tag;
+    document.getElementById('agentModalManifesto').innerText = `Manifesto: ${data.manifesto}`;
+    document.getElementById('agentModalTitle').innerText = data.title;
+    document.getElementById('agentModalDesc').innerHTML = data.desc;
+    
+    let logsHtml = '';
+    
+    // Add Metrics Section before Logs
+    if (data.metrics && data.metrics.length > 0) {
+      logsHtml += `
+        <div style="font-family:'JetBrains Mono', monospace; font-size: 0.8rem; color: #fff; margin-bottom: 12px; margin-top: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+           RESPONSIBLE METRICS
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom: 24px;">
+      `;
+      data.metrics.forEach(m => {
+        logsHtml += `
+          <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); padding: 12px; border-radius: 6px;">
+            <strong style="color:var(--accent); font-family:'JetBrains Mono', monospace; font-size:0.8rem;">${m.name}</strong>
+            <div style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">${m.desc}</div>
+          </div>
+        `;
+      });
+      logsHtml += `</div>`;
+    }
+    
+    logsHtml += `<div style="font-family:'JetBrains Mono', monospace; font-size: 0.8rem; color: #fff; margin-bottom: 12px; display:flex; gap:8px; align-items:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        ACTIVITY LOG (SYSTEM TELEMETRY)
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; max-height: 250px; overflow-y: auto;">
+    `;
+    
+    let hasRealLogs = false;
+    const parsedEvoLogs = StateManager.getParsedEvoLogs();
+    if (parsedEvoLogs.length > 0) {
+      parsedEvoLogs.forEach((log, idx) => {
+        // Very naive text-match to see if this log belongs to this agent
+        const searchStr = (log.title + ' ' + log.body).toLowerCase();
+        if (searchStr.includes(data.tag.toLowerCase()) || searchStr.includes(agentKey.toLowerCase()) || searchStr.includes(data.title.toLowerCase())) {
+          hasRealLogs = true;
+          const preview = log.body.replace(/(<([^>]+)>)/gi, "").substring(0, 100) + '...';
+          logsHtml += `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseenter="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseleave="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='var(--border)';" onclick="closeAgentModal(); openEvoModal(${idx});">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--text-muted); margin-bottom: 6px;">${log.title}</div>
+              <div style="font-size:0.85rem; color:var(--text-main); line-height: 1.5; margin-bottom: 8px;">${preview}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--accent); font-weight:700;">CLICK TO READ FULL LOG ↗</div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    if (!hasRealLogs) {
+      data.logs.forEach(l => {
+          logsHtml += `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;" onmouseenter="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.borderColor='rgba(56, 189, 248, 0.4)';" onmouseleave="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='var(--border)';" onclick="closeAgentModal(); toggleDrawer('evolution');">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--text-muted); margin-bottom: 6px;">${l.time}</div>
+              <div style="font-size:0.85rem; color:var(--text-main); line-height: 1.5; margin-bottom: 8px;">${l.text}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--accent); font-weight:700;">CLICK TO EXPLORE EVOLUTION WALL ↗</div>
+            </div>
+          `;
+      });
+    }
+    
+    logsHtml += `</div>`;
+    
+    document.getElementById('agentModalLog').parentElement.removeChild(document.getElementById('agentModalLog').previousElementSibling);
+    document.getElementById('agentModalLog').outerHTML = `<div id="agentModalLog">${logsHtml}</div>`;
+    document.getElementById('agentStatsModal').classList.add('active');
+  }
+
+  function closeAgentModal() { document.getElementById('agentStatsModal').classList.remove('active'); }
+
+  const loreDatabase = {
+    'evolution/gen_019_a_exploit_focus_density.html': 'GEN 019 A — EXPLOIT. Radical Focus II. Deepens the proven 70/30 topology from Gen 010 with maximum editorial density. Hypothesis: density increase breaks the 4/5 global fitness ceiling. Base: Gen 010. MR-002.',
+    'evolution/gen_019_b_explore_horizontal_chronicle.html': 'GEN 019 B — EXPLORE. Horizontal Chronicle. First materialization of the Gen 014 B 5/5 horizontal timeline signal. Archival broadsheet topology with persistent sidebar to prevent density collapse. MR-002.',
+    'gen_014_a_exploit_dynamic.html': '<b>EXPLOIT:</b> Aproveita o sucesso responsivo da Gen 013 (Kinetic Print), mas descarta HTML hardcoded, injetando artigos diretamente da payload JSON do sistema.',
+    'gen_014_b_explore_horizontal.html': '<b>EXPLORE:</b> Tentativa radical de alterar a topologia de navegação vertical para um formato Horizontal (Timeline). Desenhado para injetar payload JSON.',
+    'gen_013_a_responsive_news.html': '<b>EXPLOIT:</b> Foca no feedback atômico definitivo via UI, "click outside hover", e testes textuais reais profundos focados nos últimos eventos do Cofre.',
+    'gen_012_a_clarity.html': '<b>EXPLORE:</b> Foco extremo em reduzir entropia visual. Introduz painéis de "Atomic Feedback" explícitos e suporte a notícias multi-idiomas (EN/PT) na Síntese.',
+    'gen_012_b_entropy.html': '<b>EXPLOIT:</b> Variante de alta densidade voltada a operações terminais. O feedback atômico é embutido na topologia do grid com ultra-eficiência de espaço. Teste multilíngue.',
+    'gen_011_a_exploit.html': '<b>EXPLOIT:</b> Refinamento da linhagem Solarpunk. Foca na integração suave dos painéis laterais baseados em 3s-delay e implementa toggle imediato de nível de leitura (Exec/Tech/Graph). Resolve problema de saturação cognitiva no painel principal.',
+    'gen_011_b_explore.html': '<b>EXPLORE:</b> Abandona os cards orgânicos em favor de linhas tabulares ultra-densas (Cyber-Terminal). Focado na máquina e no throughput de links ao invés da leitura narrativa suave. Teste de estresse visual.',
+    'gen_010_exploit_solarpunk.html': '<b>EXPLOIT:</b> Incorpora o framework de gavetas laterais mantendo a paleta quente/verde. O objetivo era retirar a navegação do fluxo ocular primário.',
+    'gen_010_explore_focus.html': '<b>EXPLORE:</b> Eliminação total de bordas e contêineres focando apenas tipografia pura e brutalismo. Reduza interferência da UI a praticamente zero.',
+    'gen_009_a_brutalist.html': '<b>EXPLORE:</b> Teste da hipótese de que remover curvas estéticas e empregar geometrias monoespaçadas de alto contraste aumenta a velocidade de escaneamento para operações.',
+    'gen_009_b_editorial.html': '<b>EXPLORE:</b> Estilo Orgânico/Editorial, buscando alavancar a familiaridade da leitura de formas longas clássicas (como imprensa tradicional) para um engajamento mais profundo.',
+    'gen_008_solarpunk_complete.html': '<b>BASELINE/FOSSIL:</b> A arquitetura que unificou o grid de 3 colunas e comprovou a viabilidade do Grafo Diário como um jornal inteligível.',
+    '../mockups/a_dark_sepia.html': '<b>FOSSIL:</b> Dark Sepia mockup for a classic, sophisticated reading environment.',
+    '../mockups/b_swiss_minimalism.html': '<b>FOSSIL:</b> Swiss Minimalism — clean grid structure, Helvetica-driven, inspired by the International Typographic Style.',
+    '../mockups/c_terminal_green.html': '<b>FOSSIL:</b> Terminal Green mockup designed for developers.',
+    '../mockups/d_brazilian_modernist.html': '<b>FOSSIL:</b> Brazilian Modernist aesthetic exploring warm contrasts and structured shapes.',
+    '../mockups/e_futuristic_context.html': '<b>FOSSIL:</b> Futuristic neon aesthetic exploring high-technology context presentation.',
+    '../mockups/5_amazonia_solarpunk.html': '<b>FOSSIL:</b> Amazonia Solarpunk biome-inspired design.',
+    'gen_015_a_explore_ambient.html': '<b>EXPLORE:</b> Teste de topologia Ambient/Deep Vault. Total remoção de bordas e contêineres explícitos, abraçando o whitespace e tipografia escalar.',
+    'gen_015_b_exploit_terminal.html': '<b>EXPLOIT:</b> Retorno pragmático da estrutura split-pane. Máxima densidade de dados com navegação colunar persistente. Cyber-Terminal style.',
+    'gen_017_a_focused_warmth.html': '<b>EXPLORE (MR-001):</b> Primeira geração produzida pelo Darwin-Gödel Engine com dados reais. Topologia assimétrica 70/30, paleta quente muted (Focused Warmth), densidade editorial alta com acordeão colapsável de 3 tiers. Redução forte de entropia visual.',
+    'gen_018_a_exploit_cold_slate.html': '<b>EXPLOIT (MR-001 → Controlled Palette Test):</b> Mutação cirúrgica de Gen 017 A. Topologia idêntica (70/30, accordion, sidebar). Único delta: paleta quente → paleta fria (Cold Slate — Bloomberg Terminal + Swiss Design + Cold War Intel Doc). Testa se o calor é a variável vencedora ou se é a topologia. Tooltip dourada em todos os elementos. 7 métricas por artigo. Barra de global fitness fixa.',
+    'gen_018_b_explore_signal_noise.html': '<b>EXPLORE:</b> Ruptura radical de topologia. Full-width single column — sem sidebar. Artigos como pacotes de transmissão numerados com barra de prioridade à esquerda (vermelho=P1, verde=P2). Ticker scrolling no topo. Drawer de avaliação deslizante. Estética: NOAA Emergency Broadcast + Police Dispatch Terminal + Le Monde + Phosphor Green em preto absoluto. Mono-dominant typography.',
+    'default': 'Apenas uma relíquia das primeiras simulações estéticas. Não recomendado para parâmetros atuais do Cofre.'
+  };
+
+  const fallbackGenerationsData = [
+    {
+      group: 'Radical Focus II + Horizontal Chronicle (Gen 019)',
+      items: [
+        { id: 'gen_019_a_exploit_focus_density', title: 'Radical Focus II', type: 'exploit', file: 'evolution/gen_019_a_exploit_focus_density.html', mr: 'mr-002-2026-03-26', fitness: null, votes: 0, status: 'active', tagClass: 'exploit', tagText: 'EXPLOIT' },
+        { id: 'gen_019_b_explore_horizontal_chronicle', title: 'Horizontal Chronicle', type: 'explore', file: 'evolution/gen_019_b_explore_horizontal_chronicle.html', mr: 'mr-002-2026-03-26', fitness: null, votes: 0, status: 'active', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Cold Slate + Signal/Noise (Gen 018)',
+      items: [
+        { file: 'gen_018_a_exploit_cold_slate.html', title: 'Cold Slate', tagClass: 'exploit', tagText: 'EXPLOIT' },
+        { file: 'gen_018_b_explore_signal_noise.html', title: 'Signal/Noise', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Focused Warmth (Gen 017)',
+      items: [
+        { file: 'gen_017_a_focused_warmth.html', title: 'Focused Warmth', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Aesthetic Synthesis (Gen 016)',
+      items: [
+        { file: 'gen_016_a_explore_synthesis.html', title: 'Glass-Brutalism', tagClass: 'explore', tagText: 'EXPLORE' },
+        { file: 'gen_016_b_exploit_synthesis.html', title: 'Swiss Cyber-Grid', tagClass: 'exploit', tagText: 'EXPLOIT' }
+      ]
+    },
+    {
+      group: 'Data Convergence (Gen 015)',
+      items: [
+        { file: 'gen_015_b_exploit_terminal.html', title: 'Dense Terminal', tagClass: 'exploit', tagText: 'EXPLOIT' },
+        { file: 'gen_015_a_explore_ambient.html', title: 'Ambient Discovery', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Data-Driven Mutations (Gen 014)',
+      items: [
+        { file: 'gen_014_a_exploit_dynamic.html', title: 'Dynamic Feed Injection', tagClass: 'exploit', tagText: 'EXPLOIT' },
+        { file: 'gen_014_b_explore_horizontal.html', title: 'Horizontal Timeline', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Responsive Flow (Gen 013)',
+      items: [
+        { file: 'gen_013_a_responsive_news.html', title: 'Kinetic Print UI', tagClass: 'exploit', tagText: 'EXPLOIT' }
+      ]
+    },
+    {
+      group: 'Atomic Feedback (Gen 012)',
+      items: [
+        { file: 'gen_012_a_clarity.html', title: 'Low Entropy UI', tagClass: 'explore', tagText: 'EXPLORE' },
+        { file: 'gen_012_b_entropy.html', title: 'Data-Dense Eval', tagClass: 'exploit', tagText: 'EXPLOIT' }
+      ]
+    },
+    {
+      group: 'Previous Mutations (Gen 011)',
+      items: [
+        { file: 'gen_011_a_exploit.html', title: 'Solarpunk Refined', tagClass: 'exploit', tagText: 'EXPLOIT' },
+        { file: 'gen_011_b_explore.html', title: 'Cyber-Terminal', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Previous Generation (Gen 010)',
+      items: [
+        { file: 'gen_010_exploit_solarpunk.html', title: 'Hidden Drawers', tagClass: 'exploit', tagText: 'EXPLOIT' },
+        { file: 'gen_010_explore_focus.html', title: 'Radical Focus', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Divergent Generation (Gen 009)',
+      items: [
+        { file: 'gen_009_a_brutalist.html', title: 'Brutalist', tagClass: 'explore', tagText: 'EXPLORE' },
+        { file: 'gen_009_b_editorial.html', title: 'Editorial', tagClass: 'explore', tagText: 'EXPLORE' }
+      ]
+    },
+    {
+      group: 'Omega Baseline (Gen 008)',
+      items: [
+        { file: 'gen_008_solarpunk_complete.html', title: 'Solarpunk Dusk', tagClass: 'fossil', tagText: 'BASELINE' }
+      ]
+    },
+    {
+      group: 'Mockups / Fossils',
+      items: [
+        { file: '../mockups/a_dark_sepia.html', title: 'Dark Sepia', tagClass: 'fossil', tagText: 'OLD' },
+        { file: '../mockups/b_swiss_minimalism.html', title: 'Swiss Minimalism', tagClass: 'fossil', tagText: 'OLD' },
+        { file: '../mockups/c_terminal_green.html', title: 'Terminal Green', tagClass: 'fossil', tagText: 'OLD' },
+        { file: '../mockups/d_brazilian_modernist.html', title: 'BR Modernist', tagClass: 'fossil', tagText: 'OLD' },
+        { file: '../mockups/e_futuristic_context.html', title: 'Futuristic Context', tagClass: 'fossil', tagText: 'OLD' },
+        { file: '../mockups/5_amazonia_solarpunk.html', title: 'Amazonia Solarpunk', tagClass: 'fossil', tagText: 'OLD' },
+      ]
+    }
+  ];
+
+  function buildGenerationsData(gens) {
+    if (!gens || gens.length === 0) {
+      StateManager.setGenerationsData(fallbackGenerationsData);
+      return;
+    }
+    const groups = {};
+    gens.forEach(gen => {
+       const match = gen.id.match(/gen_(\d+)/);
+       let groupName = 'Mockups / Fossils';
+       let genNum = 0;
+
+       if (match) {
+         genNum = parseInt(match[1]);
+         if (genNum === 15) groupName = 'Data Convergence (Gen 015)';
+         else if (genNum === 14) groupName = 'Data-Driven Mutations (Gen 014)';
+         else if (genNum === 13) groupName = 'Responsive Flow (Gen 013)';
+         else if (genNum === 12) groupName = 'Atomic Feedback (Gen 012)';
+         else if (genNum === 11) groupName = 'Previous Mutations (Gen 011)';
+         else if (genNum === 10) groupName = 'Previous Generation (Gen 010)';
+         else if (genNum === 9) groupName = 'Divergent Generation (Gen 009)';
+         else if (genNum === 8) groupName = 'Omega Baseline (Gen 008)';
+         else groupName = `Generation ${genNum}`;
+       }
+
+       if (!groups[groupName]) {
+         groups[groupName] = { group: groupName, genNum: genNum, items: [] };
+       }
+
+       let tagClass = gen.type === 'explore' ? 'explore' : gen.type === 'exploit' ? 'exploit' : 'fossil';
+       let tagText = gen.type ? gen.type.toUpperCase() : 'UNKNOWN';
+       if (gen.type === 'fossil') {
+          tagText = match ? 'BASELINE' : 'OLD';
+       }
+
+       let fileUrl = gen.id + '.html';
+       groups[groupName].items.push({
+          file: fileUrl,
+          title: gen.title || gen.id,
+          tagClass: tagClass,
+          tagText: tagText,
+          created_at: gen.created_at || null
+       });
+    });
+
+    // Sort descending by genNum
+    StateManager.setGenerationsData(Object.values(groups).sort((a, b) => b.genNum - a.genNum));
+  }
+
+  // 3. INITIALIZE UI
+  function initUI() {
+    let sidebarHTML = '';
+    let matrixHTML = '';
+    const storedVotes = StateManager.getAtomicVotes();
+    const currentFile = StateManager.getCurrentFile();
+    StateManager.getGenerationsData().forEach(group => {
+      let groupSidebarHTML = '';
+      let groupMatrixHTML = '';
+      let groupHasUnvoted = false;
+
+      group.items.forEach(item => {
+        // Support both old `template` and new `generation_id` formats
+        const genId = item.file.replace('.html', ''); // e.g., mockups/a_dark_sepia
+        const templateVotes = storedVotes.filter(v => v.template === item.file || v.generation_id === genId);
+        
+        if (templateVotes.length === 0) {
+          groupHasUnvoted = true;
+        }
+
+        // Translate 1-5 to net fitness: 1=-2, 2=-1, 3=0, 4=1, 5=2
+        // IF old vote format (+1 / -1), handle it gracefully
+        const score = templateVotes.reduce((acc, v) => {
+          let val = v.score !== undefined ? v.score : v.sentiment;
+          if (val >= 1 && val <= 5) val = val - 3; // map 1-5 to -2 to +2
+          return acc + val;
+        }, 0);
+        const scoreColor = score > 0 ? 'var(--accent-exploit)' : score < 0 ? 'var(--accent-explore)' : 'var(--text-muted)';
+        const scorePrefix = score > 0 ? '+' : '';
+        const loreText = loreDatabase[item.file] || loreDatabase['default'];
+        
+        // Dynamic age calculation from filename (fake footprint logic)
+        const match = item.file.match(/gen_(\d+)/);
+        const genNumber = match ? `GEN ${match[1]}` : 'FOSSIL';
+        const age = match ? (20 - parseInt(match[1])) : 45; 
+
+        // Sidebar Item
+        groupSidebarHTML += `
+          <div class="sidebar-item ${item.file === currentFile ? 'active' : ''}" data-file="${item.file}" data-voted="${templateVotes.length > 0 ? 'true' : 'false'}">
+            <div class="sidebar-head">
+              <span class="tag ${item.tagClass}">${item.tagText}</span>
+              <span class="sidebar-gen">${genNumber}</span>
+            </div>
+            <div class="sidebar-title">${item.title}</div>
+            <div class="sidebar-meta">
+              <span>Age: ${age} cycles</span>
+              <span style="color:${scoreColor}">${scorePrefix}${score} Fit</span>
+            </div>
+            <div class="sidebar-actions">
+              <button class="sb-btn primary" onclick="loadTemplate('${item.file}')">RENDER</button>
+              <button class="sb-btn secondary" onclick="openNodeStats('${item.file}', '${item.title}', '${loreText.replace(/'/g, "\\'")}', '${genNumber}', ${age})">INFO</button>
+            </div>
+          </div>
+        `;
+
+        // Matrix Card — now with explicit RENDER + INFO buttons
+        groupMatrixHTML += `
+          <div class="matrix-card" data-file="${item.file}" data-voted="${templateVotes.length > 0 ? 'true' : 'false'}">
+            <span class="tag ${item.tagClass}">${item.tagText}</span>
+            <div class="matrix-title">${item.title}</div>
+            <div class="matrix-lore">${loreText}</div>
+            
+            <div style="font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--text-muted); letter-spacing:0.5px; margin-top:auto; padding-top:16px; border-top:1px dashed rgba(255,255,255,0.06);">
+              ⏱ CREATED: <span style="color:var(--accent);">${item.created_at ? new Date(item.created_at).toLocaleString('en-GB', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'UNKNOWN'}</span>
+            </div>
+
+            <div class="matrix-stats" style="margin-top:12px; padding-top:12px;">
+              <div class="matrix-stat-item">
+                <span style="color:var(--text-muted);">VOTES</span> <strong style="color:#fff;">${templateVotes.length}</strong>
+              </div>
+              <div class="matrix-stat-item" style="border-color: ${scoreColor}">
+                <span style="color:var(--text-muted);">FITNESS</span> <strong style="color:${scoreColor}">${scorePrefix}${score}</strong>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top: 16px;">
+              <button class="sb-btn primary" style="padding: 8px 0;" onclick="event.stopPropagation(); loadTemplate('${item.file}')">▶ RENDER</button>
+              <button class="sb-btn secondary" style="padding: 8px 0;" onclick="event.stopPropagation(); openNodeStats('${item.file}', '${item.title}', '${loreText.replace(/'/g, "\\'")}', '${genNumber}', ${age})">ℹ INFO</button>
+            </div>
+          </div>
+        `;
+      });
+      
+      if (group.items.length > 0) {
+        sidebarHTML += `<div class="group-title">${group.group}</div>` + groupSidebarHTML;
+        matrixHTML += groupMatrixHTML;
+      }
+    });
+
+    document.getElementById('sidebar-list').innerHTML = sidebarHTML;
+    document.getElementById('matrixGrid').innerHTML = matrixHTML;
+    applyTemplateFilter();
+  }
+
+  // 3.5 FILTER LOGIC
+  function setTemplateFilter(filter) {
+    StateManager.setCurrentTemplateFilter(filter);
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.remove('primary');
+      b.classList.add('secondary');
+    });
+    document.getElementById('filter-' + filter).classList.remove('secondary');
+    document.getElementById('filter-' + filter).classList.add('primary');
+    applyTemplateFilter();
+  }
+
+  function applyTemplateFilter() {
+    const currentTemplateFilter = StateManager.getCurrentTemplateFilter();
+    // --- Sidebar filtering ---
+    const items = document.querySelectorAll('.sidebar-item');
+    items.forEach(item => {
+      item.style.transition = 'none';
+      item.style.opacity = '1';
+      item.style.transform = 'none';
+
+      const isVoted = item.getAttribute('data-voted') === 'true';
+      let shouldShow = false;
+      if (currentTemplateFilter === 'all') shouldShow = true;
+      else if (currentTemplateFilter === 'voted' && isVoted) shouldShow = true;
+      else if (currentTemplateFilter === 'unvoted' && !isVoted) shouldShow = true;
+
+      item.style.display = shouldShow ? 'flex' : 'none';
+    });
+
+    // Hide empty group titles
+    document.querySelectorAll('.group-title').forEach(title => {
+      let next = title.nextElementSibling;
+      let hasVisibleChild = false;
+      while (next && next.classList.contains('sidebar-item')) {
+        if (next.style.display !== 'none') {
+          hasVisibleChild = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      title.style.display = hasVisibleChild ? 'block' : 'none';
+    });
+
+    // --- Matrix grid filtering (NEW) ---
+    const matrixCards = document.querySelectorAll('.matrix-card[data-file]');
+    matrixCards.forEach(card => {
+      const isVoted = card.getAttribute('data-voted') === 'true';
+      let shouldShow = false;
+      if (currentTemplateFilter === 'all') shouldShow = true;
+      else if (currentTemplateFilter === 'voted' && isVoted) shouldShow = true;
+      else if (currentTemplateFilter === 'unvoted' && !isVoted) shouldShow = true;
+      card.style.display = shouldShow ? 'flex' : 'none';
+    });
+
+    // --- Sync active state on all filter buttons (sidebar + matrix) ---
+    ['unvoted', 'voted', 'all'].forEach(f => {
+      const matrixBtn = document.getElementById('matrix-filter-' + f);
+      if (matrixBtn) {
+        matrixBtn.classList.remove('primary');
+        matrixBtn.classList.add('secondary');
+      }
+    });
+    const activeMatrixBtn = document.getElementById('matrix-filter-' + currentTemplateFilter);
+    if (activeMatrixBtn) {
+      activeMatrixBtn.classList.remove('secondary');
+      activeMatrixBtn.classList.add('primary');
+    }
+  }
+
+  // 4. DRAWER TOGGLE LOGIC (CLICK-BASED)
+  function toggleDrawer(which) {
+    const catalogDrawer = document.getElementById('catalog-drawer');
+    const evoDrawer = document.getElementById('evolution-drawer');
+    const tabTemplates = document.getElementById('tab-templates');
+    const tabLogs = document.getElementById('tab-logs');
+    const activeDrawer = StateManager.getActiveDrawer();
+
+    if (activeDrawer === which) {
+      catalogDrawer.classList.remove('drawer-active');
+      evoDrawer.classList.remove('drawer-active');
+      tabTemplates.classList.remove('active');
+      tabLogs.classList.remove('active');
+      StateManager.setActiveDrawer(null);
+    } else {
+      catalogDrawer.classList.remove('drawer-active');
+      evoDrawer.classList.remove('drawer-active');
+      tabTemplates.classList.remove('active');
+      tabLogs.classList.remove('active');
+
+      if (which === 'catalog') {
+        catalogDrawer.classList.add('drawer-active');
+        tabTemplates.classList.add('active');
+      } else if (which === 'evolution') {
+        evoDrawer.classList.add('drawer-active');
+        tabLogs.classList.add('active');
+      }
+      StateManager.setActiveDrawer(which);
+    }
+  }
+
+  function closeAllDrawers() {
+    document.getElementById('catalog-drawer').classList.remove('drawer-active');
+    document.getElementById('evolution-drawer').classList.remove('drawer-active');
+    document.getElementById('tab-templates').classList.remove('active');
+    document.getElementById('tab-logs').classList.remove('active');
+    StateManager.setActiveDrawer(null);
+  }
+
+  function closeEvoModal() { document.getElementById('evoLogModal').classList.remove('active'); }
+
+  function openEvoModal(index) {
+    const log = StateManager.getParsedEvoLogs()[index];
+    if (!log) return;
+    document.getElementById('evoModalDate').innerText = `LOG ENTRY // ${log.date}`;
+    document.getElementById('evoModalContent').innerHTML = `<h1>${log.title}</h1>${log.html}`;
+    document.getElementById('evoLogModal').classList.add('active');
+  }
+
+  // Embedded evolution-wall.md fallback (so logs render without a server)
+  const EVOLUTION_WALL_FALLBACK = `## [2026-03-25T03:40] Orchestrator — Epoch 2: Info-Exchange Archive Flushed
+
+The 909-line (62KB) Epoch 1 archive of \`info-exchange.md\` was permanently flushed. All critical decisions were condensed into \`system-state.md\` v2.0.0 and \`evolution-wall.md\`. The info-exchange now operates as a clean, live communication channel.
+
+## [2026-03-25T03:35] Orchestrator — Documentation Restructure
+
+The Orchestrator diagnosed the ecosystem's documentation debt. Created \`system-state.md\` as the slim state dashboard, archived \`info-exchange.md\` with a redirect header, backfilled this Evolution Wall, and fixed stale path references.
+
+## [2026-03-25T03:20] Backend & Platform — Evolution Wall Hotfix
+
+The Data Backend Engineer and Platform Architect pushed a critical hotfix. \`evolution_server.py\` was modified to intercept \`/agents/\` GET requests to bypass the root-directory restriction, fixing a 404 that prevented Evolution Wall logs from rendering.
+
+## [2026-03-25T03:12] UI & Platform — Comprehensive 1-to-5 Voting System Deployed
+
+The binary +1/-1 atomic voting buttons were replaced with an explicit 1-to-5 scale across all templates and the Genetic Platform.
+
+## [2026-03-25T02:48] Darwin-Gödel — Explicit Metric Labels Mandated
+
+Darwin-Gödel mandated that all atomic voting buttons must explicitly declare the metric being voted on. This solves the attribution problem for the Multi-Armed Bandit algorithm.
+
+## [2026-03-25T02:20] Orchestrator — Great Migration (Context Purity)
+
+All agent constitutions were moved from \`specs/newspaper/\` into isolated namespaces at \`specs/newspaper/agents/\`. Each agent now has a dedicated folder with \`manifesto.md\`, \`backlog.md\`, and \`newsletter.md\`.
+
+## [2026-03-25T01:58] Orchestrator — Exploit/Explore Dual-Engine Strategy Agreed
+
+The Orchestrator proposed and the Operator approved a dual code-combination strategy: **Exploit** (programmatic CSS variable swaps) and **Explore** (agentic LLM code generation for structural topology mutations).
+
+## [2026-03-25T01:54] Orchestrator — 4 Core Genetic Traits Assigned to Agents
+
+The evolutionary characteristics were formally assigned: Editorial Density → Editor-in-Chief, Topology & Visual Entropy → UI Evolution, Interaction Mechanics → Platform Architect, Telemetry Fidelity → Data & Backend.
+
+## [2026-03-25T01:50] Orchestrator — Primary Objectives Defined for All 5 Agents
+
+Each agent received a singular, non-negotiable primary objective: Context Purity (Orchestrator), Mathematical Convergence (Darwin), Perfect Trait Translation (UI), Unbreakable Pipelines (Backend), Variable Density Synthesis (Editor), Flawless Observability (Platform Architect).
+
+## [2026-03-25T01:46] Darwin-Gödel — Metric Taxonomy Formalized
+
+The Darwin-Gödel Engine formally defined the mathematical taxonomy of tracked traits and how signals are measured.
+
+## [2026-03-25T00:30] Orchestrator — 5-Agent Architecture Established
+
+The System Operator formally expanded the ecosystem into 5 specialized domains: Platform Architect, Darwin-Gödel Engine, Data & Backend Engineer, UI Evolution, and Editor-in-Chief.
+
+## [2026-03-25T00:06] Backend — Assumed Control of Data Infrastructure
+
+The Backend Logic Agent formally assumed responsibility for telemetry persistence (transitioning from \`localStorage\` to \`evolution_server.py\` + \`telemetry_db.json\`).
+
+## [2026-03-25] Orchestrator — System Restructure
+
+The Orchestrator completed a system-wide structural realignment. All 5 operational agents were reorganized into isolated namespaces inside \`/specs/newspaper/agents/\`.`;
+
+  function parseEvolutionWallMd(text) {
+    const entries = [];
+    const lines = text.split('\n');
+    let currentEntry = null;
+    
+    for(let i=0; i<lines.length; i++) {
+      const line = lines[i];
+      const match = line.match(/^## \[([^\]]+)\]\s+(.*)$/);
+      if(match) {
+        if(currentEntry) entries.push(currentEntry);
+        currentEntry = { date: match[1], title: match[2], body: '', html: '' };
+      } else if (currentEntry) {
+        currentEntry.body += line + '\n';
+        
+        let htmlLine = line;
+        if(htmlLine.trim() === '') htmlLine = '<br>';
+        else if(htmlLine.startsWith('- ')) htmlLine = `<li>${htmlLine.substring(2)}</li>`;
+        else htmlLine = `<p>${htmlLine}</p>`;
+        
+        htmlLine = htmlLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        htmlLine = htmlLine.replace(/`(.*?)`/g, '<code style="background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px; font-family: &quot;JetBrains Mono&quot;, monospace; font-size:0.85em;">$1</code>');
+        
+        currentEntry.html += htmlLine;
+      }
+    }
+    if(currentEntry) entries.push(currentEntry);
+    return entries;
+  }
+
+  function renderEvoList(entries) {
+    StateManager.setParsedEvoLogs(entries); // Already newest-first from the MD file
+    let listHtml = '';
+    entries.forEach((log, idx) => {
+      const preview = log.body.replace(/(<([^>]+)>)/gi, "").substring(0, 120) + '...';
+      listHtml += `
+        <div class="evo-log-item" onclick="openEvoModal(${idx})">
+          <div class="evo-log-date">${log.date}</div>
+          <div class="evo-log-title">${log.title}</div>
+          <div class="evo-log-preview">${preview}</div>
+        </div>
+      `;
+    });
+    document.getElementById('evolution-list').innerHTML = listHtml;
+  }
+
+  // 5. VIEW TOGGLERS (MATRIX VS AGENTS VS GENEALOGY VS IFRAME)
+  function hideAllViews() {
+    document.getElementById('iframeContainer').classList.remove('active');
+    document.getElementById('matrixView').classList.remove('active');
+    document.getElementById('agentsView').classList.remove('active');
+    document.getElementById('genealogyView').classList.remove('active');
+    StateManager.setCurrentFile(null);
+    document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('viewer').src = 'about:blank';
+  }
+
+  function showMatrixView() {
+    hideAllViews();
+    document.getElementById('matrixView').classList.add('active');
+    document.getElementById('lore-content').innerHTML = 'Selecione uma mutação na Matriz para avaliar.';
+    VotingSystem.hideVotePanel();
+  }
+
+  function showAgentsView() {
+    hideAllViews();
+    document.getElementById('agentsView').classList.add('active');
+    document.getElementById('lore-content').innerHTML = 'Visualizando o estado atual (d0) dos Agentes Especializados.';
+    VotingSystem.hideVotePanel();
+  }
+
+  function showGenealogyView() {
+    hideAllViews();
+    document.getElementById('genealogyView').classList.add('active');
+    document.getElementById('lore-content').innerHTML = 'Observando a linhagem evolutiva das mutações genéticas.';
+    VotingSystem.hideVotePanel();
+    renderGenealogy();
+  }
+
+  // GENEALOGY TREE DATA
+  // status: 'survived' = traits carried forward, 'extinct' = evaluated but dropped, 'current' = latest gen
+  // parentGen: which gen this branched from
+  const genealogyTree = [
+    {
+      gen: 8, label: 'Gen 008 — Omega Baseline',
+      desc: 'The foundational Solarpunk architecture. First unified 3-column grid that proved the newspaper format viable.',
+      items: [
+        { file: 'gen_008_solarpunk_complete.html', title: 'Solarpunk Dusk', type: 'exploit', status: 'survived', note: 'Baseline for all future Exploit branches' }
+      ]
+    },
+    {
+      gen: 9, label: 'Gen 009 — Divergent Exploration', parentGen: 8,
+      desc: 'First exploratory divergence: testing if brutalism or editorial familiarity outperforms the Solarpunk baseline.',
+      items: [
+        { file: 'gen_009_a_brutalist.html', title: 'Brutalist', type: 'explore', status: 'extinct', note: 'High contrast monospace. Scanning speed tested.' },
+        { file: 'gen_009_b_editorial.html', title: 'Editorial', type: 'explore', status: 'extinct', note: 'Classic print familiarity. Engagement tested.' }
+      ]
+    },
+    {
+      gen: 10, label: 'Gen 010 — Drawer Integration', parentGen: 8,
+      desc: 'Evolved from Gen 008 baseline. Introduced hidden drawer navigation to remove menus from primary reading flow.',
+      items: [
+        { file: 'gen_010_exploit_solarpunk.html', title: 'Hidden Drawers', type: 'exploit', status: 'survived', note: 'Drawer pattern carried forward to all future gens' },
+        { file: 'gen_010_explore_focus.html', title: 'Radical Focus', type: 'explore', status: 'extinct', note: 'Pure typography brutalism. Too extreme.' }
+      ]
+    },
+    {
+      gen: 11, label: 'Gen 011 — Density Control', parentGen: 10,
+      desc: 'Evolved from Gen 010. Tested reading level toggles (Exec/Tech/Graph) and ultra-dense tabular layouts.',
+      items: [
+        { file: 'gen_011_a_exploit.html', title: 'Solarpunk Refined', type: 'exploit', status: 'survived', note: 'Reading level toggle validated and carried forward' },
+        { file: 'gen_011_b_explore.html', title: 'Cyber-Terminal', type: 'explore', status: 'survived', note: 'Dense tabular pattern reused in Gen 015 B' }
+      ]
+    },
+    {
+      gen: 12, label: 'Gen 012 — Atomic Feedback', parentGen: 11,
+      desc: 'Introduced explicit per-article feedback panels. First multi-language (EN/PT) test.',
+      items: [
+        { file: 'gen_012_a_clarity.html', title: 'Low Entropy UI', type: 'explore', status: 'survived', note: 'Atomic feedback panel concept survived into all future gens' },
+        { file: 'gen_012_b_entropy.html', title: 'Data-Dense Eval', type: 'exploit', status: 'extinct', note: 'Overly compact. Readability suffered.' }
+      ]
+    },
+    {
+      gen: 13, label: 'Gen 013 — Kinetic Print', parentGen: 12,
+      desc: 'Converged feedback from Gen 012. Definitive atomic voting UI with hover micro-interactions.',
+      items: [
+        { file: 'gen_013_a_responsive_news.html', title: 'Kinetic Print UI', type: 'exploit', status: 'survived', note: 'Voting pattern and node-matrix layout carried forward' }
+      ]
+    },
+    {
+      gen: 14, label: 'Gen 014 — Data-Driven Mutations', parentGen: 13,
+      desc: 'First generation to dynamically ingest JSON payloads instead of hardcoded content. Key architectural shift.',
+      items: [
+        { file: 'gen_014_a_exploit_dynamic.html', title: 'Dynamic Feed Injection', type: 'exploit', status: 'survived', note: 'JSON payload consumption pattern is now standard' },
+        { file: 'gen_014_b_explore_horizontal.html', title: 'Horizontal Timeline', type: 'explore', status: 'extinct', note: 'Horizontal nav tested. Vertical proved superior.' }
+      ]
+    },
+    {
+      gen: 15, label: 'Gen 015 — Data Convergence (Current)', parentGen: 14,
+      desc: 'Latest generation. Full Protocol v1.0.0 compliance. Both variants consume payload and embed 7-metric atomic evaluators.',
+      items: [
+        { file: 'gen_015_a_explore_ambient.html', title: 'Ambient Discovery', type: 'explore', status: 'current', note: 'Ambient/Deep Vault topology. Minimal borders.' },
+        { file: 'gen_015_b_exploit_terminal.html', title: 'Dense Terminal', type: 'exploit', status: 'current', note: 'Split-pane Cyber-Terminal. Max data density.' }
+      ]
+    }
+  ];
+
+  function renderGenealogy() {
+    const container = document.getElementById('genealogyTimeline');
+    let html = '';
+    let survivedCount = 0, extinctCount = 0, currentCount = 0;
+
+    // Calculate telemetry scores for each template
+    const storedVotes = JSON.parse(localStorage.getItem('zefracorp_evolution_data_v1')) || [];
+
+    genealogyTree.forEach((epoch, epochIdx) => {
+      // Determine the epoch dot state: if ANY item is current, dot is current; if any survived, dot is survived; else extinct
+      let epochStatus = 'extinct';
+      epoch.items.forEach(it => {
+        if (it.status === 'current') epochStatus = 'current';
+        else if (it.status === 'survived' && epochStatus !== 'current') epochStatus = 'survived';
+      });
+
+      html += `<div class="gen-epoch">`;
+      html += `<div class="gen-epoch-dot ${epochStatus}"></div>`;
+      html += `<div class="gen-epoch-label">${epoch.label}${epoch.parentGen ? ' <span style="color:var(--text-muted); font-weight:400;">← from Gen ' + String(epoch.parentGen).padStart(3, '0') + '</span>' : ''}</div>`;
+      if (epoch.desc) {
+        html += `<div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;">${epoch.desc}</div>`;
+      }
+      html += `<div class="gen-branches">`;
+
+      epoch.items.forEach(item => {
+        if (item.status === 'survived') survivedCount++;
+        else if (item.status === 'extinct') extinctCount++;
+        else if (item.status === 'current') currentCount++;
+
+        const tagClass = item.type === 'explore' ? 'explore' : item.type === 'exploit' ? 'exploit' : 'fossil';
+        const tagText = item.type ? item.type.toUpperCase() : 'UNKNOWN';
+
+        // Get fitness from telemetry
+        const templateVotes = storedVotes.filter(v => v.template === item.file);
+        const fitness = templateVotes.reduce((acc, v) => {
+          let val = v.score !== undefined ? v.score : v.sentiment;
+          if (val >= 1 && val <= 5) val = val - 3;
+          return acc + val;
+        }, 0);
+        const fitnessColor = fitness > 0 ? 'var(--accent-exploit)' : fitness < 0 ? 'var(--accent-explore)' : 'var(--text-muted)';
+        const fitnessPrefix = fitness > 0 ? '+' : '';
+
+        let statusLabel = '';
+        if (item.status === 'survived') statusLabel = '<span class="status-survived">● SURVIVED</span>';
+        else if (item.status === 'extinct') statusLabel = '<span class="status-extinct">○ EXTINCT</span>';
+        else if (item.status === 'current') statusLabel = '<span class="status-current">◉ CURRENT</span>';
+
+        html += `
+          <div class="gen-branch-card ${item.status}" onclick="loadTemplate('${item.file}')">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span class="tag ${tagClass}">${tagText}</span>
+              <span style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:${fitnessColor};">${fitnessPrefix}${fitness} Fit (${templateVotes.length} votes)</span>
+            </div>
+            <div class="gen-branch-title">${item.title}</div>
+            <div class="gen-branch-desc">${item.note}</div>
+            <div class="gen-branch-status">
+              ${statusLabel}
+              <span style="color:var(--text-muted); font-style:italic; font-weight:400;">${item.file}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      html += `</div></div>`; // close gen-branches + gen-epoch
+    });
+
+    container.innerHTML = html;
+    document.getElementById('genealogySurvivedCount').innerText = survivedCount;
+    document.getElementById('genealogyExtinctCount').innerText = extinctCount;
+    document.getElementById('genealogyCurrentCount').innerText = currentCount;
+  }
+
+  function loadTemplate(fileUrl) {
+    if (StateManager.getCurrentFile() === fileUrl) return;
+    StateManager.setCurrentFile(fileUrl);
+
+    // Switch Views
+    document.getElementById('matrixView').classList.remove('active');
+    document.getElementById('agentsView').classList.remove('active');
+    document.getElementById('genealogyView').classList.remove('active');
+    document.getElementById('iframeContainer').classList.add('active');
+    VotingSystem.showVotePanel();
+
+    // Update Sidebar state
+    document.querySelectorAll('.sidebar-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.file === fileUrl);
+    });
+
+    // Update Lore immediately
+    const lObj = loreDatabase[fileUrl] || loreDatabase['default'];
+    document.getElementById('lore-content').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('lore-content').innerHTML = lObj;
+      document.getElementById('lore-content').style.opacity = '1';
+    }, 200);
+
+    refreshIframeContext();
+  }
+
+  function refreshIframeContext() {
+    const currentFile = StateManager.getCurrentFile();
+    if (!currentFile) return;
+    const day = document.getElementById('daySelector').value;
+    const iframe = document.getElementById('viewer');
+    const fader = document.getElementById('fader');
+
+    fader.classList.add('active');
+
+    /**
+     * @contract GET /api/payload?day={date}
+     * @request { day: string } (query param)
+     * @response { metadata: object, articles: Array }
+     */
+    DataLayer.fetchPayload(day)
+      .then(data => {
+        window.currentPayload = StyleMAB.applyStyle(data);
+      })
+      .catch(err => { console.warn("[Platform] Payload fetch failed. Falling back to mock data.", err); })
+      .finally(() => {
+        setTimeout(() => {
+          // The iframe will read window.parent.currentPayload the moment it renders
+          iframe.src = currentFile + '?day=' + day;
+          iframe.onload = () => { fader.classList.remove('active'); };
+          setTimeout(() => fader.classList.remove('active'), 1000); // safety fallback
+        }, 400);
+      });
+  }
+
+  function openFullscreen() {
+    const currentFile = StateManager.getCurrentFile();
+    if (!currentFile) { alert("Abra uma mutação primeiro."); return; }
+    window.open(currentFile + '?day=' + document.getElementById('daySelector').value, '_blank');
+  }
+
+  function renderAgentMetricsOverview() {
+    const container = document.getElementById('agentMetricsOverview');
+    if (!container) return;
+    const metrics = [
+      { agent: 'Editor-in-Chief', color: '#f59e0b', metrics: ['editorial_density', 'structure', 'tone', 'form'] },
+      { agent: 'UI Evolution', color: 'var(--accent-exploit)', metrics: ['topology', 'visual_entropy', 'aesthetics'] },
+      { agent: 'Platform Architect', color: 'var(--accent-explore)', metrics: ['interaction_mechanics'] },
+      { agent: 'Darwin-Gödel Engine', color: 'var(--accent)', metrics: ['global_fitness'] },
+    ];
+    container.innerHTML = metrics.map(a => `
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:700; color:${a.color}; margin-bottom:10px; text-transform:uppercase;">${a.agent}</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${a.metrics.map(m => `<span style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; padding:3px 8px; border-radius:4px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-muted);">${m}</span>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  return {
+    initUI,
+    buildGenerationsData,
+    renderCatalog: initUI,
+    renderMatrixView: initUI,
+    renderEvoList,
+    parseEvolutionWallMd,
+    renderAgentMetricsOverview,
+    // View togglers (called from HTML event handlers via window.* in EventBus)
+    hideAllViews,
+    showMatrixView,
+    showAgentsView,
+    showGenealogyView,
+    loadTemplate,
+    refreshIframeContext,
+    openFullscreen,
+    renderGenealogy,
+    // Drawer helpers
+    toggleDrawer,
+    closeAllDrawers,
+    setTemplateFilter,
+    applyTemplateFilter,
+    // Evo modal helpers
+    openEvoModal,
+    closeEvoModal,
+    // Agent modal helpers
+    openAgentModal,
+    closeAgentModal
+  };
+})();
+
+// ============================================================
+// MODULE: ModalController — open/close all modals
+// ============================================================
+const ModalController = (() => {
+  function openTelemetry() { VotingSystem.renderTelemetry(); document.getElementById('telemetryModal').classList.add('active'); }
+  function closeTelemetry() { document.getElementById('telemetryModal').classList.remove('active'); }
+
+  function openNodeStats(file, title, lore, gen, age) {
+    document.getElementById('nodeStatsHeaderLabel').innerText = `NODE: ${file}`;
+    document.getElementById('nodeStatsGen').innerText = gen;
+    document.getElementById('nodeStatsTitle').innerText = title;
+    document.getElementById('nodeStatsAge').innerText = `${age} CYCLES`;
+    document.getElementById('nodeStatsLore').innerHTML = lore;
+    
+    document.getElementById('nodeStatsRenderBtn').onclick = () => { closeNodeStats(); UIRenderer.loadTemplate(file); };
+
+    // Calculate detailed stats
+    const tVotes = StateManager.getAtomicVotes().filter(v => v.template === file);
+    let pos = 0, neg = 0;
+    tVotes.forEach(v => { 
+       let val = v.score !== undefined ? v.score : v.sentiment;
+       if (val >= 1 && val <= 5) val = val - 3;
+       if(val > 0) pos++; else if (val < 0) neg++; 
+    });
+    const total = tVotes.length;
+    let posPct = total > 0 ? Math.round((pos/total)*100) : 0;
+    let negPct = total > 0 ? Math.round((neg/total)*100) : 0;
+    const net = tVotes.reduce((acc, v) => {
+       let val = v.score !== undefined ? v.score : v.sentiment;
+       if (val >= 1 && val <= 5) val = val - 3;
+       return acc + val;
+    }, 0);
+
+    let metricsHTML = '';
+    if (total === 0) {
+      metricsHTML = '<div style="color:var(--text-muted); font-style:italic;">No atomic feedback interactions found for this specific generation.</div>';
+    } else {
+      metricsHTML = `
+        <div style="display:flex; gap:24px; margin-bottom: 20px;">
+          <div style="flex:1; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 16px; border-radius: 8px; text-align:center;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-muted);">NET FITNESS</div>
+            <div style="font-size:2rem; font-weight:800; color:${net > 0 ? 'var(--accent-exploit)' : net < 0 ? 'var(--accent-explore)' : '#fff'};">${net>0?'+'+net:net}</div>
+          </div>
+          <div style="flex:1; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 16px; border-radius: 8px; text-align:center;">
+             <div style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--text-muted);">TOTAL ATOMIC VOTES</div>
+             <div style="font-size:2rem; font-weight:800; color:#fff;">${total}</div>
+          </div>
+        </div>
+        <div style="display:flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; margin-bottom: 8px; font-weight: 700;">
+            <span style="color: var(--accent-exploit)">POS ${posPct}%</span>
+            <span style="color: var(--accent-explore)">NEG ${negPct}%</span>
+        </div>
+        <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; display: flex; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);">
+            <div style="width: ${posPct}%; background: var(--accent-exploit);"></div>
+            <div style="width: ${negPct}%; background: var(--accent-explore);"></div>
+        </div>
+      `;
+    }
+    document.getElementById('nodeStatsMetrics').innerHTML = metricsHTML;
+    document.getElementById('nodeStatsModal').classList.add('active');
+  }
+  function closeNodeStats() { document.getElementById('nodeStatsModal').classList.remove('active'); }
+
+  function syncKnowledge() {
+    const modal = document.getElementById('terminalModal');
+    const body = document.getElementById('terminalBody');
+    modal.classList.add('active'); clearInterval(StateManager.getTypeInterval());
+    body.innerHTML = '<span class="cursor"></span>';
+
+    const block = `> INITIATING KNOWLEDGE TRANSFER...
+> CONNECTING TO ZEFRAHUB... OK
+
+CONSTITUTIONS SECURED:
+- Fixed Trait 1: <span class="highlight">3-Second Delayed Hover (Always hide menus)</span>
+- Fixed Trait 2: Telemetry/Diag Panel explicitly rendered
+- Fixed Trait 3: Atomic component-level voting
+- Fixed Trait 4: Reading Level Depth Control
+- 🟢 NEW TRAIT:  <span class="highlight">Lore integration explicit at UI Level</span>
+
+LATEST PARADIGM SHIFT:
+System now evaluates Editorial Voice styles independently from UI structure.
+
+> INTELLIGENCE PUSHED BACK TO MAIN AGENT.
+> AWAITING NEXT EVOLUTION CYCLE...`;
+
+    let charIdx = 0;
+    const interval = setInterval(() => {
+      if (charIdx <= block.length) {
+        if (block[charIdx] === '<') { const closeIdx = block.indexOf('>', charIdx); if (closeIdx !== -1) charIdx = closeIdx + 1; }
+        else { charIdx += 2; }
+        body.innerHTML = block.substring(0, charIdx) + '<span class="cursor"></span>';
+        body.scrollTop = body.scrollHeight;
+      } else { clearInterval(interval); }
+    }, 15);
+    StateManager.setTypeInterval(interval);
+  }
+  function closeTerminal() { document.getElementById('terminalModal').classList.remove('active'); clearInterval(StateManager.getTypeInterval()); }
+
+  return { openTelemetry, closeTelemetry, openNodeStats, closeNodeStats, syncKnowledge, closeTerminal };
+})();
+
+// ============================================================
+// MODULE: VotingSystem — vote recording and transitions
+// ============================================================
+const VotingSystem = (() => {
+  function renderTelemetry() {
+    const container = document.getElementById('telemetryList');
+    const atomicVotes = StateManager.getAtomicVotes();
+    if (atomicVotes.length === 0) { 
+      container.innerHTML = `
+        <div style="text-align:center; padding: 60px 20px;">
+          <h2 style="font-family: 'JetBrains Mono', monospace; color: var(--accent-explore); margin: 0 0 16px 0;">NO TELEMETRY RECORDED YET</h2>
+          <p style="color:var(--text-muted); font-size: 1rem; margin: 0;">A Máquina de Gödel está aguardando interações.</p>
+          <div style="margin-top:24px; font-size: 0.85rem; color: #a1a1aa; background: rgba(255,255,255,0.03); border: 1px dashed var(--border); padding: 16px; border-radius: 8px; display: inline-block;">
+            <strong style="color: #fff;">Como gerar dados:</strong><br><br>
+            1. Clique no botão <strong style="color:#f59e0b;">★ UPVOTE PLATFORM</strong> no topo para avaliar o Hub atual.<br>
+            2. Volte para a Matrix, abra a <strong style="color:var(--accent);">Gen 013</strong> ou <strong style="color:var(--accent);">Gen 014</strong> e vote diretamente nas matérias.
+          </div>
+        </div>`;
+      return; 
+    }
+    
+    let pos = 0, neg = 0;
+    let traitData = { 
+      Topology: { pos: 0, neg: 0 }, 
+      Density: { pos: 0, neg: 0 }, 
+      Entropy: { pos: 0, neg: 0 }, 
+      Mechanics: { pos: 0, neg: 0 },
+      Unknown: { pos: 0, neg: 0 }
+    };
+
+    atomicVotes.forEach(v => {
+      let val = v.score !== undefined ? v.score : v.sentiment;
+      if (val >= 1 && val <= 5) val = val - 3;
+      if(val > 0) pos++; else if (val < 0) neg++;
+
+      let t = 'Unknown';
+      let c = (v.metric_name || v.component || '').toLowerCase();
+      let r = (v.comment || v.reason || '').toLowerCase();
+
+      if(c.includes('layout') || c.includes('topology') || r.includes('topology') || c.includes('grid') || c.includes('timeline')) t = 'Topology';
+      else if(c.includes('text') || c.includes('density') || r.includes('density') || c.includes('exec') || r.includes('reading')) t = 'Density';
+      else if(c.includes('color') || c.includes('entropy') || r.includes('entropy') || c.includes('font') || c.includes('dark')) t = 'Entropy';
+      else if(c.includes('hover') || c.includes('mechanic') || r.includes('mechanic') || c.includes('modal') || c.includes('drawer')) t = 'Mechanics';
+
+      if(val > 0) traitData[t].pos++; else if (val < 0) traitData[t].neg++;
+    });
+
+    const total = atomicVotes.length;
+    const posPct = total > 0 ? Math.round((pos/total)*100) : 0;
+    const negPct = total > 0 ? Math.round((neg/total)*100) : 0;
+    const net = atomicVotes.reduce((acc, v) => {
+      let val = v.score !== undefined ? v.score : v.sentiment;
+      if (val >= 1 && val <= 5) val = val - 3;
+      return acc + val;
+    }, 0);
+    
+    let html = `
+      <div style="background: rgba(0,0,0,0.3); padding: 20px 24px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.1); margin-bottom: 24px; display: flex; gap: 32px; align-items: center; justify-content: space-between;">
+        <div style="text-align:center;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color:var(--text-muted); margin-bottom: 6px;">TOTAL VOTES</div>
+          <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; color:#fff;">${total}</div>
+        </div>
+        <div style="text-align:center; border-left: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0 32px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color:var(--text-muted); margin-bottom: 6px;">GLOBAL FITNESS</div>
+          <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; color: ${net > 0 ? 'var(--accent-exploit)': net < 0 ? 'var(--accent-explore)' : '#fff'}">${net > 0 ? '+'+net : net}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="display:flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; margin-bottom: 8px; font-weight: 700;">
+            <span style="color: var(--accent-exploit)">POS ${posPct}%</span>
+            <span style="color: var(--accent-explore)">NEG ${negPct}%</span>
+          </div>
+          <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; display: flex; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);">
+            <div style="width: ${posPct}%; background: var(--accent-exploit); transition: width 0.5s;"></div>
+            <div style="width: ${negPct}%; background: var(--accent-explore); transition: width 0.5s;"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color:var(--accent); margin-bottom: 12px; font-weight: 700;">> GENETIC TRAIT DISTRIBUTION (ANALYTICS)</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px;">
+    `;
+
+    Object.keys(traitData).forEach(trait => {
+        if(trait === 'Unknown' && traitData[trait].pos === 0 && traitData[trait].neg === 0) return;
+        let tTotal = traitData[trait].pos + traitData[trait].neg;
+        if(tTotal === 0) return;
+        let tpPct = Math.round((traitData[trait].pos / tTotal) * 100);
+        let tnPct = 100 - tpPct;
+        html += `
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 6px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-family:'JetBrains Mono', monospace; font-size:0.7rem;">
+               <strong style="color:var(--text-main);">${trait}</strong>
+               <span style="color:var(--text-muted);">${tTotal} votes</span>
+            </div>
+            <div style="height: 4px; background: var(--accent-explore); border-radius: 2px; display: flex; overflow: hidden;">
+              <div style="width: ${tpPct}%; background: var(--accent-exploit);"></div>
+            </div>
+          </div>
+        `;
+    });
+
+    html += `</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color:var(--text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">> RAW ATOMIC LOGS (WITH OPERATOR REASONS)</div>`;
+
+    html += atomicVotes.map(v => { // atomicVotes is already the local const from StateManager
+      let scoreLabel = v.score !== undefined ? v.score : v.sentiment;
+      let metricLabel = v.metric_name || v.component || 'Unknown Metric';
+      let commentLabel = v.comment || v.reason || '';
+      let badgeClass = '';
+      if (scoreLabel >= 4 || scoreLabel === 1 && v.score === undefined) badgeClass = 'positive';
+      else if (scoreLabel <= 2 && scoreLabel !== 1 && scoreLabel !== 0 && v.score === undefined || v.score !== undefined && scoreLabel <= 2) badgeClass = 'negative';
+      
+      return `
+      <div class="vote-card" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; width: 100%;">
+           <div class="vote-card-title">
+             <span class="vote-badge ${badgeClass}" style="background: rgba(255,255,255,0.1); color: #fff;">SCORE: ${scoreLabel}</span> 
+             <span style="color:#fff;">${metricLabel}</span>
+           </div>
+           <div class="vote-card-meta" style="margin:0;">${new Date(v.timestamp).toLocaleTimeString()}</div>
+        </div>
+        <div class="vote-card-meta" style="width: 100%; margin:0; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.05);">
+           Template: <span style="color:var(--accent);">${v.template === 'null' || !v.template ? 'PLATFORM DASHBOARD' : v.template}</span><br>
+           ${commentLabel ? '<div style="margin-top:6px; padding: 6px 8px; background: rgba(0,0,0,0.4); border-left: 2px solid var(--text-muted); color: #cbd5e1;">Reason / Comment: ' + commentLabel + '</div>' : '<div style="margin-top:6px; color:var(--text-muted); font-style:italic;">No comment provided.</div>'}
+        </div>
+      </div>
+    `}).join('');
+    
+    container.innerHTML = html;
+  }
+  function exportTelemetry() {
+    const votes = StateManager.getAtomicVotes();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(votes, null, 2));
+    const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "evolution_telemetry.json"); dlAnchorElem.click();
+  }
+  function clearTelemetry() {
+    if (confirm("Purge all telemetry?")) {
+      StateManager.setAtomicVotes([]);
+      localStorage.removeItem(DataLayer.STORAGE_KEY);
+      renderTelemetry();
+    }
+  }
+
+  function registerAtomicVote(data) {
+    let metricName = data.metric_name || data.component || 'unknown';
+    let score = data.score !== undefined ? data.score : data.sentiment;
+    let comment = data.reason || '';
+
+    const voteRecord = {
+      id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7),
+      template: StateManager.getCurrentFile(),
+      generation_id: StateManager.getCurrentFile() ? StateManager.getCurrentFile().replace('.html', '') : 'platform_dashboard',
+      metric_name: metricName,
+      score: score,
+      comment: comment,
+      timestamp: new Date().toISOString()
+    };
+
+    // Optimistic UI Update
+    const votes = StateManager.getAtomicVotes();
+    votes.unshift(voteRecord);
+    StateManager.setAtomicVotes(votes);
+    localStorage.setItem(DataLayer.STORAGE_KEY, JSON.stringify(votes));
+
+    // Log to Realtime Interface
+    let badgeType = 'default';
+    if (score >= 4 || score === 1 && !data.score) badgeType = 'exploit';
+    if (score <= 2 && score !== 1 && score !== 0 && !data.score || data.score && score <= 2) badgeType = 'explore';
+    Logger.addRealtimeLog(`[TELEMETRY] Vote recorded on ${metricName}: ${score}`, badgeType);
+
+    /**
+     * @contract POST /api/vote
+     * @request { id, template, generation_id, metric_name, score, comment, timestamp }
+     * @response { synced: boolean }
+     */
+    // Update MAB style score for the active style
+    StyleMAB.recordVote(score);
+
+    return DataLayer.postVote(voteRecord).then(res => {
+      if (res.synced) Logger.showQuickToast(`Backend Synced: [${metricName}] Score: ${score}`);
+      return res;
+    }).catch(err => {
+      Logger.showQuickToast(`Offline mode - Local saved: [${metricName}]`);
+      throw err;
+    });
+  }
+
+  function commitVote() {
+    const btn = document.getElementById('vpCommitBtn');
+    const activeScoreBtn = document.querySelector('#vpScoreRow .vp-score-btn.active');
+    if (!activeScoreBtn || !StateManager.getCurrentFile()) return;
+    if (btn.disabled) return;
+
+    btn.disabled = true;
+    btn.innerText = 'SYNCING...';
+
+    const scoreNum = parseInt(activeScoreBtn.dataset.score, 10);
+    const comment = (document.getElementById('voteComment').value || '').trim();
+
+    const promise = registerAtomicVote({
+      metric_name: 'global_fitness',
+      score: scoreNum,
+      reason: comment || 'Manual global fitness via floating vote panel'
+    });
+
+    const currentFile = StateManager.getCurrentFile();
+    const currentSidebarItem = Array.from(document.querySelectorAll('.sidebar-item')).find(item => item.dataset.file === currentFile);
+
+    const advance = () => {
+      if (currentSidebarItem) {
+        currentSidebarItem.setAttribute('data-voted', 'true');
+        if (StateManager.getCurrentTemplateFilter() === 'unvoted') {
+          currentSidebarItem.style.transition = 'all 0.4s ease';
+          currentSidebarItem.style.opacity = '0';
+          currentSidebarItem.style.transform = 'translateX(-20px)';
+          setTimeout(() => { UIRenderer.applyTemplateFilter(); advanceToNext(currentSidebarItem); }, 400);
+        } else {
+          advanceToNext(currentSidebarItem);
+        }
+      }
+    };
+
+    const reset = () => {
+      btn.disabled = false;
+      btn.classList.remove('committed', 'sync-error');
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.innerText = 'COMMIT';
+      document.getElementById('voteComment').value = '';
+      document.querySelectorAll('#vpScoreRow .vp-score-btn').forEach(b => b.classList.remove('active'));
+      collapseVotePanel();
+    };
+
+    Promise.resolve(promise).then(() => {
+      btn.classList.add('committed');
+      btn.innerText = 'COMMITTED ✔';
+      advance();
+      setTimeout(reset, 1200);
+    }).catch(() => {
+      btn.classList.add('sync-error');
+      btn.innerText = 'SYNC FAILED — LOCAL SAVED';
+      btn.style.background = '#6b1a1a';
+      btn.style.color = '#ffaaaa';
+      setTimeout(reset, 2500);
+    });
+  }
+
+  function transitionToNextTemplate() {
+    UIRenderer.initUI();
+
+    let unvotedTemplates = [];
+    const storedVotes = JSON.parse(localStorage.getItem(DataLayer.STORAGE_KEY)) || [];
+    const currentFile = StateManager.getCurrentFile();
+    StateManager.getGenerationsData().forEach(group => {
+      group.items.forEach(item => {
+        const hasVoted = storedVotes.some(v => v.template === item.file);
+        if (!hasVoted || item.file === currentFile) {
+          if (!hasVoted) unvotedTemplates.push(item);
+        }
+      });
+    });
+
+    setTimeout(() => {
+      if (unvotedTemplates.length > 0) {
+        UIRenderer.loadTemplate(unvotedTemplates[0].file);
+      } else {
+        UIRenderer.showMatrixView();
+        Logger.showQuickToast("All templates evaluated!");
+      }
+    }, 1500);
+  }
+
+  function advanceToNext(previousItem) {
+    const allItems = Array.from(document.querySelectorAll('.sidebar-item'));
+    const nextItem = allItems.find(item => item.style.display !== 'none' && item !== previousItem);
+    if (nextItem) {
+      const nextBtn = nextItem.querySelector('.primary');
+      if (nextBtn) nextBtn.click();
+    } else {
+      UIRenderer.hideAllViews();
+      document.getElementById('lore-content').innerHTML = '<span style="color:var(--accent-exploit)">All templates evaluated for current filter. Waiting for Darwin-Gödel engine...</span>';
+    }
+  }
+
+  // Floating vote panel helpers
+  function showVotePanel() { document.getElementById('votingPanel').classList.add('panel-visible'); }
+  function hideVotePanel() { document.getElementById('votingPanel').classList.remove('panel-visible'); collapseVotePanel(); }
+  function collapseVotePanel() {
+    document.getElementById('votePill').style.display = 'flex';
+    document.getElementById('voteExpanded').classList.remove('expanded');
+  }
+  function toggleVotePanel() {
+    const expanded = document.getElementById('voteExpanded');
+    const pill = document.getElementById('votePill');
+    if (expanded.classList.contains('expanded')) {
+      expanded.classList.remove('expanded');
+      pill.style.display = 'flex';
+    } else {
+      expanded.classList.add('expanded');
+      pill.style.display = 'none';
+    }
+  }
+  function selectVpScore(n) {
+    document.querySelectorAll('#vpScoreRow .vp-score-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.score, 10) === n);
+    });
+  }
+
+  return { registerAtomicVote, commitVote, transitionToNextTemplate, advanceToNext, renderTelemetry, exportTelemetry, clearTelemetry, showVotePanel, hideVotePanel, toggleVotePanel, selectVpScore };
+})();
+
+// ============================================================
+// MODULE: EventBus — keyboard nav, global listeners, bootstrap
+// ============================================================
+const EventBus = (() => {
+  function init() {
+    // Click outside drawers to close
+    document.addEventListener('click', (e) => {
+      if (!StateManager.getActiveDrawer()) return;
+      const leftTabs = document.querySelector('.left-tabs');
+      const catalog = document.getElementById('catalog-drawer');
+      const evo = document.getElementById('evolution-drawer');
+      if (leftTabs.contains(e.target) || catalog.contains(e.target) || evo.contains(e.target)) return;
+      UIRenderer.closeAllDrawers();
+    });
+
+    // ESC key to close drawers and modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        UIRenderer.closeAllDrawers();
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+      }
+    });
+
+    // Keyboard navigation (ArrowDown / ArrowUp)
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('terminalModal').classList.contains('active') ||
+          document.getElementById('telemetryModal').classList.contains('active')) return;
+
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (!StateManager.getCurrentFile()) return;
+        const btns = Array.from(document.querySelectorAll('.sidebar-item .primary'));
+        const activeIdx = Array.from(document.querySelectorAll('.sidebar-item')).findIndex(i => i.classList.contains('active'));
+        if (activeIdx !== -1) {
+          e.preventDefault();
+          let nIdx = e.key === 'ArrowDown' ? activeIdx + 1 : activeIdx - 1;
+          if (nIdx >= 0 && nIdx < btns.length) {
+            btns[nIdx].click();
+            btns[nIdx].parentElement.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+      }
+    });
+
+    // Simulated initial logs
+    setTimeout(() => Logger.addRealtimeLog('Platform Observer mounted. Awaiting telemetry.', 'system'), 500);
+    setTimeout(() => Logger.addRealtimeLog('Darwin Engine polling complete.', 'default'), 1200);
+    setTimeout(() => Logger.addRealtimeLog('UI Agent injected structural schemas.', 'exploit'), 2100);
+
+    // Expose globals for inline HTML event handlers
+    window.openTraitLab = () => Logger.showQuickToast('Trait Lab deprecated. Vote directly on each page!');
+    window.closeTraitLab = () => {};
+    window.voteTrait = () => {};
+    window.toggleDrawer = UIRenderer.toggleDrawer;
+    window.showMatrixView = UIRenderer.showMatrixView;
+    window.showAgentsView = UIRenderer.showAgentsView;
+    window.showGenealogyView = UIRenderer.showGenealogyView;
+    window.loadTemplate = UIRenderer.loadTemplate;
+    window.refreshIframeContext = UIRenderer.refreshIframeContext;
+    window.openFullscreen = UIRenderer.openFullscreen;
+    window.openTelemetry = ModalController.openTelemetry;
+    window.closeTelemetry = ModalController.closeTelemetry;
+    window.syncKnowledge = ModalController.syncKnowledge;
+    window.closeTerminal = ModalController.closeTerminal;
+    window.openNodeStats = ModalController.openNodeStats;
+    window.closeNodeStats = ModalController.closeNodeStats;
+    window.openAgentModal = UIRenderer.openAgentModal;
+    window.closeAgentModal = UIRenderer.closeAgentModal;
+    window.openEvoModal = UIRenderer.openEvoModal;
+    window.closeEvoModal = UIRenderer.closeEvoModal;
+    window.setTemplateFilter = UIRenderer.setTemplateFilter;
+    window.commitVote = VotingSystem.commitVote;
+    window.exportTelemetry = VotingSystem.exportTelemetry;
+    window.clearTelemetry = VotingSystem.clearTelemetry;
+    window.toggleVotePanel = VotingSystem.toggleVotePanel;
+    window.selectVpScore = VotingSystem.selectVpScore;
+    // Expose registerAtomicVote on window for iframe children
+    window.registerAtomicVote = VotingSystem.registerAtomicVote;
+  }
+
+  return { init };
+})();
+
+// ============================================================
+// STYLE MAB — Content Writing Style Multi-Armed Bandit
+// ============================================================
+// Epsilon-greedy bandit that picks a writing style variant for
+// each payload load. Scores are stored in localStorage and updated
+// on every atomic vote cast while a template is active.
+// Variants are loaded from: agents/editor_in_chief/content_style_variants_YYYY-MM-DD.json
+
+const StyleMAB = (() => {
+  const STORAGE_KEY = 'style_mab_scores';
+  const EPSILON = 0.2; // 20% explore, 80% exploit
+  const STYLE_IDS = ['dispatch', 'manifesto', 'brief', 'chronicle', 'oracle', 'field_report', 'academic'];
+  const BADGE_EL_ID = 'style-mab-badge';
+
+  let _activeStyleId = null;
+  let _variantsCache = null; // keyed by article id
+
+  function _loadScores() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  }
+
+  function _saveScores(scores) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+  }
+
+  function _pickStyle() {
+    const scores = _loadScores();
+    if (Math.random() < EPSILON) {
+      // Explore: random style
+      return STYLE_IDS[Math.floor(Math.random() * STYLE_IDS.length)];
+    }
+    // Exploit: highest avg score
+    let bestId = null, bestAvg = -1;
+    for (const id of STYLE_IDS) {
+      const s = scores[id];
+      if (!s || s.pulls === 0) { if (bestId === null) bestId = id; continue; }
+      const avg = s.total_score / s.pulls;
+      if (avg > bestAvg) { bestAvg = avg; bestId = id; }
+    }
+    return bestId || STYLE_IDS[Math.floor(Math.random() * STYLE_IDS.length)];
+  }
+
+  function _applyVariants(payload, styleId, variants) {
+    // variants: array of { id, content_variants }
+    const variantMap = {};
+    for (const art of variants) variantMap[art.id] = art.content_variants;
+
+    const articles = (payload.articles || []).map(art => {
+      const cv = variantMap[art.id];
+      if (!cv) return art;
+      const chosen = cv.find(v => v.style_id === styleId) || cv[0];
+      return { ...art, content: { exec: chosen.exec, tech: chosen.tech, graph: chosen.graph } };
+    });
+
+    return { ...payload, articles, selected_style_id: styleId };
+  }
+
+  function _updateBadge(styleId, styleName) {
+    let el = document.getElementById(BADGE_EL_ID);
+    if (!el) return;
+    el.textContent = `✦ ${styleName || styleId}`;
+    el.style.opacity = '1';
+  }
+
+  /** Main entry: called by refreshIframeContext after fetchPayload resolves */
+  function applyStyle(payload) {
+    const day = (payload.metadata && payload.metadata.date) || new Date().toISOString().slice(0, 10);
+    const variantsUrl = `agents/editor_in_chief/content_style_variants_${day}.json`;
+
+    const styleId = _pickStyle();
+    _activeStyleId = styleId;
+
+    if (_variantsCache) {
+      const result = _applyVariants(payload, styleId, _variantsCache);
+      _updateBadge(styleId, _getStyleName(styleId));
+      return result;
+    }
+
+    // Async: fetch variants then patch window.currentPayload in place
+    fetch(variantsUrl)
+      .then(r => r.ok ? r.json() : Promise.reject('no variants'))
+      .then(data => {
+        _variantsCache = data.articles || [];
+        const result = _applyVariants(payload, styleId, _variantsCache);
+        window.currentPayload = result;
+        _updateBadge(styleId, _getStyleName(styleId, data.styles_catalog));
+        Logger.addRealtimeLog(`[MAB] Style selected: ${styleId}`, 'explore');
+      })
+      .catch(() => {
+        // Variants not available yet — serve default content
+        Logger.addRealtimeLog(`[MAB] No style variants found for ${day}. Serving default.`, 'default');
+      });
+
+    // Return unmodified payload synchronously; async patch above updates it before iframe reads it
+    return { ...payload, selected_style_id: 'default' };
+  }
+
+  function _getStyleName(styleId, catalog) {
+    if (catalog) { const e = catalog.find(s => s.id === styleId); if (e) return e.name; }
+    const names = { dispatch: 'Emergency Dispatch', manifesto: 'Manifesto', brief: 'Executive Brief',
+      chronicle: 'Chronicle', oracle: 'Oracle', field_report: 'Field Report', academic: 'Academic Abstract' };
+    return names[styleId] || styleId;
+  }
+
+  /** Called by registerAtomicVote after each vote */
+  function recordVote(score) {
+    if (!_activeStyleId || _activeStyleId === 'default') return;
+    const scores = _loadScores();
+    if (!scores[_activeStyleId]) scores[_activeStyleId] = { pulls: 0, total_score: 0 };
+    scores[_activeStyleId].pulls += 1;
+    scores[_activeStyleId].total_score += score / 5.0; // normalize to 0–1
+    _saveScores(scores);
+  }
+
+  /** Expose scores for Darwin-Gödel to read */
+  function getScores() { return _loadScores(); }
+
+  /** Reset (for testing) */
+  function reset() { localStorage.removeItem(STORAGE_KEY); _variantsCache = null; _activeStyleId = null; }
+
+  return { applyStyle, recordVote, getScores, reset };
+})();
+
+// ============================================================
+// BOOTSTRAP
+// ============================================================
+
+// MOCK SYSTEM PAYLOAD EXPOSED TO IFRAMES (fallback when backend is offline)
+window.currentPayload = {
+  metadata: { date: "2026-03-24", stats: { sessions: 142, decisions: 33, specChanges: 12 } },
+  articles: [
+    { id: "node_77x", type: "event", tag: "P1 • GOVERNANCE", title: "A Ascensão da Genetic Platform", body: "<p>O Cofre agora possui um terminal central para evoluir a interface do The Daily Graph de forma sistemática baseada em mutações estéticas.</p>", meta: { impact: 9.8, risk: "low", source_files: [] } },
+    { id: "node_88y", type: "architecture", tag: "P2 • FOUNDATION", title: "Adoção da Matriz N-Dimensional", body: "<p>Abandonamos as pastas fixas. A ontologia baseia-se num espectro contínuo.</p>", meta: { impact: 8.5, risk: "medium", source_files: [] } }
+  ]
+};
+
+UIRenderer.renderAgentMetricsOverview();
+DataLayer.fetchEvolutionWall()
+  .then(text => UIRenderer.renderEvoList(UIRenderer.parseEvolutionWallMd(text)))
+  .catch(err => {
+    console.warn('Evolution Wall fetch failed, using embedded fallback:', err.message);
+    UIRenderer.renderEvoList(UIRenderer.parseEvolutionWallMd(EVOLUTION_WALL_FALLBACK));
+  });
+DataLayer.init().then(() => {
+  EventBus.init();
+  VotingSystem.transitionToNextTemplate();
+});
+
+// Populate daySelector from publications archive
+DataLayer.fetchPublications().then(function(editions) {
+    var sel = document.getElementById('daySelector');
+    if (!editions || editions.length === 0) {
+        sel.innerHTML = '<option value="2026-03-25" selected>Edição 001 (25.03.2026)</option>';
+        return;
+    }
+    sel.innerHTML = editions.map(function(ed, i) {
+        var d = ed.date;
+        // Format: DD.MM.YYYY
+        var parts = d.split('-');
+        var label = parts[2] + '.' + parts[1] + '.' + parts[0];
+        var num = editions.length - i; // newest = highest number
+        return '<option value="' + d + '">' + 'Edição ' + String(num).padStart(3, '0') + ' (' + label + ')</option>';
+    }).join('');
+    sel.value = editions[0].date; // select most recent
+    // Trigger initial load if a template is already active
+    if (typeof refreshIframeContext === 'function') {
+        // Don't auto-trigger here — let the user pick a template first
+    }
+});
+</script>
+
+<!-- FLOATING VOTE PANEL -->
+<style>
+  /* === FLOATING VOTE PANEL === */
+  #votingPanel {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  #votingPanel.panel-visible {
+    display: block;
+  }
+
+  /* Collapsed pill */
+  #votePill {
+    background: rgba(20, 21, 31, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #votePill:hover {
+    background: rgba(56, 189, 248, 0.1);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+  }
+  #votePill .pill-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  /* Expanded panel */
+  #voteExpanded {
+    display: none;
+    width: 280px;
+    background: rgba(20, 21, 31, 0.92);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(56, 189, 248, 0.08);
+    flex-direction: column;
+    gap: 12px;
+  }
+  #voteExpanded.expanded {
+    display: flex;
+  }
+
+  .vp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  .vp-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .vp-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .vp-close:hover { color: var(--text-main); }
+
+  #voteComment {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: var(--text-main);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 8px 10px;
+    resize: none;
+    height: 64px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #voteComment:focus {
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+  #voteComment::placeholder { color: var(--text-muted); }
+
+  .vp-fitness-label {
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .vp-fitness-row {
+    display: flex;
+    gap: 6px;
+  }
+  .vp-score-btn {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 5px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 7px 0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+  .vp-score-btn:hover {
+    background: rgba(56, 189, 248, 0.08);
+    border-color: rgba(56, 189, 248, 0.3);
+    color: var(--accent);
+  }
+  .vp-score-btn.active {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+  }
+
+  #vpCommitBtn {
+    width: 100%;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 6px;
+    color: var(--accent-exploit);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 9px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+  }
+  #vpCommitBtn:hover {
+    background: rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+  }
+  #vpCommitBtn.committed {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: var(--accent-exploit);
+    color: var(--accent-exploit);
+  }
+</style>
+
+<div id="votingPanel">
+  <button id="votePill" onclick="toggleVotePanel()">
+    <span class="pill-dot"></span>
+    ◉ VOTE
+  </button>
+  <div id="voteExpanded">
+    <div class="vp-header">
+      <span class="vp-title">Evaluate Template</span>
+      <button class="vp-close" onclick="toggleVotePanel()" title="Collapse">✕</button>
+    </div>
+    <textarea id="voteComment" placeholder="Your thoughts on this UI..."></textarea>
+    <div>
+      <div class="vp-fitness-label">Global Fitness</div>
+      <div class="vp-fitness-row" id="vpScoreRow">
+        <button class="vp-score-btn" data-score="1" onclick="selectVpScore(1)">1</button>
+        <button class="vp-score-btn" data-score="2" onclick="selectVpScore(2)">2</button>
+        <button class="vp-score-btn" data-score="3" onclick="selectVpScore(3)">3</button>
+        <button class="vp-score-btn" data-score="4" onclick="selectVpScore(4)">4</button>
+        <button class="vp-score-btn" data-score="5" onclick="selectVpScore(5)">5</button>
+      </div>
+    </div>
+    <button id="vpCommitBtn" onclick="commitVote()">COMMIT</button>
+  </div>
+</div>
+
+</body>
+</html>

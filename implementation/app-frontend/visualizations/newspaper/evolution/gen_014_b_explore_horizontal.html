@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 014 B: Explore Horizontal Timeline</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #090a0f; --text: #e2e8f0; --accent: #f43f5e; --border: rgba(255,255,255,0.1); }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow-x: auto; overflow-y: hidden; }
+  
+  header { padding: 40px; flex-shrink: 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-end;}
+  .logo { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: #fff;}
+  .stats { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent); }
+
+  .timeline { display: flex; padding: 60px 40px; gap: 60px; height: calc(100vh - 120px); align-items: stretch;}
+  
+  .card { 
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 16px; 
+    min-width: 600px; max-width: 600px; padding: 40px; display: flex; flex-direction: column;
+    transition: 0.3s; overflow-y: auto;
+  }
+  .card:hover { background: rgba(255,255,255,0.05); border-color: rgba(244, 63, 94, 0.4); transform: translateY(-4px);}
+
+  .card-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 4px 8px; background: rgba(244, 63, 94, 0.1); color: var(--accent); border-radius: 4px; font-weight: 700; align-self: flex-start; margin-bottom: 24px;}
+  .card-title { font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin: 0 0 20px 0; color: #fff;}
+  .card-body { font-size: 1.05rem; line-height: 1.7; color: #cbd5e1; flex: 1; }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #64748b; text-decoration: none; border: 1px dashed rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 3px; }
+  .source-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  .tech-block { background: rgba(0,0,0,0.5); padding: 16px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin: 20px 0; color: #94a3b8; border-left: 2px solid var(--accent);}
+  
+  /* VOTE */
+  .vote-panel { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .vote-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); text-transform: uppercase;}
+  .vote-actions.voted .vote-btn { display: none; }
+  .vote-success-msg { display: none; background: #dcfce7; color: #065f46; border: 1px solid var(--success); padding: 8px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; }
+  .vote-actions.voted .vote-success-msg { display: inline-block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  .vote-btn-scale { border: none; background: transparent; color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; padding: 6px 12px; cursor: pointer; border-right: 1px solid var(--border); font-weight: 700;}
+  .vote-btn-scale:last-child { border-right: none; }
+  .vote-btn-scale:hover { background: #e5e7eb; }
+  .vote-btn-scale.active { background: var(--accent); color: #fff; }
+
+  /* CUSTOM TOOLTIP */
+  [data-tooltip] { position: relative; }
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute; bottom: 100%; left: 0; transform: translateY(-8px);
+    background: #1f2937; border: 1px solid #374151; color: #f9fafb; padding: 8px 12px;
+    font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500;
+    white-space: pre-wrap; width: max-content; max-width: 250px; line-height: 1.4;
+    border-radius: 6px; pointer-events: none; opacity: 0; transition: all 0.2s; z-index: 100;
+  }
+  [data-tooltip]:hover::before { opacity: 1; transform: translateY(-4px); }
+  .voted .vote-btn { display: none; }
+  .voted .success { display: inline-block; color: var(--accent); font-family: monospace; font-weight: bold; }
+  .success { display: none; }
+
+  /* CUSTOM SCROLLBAR */
+  ::-webkit-scrollbar { height: 8px; width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">O GRAFO DIÁRIO // HORIZONTAL TIMELINE</div>
+  <div class="stats" id="headStats">WAITING SYNC...</div>
+</header>
+
+<div class="timeline" id="timelineContainer"></div>
+
+<!-- GLOBAL COMPREHENSIVE VOTING -->
+<div id="global-voting-footer" style="position:fixed; bottom:0; right:0; left:320px; background:var(--bg-panel); border-top:1px solid var(--border); padding: 16px 24px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); z-index: 100;">
+  <div class="vote-label" data-tooltip="Global Fitness: Evaluate the overall layout and usability of this entire horizontal generation.">
+    <span style="border-bottom: 1px dotted var(--text-muted); cursor:help;">GLOBAL METRIC: GENERATION FITNESS</span>
+  </div>
+  <div class="vote-actions" id="vote_global_page">
+     <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+        <button class="vote-btn-scale" onclick="registerVote('global_fitness', null, 1, 'vote_global_page')">1</button>
+        <button class="vote-btn-scale" onclick="registerVote('global_fitness', null, 2, 'vote_global_page')">2</button>
+        <button class="vote-btn-scale" onclick="registerVote('global_fitness', null, 3, 'vote_global_page')">3</button>
+        <button class="vote-btn-scale" onclick="registerVote('global_fitness', null, 4, 'vote_global_page')">4</button>
+        <button class="vote-btn-scale" onclick="registerVote('global_fitness', null, 5, 'vote_global_page')">5</button>
+     </div>
+  </div>
+</div>
+<div id="comment_global_page" style="position:fixed; bottom:70px; right:24px; left:344px; background:var(--bg-panel); border:1px solid var(--border); padding: 16px; border-radius:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display:none; flex-direction:column; gap:8px; z-index:100;">
+   <div style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--accent);">You are commenting on: Overall Generation Fitness</div>
+   <input type="text" id="input_global_page" placeholder="Type your comment and press Enter..." style="width:100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.9rem;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+</div>
+
+<script>
+  const mockPayload = {
+    metadata: { date: "2026-03-24", stats: { sessions: 25, decisions: 12, specChanges: 8 } },
+    articles: [
+      {
+        id: "item_gen014", type: "architectural_decision", tag: "P1 • ACADEMIC STYLE", title: "Integração de S. R. Ranganathan",
+        body: "<p>A transição epistemológica do nosso Cofre impôs a Classificação Facetada.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "item_gen015", type: "system_rollback", tag: "P2 • TECHNICAL", title: "CCB Lift & Shift Halted",
+        body: "<p>Rollback iniciado devido ao acoplamento orgânico invisível.</p>",
+        meta: { impact: 9.5, risk: "high", source_files: [] }
+      }
+    ]
+  };
+
+  let payload = (window.parent && window.parent.currentPayload) ? window.parent.currentPayload : mockPayload;
+
+  function renderUI() {
+    document.getElementById('headStats').innerText = `DATE: ${payload.metadata.date} | SESSIONS: ${payload.metadata.stats.sessions}`;
+    let html = '';
+
+    payload.articles.forEach(art => {
+      let bodyText = art.body || '';
+      let sourceFiles = (art.meta && art.meta.source_files) || [];
+      let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+        let name = f.split('/').pop();
+        return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+      }).join('') + '</div>' : '';
+      html += `
+        <div class="card" id="card_${art.id}">
+          <div class="card-tag">${art.tag}</div>
+          <h1 class="card-title">${art.title}</h1>
+          <div class="card-body">${bodyText}${sourceLinksHtml}</div>
+          
+          <div class="atomic-vote-panel" style="flex-direction: column; align-items: stretch; gap: 24px;">
+            <div class="vote-label" style="text-align: center; border-bottom: 1px dotted var(--text-muted); padding-bottom: 8px;">ATOMIC EVALUATORS</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+              <!-- Left Column -->
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">EDITORIAL DENSITY</div>
+                  <div class="vote-actions" id="vote_den_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('editorial_density', '${art.id}', 1, 'vote_den_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('editorial_density', '${art.id}', 2, 'vote_den_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('editorial_density', '${art.id}', 3, 'vote_den_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('editorial_density', '${art.id}', 4, 'vote_den_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('editorial_density', '${art.id}', 5, 'vote_den_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_den_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_den_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('editorial_density', '${art.id}', 'vote_den_${art.id}')">
+                  </div>
+                </div>
+
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">STRUCTURE</div>
+                  <div class="vote-actions" id="vote_str_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('structure', '${art.id}', 1, 'vote_str_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('structure', '${art.id}', 2, 'vote_str_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('structure', '${art.id}', 3, 'vote_str_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('structure', '${art.id}', 4, 'vote_str_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('structure', '${art.id}', 5, 'vote_str_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_str_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_str_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('structure', '${art.id}', 'vote_str_${art.id}')">
+                  </div>
+                </div>
+
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">TONE</div>
+                  <div class="vote-actions" id="vote_ton_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('tone', '${art.id}', 1, 'vote_ton_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('tone', '${art.id}', 2, 'vote_ton_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('tone', '${art.id}', 3, 'vote_ton_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('tone', '${art.id}', 4, 'vote_ton_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('tone', '${art.id}', 5, 'vote_ton_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_ton_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_ton_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('tone', '${art.id}', 'vote_ton_${art.id}')">
+                  </div>
+                </div>
+
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">FORM</div>
+                  <div class="vote-actions" id="vote_for_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('form', '${art.id}', 1, 'vote_for_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('form', '${art.id}', 2, 'vote_for_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('form', '${art.id}', 3, 'vote_for_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('form', '${art.id}', 4, 'vote_for_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('form', '${art.id}', 5, 'vote_for_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_for_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_for_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('form', '${art.id}', 'vote_for_${art.id}')">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column -->
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">TOPOLOGY</div>
+                  <div class="vote-actions" id="vote_top_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('topology', '${art.id}', 1, 'vote_top_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('topology', '${art.id}', 2, 'vote_top_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('topology', '${art.id}', 3, 'vote_top_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('topology', '${art.id}', 4, 'vote_top_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('topology', '${art.id}', 5, 'vote_top_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_top_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_top_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('topology', '${art.id}', 'vote_top_${art.id}')">
+                  </div>
+                </div>
+                
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">VISUAL ENTROPY</div>
+                  <div class="vote-actions" id="vote_ent_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('visual_entropy', '${art.id}', 1, 'vote_ent_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('visual_entropy', '${art.id}', 2, 'vote_ent_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('visual_entropy', '${art.id}', 3, 'vote_ent_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('visual_entropy', '${art.id}', 4, 'vote_ent_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('visual_entropy', '${art.id}', 5, 'vote_ent_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_ent_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_ent_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('visual_entropy', '${art.id}', 'vote_ent_${art.id}')">
+                  </div>
+                </div>
+
+                <div class="eval-group">
+                  <div class="vote-label" style="margin-bottom: 8px;">INTERACTION MECHANICS</div>
+                  <div class="vote-actions" id="vote_int_${art.id}">
+                    <div style="display:flex; gap: 4px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--bg-page);">
+                      <button class="vote-btn-scale" onclick="registerVote('interaction_mechanics', '${art.id}', 1, 'vote_int_${art.id}')">1</button>
+                      <button class="vote-btn-scale" onclick="registerVote('interaction_mechanics', '${art.id}', 2, 'vote_int_${art.id}')">2</button>
+                      <button class="vote-btn-scale" onclick="registerVote('interaction_mechanics', '${art.id}', 3, 'vote_int_${art.id}')">3</button>
+                      <button class="vote-btn-scale" onclick="registerVote('interaction_mechanics', '${art.id}', 4, 'vote_int_${art.id}')">4</button>
+                      <button class="vote-btn-scale" onclick="registerVote('interaction_mechanics', '${art.id}', 5, 'vote_int_${art.id}')">5</button>
+                    </div>
+                  </div>
+                  <div id="comment_int_${art.id}" style="display:none; flex-direction:column; gap:8px; margin-top:8px;">
+                     <input type="text" id="input_int_${art.id}" placeholder="Reason..." style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem;" onkeydown="if(event.key==='Enter') commitVote('interaction_mechanics', '${art.id}', 'vote_int_${art.id}')">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+      `;
+    });
+    document.getElementById('timelineContainer').innerHTML = html;
+  }
+
+  let pendingVotes = {};
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.innerText) === score) btn.classList.add('active');
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const commentId = blockId.replace('vote_', 'comment_');
+    const commentBlock = document.getElementById(commentId);
+    if(commentBlock) {
+      commentBlock.style.display = 'flex';
+      const inputId = blockId.replace('vote_', 'input_');
+      const inputEl = document.getElementById(inputId);
+      if(inputEl) inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    const commentId = blockId.replace('vote_', 'comment_');
+    const commentBlock = document.getElementById(commentId);
+    if(commentBlock) commentBlock.innerHTML = `<span class="vote-success-msg" style="display:inline-block; margin-top:8px;">✓ SYNCED: ${state.score}/5</span>`;
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      let componentContext = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[${componentContext}] ${reason}` : `[${componentContext}] No comment`
+      });
+    }
+  }
+
+  renderUI();
+</script>
+</body>
+</html>

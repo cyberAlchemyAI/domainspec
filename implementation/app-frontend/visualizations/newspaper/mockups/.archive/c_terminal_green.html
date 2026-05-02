@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário — Terminal Green</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0a;
+    --green: #00e05a;
+    --green-dim: #007a30;
+    --green-faint: #003d18;
+    --amber: #e0a800;
+    --red: #e04040;
+    --text: #00e05a;
+    --text-dim: #007a30;
+    --border: #003d18;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.12) 0px,
+      rgba(0, 0, 0, 0.12) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 10;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 24px 32px; }
+
+  /* === MASTHEAD === */
+  .masthead {
+    text-align: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ascii-title {
+    font-size: 10px;
+    line-height: 1.1;
+    letter-spacing: 0;
+    white-space: pre;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+
+  .masthead-meta {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .masthead-meta span { color: var(--green); }
+
+  /* === STATS === */
+  .stats-line {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .stats-line span { color: var(--green); font-weight: 600; }
+
+  /* === SECTION === */
+  .section-header {
+    padding: 16px 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+
+  .divider { color: var(--green-faint); }
+
+  /* === STORIES === */
+  .story {
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .story:last-of-type { border-bottom: none; }
+
+  .story-tag {
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .story-tag.p0 { color: var(--red); }
+  .story-tag.p1 { color: var(--amber); }
+  .story-tag.p2 { color: var(--green); }
+  .story-tag.p3 { color: var(--text-dim); }
+
+  .story-headline {
+    font-weight: 600;
+    font-size: 14px;
+    display: inline;
+  }
+
+  .story-body {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-dim);
+    padding-left: 16px;
+  }
+
+  .story-meta-line {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--green-faint);
+    padding-left: 16px;
+  }
+  .story-meta-line .tag-inline {
+    border: 1px solid var(--border);
+    padding: 0 4px;
+    margin-right: 4px;
+  }
+
+  /* === BELOW FOLD === */
+  .fold-item {
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .fold-item .imp {
+    color: var(--text-dim);
+    display: inline-block;
+    width: 40px;
+  }
+
+  /* === DOMAIN === */
+  .domain-item {
+    padding: 4px 0;
+    font-size: 12px;
+  }
+  .domain-name { color: var(--amber); font-weight: 600; }
+
+  /* === CALENDAR === */
+  .calendar {
+    margin-top: 16px;
+    font-size: 11px;
+  }
+  .calendar pre {
+    line-height: 1.5;
+    color: var(--text-dim);
+    font-family: inherit;
+  }
+  .calendar .has-ed { color: var(--green); font-weight: 700; }
+  .calendar .today { color: var(--amber); font-weight: 700; text-decoration: underline; }
+
+  .prompt { color: var(--text-dim); }
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--green);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .footer {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--green-faint);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="masthead">
+<pre class="ascii-title">
+ ██████╗     ██████╗ ██████╗  █████╗ ███████╗ ██████╗
+██╔═══██╗   ██╔════╝ ██╔══██╗██╔══██╗██╔════╝██╔═══██╗
+██║   ██║   ██║  ███╗██████╔╝███████║█████╗  ██║   ██║
+██║   ██║   ██║   ██║██╔══██╗██╔══██║██╔══╝  ██║   ██║
+╚██████╔╝   ╚██████╔╝██║  ██║██║  ██║██║     ╚██████╔╝
+ ╚═════╝     ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝      ╚═════╝
+        ██████╗ ██╗ █████╗ ██████╗ ██╗ ██████╗
+        ██╔══██╗██║██╔══██╗██╔══██╗██║██╔═══██╗
+        ██║  ██║██║███████║██████╔╝██║██║   ██║
+        ██║  ██║██║██╔══██║██╔══██╗██║██║   ██║
+        ██████╔╝██║██║  ██║██║  ██║██║╚██████╔╝
+        ╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝
+</pre>
+      <div class="masthead-meta">
+        <span class="prompt">&gt;</span> DATE: <span>2026-03-24</span> | EDITION: <span>#001</span> | STATUS: <span>GENERATED</span>
+      </div>
+    </header>
+
+    <div class="stats-line">
+      <span class="prompt">&gt;</span> SESSIONS: <span>25</span> | DECISIONS: <span>12</span> | SPECS_UPDATED: <span>8</span> | CONTRADICTIONS: <span>0</span> | PROMOTED: <span>3</span>
+    </div>
+
+    <div class="section-header">=== PRIMEIRA PÁGINA ===</div>
+
+    <article class="story">
+      <span class="prompt">&gt;</span> <span class="story-tag p1">[P1]</span>
+      <span class="story-headline">BIBLIOTECONOMIA INTEGRADA À CONSTITUIÇÃO DO VAULT</span>
+      <div class="story-body">
+        Classificação facetada de Ranganathan (1933) reconhecida como quarto pilar intelectual do sistema. Convergência entre AX-ONT-2 e ciência da informação de 95 anos documentada.
+      </div>
+      <div class="story-meta-line">
+        <span class="tag-inline">#ontology</span> <span class="tag-inline">#vault</span> IMP: 8/10
+      </div>
+    </article>
+
+    <article class="story">
+      <span class="prompt">&gt;</span> <span class="story-tag p2">[P2]</span>
+      <span class="story-headline">PIPELINE DE MIGRAÇÃO CCB: SCAFFOLDING COMPLETO</span>
+      <div class="story-body">
+        Migração lift-and-shift do pipeline de validação CCB de aquisicao → documents_validation. Scaffolding, relocação de serviços, atualização de referências.
+      </div>
+      <div class="story-meta-line">
+        <span class="tag-inline">#ccb</span> <span class="tag-inline">#migration</span> IMP: 7/10
+      </div>
+    </article>
+
+    <article class="story">
+      <span class="prompt">&gt;</span> <span class="story-tag p3">[P3]</span>
+      <span class="story-headline">O GRAFO DIÁRIO: DISCOVERY DO JORNAL INTERNO</span>
+      <div class="story-body">
+        Exploração conceitual de jornal diário. Identidade, relevância (P0-P5), naming e estética definidos antes de implementação.
+      </div>
+      <div class="story-meta-line">
+        <span class="tag-inline">#ontology</span> IMP: 6/10
+      </div>
+    </article>
+
+    <article class="story">
+      <span class="prompt">&gt;</span> <span class="story-tag p2">[P2]</span>
+      <span class="story-headline">KIT MATCHING: QUALITY GATE REFINADO</span>
+      <div class="story-body">
+        Gate de qualidade stricta para documents_matched no bulk import. CCB exige match de contrato no banco.
+      </div>
+      <div class="story-meta-line">
+        <span class="tag-inline">#pipeline</span> <span class="tag-inline">#quality</span> IMP: 7/10
+      </div>
+    </article>
+
+    <div class="divider">───────────────────────────────────────────────────────────────────</div>
+
+    <div class="section-header">=== ABAIXO DA DOBRA ===</div>
+
+    <div class="fold-item"><span class="prompt">&gt;</span> <span class="imp">[5]</span> Ontology Visualization Explorer Corrigido</div>
+    <div class="fold-item"><span class="prompt">&gt;</span> <span class="imp">[5]</span> CCB Spec Audit</div>
+    <div class="fold-item"><span class="prompt">&gt;</span> <span class="imp">[5]</span> Document Merge: Edge Cases</div>
+    <div class="fold-item"><span class="prompt">&gt;</span> <span class="imp">[4]</span> Deferred Save Merge Plan</div>
+    <div class="fold-item"><span class="prompt">&gt;</span> <span class="imp">[4]</span> Document Merge Implementation</div>
+    <div class="fold-item"><span class="prompt">&gt;</span> <span class="imp">[3]</span> Migration Test Safety Net Audit</div>
+
+    <div class="divider">───────────────────────────────────────────────────────────────────</div>
+
+    <div class="section-header">=== DOMÍNIOS ===</div>
+
+    <div class="domain-item"><span class="prompt">&gt;</span> <span class="domain-name">ONTOLOGIA</span>  4 sessões — constituição, governance, newspaper</div>
+    <div class="domain-item"><span class="prompt">&gt;</span> <span class="domain-name">CCB</span>        8 sessões — scaffolding, lift-and-shift</div>
+    <div class="domain-item"><span class="prompt">&gt;</span> <span class="domain-name">PIPELINE</span>   6 sessões — quality gate, merge fixes</div>
+
+    <div class="divider">───────────────────────────────────────────────────────────────────</div>
+
+    <div class="section-header">=== ARQUIVO · MARÇO 2026 ===</div>
+
+    <div class="calendar">
+<pre>
+  S   T   Q   Q   S   S   D
+                          1
+  <span class="has-ed">2</span>   <span class="has-ed">3</span>   <span class="has-ed">4</span>   <span class="has-ed">5</span>   <span class="has-ed">6</span>   <span class="has-ed">7</span>   8
+  <span class="has-ed">9</span>  <span class="has-ed">10</span>  <span class="has-ed">11</span>  <span class="has-ed">12</span>  <span class="has-ed">13</span>  <span class="has-ed">14</span>  15
+ <span class="has-ed">16</span>  <span class="has-ed">17</span>  <span class="has-ed">18</span>  <span class="has-ed">19</span>  <span class="has-ed">20</span>  21  22
+ <span class="has-ed">23</span>  <span class="today">24</span>  25  26  27  28  29
+ 30  31
+</pre>
+    </div>
+
+    <div class="footer">
+      <span class="prompt">&gt;</span> O Grafo Diário · Edição #001 · EOF<span class="cursor"></span>
+    </div>
+
+  </div>
+
+</body>
+</html>

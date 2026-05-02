@@ -1,0 +1,263 @@
+[
+  {
+    "id": "c5839e99-79e8-4ad3-a920-0755d4ff6f8f",
+    "template": "gen_019_a_exploit_focus_density.html",
+    "generation_id": "gen_019_a_exploit_focus_density",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "isso \u00e9 uma merda",
+    "timestamp": "2026-04-27T19:16:03.597Z"
+  },
+  {
+    "id": "f5ecef80-21c8-4782-a46e-f7ab15b1bd8d",
+    "template": "gen_019_a_exploit_focus_density.html",
+    "generation_id": "gen_019_a_exploit_focus_density",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "isso \u00e9 uma merda",
+    "timestamp": "2026-04-22T04:43:27.667Z"
+  },
+  {
+    "id": "9f2dbda5-e893-449f-81e9-06357a6b68e5",
+    "template": "gen_019_a_exploit_focus_density.html",
+    "generation_id": "gen_019_a_exploit_focus_density",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "this is shit",
+    "timestamp": "2026-04-14T18:43:53.362Z"
+  },
+  {
+    "id": "f90a1154-74ae-489d-89e4-ba78249dd853",
+    "template": "gen_019_b_explore_horizontal_chronicle.html",
+    "generation_id": "gen_019_b_explore_horizontal_chronicle",
+    "metric_name": "global_fitness",
+    "score": 2,
+    "comment": "this is shit",
+    "timestamp": "2026-04-14T18:43:33.688Z"
+  },
+  {
+    "id": "bc3e844a-977c-44c9-a5ba-055a7c3f919d",
+    "template": "gen_009_b_editorial.html",
+    "generation_id": "gen_009_b_editorial",
+    "metric_name": "global_fitness",
+    "score": 2,
+    "comment": "The look is good. But the letters are too big and there is to much information. The left bar is also bugged.",
+    "timestamp": "2026-04-10T07:15:47.255Z"
+  },
+  {
+    "id": "3b87a88f-0a0d-4110-9c78-57dc181d6b5d",
+    "template": "gen_019_b_explore_horizontal_chronicle.html",
+    "generation_id": "gen_019_b_explore_horizontal_chronicle",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "aaaa stoppppp",
+    "timestamp": "2026-04-10T07:08:06.923Z"
+  },
+  {
+    "id": "c0e0d217-9302-41ea-92ec-3d32f99d5d66",
+    "template": "gen_019_b_explore_horizontal_chronicle.html",
+    "generation_id": "gen_019_b_explore_horizontal_chronicle",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "I hate this one. Stop showing.",
+    "timestamp": "2026-04-10T07:07:47.991Z"
+  },
+  {
+    "id": "2e439e32-d0ec-4ddf-bbc8-48ab7ef15e22",
+    "template": "gen_011_b_explore.html",
+    "generation_id": "gen_011_b_explore",
+    "metric_name": "global_fitness",
+    "score": 2,
+    "comment": "Like, but no that much",
+    "timestamp": "2026-04-10T07:00:57.004Z"
+  },
+  {
+    "id": "79e83314-09f7-405e-ab0a-31ab436f2c2d",
+    "template": "gen_019_b_explore_horizontal_chronicle.html",
+    "generation_id": "gen_019_b_explore_horizontal_chronicle",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "horrible. Stop this",
+    "timestamp": "2026-04-10T06:58:48.200Z"
+  },
+  {
+    "id": "f44cb151-372c-4ea6-80c3-58a8faeb6d60",
+    "template": "gen_017_a_focused_warmth.html",
+    "generation_id": "gen_017_a_focused_warmth",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "I don't like this",
+    "timestamp": "2026-04-10T06:37:11.032Z"
+  },
+  {
+    "id": "63077ce4-a67c-423b-a403-48b2b0351813",
+    "template": "gen_019_a_exploit_focus_density.html",
+    "generation_id": "gen_019_a_exploit_focus_density",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "To much information",
+    "timestamp": "2026-04-10T06:29:59.757Z"
+  },
+  {
+    "id": "66b8ad78-5452-476f-92e6-6bd46160557d",
+    "template": "gen_012_a_clarity.html",
+    "generation_id": "gen_012_a_clarity",
+    "metric_name": "global_fitness",
+    "score": 2,
+    "comment": "To much light",
+    "timestamp": "2026-04-10T06:29:47.221Z"
+  },
+  {
+    "id": "164e3665-a8d9-4b20-8d8d-e7d1599166d3",
+    "template": "gen_012_b_entropy.html",
+    "generation_id": "gen_012_b_entropy",
+    "metric_name": "global_fitness",
+    "score": 3,
+    "comment": "I like this way when the user opens a news.",
+    "timestamp": "2026-03-26T19:01:35.200Z"
+  },
+  {
+    "id": "467694e4-a523-4542-8814-4f6031af08b0",
+    "template": "gen_011_a_exploit.html",
+    "generation_id": "gen_011_a_exploit",
+    "metric_name": "global_fitness",
+    "score": 4,
+    "comment": "I already voted for this. Good for a quick news sessions, where the info is condensed, the user can pass through different news and click on the news to see the full article",
+    "timestamp": "2026-03-26T11:50:19.388Z"
+  },
+  {
+    "id": "3f13648c-ce81-4f66-94a8-98663c3ad53a",
+    "template": "gen_011_a_exploit.html",
+    "generation_id": "gen_011_a_exploit",
+    "metric_name": "global_fitness",
+    "score": 3,
+    "comment": "I like this color, the framing, the spaces. Maybe this can be a quick news sessions, where the user can click on the sides and pass the news. The news here can be more concise as well, and then the user can click on them to see the full article",
+    "timestamp": "2026-03-26T11:49:07.728Z"
+  },
+  {
+    "id": "d86e474c-5d10-461a-be84-aac3f7997a43",
+    "template": "gen_013_a_responsive_news.html",
+    "generation_id": "gen_013_a_responsive_news",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "Manual global fitness via floating vote panel",
+    "timestamp": "2026-03-26T11:46:26.601Z"
+  },
+  {
+    "id": "37b43029-823b-4ef3-96ee-fa70e6fe7011",
+    "template": "gen_018_a_exploit_cold_slate.html",
+    "generation_id": "gen_018_a_exploit_cold_slate",
+    "metric_name": "global_fitness",
+    "score": 3,
+    "comment": "The content is still to condensated. We should bring more information, and focus more on the things related to the application itself. We should add some filters, so the user can choose date and if the news is from the ontology, the application or both",
+    "timestamp": "2026-03-26T11:46:00.073Z"
+  },
+  {
+    "id": "e9a8159b-cc29-4e07-a3e2-fa1d9b3fab54",
+    "template": "gen_018_a_exploit_cold_slate.html",
+    "generation_id": "gen_018_a_exploit_cold_slate",
+    "metric_name": "global_fitness",
+    "score": 3,
+    "comment": "",
+    "timestamp": "2026-03-26T11:39:56.485Z"
+  },
+  {
+    "id": "01986207-0f80-4d9e-af82-8f1b4ebec0b1",
+    "template": "gen_016_b_exploit_synthesis.html",
+    "generation_id": "gen_016_b_exploit_synthesis",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "to much information. The squared on the back didnt got me",
+    "timestamp": "2026-03-25T22:56:02.902Z"
+  },
+  {
+    "id": "2dab7d97-dfda-474a-bc59-9ecd0c95d942",
+    "template": "gen_018_b_explore_signal_noise.html",
+    "generation_id": "gen_018_b_explore_signal_noise",
+    "metric_name": "editorial_density",
+    "score": 1,
+    "comment": "",
+    "timestamp": "2026-03-25T22:52:25.663Z"
+  },
+  {
+    "metric_name": "global_fitness",
+    "score": 5,
+    "comment": "Automated Test",
+    "template": "gen_015_b_exploit_terminal.html",
+    "generation_id": "gen_015_b_exploit_terminal",
+    "id": "test-123",
+    "timestamp": "2026-03-25T15:52:00Z"
+  },
+  {
+    "id": "389c642b-37de-445f-80b6-0be02247358e",
+    "template": "gen_014_b_explore_horizontal.html",
+    "generation_id": "gen_014_b_explore_horizontal",
+    "metric_name": "global_fitness",
+    "score": 5,
+    "comment": "",
+    "timestamp": "2026-03-25T18:56:38.366Z"
+  },
+  {
+    "id": "f208afd0-0229-4eed-a095-ac82c3a9e18c",
+    "template": "gen_016_a_explore_synthesis.html",
+    "generation_id": "gen_016_a_explore_synthesis",
+    "metric_name": "visual_entropy",
+    "score": 1,
+    "comment": "[Article: ed001_condensation_business] To much contrast, the contrast must be enough but subtle. ",
+    "timestamp": "2026-03-25T18:38:54.911Z"
+  },
+  {
+    "id": "7ac537e3-2a07-4afb-bd2a-a9be6e0e0ab1",
+    "template": "gen_016_b_exploit_synthesis.html",
+    "generation_id": "gen_016_b_exploit_synthesis",
+    "metric_name": "visual_entropy",
+    "score": 2,
+    "comment": "[Article: ed001_protocol_v1_business] More minimalistic",
+    "timestamp": "2026-03-25T16:20:52.728Z"
+  },
+  {
+    "id": "47d06d7b-fe8a-4dda-97c4-c47532b5cb0a",
+    "template": "gen_010_explore_focus.html",
+    "generation_id": "gen_010_explore_focus",
+    "metric_name": "global_fitness",
+    "score": 4,
+    "comment": "",
+    "timestamp": "2026-03-25T16:14:26.125Z"
+  },
+  {
+    "id": "d96f7f2a-a96c-4b0d-bf0f-9a2f44e2323a",
+    "template": "gen_014_a_exploit_dynamic.html",
+    "generation_id": "gen_014_a_exploit_dynamic",
+    "metric_name": "editorial_density",
+    "score": 1,
+    "comment": "",
+    "timestamp": "2026-03-25T16:05:43.254Z"
+  },
+  {
+    "id": "65e27b57-e807-4047-a61f-b1aa9c006236",
+    "template": "gen_015_b_exploit_terminal.html",
+    "generation_id": "gen_015_b_exploit_terminal",
+    "metric_name": "global_fitness",
+    "score": 1,
+    "comment": "[Overall Page] The design is not bad, but we don't have enough context, enough news so I can assess ",
+    "timestamp": "2026-03-25T07:15:26.505Z"
+  },
+  {
+    "id": "1a89fefc-f0b0-4e90-9b4a-3c5af6474651",
+    "template": "gen_015_a_explore_ambient.html",
+    "generation_id": "gen_015_a_explore_ambient",
+    "metric_name": "global_fitness",
+    "score": 2,
+    "comment": "[Overall Page] The design is not bad, the information density is",
+    "timestamp": "2026-03-25T07:09:16.583Z"
+  },
+  {
+    "id": "1f0b4f44-d39d-49d6-9f70-403a50546105",
+    "template": "gen_015_b_exploit_terminal.html",
+    "generation_id": "gen_015_b_exploit_terminal",
+    "metric_name": "global_fitness",
+    "score": 2,
+    "comment": "[Overall Page] I want density and I'm not seeing all the things I should be able to vote for",
+    "timestamp": "2026-03-25T07:07:49.469Z"
+  }
+]

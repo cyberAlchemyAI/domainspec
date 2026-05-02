@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 012 A: High Clarity & Atomic Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #fafafa;
+    --bg-surface: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --border-color: #e5e7eb;
+    --accent-color: #2563eb;
+    --feedback-bg: #f8fafc;
+    --feedback-border: #cbd5e1;
+    --feedback-text: #334155;
+    
+    --radius: 8px;
+  }
+
+  body {
+    background-color: var(--bg-base); color: var(--text-primary); font-family: 'Inter', sans-serif;
+    margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column;
+  }
+
+  /* EXPLICIT LABELS FOR LOW ENTROPY */
+  .explicit-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);
+    margin-bottom: 8px; display: block;
+  }
+
+  header {
+    background: var(--bg-surface); padding: 24px 48px; border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .header-brand h1 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.5rem; margin: 0 0 4px 0; letter-spacing: -0.5px;}
+
+  /* ATOMIC FEEDBACK UI COMPONENT */
+  .feedback-module {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--feedback-bg); border: 1px solid var(--feedback-border);
+    padding: 6px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--feedback-text);
+  }
+  .feedback-module span.label { font-weight: 700; text-transform: uppercase; opacity: 0.8;}
+  .feedback-module .vote-btn {
+    background: #ffffff; border: 1px solid var(--feedback-border); border-radius: 4px; padding: 4px 8px;
+    cursor: pointer; font-weight: 700; color: var(--accent-color); transition: 0.2s;
+  }
+  .feedback-module .vote-btn:hover { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+  .feedback-module input[type="number"] {
+    width: 40px; text-align: center; border: 1px solid var(--feedback-border); border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 4px;
+  }
+
+  /* LAYOUT */
+  .app-container {
+    display: flex; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%;
+  }
+
+  /* THE NAVIGATIONAL NODE */
+  .pane-nav {
+    width: 350px; background: var(--bg-surface); border-right: 1px solid var(--border-color);
+    padding: 32px; overflow-y: auto; height: calc(100vh - 90px);
+  }
+  
+  .nav-item {
+    border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    background: var(--bg-surface); transition: 0.2s; position: relative;
+  }
+  .nav-item:hover { border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05); }
+  .nav-item.active { border-color: var(--accent-color); border-left: 4px solid var(--accent-color); }
+  .nav-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;}
+  .nav-meta { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 4px 8px; background: #e0e7ff; color: #3730a3; border-radius: 4px; font-weight: 700;}
+  
+  /* THE ARTICLE SYNTHESIS */
+  .pane-content {
+    flex: 1; padding: 48px 80px; overflow-y: auto; height: calc(100vh - 90px);
+    background: var(--bg-base);
+  }
+  
+  .content-block {
+    background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius);
+    padding: 40px; margin-bottom: 32px; position: relative;
+  }
+  
+  .lang-badge {
+    position: absolute; top: 40px; right: 40px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; background: #f1f5f9;
+    padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0; font-weight: 700;
+  }
+
+  .content-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 24px 0; line-height: 1.2;}
+  .content-body { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); }
+  .content-body p { margin-bottom: 20px;}
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'Inter', monospace; font-size: 0.7rem; color: var(--text-muted, #999); text-decoration: none; border: 1px dashed var(--border-color, #ddd); padding: 2px 8px; border-radius: 4px; }
+  .source-link:hover { color: var(--accent, #2563eb); border-color: var(--accent, #2563eb); }
+
+  /* Feedback Wrapper for specific parts */
+  .feedback-wrapper { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border-color); display: flex; justify-content:flex-end;}
+
+  /* 8-AXIS VOTING GRID (Protocol v1.0.0) */
+  .atomic-vote-panel { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px dashed var(--border-color); }
+  .vote-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
+  .eval-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+  .vote-actions { margin-top: 8px; }
+  .vote-btn-scale { border: none; background: transparent; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; padding: 6px 14px; cursor: pointer; border-right: 1px solid var(--border-color); font-weight: 700; transition: background-color 0.2s, color 0.2s; }
+  .vote-btn-scale:last-child { border-right: none; }
+  .vote-btn-scale:hover { background: #e5e7eb; }
+  .vote-btn-scale.active { background: var(--accent-color); color: #fff; }
+  .vote-success-msg { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #10b981; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <span class="explicit-label">System Global Header</span>
+    <h1>O Grafo Diário // The Daily Graph</h1>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);">24.03.2026 • GEN 012 A</div>
+  </div>
+  
+  <!-- Global Page Feedback -->
+  <div class="feedback-module" style="background:transparent; border:none; box-shadow:none; flex-direction:column; align-items:flex-end;">
+    <span class="explicit-label" style="color:var(--text-primary); margin-bottom:4px;">GLOBAL METRIC: GENERATION FITNESS</span>
+    <div class="vote-group" id="vote_global_page"></div>
+    <input type="text" class="comment-input" id="input_global_page" placeholder="Final Reason..." style="display:none; width: 250px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem; margin-top: 4px;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+  </div>
+</header>
+
+<div class="app-container">
+  
+  <!-- LEFT PANE -->
+  <aside class="pane-nav" id="navContainer">
+    <span class="explicit-label">Navigational Pane (Matrix)</span>
+    <!-- Injected via JS -->
+  </aside>
+
+  <!-- RIGHT PANE -->
+  <main class="pane-content" id="contentContainer">
+    <span class="explicit-label">Article Synthesis Pane</span>
+    <!-- Injected via JS -->
+  </main>
+</div>
+
+<script>
+  let pendingVotes = {};
+  
+  const mockPayload = {
+    metadata: { date: "2026-03-24", stats: { sessions: 25, decisions: 12, specChanges: 8 } },
+    articles: [
+      {
+        id: "item_gen014", type: "architectural_decision", tag: "P1 • ACADEMIC STYLE", title: "Integração de S. R. Ranganathan",
+        body: "<p>A transição epistemológica do nosso Cofre impôs a Classificação Facetada.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload = (window.parent && window.parent.currentPayload) ? window.parent.currentPayload : mockPayload;
+
+  function renderUI() {
+    let navHTML = `<span class="explicit-label">Navigational Pane (Matrix)</span>`;
+    let contentHTML = `<span class="explicit-label">Article Synthesis Pane</span>`;
+
+    payload.articles.forEach((art, idx) => {
+      // NAV NODE
+      navHTML += `
+        <div class="nav-item ${idx === 0 ? 'active' : ''}" id="nav_${art.id}" onclick="activateArticle('${art.id}')">
+          <div class="nav-title">${art.title}</div>
+          <div class="nav-meta">
+            <span class="tag">${art.tag}</span> <span class="tag">IMP: ${art.meta.impact}</span>
+          </div>
+          <div class="feedback-wrapper" style="margin-top: 0; padding-top:0; border-top:none;">
+            <div class="feedback-module" style="background:transparent; border:none; box-shadow:none; flex-direction:column; align-items:flex-start; transform: scale(0.9); transform-origin: left; padding:0;">
+              <span class="explicit-label" style="color:var(--text-secondary); margin-bottom:4px;">NAV EVAL</span>
+              <div class="vote-group" id="vote_top_nav_${art.id}"></div>
+              <input type="text" class="comment-input" id="input_top_nav_${art.id}" placeholder="Nav Reason..." style="display:none; width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.8rem; margin-top: 4px;" onkeydown="if(event.key==='Enter') commitVote('topology', '${art.id}', 'vote_top_nav_${art.id}')">
+            </div>
+          </div>
+        </div>
+      `;
+      // ARTICLE BLOCK
+      let bodyText = art.body || '';
+      let sourceFiles = (art.meta && art.meta.source_files) || [];
+      let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(function(f) {
+        let name = f.split('/').pop();
+        return '<a href="/api/doc?path=' + f + '" target="_blank" class="source-link">↗ ' + name + '</a>';
+      }).join('') + '</div>' : '';
+      contentHTML += `
+        <div class="content-block" id="art_${art.id}" style="display: ${idx === 0 ? 'block' : 'none'};">
+          <div class="lang-badge">DYNAMIC</div>
+          <h1 class="content-title">${art.title}</h1>
+          <div class="content-body">${bodyText}${sourceLinksHtml}</div>
+          
+          <div class="atomic-vote-panel">
+            <div class="vote-label">ATOMIC EVALUATORS</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <!-- Left Column -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <!-- DENSITY -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">EDITORIAL DENSITY</span>
+                    <div class="vote-group" id="vote_den_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_den_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('editorial_density', '${art.id}', 'vote_den_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+                <!-- STRUCTURE -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">STRUCTURE</span>
+                    <div class="vote-group" id="vote_str_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_str_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('structure', '${art.id}', 'vote_str_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+                <!-- TONE -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">TONE</span>
+                    <div class="vote-group" id="vote_ton_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_ton_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('tone', '${art.id}', 'vote_ton_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+                <!-- FORM -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">FORM</span>
+                    <div class="vote-group" id="vote_for_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_for_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('form', '${art.id}', 'vote_for_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+              </div>
+              
+              <!-- Right Column -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <!-- TOPOLOGY -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">TOPOLOGY</span>
+                    <div class="vote-group" id="vote_top_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_top_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('topology', '${art.id}', 'vote_top_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+                <!-- ENTROPY -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">VISUAL ENTROPY</span>
+                    <div class="vote-group" id="vote_vis_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_vis_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('visual_entropy', '${art.id}', 'vote_vis_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+                <!-- MECHANICS -->
+                <div>
+                  <div class="eval-row"><span class="vote-label" style="font-size:0.7rem;">INTERACTION MECHANICS</span>
+                    <div class="vote-group" id="vote_int_${art.id}"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_int_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('interaction_mechanics', '${art.id}', 'vote_int_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; margin-top: 8px;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById('navContainer').innerHTML = navHTML;
+    document.getElementById('contentContainer').innerHTML = contentHTML;
+    
+    // Global Vote
+    const globContainer = document.getElementById('vote_global_page');
+    let btns = '';
+    for(let n=1; n<=5; n++) {
+      btns += `<button class="vote-btn-scale" onclick="registerVote('global_fitness', '', ${n}, 'vote_global_page')">${n}</button>`;
+    }
+    globContainer.innerHTML = btns;
+  }
+
+  function activateArticle(id) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav_' + id).classList.add('active');
+    document.querySelectorAll('.content-block').forEach(el => el.style.display = 'none');
+    document.getElementById('art_' + id).style.display = 'block';
+  }
+
+  // Initialize the 1-5 scale buttons inside elements with class 'vote-group'
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      if(container.innerHTML !== '') return;
+      const id = container.id;
+      const parts = id.replace('vote_', '').split('_');
+      const articleId = parts.pop();
+      const metricKey = parts.join('_');
+      let metricName = metricKey;
+      
+      // Map shorthand to canonical names
+      if (metricKey === 'den') metricName = 'editorial_density';
+      else if (metricKey === 'str') metricName = 'structure';
+      else if (metricKey === 'ton') metricName = 'tone';
+      else if (metricKey === 'top') metricName = 'topology';
+      else if (metricKey === 'vis') metricName = 'visual_entropy';
+      else if (metricKey === 'int') metricName = 'interaction_mechanics';
+      else if (metricKey === 'for') metricName = 'form';
+      
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button class="vote-btn-scale" onclick="registerVote('${metricName}', '${articleId}', ${n}, '${id}')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.innerText) === score) btn.classList.add('active');
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const commentId = blockId.replace('vote_', 'comment_');
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      let componentContext = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[${componentContext}] ${reason}` : `[${componentContext}] No comment`
+      });
+    }
+    
+    if(container) {
+      container.innerHTML = `<span class="vote-success-msg" style="display:inline-block; margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:#10b981; font-weight:700;">✓ SYNCED: ${state.score}/5</span>`;
+    }
+    if (inputEl) inputEl.style.display = 'none';
+  }
+  
+  // Initialize on load
+  document.addEventListener("DOMContentLoaded", () => {
+    renderUI();
+    initVoteButtons();
+  });
+</script>
+</body>
+</html>

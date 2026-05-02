@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário — Edição #001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0c0c0e;
+    --bg-surface: #141416;
+    --bg-elevated: #1a1a1e;
+    --bg-hover: #1f1f24;
+    --text: #e4e2de;
+    --text-secondary: #9c9a94;
+    --text-tertiary: #5c5a55;
+    --accent: #c8a882;
+    --accent-dim: rgba(200, 168, 130, 0.12);
+    --accent-glow: rgba(200, 168, 130, 0.06);
+    --arc-ontology: #7eb8a8;
+    --arc-ccb: #a88ec8;
+    --arc-pipeline: #c8a07e;
+    --p0: #c86464;
+    --p0-glow: rgba(200, 100, 100, 0.08);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-accent: rgba(200, 168, 130, 0.15);
+    --glow: 0 0 40px rgba(200, 168, 130, 0.04);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === SUBTLE BACKGROUND GRAIN === */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === MASTHEAD === */
+  .masthead {
+    padding: 52px 0 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .masthead-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .masthead-icon {
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    position: relative;
+    opacity: 0.7;
+  }
+  .masthead-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .masthead-title {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 38px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .masthead-right {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+  }
+  .masthead-right .edition {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .masthead-sub {
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+
+  /* === PULSE BAR (stats) === */
+  .pulse-bar {
+    display: flex;
+    gap: 28px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .pulse-item { display: flex; align-items: center; gap: 6px; }
+  .pulse-value {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pulse-label { font-size: 11px; }
+
+  /* === CONTEXT ARCS === */
+  .arcs {
+    padding-top: 32px;
+  }
+
+  .arc {
+    margin-bottom: 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-surface);
+    overflow: hidden;
+    box-shadow: var(--glow);
+    transition: border-color 0.3s;
+  }
+  .arc:hover { border-color: var(--border-accent); }
+
+  .arc-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .arc-indicator {
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  .arc-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+  }
+
+  .arc-subtitle {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .arc-meta {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .arc-meta .count {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: block;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  /* arc context paragraph */
+  .arc-context {
+    padding: 16px 24px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    background: var(--accent-glow);
+  }
+
+  .arc-context em {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 14px;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  /* arc stories */
+  .arc-stories {
+    padding: 0;
+  }
+
+  .arc-story {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    transition: background 0.2s;
+  }
+  .arc-story:last-child { border-bottom: none; }
+  .arc-story:hover { background: var(--bg-hover); }
+
+  .arc-story-priority {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .priority-p1 { color: var(--accent); background: var(--accent-dim); }
+  .priority-p2 { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+  .priority-p3 { color: var(--text-tertiary); background: rgba(255,255,255,0.03); }
+  .priority-p4 { color: var(--text-tertiary); background: transparent; }
+
+  .arc-story-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .arc-story-imp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  /* === PERIPHERAL SIGNAL (below the fold) === */
+  .peripheral {
+    margin-top: 8px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+
+  .peripheral-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .peripheral-item {
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .peripheral-item:hover { border-color: var(--border-accent); }
+
+  .peripheral-item-title {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .peripheral-item-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  /* === ARCHIVE === */
+  .archive {
+    margin-top: 32px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+    max-width: 260px;
+  }
+  .cal-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-align: center;
+    padding-bottom: 6px;
+    font-weight: 500;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    border-radius: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .cal-day.empty { background: transparent; border-color: transparent; }
+  .cal-day.has-edition {
+    color: var(--accent);
+    border-color: var(--border-accent);
+    background: var(--accent-dim);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .cal-day.has-edition:hover {
+    background: rgba(200, 168, 130, 0.2);
+    box-shadow: 0 0 12px rgba(200, 168, 130, 0.1);
+  }
+  .cal-day.today {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(200, 168, 130, 0.15);
+  }
+
+  /* === FOOTER === */
+  .footer {
+    padding: 24px 0 40px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .footer .accent { color: var(--accent); }
+
+  /* === COLOR CLASSES === */
+  .clr-ontology { color: var(--arc-ontology); }
+  .clr-ccb { color: var(--arc-ccb); }
+  .clr-pipeline { color: var(--arc-pipeline); }
+  .bg-ontology { background: var(--arc-ontology); }
+  .bg-ccb { background: var(--arc-ccb); }
+  .bg-pipeline { background: var(--arc-pipeline); }
+</style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- MASTHEAD -->
+    <header class="masthead">
+      <div class="masthead-top">
+        <div class="masthead-brand">
+          <div class="masthead-icon"></div>
+          <div>
+            <div class="masthead-title">O Grafo Diário</div>
+            <div class="masthead-sub">Boletim Epistemológico do Vault</div>
+          </div>
+        </div>
+        <div class="masthead-right">
+          <span class="edition">Edição #001</span><br>
+          24 de Março de 2026 · Segunda-feira<br>
+          Gerado às 07:00
+        </div>
+      </div>
+    </header>
+
+    <!-- PULSE BAR -->
+    <div class="pulse-bar">
+      <div class="pulse-item"><span class="pulse-value">25</span> <span class="pulse-label">sessões</span></div>
+      <div class="pulse-item"><span class="pulse-value">12</span> <span class="pulse-label">decisões</span></div>
+      <div class="pulse-item"><span class="pulse-value">8</span> <span class="pulse-label">specs</span></div>
+      <div class="pulse-item"><span class="pulse-value">0</span> <span class="pulse-label">contradições</span></div>
+      <div class="pulse-item"><span class="pulse-value">3</span> <span class="pulse-label">promovidos</span></div>
+    </div>
+
+    <!-- CONTEXT ARCS -->
+    <section class="arcs">
+
+      <!-- ARC 1: Ontology -->
+      <article class="arc">
+        <div class="arc-header">
+          <div>
+            <div class="arc-title">
+              <span class="arc-indicator bg-ontology"></span>
+              Ontologia & Consciência do Sistema
+            </div>
+            <div class="arc-subtitle">Expansão intelectual e mecanismos de auto-percepção do vault</div>
+          </div>
+          <div class="arc-meta"><span class="count">4</span>sessões</div>
+        </div>
+        <div class="arc-context">
+          O vault deu um salto de maturidade: formalizou a Biblioteconomia de Ranganathan como seu quarto pilar intelectual, criou workflows de governança para prevenir entropia, e iniciou a concepção de <em>O Grafo Diário</em> — um mecanismo para que o sistema reflita diariamente sobre si mesmo. A convergência é notável: o mesmo dia em que o vault reconheceu formalmente os princípios de classificação de 95 anos, também começou a projetar sua própria consciência diária.
+        </div>
+        <div class="arc-stories">
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p1">P1</span>
+            <span class="arc-story-title">Biblioteconomia Integrada à Constituição do Vault</span>
+            <span class="arc-story-imp">8</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p2">P2</span>
+            <span class="arc-story-title">Governance Workflows: Backlog Pattern & README Pattern Criados</span>
+            <span class="arc-story-imp">8</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p3">P3</span>
+            <span class="arc-story-title">O Grafo Diário: Discovery do Jornal Interno</span>
+            <span class="arc-story-imp">6</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p4">P4</span>
+            <span class="arc-story-title">Ontology Visualization Explorer Restaurado</span>
+            <span class="arc-story-imp">5</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- ARC 2: CCB -->
+      <article class="arc">
+        <div class="arc-header">
+          <div>
+            <div class="arc-title">
+              <span class="arc-indicator bg-ccb"></span>
+              Migração do Pipeline CCB
+            </div>
+            <div class="arc-subtitle">Lift-and-shift do domínio aquisicao → documents_validation</div>
+          </div>
+          <div class="arc-meta"><span class="count">8</span>sessões</div>
+        </div>
+        <div class="arc-context">
+          O dia mais intenso da migração até agora. O scaffolding do novo domínio <em>documents_validation</em> foi completado, os serviços e use cases foram relocados, e referências atualizadas em todo o projeto. Múltiplas auditorias de spec e test gaps identificaram os pontos de fragilidade restantes. O pipeline está migrando, mas a rede de segurança de testes ainda tem buracos — as próximas sessões precisam endereçar isso antes de qualquer deploy.
+        </div>
+        <div class="arc-stories">
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p2">P2</span>
+            <span class="arc-story-title">Domain Scaffolding & Relocação de Serviços Completa</span>
+            <span class="arc-story-imp">7</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p4">P4</span>
+            <span class="arc-story-title">CCB Spec Audit: Gaps Identificados</span>
+            <span class="arc-story-imp">5</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p4">P4</span>
+            <span class="arc-story-title">Migration Test Safety Net Analysis</span>
+            <span class="arc-story-imp">5</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p4">P4</span>
+            <span class="arc-story-title">Revert de Mudanças Não-Aprovadas nos Testes</span>
+            <span class="arc-story-imp">4</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- ARC 3: Pipeline -->
+      <article class="arc">
+        <div class="arc-header">
+          <div>
+            <div class="arc-title">
+              <span class="arc-indicator bg-pipeline"></span>
+              Qualidade do Pipeline de Importação
+            </div>
+            <div class="arc-subtitle">Refinamento de quality gates e lógica de merge de documentos</div>
+          </div>
+          <div class="arc-meta"><span class="count">6</span>sessões</div>
+        </div>
+        <div class="arc-context">
+          A confiabilidade do pipeline de importação foi endurecida em duas frentes: o counter de <em>documents_matched</em> agora exige match de contrato no banco para documentos CCB (não apenas extração de campos), e múltiplos edge cases na fusão de documentos foram resolvidos. A qualidade medida pelo UI agora reflete readiness real, não apenas processamento.
+        </div>
+        <div class="arc-stories">
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p2">P2</span>
+            <span class="arc-story-title">Kit Matching: Quality Gate Refinado para CCB</span>
+            <span class="arc-story-imp">7</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p4">P4</span>
+            <span class="arc-story-title">Document Merge: Edge Cases Resolvidos</span>
+            <span class="arc-story-imp">5</span>
+          </div>
+          <div class="arc-story">
+            <span class="arc-story-priority priority-p4">P4</span>
+            <span class="arc-story-title">Naming Constraint Fix no Merge</span>
+            <span class="arc-story-imp">4</span>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- PERIPHERAL SIGNAL -->
+    <section class="peripheral">
+      <div class="section-label">Sinal Periférico</div>
+      <div class="peripheral-grid">
+        <div class="peripheral-item">
+          <div class="peripheral-item-title">Deferred Save Merge Plan</div>
+          <div class="peripheral-item-meta">Imp. 4 · Plan para merge com save diferido</div>
+        </div>
+        <div class="peripheral-item">
+          <div class="peripheral-item-title">Document Merge Implementation</div>
+          <div class="peripheral-item-meta">Imp. 4 · Implementação do pipeline de merge</div>
+        </div>
+        <div class="peripheral-item">
+          <div class="peripheral-item-title">Missing Critical Reason Analysis</div>
+          <div class="peripheral-item-meta">Imp. 3 · Análise de campos critical reason</div>
+        </div>
+        <div class="peripheral-item">
+          <div class="peripheral-item-title">CCB Solidity Audit</div>
+          <div class="peripheral-item-meta">Imp. 3 · Auditoria de solidez da pipeline</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARCHIVE -->
+    <section class="archive">
+      <div class="section-label">Arquivo · Março 2026</div>
+      <div class="calendar-grid">
+        <div class="cal-header">S</div><div class="cal-header">T</div><div class="cal-header">Q</div><div class="cal-header">Q</div><div class="cal-header">S</div><div class="cal-header">S</div><div class="cal-header">D</div>
+        <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day">1</div>
+        <div class="cal-day has-edition">2</div><div class="cal-day has-edition">3</div><div class="cal-day has-edition">4</div><div class="cal-day has-edition">5</div><div class="cal-day has-edition">6</div><div class="cal-day has-edition">7</div><div class="cal-day">8</div>
+        <div class="cal-day has-edition">9</div><div class="cal-day has-edition">10</div><div class="cal-day has-edition">11</div><div class="cal-day has-edition">12</div><div class="cal-day has-edition">13</div><div class="cal-day has-edition">14</div><div class="cal-day">15</div>
+        <div class="cal-day has-edition">16</div><div class="cal-day has-edition">17</div><div class="cal-day has-edition">18</div><div class="cal-day has-edition">19</div><div class="cal-day has-edition">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+        <div class="cal-day has-edition">23</div><div class="cal-day has-edition today">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+        <div class="cal-day">30</div><div class="cal-day">31</div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span class="accent">O Grafo Diário</span> · Edição #001 · Gerado a partir do Knowledge Graph do ZefraHub
+    </footer>
+
+  </div>
+
+
+<!-- GLOBAL FITNESS ACTION BAR (Protocol v1.0.0) -->
+<style>
+  .vote-label { font-family: 'Inter', monospace; font-size: 0.70rem; font-weight: 700; color: #9a8b78; text-transform: uppercase; }
+  .vote-group { display: flex; gap: 4px; border: 1px solid #3a2e22; border-radius: 4px; overflow: hidden; background: #1c1710; }
+  .vote-btn-scale { border: none; background: transparent; color: #e8dcc8; font-family: 'Inter', monospace; font-size: 0.80rem; padding: 4px 10px; cursor: pointer; border-right: 1px solid #3a2e22; font-weight: 700; transition: background-color 0.2s, color 0.2s; }
+  .vote-btn-scale:last-child { border-right: none; }
+  .vote-btn-scale:hover { background: #e8dcc8; color: #1c1710; }
+  .vote-btn-scale.active { background: #c4956a; color: #1c1710; }
+  .comment-input { padding: 6px 10px; border: 1px solid #3a2e22; background: #1c1710; color: #e8dcc8; border-radius: 4px; font-family: 'Inter', monospace; font-size: 0.8rem; outline: none; margin-left: 12px; }
+  .vote-success-msg { font-family: 'Inter', monospace; font-size: 0.75rem; color: #10b981; font-weight: 700; margin-left: 12px; }
+</style>
+
+<div class="global-vote-bar" style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); padding: 12px 24px; border-radius: 30px; display: flex; gap: 16px; align-items: center; z-index: 9999;">
+  <div class="vote-label" style="color: white;">GLOBAL FITNESS:</div>
+  <div class="vote-group" id="vote_global_page"></div>
+  <input type="text" class="comment-input" id="input_global_page" placeholder="Reason..." style="display:none; width: 200px;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+  <div id="comment_global_page"></div>
+</div>
+
+<script>
+  let pendingVotes = {};
+
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button class="vote-btn-scale" onclick="registerVote('global_fitness', '', ${n}, 'vote_global_page')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.innerText) === score) btn.classList.add('active');
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const inputEl = document.getElementById('input_global_page');
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById('input_global_page');
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if(inputEl) inputEl.style.display = 'none';
+    const commentBlock = document.getElementById('comment_global_page');
+    if(commentBlock) commentBlock.innerHTML = `<span class="vote-success-msg">✓ SYNCED</span>`;
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[Overall Page] ${reason}` : `[Overall Page] No comment`
+      });
+    }
+  }
+  
+  initVoteButtons();
+</script>
+
+</body>
+</html>

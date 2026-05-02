@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 017 A: Focused Warmth</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== FOCUSED WARMTH — Gen 017 A =====
+     Palette: warm near-black, off-white, muted amber
+     No neon. No gradients. No glassmorphism.
+     Topology: asymmetric 70/30 two-column
+     Structure: 3-tier collapsible accordion (exec always open, tech+graph collapsed)
+  ============================================ */
+
+  :root {
+    --bg:          #0d0b09;    /* warm near-black */
+    --bg-surface:  #141210;    /* slightly lifted surface */
+    --bg-card:     #1a1714;    /* article card background */
+    --bg-sidebar:  #110f0d;    /* sidebar background */
+    --text:        #f5f0e8;    /* warm off-white */
+    --text-muted:  #9c9188;    /* warm muted grey */
+    --text-dim:    #5c5550;    /* very dim for tertiary */
+    --accent:      #c8a86b;    /* muted amber — the single accent */
+    --accent-dim:  #7a6340;    /* dimmed amber for hover states */
+    --border:      #2a2520;    /* very subtle warm border */
+    --border-mid:  #3d3830;    /* mid-weight border */
+    --danger:      #9b6b4a;    /* muted rust for P1 tags */
+    --success:     #5c7a5a;    /* muted sage green for confirmations */
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== META BANNER ===== */
+  .meta-banner {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-mid);
+    padding: 8px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .mutation-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 2px 7px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+  .banner-right {
+    color: var(--text-dim);
+    font-size: 0.65rem;
+  }
+
+  /* ===== LAYOUT: 70/30 two-column ===== */
+  .layout-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    min-height: 100vh;
+  }
+
+  /* ===== MAIN FEED (70%) ===== */
+  .main-feed {
+    padding: 48px 56px 96px 56px;
+    border-right: 1px solid var(--border);
+    max-width: 860px;
+    width: 100%;
+  }
+
+  /* ===== MASTHEAD ===== */
+  .masthead {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border-mid);
+  }
+  .masthead-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .masthead-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* ===== ARTICLE CARD ===== */
+  .article-node {
+    position: relative;
+    margin-bottom: 56px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .article-node:last-child {
+    border-bottom: none;
+  }
+
+  .article-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .article-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--danger);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .article-impact {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+  .article-impact span {
+    color: var(--accent);
+  }
+
+  .article-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ===== 3-TIER ACCORDION ===== */
+
+  /* EXEC tier: always visible */
+  .tier-exec {
+    font-size: 0.97rem;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .tier-exec p { margin-bottom: 12px; }
+  .tier-exec p:last-child { margin-bottom: 0; }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #b8956b; text-decoration: none; border: 1px dashed rgba(184,149,107,0.3); padding: 2px 8px; border-radius: 3px; }
+  .source-link:hover { color: #d4a876; border-color: #d4a876; }
+
+  /* Collapsible tier header */
+  .tier-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+    user-select: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .tier-toggle:hover { color: var(--accent); }
+  .tier-toggle .toggle-icon {
+    font-size: 0.7rem;
+    width: 14px;
+    text-align: center;
+    transition: transform 0.2s;
+    color: var(--accent);
+  }
+  .tier-toggle.open .toggle-icon { transform: rotate(45deg); }
+
+  /* Collapsible tier body */
+  .tier-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease, padding 0.2s ease;
+    padding-top: 0;
+  }
+  .tier-body.open {
+    max-height: 2000px;
+    padding-top: 16px;
+  }
+
+  /* TECH block */
+  .tier-tech-content {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border-left: 2px solid var(--accent-dim);
+    padding: 16px 20px;
+    margin-bottom: 4px;
+  }
+  .tier-tech-content strong { color: var(--text); font-weight: 600; }
+  .tier-tech-content code {
+    color: var(--accent);
+    font-size: 0.8rem;
+  }
+
+  /* GRAPH block */
+  .tier-graph-content {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    background: var(--bg);
+    border-left: 2px solid var(--border-mid);
+    padding: 16px 20px;
+    margin-bottom: 4px;
+  }
+  .tier-graph-content .graph-header {
+    color: var(--text-dim);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  /* ===== VOTE ICON — ◉ top-right popup ===== */
+  .vote-trigger {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg-surface);
+    transition: all 0.2s;
+    z-index: 20;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .vote-trigger:hover {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: var(--bg-card);
+  }
+
+  /* The popup — reveals on hover of the trigger OR itself */
+  .vote-popup {
+    position: absolute;
+    top: 36px;
+    right: 0;
+    width: 240px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-mid);
+    padding: 14px 16px;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .vote-trigger:hover .vote-popup,
+  .vote-popup:hover {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .vote-popup-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .popup-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .popup-metric-row:last-child { margin-bottom: 0; }
+
+  .popup-metric-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex: 1;
+    white-space: nowrap;
+  }
+
+  .popup-btns {
+    display: flex;
+    gap: 3px;
+  }
+
+  .popup-btn {
+    width: 24px;
+    height: 24px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .popup-btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent-dim);
+    color: var(--text);
+  }
+  .popup-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .popup-voted-msg {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--success);
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  /* ===== SIDEBAR (30%) ===== */
+  .sidebar {
+    background: var(--bg-sidebar);
+    padding: 48px 28px;
+    position: sticky;
+    top: 37px; /* height of meta-banner */
+    height: calc(100vh - 37px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .sidebar-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Article index in sidebar */
+  .sidebar-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sidebar-nav-item a {
+    display: block;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    padding: 6px 8px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .sidebar-nav-item a:hover {
+    color: var(--text);
+    border-left-color: var(--accent);
+  }
+  .sidebar-nav-item .nav-tag {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Session stats */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat-item {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 12px;
+  }
+  .stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Generation info */
+  .gen-info-block {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .gen-info-block .info-line { display: flex; justify-content: space-between; }
+  .gen-info-block .info-val { color: var(--text-muted); }
+
+  /* Mutation lineage */
+  .lineage-block {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+  .lineage-block .lin-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lineage-block .lin-arrow {
+    color: var(--accent-dim);
+    flex-shrink: 0;
+  }
+  .lineage-block .lin-name {
+    color: var(--text-muted);
+  }
+  .lineage-block .lin-score {
+    margin-left: auto;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Scrollbar styling */
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== META BANNER ===== -->
+<div class="meta-banner">
+  <div>
+    <span class="mutation-tag">EXPLORE</span>
+    <span>GEN 017 A // Focused Warmth // Genealogy: Gen 010 → Darwin-Gödel Engine → Gen 017</span>
+  </div>
+  <div class="banner-right" id="bannerDate">MR-001-2026-03-25 // STRATEGY: EXPLORE (CONSTRAINED)</div>
+</div>
+
+<!-- ===== LAYOUT: 70/30 ===== -->
+<div class="layout-wrapper">
+
+  <!-- ===== MAIN FEED ===== -->
+  <main class="main-feed">
+
+    <!-- Masthead -->
+    <header class="masthead">
+      <div class="masthead-eyebrow">O Grafo Diário</div>
+      <h1 class="masthead-title" id="mastheadTitle">The Daily Graph</h1>
+      <div class="masthead-sub" id="mastheadDate">EDITION // LOADING</div>
+    </header>
+
+    <!-- Articles injected here -->
+    <div id="articles-container"></div>
+
+  </main>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Index</div>
+      <ul class="sidebar-nav-list" id="sidebar-nav"></ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Session Stats</div>
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-sessions">—</div>
+          <div class="stat-label">Sessions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-decisions">—</div>
+          <div class="stat-label">Decisions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-specs">—</div>
+          <div class="stat-label">Spec Changes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-articles">—</div>
+          <div class="stat-label">Articles</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Generation Info</div>
+      <div class="gen-info-block">
+        <div class="info-line"><span>ID</span><span class="info-val">gen_017_a</span></div>
+        <div class="info-line"><span>Strategy</span><span class="info-val">EXPLORE</span></div>
+        <div class="info-line"><span>Aesthetic</span><span class="info-val">Focused Warmth</span></div>
+        <div class="info-line"><span>Base</span><span class="info-val">gen_010</span></div>
+        <div class="info-line"><span>Target VE</span><span class="info-val">2 / 5</span></div>
+        <div class="info-line"><span>Target Density</span><span class="info-val">4 / 5</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Mutation Lineage</div>
+      <div class="lineage-block">
+        <div class="lin-entry">
+          <span class="lin-arrow">●</span>
+          <span class="lin-name">gen_010_explore_focus</span>
+          <span class="lin-score">4.0</span>
+        </div>
+        <div class="lin-entry">
+          <span class="lin-arrow">↑</span>
+          <span class="lin-name">gen_016_b (topology ref)</span>
+          <span class="lin-score">—</span>
+        </div>
+        <div class="lin-entry">
+          <span class="lin-arrow">↑</span>
+          <span class="lin-name">gen_012_a (clarity ref)</span>
+          <span class="lin-score">—</span>
+        </div>
+        <div class="lin-entry" style="margin-top:4px;">
+          <span class="lin-arrow" style="color:var(--accent);">→</span>
+          <span class="lin-name" style="color:var(--accent);">gen_017_a_focused_warmth</span>
+          <span class="lin-score" style="color:var(--text-dim);">NEW</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Aesthetic References</div>
+      <div class="lineage-block">
+        <div class="lin-entry"><span class="lin-arrow">—</span><span class="lin-name">Bloomberg Terminal</span></div>
+        <div class="lin-entry"><span class="lin-arrow">—</span><span class="lin-name">Dark Sepia</span></div>
+        <div class="lin-entry"><span class="lin-arrow">—</span><span class="lin-name">Gen 010 Radical Focus</span></div>
+      </div>
+    </div>
+
+  </aside>
+
+</div><!-- end .layout-wrapper -->
+
+<script>
+  // ===== PAYLOAD =====
+  const mockPayload = {
+    metadata: {
+      date: "2026-03-25",
+      stats: { sessions: 31, decisions: 17, specChanges: 12 }
+    },
+    articles: [
+      {
+        id: "art_ranganathan",
+        tag: "P1 • ARQUITETURA",
+        title: "A Integração de Ranganathan",
+        body: "<p>A percepção foi necessária: nosso sistema anterior baseado em &quot;Assuntos&quot; (subpastas fixas) estava quebrando a escalabilidade do Cofre. Adotamos oficialmente a Classificação Facetada de S. R. Ranganathan, forçando o Grafo Diário a ler os dados por atributos multidimensionais em vez de hierarquias fixas.</p><p>O impacto imediato foi a dissolução das divisões artificiais entre domínios. A ontologia agora conversa diretamente com o sistema de inferência evolutiva.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "art_darwin_godsel",
+        tag: "P1 • EVOLUÇÃO",
+        title: "Darwin-Gödel Engine: Primeiro Ciclo Real",
+        body: "<p>O motor evolutivo produziu sua primeira requisição de mutação computada por dados reais. Sete votos distribuídos em cinco gerações geraram um gradiente de fitness claro: Gen 010 lidera com 4.0, Gen 015 B afunda em 1.5. O sinal mais forte: <em>o Operador rejeita entropia visual alta.</em></p><p>Esta geração — Gen 017 — é a primeira fisiologia produzida pelo motor. O ciclo fechou.</p>",
+        meta: { impact: 9.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "art_workflow_migration",
+        tag: "P2 • PIPELINE",
+        title: "Migração do Pipeline CCB: Validação em Camadas",
+        body: "<p>O workflow de validação de documentos CCB foi completamente reestruturado. A abordagem anterior processava cada documento de forma isolada. A nova arquitetura introduz um Quality Gate de Kit: nenhum documento avança sem que o kit inteiro passe pela validação cruzada.</p>",
+        meta: { impact: 6.5, risk: "medium", source_files: [] }
+      }
+    ]
+  };
+
+  let payload;
+  try {
+    payload = (window.parent && window.parent.currentPayload && window.parent.currentPayload.articles)
+      ? window.parent.currentPayload
+      : mockPayload;
+  } catch(e) {
+    payload = mockPayload;
+  }
+
+  // ===== VOTE STATE =====
+  const pendingVotes = {};
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if (!container || container.classList.contains('voted')) return;
+
+    container.querySelectorAll('.popup-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (parseInt(btn.dataset.score) === score) btn.classList.add('active');
+    });
+
+    pendingVotes[blockId] = { metricName, articleId, score };
+
+    // Auto-commit after a short delay (no mandatory reason in popup)
+    clearTimeout(container._voteTimer);
+    container._voteTimer = setTimeout(() => {
+      commitVote(metricName, articleId, blockId);
+    }, 900);
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if (!state) return;
+
+    const container = document.getElementById(blockId);
+    if (container) container.classList.add('voted');
+
+    try {
+      if (window.parent && window.parent.registerAtomicVote) {
+        const context = articleId ? `Article: ${articleId}` : 'Overall';
+        window.parent.registerAtomicVote({
+          metric_name: state.metricName,
+          score: state.score,
+          reason: `[${context}] Gen 017 A atomic vote`
+        });
+      }
+    } catch(e) {}
+
+    if (container) {
+      container.innerHTML = `<div class="popup-voted-msg">✓ ${state.score}/5 SYNCED</div>`;
+    }
+  }
+
+  // ===== ACCORDION TOGGLE =====
+  function toggleTier(toggleEl) {
+    const body = toggleEl.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    toggleEl.classList.toggle('open', !isOpen);
+  }
+
+  // ===== RENDER UI =====
+  function renderUI() {
+    const meta = payload.metadata || {};
+    const stats = meta.stats || {};
+    const articles = payload.articles || [];
+
+    // Masthead
+    document.getElementById('mastheadDate').textContent = `EDITION // ${meta.date || '—'}`;
+    if (meta.date) {
+      document.getElementById('bannerDate').textContent = `${meta.date} // MR-001 // STRATEGY: EXPLORE (CONSTRAINED)`;
+    }
+
+    // Stats
+    document.getElementById('stat-sessions').textContent = stats.sessions || '—';
+    document.getElementById('stat-decisions').textContent = stats.decisions || '—';
+    document.getElementById('stat-specs').textContent = stats.specChanges || '—';
+    document.getElementById('stat-articles').textContent = articles.length || '—';
+
+    // Sidebar nav
+    let navHtml = '';
+    articles.forEach(art => {
+      navHtml += `
+        <li class="sidebar-nav-item">
+          <a href="#${art.id}">
+            <span class="nav-tag">${art.tag || 'ARTICLE'}</span>
+            ${art.title}
+          </a>
+        </li>
+      `;
+    });
+    document.getElementById('sidebar-nav').innerHTML = navHtml;
+
+    // Articles
+    let artHtml = '';
+    articles.forEach(art => {
+      const bodyContent  = art.body || '<p>No content available.</p>';
+      const impact = art.meta ? art.meta.impact : null;
+      const sourceFiles = (art.meta && art.meta.source_files) || [];
+      const sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+        let name = f.split('/').pop();
+        return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+      }).join('') + '</div>' : '';
+
+      artHtml += `
+        <article class="article-node" id="${art.id}">
+
+          <!-- VOTE TRIGGER — ◉ icon, top-right -->
+          <div class="vote-trigger" title="Vote on this article's metrics">&#9677;
+            <div class="vote-popup">
+              <div class="vote-popup-title">Atomic Metrics — ${escapeHtml(art.title)}</div>
+
+              <div class="popup-metric-row">
+                <span class="popup-metric-name">Topology</span>
+                <div class="popup-btns" id="vote_top_${art.id}">
+                  ${[1,2,3,4,5].map(n => `<button class="popup-btn" data-score="${n}" onclick="registerVote('topology','${art.id}',${n},'vote_top_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+
+              <div class="popup-metric-row">
+                <span class="popup-metric-name">Visual Entropy</span>
+                <div class="popup-btns" id="vote_ve_${art.id}">
+                  ${[1,2,3,4,5].map(n => `<button class="popup-btn" data-score="${n}" onclick="registerVote('visual_entropy','${art.id}',${n},'vote_ve_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+
+              <div class="popup-metric-row">
+                <span class="popup-metric-name">Readability</span>
+                <div class="popup-btns" id="vote_read_${art.id}">
+                  ${[1,2,3,4,5].map(n => `<button class="popup-btn" data-score="${n}" onclick="registerVote('readability','${art.id}',${n},'vote_read_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Article eyebrow -->
+          <div class="article-eyebrow">
+            <span class="article-tag">${escapeHtml(art.tag || 'ARTICLE')}</span>
+            ${impact !== null ? `<span class="article-impact">IMPACT <span>${impact}</span></span>` : ''}
+          </div>
+
+          <!-- Title -->
+          <h2 class="article-title">${escapeHtml(art.title)}</h2>
+
+          <!-- BODY -->
+          <div class="tier-exec">${bodyContent}</div>
+          ${sourceLinksHtml}
+
+        </article>
+      `;
+    });
+
+    document.getElementById('articles-container').innerHTML = artHtml;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  renderUI();
+</script>
+</body>
+</html>

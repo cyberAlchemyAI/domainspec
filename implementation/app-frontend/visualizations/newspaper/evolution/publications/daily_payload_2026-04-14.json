@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "date": "2026-04-14",
+    "generated_at": "2026-04-14T22:00:00.000000+00:00",
+    "editorial_vectors": {
+      "form": "narrative",
+      "tone": "clinical",
+      "structure": "hierarchical"
+    },
+    "stats": {
+      "sessions": 8,
+      "decisions": 7,
+      "spec_changes": 6
+    }
+  },
+  "articles": [
+    {
+      "id": "2026-04-14-0113-memory-axiom-system",
+      "type": "constitutional_rule",
+      "tag": "Governance | Knowledge Management",
+      "title": "Memory System Redesigned as Axiom-Only Router; All Tactical Noise Purged for Foundational Context",
+      "body": "<p><strong>A fundamental rebuild of the agent memory system eliminated project status and tactical noise, replacing it with an axiom-only index that injects only foundational knowledge into future sessions.</strong> The prior memory model was storing temporal project state, merge decisions, and pipeline statuses — ephemeral information that degrades rapidly and adds noise to every new conversation. The new model identified \"Verifiable Reproducibility\" as the candidate north star unifying business, system, and ontology layers.</p><p>The system was rebuilt from scratch: 22+ ephemeral memory files purged, MEMORY.md reduced to a 4-line context router pointing exclusively to axiom-level entries with weight metadata and informational density rules. A memory constitution was drafted establishing deprecation paths and quarterly review cadence, with governance rules for when tactical information is allowed to persist. <strong>This structural change ensures that agent memory carries only load-bearing, slowly-changing knowledge, improving both token efficiency and reasoning quality across all future sessions.</strong></p>",
+      "meta": {
+        "impact": 8.7,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/axiom/business-axioms.md",
+          "docs/vault/axiom/system-axioms.md"
+        ]
+      }
+    },
+    {
+      "id": "2026-04-14-1324-vault-routing-mcp-launch",
+      "type": "architectural_decision",
+      "tag": "Vault | Semantic Search",
+      "title": "Vault-Routing MCP Server Goes Live, Enabling Vector-Based Document Retrieval with Trust-Weighted Ranking",
+      "body": "<p><strong>The first local-embedding MCP tool is now operational, establishing the pattern for semantic retrieval across the vault using local Gemma embeddings and trust-weighted ranking.</strong> The vault-routing system indexes all vault documentation into SQLite via local embeddings, then exposes a context_menu(query, k) MCP tool that returns the top-k most relevant documents ranked by cosine similarity multiplied by trust weight (document status × node_type × confidence score). This eliminates false positives from naive keyword search and prioritizes high-confidence, actively-maintained documentation.</p><p>The implementation includes 25 passing tests, patched walker.py with a custom YAML loader to handle invalid timestamps in vault documents, and required HuggingFace gated-repo authentication for Gemma model access. The tool is now registered in .mcp.json and available to all agents for context retrieval. <strong>This establishes the infrastructure for semantic understanding of vault content, enabling future features like automated documentation discovery, contradiction detection, and agent-guided vault navigation.</strong></p>",
+      "meta": {
+        "impact": 8.4,
+        "risk": "low",
+        "source_files": [
+          "internal_tools/vault_routing/mcp_server.py",
+          "internal_tools/vault_routing/tests/"
+        ]
+      }
+    },
+    {
+      "id": "2026-04-14-0114-domain-code-mapping-repair",
+      "type": "progress",
+      "tag": "Ontology | Codebase",
+      "title": "Domain Code Mapping Audit Completed; Tagging Inconsistencies Repaired Across All Five Business Domains",
+      "body": "<p><strong>A full audit of domain-to-code mappings across the five business domains identified and repaired tagging inconsistencies, ensuring the codebase remains a faithful reflection of the business ontology.</strong> The session found instances where code symbols were either untagged or tagged with incorrect domain categories, breaking the contract between business concepts and their implementation. All inconsistencies were systematically corrected using GitNexus to verify impact scope before applying fixes.</p><p>This repair work ensures that future automated operations — extraction pipelines, semantic search, agent navigation — can trust the tag metadata as an authoritative source of truth. <strong>The domain code mapping now serves as a reliable index for cross-cutting concerns and enables safe refactoring operations guided by business semantics rather than syntactic patterns.</strong></p>",
+      "meta": {
+        "impact": 6.8,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/dictionary-business.md",
+          "docs/vault/constitution/domain-tagging-constitution.md"
+        ]
+      }
+    },
+    {
+      "id": "2026-04-14-2159-tier3-test-audit",
+      "type": "risk_alert",
+      "tag": "Testing | Extraction Pipeline",
+      "title": "Extraction Tier 3 Test Coverage Audit Reveals Critical Gaps; Concurrent Execution and State Transitions Untested",
+      "body": "<p><strong>A comprehensive test audit of the extraction tier 3 implementation plan identified five critical test gaps spanning concurrent folder processing, state machine transitions, and rollback scenarios that must be addressed before the feature ships to production.</strong> The gaps center on how the system handles: (1) concurrent extraction jobs on the same folder, (2) state machine edge cases during pause/resume cycles, (3) rollback semantics when extraction fails mid-flight, (4) vault routing consistency under cache misses, and (5) error recovery in multi-CCB extraction chains.</p><p>Each gap was mapped to specific test stubs that must be implemented with production-level data and real concurrent execution scenarios. <strong>This audit serves as the release gate for extraction tier 3; all five test gaps must be closed with passing tests before the feature can be merged to main.</strong> Estimated implementation effort: 3-4 sessions for comprehensive coverage.</p>",
+      "meta": {
+        "impact": 7.9,
+        "risk": "high",
+        "source_files": [
+          "specs/002-ccb-validation-workflow/docs/extraction-refactor/docs/refactor/extraction-tier3-implementation-plan.md",
+          "docs/vault/constitution/development-practices-constitution.md"
+        ]
+      }
+    },
+    {
+      "id": "2026-04-14-2104-tier4-plan-freeze",
+      "type": "decision",
+      "tag": "Governance | Planning",
+      "title": "Tier 4 Extraction Plan Frozen; No Scope Changes Until Core Tier 1-3 Features Ship",
+      "body": "<p><strong>To prevent architectural drift and ensure the extraction pipeline ships as a unified, coherent product, tier 4 scope is now frozen pending completion and deployment of tiers 1–3.</strong> Tier 4 contains exploratory features and edge-case handlers that would introduce complexity and increase maintenance surface area during the critical stabilization phase. This decision enforces strict scope discipline: all approved items are in tiers 1–3, tier 4 remains on ice until the core product is hardened and deployed.</p><p>Any requests for new extraction features, advanced strategies, or composite extraction patterns will be queued in the tier 4 backlog but will not be considered for implementation until the core extraction pipeline is in production and has demonstrated reliability under real-world conditions. <strong>This boundary protects the project's focus and ensures we ship a complete, testable product rather than a sprawling collection of incomplete features.</strong></p>",
+      "meta": {
+        "impact": 6.2,
+        "risk": "low",
+        "source_files": [
+          "specs/002-ccb-validation-workflow/backlog.md"
+        ]
+      }
+    },
+    {
+      "id": "2026-04-14-meta-l3-governance",
+      "type": "constitutional_rule",
+      "tag": "Governance | Agent Systems",
+      "title": "L3 Agent Density and Governance Rules Formalized; System Complexity Bounded",
+      "body": "<p><strong>The maximum density and governance rules for L3 meta-representation agents were formalized to prevent exponential complexity growth in multi-agent orchestration.</strong> As the system evolves from single agents to multi-agent ecosystems, the risk of creating agents-about-agents-about-agents (L3+ recursion) grows without explicit guardrails. New rules establish: (1) maximum 3 concurrent L3 agents per session, (2) hard gate requiring human approval before spawning L3 agents, (3) all L3 decision tracing must be recorded in evolution-wall, and (4) L3 agents must have explicit closure criteria or time-bound operations.</p><p>These rules target a failure mode that wasn't present at lower complexity levels: the system can become so self-referential that it loses connection to ground truth. By bounding L3 density and enforcing transparency, we preserve the system's ability to self-correct and maintain alignment with business objectives. <strong>This governance framework enables safe experimentation with meta-agents while preventing architectural runaway.</strong></p>",
+      "meta": {
+        "impact": 6.5,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/constitution/robot-talks-constitution.md"
+        ]
+      }
+    }
+  ]
+}

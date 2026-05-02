@@ -1,0 +1,37 @@
+// {
+//   "hooks": {
+//     "PreToolUse": [
+//       {
+//         "matcher": "Write|Edit",
+//         "hooks": [
+//           {
+//             "type": "command",
+//             "command": "input=$(cat); path=$(echo \"$input\" | jq -r '.tool_input.file_path // \"\"'); case \"$path\" in *README.md) ;; *.md) jq -n --rawfile ctx /Users/victorboscaro/house_project/.claude/skills/custom/frontmatter.md '{hookSpecificOutput:{hookEventName:\"PreToolUse\",additionalContext:$ctx}}' ;; esac"
+//           },
+//           {
+//             "type": "command",
+//             "command": "input=$(cat); path=$(echo \"$input\" | jq -r '.tool_input.file_path // \"\"'); case \"$path\" in *README.md) jq -n --rawfile ctx /Users/victorboscaro/house_project/.claude/skills/custom/readme-pattern.md '{hookSpecificOutput:{hookEventName:\"PreToolUse\",additionalContext:$ctx}}' ;; esac"
+//           }
+//         ]
+//       },
+//       {
+//         "matcher": "Grep|Glob",
+//         "hooks": [
+//           {
+//             "type": "command",
+//             "command": "/Users/victorboscaro/house_project/.claude/scripts/remind-mcp-before-grep.sh"
+//           }
+//         ]
+//       },
+//       {
+//         "matcher": "Read",
+//         "hooks": [
+//           {
+//             "type": "command",
+//             "command": "/Users/victorboscaro/house_project/.claude/scripts/remind-targeted-read.sh"
+//           }
+//         ]
+//       }
+//     ]
+//   }
+// }

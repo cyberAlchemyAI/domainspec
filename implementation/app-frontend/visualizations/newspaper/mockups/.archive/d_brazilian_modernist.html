@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário — Modernismo Brasileiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #faf5ef;
+    --bg-warm: #f0e8dc;
+    --text: #2a2520;
+    --text-secondary: #5a5048;
+    --text-muted: #8a7e72;
+    --teal: #006d77;
+    --teal-light: #83c5be;
+    --terracotta: #c4654a;
+    --terracotta-light: #e29578;
+    --gold: #b88a44;
+    --gold-light: #d4b880;
+    --cream: #ffddd2;
+    --border: #d8cfc4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .container { max-width: 940px; margin: 0 auto; padding: 0 32px; }
+
+  /* === GEOMETRIC PATTERN === */
+  .pattern-strip {
+    height: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--teal) 0px, var(--teal) 16px,
+      var(--terracotta) 16px, var(--terracotta) 32px,
+      var(--gold) 32px, var(--gold) 48px,
+      var(--teal-light) 48px, var(--teal-light) 64px,
+      var(--cream) 64px, var(--cream) 80px
+    );
+  }
+
+  /* === MASTHEAD === */
+  .masthead {
+    padding: 36px 0 20px;
+    border-bottom: 2px solid var(--text);
+    position: relative;
+  }
+
+  .masthead-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .masthead-title {
+    font-size: 44px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .masthead-title .accent { color: var(--teal); }
+
+  .masthead-icon {
+    display: inline-flex;
+    gap: 3px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  .masthead-icon .block {
+    width: 10px; height: 10px;
+    display: inline-block;
+  }
+  .masthead-icon .b1 { background: var(--teal); }
+  .masthead-icon .b2 { background: var(--terracotta); transform: rotate(45deg); }
+  .masthead-icon .b3 { background: var(--gold); }
+
+  .masthead-date {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .masthead-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* === STATS === */
+  .stats {
+    display: flex;
+    gap: 28px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .stat-value { font-weight: 700; color: var(--teal); font-size: 15px; }
+
+  /* === GRID === */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 36px;
+    padding-top: 28px;
+  }
+
+  /* === SECTION DIVIDERS (Bulcão-inspired) === */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .section-label::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--teal) 0px, var(--teal) 12px,
+      transparent 12px, transparent 16px,
+      var(--terracotta) 16px, var(--terracotta) 28px,
+      transparent 28px, transparent 32px,
+      var(--gold) 32px, var(--gold) 44px,
+      transparent 44px, transparent 48px
+    );
+  }
+
+  /* === STORIES === */
+  .story {
+    margin-bottom: 24px;
+    padding: 20px;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .story:hover { box-shadow: 0 4px 20px rgba(42, 37, 32, 0.08); }
+
+  .story::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+  }
+  .story.p0::before { background: var(--terracotta); }
+  .story.p1::before { background: var(--gold); }
+  .story.p2::before { background: var(--teal); }
+  .story.p3::before { background: var(--teal-light); }
+
+  .story-priority {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .story.p0 .story-priority { color: var(--terracotta); }
+  .story.p1 .story-priority { color: var(--gold); }
+  .story.p2 .story-priority { color: var(--teal); }
+  .story.p3 .story-priority { color: var(--teal-light); }
+
+  .story-headline {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .story.p1 .story-headline { font-size: 26px; }
+
+  .story-body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  .story-body code {
+    font-size: 12px;
+    background: var(--bg-warm);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--teal);
+    font-family: 'SF Mono', Monaco, monospace;
+  }
+
+  .story-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .story-meta .tag {
+    background: var(--bg-warm);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  /* === SIDEBAR === */
+  .sidebar-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-item:last-child { border-bottom: none; }
+  .sidebar-item-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .sidebar-item-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  .dot-high { background: var(--teal); }
+  .dot-med { background: var(--text-muted); }
+  .dot-low { background: var(--border); }
+
+  /* === DOMAIN === */
+  .domain-section { margin-top: 24px; }
+  .domain-item {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid var(--border);
+  }
+  .domain-item-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal);
+  }
+  .domain-item-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* === ARCHIVE === */
+  .archive {
+    margin-top: 36px;
+    padding-top: 24px;
+  }
+  .archive .section-label { border-top: 2px solid var(--text); padding-top: 24px; }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+    max-width: 260px;
+  }
+  .cal-header {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    padding-bottom: 4px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-radius: 4px;
+    background: white;
+    border: 1px solid var(--border);
+  }
+  .cal-day.empty { background: transparent; border-color: transparent; }
+  .cal-day.has-edition {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .cal-day.has-edition:hover { background: var(--terracotta); border-color: var(--terracotta); }
+  .cal-day.today { box-shadow: 0 0 0 2px var(--terracotta); }
+
+  .footer {
+    padding: 28px 0;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .pattern-strip-bottom {
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--teal) 0px, var(--teal) 12px,
+      transparent 12px, transparent 16px,
+      var(--terracotta) 16px, var(--terracotta) 28px,
+      transparent 28px, transparent 32px
+    );
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="pattern-strip"></div>
+
+  <div class="container">
+    <header class="masthead">
+      <div class="masthead-top">
+        <div class="masthead-title">
+          <span class="masthead-icon"><span class="block b1"></span><span class="block b2"></span><span class="block b3"></span></span>O Grafo <span class="accent">Diário</span>
+        </div>
+        <div class="masthead-date">24 de Março de 2026<br>Edição #001</div>
+      </div>
+      <div class="masthead-sub">Boletim Epistemológico do Vault</div>
+    </header>
+
+    <div class="stats">
+      <div><span class="stat-value">25</span> sessões</div>
+      <div><span class="stat-value">12</span> decisões</div>
+      <div><span class="stat-value">8</span> specs</div>
+      <div><span class="stat-value">0</span> contradições</div>
+      <div><span class="stat-value">3</span> promovidos</div>
+    </div>
+
+    <main class="grid">
+      <div>
+        <div class="section-label">Primeira Página</div>
+
+        <article class="story p1">
+          <div class="story-priority">P1 · Mudança Fundacional</div>
+          <h2 class="story-headline">Biblioteconomia Integrada à Constituição do Vault</h2>
+          <p class="story-body">
+            A classificação facetada de Ranganathan (1933) foi formalmente reconhecida como o quarto pilar intelectual do sistema, ao lado de Zettelkasten, Evergreen Notes e Epistemologia Bayesiana. A convergência entre os axiomas de ortogonalidade e a ciência da informação de 95 anos foi documentada.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#ontology</span>
+            <span class="tag">#vault</span>
+            <span>Importância: 8/10</span>
+          </div>
+        </article>
+
+        <article class="story p2">
+          <div class="story-priority">P2 · Alta Importância</div>
+          <h2 class="story-headline">Pipeline de Migração CCB: Scaffolding Completo</h2>
+          <p class="story-body">
+            A migração lift-and-shift do pipeline de validação CCB do domínio <code>aquisicao</code> para <code>documents_validation</code> progrediu com scaffolding completo, relocação de serviços e atualização de referências.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#ccb</span>
+            <span class="tag">#migration</span>
+            <span>Importância: 7/10</span>
+          </div>
+        </article>
+
+        <article class="story p3">
+          <div class="story-priority">P3 · Direção Estratégica</div>
+          <h2 class="story-headline">O Grafo Diário: Discovery do Jornal Interno</h2>
+          <p class="story-body">
+            Exploração conceitual de jornal diário que sintetiza atividade do vault. Identidade, critérios de relevância (P0–P5), naming e direção estética definidos.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#ontology</span>
+            <span>Importância: 6/10</span>
+          </div>
+        </article>
+
+        <article class="story p2">
+          <div class="story-priority">P2 · Alta Importância</div>
+          <h2 class="story-headline">Kit Matching: Quality Gate Refinado</h2>
+          <p class="story-body">
+            Gate de qualidade stricta para o counter <code>documents_matched</code> — documentos CCB agora exigem match de contrato no banco além da extração de campos obrigatórios.
+          </p>
+          <div class="story-meta">
+            <span class="tag">#pipeline</span>
+            <span>Importância: 7/10</span>
+          </div>
+        </article>
+      </div>
+
+      <aside class="sidebar">
+        <div class="section-label">Abaixo da Dobra</div>
+
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-med"></span>Ontology Visualization Corrigido</div>
+          <div class="sidebar-item-meta">Imp. 5 · Restaurado após reestruturação</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-med"></span>CCB Spec Audit</div>
+          <div class="sidebar-item-meta">Imp. 5 · Auditoria de validação</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-med"></span>Document Merge: Edge Cases</div>
+          <div class="sidebar-item-meta">Imp. 5 · Edge cases na fusão</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-low"></span>Deferred Save Merge Plan</div>
+          <div class="sidebar-item-meta">Imp. 4 · Save diferido</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-low"></span>Document Merge Implementation</div>
+          <div class="sidebar-item-meta">Imp. 4 · Implementação</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-title"><span class="dot dot-low"></span>Migration Test Safety Net</div>
+          <div class="sidebar-item-meta">Imp. 3 · Cobertura de teste</div>
+        </div>
+
+        <div class="domain-section">
+          <div class="section-label">Por Domínio</div>
+          <div class="domain-item">
+            <div class="domain-item-title">Ontologia & Vault</div>
+            <div class="domain-item-meta">4 sessões · Constituição, governance, newspaper</div>
+          </div>
+          <div class="domain-item">
+            <div class="domain-item-title">CCB & Migration</div>
+            <div class="domain-item-meta">8 sessões · Scaffolding, lift-and-shift</div>
+          </div>
+          <div class="domain-item">
+            <div class="domain-item-title">Pipeline & Quality</div>
+            <div class="domain-item-meta">6 sessões · Quality gate, merge fixes</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <section class="archive">
+      <div class="section-label">Arquivo · Março 2026</div>
+      <div class="calendar-grid">
+        <div class="cal-header">S</div><div class="cal-header">T</div><div class="cal-header">Q</div><div class="cal-header">Q</div><div class="cal-header">S</div><div class="cal-header">S</div><div class="cal-header">D</div>
+        <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day">1</div>
+        <div class="cal-day has-edition">2</div><div class="cal-day has-edition">3</div><div class="cal-day has-edition">4</div><div class="cal-day has-edition">5</div><div class="cal-day has-edition">6</div><div class="cal-day has-edition">7</div><div class="cal-day">8</div>
+        <div class="cal-day has-edition">9</div><div class="cal-day has-edition">10</div><div class="cal-day has-edition">11</div><div class="cal-day has-edition">12</div><div class="cal-day has-edition">13</div><div class="cal-day has-edition">14</div><div class="cal-day">15</div>
+        <div class="cal-day has-edition">16</div><div class="cal-day has-edition">17</div><div class="cal-day has-edition">18</div><div class="cal-day has-edition">19</div><div class="cal-day has-edition">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+        <div class="cal-day has-edition">23</div><div class="cal-day has-edition today">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+        <div class="cal-day">30</div><div class="cal-day">31</div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      O Grafo Diário · Edição #001 · Gerado automaticamente a partir do Knowledge Graph do ZefraHub
+      <div class="pattern-strip-bottom"></div>
+    </footer>
+  </div>
+
+</body>
+</html>

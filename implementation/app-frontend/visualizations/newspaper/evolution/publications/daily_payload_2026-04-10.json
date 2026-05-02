@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "date": "2026-04-10",
+    "generated_at": "2026-04-10T06:20:27.879847+00:00",
+    "editorial_vectors": {
+      "form": "analytical",
+      "tone": "clinical",
+      "structure": "flat"
+    },
+    "stats": {
+      "sessions": 28,
+      "decisions": 28,
+      "spec_changes": 27
+    }
+  },
+  "articles": [
+    {
+      "id": "a9e1b8c0-f7d6-4c5a-9b3d-8e2f1a0c4b9f",
+      "type": "architectural_decision",
+      "tag": "Ontology | Core",
+      "title": "Ontology Graph Springs to Life After Critical Edge Parser Fix",
+      "content": {
+        "exec": "<p>A silent data loss bug in the ontology pipeline, which dropped all relationship edges since inception, was corrected in <code>dictionary_extractor.py</code>. This fix materialized the full 116-edge knowledge graph for the first time, enabling structural analysis.</p>",
+        "tech": "<div class='tech-block'><strong>Root Cause:</strong> The <code>EDGE_PATTERN</code> regex in <code>dictionary_extractor.py</code> exclusively matched forward arrows (<code>→</code>/<code>-></code>), silently ignoring the widespread use of reverse arrows (<code>←</code>) in dictionary files for relationships like 'contained-by'.<br><strong>Fix:</strong> The regex was updated to capture both arrow directions and handle parenthetical descriptions following edge targets.<br><strong>Result:</strong> The ontology registry immediately populated with 116 edges across 48 terms, with 114 resolving to known nodes. Two new test cases covering reverse and mixed-direction edges were added to prevent regression.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>NODE(OntologyGraph) | status: UNREACHABLE → MATERIALIZED<br>NODE(Term) | connectivity: 0 → N<br>EDGE(Term)-[RELATIONSHIP]->(Term) | count: 0 → 116<br>NEW_CAPABILITY(GraphPathfinding)<br>NEW_CAPABILITY(CentralityAnalysis)"
+      },
+      "meta": {
+        "impact": 9.5,
+        "risk": "high",
+        "source_files": [
+          "2026-04-07-2100-edge-extraction-fix-visualization.md"
+        ]
+      }
+    },
+    {
+      "id": "b3d2c1a9-0e8f-4a7b-8c6d-5e4f3a2b1c0d",
+      "type": "feature_evolution",
+      "tag": "Frontend | Merge",
+      "title": "Major Frontend Refactor Deployed, Unifying UI Patterns and Exposing Infrastructure Gaps",
+      "content": {
+        "exec": "<p>The <code>minor-fixes-fe</code> branch, containing a complete UI navigation rewrite, was successfully merged and deployed. This introduced new sidebar and tabbed page patterns while exposing critical infrastructure weaknesses in worker disk management and CI webhook visibility.</p>",
+        "tech": "<div class='tech-block'><strong>Scope:</strong> The merge consolidated ~85 file changes from 36 commits, resolving 9 git conflicts. Key changes include a double-sidebar navigation, tabbed page decomposition, and a new <code>PendingDocuments</code> module.<br><strong>Conflict Resolution:</strong> The obsolete <code>current_phase</code> feature, spanning 11 files, was removed to prevent migration conflicts.<br><strong>Verification:</strong> 23 new tests were added to cover new backend features like the <code>pending-overview</code> endpoint and schema manifest builder API.<br><strong>Exposed Risks:</strong> The deployment revealed two systemic infrastructure flaws: worker disk space accumulation from build artifacts and opaque Vercel webhook failures, both requiring remediation.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>NEW_NODE(UI_Component::Sidebar::IconRail)<br>NEW_NODE(UI_Component::Sidebar::DetailPanel)<br>NEW_NODE(UI_Pattern::TabbedView)<br>NEW_EDGE(Deployment)-[EXPOSES]->(InfrastructureWeakness)<br>NEW_NODE(Risk::WorkerDiskAccumulation)<br>NEW_NODE(Risk::CI_WebhookOpacity)"
+      },
+      "meta": {
+        "impact": 8.8,
+        "risk": "high",
+        "source_files": [
+          "2026-04-06-1400-frontend-merge-discovery.md",
+          "2026-04-07-0700-frontend-merge-completion.md",
+          "2026-04-06-1630-merge-minor-fixes-fe-deploy.md"
+        ]
+      }
+    },
+    {
+      "id": "c7a6b5d4-3f2e-1a0b-9c8d-7e6f5a4b3c2d",
+      "type": "constitutional_rule",
+      "tag": "Ontology | Governance",
+      "title": "Domain-Tagging Constitution Ratified, Embedding Business Vocabulary into Code and Agent Workflows",
+      "content": {
+        "exec": "<p>A new domain-tagging system using <code>@biz</code>/<code>@sys</code> docstring tags was designed and ratified, creating a machine-readable bridge between business concepts in the ontology and their implementation in the codebase. This governance was then embedded into core agent workflows, making domain-awareness an enforceable, automated behavior.</p>",
+        "tech": "<div class='tech-block'><strong>Mechanism:</strong> The system relies on Python docstring tags (e.g., <code>@biz(term=\"Remessa\", type=\"Event\")</code>) coupled directly to code symbols.<br><strong>Foundation:</strong> This is supported by a restructured business dictionary (<code>dictionary-business.md</code>) organized by domain (Core, Aquisição, Documents) with explicit <code>taxonomy_type</code> and <code>edge</code> definitions.<br><strong>Enforcement:</strong> Agent behavior is governed by updates to <code>CLAUDE.md</code>, which now routes tasks to specific skills for dictionary maintenance (Route 3) and code tagging (Route 4), ensuring compliance.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>NEW_EDGE(CodeSymbol)-[ANNOTATED_BY]->(OntologyTerm)<br>NEW_NODE(AgentWorkflow::{concern: 'DictionaryMaintenance'})<br>NEW_NODE(AgentWorkflow::{concern: 'CodeTagging'})<br>NODE(Codebase) | state: Opaque → Queryable<br>AXIOM_ESTABLISHED('Code is an extension of the knowledge graph')"
+      },
+      "meta": {
+        "impact": 9.2,
+        "risk": "medium",
+        "source_files": [
+          "2026-04-06-1400-domain-tagging.md",
+          "2026-04-07-1130-a7k2p-domain-tagging-skill-routing.md",
+          "2026-04-06-1530-w7m4a-dictionary-restructure.md"
+        ]
+      }
+    },
+    {
+      "id": "d1b0a9f8-7e6d-5c4b-3a2b-1c0d9e8f7a6b",
+      "type": "risk_alert",
+      "tag": "Performance | API",
+      "title": "Critical Frontend Performance Bottleneck Eliminated by Stripping Bloated API Payloads",
+      "content": {
+        "exec": "<p>A severe frontend performance issue causing browser freezes on bulk import pages was traced to oversized API responses. The issue was resolved by removing <code>extracted_data</code> and <code>ocr_text</code> fields from the list view endpoint, reducing payload size by over 80%.</p>",
+        "tech": "<div class='tech-block'><strong>Problem:</strong> The <code>BulkImportDetailView.get()</code> endpoint was serializing full OCR text for every document in its list response, creating multi-megabyte JSON payloads that froze the browser.<br><strong>Backend Fix:</strong> The serializer in <code>views.py:1035-1045</code> was modified to exclude the <code>extracted_data</code> and <code>ocr_text</code> fields from the document dictionary for the list view.<br><strong>Frontend Fix:</strong> The <code>openPreview</code> function in <code>BulkImportTable.tsx</code> was rewritten to fetch full document data on-demand when a user clicks to view a preview, aligning with established lazy-loading patterns.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>NEW_AXIOM('List endpoints must not serialize large text or binary fields')<br>REFINES_NODE(APIDesignConstitution)<br>DIFFERENTIATES_NODE(Entity::SummaryView) from NODE(Entity::DetailView)<br>NEW_EDGE(PerformanceRequirement)-[DRIVES]->(APISchemaRefinement)"
+      },
+      "meta": {
+        "impact": 8.0,
+        "risk": "low",
+        "source_files": [
+          "2026-04-06-1800-m3q7v-frontend-page-load-discovery.md",
+          "2026-04-07-0145-fix1-bulk-import-payload-strip.md"
+        ]
+      }
+    },
+    {
+      "id": "e5f4g3h2-1i0j-9k8l-7m6n-5o4p3q2r1s0t",
+      "type": "meta_reflection",
+      "tag": "Governance | Agents",
+      "title": "Commit Message Constitution Ratified, Revealing 'Constitution-to-Skill' Architectural Pattern",
+      "content": {
+        "exec": "<p>A new constitution was established to enforce a strict, structured format for all git commit messages. This process revealed a key architectural pattern: every high-level <code>Constitution</code> document should be paired with a compact, executable <code>Skill</code> file for direct use by AI agents.</p>",
+        "tech": "<div class='tech-block'><strong>Standard:</strong> The new commit standard mandates conventional prefixes (<code>fix</code>, <code>feat</code>, <code>refactor</code>), an imperative subject line, and a structured body detailing what, why, impact, test summary, and spec references.<br><strong>Pattern Discovery:</strong> The key insight was the need to separate the lengthy, human-readable constitution from a concise, context-window-friendly skill file (e.g., <code>commit-message.md</code>) that agents can load at execution time for direct instruction.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>NEW_META_EDGE(Constitution)-[PRODUCES]->(Skill)<br>This formalizes the link between declarative system rules (NODE(Constitution)) and procedural agent knowledge (NODE(Skill)).<br>It establishes a clear pathway from high-level governance to low-level, automated enforcement.<br>REFINES_NODE(AgentWorkflow) | attribute: constitutionally_driven"
+      },
+      "meta": {
+        "impact": 8.5,
+        "risk": "low",
+        "source_files": [
+          "2026-04-07-1100-commit-message-constitution.md"
+        ]
+      }
+    },
+    {
+      "id": "f9e8d7c6-5b4a-3i2h-1g0f-9e8d7c6b5a4b",
+      "type": "decision",
+      "tag": "Domain | CCB Matching",
+      "title": "Systematic Contract Matching Failure Resolved via Check-Digit Normalization",
+      "content": {
+        "exec": "<p>A persistent failure in matching CCB contracts during bulk import was traced to a mismatch in number formatting. The issue was resolved by implementing a normalization step that strips the trailing check-digit from extracted numbers before database lookup.</p>",
+        "tech": "<div class='tech-block'><strong>Root Cause:</strong> Extracted CCB numbers from PDFs contained a check digit (e.g., <code>600913767-7</code>), while the canonical numbers in the upstream database were purely numeric (<code>600913767</code>), causing exact-match lookups to fail silently.<br><strong>Solution:</strong> A normalization function is now applied to the extracted value upon ingestion, ensuring data format consistency across the pipeline before any database comparison occurs.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>NEW_RULE('All external identifiers must be normalized to a canonical form upon ingestion')<br>REFINES_NODE(Identifier::CCB) | adds attribute: canonical_format<br>NEW_EDGE(DataIngestionPipeline)-[ENFORCES]->(NormalizationRule)<br>FALSIFIED_ASSUMPTION('External data formats are consistent with internal representations')"
+      },
+      "meta": {
+        "impact": 7.5,
+        "risk": "medium",
+        "source_files": [
+          "2026-04-05-1200-ccb-matching-discovery.md"
+        ]
+      }
+    },
+    {
+      "id": "0a1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+      "type": "progress",
+      "tag": "Ontology | Dictionary",
+      "title": "Core Dictionaries Overhauled, Establishing Domain-Alignment and Machine-Readable Taxonomies",
+      "content": {
+        "exec": "<p>The business and system dictionaries underwent a significant restructuring and cleanup, organizing terms by business domain, establishing formal taxonomy types and relationship edges, and resolving critical ambiguities. This makes the entire domain vocabulary machine-queryable and aligned with the codebase.</p>",
+        "tech": "<div class='tech-block'><strong>Restructuring:</strong> The <code>dictionary-business.md</code> was reorganized from a flat list into domain-aligned sections: Core/Shared, Aquisição, and Documents & OCR.<br><strong>Enrichment:</strong> All 24 core terms were updated with explicit <code>taxonomy_type</code> and <code>edge</code> definitions, providing structured data for the ontology pipeline.<br><strong>Cleanup:</strong> Contradictions in the system dictionary, such as the <code>log_event</code> vs. <code>log_event_safe</code> ambiguity, were resolved, and missing system concepts like <code>parent_event</code> and <code>filter_key</code> were added.<br><strong>Validation:</strong> The changes were validated via an end-to-end audit using the extraction pipeline itself.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>UPGRADES_SCHEMA(KnowledgeGraph)<br>NODE(Term) → NODE(Domain) contains NODE(Term)<br>ENRICHES_NODE(Term) | adds attribute: taxonomy_type<br>ENRICHES_NODE(Term) | adds attribute: edges<br>This work provides the structured raw material for the now-functional edge parser, upgrading the graph's foundational schema."
+      },
+      "meta": {
+        "impact": 8.2,
+        "risk": "low",
+        "source_files": [
+          "2026-04-06-1530-w7m4a-dictionary-restructure.md",
+          "2026-04-07-0002-ontology-dict-cleanup.md",
+          "2026-04-07-1700-w9d3h-aquisicao-dictionary-audit.md"
+        ]
+      }
+    },
+    {
+      "id": "1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e",
+      "type": "meta_reflection",
+      "tag": "Meta | L7",
+      "title": "L7 Reframed as Emergent Property, Unifying Meta-Representation Framework",
+      "content": {
+        "exec": "<p>A deep assessment of the meta-representations framework resulted in a significant conceptual shift, reframing the L7 architecture not as a designed construct but as an emergent property of the system's adaptive formalization processes. This insight identified the <strong>uncertainty-investment curve</strong> as the framework's core unifying principle.</p>",
+        "tech": "<div class='tech-block'><strong>Change Type:</strong> This was a non-code, conceptual change focused on updating core documentation in <code>docs/business-philosopher/assuntos/meta-representations/</code>.<br><strong>Artifacts Produced:</strong> The sessions generated new conceptual models, including an abstract-concrete evidence map and a documented intellectual lineage for the <code>DomainSpec</code> concept.<br><strong>Impact:</strong> The work structurally reshaped the project's guiding thesis, providing a new lens through which to evaluate architectural decisions and system evolution.</div>",
+        "graph": "<div class='graph-header'>// KNOWLEDGE GRAPH DELTA</div>RECLASSIFIES_NODE(L7_Architecture) | type: Designed → Emergent<br>NEW_NODE(UncertaintyInvestmentCurve)<br>NEW_EDGE(UncertaintyInvestmentCurve)-[GOVERNS]->(AdaptiveFormalization)<br>NEW_EDGE(UncertaintyInvestmentCurve)-[EXPLAINS]->(L7_Architecture)<br>This change operates at the meta-level of the ontology, altering the system's self-conception."
+      },
+      "meta": {
+        "impact": 8.9,
+        "risk": "low",
+        "source_files": [
+          "2026-04-10-1800-meta-representations-corpus-assessment.md"
+        ]
+      }
+    }
+  ]
+}

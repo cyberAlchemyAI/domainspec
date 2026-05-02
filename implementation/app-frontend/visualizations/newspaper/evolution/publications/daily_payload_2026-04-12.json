@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "date": "2026-04-12",
+    "generated_at": "2026-04-13T01:19:48.732742+00:00",
+    "editorial_vectors": {
+      "form": "narrative",
+      "tone": "clinical",
+      "structure": "flat"
+    },
+    "stats": {
+      "sessions": 4,
+      "decisions": 4,
+      "spec_changes": 7
+    }
+  },
+  "articles": [
+    {
+      "id": "2026-04-12-1652-semantic-index-mcp-server",
+      "type": "architectural_decision",
+      "tag": "Ontology | Infrastructure",
+      "title": "Semantic Index Server Goes Live, Unlocking Codebase as a Queryable Asset for Agents",
+      "body": "<p><strong>The semantic query layer is now operational with the launch of the new Master Control Program (MCP) server, transforming the codebase from static text into a queryable, contextual asset for all agents.</strong> This is a foundational infrastructure milestone. It closes the loop from discovery to production, enabling agents to understand the <em>meaning</em> and relationships within our code, not just its syntax. This capability is expected to significantly increase agent effectiveness and reduce token consumption by providing richer, more relevant context for task execution.</p><p>The server was built end-to-end, passing all 157 tests, and is now the primary, live interface to the system's ontology. A new command-line tool, <code>ontology pipeline</code>, has been created to automate the extraction and embedding process for deployments, ensuring the index remains current.</p>",
+      "meta": {
+        "impact": 8.5,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/discovery/knowledge-graph-topology.md"
+        ]
+      }
+    },
+    {
+      "id": "2026-04-12-ccb-extraction-refactor",
+      "type": "architectural_decision",
+      "tag": "CCB | Pipeline",
+      "title": "CCB Extraction Pipeline De-risked and Re-scoped After Audit Reveals Core Flaws",
+      "body": "<p><strong>A full-scope \"robot-talks\" audit on the Tier 1 CCB extraction plan uncovered six deep, cross-layer architectural tensions before a single line of implementation code was written, averting significant future rework and data corruption bugs.</strong> The audit revealed fundamental issues, such as a data structure (<code>Shape B</code>) being incompatible with the planned helper logic and a key validation test having zero actual assertions. All six issues were resolved, resulting in a hardened, trustworthy implementation plan.</p><p>Based on this newfound stability and a directive to prevent an \"unrecoverable audit-trail gap,\" <strong>the strategic decision was made to absorb the entire deferred Tier 3 scope (including the strategy registry and composite extractors) into Tier 2.</strong> The extraction pipeline will now be shipped as a complete product, not in narrow phases. This trades a larger initial implementation effort for long-term data integrity and product coherence.</p>",
+      "meta": {
+        "impact": 8.2,
+        "risk": "medium",
+        "source_files": [
+          "docs/vault/conceptual/fidc-and-credit-rights.md"
+        ]
+      }
+    },
+    {
+      "id": "robot-talks-strategy-check",
+      "type": "constitutional_rule",
+      "tag": "Governance | Agents",
+      "title": "Robot-Talks Constitution Updated to Enforce Strategic Review and Clear Ownership",
+      "body": "<p><strong>The constitution governing our \"robot-talks\" automated problem-solving framework was enhanced with two high-leverage rules aimed at improving strategic decision quality.</strong> First, a mandatory \"Strategy Check\" now requires the orchestrating agent to present one rejected alternative decomposition alongside its chosen path, forcing an explicit review of the trade-offs. Second, ownership is now formally separated: the user defines the problem, and the orchestrator proposes the strategy, with a hard gate requiring human approval before any sub-agents can be spawned.</p><p>These changes target the most critical moment in any complex task: the initial breakdown of the problem. By embedding this rigor directly into the process, we are structurally improving the quality and alignment of all future automated architectural and implementation work.</p>",
+      "meta": {
+        "impact": 6.5,
+        "risk": "low",
+        "source_files": [
+          "docs/vault/constitution/robot-talks-constitution.md",
+          "docs/vault/premise/robot-talks-premises.md"
+        ]
+      }
+    }
+  ]
+}

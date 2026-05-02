@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário: Neoconcretismo de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-canvas: #f6f5ef;
+    --line: #111;
+    --neo-yellow: #fadc00;
+    --neo-blue: #0047b3;
+    --neo-green: #008a3e;
+  }
+
+  body {
+    background: var(--bg-canvas);
+    color: var(--line);
+    font-family: 'Outfit', sans-serif;
+    margin: 0; padding: 40px;
+  }
+
+  header {
+    margin-bottom: 60px;
+    border-top: 4px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  h1 { font-size: 2.5rem; font-weight: 800; margin: 0; letter-spacing: -1px;}
+  .meta { font-weight: 500; font-size: 1.1rem; }
+
+  /* Interactive geometric unfolding */
+  details.geo {
+    margin-bottom: 10px;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid var(--line);
+    padding: 20px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  summary::-webkit-details-marker { display: none; }
+
+  .shape { width: 20px; height: 20px; border: 2px solid var(--line); }
+  .s1 { background: var(--neo-yellow); border-radius: 50%; }
+  .s2 { background: var(--neo-blue); }
+  .s3 { background: var(--neo-green); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border: none;}
+
+  details.geo:hover summary { transform: translateX(8px); }
+  
+  details.geo[open] summary {
+    background: var(--line);
+    color: var(--bg-canvas);
+  }
+
+  .unfold {
+    border: 2px solid var(--line);
+    border-top: none;
+    padding: 30px;
+    background: #fff;
+    font-weight: 300;
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  .unfold b { font-weight: 800; }
+
+  .record {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>O Grafo Diário</h1>
+    <span class="meta">E.001 / 2026.03.24</span>
+  </header>
+
+  <details class="geo" open>
+    <summary><div class="shape s1"></div> Ontologia & Consciência</summary>
+    <div class="unfold">
+      <p><b>[SÍNTESE]</b> O sistema absorve os princípios facetados de Ranganathan. <em>O Grafo Diário</em> torna-se a manifestação visual do Zettelkasten.</p>
+      <br>
+      <div class="record"><span><b>P1</b> Biblioteconomia Integrada à Constituição</span><span>8.0</span></div>
+      <div class="record"><span><b>P2</b> Governance Workflows: Backlog & README Patterns</span><span>8.0</span></div>
+      <div class="record"><span><b>P3</b> O Grafo Diário: Discovery do Jornal Interno</span><span>6.0</span></div>
+    </div>
+  </details>
+
+  <details class="geo">
+    <summary><div class="shape s2"></div> Migração CCB</summary>
+    <div class="unfold">
+      <p><b>[SÍNTESE]</b> O domínio validation é estabelecido fisicamente com relocação de arquivos, porém lacunas de segurança (testes) exigem intervenção posterior.</p>
+      <br>
+      <div class="record"><span><b>P2</b> Domain Scaffolding & Relocação Completa</span><span>7.0</span></div>
+      <div class="record"><span><b>P4</b> CCB Spec Audit: Gaps Identificados</span><span>5.0</span></div>
+    </div>
+  </details>
+</body>
+</html>
