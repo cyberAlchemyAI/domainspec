@@ -564,6 +564,12 @@ Primary command:
 Readiness command:
 
 ```
+@domainspec-verifier domainspec-readiness-gate <feature-name> --profile pilot|release-candidate|production
+```
+
+Pilot compatibility command (still supported):
+
+```
 @domainspec-verifier domainspec-pilot-readiness <feature-name>
 ```
 
@@ -571,7 +577,7 @@ Expected outputs:
 
 - PASS / FLAG / BLOCK verdict with evidence links
 - alignment and layering findings (or explicit no-drift result)
-- pilot-readiness checklist for rollout
+- profile-specific readiness checklist for rollout
 
 ---
 
@@ -676,6 +682,7 @@ Direct specialist commands remain callable as advanced/internal invocations.
 | `domainspec-audit-alignment`        | 5–7   | Alignment report comparing docs vs code                                                                   |
 | `domainspec-audit-layering`         | 5–7   | Detect domain-logic drift into application layers                                                         |
 | `domainspec-verify-feature`         | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                                          |
+| `domainspec-readiness-gate`         | 10    | Profile-driven readiness gate (`pilot`, `release-candidate`, `production`)                                |
 | `domainspec-pilot-readiness`        | 10    | Prepare a feature for pilot testing                                                                       |
 | `domainspec-interview-scope`        | Setup | Capture project context before first feature planning                                                     |
 | `domainspec-help`                   | —     | Show command reference and recommend next step (orchestrator-first guidance)                              |
@@ -748,6 +755,7 @@ All templates live in [templates/](templates/):
 | [observability.md](templates/observability.md)                 | Per-feature OTel metric obligations                   |
 | [OBSERVABILITY-REPORT.md](templates/OBSERVABILITY-REPORT.md)   | OTel audit output report template                     |
 | [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)             | End-to-end pipeline execution report                  |
+| [work-pack.md](templates/work-pack.md)                         | Plan-first execution manifest and wave/task status    |
 | [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)                 | Signal contract documentation schema                  |
 | [agent-runner.md](templates/agent-runner.md)                   | Self-hosted agent runner architecture                 |
 | [use-case.md](templates/use-case.md)                           | Use-case decomposition and boundaries                 |

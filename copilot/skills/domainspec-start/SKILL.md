@@ -18,6 +18,7 @@ Read first:
 - `domainspec/RELATIONSHIPS.md`
 
 Uses:
+
 - `.github/skills/domainspec-interview-scope/SKILL.md`
 - `.github/skills/domainspec-init/SKILL.md`
 - `domainspec/templates/project-overview.md`
@@ -25,9 +26,13 @@ Uses:
 - `domainspec/templates/project-decisions.md`
 - `domainspec/templates/hypotheses.md`
 - `domainspec/templates/experiment-candidates.md`
-</context>
+  </context>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read framework references and detect mode (`greenfield`, `brownfield`, `auto`).
 2. Delegate scoped discovery to `domainspec-interview-scope`.
    - `auto` must inspect the repository and choose mode.
@@ -56,12 +61,14 @@ Return:
 
 ```markdown
 ## DomainSpec Startpoint Summary
+
 - Mode selected: greenfield | brownfield
 - Gate verdict: PASS | BLOCK
 - Init status: skipped | completed
 - Decision blockers: <count>
 
 ### Artifacts
+
 - Project overview: <path>
 - Initial definitions: <path>
 - Project decisions: <path>
@@ -69,12 +76,15 @@ Return:
 - Experiment candidates: <path>
 
 ### Brownfield Scope Gates
+
 | Gate | Verdict | Notes |
-|---|---|---|
+| ---- | ------- | ----- |
 
 ### Recommended Next Command
+
 - <exact command with arguments>
 ```
+
 </output-contract>
 
 <authority-rule>

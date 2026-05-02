@@ -110,6 +110,10 @@ Enable when: project has `docs/signals/pipeline-signals.jsonl` and `domainspec/c
     </presets>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Read domainspec/templates/infra-architecture.md.
 3. Read domainspec/templates/slos.md.
@@ -192,11 +196,11 @@ b. Create infra/index.ts:
   m. Run `pulumi preview --stack dev` to validate IaC (dry run, no deploy).
   n. Run TypeScript compilation on infra/index.ts.
   o. Generate infra/setup.sh from domainspec/templates/setup.sh:
-     - Replace `{project-name}` with actual project name.
-     - Replace `{pulumi-project-name}` with Pulumi project name from Pulumi.yaml.
-     - Replace `{app-dir}` with /opt/{project-name}.
-     - Make executable: `chmod +x infra/setup.sh`.
-     - The script automates: SSH key gen, Pulumi stack init, config, `pulumi up`, cloud-init wait, file copy, secret generation, deploy user setup, and prints GitHub Secrets summary.
+  - Replace `{project-name}` with actual project name.
+  - Replace `{pulumi-project-name}` with Pulumi project name from Pulumi.yaml.
+  - Replace `{app-dir}` with /opt/{project-name}.
+  - Make executable: `chmod +x infra/setup.sh`.
+  - The script automates: SSH key gen, Pulumi stack init, config, `pulumi up`, cloud-init wait, file copy, secret generation, deploy user setup, and prints GitHub Secrets summary.
 
 ### Split VPS Scaffold (extends Single VPS:)
 

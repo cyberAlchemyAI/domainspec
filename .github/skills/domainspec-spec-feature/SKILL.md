@@ -21,10 +21,15 @@ Target location:
 </context>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Create or update SPEC.md and concept table.
 3. Generate relevant aspect files from templates.
 4. Add formal rules, formulas, transitions, and invariants where applicable.
-5. Validate cross-links, referenced field-name links, and concept ID naming.
-6. Summarize what is ready and what remains undefined.
+5. When introducing or changing gate-critical terms, sync canonical definitions first via `.github/skills/domainspec-definitions-governance/SKILL.md`.
+6. Validate cross-links, referenced field-name links, and concept ID naming.
+7. Summarize what is ready and what remains undefined.
 </process>

@@ -1,7 +1,7 @@
 ---
 name: domainspec-interview-scope
-description: 'Interview a greenfield or brownfield project to discover domain scope, inspect what is already implemented, and produce DomainSpec-ready project overview, definitions, project decisions, hypotheses, and experiment candidates.'
-argument-hint: '[greenfield|brownfield|auto] [project-or-feature-scope]'
+description: "Interview a greenfield or brownfield project to discover domain scope, inspect what is already implemented, and produce DomainSpec-ready project overview, definitions, project decisions, hypotheses, and experiment candidates."
+argument-hint: "[greenfield|brownfield|auto] [project-or-feature-scope]"
 agent: domainspec-interviewer
 allowed-tools: Read, Write, Glob, Grep, AskQuestions
 ---
@@ -29,6 +29,7 @@ Potential sources of evidence:
 - operator answers gathered during the interview
 
 Primary DomainSpec references:
+
 - `domainspec/CHANGELOG.md`
 - `domainspec/ARCHITECTURE.md`
 - `domainspec/TAXONOMY.md`
@@ -38,9 +39,13 @@ Primary DomainSpec references:
 - `domainspec/templates/project-decisions.md`
 - `domainspec/templates/hypotheses.md`
 - `domainspec/templates/experiment-candidates.md`
-</inputs>
+  </inputs>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read the DomainSpec references first.
 2. Detect mode.
    - `greenfield`: little or no implementation exists.

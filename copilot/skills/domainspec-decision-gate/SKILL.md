@@ -15,6 +15,7 @@ Framework constraints:
 - domainspec/CHANGELOG.md
 
 Feature inputs:
+
 - docs/features/{feature-name}/SPEC.md
 - docs/features/{feature-name}/interfaces.md
 - docs/features/{feature-name}/operations.md
@@ -23,11 +24,16 @@ Feature inputs:
 - docs/features/{feature-name}/STORIES.md (if present)
 
 Output artifact:
+
 - default and pipeline profile: `docs/features/{feature-name}/DECISIONS.md`
 - pilot profile: `docs/features/{feature-name}/PILOT-DECISIONS.md`
-</context>
+  </context>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read `domainspec/CHANGELOG.md` and active feature documents.
 2. Enumerate every unresolved decision with more than one viable option.
 3. Prepare concrete options with concise trade-offs for each decision.

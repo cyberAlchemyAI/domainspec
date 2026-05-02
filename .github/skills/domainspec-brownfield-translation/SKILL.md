@@ -29,6 +29,7 @@ Primary evidence sources:
 - tests and fixtures that reveal expected behavior
 
 DomainSpec references:
+
 - `domainspec/CHANGELOG.md`
 - `domainspec/ARCHITECTURE.md`
 - `domainspec/TAXONOMY.md`
@@ -45,9 +46,13 @@ DomainSpec references:
 - `domainspec/templates/initial-definitions.md`
 - `domainspec/templates/hypotheses.md`
 - `domainspec/templates/experiment-candidates.md`
-</inputs>
+  </inputs>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 ### Stage 1 - Research (always first)
 1. Read DomainSpec references before repository inspection.
 2. Perform brownfield evidence scan:
@@ -60,6 +65,7 @@ DomainSpec references:
 4. Ask targeted questions for missing intent or ambiguous behavior. Ask only what cannot be resolved from repository evidence.
 
 ### Stage 2 - Plan
+
 5. Write translation plan artifact with wave ordering and dependencies:
    - Wave A: project baseline and feature inventory
    - Wave B: per-feature as-is spec generation
@@ -68,6 +74,7 @@ DomainSpec references:
 6. Stop after this stage when `--plan-only` is provided.
 
 ### Stage 3 - Execute Translation
+
 7. Create or update project-level baseline artifacts:
    - `docs/PROJECT-OVERVIEW.md` (actual current state, not target state)
    - `docs/INITIAL-DEFINITIONS.md` (core vocabulary and bounded contexts)
@@ -94,11 +101,12 @@ Governance gaps include:
 - lifecycle breaks between spec, tests, implementation, and verification
 
 Ontology gaps include:
+
 - duplicate terms for the same concept
 - one term overloaded with multiple meanings
 - missing definitions for high-frequency concepts
 - inconsistent concept relationships across features
-</gap-taxonomy>
+  </gap-taxonomy>
 
 <quality-bar>
 - As-is first: do not rewrite behavior in docs to match a desired future state.
@@ -113,6 +121,7 @@ Return:
 
 ```markdown
 ## Brownfield Translation Summary
+
 - Scope: <scope>
 - Features discovered: <n>
 - Features translated: <n>
@@ -120,6 +129,7 @@ Return:
 - Translation status: audit-only | plan-only | execute
 
 ### Artifacts
+
 - Project overview: <path>
 - Initial definitions: <path>
 - Hypotheses: <path>
@@ -131,16 +141,20 @@ Return:
 - Alignment backlog: <path>
 
 ### Feature Coverage
+
 | Feature | Evidence status | Spec status | Notes |
-|---|---|---|---|
+| ------- | --------------- | ----------- | ----- |
 
 ### Highest-Risk Gaps
+
 1. <gap>
 2. <gap>
 
 ### Recommended Next Step
+
 - <one concrete action>
 ```
+
 </output-contract>
 
 <examples>

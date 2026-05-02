@@ -25,6 +25,10 @@ Targets:
   </context>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Parse concept tables from selected feature or all features.
 3. Update registry sections by meta-type.

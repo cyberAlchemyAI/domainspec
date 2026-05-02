@@ -40,6 +40,7 @@ Prerequisites:
 
 Created/updated by this skill (cumulative):
 
+- docs/features/{feature}/WORK-PACK.md
 - docs/features/{feature}/SPEC.md
 - docs/features/{feature}/domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, etc.
 - docs/features/{feature}/STORIES.md
@@ -65,20 +66,20 @@ Created/updated by this skill (cumulative):
 2. Check if docs/features/{feature}/ exists:
    - If exists → this is an **evolution** of an existing feature. Load SPEC.md and all aspect files.
    - If missing → this is a **new feature**. Ensure docs/ directory exists (run `domainspec-init` if needed).
-2a. Determine scope mode for this repository:
-    - Treat as brownfield when implementation directories such as `src/`, `apps/`, `backend/`, `frontend/`, or `services/` already exist.
-    - Treat as greenfield when repository is docs-first and implementation has not started.
-2b. Brownfield scope gate (hard gate):
-    - Required artifacts for brownfield execution:
-      - `docs/PROJECT-OVERVIEW.md`
-      - `docs/INITIAL-DEFINITIONS.md`
-      - `docs/PROJECT-DECISIONS.md`
-    - If any artifact is missing, return BLOCK and require `domainspec-start brownfield` (or `domainspec-start auto`) before pipeline execution.
-    - If `docs/PROJECT-DECISIONS.md` contains blocker-level unresolved decisions, return BLOCK and request closure before Step 1.
-2c. Validate governance baseline before feature execution:
-    - Preferred baseline file: `docs/shared/governance-baseline.md`.
-    - Compatibility fallback accepted: `docs/shared/cash-game-management-governance.md`.
-    - If neither file exists, return BLOCK and require `domainspec-init` (or copy `domainspec/templates/governance-baseline.md` manually) before continuing.
+     2a. Determine scope mode for this repository:
+   - Treat as brownfield when implementation directories such as `src/`, `apps/`, `backend/`, `frontend/`, or `services/` already exist.
+   - Treat as greenfield when repository is docs-first and implementation has not started.
+     2b. Brownfield scope gate (hard gate):
+   - Required artifacts for brownfield execution:
+     - `docs/PROJECT-OVERVIEW.md`
+     - `docs/INITIAL-DEFINITIONS.md`
+     - `docs/PROJECT-DECISIONS.md`
+   - If any artifact is missing, return BLOCK and require `domainspec-start brownfield` (or `domainspec-start auto`) before pipeline execution.
+   - If `docs/PROJECT-DECISIONS.md` contains blocker-level unresolved decisions, return BLOCK and request closure before Step 1.
+     2c. Validate governance baseline before feature execution:
+   - Preferred baseline file: `docs/shared/governance-baseline.md`.
+   - Compatibility fallback accepted: `docs/shared/cash-game-management-governance.md`.
+   - If neither file exists, return BLOCK and require `domainspec-init` (or copy `domainspec/templates/governance-baseline.md` manually) before continuing.
 3. If --dry-run, output the execution plan (which steps apply, which delegate skills) and stop.
 
 ## Step 1 — Plan
@@ -86,17 +87,45 @@ Created/updated by this skill (cumulative):
 4. Delegate to `domainspec-planner`:
    - For new features: ask clarifying questions about business objective, constraints, and acceptance criteria.
    - For existing features: load current docs and identify what needs to change.
-   - Output: execution plan with dependency-ordered tasks, complexity assessment, and identified risks.
-5. If complexity is medium/high, auto-select `gsd-phase` execution mode for task orchestration.
+   - Output: execution plan with dependency-ordered tasks, per-task complexity classification, identified risks, and wave decomposition.
+5. Resolve work-pack strategy:
+   - Stable entry artifact: `docs/features/{feature}/WORK-PACK.md`.
+   - Low complexity: work-pack optional; update if already present.
+   - Medium/high complexity: work-pack mandatory before any mutation step.
+   - If medium/high and missing, create `WORK-PACK.md` from `domainspec/templates/work-pack.md`.
+   - If work-pack grows (for example >3 tasks, >3 waves, or >250 lines), split into modular files under `docs/features/{feature}/work-pack/` and keep `WORK-PACK.md` as manifest.
+6. Set planner gate fields in `WORK-PACK.md` for medium/high execution:
+   - `plannerGateStatus: pass|block`
+   - `complexity: low|medium|high`
+   - `activePlanRef: <path>`
+   - `lastPlannedAt: <ISO-8601>`
+7. If complexity is high, auto-select `gsd-phase` execution mode for task orchestration unless user explicitly requests `native`.
+
+## Step 1a — Work-Pack Gate (hard gate)
+
+- For medium/high complexity, require `docs/features/{feature}/WORK-PACK.md` before mutation.
+- Require task-local planning entries (`work-pack/tasks/*.md`) containing at minimum:
+  - `## Gaps and Questions`
+  - `## Decision Lock`
+  - wave assignment metadata.
+- Cross-task blockers may be stored in `work-pack/shared/` and linked from manifest.
+- If required work-pack artifacts are missing or incomplete, return BLOCK and stop before Step 1b.
 
 ## Step 1b — Decision Gate (hard gate)
 
 - Load `docs/PROJECT-DECISIONS.md` first (if present) so feature-level decisions stay consistent with project-level constraints.
 - If Step 1 output includes unresolved multi-option decisions, delegate to `domainspec-decision-gate {feature} --profile pipeline`.
 - Required artifact for continuation: `docs/features/{feature}/DECISIONS.md`.
+- Mirror task-specific decision outcomes into `work-pack/tasks/*.md` `## Decision Lock` sections.
 - Re-run `domainspec-planner` after the decision artifact is created.
 - If unresolved decisions still remain after re-planning, return BLOCK and stop before Step 2.
 - If AskQuestions tooling is unavailable, collect equivalent decisions in plain conversation and write the artifact before continuing.
+
+## Step 1c — Planner Gate Revalidation (hard gate)
+
+- Before each mutation-capable stage (Steps 2–7d), revalidate planner gate from `WORK-PACK.md` when complexity is medium/high.
+- If `plannerGateStatus != pass`, return BLOCK and re-enter planning.
+- If plan is stale due scope change, update work-pack and decision lock before continuing.
 
 ## Step 2 — Spec
 
@@ -258,13 +287,15 @@ Created/updated by this skill (cumulative):
 
 ## Completion
 
-40. Return pipeline summary: - Feature: name, new or evolved - Artifacts created/updated (file paths by category: docs, backend, frontend, tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Signals emitted by source (session-epilogue, fast-observer, async-observer) - Next actions (if FLAG or BLOCK)
+40. Return pipeline summary: - Feature: name, new or evolved - Work-pack mode: single-file or split-module - Artifacts created/updated (file paths by category: planning/docs/backend/frontend/tests) - Test results: count passed / failed / pending - Build status: backend + frontend (if applicable) - UI audit verdict (if applicable, or "skipped") - Observability spec: instrument count, applicable rules, pillar-specific obligations (or "skipped") - Instrumentation: files modified, instruments added, compilation status (or "skipped") - OTel verification: coverage %, verdict (PASS/FLAG/BLOCK), change requests count (or "skipped") - Infra sync: prometheus.yml updated, alert rules generated/updated, validation status (or "skipped") - Verification verdict: PASS / FLAG / BLOCK with details - Signals emitted by source (session-epilogue, fast-observer, async-observer) - Next actions (if FLAG or BLOCK)
     </process>
 
 <error-handling>
 - Pre-flight failures (no domainspec/, no docs/) → BLOCK with setup instructions.
 - Brownfield scope gate failure (missing startpoint artifacts or blocked project decisions) → BLOCK with `domainspec-start` remediation.
 - Planner questions unanswered → cannot proceed, re-prompt user.
+- Missing required work-pack artifacts for medium/high complexity → BLOCK before Step 1b.
+- Planner gate not PASS before mutation stage → BLOCK and return to planning.
 - Decision gate unresolved or missing decisions artifact → BLOCK before step 2; do not generate specs, tests, or code.
 - Spec generation fails → BLOCK at step 2, report what is missing.
 - Test derivation finds incomplete docs → FLAG with specific gaps, continue to implement what is derivable.
@@ -279,6 +310,7 @@ Created/updated by this skill (cumulative):
 <authority-rule>
 - DomainSpec artifacts (SPEC, aspects, STORIES) define behavior — they are the source of truth.
 - This skill orchestrates the pipeline sequence — it never overrides delegate skill decisions.
+- Planner gate in `WORK-PACK.md` is authoritative for medium/high mutation progression.
 - When delegate skills ask interactive questions (planner, ui-architecture), those propagate to the user.
 - For brownfield scope, no downstream mutation step may run until the brownfield scope gate passes.
 - No downstream mutation step (SPEC, TEST-SPEC, implementation) may run while decision gate status is unresolved.

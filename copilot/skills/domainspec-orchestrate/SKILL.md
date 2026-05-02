@@ -29,11 +29,14 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
    - observability instrumentation -> `domainspec-instrument-otel <feature>`
    - observability verification -> `domainspec-otel-verify <feature>`
    - infrastructure architecture/sync -> `domainspec-infra-architecture` or `domainspec-infra-deploy <feature>`
-   - audits/readiness -> `domainspec-audit-alignment`, `domainspec-audit-layering`, or `domainspec-verify-feature <feature>`
+   - audits/readiness -> `domainspec-audit-alignment`, `domainspec-audit-layering`, `domainspec-verify-feature <feature>`, or `domainspec-readiness-gate <feature> [--profile ...]`
    - command guidance -> `domainspec-help`
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
-5. Return and run the routed command with resolved arguments.
-6. In responses, show both recommended orchestrator route and direct specialist command when useful, labeling direct use as advanced/internal.
+5. Planner-first enforcement for mutation-capable routes:
+   - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-implement`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegate execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
+   - Read-only guidance and verification-only commands may bypass planner preflight.
+6. Return and run the routed command with resolved arguments.
+7. In responses, show both recommended orchestrator route and direct specialist command when useful, labeling direct use as advanced/internal.
 </process>
 
 <routing-guardrails>

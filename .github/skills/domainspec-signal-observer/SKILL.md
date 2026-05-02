@@ -20,6 +20,10 @@ This skill is non-blocking and runs after session completion as part of Step 11 
 </context>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Load telemetry bundle (`--bundle`).
 2. Validate expected telemetry fields exist (ordered events, changed files, test chronology).
 3. Derive behavior-level signals:

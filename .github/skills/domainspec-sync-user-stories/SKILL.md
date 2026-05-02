@@ -19,11 +19,16 @@ Inputs:
 - docs/index/features-index.json (optional discovery)
 
 Output:
+
 - Updated capability-scoped stories and coverage matrix in `docs/features/{feature}/STORIES.md`
 - Updated `## Stories` link section in `docs/features/{feature}/SPEC.md` when missing
-</context>
+  </context>
 
 <process>
+0. Planner gate hard rollout (feature mutations):
+   - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
+   - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
+   - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load feature SPEC, STORIES (or create it), and all referenced aspect files.
 3. Ask focused clarification questions when actor, outcome, or acceptance behavior is ambiguous.
