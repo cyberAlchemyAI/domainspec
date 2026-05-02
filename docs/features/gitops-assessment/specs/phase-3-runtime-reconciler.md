@@ -1,17 +1,49 @@
 ---
-tags: [gitops, runtime-reconciler, phase-3, infrastructure, deploy, secrets]
+tags: [gitops, runtime-reconciler, phase-3, infrastructure, deploy, secrets, deferred-to-v3, vault-pilot-out-of-scope]
 node_type: spec
 layer: infrastructure, deploy
-status: draft
+# status: `deferred` is a non-template lifecycle state introduced for this feature.
+# The parent DISCOVERY.md (v0.2.0+) elevates `deferred` as an explicit state for
+# specs that are preserved as forward designs but excluded from v1 scope. See
+# the "Status: DEFERRED to v3" section below for the rationale and activation
+# triggers.
+status: deferred
 veracidade: high
 conviccao: medium
-version: 0.1.0
+version: 0.2.0
 last_updated: 2026-05-02
 parent_discovery: ../DISCOVERY.md
 depends_on: [phase-1-ci-substrate.md, phase-2-intent-compiled-split.md]
 ---
 
 # Phase 3 — Runtime Reconciler (VPS)
+
+## Status: DEFERRED to v3
+
+This spec is preserved as a forward design but is **not in scope for v1 of `gitops-assessment`**.
+
+**Reason for deferral.** The v1 target is the `/vault/` directory — a markdown knowledge graph with no runtime. There is no service to deploy, no compose stack to reconcile, no SLO to enforce. The runtime reconciler reactivates as v3 of this feature when the first hosted DomainSpec service ships (candidates: a vault query API / Information Keeper, an MCP server, the `domainspec-bot` GitHub App backend if self-hosted).
+
+**What stays valid in this spec.**
+- The systemd + git-sync + `docker compose up -d` reconciliation contract
+- The SOPS+age secrets approach
+- The acceptance criteria (click-ops drift reverted within one timer cycle, etc.)
+- The compose-target naming (infra/docker-compose.yml — no `.prod` suffix)
+- The ~55-95 LOC honesty about the reconciler size
+- The named rotation owner (`domainspec-reflect` for detection; human maintainer for execution)
+
+**What activates this spec.** Any of:
+1. A hosted query API for the vault ships (Information Keeper)
+2. The `domainspec-bot` from Phase 4 graduates from GitHub-hosted to self-hosted
+3. A user-facing DomainSpec service (Harness, etc.) needs continuous deployment
+
+**What this spec does NOT do in v1.**
+- No infra/ files are created
+- No SOPS bootstrap is performed
+- No VPS is provisioned
+- The drift-correction commit in Phase 1 does NOT touch INFRA-SETUP.md:484 (that line stays false until v3)
+
+When v3 activates, this spec graduates to active and the implementation phases (`infra/` files, systemd units, SOPS setup) execute as written below.
 
 ## Scope
 
@@ -327,53 +359,54 @@ SSHes to the droplet again; the reconciler owns it.
 
 ## Acceptance criteria
 
-Each criterion is independently checkable.
+Each criterion is independently checkable. **All criteria below are (v3) — they activate when this spec graduates from `deferred` to active per the "Status: DEFERRED to v3" section.**
 
-1. **GitOps loop is real.** Starting from a clean main checkout on the
+1. (v3) **GitOps loop is real.** Starting from a clean main checkout on the
    maintainer's laptop, the sequence (a) edit `infra/docker-compose.yml`
    to add a label or change a published port, (b) commit and push to
    `main`, (c) wait at most 90 seconds (60s timer + 30s pull/up margin)
    produces the changed configuration on `docker inspect <container>` on
    the droplet, with no SSH commands run by the maintainer between (b)
    and (c).
-2. **Click-ops drift is reverted.** SSH to the droplet (the only
+2. (v3) **Click-ops drift is reverted.** SSH to the droplet (the only
    permitted SSH outside bootstrap, and only for verification), run
    `docker stop <one of the running containers>`, exit. Within 60 seconds
    the container is running again with the same image digest.
-3. **Manual file edits are reverted.** SSH to the droplet, run
+3. (v3) **Manual file edits are reverted.** SSH to the droplet, run
    `echo BAD >> /opt/domainspec/infra/Caddyfile`, exit. Within 60 seconds
    either (a) the file matches `main` again (clean overwrite via FF
    pull), or (b) the reconciler is in `failed` state with a journald
    entry explaining the conflict — i.e. the drift is never silent.
-4. **Secret rotation runbook is exercised.** The maintainer can rotate a
+4. (v3) **Secret rotation runbook is exercised.** The maintainer can rotate a
    token following `docs/runbooks/secret-rotation.md` in **≤ 6 commands
    on their local machine** plus a single `git push`, with no SSH to the
    droplet. The "named owner" is `domainspec-reflect` for *detecting*
    that rotation is needed (per DISCOVERY §8) and the human maintainer
    for *executing* it; the runbook covers the human side.
-5. **No plaintext secret reaches git.** `git log -p --all -S 'dop_v1'`
+5. (v3) **No plaintext secret reaches git.** `git log -p --all -S 'dop_v1'`
    and `gitleaks detect --no-git --source .` both return empty. The
    pre-commit hook and the `pr-validate.yml` `gitleaks` step both block
    a deliberately-introduced plaintext secret in a smoke-test PR.
-6. **Failure is observable.** A deliberately-broken commit (invalid
+6. (v3) **Failure is observable.** A deliberately-broken commit (invalid
    compose YAML) merged to `main` produces a `failed` state on
    `reconciler.service` within 90s, a Prometheus alert within the alert
    rule's `for:` window, and **no** disruption to the previously-running
    containers (they keep serving the old configuration).
-7. **Lock prevents overlap.** `kill -STOP` on a running `reconcile.sh`
+7. (v3) **Lock prevents overlap.** `kill -STOP` on a running `reconcile.sh`
    process for two minutes does not produce a second concurrent run on
    the next two timer ticks; the lock acquisition fails cleanly and
    `reconciler.service` exits with a "lock held" log line.
-8. **DNS and TLS are end-to-end.** `curl -sI https://<configured-domain>/`
+8. (v3) **DNS and TLS are end-to-end.** `curl -sI https://<configured-domain>/`
    from any external host returns a 200 (or the configured Caddy
    landing-page status) with a valid Let's Encrypt certificate; this
    resolves through the Cloudflare-managed A record that Pulumi created.
-9. **Firewall is closed.** `nmap -p- <droplet-ip>` from outside the VPC
+9. (v3) **Firewall is closed.** `nmap -p- <droplet-ip>` from outside the VPC
    shows only ports 22, 80, 443 open. Prometheus (9090) and the OTel
    collector (4317/4318) are not reachable from the public internet.
 
 ## Out of scope
 
+- **Everything in this spec is out of scope for v1** — see "Status: DEFERRED to v3" above. The bullets that follow are the v3 out-of-scope list, preserved for when this spec graduates.
 - **Kubernetes.** Per DISCOVERY §1 ("No Kubernetes adoption"). No
   kubelet, no kubectl, no Helm, no kustomize. The deploy target is
   Compose on a single droplet.
@@ -406,6 +439,9 @@ Each criterion is independently checkable.
   reconciles to the reverted state.
 
 ## Open items
+
+- **v3 activation trigger — which of the three activation candidates fires first?**
+  *Recommendation:* Information Keeper, since it is the natural next vault-pilot extension. When the IK design lands, this spec bumps from `deferred` back to active and the implementation phases below execute as written. Track the activation decision against the three candidates listed in "Status: DEFERRED to v3" (Information Keeper, self-hosted `domainspec-bot`, user-facing DomainSpec service).
 
 - **Path-watcher unit (`reconciler-path.path`) — keep or drop?**
   *Recommendation:* keep, but make it the easiest thing to remove if it
