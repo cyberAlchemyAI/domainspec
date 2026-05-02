@@ -1,0 +1,353 @@
+{
+  "feature": "payment-processing",
+  "source_commit": "dea952a96154b0989bfa556affe215cbe4a57622",
+  "extraction_date": "2026-05-01",
+  "object_map": [
+    {
+      "l1": "payment.PaymentTransaction",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "shared.Money",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentMethod",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentStatus",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.ProcessPayment",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RefundPayment",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RetryPayment",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.FeeCalculation",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.MaxAmountRule",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.MethodAvailabilityRule",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RetryPolicy",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentInitiated",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentCompleted",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentFailed",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RefundCompleted",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.GetPaymentStatus",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.GetPaymentHistory",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentAPI",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentModule",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RequestToTransaction",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.TransactionToResponse",
+      "l2": [],
+      "evidence": null,
+      "confidence": "none"
+    }
+  ],
+  "morphism_map": [
+    {
+      "l1": "payment.ProcessPayment::produces::PaymentInitiated",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.MaxAmountRule::enforces::ProcessPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.MethodAvailabilityRule::enforces::ProcessPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.FeeCalculation::calculates::ProcessPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RetryPolicy::applies::RetryPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentInitiated::transitions::PaymentStatus",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentCompleted::transitions::PaymentStatus",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentFailed::transitions::PaymentStatus",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RefundCompleted::transitions::PaymentStatus",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentAPI::exposes::ProcessPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentAPI::exposes::RefundPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentAPI::exposes::GetPaymentStatus",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentAPI::exposes::GetPaymentHistory",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentModule::exposes::ProcessPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentModule::exposes::RefundPayment",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentModule::exposes::GetPaymentStatus",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentModule::exposes::GetPaymentHistory",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.RequestToTransaction::maps::PaymentTransaction",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.TransactionToResponse::maps::PaymentTransaction",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentTransaction::contains::Money(amount)",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.GetPaymentStatus::queries::PaymentTransaction",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.GetPaymentHistory::queries::PaymentTransaction",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentTransaction::emits::PaymentInitiated",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentTransaction::emits::PaymentCompleted",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentTransaction::emits::PaymentFailed",
+      "l2": [],
+      "confidence": "none"
+    },
+    {
+      "l1": "payment.PaymentTransaction::emits::RefundCompleted",
+      "l2": [],
+      "confidence": "none"
+    }
+  ],
+  "diagnostics": {
+    "objects_unmapped": [
+      "payment.PaymentTransaction",
+      "shared.Money",
+      "payment.PaymentMethod",
+      "payment.PaymentStatus",
+      "payment.ProcessPayment",
+      "payment.RefundPayment",
+      "payment.RetryPayment",
+      "payment.FeeCalculation",
+      "payment.MaxAmountRule",
+      "payment.MethodAvailabilityRule",
+      "payment.RetryPolicy",
+      "payment.PaymentInitiated",
+      "payment.PaymentCompleted",
+      "payment.PaymentFailed",
+      "payment.RefundCompleted",
+      "payment.GetPaymentStatus",
+      "payment.GetPaymentHistory",
+      "payment.PaymentAPI",
+      "payment.PaymentModule",
+      "payment.RequestToTransaction",
+      "payment.TransactionToResponse"
+    ],
+    "objects_orphan_l2": [],
+    "objects_dangling_anchor": [],
+    "objects_multi_mapped": [],
+    "morphisms_unwitnessed": {
+      "produces": [
+        "payment.ProcessPayment::produces::PaymentInitiated"
+      ],
+      "enforces": [
+        "payment.MaxAmountRule::enforces::ProcessPayment",
+        "payment.MethodAvailabilityRule::enforces::ProcessPayment"
+      ],
+      "calculates": [
+        "payment.FeeCalculation::calculates::ProcessPayment"
+      ],
+      "applies": [
+        "payment.RetryPolicy::applies::RetryPayment"
+      ],
+      "transitions": [
+        "payment.PaymentInitiated::transitions::PaymentStatus",
+        "payment.PaymentCompleted::transitions::PaymentStatus",
+        "payment.PaymentFailed::transitions::PaymentStatus",
+        "payment.RefundCompleted::transitions::PaymentStatus"
+      ],
+      "exposes": [
+        "payment.PaymentAPI::exposes::ProcessPayment",
+        "payment.PaymentAPI::exposes::RefundPayment",
+        "payment.PaymentAPI::exposes::GetPaymentStatus",
+        "payment.PaymentAPI::exposes::GetPaymentHistory",
+        "payment.PaymentModule::exposes::ProcessPayment",
+        "payment.PaymentModule::exposes::RefundPayment",
+        "payment.PaymentModule::exposes::GetPaymentStatus",
+        "payment.PaymentModule::exposes::GetPaymentHistory"
+      ],
+      "maps": [
+        "payment.RequestToTransaction::maps::PaymentTransaction",
+        "payment.TransactionToResponse::maps::PaymentTransaction"
+      ],
+      "contains": [
+        "payment.PaymentTransaction::contains::Money(amount)"
+      ],
+      "queries": [
+        "payment.GetPaymentStatus::queries::PaymentTransaction",
+        "payment.GetPaymentHistory::queries::PaymentTransaction"
+      ],
+      "emits": [
+        "payment.PaymentTransaction::emits::PaymentInitiated",
+        "payment.PaymentTransaction::emits::PaymentCompleted",
+        "payment.PaymentTransaction::emits::PaymentFailed",
+        "payment.PaymentTransaction::emits::RefundCompleted"
+      ]
+    },
+    "rel_type_coverage": {
+      "produces": 0.0,
+      "enforces": 0.0,
+      "calculates": 0.0,
+      "applies": 0.0,
+      "transitions": 0.0,
+      "exposes": 0.0,
+      "maps": 0.0,
+      "contains": 0.0,
+      "queries": 0.0,
+      "emits": 0.0
+    }
+  }
+}
