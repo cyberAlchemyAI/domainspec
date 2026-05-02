@@ -21,4 +21,4 @@ Scope: V1 Capability Atlas Board specification quality gate
 
 Wave 1 stability lock granted.
 
-Wave 2 authoring can start under the constraints captured in `tasks.en.md` and `decisions.en.md`.
+Wave 2 authoring can start under the constraints captured in `TASKS.md` and `DECISIONS.md`.

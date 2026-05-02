@@ -46,7 +46,7 @@ Existing V2 and V3 feature documents were loaded and preserved without mutation.
 | Agent delegations         | 0     | Direct execution in current feature docs context                                                                 |
 | Human questions asked     | 0     | Scope inferred from request and feature context                                                                  |
 | Files created             | 0     | Re-run used existing feature artifacts                                                                           |
-| Files modified            | 2     | `PIPELINE-REPORT.md` and `tasks.en.md` updated with rerun evidence                                               |
+| Files modified            | 2     | `PIPELINE-REPORT.md` and `TASKS.md` updated with rerun evidence                                                  |
 | Test suites run           | 0     | No runnable implementation test workspace is present in this project scope                                       |
 | Tests added (obligations) | 0     | Existing V1 obligations in `TEST-SPEC.md` were reused                                                            |
 
@@ -98,7 +98,7 @@ Final Verdict: FLAG (full lifecycle intent, implementation layers unavailable)
 | File                                                             | Action   | Notes                                                        |
 | ---------------------------------------------------------------- | -------- | ------------------------------------------------------------ |
 | `docs/features/knowledge-graph-visualization/PIPELINE-REPORT.md` | modified | Replaced test-only report with full-lifecycle rerun evidence |
-| `docs/features/knowledge-graph-visualization/tasks.en.md`        | modified | Added full-lifecycle rerun entry under execution log         |
+| `docs/features/knowledge-graph-visualization/TASKS.md`           | modified | Added full-lifecycle rerun entry under execution log         |
 
 ### Backend
 

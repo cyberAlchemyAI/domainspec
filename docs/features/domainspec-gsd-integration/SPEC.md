@@ -26,8 +26,8 @@ The objective is to combine DomainSpec correctness with GSD execution rigor, wit
 - [Operations](operations.md) — Bridge operation contracts
 - [Mappings](mappings.md) — Feature/phase and evidence mapping rules
 - [Workflows](workflows.md) — Delegated orchestration lifecycle and policy
-- [Tasks](tasks.en.md) — Ordered rollout tasks
-- [Decisions](decisions.en.md) — Confirmed and open design decisions
+- [Tasks](TASKS.md) — Ordered rollout tasks
+- [Decisions](DECISIONS.md) — Confirmed and open design decisions
 
 ## Cross-Feature Dependencies
 

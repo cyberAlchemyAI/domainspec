@@ -27,7 +27,10 @@ type CodeAnchor = {
 };
 
 const args = process.argv.slice(2);
-const outputPath = resolve(process.cwd(), getArg("--output") || "docs/registry.json");
+const outputPath = resolve(
+  process.cwd(),
+  getArg("--output") || "docs/registry.json",
+);
 
 const specs = findSpecFiles(resolve(process.cwd(), "docs/features"));
 const concepts = parseConcepts(specs);
@@ -52,7 +55,7 @@ const unanchoredConcepts = concepts.filter((c) => c.codeAnchors.length === 0);
 const registry = {
   meta: {
     generatedAt: new Date().toISOString(),
-    sourceOfTruth: "docs/features/**/(SPEC.md|spec.en.md)",
+    sourceOfTruth: "docs/features/**/SPEC.md",
     domainspecVersion: getDomainspecVersion(),
   },
   concepts,
@@ -133,7 +136,9 @@ function scanCodeAnchors(roots: string[]): CodeAnchor[] {
   const anchors: CodeAnchor[] = [];
   for (const root of roots) {
     if (!existsSync(root)) continue;
-    const files = walk(root).filter((p) => p.endsWith(".ts") || p.endsWith(".tsx"));
+    const files = walk(root).filter(
+      (p) => p.endsWith(".ts") || p.endsWith(".tsx"),
+    );
     for (const filePath of files) {
       const raw = readFileSync(filePath, "utf-8");
       const lines = raw.split("\n");
@@ -165,7 +170,9 @@ function scanCodeAnchors(roots: string[]): CodeAnchor[] {
 function detectSymbol(lines: string[], start: number): string {
   for (let i = start; i < Math.min(lines.length, start + 8); i += 1) {
     const line = lines[i] || "";
-    const m = line.match(/(?:function|class|type|interface|const)\s+([A-Za-z0-9_]+)/);
+    const m = line.match(
+      /(?:function|class|type|interface|const)\s+([A-Za-z0-9_]+)/,
+    );
     if (m?.[1]) return m[1];
   }
   return "unknown";
@@ -201,7 +208,7 @@ function featureFromPath(path: string): string {
 function findSpecFiles(featuresRoot: string): string[] {
   if (!existsSync(featuresRoot)) return [];
   const all = walk(featuresRoot);
-  return all.filter((path) => path.endsWith("/SPEC.md") || path.endsWith("/spec.en.md"));
+  return all.filter((path) => path.endsWith("/SPEC.md"));
 }
 
 function getDomainspecVersion(): string {

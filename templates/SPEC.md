@@ -104,6 +104,6 @@ See [Changelog](CHANGELOG.md) for a dated record of domain-level changes to this
 
 ## References
 
-- [Implementation tasks](tasks.en.md)
-- [Architecture decisions](decisions.en.md)
+- [Implementation tasks](TASKS.md)
+- [Architecture decisions](DECISIONS.md)
 - [Test specification](TEST-SPEC.md)

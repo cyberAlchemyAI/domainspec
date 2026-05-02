@@ -24,7 +24,7 @@ Required existing artifacts (already present):
 - `STORIES.md`
 - `TEST-SPEC.md`
 - `DECISIONS.md`
-- `decisions.en.md`
+- `DECISIONS.md`
 - `capabilities/v1-capability-atlas-board.md`
 - `PIPELINE-WAVE-EXECUTION-PLAN.md`
 
@@ -62,7 +62,7 @@ Objective:
 Inputs:
 
 - `DECISIONS.md`
-- `decisions.en.md`
+- `DECISIONS.md`
 - `docs/shared/governance-baseline.md`
 - `capabilities/v1-capability-atlas-board.md`
 - `queries.md`

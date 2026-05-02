@@ -32,4 +32,4 @@ Validation criteria applied:
 
 Wave 2 semantic lock granted.
 
-Wave 3 authoring can start under `tasks.en.md` constraints.
+Wave 3 authoring can start under `TASKS.md` constraints.

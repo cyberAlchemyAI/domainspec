@@ -21,7 +21,8 @@ type Signal = {
 
 const args = process.argv.slice(2);
 const feature = getArg("--feature") || "cross-feature";
-const session = getArg("--session") || `detector-${new Date().toISOString().slice(0, 10)}`;
+const session =
+  getArg("--session") || `detector-${new Date().toISOString().slice(0, 10)}`;
 const modeArg = getArg("--mode") || "audit";
 const sourceArg = getArg("--source") || "ci-detector";
 const output = resolve(
@@ -35,7 +36,8 @@ const pipelineMode: Signal["pipelineMode"] =
   modeArg === "new" || modeArg === "evolution" || modeArg === "audit"
     ? modeArg
     : "audit";
-const source: Signal["source"] = sourceArg === "fast-observer" ? "fast-observer" : "ci-detector";
+const source: Signal["source"] =
+  sourceArg === "fast-observer" ? "fast-observer" : "ci-detector";
 
 const domainspecVersion = getDomainspecVersion();
 const changedFiles = getChangedFiles(range);
@@ -67,10 +69,24 @@ if (specFile && existsSync(specFile)) {
   }
 }
 
-const todoSignals = detectTodoSignals(changedFiles, feature, session, domainspecVersion, pipelineMode, source);
+const todoSignals = detectTodoSignals(
+  changedFiles,
+  feature,
+  session,
+  domainspecVersion,
+  pipelineMode,
+  source,
+);
 signals.push(...todoSignals);
 
-const scopeSignals = detectScopeDrift(changedFiles, feature, session, domainspecVersion, pipelineMode, source);
+const scopeSignals = detectScopeDrift(
+  changedFiles,
+  feature,
+  session,
+  domainspecVersion,
+  pipelineMode,
+  source,
+);
 signals.push(...scopeSignals);
 
 if (signals.length === 0) {
@@ -84,11 +100,18 @@ if (dryRun) {
 }
 
 appendSignals(output, signals);
-console.log(`Appended ${signals.length} detected signal(s) to ${toRelative(output)}`);
+console.log(
+  `Appended ${signals.length} detected signal(s) to ${toRelative(output)}`,
+);
 
-function detectMissingConceptAnchors(featureId: string, specPath: string): string[] {
+function detectMissingConceptAnchors(
+  featureId: string,
+  specPath: string,
+): string[] {
   const raw = readFileSync(specPath, "utf-8");
-  const conceptIds = [...raw.matchAll(/\|\s*\[[^\]]+\]\([^\)]*\)\s*\|\s*([^|]+)\|/g)]
+  const conceptIds = [
+    ...raw.matchAll(/\|\s*\[[^\]]+\]\([^\)]*\)\s*\|\s*([^|]+)\|/g),
+  ]
     .map((m) => m[1]?.trim() || "")
     .filter((id) => id.startsWith(`${featureId}.`));
 
@@ -158,7 +181,10 @@ function detectScopeDrift(
   ];
 
   const drifts = files.filter(
-    (f) => !allowedFragments.some((fragment) => f.replace(/\\/g, "/").includes(fragment)),
+    (f) =>
+      !allowedFragments.some((fragment) =>
+        f.replace(/\\/g, "/").includes(fragment),
+      ),
   );
 
   if (drifts.length === 0) return [];
@@ -209,7 +235,6 @@ function getChangedFiles(gitRange: string): string[] {
 function resolveFeatureSpec(featureId: string): string | null {
   const candidates = [
     resolve(process.cwd(), `docs/features/${featureId}/SPEC.md`),
-    resolve(process.cwd(), `docs/features/${featureId}/spec.en.md`),
   ];
   for (const candidate of candidates) {
     if (existsSync(candidate)) return candidate;
@@ -225,7 +250,9 @@ function readCodeCorpus(): string {
 
   let corpus = "";
   for (const root of roots) {
-    const text = execOrEmpty(`rg --no-heading --line-number --glob '*.ts' '.' ${root}`);
+    const text = execOrEmpty(
+      `rg --no-heading --line-number --glob '*.ts' '.' ${root}`,
+    );
     corpus += text + "\n";
   }
   return corpus;
@@ -249,7 +276,10 @@ function safeRead(path: string): string {
 
 function execOrEmpty(command: string): string {
   try {
-    return execSync(command, { encoding: "utf-8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+    return execSync(command, {
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "pipe"],
+    }).trim();
   } catch {
     return "";
   }

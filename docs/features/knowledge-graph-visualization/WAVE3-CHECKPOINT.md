@@ -15,7 +15,7 @@ Scope: V3 Dependency Matrix + Trace Storyboard specification quality gate
 
 1. Score formula and weights documented in [ComputeDependencyRiskScore](operations.md#computedependencyriskscore).
 2. Threshold mapping documented in [DependencyRiskState](states.md#dependencyriskstate).
-3. Governance decision lock recorded in [decisions.en.md](decisions.en.md).
+3. Governance decision lock recorded in [DECISIONS.md](DECISIONS.md).
 
 ## End-to-End Traceability Evidence
 

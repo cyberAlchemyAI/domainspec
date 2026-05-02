@@ -220,8 +220,8 @@ graph TD
 - [V2 Capability](capabilities/v2-relationship-constellation-canvas.md) - Analysis-first graph interaction contract
 - [V3 Capability](capabilities/v3-dependency-matrix-trace-storyboard.md) - Governance-first matrix and storyboard contract
 - [Stories](STORIES.md) - Acceptance scenarios and coverage matrix
-- [Decisions](decisions.en.md) - Confirmed and open Wave 1, Wave 2, and Wave 3 choices
-- [Tasks](tasks.en.md) - Wave execution plan
+- [Decisions](DECISIONS.md) - Confirmed and open Wave 1, Wave 2, and Wave 3 choices
+- [Tasks](TASKS.md) - Wave execution plan
 
 ## Cross-Feature Dependencies
 
@@ -247,10 +247,10 @@ See [STORIES.md](STORIES.md) for V1, V2, and V3 user stories and acceptance chec
 
 ## References
 
-- [Wave plan](tasks.en.md)
+- [Wave plan](TASKS.md)
 - [Wave 1 checkpoint](WAVE1-CHECKPOINT.md)
 - [Wave 2 checkpoint](WAVE2-CHECKPOINT.md)
 - [Wave 3 checkpoint](WAVE3-CHECKPOINT.md)
 - [Test specification](TEST-SPEC.md)
 - [Pipeline report](PIPELINE-REPORT.md)
-- [Decisions](decisions.en.md)
+- [Decisions](DECISIONS.md)

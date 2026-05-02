@@ -23,7 +23,7 @@ Operational execution playbook:
    - V1 owns comprehension and navigation contracts.
    - V2 owns graph analysis and multi-hop tracing contracts.
    - V3 owns dependency governance and risk contracts.
-4. Record unresolved choices in `decisions.en.md` before mutating aspect docs.
+4. Record unresolved choices in `DECISIONS.md` before mutating aspect docs.
 
 ## Wave 1: V1 Spec (Capability Atlas Board)
 
@@ -69,7 +69,7 @@ Primary users: new developers, product stakeholders, operators.
    - Drill-down behavior
    - Cross-feature preview behavior
 7. Author `STORIES.md` and ensure each story maps to at least one V1 concept and one query.
-8. Add decision records in `decisions.en.md` for naming and edge-label UI aliases.
+8. Add decision records in `DECISIONS.md` for naming and edge-label UI aliases.
 
 ## Wave 1 Review Checkpoint
 
@@ -126,7 +126,7 @@ Primary users: architects, senior engineers, spec maintainers.
    - Edge-family lenses
    - Analyst drill-down flows
 7. Extend `STORIES.md` with analyst scenarios and acceptance checks.
-8. Update `decisions.en.md` for path-ranking policy and depth limits.
+8. Update `DECISIONS.md` for path-ranking policy and depth limits.
 
 ## Wave 2 Review Checkpoint
 
@@ -185,7 +185,7 @@ Primary users: governance leads, release managers, risk owners.
    - Storyboard trace evidence model
    - Risk triage interactions
 8. Extend `STORIES.md` with governance and release-readiness scenarios.
-9. Update `decisions.en.md` with approved scoring formula and override policy.
+9. Update `DECISIONS.md` with approved scoring formula and override policy.
 
 ## Wave 3 Review Checkpoint
 
@@ -235,7 +235,7 @@ Produced artifacts:
 - `interfaces.md`
 - `mappings.md`
 - `STORIES.md`
-- `decisions.en.md`
+- `DECISIONS.md`
 - `capabilities/v1-capability-atlas-board.md`
 - `WAVE1-CHECKPOINT.md`
 
@@ -258,7 +258,7 @@ Produced artifacts:
 - `queries.md` (extended with V2 analysis queries)
 - `mappings.md` (extended with V2 projection mappings)
 - `STORIES.md` (extended with V2 analyst stories)
-- `decisions.en.md` (updated with V2 policy decisions)
+- `DECISIONS.md` (updated with V2 policy decisions)
 - `WAVE2-CHECKPOINT.md`
 
 Checkpoint result:
@@ -284,7 +284,7 @@ Produced artifacts:
 - `domain.md` (extended with feature-pair impact and exception concepts)
 - `SPEC.md` (extended for V3 capability and concept registry)
 - `STORIES.md` (extended with V3 governance scenarios)
-- `decisions.en.md` (updated with V3 formula and override policy)
+- `DECISIONS.md` (updated with V3 formula and override policy)
 - `WAVE3-CHECKPOINT.md`
 
 Checkpoint result:

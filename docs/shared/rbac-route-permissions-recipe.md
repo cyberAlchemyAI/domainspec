@@ -39,7 +39,7 @@ Wildcards can be supported by implementation, for example:
 
 3. In `queries.md`, include authorization actor constraints for read actions.
 
-4. In `tasks.en.md`, include implementation tasks for:
+4. In `TASKS.md`, include implementation tasks for:
 
 - permission middleware wiring
 - route-to-permission mapping
