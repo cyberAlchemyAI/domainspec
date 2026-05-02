@@ -1,0 +1,412 @@
+{
+  "schema_version": "1.1.0",
+  "last_updated": "2026-03-26T12:00:00-03:00",
+  "last_updated_by": "UI Evolution Agent (MR-002 gen_019_a + gen_019_b synthesis)",
+  "generations": [
+    {
+      "id": "gen_019_a_exploit_focus_density",
+      "title": "Radical Focus II",
+      "created_at": "2026-03-26T12:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": "mr-002-2026-03-26",
+      "aesthetic_references": ["Bloomberg Terminal", "Dark Sepia", "Gen 010 Radical Focus"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_019_b_explore_horizontal_chronicle",
+      "title": "Horizontal Chronicle",
+      "created_at": "2026-03-26T12:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": "mr-002-2026-03-26",
+      "aesthetic_references": ["Archival Broadsheet", "Cartographic Grid", "Le Monde", "Muriel Cooper MIT Media Lab"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_018_b_explore_signal_noise",
+      "title": "Signal/Noise",
+      "created_at": "2026-03-25T20:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": "mr-001-2026-03-25",
+      "aesthetic_references": ["NOAA Emergency Broadcast", "Police Dispatch Terminal", "Le Monde", "Phosphor Terminal"],
+      "trait_scores": {
+        "editorial_density": 1.0, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 1,
+      "fitness_delta": -1.77
+    },
+    {
+      "id": "gen_018_a_exploit_cold_slate",
+      "title": "Cold Slate",
+      "created_at": "2026-03-25T20:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": "mr-001-2026-03-25",
+      "aesthetic_references": ["Bloomberg Terminal", "Swiss Design System", "Cold War Intel Doc"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 3.0
+      },
+      "vote_count": 2,
+      "fitness_delta": 0.23
+    },
+    {
+      "id": "gen_017_a_focused_warmth",
+      "title": "Focused Warmth",
+      "created_at": "2026-03-25T17:30:00-03:00",
+      "type": "explore",
+      "source_mutation_request": "mr-001-2026-03-25",
+      "aesthetic_references": ["Bloomberg Terminal", "Dark Sepia", "Gen 010 Radical Focus"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_016_b_exploit_synthesis",
+      "title": "Swiss Cyber-Grid",
+      "created_at": "2026-03-25T13:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": ["Swiss Grid", "Cybernetics", "Solarpunk"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": 2.0, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 1.0
+      },
+      "vote_count": 2,
+      "fitness_delta": -1.77
+    },
+    {
+      "id": "gen_016_a_explore_synthesis",
+      "title": "Glass-Brutalism",
+      "created_at": "2026-03-25T13:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": ["Brutalism", "Glassmorphism"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": 1.0, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 1,
+      "fitness_delta": -1.77
+    },
+    {
+      "id": "gen_015_b_exploit_terminal",
+      "title": "Dense Terminal",
+      "created_at": "2026-03-25T04:10:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": ["Cyber-Terminal Split-Pane"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 2.67
+      },
+      "vote_count": 3,
+      "fitness_delta": -0.10
+    },
+    {
+      "id": "gen_015_a_explore_ambient",
+      "title": "Ambient Discovery",
+      "created_at": "2026-03-25T04:10:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": ["Deep Vault Ambient Mode"],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 2.0
+      },
+      "vote_count": 1,
+      "fitness_delta": -0.77
+    },
+    {
+      "id": "gen_014_a_exploit_dynamic",
+      "title": "Dynamic Feed Injection",
+      "created_at": "2026-03-25T01:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": 1.0, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 1,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_014_b_explore_horizontal",
+      "title": "Horizontal Timeline",
+      "created_at": "2026-03-25T01:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 5.0
+      },
+      "vote_count": 1,
+      "fitness_delta": 2.23
+    },
+    {
+      "id": "gen_013_a_responsive_news",
+      "title": "Kinetic Print UI",
+      "created_at": "2026-03-24T22:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 1.0
+      },
+      "vote_count": 1,
+      "fitness_delta": -1.77
+    },
+    {
+      "id": "gen_012_a_clarity",
+      "title": "Low Entropy UI",
+      "created_at": "2026-03-24T20:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_012_b_entropy",
+      "title": "Data-Dense Eval",
+      "created_at": "2026-03-24T20:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_011_a_exploit",
+      "title": "Solarpunk Refined",
+      "created_at": "2026-03-24T18:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 3.5
+      },
+      "vote_count": 2,
+      "fitness_delta": 0.73
+    },
+    {
+      "id": "gen_011_b_explore",
+      "title": "Cyber-Terminal",
+      "created_at": "2026-03-24T18:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_010_exploit_solarpunk",
+      "title": "Hidden Drawers",
+      "created_at": "2026-03-24T16:00:00-03:00",
+      "type": "exploit",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_010_explore_focus",
+      "title": "Radical Focus",
+      "created_at": "2026-03-24T16:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": 4.0
+      },
+      "vote_count": 1,
+      "fitness_delta": 1.23
+    },
+    {
+      "id": "gen_009_a_brutalist",
+      "title": "Brutalist",
+      "created_at": "2026-03-24T14:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_009_b_editorial",
+      "title": "Editorial",
+      "created_at": "2026-03-24T14:00:00-03:00",
+      "type": "explore",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "gen_008_solarpunk_complete",
+      "title": "Solarpunk Dusk",
+      "created_at": "2026-03-24T12:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "../mockups/a_dark_sepia",
+      "title": "Dark Sepia",
+      "created_at": "2026-03-20T10:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "../mockups/b_swiss_minimalism",
+      "title": "Swiss Minimalism",
+      "created_at": "2026-03-20T10:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "../mockups/c_terminal_green",
+      "title": "Terminal Green",
+      "created_at": "2026-03-20T10:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "../mockups/d_brazilian_modernist",
+      "title": "BR Modernist",
+      "created_at": "2026-03-20T10:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "../mockups/e_futuristic_context",
+      "title": "Futuristic Context",
+      "created_at": "2026-03-20T10:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    },
+    {
+      "id": "../mockups/5_amazonia_solarpunk",
+      "title": "Amazonia Solarpunk",
+      "created_at": "2026-03-20T10:00:00-03:00",
+      "type": "fossil",
+      "source_mutation_request": null,
+      "aesthetic_references": [],
+      "trait_scores": {
+        "editorial_density": null, "structure": null, "tone": null, "form": null,
+        "topology": null, "visual_entropy": null, "interaction_mechanics": null,
+        "aesthetics": null, "global_fitness": null
+      },
+      "vote_count": 0,
+      "fitness_delta": null
+    }
+  ]
+}

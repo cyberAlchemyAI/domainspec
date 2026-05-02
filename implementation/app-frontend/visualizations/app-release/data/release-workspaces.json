@@ -1,0 +1,877 @@
+{
+  "workspaces": {
+    "workspace-smoke-1393846a": {
+      "workspaceId": "workspace-smoke-1393846a",
+      "title": "Smoke",
+      "scopeMode": "greenfield-only",
+      "runtimeMode": "local-only",
+      "graphPriorityMode": "graph-first",
+      "status": "projected",
+      "activeDomainMapId": "domain-map-workspace-smoke-1393846a",
+      "selectedPrototypeVariantId": null,
+      "activePlaybackSessionId": null,
+      "interviewTurns": [
+        {
+          "turnId": "turn-7197c679",
+          "turnText": "We need pricing engine and partner onboarding. Maybe approval differs.",
+          "actorRole": "Operator",
+          "createdAt": "2026-04-28T21:52:09.481Z",
+          "evidenceLinks": [
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-7197c679",
+              "confidence": 0.81,
+              "conceptLabel": "Maybe"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-7197c679",
+              "confidence": 0.81,
+              "conceptLabel": "Pricing"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-7197c679",
+              "confidence": 0.81,
+              "conceptLabel": "Engine"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-7197c679",
+              "confidence": 0.81,
+              "conceptLabel": "Partner"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-7197c679",
+              "confidence": 0.81,
+              "conceptLabel": "Onboarding"
+            }
+          ],
+          "ambiguityIds": [
+            "amb-7c65575f"
+          ]
+        }
+      ],
+      "governanceQueue": [],
+      "playbackSessions": [],
+      "events": [
+        {
+          "eventId": "b4a04a99-879e-4d12-9b2f-47bbe39af62e",
+          "type": "WorkspaceInitialized",
+          "workspaceId": "workspace-smoke-1393846a",
+          "occurredAt": "2026-04-28T21:52:09.012Z",
+          "payload": {
+            "workspaceId": "workspace-smoke-1393846a",
+            "scopeMode": "greenfield-only",
+            "runtimeMode": "local-only",
+            "graphPriorityMode": "graph-first"
+          }
+        },
+        {
+          "eventId": "ab0d691a-528e-4045-8db8-40b63b0f7877",
+          "type": "ProjectionRefreshed",
+          "workspaceId": "workspace-smoke-1393846a",
+          "occurredAt": "2026-04-28T21:52:09.490Z",
+          "payload": {
+            "workspaceId": "workspace-smoke-1393846a",
+            "nodeCount": 6,
+            "edgeCount": 9,
+            "unresolvedAmbiguityCount": 1,
+            "projectionReason": "smoke"
+          }
+        }
+      ],
+      "prototypeVariants": [
+        {
+          "prototypeVariantId": "variant-signal-atlas-workspace-smoke-1393846a",
+          "workspaceId": "workspace-smoke-1393846a",
+          "label": "Signal Atlas",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Dense graph-first workspace with governance overlays and evidence-first inspection.",
+          "summary": "Dense graph-first workspace with governance overlays and evidence-first inspection. Current graph: 6 nodes, 1 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-operator-briefing-workspace-smoke-1393846a",
+          "workspaceId": "workspace-smoke-1393846a",
+          "label": "Operator Briefing",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders.",
+          "summary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders. Current graph: 6 nodes, 1 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-prototype-lab-workspace-smoke-1393846a",
+          "workspaceId": "workspace-smoke-1393846a",
+          "label": "Prototype Lab",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Presentation-led direction that keeps prototype selection and release narrative in view.",
+          "summary": "Presentation-led direction that keeps prototype selection and release narrative in view. Current graph: 6 nodes, 1 open ambiguities."
+        }
+      ],
+      "domainMap": {
+        "domainMapId": "domain-map-workspace-smoke-1393846a",
+        "workspaceId": "workspace-smoke-1393846a",
+        "nodeCount": 6,
+        "edgeCount": 9,
+        "evidenceTurnCount": 1,
+        "unresolvedAmbiguityCount": 1,
+        "nodes": [
+          {
+            "id": "role-operator",
+            "label": "Operator",
+            "type": "role",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ],
+            "metadata": {
+              "actorRole": "Operator"
+            }
+          },
+          {
+            "id": "concept-maybe",
+            "label": "Maybe",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-pricing",
+            "label": "Pricing",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-engine",
+            "label": "Engine",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-partner",
+            "label": "Partner",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-onboarding",
+            "label": "Onboarding",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ],
+            "metadata": {}
+          }
+        ],
+        "links": [
+          {
+            "id": "role-operator:mentions:concept-maybe",
+            "source": "role-operator",
+            "target": "concept-maybe",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "role-operator:mentions:concept-pricing",
+            "source": "role-operator",
+            "target": "concept-pricing",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "role-operator:mentions:concept-engine",
+            "source": "role-operator",
+            "target": "concept-engine",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "role-operator:mentions:concept-partner",
+            "source": "role-operator",
+            "target": "concept-partner",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "role-operator:mentions:concept-onboarding",
+            "source": "role-operator",
+            "target": "concept-onboarding",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "concept-maybe:relates-to:concept-pricing",
+            "source": "concept-maybe",
+            "target": "concept-pricing",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "concept-pricing:relates-to:concept-engine",
+            "source": "concept-pricing",
+            "target": "concept-engine",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "concept-engine:relates-to:concept-partner",
+            "source": "concept-engine",
+            "target": "concept-partner",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          },
+          {
+            "id": "concept-partner:relates-to:concept-onboarding",
+            "source": "concept-partner",
+            "target": "concept-onboarding",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-7197c679"
+            ]
+          }
+        ],
+        "ambiguities": [
+          {
+            "id": "amb-7c65575f",
+            "summary": "Maybe approval differs",
+            "actorRole": "Operator",
+            "sourceTurnId": "turn-7197c679",
+            "status": "open"
+          }
+        ]
+      }
+    },
+    "workspace-fullsmoke-d895f613": {
+      "workspaceId": "workspace-fullsmoke-d895f613",
+      "title": "FullSmoke",
+      "scopeMode": "greenfield-only",
+      "runtimeMode": "local-only",
+      "graphPriorityMode": "graph-first",
+      "status": "review-ready",
+      "activeDomainMapId": "domain-map-workspace-fullsmoke-d895f613",
+      "selectedPrototypeVariantId": null,
+      "activePlaybackSessionId": null,
+      "interviewTurns": [
+        {
+          "turnId": "turn-0dcef15d",
+          "turnText": "We need pricing engine, partner onboarding. Maybe approval differs.",
+          "actorRole": "Stakeholder",
+          "createdAt": "2026-04-28T21:54:00.166Z",
+          "evidenceLinks": [
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-0dcef15d",
+              "confidence": 0.81,
+              "conceptLabel": "Maybe"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-0dcef15d",
+              "confidence": 0.81,
+              "conceptLabel": "Pricing"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-0dcef15d",
+              "confidence": 0.81,
+              "conceptLabel": "Engine"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-0dcef15d",
+              "confidence": 0.81,
+              "conceptLabel": "Partner"
+            },
+            {
+              "sourceType": "interview-turn",
+              "sourceRef": "turn-0dcef15d",
+              "confidence": 0.81,
+              "conceptLabel": "Onboarding"
+            }
+          ],
+          "ambiguityIds": [
+            "amb-1bf09e04"
+          ]
+        }
+      ],
+      "governanceQueue": [
+        {
+          "queueItemId": "gov-amb-1bf09e04",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "title": "Resolve ambiguity: Maybe approval differs",
+          "rationale": "This ambiguity blocks land first release because the evidence remains unresolved from Stakeholder.",
+          "priorityScore": 0.78,
+          "ownerRole": "Stakeholder",
+          "status": "open"
+        },
+        {
+          "queueItemId": "gov-workspace-fullsmoke-d895f613-prototype",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "title": "Select a prototype direction",
+          "rationale": "Prototype selection is still open, so the release narrative for land first release is not locked.",
+          "priorityScore": 0.48,
+          "ownerRole": "Design operator",
+          "status": "open"
+        }
+      ],
+      "playbackSessions": [],
+      "events": [
+        {
+          "eventId": "8d85acb2-f529-40d1-afa4-2e43e9c69cf8",
+          "type": "WorkspaceInitialized",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "occurredAt": "2026-04-28T21:54:00.091Z",
+          "payload": {
+            "workspaceId": "workspace-fullsmoke-d895f613",
+            "scopeMode": "greenfield-only",
+            "runtimeMode": "local-only",
+            "graphPriorityMode": "graph-first"
+          }
+        },
+        {
+          "eventId": "a59ac5b7-5c47-42c8-800c-8d7db7f03006",
+          "type": "ProjectionRefreshed",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "occurredAt": "2026-04-28T21:54:00.174Z",
+          "payload": {
+            "workspaceId": "workspace-fullsmoke-d895f613",
+            "nodeCount": 6,
+            "edgeCount": 9,
+            "unresolvedAmbiguityCount": 1,
+            "projectionReason": "smoke"
+          }
+        },
+        {
+          "eventId": "ab5fafa1-600d-4574-af04-8ce75b6baf11",
+          "type": "GovernanceQueueReprioritized",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "occurredAt": "2026-04-28T21:54:00.182Z",
+          "payload": {
+            "workspaceId": "workspace-fullsmoke-d895f613",
+            "topQueueItemId": "gov-amb-1bf09e04",
+            "topPriorityScore": 0.78
+          }
+        }
+      ],
+      "prototypeVariants": [
+        {
+          "prototypeVariantId": "variant-signal-atlas-workspace-fullsmoke-d895f613",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "label": "Signal Atlas",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Dense graph-first workspace with governance overlays and evidence-first inspection.",
+          "summary": "Dense graph-first workspace with governance overlays and evidence-first inspection. Current graph: 6 nodes, 1 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-operator-briefing-workspace-fullsmoke-d895f613",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "label": "Operator Briefing",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders.",
+          "summary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders. Current graph: 6 nodes, 1 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-prototype-lab-workspace-fullsmoke-d895f613",
+          "workspaceId": "workspace-fullsmoke-d895f613",
+          "label": "Prototype Lab",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Presentation-led direction that keeps prototype selection and release narrative in view.",
+          "summary": "Presentation-led direction that keeps prototype selection and release narrative in view. Current graph: 6 nodes, 1 open ambiguities."
+        }
+      ],
+      "domainMap": {
+        "domainMapId": "domain-map-workspace-fullsmoke-d895f613",
+        "workspaceId": "workspace-fullsmoke-d895f613",
+        "nodeCount": 6,
+        "edgeCount": 9,
+        "evidenceTurnCount": 1,
+        "unresolvedAmbiguityCount": 1,
+        "nodes": [
+          {
+            "id": "role-stakeholder",
+            "label": "Stakeholder",
+            "type": "role",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ],
+            "metadata": {
+              "actorRole": "Stakeholder"
+            }
+          },
+          {
+            "id": "concept-maybe",
+            "label": "Maybe",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-pricing",
+            "label": "Pricing",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-engine",
+            "label": "Engine",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-partner",
+            "label": "Partner",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ],
+            "metadata": {}
+          },
+          {
+            "id": "concept-onboarding",
+            "label": "Onboarding",
+            "type": "concept",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ],
+            "metadata": {}
+          }
+        ],
+        "links": [
+          {
+            "id": "role-stakeholder:mentions:concept-maybe",
+            "source": "role-stakeholder",
+            "target": "concept-maybe",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "role-stakeholder:mentions:concept-pricing",
+            "source": "role-stakeholder",
+            "target": "concept-pricing",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "role-stakeholder:mentions:concept-engine",
+            "source": "role-stakeholder",
+            "target": "concept-engine",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "role-stakeholder:mentions:concept-partner",
+            "source": "role-stakeholder",
+            "target": "concept-partner",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "role-stakeholder:mentions:concept-onboarding",
+            "source": "role-stakeholder",
+            "target": "concept-onboarding",
+            "type": "mentions",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "concept-maybe:relates-to:concept-pricing",
+            "source": "concept-maybe",
+            "target": "concept-pricing",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "concept-pricing:relates-to:concept-engine",
+            "source": "concept-pricing",
+            "target": "concept-engine",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "concept-engine:relates-to:concept-partner",
+            "source": "concept-engine",
+            "target": "concept-partner",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          },
+          {
+            "id": "concept-partner:relates-to:concept-onboarding",
+            "source": "concept-partner",
+            "target": "concept-onboarding",
+            "type": "relates-to",
+            "evidenceTurnIds": [
+              "turn-0dcef15d"
+            ]
+          }
+        ],
+        "ambiguities": [
+          {
+            "id": "amb-1bf09e04",
+            "summary": "Maybe approval differs",
+            "actorRole": "Stakeholder",
+            "sourceTurnId": "turn-0dcef15d",
+            "status": "open"
+          }
+        ]
+      }
+    },
+    "workspace-harness-release-demo-f50df095": {
+      "workspaceId": "workspace-harness-release-demo-f50df095",
+      "title": "Harness Release Demo",
+      "scopeMode": "greenfield-only",
+      "runtimeMode": "local-only",
+      "graphPriorityMode": "graph-first",
+      "status": "interviewing",
+      "activeDomainMapId": "domain-map-workspace-harness-release-demo-f50df095",
+      "selectedPrototypeVariantId": "variant-operator-briefing-workspace-harness-release-demo-f50df095",
+      "activePlaybackSessionId": null,
+      "interviewTurns": [],
+      "governanceQueue": [],
+      "playbackSessions": [],
+      "events": [
+        {
+          "eventId": "bf992035-2560-4968-a29c-d95906ce59f5",
+          "type": "WorkspaceInitialized",
+          "workspaceId": "workspace-harness-release-demo-f50df095",
+          "occurredAt": "2026-04-29T02:46:29.396Z",
+          "payload": {
+            "workspaceId": "workspace-harness-release-demo-f50df095",
+            "scopeMode": "greenfield-only",
+            "runtimeMode": "local-only",
+            "graphPriorityMode": "graph-first"
+          }
+        }
+      ],
+      "prototypeVariants": [
+        {
+          "prototypeVariantId": "variant-signal-atlas-workspace-harness-release-demo-f50df095",
+          "workspaceId": "workspace-harness-release-demo-f50df095",
+          "label": "Signal Atlas",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "Selected inside the release workspace",
+          "baseSummary": "Dense graph-first workspace with governance overlays and evidence-first inspection.",
+          "summary": "Dense graph-first workspace with governance overlays and evidence-first inspection. Current graph: 0 nodes, 0 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-operator-briefing-workspace-harness-release-demo-f50df095",
+          "workspaceId": "workspace-harness-release-demo-f50df095",
+          "label": "Operator Briefing",
+          "selectionStatus": "selected",
+          "critiqueSummary": "Selected inside the release workspace",
+          "baseSummary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders.",
+          "summary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders. Current graph: 0 nodes, 0 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-prototype-lab-workspace-harness-release-demo-f50df095",
+          "workspaceId": "workspace-harness-release-demo-f50df095",
+          "label": "Prototype Lab",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Presentation-led direction that keeps prototype selection and release narrative in view.",
+          "summary": "Presentation-led direction that keeps prototype selection and release narrative in view. Current graph: 0 nodes, 0 open ambiguities."
+        }
+      ],
+      "domainMap": {
+        "domainMapId": "domain-map-workspace-harness-release-demo-f50df095",
+        "workspaceId": "workspace-harness-release-demo-f50df095",
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "evidenceTurnCount": 0,
+        "unresolvedAmbiguityCount": 0,
+        "nodes": [],
+        "links": [],
+        "ambiguities": []
+      }
+    },
+    "workspace-harness-release-demo-6c08a963": {
+      "workspaceId": "workspace-harness-release-demo-6c08a963",
+      "title": "Harness Release Demo",
+      "scopeMode": "greenfield-only",
+      "runtimeMode": "local-only",
+      "graphPriorityMode": "graph-first",
+      "status": "interviewing",
+      "activeDomainMapId": "domain-map-workspace-harness-release-demo-6c08a963",
+      "selectedPrototypeVariantId": null,
+      "activePlaybackSessionId": null,
+      "interviewTurns": [],
+      "governanceQueue": [],
+      "playbackSessions": [],
+      "events": [
+        {
+          "eventId": "f2707a36-d2a8-4ed9-a892-d7b1e148c53d",
+          "type": "WorkspaceInitialized",
+          "workspaceId": "workspace-harness-release-demo-6c08a963",
+          "occurredAt": "2026-04-29T02:47:44.271Z",
+          "payload": {
+            "workspaceId": "workspace-harness-release-demo-6c08a963",
+            "scopeMode": "greenfield-only",
+            "runtimeMode": "local-only",
+            "graphPriorityMode": "graph-first"
+          }
+        }
+      ],
+      "prototypeVariants": [
+        {
+          "prototypeVariantId": "variant-signal-atlas-workspace-harness-release-demo-6c08a963",
+          "workspaceId": "workspace-harness-release-demo-6c08a963",
+          "label": "Signal Atlas",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Dense graph-first workspace with governance overlays and evidence-first inspection.",
+          "summary": "Dense graph-first workspace with governance overlays and evidence-first inspection. Current graph: 0 nodes, 0 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-operator-briefing-workspace-harness-release-demo-6c08a963",
+          "workspaceId": "workspace-harness-release-demo-6c08a963",
+          "label": "Operator Briefing",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders.",
+          "summary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders. Current graph: 0 nodes, 0 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-prototype-lab-workspace-harness-release-demo-6c08a963",
+          "workspaceId": "workspace-harness-release-demo-6c08a963",
+          "label": "Prototype Lab",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Presentation-led direction that keeps prototype selection and release narrative in view.",
+          "summary": "Presentation-led direction that keeps prototype selection and release narrative in view. Current graph: 0 nodes, 0 open ambiguities."
+        }
+      ],
+      "domainMap": {
+        "domainMapId": "domain-map-workspace-harness-release-demo-6c08a963",
+        "workspaceId": "workspace-harness-release-demo-6c08a963",
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "evidenceTurnCount": 0,
+        "unresolvedAmbiguityCount": 0,
+        "nodes": [],
+        "links": [],
+        "ambiguities": []
+      }
+    },
+    "workspace-harness-release-demo-21a731bf": {
+      "workspaceId": "workspace-harness-release-demo-21a731bf",
+      "title": "Harness Release Demo",
+      "scopeMode": "greenfield-only",
+      "runtimeMode": "local-only",
+      "graphPriorityMode": "graph-first",
+      "status": "interviewing",
+      "activeDomainMapId": "domain-map-workspace-harness-release-demo-21a731bf",
+      "selectedPrototypeVariantId": null,
+      "activePlaybackSessionId": null,
+      "interviewTurns": [],
+      "governanceQueue": [],
+      "playbackSessions": [],
+      "events": [
+        {
+          "eventId": "11c43cc3-36a6-40be-8fdf-23494e0bd058",
+          "type": "WorkspaceInitialized",
+          "workspaceId": "workspace-harness-release-demo-21a731bf",
+          "occurredAt": "2026-04-29T02:47:45.287Z",
+          "payload": {
+            "workspaceId": "workspace-harness-release-demo-21a731bf",
+            "scopeMode": "greenfield-only",
+            "runtimeMode": "local-only",
+            "graphPriorityMode": "graph-first"
+          }
+        }
+      ],
+      "prototypeVariants": [
+        {
+          "prototypeVariantId": "variant-signal-atlas-workspace-harness-release-demo-21a731bf",
+          "workspaceId": "workspace-harness-release-demo-21a731bf",
+          "label": "Signal Atlas",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Dense graph-first workspace with governance overlays and evidence-first inspection.",
+          "summary": "Dense graph-first workspace with governance overlays and evidence-first inspection. Current graph: 0 nodes, 0 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-operator-briefing-workspace-harness-release-demo-21a731bf",
+          "workspaceId": "workspace-harness-release-demo-21a731bf",
+          "label": "Operator Briefing",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders.",
+          "summary": "Editorial dashboard framing priorities, tradeoffs, and readiness for stakeholders. Current graph: 0 nodes, 0 open ambiguities."
+        },
+        {
+          "prototypeVariantId": "variant-prototype-lab-workspace-harness-release-demo-21a731bf",
+          "workspaceId": "workspace-harness-release-demo-21a731bf",
+          "label": "Prototype Lab",
+          "selectionStatus": "candidate",
+          "critiqueSummary": "",
+          "baseSummary": "Presentation-led direction that keeps prototype selection and release narrative in view.",
+          "summary": "Presentation-led direction that keeps prototype selection and release narrative in view. Current graph: 0 nodes, 0 open ambiguities."
+        }
+      ],
+      "domainMap": {
+        "domainMapId": "domain-map-workspace-harness-release-demo-21a731bf",
+        "workspaceId": "workspace-harness-release-demo-21a731bf",
+        "nodeCount": 0,
+        "edgeCount": 0,
+        "evidenceTurnCount": 0,
+        "unresolvedAmbiguityCount": 0,
+        "nodes": [],
+        "links": [],
+        "ambiguities": []
+      }
+    }
+  },
+  "events": [
+    {
+      "eventId": "b4a04a99-879e-4d12-9b2f-47bbe39af62e",
+      "type": "WorkspaceInitialized",
+      "workspaceId": "workspace-smoke-1393846a",
+      "occurredAt": "2026-04-28T21:52:09.012Z",
+      "payload": {
+        "workspaceId": "workspace-smoke-1393846a",
+        "scopeMode": "greenfield-only",
+        "runtimeMode": "local-only",
+        "graphPriorityMode": "graph-first"
+      }
+    },
+    {
+      "eventId": "ab0d691a-528e-4045-8db8-40b63b0f7877",
+      "type": "ProjectionRefreshed",
+      "workspaceId": "workspace-smoke-1393846a",
+      "occurredAt": "2026-04-28T21:52:09.490Z",
+      "payload": {
+        "workspaceId": "workspace-smoke-1393846a",
+        "nodeCount": 6,
+        "edgeCount": 9,
+        "unresolvedAmbiguityCount": 1,
+        "projectionReason": "smoke"
+      }
+    },
+    {
+      "eventId": "8d85acb2-f529-40d1-afa4-2e43e9c69cf8",
+      "type": "WorkspaceInitialized",
+      "workspaceId": "workspace-fullsmoke-d895f613",
+      "occurredAt": "2026-04-28T21:54:00.091Z",
+      "payload": {
+        "workspaceId": "workspace-fullsmoke-d895f613",
+        "scopeMode": "greenfield-only",
+        "runtimeMode": "local-only",
+        "graphPriorityMode": "graph-first"
+      }
+    },
+    {
+      "eventId": "a59ac5b7-5c47-42c8-800c-8d7db7f03006",
+      "type": "ProjectionRefreshed",
+      "workspaceId": "workspace-fullsmoke-d895f613",
+      "occurredAt": "2026-04-28T21:54:00.174Z",
+      "payload": {
+        "workspaceId": "workspace-fullsmoke-d895f613",
+        "nodeCount": 6,
+        "edgeCount": 9,
+        "unresolvedAmbiguityCount": 1,
+        "projectionReason": "smoke"
+      }
+    },
+    {
+      "eventId": "ab5fafa1-600d-4574-af04-8ce75b6baf11",
+      "type": "GovernanceQueueReprioritized",
+      "workspaceId": "workspace-fullsmoke-d895f613",
+      "occurredAt": "2026-04-28T21:54:00.182Z",
+      "payload": {
+        "workspaceId": "workspace-fullsmoke-d895f613",
+        "topQueueItemId": "gov-amb-1bf09e04",
+        "topPriorityScore": 0.78
+      }
+    },
+    {
+      "eventId": "bf992035-2560-4968-a29c-d95906ce59f5",
+      "type": "WorkspaceInitialized",
+      "workspaceId": "workspace-harness-release-demo-f50df095",
+      "occurredAt": "2026-04-29T02:46:29.396Z",
+      "payload": {
+        "workspaceId": "workspace-harness-release-demo-f50df095",
+        "scopeMode": "greenfield-only",
+        "runtimeMode": "local-only",
+        "graphPriorityMode": "graph-first"
+      }
+    },
+    {
+      "eventId": "f2707a36-d2a8-4ed9-a892-d7b1e148c53d",
+      "type": "WorkspaceInitialized",
+      "workspaceId": "workspace-harness-release-demo-6c08a963",
+      "occurredAt": "2026-04-29T02:47:44.271Z",
+      "payload": {
+        "workspaceId": "workspace-harness-release-demo-6c08a963",
+        "scopeMode": "greenfield-only",
+        "runtimeMode": "local-only",
+        "graphPriorityMode": "graph-first"
+      }
+    },
+    {
+      "eventId": "11c43cc3-36a6-40be-8fdf-23494e0bd058",
+      "type": "WorkspaceInitialized",
+      "workspaceId": "workspace-harness-release-demo-21a731bf",
+      "occurredAt": "2026-04-29T02:47:45.287Z",
+      "payload": {
+        "workspaceId": "workspace-harness-release-demo-21a731bf",
+        "scopeMode": "greenfield-only",
+        "runtimeMode": "local-only",
+        "graphPriorityMode": "graph-first"
+      }
+    }
+  ]
+}

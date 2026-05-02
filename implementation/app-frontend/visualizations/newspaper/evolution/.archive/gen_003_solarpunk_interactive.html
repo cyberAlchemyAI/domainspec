@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 003: Solarpunk Interactive</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  /* ========================================= */
+  /* CSS VARIABLES (MÚLTIPLOS THEMES)         */
+  /* ========================================= */
+  
+  /* Tema Padrão: Solarpunk Day (Baseado na Gen 002) */
+  :root {
+    --bg-page: #d8eee7;      
+    --bg-container: #e2f1ec; 
+    --bg-card: #ffffff;      
+    --text-main: #0a4d3c;    
+    --text-muted: #578070;   
+    --text-reading: #1f3830; 
+    --radius-lg: 12px;
+    --radius-sm: 8px;
+    --border-subtle: rgba(10, 77, 60, 0.08);
+  }
+
+  /* Parâmetro B: Floresta Profunda (Dark Mode Orgânico) */
+  body.theme-forest {
+    --bg-page: #0a1712;      
+    --bg-container: #10261e; 
+    --bg-card: #16362b;      
+    --text-main: #d8eee7;    
+    --text-muted: #85ad9d;   
+    --text-reading: #b8d4ca; 
+    --border-subtle: rgba(216, 238, 231, 0.08);
+  }
+
+  /* Parâmetro C: Foco Documental (Alto Contraste Branco) */
+  body.theme-focus {
+    --bg-page: #f5f5f5;      
+    --bg-container: #ffffff; 
+    --bg-card: #fafafa;      
+    --text-main: #111111;    
+    --text-muted: #666666;   
+    --text-reading: #222222; 
+    --border-subtle: rgba(0, 0, 0, 0.1);
+  }
+
+  /* ========================================= */
+  /* BASE STYLES                               */
+  /* ========================================= */
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 40px 20px 40px 80px; /* Extra left padding for menu trigger */
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 { font-size: 2.2rem; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -1px; }
+  .meta { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; }
+
+  /* ========================================= */
+  /* NOVIDADE: SIDE MENU (CONTROLES PARÂMETROS)*/
+  /* ========================================= */
+  .side-menu {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 240px;
+    background: var(--text-main);
+    color: var(--bg-page);
+    transform: translateX(-220px); /* Hides almost entirely off screen */
+    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 100;
+    padding: 32px 20px 32px 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+  }
+  
+  .side-menu::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 20px;
+    cursor: pointer;
+  }
+
+  .side-menu:hover {
+    transform: translateX(0);
+  }
+
+  .menu-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    opacity: 0.6;
+  }
+
+  .param-group { margin-bottom: 24px; }
+  .param-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    opacity: 0.8;
+  }
+
+  .param-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: inherit;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .param-btn:hover { background: rgba(255,255,255,0.1); }
+  .param-btn.active { background: var(--bg-page); color: var(--text-main); font-weight: 600; }
+
+  /* ========================================= */
+  /* EDITORIAL                                 */
+  /* ========================================= */
+  .editorial {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 32px 40px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    transition: all 0.4s ease;
+  }
+  
+  .editorial-tag {
+    position: absolute;
+    top: -12px;
+    left: 40px;
+    background: var(--text-main);
+    color: var(--bg-card);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+  }
+
+  .editorial-title {
+    font-family: 'Newsreader', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+  }
+
+  .editorial-body {
+    font-family: 'Newsreader', serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-reading);
+  }
+  .editorial-body p { margin-bottom: 16px; }
+  .editorial-body p:last-child { margin-bottom: 0; }
+  
+  /* ========================================= */
+  /* NOVIDADE: "GRITAR A INTENÇÂO" (TOOLTIPS)  */
+  /* ========================================= */
+  .intent-tip {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dotted var(--text-muted);
+  }
+  
+  .intent-tip::before {
+    content: attr(data-intent);
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text-main);
+    color: var(--bg-card);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+  
+  .intent-tip::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--text-main) transparent transparent transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  .intent-tip:hover::before,
+  .intent-tip:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ========================================= */
+  /* ARCOS (O GRAFO / EVIDÊNCIAS)              */
+  /* ========================================= */
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    padding-left: 8px;
+  }
+
+  details.arc {
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+    border: 1px solid var(--border-subtle);
+    transition: all 0.4s ease;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 24px 32px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: opacity 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { opacity: 0.8; }
+
+  .icon {
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text-main);
+  }
+  details.arc:not([open]) .icon::after { content: '+'; }
+  details.arc[open] .icon::after { content: '×'; font-size: 1.2rem; }
+
+  .content {
+    padding: 0 32px 32px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .content p { margin-top: 0; margin-bottom: 24px; }
+
+  .node {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.4s ease;
+  }
+  .node:last-child { margin-bottom: 0; }
+  
+  .node-title { font-weight: 500; font-size: 0.95rem; }
+  .node-meta { font-family: monospace; font-size: 0.9rem; color: var(--text-main); font-weight: 500; }
+  .node-id { opacity: 0.4; font-weight: 700; margin-right: 12px; }
+
+</style>
+</head>
+<body>
+
+<!-- MENU LATERAL ESCONDIDO -->
+<nav class="side-menu">
+  <div class="menu-title">Variáveis / Gen 003</div>
+  
+  <div class="param-group">
+    <span class="param-label">Esquema de Cores</span>
+    <button class="param-btn active" onclick="setTheme('')">Solarpunk Day</button>
+    <button class="param-btn" onclick="setTheme('theme-forest')">Deep Forest Night</button>
+    <button class="param-btn" onclick="setTheme('theme-focus')">Focus (Alto Contraste)</button>
+  </div>
+</nav>
+
+<div class="wrapper">
+  
+  <header>
+    <h1>O Grafo Diário</h1>
+    <div class="meta">Ecossistema ZefraHub · 24 Mar 2026</div>
+  </header>
+
+  <!-- Editorial -->
+  <article class="editorial">
+    <div class="editorial-tag">Síntese de Ontem</div>
+    <h2 class="editorial-title">O Cofre Torna-se Consciente de Si Mesmo</h2>
+    <div class="editorial-body">
+      <p>Ontem foi um dia de fundações arquitetônicas pesadas. O sistema formalizou a adoção dos princípios de Biblioteconomia de S. R. Ranganathan como o seu quarto pilar intelectual — uma movimentação que resultará em uma governança informacional muito mais estrita nas próximas semanas.</p>
+    </div>
+  </article>
+
+  <div class="section-label">A Matriz Subjacente (O Grafo)</div>
+
+  <!-- Arcos Expansíveis com Intenções (Tooltips) -->
+  <details class="arc" open>
+    <summary>
+      <span>Ontologia & Consciência</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O ecossistema expande suas raízes e cultiva este mesmo Grafo Diário como mecanismo de retro-alimentação consciente.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id intent-tip" data-intent="Prioridade 1: Mudança Estrutural Fundacional">P1</span> Biblioteconomia Integrada à Constituição</span>
+        <span class="node-meta intent-tip" data-intent="Aprovação Máxima (8.0/10) - Define arquitetura futura">8.0</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id intent-tip" data-intent="Prioridade 2: Modificação de Alto Impacto">P2</span> Governance Workflows: Backlog & README</span>
+        <span class="node-meta intent-tip" data-intent="Alta Relevância (8.0/10)">8.0</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="arc">
+    <summary>
+      <span>Migração CCB</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O domínio validation é estabelecido com relocação de arquivos, mas furos na rede de testes exigem fix imediato.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id intent-tip" data-intent="Prioridade 2: Modificação de Alto Impacto">P2</span> Domain Scaffolding & Relocação</span>
+        <span class="node-meta intent-tip" data-intent="Relevância Significativa (7.0/10)">7.0</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id intent-tip" data-intent="Prioridade 4: Decisão Técnica Local">P4</span> CCB Spec Audit: Gaps Identificados</span>
+        <span class="node-meta intent-tip" data-intent="Relevância Moderada (5.0/10)">5.0</span>
+      </div>
+    </div>
+  </details>
+
+</div>
+
+<script>
+  function setTheme(themeName) {
+    document.body.className = themeName;
+    document.querySelectorAll('.param-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

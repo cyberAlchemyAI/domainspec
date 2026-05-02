@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário — Edição #001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #13100c;
+    --bg-card: #1c1710;
+    --bg-card-hover: #241e16;
+    --text: #e8dcc8;
+    --text-muted: #9a8b78;
+    --text-dim: #6b5e50;
+    --accent-gold: #c4956a;
+    --accent-amber: #d4a574;
+    --accent-warm: #b07a4a;
+    --border: #2e261c;
+    --border-light: #3a2e22;
+    --p0: #d94a3a;
+    --p0-bg: rgba(217, 74, 58, 0.08);
+    --p1: #d4a574;
+    --p1-bg: rgba(212, 165, 116, 0.06);
+    --p2: #7a9e7e;
+    --p3: #7a8fa0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .masthead {
+    text-align: center;
+    padding: 40px 24px 0;
+    border-bottom: 1px solid var(--border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .masthead-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .masthead-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .masthead-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--accent-gold);
+    margin: 0 auto 12px;
+  }
+
+  .masthead-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .masthead-meta .edition { color: var(--accent-gold); font-weight: 500; }
+
+  .stats-bar {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 24px;
+    font-size: 12px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-value { color: var(--accent-gold); font-weight: 600; font-size: 14px; }
+
+  .content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 32px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .story {
+    padding: 16px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    border-left: 3px solid transparent;
+    transition: background 0.2s;
+  }
+  .story:hover { background: var(--bg-card-hover); }
+
+  .story.p0 { background: var(--p0-bg); border-left-color: var(--p0); }
+  .story.p1 { background: var(--p1-bg); border-left-color: var(--p1); }
+  .story.p2 { border-left-color: var(--p2); }
+  .story.p3 { border-left-color: var(--p3); }
+
+  .story-priority {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .story.p0 .story-priority { color: var(--p0); }
+  .story.p1 .story-priority { color: var(--p1); }
+  .story.p2 .story-priority { color: var(--p2); }
+  .story.p3 .story-priority { color: var(--p3); }
+
+  .story-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .story.p0 .story-headline,
+  .story.p1 .story-headline { font-size: 24px; }
+
+  .story-body {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .story-body code {
+    font-size: 12px;
+    background: var(--bg-card);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--accent-gold);
+  }
+
+  .story-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-dim);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .story-meta .tag {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .sidebar .section-label { margin-top: 0; }
+
+  .sidebar-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-item:last-child { border-bottom: none; }
+
+  .sidebar-item-title {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-item-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .sidebar-item-importance {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .importance-high { background: var(--accent-gold); }
+  .importance-med { background: var(--text-dim); }
+  .importance-low { background: var(--border-light); }
+
+  .archive {
+    max-width: 960px;
+    margin: 32px auto 0;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+    max-width: 280px;
+  }
+
+  .cal-header {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    font-weight: 600;
+    padding-bottom: 4px;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-radius: 3px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .cal-day.empty { background: transparent; border-color: transparent; }
+  .cal-day.has-edition {
+    background: rgba(196, 149, 106, 0.15);
+    border-color: var(--accent-warm);
+    color: var(--accent-gold);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .cal-day.has-edition:hover { background: rgba(196, 149, 106, 0.25); }
+  .cal-day.today { border-color: var(--accent-gold); box-shadow: 0 0 0 1px var(--accent-gold); }
+
+  .domain-summary {
+    margin-top: 24px;
+  }
+
+  .domain-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .domain-item:last-child { border-bottom: none; }
+  .domain-item-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--accent-gold);
+    margin-bottom: 2px;
+  }
+  .domain-item-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead-title">O Grafo Diário</div>
+    <div class="masthead-rule"></div>
+    <div class="masthead-subtitle">Boletim Epistemológico do Vault</div>
+    <div class="masthead-meta">
+      <span>24 de Março de 2026 · Segunda-feira</span>
+      <span class="edition">Edição #001</span>
+      <span>Gerado às 07:00</span>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat"><span>Sessões:</span> <span class="stat-value">25</span></div>
+    <div class="stat"><span>Decisões:</span> <span class="stat-value">12</span></div>
+    <div class="stat"><span>Specs atualizados:</span> <span class="stat-value">8</span></div>
+    <div class="stat"><span>Contradições:</span> <span class="stat-value">0</span></div>
+    <div class="stat"><span>Promovidos:</span> <span class="stat-value">3</span></div>
+  </div>
+
+  <main class="content">
+    <div class="front-page">
+      <div class="section-label">Primeira Página</div>
+
+      <article class="story p1">
+        <div class="story-priority">P1 · Mudança Fundacional</div>
+        <h2 class="story-headline">Biblioteconomia Integrada à Constituição do Vault</h2>
+        <p class="story-body">
+          A classificação facetada de Ranganathan (1933) foi formalmente reconhecida como o quarto pilar intelectual do sistema, ao lado de Zettelkasten, Evergreen Notes e Epistemologia Bayesiana. A convergência entre os axiomas de ortogonalidade (AX-ONT-2) e a ciência da informação de 95 anos foi documentada.
+        </p>
+        <div class="story-meta">
+          <span class="tag">#ontology</span>
+          <span class="tag">#vault</span>
+          <span>Importância: 8/10</span>
+        </div>
+      </article>
+
+      <article class="story p2">
+        <div class="story-priority">P2 · Sessão de Alta Importância</div>
+        <h2 class="story-headline">Pipeline de Migração CCB: Scaffolding do Domínio Completo</h2>
+        <p class="story-body">
+          A migração lift-and-shift do pipeline de validação CCB do domínio <code>aquisicao</code> para <code>documents_validation</code> progrediu com scaffolding completo da estrutura de domínio, relocação de serviços e use cases, e atualização de referências.
+        </p>
+        <div class="story-meta">
+          <span class="tag">#ccb</span>
+          <span class="tag">#migration</span>
+          <span>Importância: 7/10</span>
+        </div>
+      </article>
+
+      <article class="story p3">
+        <div class="story-priority">P3 · Direção Estratégica</div>
+        <h2 class="story-headline">O Grafo Diário: Discovery do Jornal Interno</h2>
+        <p class="story-body">
+          Iniciada a exploração conceitual de um serviço de jornal diário que sintetiza atividade do vault em uma publicação navegável. Identidade, critérios de relevância (P0–P5), naming e direção estética foram definidos antes de qualquer implementação.
+        </p>
+        <div class="story-meta">
+          <span class="tag">#ontology</span>
+          <span class="tag">#vault</span>
+          <span>Importância: 6/10</span>
+        </div>
+      </article>
+
+      <article class="story p2">
+        <div class="story-priority">P2 · Sessão de Alta Importância</div>
+        <h2 class="story-headline">Kit Matching: Quality Gate Refinado</h2>
+        <p class="story-body">
+          Implementada gate de qualidade stricta para o counter <code>documents_matched</code> no bulk import — documentos CCB agora exigem match de contrato no banco além da extração de campos obrigatórios.
+        </p>
+        <div class="story-meta">
+          <span class="tag">#pipeline</span>
+          <span class="tag">#quality</span>
+          <span>Importância: 7/10</span>
+        </div>
+      </article>
+    </div>
+
+    <aside class="sidebar">
+      <div class="section-label">Abaixo da Dobra</div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-title">
+          <span class="sidebar-item-importance importance-med"></span>
+          Ontology Visualization Explorer Corrigido
+        </div>
+        <div class="sidebar-item-meta">Importância 5 · #ontology · Visualização restaurada após reestruturação do vault</div>
+      </div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-title">
+          <span class="sidebar-item-importance importance-med"></span>
+          CCB Spec Audit
+        </div>
+        <div class="sidebar-item-meta">Importância 5 · #ccb · Auditoria das specs de validação CCB</div>
+      </div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-title">
+          <span class="sidebar-item-importance importance-med"></span>
+          Document Merge: Edge Cases
+        </div>
+        <div class="sidebar-item-meta">Importância 5 · #pipeline · Tratamento de edge cases na fusão de documentos</div>
+      </div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-title">
+          <span class="sidebar-item-importance importance-low"></span>
+          Deferred Save Merge Plan
+        </div>
+        <div class="sidebar-item-meta">Importância 4 · #pipeline · Plan para merge com save diferido</div>
+      </div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-title">
+          <span class="sidebar-item-importance importance-low"></span>
+          Document Merge Implementation
+        </div>
+        <div class="sidebar-item-meta">Importância 4 · #pipeline · Implementação do merge de identificação</div>
+      </div>
+
+      <div class="sidebar-item">
+        <div class="sidebar-item-title">
+          <span class="sidebar-item-importance importance-low"></span>
+          Migration Test Safety Net Audit
+        </div>
+        <div class="sidebar-item-meta">Importância 3 · #ccb · Auditoria de cobertura de teste para migração</div>
+      </div>
+
+      <div class="domain-summary">
+        <div class="section-label">Resumo por Domínio</div>
+        <div class="domain-item">
+          <div class="domain-item-title">Ontologia & Vault</div>
+          <div class="domain-item-meta">4 sessões · Constituição atualizada, governance workflows criados, newspaper discovery</div>
+        </div>
+        <div class="domain-item">
+          <div class="domain-item-title">CCB & Migration</div>
+          <div class="domain-item-meta">8 sessões · Domain scaffolding, lift-and-shift em progresso, test gap analysis</div>
+        </div>
+        <div class="domain-item">
+          <div class="domain-item-title">Pipeline & Quality</div>
+          <div class="domain-item-meta">6 sessões · Kit quality gate, document merge fixes, naming constraints</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="archive">
+    <div class="section-label">Arquivo · Março 2026</div>
+    <div class="calendar-grid">
+      <div class="cal-header">S</div><div class="cal-header">T</div><div class="cal-header">Q</div><div class="cal-header">Q</div><div class="cal-header">S</div><div class="cal-header">S</div><div class="cal-header">D</div>
+      <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day">1</div>
+      <div class="cal-day has-edition">2</div><div class="cal-day has-edition">3</div><div class="cal-day has-edition">4</div><div class="cal-day has-edition">5</div><div class="cal-day has-edition">6</div><div class="cal-day has-edition">7</div><div class="cal-day">8</div>
+      <div class="cal-day has-edition">9</div><div class="cal-day has-edition">10</div><div class="cal-day has-edition">11</div><div class="cal-day has-edition">12</div><div class="cal-day has-edition">13</div><div class="cal-day has-edition">14</div><div class="cal-day">15</div>
+      <div class="cal-day has-edition">16</div><div class="cal-day has-edition">17</div><div class="cal-day has-edition">18</div><div class="cal-day has-edition">19</div><div class="cal-day has-edition">20</div><div class="cal-day">21</div><div class="cal-day">22</div>
+      <div class="cal-day has-edition">23</div><div class="cal-day has-edition today">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+      <div class="cal-day">30</div><div class="cal-day">31</div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    O Grafo Diário · Gerado automaticamente a partir do Knowledge Graph do ZefraHub · Edição #001
+  </footer>
+
+
+<!-- GLOBAL FITNESS ACTION BAR (Protocol v1.0.0) -->
+<style>
+  .vote-label { font-family: 'Inter', monospace; font-size: 0.70rem; font-weight: 700; color: #9a8b78; text-transform: uppercase; }
+  .vote-group { display: flex; gap: 4px; border: 1px solid #3a2e22; border-radius: 4px; overflow: hidden; background: #1c1710; }
+  .vote-btn-scale { border: none; background: transparent; color: #e8dcc8; font-family: 'Inter', monospace; font-size: 0.80rem; padding: 4px 10px; cursor: pointer; border-right: 1px solid #3a2e22; font-weight: 700; transition: background-color 0.2s, color 0.2s; }
+  .vote-btn-scale:last-child { border-right: none; }
+  .vote-btn-scale:hover { background: #e8dcc8; color: #1c1710; }
+  .vote-btn-scale.active { background: #c4956a; color: #1c1710; }
+  .comment-input { padding: 6px 10px; border: 1px solid #3a2e22; background: #1c1710; color: #e8dcc8; border-radius: 4px; font-family: 'Inter', monospace; font-size: 0.8rem; outline: none; margin-left: 12px; }
+  .vote-success-msg { font-family: 'Inter', monospace; font-size: 0.75rem; color: #10b981; font-weight: 700; margin-left: 12px; }
+</style>
+
+<div class="global-vote-bar" style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); padding: 12px 24px; border-radius: 30px; display: flex; gap: 16px; align-items: center; z-index: 9999;">
+  <div class="vote-label" style="color: white;">GLOBAL FITNESS:</div>
+  <div class="vote-group" id="vote_global_page"></div>
+  <input type="text" class="comment-input" id="input_global_page" placeholder="Reason..." style="display:none; width: 200px;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+  <div id="comment_global_page"></div>
+</div>
+
+<script>
+  let pendingVotes = {};
+
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button class="vote-btn-scale" onclick="registerVote('global_fitness', '', ${n}, 'vote_global_page')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.innerText) === score) btn.classList.add('active');
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const inputEl = document.getElementById('input_global_page');
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById('input_global_page');
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if(inputEl) inputEl.style.display = 'none';
+    const commentBlock = document.getElementById('comment_global_page');
+    if(commentBlock) commentBlock.innerHTML = `<span class="vote-success-msg">✓ SYNCED</span>`;
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[Overall Page] ${reason}` : `[Overall Page] No comment`
+      });
+    }
+  }
+  
+  initVoteButtons();
+</script>
+
+</body>
+</html>

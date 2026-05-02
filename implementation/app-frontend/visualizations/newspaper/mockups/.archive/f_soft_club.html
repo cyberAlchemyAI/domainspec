@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O_GRAFO_DIARIO / 001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    /* Not full dark, not full white. Mid-tone hazy silver/grey */
+    --bg-base: #d2d4d8; 
+    --bg-gradient: linear-gradient(140deg, #dbdce0 0%, #c1c3c9 100%);
+    --bg-glass: rgba(255, 255, 255, 0.4);
+    
+    --text-primary: #15161a;
+    --text-muted: #64666f;
+    --text-faint: #8e919c;
+    
+    --border-main: rgba(0, 0, 0, 0.12);
+    --border-dashed: rgba(0, 0, 0, 0.08);
+    
+    /* Muted 90s ambient club tones */
+    --accent-blue: #9ebccc;
+    --accent-lilac: #b3aacc;
+    --accent-sage: #a8ccaa;
+  }
+
+  body {
+    background: var(--bg-base);
+    background-image: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--text-primary);
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 20px;
+  }
+
+  /* Subtle noise texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === HEADER / IDM METADATA === */
+  header {
+    margin-bottom: 40px;
+  }
+  
+  .tech-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    border-bottom: 1px dotted var(--border-dashed);
+    padding-bottom: 4px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .title-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 42px;
+    font-weight: 500;
+    letter-spacing: -2px;
+    line-height: 0.9;
+  }
+
+  h1 span.sub {
+    display: block;
+    font-size: 14px;
+    letter-spacing: -0.5px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    font-weight: 400;
+  }
+
+  .barcode {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    line-height: 1;
+    color: var(--text-faint);
+    text-align: right;
+  }
+  .barcode svg { width: 80px; height: 30px; margin-bottom: 4px; opacity: 0.3; }
+
+  /* === STATS / VUMETER === */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-main);
+    border-radius: 4px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+  
+  .stat-cell {
+    padding: 12px 16px;
+    border-right: 1px solid var(--border-main);
+  }
+  .stat-cell:last-child { border-right: none; }
+  
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+
+  /* === CONTEXT ARCS AS TRACKLISTS === */
+  .arcs {
+    margin-top: 48px;
+  }
+
+  .arc {
+    margin-bottom: 40px;
+  }
+  
+  .arc-header {
+    border-bottom: 2px solid var(--text-primary);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .arc-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .arc-color-tag {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.2);
+  }
+
+  .arc-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    max-width: 500px;
+  }
+
+  .arc-context-blurb {
+    font-size: 14px;
+    color: var(--text-primary);
+    padding: 16px;
+    background: var(--bg-glass);
+    border-left: 3px solid var(--border-main);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  /* Tracklist Table */
+  table.tracklist {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  table.tracklist th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-dashed);
+    font-weight: normal;
+  }
+
+  table.tracklist td {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-main);
+    vertical-align: top;
+  }
+  table.tracklist tr:last-child td { border-bottom: none; }
+  table.tracklist tr:hover td { background: rgba(255,255,255, 0.2); }
+
+  .track-priority {
+    width: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 10px;
+  }
+  .track-title {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .track-meta {
+    width: 80px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Specific priority styling */
+  .p1-color { color: #8e1c1c; }
+  .p2-color { color: var(--text-primary); }
+  .p3-color { color: var(--text-muted); }
+  .p4-color { color: var(--text-faint); }
+
+  /* === PERIPHERAL / AMBIENT SIGNALS === */
+  .ambient-signals {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-main);
+  }
+
+  .ambient-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .ambient-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-main); /* Acts as border between items */
+    border: 1px solid var(--border-main);
+  }
+
+  .ambient-item {
+    background: var(--bg-base); /* match outer to hide inner */
+    padding: 16px;
+    background-image: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1));
+    transition: background 0.2s;
+  }
+  .ambient-item:hover { background: var(--bg-glass); }
+
+  .ambient-title {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .ambient-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+  }
+
+  /* === CALENDAR / INDEX === */
+  .calendar-section {
+    margin-top: 80px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .cal-wrap {
+    width: 240px;
+  }
+  .cal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    text-align: right;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-faint);
+    background: rgba(255,255,255, 0.2);
+    border: 1px solid transparent;
+  }
+  .cal-day.active {
+    background: var(--text-primary);
+    color: var(--bg-base);
+    font-weight: 700;
+  }
+  .cal-day.past {
+    background: transparent;
+    border: 1px solid var(--border-dashed);
+    color: var(--text-muted);
+  }
+
+  /* Colors for Arcs */
+  .col-1 { background: var(--accent-blue); }
+  .col-2 { background: var(--accent-lilac); }
+  .col-3 { background: var(--accent-sage); }
+
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  
+  <!-- METADATA HEADER -->
+  <header>
+    <div class="tech-line">
+      <span>REF_ID: VAULT/NSP/20260324</span>
+      <span>EDITION: 001</span>
+      <span>STATUS: GENERATED</span>
+    </div>
+
+    <div class="title-block">
+      <div>
+        <h1>O Grafo Diário
+          <span class="sub">Boletim Epistemológico // ZefraHub</span>
+        </h1>
+      </div>
+      <div class="barcode">
+        <!-- fake barcode SVG -->
+        <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+          <rect x="0" y="0" width="4" height="30" fill="currentColor"/>
+          <rect x="6" y="0" width="2" height="30" fill="currentColor"/>
+          <rect x="12" y="0" width="6" height="30" fill="currentColor"/>
+          <rect x="20" y="0" width="2" height="30" fill="currentColor"/>
+          <rect x="25" y="0" width="8" height="30" fill="currentColor"/>
+          <rect x="36" y="0" width="4" height="30" fill="currentColor"/>
+          <rect x="42" y="0" width="1" height="30" fill="currentColor"/>
+          <rect x="46" y="0" width="10" height="30" fill="currentColor"/>
+          <rect x="58" y="0" width="2" height="30" fill="currentColor"/>
+          <rect x="63" y="0" width="5" height="30" fill="currentColor"/>
+          <rect x="71" y="0" width="4" height="30" fill="currentColor"/>
+          <rect x="78" y="0" width="2" height="30" fill="currentColor"/>
+          <rect x="83" y="0" width="8" height="30" fill="currentColor"/>
+          <rect x="94" y="0" width="6" height="30" fill="currentColor"/>
+        </svg>
+        <br>3219 908 001
+      </div>
+    </div>
+
+    <!-- STATS BLOCKS -->
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <div class="stat-label">Sessões</div>
+        <div class="stat-val">25</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Decisões</div>
+        <div class="stat-val">12</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Specs</div>
+        <div class="stat-val">08</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Contradições</div>
+        <div class="stat-val">00</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">Promovidos</div>
+        <div class="stat-val">03</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARCS -->
+  <section class="arcs">
+    
+    <!-- ARC A -->
+    <div class="arc">
+      <div class="arc-header">
+        <div class="arc-title">
+          <span class="arc-color-tag col-1"></span>
+          Ontologia & Consciência do Sistema
+        </div>
+        <div class="arc-subtitle">4 SESSÕES // 32KB</div>
+      </div>
+      <div class="arc-context-blurb">
+        O vault formalizou a Biblioteconomia de Ranganathan como quarto pilar intelectual. Ao mesmo tempo que estabelece regras de classificação de 95 anos, iniciou a arquitetura do Grafo Diário — um mecanismo para refletir sobre si mesmo ao final do dia.
+      </div>
+      <table class="tracklist">
+        <thead>
+          <tr>
+            <th style="width:50px">Level</th>
+            <th>Event / Node Title</th>
+            <th style="text-align:right">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="track-priority p1-color">P1</td>
+            <td class="track-title">Biblioteconomia Integrada à Constituição do Vault</td>
+            <td class="track-meta">8/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p2-color">P2</td>
+            <td class="track-title">Governance Workflows: Backlog & README Patterns</td>
+            <td class="track-meta">8/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p3-color">P3</td>
+            <td class="track-title">O Grafo Diário: Discovery do Jornal Interno</td>
+            <td class="track-meta">6/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p4-color">P4</td>
+            <td class="track-title">Ontology Visualization Explorer Restaurado</td>
+            <td class="track-meta">5/10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ARC B -->
+    <div class="arc">
+      <div class="arc-header">
+        <div class="arc-title">
+          <span class="arc-color-tag col-2"></span>
+          Migração do Pipeline CCB
+        </div>
+        <div class="arc-subtitle">8 SESSÕES // 45KB</div>
+      </div>
+      <div class="arc-context-blurb">
+        Lift-and-shift do domínio aquisicao para documents_validation progrediu fortemente. O scaffolding foi completado, mas auditorias da camada de proteção (test safety net) revelaram buracos críticos que precisam ser endereçados antes do merge final.
+      </div>
+      <table class="tracklist">
+        <tbody>
+          <tr>
+            <td class="track-priority p2-color">P2</td>
+            <td class="track-title">Domain Scaffolding & Relocação Completa</td>
+            <td class="track-meta">7/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p4-color">P4</td>
+            <td class="track-title">CCB Spec Audit: Gaps Identificados</td>
+            <td class="track-meta">5/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p4-color">P4</td>
+            <td class="track-title">Migration Test Safety Net Analysis</td>
+            <td class="track-meta">5/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p4-color">P4</td>
+            <td class="track-title">Revert de Mudanças Não-Aprovadas (Testes)</td>
+            <td class="track-meta">4/10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ARC C -->
+    <div class="arc">
+      <div class="arc-header">
+        <div class="arc-title">
+          <span class="arc-color-tag col-3"></span>
+          Qualidade do Pipeline de Importação
+        </div>
+        <div class="arc-subtitle">6 SESSÕES // 21KB</div>
+      </div>
+      <div class="arc-context-blurb">
+        Endurecimento dos quality gates no processamento de kits. O counter de success rating para CCB agora exige não só extração válida, mas também match afirmativo com registros de contrato no banco. UI agora reflete factuality absoluta.
+      </div>
+      <table class="tracklist">
+        <tbody>
+          <tr>
+            <td class="track-priority p2-color">P2</td>
+            <td class="track-title">Kit Matching: Quality Gate Refinado O&M</td>
+            <td class="track-meta">7/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p4-color">P4</td>
+            <td class="track-title">Document Merge: Resolução Multi-Edge Cases</td>
+            <td class="track-meta">5/10</td>
+          </tr>
+          <tr>
+            <td class="track-priority p4-color">P4</td>
+            <td class="track-title">Naming Constraint Fix na Fusão</td>
+            <td class="track-meta">4/10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- AMBIENT SIGNALS -->
+  <section class="ambient-signals">
+    <div class="ambient-header">Sinais Periféricos / Below the Fold</div>
+    <div class="ambient-grid">
+      <div class="ambient-item">
+        <div class="ambient-title">Deferred Save Merge Plan</div>
+        <div class="ambient-meta">IMP:04 // PIPELINE</div>
+      </div>
+      <div class="ambient-item">
+        <div class="ambient-title">Document Merge Execution</div>
+        <div class="ambient-meta">IMP:04 // PIPELINE</div>
+      </div>
+      <div class="ambient-item">
+        <div class="ambient-title">Missing Critical Reason</div>
+        <div class="ambient-meta">IMP:03 // CCB</div>
+      </div>
+      <div class="ambient-item">
+        <div class="ambient-title">CCB Solidity Audit</div>
+        <div class="ambient-meta">IMP:03 // SPECS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDAR MODULE -->
+  <section class="calendar-section">
+    <div class="cal-wrap">
+      <div class="cal-title">Arquivo // Mar 2026</div>
+      <div class="cal-grid">
+        <div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day"></div><div class="cal-day past">1</div>
+        <div class="cal-day past">2</div><div class="cal-day past">3</div><div class="cal-day past">4</div><div class="cal-day past">5</div><div class="cal-day past">6</div><div class="cal-day past">7</div><div class="cal-day past">8</div>
+        <div class="cal-day past">9</div><div class="cal-day past">10</div><div class="cal-day past">11</div><div class="cal-day past">12</div><div class="cal-day past">13</div><div class="cal-day past">14</div><div class="cal-day past">15</div>
+        <div class="cal-day past">16</div><div class="cal-day past">17</div><div class="cal-day past">18</div><div class="cal-day past">19</div><div class="cal-day past">20</div><div class="cal-day past">21</div><div class="cal-day past">22</div>
+        <div class="cal-day past">23</div><div class="cal-day active">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div>
+        <div class="cal-day">30</div><div class="cal-day">31</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

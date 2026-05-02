@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário: Solarpunk Amazônico</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --leaf-light: #e0f2f1;
+    --leaf-dark: #004d40;
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 77, 64, 0.1);
+  }
+
+  body {
+    margin: 0; padding: 40px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--leaf-dark);
+    /* Soft Amazonian Solarpunk gradient */
+    background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+    min-height: 100vh;
+  }
+
+  /* Abstract blurred shape mimicking nature behind glass */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 10%; right: 10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, #80cbc4 0%, transparent 70%);
+    filter: blur(60px); opacity: 0.6; z-index: -1;
+  }
+
+  .container { max-width: 800px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 50px; }
+  h1 { font-weight: 700; font-size: 2.5rem; letter-spacing: -1px; margin: 0; }
+  .stamp { font-size: 0.9rem; font-weight: 500; opacity: 0.7; }
+
+  /* Glassmorphism Details */
+  details.node {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: var(--glass-shadow);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  details.node:hover { transform: translateY(-2px); }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 24px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  summary::-webkit-details-marker { display: none; }
+  
+  summary::after {
+    content: '+';
+    font-weight: 300;
+    font-size: 1.8rem;
+    line-height: 1;
+    transition: transform 0.3s;
+  }
+  details.node[open] summary::after { transform: rotate(45deg); }
+
+  .content { padding: 0 24px 24px; }
+
+  .bio-text {
+    font-weight: 300;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+
+  .data-leaf {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: rgba(255,255,255, 0.5);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+  }
+  .data-leaf b { opacity: 0.6; margin-right: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>O Grafo Diário</h1>
+    <div class="stamp">Ecossistema ZefraHub · 24 Mar 2026</div>
+  </header>
+
+  <details class="node" open>
+    <summary>Ontologia & Consciência</summary>
+    <div class="content">
+      <div class="bio-text">
+        O ecossistema expande suas raízes: alinha-se formalmente aos princípios da Biblioteconomia de Ranganathan e cultiva este mesmo Grafo Diário como mecanismo de retro-alimentação consciente.
+      </div>
+      <div class="data-leaf"><span><b>P1</b> Biblioteconomia Integrada à Constituição</span> <span>Imp: 8</span></div>
+      <div class="data-leaf"><span><b>P2</b> Governance Workflows: Backlog & README</span> <span>Imp: 8</span></div>
+      <div class="data-leaf"><span><b>P3</b> O Grafo Diário: Discovery do Jornal</span> <span>Imp: 6</span></div>
+    </div>
+  </details>
+
+  <details class="node">
+    <summary>Migração CCB</summary>
+    <div class="content">
+      <div class="bio-text">
+        Transplante arquitetônico. O scaffolding do domínio foi completado com êxito, mas as simbioses de teste requerem polinização cuidadosa nas próximas seções antes da floração (merge).
+      </div>
+      <div class="data-leaf"><span><b>P2</b> Domain Scaffolding & Relocação</span> <span>Imp: 7</span></div>
+      <div class="data-leaf"><span><b>P4</b> CCB Spec Audit: Gaps Identificados</span> <span>Imp: 5</span></div>
+    </div>
+  </details>
+</div>
+
+<!-- GLOBAL FITNESS ACTION BAR (Protocol v1.0.0) -->
+<style>
+  .vote-label { font-family: 'Inter', monospace; font-size: 0.70rem; font-weight: 700; color: #9a8b78; text-transform: uppercase; }
+  .vote-group { display: flex; gap: 4px; border: 1px solid #3a2e22; border-radius: 4px; overflow: hidden; background: #1c1710; }
+  .vote-btn-scale { border: none; background: transparent; color: #e8dcc8; font-family: 'Inter', monospace; font-size: 0.80rem; padding: 4px 10px; cursor: pointer; border-right: 1px solid #3a2e22; font-weight: 700; transition: background-color 0.2s, color 0.2s; }
+  .vote-btn-scale:last-child { border-right: none; }
+  .vote-btn-scale:hover { background: #e8dcc8; color: #1c1710; }
+  .vote-btn-scale.active { background: #c4956a; color: #1c1710; }
+  .comment-input { padding: 6px 10px; border: 1px solid #3a2e22; background: #1c1710; color: #e8dcc8; border-radius: 4px; font-family: 'Inter', monospace; font-size: 0.8rem; outline: none; margin-left: 12px; }
+  .vote-success-msg { font-family: 'Inter', monospace; font-size: 0.75rem; color: #10b981; font-weight: 700; margin-left: 12px; }
+</style>
+
+<div class="global-vote-bar" style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); padding: 12px 24px; border-radius: 30px; display: flex; gap: 16px; align-items: center; z-index: 9999;">
+  <div class="vote-label" style="color: white;">GLOBAL FITNESS:</div>
+  <div class="vote-group" id="vote_global_page"></div>
+  <input type="text" class="comment-input" id="input_global_page" placeholder="Reason..." style="display:none; width: 200px;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+  <div id="comment_global_page"></div>
+</div>
+
+<script>
+  let pendingVotes = {};
+
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button class="vote-btn-scale" onclick="registerVote('global_fitness', '', ${n}, 'vote_global_page')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.innerText) === score) btn.classList.add('active');
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const inputEl = document.getElementById('input_global_page');
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById('input_global_page');
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if(inputEl) inputEl.style.display = 'none';
+    const commentBlock = document.getElementById('comment_global_page');
+    if(commentBlock) commentBlock.innerHTML = `<span class="vote-success-msg">✓ SYNCED</span>`;
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[Overall Page] ${reason}` : `[Overall Page] No comment`
+      });
+    }
+  }
+  
+  initVoteButtons();
+</script>

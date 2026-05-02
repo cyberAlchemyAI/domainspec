@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 001: Solarpunk Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #d8eee7;      /* Very pale mint background */
+    --bg-container: #dff0ea; /* Slightly lighter mint container */
+    --bg-card: #ffffff;      /* Pure white cards */
+    --text-main: #0a4d3c;    /* Deep forest green */
+    --text-muted: #53796d;   /* Muted green-grey */
+    --radius-lg: 16px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 { font-size: 2.2rem; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -1px; }
+  .meta { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; }
+
+  /* Accordion Container */
+  details.arc {
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(10, 77, 60, 0.04);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 24px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: opacity 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { opacity: 0.8; }
+
+  /* Plus / Cross logic */
+  .icon {
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text-main);
+  }
+  details.arc:not([open]) .icon::after { content: '+'; }
+  details.arc[open] .icon::after { content: '×'; font-size: 1.2rem; }
+
+  /* Interior content */
+  .content {
+    padding: 0 24px 24px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .content p { margin-top: 0; margin-bottom: 24px; }
+
+  /* White nested cards */
+  .node {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-main);
+    box-shadow: 0 2px 12px rgba(10, 77, 60, 0.02);
+  }
+  .node:last-child { margin-bottom: 0; }
+  
+  .node-title { font-weight: 500; font-size: 0.95rem; }
+  .node-meta { font-family: monospace; font-size: 0.9rem; color: var(--text-main); }
+  .node-id { opacity: 0.4; font-weight: 700; margin-right: 12px; }
+  
+</style>
+</head>
+<body>
+<div class="wrapper">
+  
+  <header>
+    <h1>O Grafo Diário</h1>
+    <div class="meta">Ecossistema ZefraHub · 24 Mar 2026</div>
+  </header>
+
+  <details class="arc" open>
+    <summary>
+      <span>Ontologia & Consciência</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O ecossistema expande suas raízes: alinha-se formalmente aos princípios da Biblioteconomia de Ranganathan e cultiva este mesmo Grafo Diário como mecanismo de retro-alimentação consciente.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id">P1</span> Biblioteconomia Integrada à Constituição</span>
+        <span class="node-meta">Imp: 8</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id">P2</span> Governance Workflows: Backlog & README</span>
+        <span class="node-meta">Imp: 8</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id">P3</span> O Grafo Diário: Discovery do Jornal</span>
+        <span class="node-meta">Imp: 6</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="arc">
+    <summary>
+      <span>Migração CCB</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O domínio validation é estabelecido com relocação de arquivos, porém lacunas de segurança (testes) exigem intervenção posterior.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id">P2</span> Domain Scaffolding & Relocação</span>
+        <span class="node-meta">Imp: 7</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id">P4</span> CCB Spec Audit: Gaps Identificados</span>
+        <span class="node-meta">Imp: 5</span>
+      </div>
+    </div>
+  </details>
+
+</div>
+</body>
+</html>

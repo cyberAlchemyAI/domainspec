@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 019 B: Horizontal Chronicle (EXPLORE)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== HORIZONTAL CHRONICLE — Gen 019 B — EXPLORE =====
+     Materializes gen_014_b 5/5 horizontal timeline topology.
+     CRITICAL: persistent vertical sidebar prevents editorial density collapse (gen_018_b failure).
+     Primary axis: horizontal click-stepped pagination.
+     Aesthetic: Archival broadsheet · Cartographic grid · Le Monde · Muriel Cooper MIT Media Lab
+     Palette: #1a1612 bg · #e8e0d0 text · #c8a96e accent · #3a3228 borders
+  =============================================== */
+
+  :root {
+    --bg:          #1a1612;
+    --bg-surface:  #221e19;
+    --bg-card:     #2a2520;
+    --bg-sidebar:  #161310;
+    --bg-page:     #1e1a15;
+    --text:        #e8e0d0;
+    --text-muted:  #a8998a;
+    --text-dim:    #5a4f44;
+    --accent:      #c8a96e;
+    --accent-dim:  #6a4e20;
+    --accent-soft: #a88848;
+    --border:      #3a3228;
+    --border-mid:  #4a4236;
+    --border-light: #5a5048;
+    --danger:      #c45c3a;
+    --success:     #7aab6a;
+    --sidebar-w:   260px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== GLOBAL TOOLTIP ===== */
+  #tt {
+    position: fixed;
+    z-index: 9999;
+    background: #111;
+    color: #e5e5e5;
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 320px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.5;
+  }
+  #tt.show { opacity: 1; }
+
+  /* ===== TOP MASTHEAD BAR ===== */
+  .masthead-bar {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--accent-dim);
+    padding: 0 28px 0 calc(var(--sidebar-w) + 28px);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 56px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 300;
+  }
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.65rem;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    cursor: default;
+    white-space: nowrap;
+  }
+  .masthead-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border-mid);
+    flex-shrink: 0;
+  }
+  .masthead-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: default;
+    line-height: 1.6;
+  }
+  .masthead-meta strong { color: var(--accent); display: block; }
+  .masthead-style-badge {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    padding: 3px 10px;
+    white-space: nowrap;
+    cursor: default;
+    flex-shrink: 0;
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ===== PERSISTENT LEFT SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-mid);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    z-index: 200;
+  }
+  .sidebar-inner {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .sidebar-inner::-webkit-scrollbar { width: 3px; }
+  .sidebar-inner::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-inner::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  .sidebar-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+  }
+
+  /* Article index */
+  .article-index { display: flex; flex-direction: column; gap: 4px; }
+  .index-item {
+    padding: 8px 10px;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    border-radius: 0 2px 2px 0;
+  }
+  .index-item:hover { background: rgba(200,169,110,0.06); border-left-color: var(--accent-dim); }
+  .index-item.active { background: rgba(200,169,110,0.1); border-left-color: var(--accent); }
+  .index-item-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+  .index-item.active .index-item-num { color: var(--accent); }
+  .index-item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+  .index-item.active .index-item-title { color: var(--text); }
+
+  /* Stats */
+  .stat-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stat-mini {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 8px;
+    cursor: default;
+    transition: border-color 0.2s;
+  }
+  .stat-mini:hover { border-color: var(--accent-dim); }
+  .stat-mini-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .stat-mini-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Gen info */
+  .gen-info-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+  .info-line {
+    display: flex;
+    justify-content: space-between;
+    cursor: default;
+    padding: 0;
+    transition: color 0.15s;
+    gap: 6px;
+  }
+  .info-line:hover { color: var(--text-muted); }
+  .info-val { color: var(--text-muted); text-align: right; flex-shrink: 0; }
+
+  /* Lineage */
+  .lineage-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+  .lin-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    cursor: default;
+    transition: color 0.15s;
+  }
+  .lin-entry:hover { color: var(--text-muted); }
+  .lin-arrow { color: var(--accent-dim); flex-shrink: 0; }
+  .lin-name { color: var(--text-muted); word-break: break-all; }
+  .lin-score { margin-left: auto; color: var(--accent); font-weight: 600; flex-shrink: 0; }
+
+  /* Global vote in sidebar footer */
+  .sidebar-gfb {
+    flex-shrink: 0;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-mid);
+    background: var(--bg-sidebar);
+  }
+  .sidebar-gfb-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+    cursor: default;
+  }
+  .gfb-btns { display: flex; gap: 3px; }
+  .gfb-btn {
+    flex: 1;
+    height: 26px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.64rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.15s;
+  }
+  .gfb-btn:hover { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+  .gfb-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .gfb-voted-msg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--success);
+    font-weight: 600;
+    margin-top: 6px;
+    text-align: center;
+    cursor: default;
+  }
+
+  /* ===== ARTICLE VIEWPORT ===== */
+  .article-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .article-pages {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .article-page {
+    min-width: 100%;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 32px 52px 100px 52px;
+    display: flex;
+    flex-direction: column;
+  }
+  .article-page::-webkit-scrollbar { width: 4px; }
+  .article-page::-webkit-scrollbar-track { background: transparent; }
+  .article-page::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  /* ===== ARTICLE PAGE CONTENT ===== */
+  .page-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .page-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--danger);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: default;
+  }
+  .page-tag.p2 { color: var(--accent-soft); }
+  .page-impact {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 1px 7px;
+    cursor: default;
+  }
+  .page-position {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: default;
+  }
+
+  .page-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.4rem;
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    letter-spacing: -0.025em;
+    margin-bottom: 20px;
+    max-width: 860px;
+  }
+
+  .page-rule {
+    border: none;
+    border-top: 2px solid var(--accent-dim);
+    margin-bottom: 24px;
+    width: 80px;
+  }
+
+  /* Multi-column editorial body */
+  .page-exec {
+    column-count: 2;
+    column-gap: 40px;
+    column-rule: 1px solid var(--border);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 28px;
+    max-width: 900px;
+  }
+  .page-exec p { margin-bottom: 12px; orphans: 3; widows: 3; }
+  .page-exec p:last-child { margin-bottom: 0; }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-dim); text-decoration: none; border: 1px dashed var(--border-mid); padding: 2px 8px; }
+  .source-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ===== 3-TIER DRAWERS ===== */
+  .tier-drawers { max-width: 900px; }
+
+  .tier-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+    user-select: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .tier-toggle:hover { color: var(--accent); }
+  .tier-toggle .toggle-icon {
+    font-size: 0.68rem;
+    width: 12px;
+    text-align: center;
+    transition: transform 0.2s;
+    color: var(--accent);
+  }
+  .tier-toggle.open .toggle-icon { transform: rotate(45deg); }
+
+  .tier-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease, padding 0.2s ease;
+    padding-top: 0;
+  }
+  .tier-body.open { max-height: 2000px; padding-top: 14px; }
+
+  .tier-tech-content {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border-left: 2px solid var(--accent-dim);
+    padding: 12px 18px;
+    margin-bottom: 4px;
+  }
+  .tier-tech-content strong { color: var(--text); font-weight: 600; }
+  .tier-tech-content code { color: var(--accent); font-size: 0.76rem; }
+
+  .tier-graph-content {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    background: var(--bg);
+    border-left: 2px solid var(--border-mid);
+    padding: 12px 18px;
+    margin-bottom: 4px;
+  }
+  .tier-graph-content .graph-header {
+    color: var(--text-dim);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  /* ===== VOTE TRIGGER — per article ===== */
+  .vote-anchor {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+    align-self: flex-start;
+  }
+  .vote-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--bg-surface);
+    padding: 4px 10px;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .vote-trigger:hover {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: var(--bg-card);
+  }
+  .vote-popup {
+    position: absolute;
+    top: calc(100% + 6px); left: 0;
+    width: 268px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-mid);
+    padding: 12px 14px;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .vote-trigger:hover + .vote-popup,
+  .vote-popup:hover {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .vote-popup-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+  .popup-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .popup-metric-row:last-child { margin-bottom: 0; }
+  .popup-metric-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex: 1;
+    white-space: nowrap;
+    cursor: default;
+  }
+  .popup-btns { display: flex; gap: 2px; }
+  .popup-btn {
+    width: 20px; height: 20px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .popup-btn:hover { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+  .popup-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
+  .popup-voted-msg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--success);
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  /* ===== NAV CONTROLS ===== */
+  .page-nav-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-mid);
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+  }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.64rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-dots {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border-mid);
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .nav-dot.active { background: var(--accent); transform: scale(1.3); }
+  .nav-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: default;
+    white-space: nowrap;
+  }
+  .nav-counter span { color: var(--accent); font-weight: 700; }
+
+  /* Keyboard hint */
+  .nav-kbd-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .nav-kbd-hint kbd {
+    background: var(--bg-card);
+    border: 1px solid var(--border-mid);
+    border-radius: 2px;
+    padding: 1px 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== GLOBAL TOOLTIP ===== -->
+<div id="tt"></div>
+
+<!-- ===== TOP MASTHEAD BAR ===== -->
+<div class="masthead-bar">
+  <div class="masthead-title"
+    data-tip="O Grafo Diário — The Daily Graph. This edition materializes the Gen 014 B 5/5 horizontal topology signal into a cartographic broadsheet.">
+    O Grafo Diário
+  </div>
+  <div class="masthead-divider"></div>
+  <div class="masthead-meta"
+    data-tip="GEN 019 B EXPLORE — Horizontal Chronicle. Materializes the gen_014_b 5/5 signal. Persistent sidebar prevents the editorial density collapse that killed gen_018_b.">
+    <strong>GEN 019 B // EXPLORE // MR-002-2026-03-26</strong>
+    HORIZONTAL CHRONICLE · ARCHIVAL BROADSHEET
+  </div>
+  <div class="masthead-style-badge" id="styleBadge"
+    data-tip="Active content style variant selected by the Multi-Armed Bandit system.">
+    ✦ —
+  </div>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="main-layout">
+
+  <!-- ===== PERSISTENT LEFT SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title"
+          data-tip="Article index. Click any entry to navigate directly to that article.">
+          Chronicle Index
+        </div>
+        <div class="article-index" id="article-index"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title"
+          data-tip="Live counters from the Vault's operational history.">
+          Session Stats
+        </div>
+        <div class="stat-mini-grid">
+          <div class="stat-mini"
+            data-tip="Sessions: Total working sessions since project inception.">
+            <div class="stat-mini-val" id="stat-sessions">—</div>
+            <div class="stat-mini-label">Sessions</div>
+          </div>
+          <div class="stat-mini"
+            data-tip="Decisions: Architectural decisions recorded in the Vault.">
+            <div class="stat-mini-val" id="stat-decisions">—</div>
+            <div class="stat-mini-label">Decisions</div>
+          </div>
+          <div class="stat-mini"
+            data-tip="Spec Changes: Specification documents modified this cycle.">
+            <div class="stat-mini-val" id="stat-specs">—</div>
+            <div class="stat-mini-label">Spec Δ</div>
+          </div>
+          <div class="stat-mini"
+            data-tip="Articles in this edition.">
+            <div class="stat-mini-val" id="stat-articles">—</div>
+            <div class="stat-mini-label">Articles</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title"
+          data-tip="Metadata for this UI template and Darwin Engine parameters.">
+          Generation Info
+        </div>
+        <div class="gen-info-block">
+          <div class="info-line" data-tip="Unique template ID tracked by Darwin Engine for fitness scoring.">
+            <span>ID</span><span class="info-val">gen_019_b</span>
+          </div>
+          <div class="info-line" data-tip="EXPLORE: Engine tests an unconfirmed 5/5 signal. Higher variance strategy.">
+            <span>Strategy</span><span class="info-val">EXPLORE</span>
+          </div>
+          <div class="info-line" data-tip="Named aesthetic. Declared for reproducibility.">
+            <span>Aesthetic</span><span class="info-val">Horiz. Chronicle</span>
+          </div>
+          <div class="info-line" data-tip="Ancestral origin. gen_014_b achieved 5/5 global fitness (n=1).">
+            <span>Base</span><span class="info-val">gen_014_b</span>
+          </div>
+          <div class="info-line" data-tip="Mutation Request that produced this generation.">
+            <span>MR</span><span class="info-val">MR-002</span>
+          </div>
+          <div class="info-line" data-tip="Target Visual Entropy. 2 = muted, disciplined palette.">
+            <span>Target VE</span><span class="info-val">2 / 5</span>
+          </div>
+          <div class="info-line" data-tip="Target Editorial Density. CRITICAL: sidebar must persist. gen_018_b failed at 1/5.">
+            <span>Target Density</span><span class="info-val">4 / 5</span>
+          </div>
+          <div class="info-line" data-tip="Topology target. Horizontal primary axis + persistent sidebar = hybrid.">
+            <span>Target Topology</span><span class="info-val">5 / 5</span>
+          </div>
+          <div class="info-line" data-tip="Interaction: click-stepped horizontal navigation (not swipe).">
+            <span>Interaction</span><span class="info-val">Click-Stepped</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title"
+          data-tip="Evolutionary ancestry. gen_014_b 5/5 signal was the trigger for this EXPLORE arm.">
+          Mutation Lineage
+        </div>
+        <div class="lineage-block">
+          <div class="lin-entry" data-tip="The signal. gen_014_b achieved 5/5 global fitness (n=1, unconfirmed). This is the confirmation attempt.">
+            <span class="lin-arrow">●</span>
+            <span class="lin-name">gen_014_b_explore_horizontal</span>
+            <span class="lin-score">5.0</span>
+          </div>
+          <div class="lin-entry" data-tip="Anti-pattern avoided. gen_018_b removed sidebar → editorial density 1/5. NEVER repeat.">
+            <span class="lin-arrow">✕</span>
+            <span class="lin-name">gen_018_b (failure: no sidebar)</span>
+            <span class="lin-score">1.0</span>
+          </div>
+          <div class="lin-entry" style="margin-top:4px;"
+            data-tip="Current generation. Horizontal timeline + persistent sidebar = density preserved.">
+            <span class="lin-arrow" style="color:var(--accent);">→</span>
+            <span class="lin-name" style="color:var(--accent);">gen_019_b (this)</span>
+            <span class="lin-score" style="color:var(--text-dim);">NEW</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title"
+          data-tip="Visual design schools declared as explicit references.">
+          Aesthetic Refs
+        </div>
+        <div class="lineage-block">
+          <div class="lin-entry" data-tip="Archival Broadsheet: Broadsheet newspaper layout — ruled columns, heavy serif, editorial discipline.">
+            <span class="lin-arrow">—</span><span class="lin-name">Archival Broadsheet</span>
+          </div>
+          <div class="lin-entry" data-tip="Cartographic Grid: Maps as information design. Ruled coordinates, layered data, dense legend.">
+            <span class="lin-arrow">—</span><span class="lin-name">Cartographic Grid</span>
+          </div>
+          <div class="lin-entry" data-tip="Le Monde: French newspaper aesthetic — refined serif, tight editorial columns, restrained decoration.">
+            <span class="lin-arrow">—</span><span class="lin-name">Le Monde</span>
+          </div>
+          <div class="lin-entry" data-tip="Muriel Cooper MIT Media Lab: Information design pioneer. Layered, typographic, systematic.">
+            <span class="lin-arrow">—</span><span class="lin-name">Muriel Cooper / MIT</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end sidebar-inner -->
+
+    <!-- Global Fitness pinned to sidebar bottom -->
+    <div class="sidebar-gfb">
+      <div class="sidebar-gfb-label"
+        data-tip="Overall fitness rating for this template. Feeds the Darwin Engine next mutation cycle.">
+        ◉ Global Fitness
+      </div>
+      <div class="gfb-btns" id="gfb-btns">
+        <button class="gfb-btn" data-score="1"
+          data-tip="Score 1 — Strongly reject. Regression."
+          onclick="castGlobalFitness(1)">1</button>
+        <button class="gfb-btn" data-score="2"
+          data-tip="Score 2 — Weak negative."
+          onclick="castGlobalFitness(2)">2</button>
+        <button class="gfb-btn" data-score="3"
+          data-tip="Score 3 — Neutral."
+          onclick="castGlobalFitness(3)">3</button>
+        <button class="gfb-btn" data-score="4"
+          data-tip="Score 4 — Positive signal."
+          onclick="castGlobalFitness(4)">4</button>
+        <button class="gfb-btn" data-score="5"
+          data-tip="Score 5 — Strongly confirm. Horizontal topology validated."
+          onclick="castGlobalFitness(5)">5</button>
+      </div>
+      <div id="gfb-feedback"></div>
+    </div>
+  </aside>
+
+  <!-- ===== ARTICLE VIEWPORT ===== -->
+  <div class="article-viewport">
+    <div class="article-pages" id="article-pages"></div>
+
+    <!-- Navigation bar -->
+    <div class="page-nav-bar">
+      <button class="nav-btn" id="btn-prev"
+        data-tip="Previous article. Also: ArrowLeft key."
+        onclick="navigate(-1)">← PREV</button>
+      <div class="nav-dots" id="nav-dots"></div>
+      <span class="nav-counter" id="nav-counter"
+        data-tip="Current article position in the horizontal chronicle sequence.">
+        ARTICLE <span id="nav-current">1</span> / <span id="nav-total">—</span>
+      </span>
+      <button class="nav-btn" id="btn-next"
+        data-tip="Next article. Also: ArrowRight key."
+        onclick="navigate(1)">NEXT →</button>
+      <span class="nav-kbd-hint"
+        data-tip="Keyboard navigation is active for this template. Arrow keys step between articles.">
+        <kbd>←</kbd> <kbd>→</kbd>
+      </span>
+    </div>
+  </div>
+
+</div><!-- end .main-layout -->
+
+<script>
+  // ===== TOOLTIP ENGINE =====
+  (function() {
+    const tt = document.getElementById('tt');
+    let hideTimer;
+    document.addEventListener('mousemove', function(e) {
+      let x = e.clientX + 16, y = e.clientY + 16;
+      if (x + 330 > window.innerWidth) x = e.clientX - 330;
+      if (y + 90 > window.innerHeight) y = e.clientY - 80;
+      tt.style.left = x + 'px';
+      tt.style.top = y + 'px';
+    });
+    document.addEventListener('mouseover', function(e) {
+      const el = e.target.closest('[data-tip]');
+      clearTimeout(hideTimer);
+      if (el && el.dataset.tip) {
+        tt.textContent = el.dataset.tip;
+        tt.classList.add('show');
+      } else {
+        tt.classList.remove('show');
+      }
+    });
+    document.addEventListener('mouseout', function() {
+      hideTimer = setTimeout(function() { tt.classList.remove('show'); }, 60);
+    });
+  })();
+
+  // ===== MOCK PAYLOAD =====
+  const mockPayload = {
+    metadata: { date: "2026-03-26", stats: { sessions: 45, decisions: 31, specChanges: 19 } },
+    articles: [
+      {
+        id: "art_ranganathan", tag: "P1 • ARQUITETURA",
+        title: "A Integração de Ranganathan",
+        body: "<p>A percepção foi necessária: nosso sistema anterior baseado em &quot;Assuntos&quot; (subpastas fixas) estava quebrando a escalabilidade do Cofre. Adotamos oficialmente a Classificação Facetada de S. R. Ranganathan.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "art_darwin", tag: "P1 • EVOLUÇÃO",
+        title: "Darwin-Gödel Engine: MR-002 Produzido",
+        body: "<p>O motor evolutivo consumiu 16 votos em 11 gerações e produziu MR-002. Sinal dominante: Gen 014 B (topologia horizontal) com 5/5 — o score mais alto do dataset. Estratégia: EXPLORE com braço EXPLOIT paralelo.</p>",
+        meta: { impact: 9.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "art_validation", tag: "P2 • PIPELINE",
+        title: "Content Style MAB: 7 Vozes Ativas",
+        body: "<p>O sistema de seleção de estilo por Multi-Armed Bandit está ativo. 7 variações de voz por artigo. Cada carga de template seleciona uma voz via epsilon-greedy (ε=0.2). Votos treinam a convergência.</p>",
+        meta: { impact: 7.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload;
+  try {
+    payload = (window.parent && window.parent.currentPayload && window.parent.currentPayload.articles)
+      ? window.parent.currentPayload : mockPayload;
+  } catch(e) { payload = mockPayload; }
+
+  // ===== STATE =====
+  let currentIndex = 0;
+  const pendingVotes = {};
+
+  // ===== VOTE FUNCTIONS =====
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if (!container || container.classList.contains('voted')) return;
+    container.querySelectorAll('.popup-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+      if (parseInt(btn.dataset.score) === score) btn.classList.add('active');
+    });
+    pendingVotes[blockId] = { metricName: metricName, articleId: articleId, score: score };
+    clearTimeout(container._voteTimer);
+    container._voteTimer = setTimeout(function() { commitVote(metricName, articleId, blockId); }, 900);
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if (!state) return;
+    const container = document.getElementById(blockId);
+    if (container) container.classList.add('voted');
+    try {
+      if (window.parent && window.parent.registerAtomicVote) {
+        window.parent.registerAtomicVote({
+          metric_name: state.metricName,
+          score: state.score,
+          template: 'gen_019_b_explore_horizontal_chronicle',
+          comment: '[Article: ' + state.articleId + '] Gen 019 B — ' + state.metricName + ' atomic vote'
+        });
+      }
+    } catch(e) {}
+    if (container) container.innerHTML = '<div class="popup-voted-msg">✓ ' + state.score + '/5 SYNCED</div>';
+  }
+
+  // ===== GLOBAL FITNESS =====
+  let globalFitnessVoted = false;
+  function castGlobalFitness(score) {
+    if (globalFitnessVoted) return;
+    globalFitnessVoted = true;
+    document.querySelectorAll('.gfb-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+      if (parseInt(btn.dataset.score) === score) btn.classList.add('active');
+    });
+    try {
+      if (window.parent && window.parent.registerAtomicVote) {
+        window.parent.registerAtomicVote({
+          metric_name: 'global_fitness',
+          score: score,
+          template: 'gen_019_b_explore_horizontal_chronicle',
+          comment: 'Gen 019 B overall template fitness vote'
+        });
+      }
+    } catch(e) {}
+    document.getElementById('gfb-feedback').innerHTML = '<div class="gfb-voted-msg">✓ ' + score + '/5 — Recorded.</div>';
+  }
+
+  // ===== ACCORDION =====
+  function toggleTier(toggleEl) {
+    const body = toggleEl.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    toggleEl.classList.toggle('open', !isOpen);
+  }
+
+  // ===== NAVIGATION =====
+  function navigate(delta) {
+    const articles = payload.articles || [];
+    const next = currentIndex + delta;
+    if (next < 0 || next >= articles.length) return;
+    currentIndex = next;
+    updateView();
+  }
+
+  function goTo(idx) {
+    const articles = payload.articles || [];
+    if (idx < 0 || idx >= articles.length) return;
+    currentIndex = idx;
+    updateView();
+  }
+
+  function updateView() {
+    const articles = payload.articles || [];
+    const total = articles.length;
+
+    // Slide pages
+    document.getElementById('article-pages').style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+
+    // Update dots
+    document.querySelectorAll('.nav-dot').forEach(function(dot, i) {
+      dot.classList.toggle('active', i === currentIndex);
+    });
+
+    // Update index items
+    document.querySelectorAll('.index-item').forEach(function(item, i) {
+      item.classList.toggle('active', i === currentIndex);
+    });
+
+    // Update counter
+    document.getElementById('nav-current').textContent = currentIndex + 1;
+
+    // Update buttons
+    document.getElementById('btn-prev').disabled = currentIndex === 0;
+    document.getElementById('btn-next').disabled = currentIndex === total - 1;
+  }
+
+  // ===== METRICS =====
+  const METRICS = [
+    { key: 'topology',          label: 'Topology',     tip: 'Topology: Does the horizontal pagination serve navigation? 1=disorienting, 5=effortless.' },
+    { key: 'visual_entropy',    label: 'Vis. Entropy', tip: 'Visual Entropy: Amount of visual noise. 1=chaotic, 5=pure signal.' },
+    { key: 'aesthetics',        label: 'Aesthetics',   tip: 'Aesthetics: Does the cartographic broadsheet feel match declared references?' },
+    { key: 'editorial_density', label: 'Ed. Density',  tip: 'Editorial Density: Information-to-space ratio. 1=sparse, 5=maximum density. CRITICAL metric for this gen.' },
+    { key: 'structure',         label: 'Structure',    tip: 'Structure: Does the horizontal + sidebar hybrid serve reading flow?' },
+    { key: 'tone',              label: 'Tone',         tip: 'Tone: Is the editorial voice calibrated — archival authority, not arid?' },
+    { key: 'form',              label: 'Form',         tip: 'Form: Multi-column body, horizontal stepping — does the form match the content type?' }
+  ];
+
+  const SCORE_TIPS = [
+    '',
+    'Score 1: Strongly negative.',
+    'Score 2: Weak negative.',
+    'Score 3: Neutral.',
+    'Score 4: Positive signal.',
+    'Score 5: Strongly positive. Best-in-class execution.'
+  ];
+
+  function buildMetricRows(artId) {
+    return METRICS.map(function(m) {
+      var btns = [1,2,3,4,5].map(function(n) {
+        return '<button class="popup-btn" data-score="' + n + '" data-tip="' + SCORE_TIPS[n] + '" onclick="registerVote(\'' + m.key + '\',\'' + artId + '\',' + n + ',\'vote_' + m.key + '_' + artId + '\');event.stopPropagation()">' + n + '</button>';
+      }).join('');
+      return '<div class="popup-metric-row"><span class="popup-metric-name" data-tip="' + m.tip + '">' + m.label + '</span><div class="popup-btns" id="vote_' + m.key + '_' + artId + '">' + btns + '</div></div>';
+    }).join('');
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ===== RENDER =====
+  function renderUI() {
+    const meta = payload.metadata || {};
+    const stats = meta.stats || {};
+    const articles = payload.articles || [];
+    const total = articles.length;
+
+    // Style badge
+    let styleId = '—';
+    try {
+      if (window.parent && window.parent.currentPayload && window.parent.currentPayload.selected_style_id) {
+        styleId = window.parent.currentPayload.selected_style_id;
+      }
+    } catch(e) {}
+    document.getElementById('styleBadge').textContent = '✦ ' + styleId;
+
+    // Stats
+    document.getElementById('stat-sessions').textContent  = stats.sessions    || '—';
+    document.getElementById('stat-decisions').textContent = stats.decisions   || '—';
+    document.getElementById('stat-specs').textContent     = stats.specChanges || '—';
+    document.getElementById('stat-articles').textContent  = total || '—';
+    document.getElementById('nav-total').textContent      = total;
+
+    // Build article index in sidebar
+    document.getElementById('article-index').innerHTML = articles.map(function(art, i) {
+      return '<div class="index-item' + (i === 0 ? ' active' : '') + '" onclick="goTo(' + i + ')" data-tip="Navigate to: ' + escHtml(art.title) + '">' +
+        '<div class="index-item-num">' + escHtml(art.tag || ('ARTICLE ' + (i+1))) + '</div>' +
+        '<div class="index-item-title">' + escHtml(art.title) + '</div>' +
+      '</div>';
+    }).join('');
+
+    // Build nav dots
+    document.getElementById('nav-dots').innerHTML = articles.map(function(art, i) {
+      return '<div class="nav-dot' + (i === 0 ? ' active' : '') + '" onclick="goTo(' + i + ')" data-tip="Article ' + (i+1) + ': ' + escHtml(art.title) + '"></div>';
+    }).join('');
+
+    // Build article pages
+    document.getElementById('article-pages').innerHTML = articles.map(function(art, i) {
+      const body  = art.body || '<p>No content available.</p>';
+      const sourceFiles = (art.meta && art.meta.source_files) || [];
+      const sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(function(f) {
+        var name = f.split('/').pop();
+        return '<a href="/api/doc?path=' + f + '" target="_blank" class="source-link">↗ ' + name + '</a>';
+      }).join('') + '</div>' : '';
+      const impact = art.meta ? art.meta.impact : null;
+      const risk   = art.meta ? art.meta.risk : null;
+      const isP1 = art.tag && art.tag.startsWith('P1');
+
+      return '<div class="article-page" id="page_' + art.id + '">' +
+        '<div class="page-eyebrow">' +
+          '<span class="page-tag ' + (isP1 ? '' : 'p2') + '" data-tip="' + (isP1 ? 'P1: Highest editorial priority.' : 'P2: High priority.') + '">' + escHtml(art.tag || 'ARTICLE') + '</span>' +
+          (impact !== null ? '<span class="page-impact" data-tip="Impact Score (0–10) from Vault graph signal.">' + impact + '</span>' : '') +
+          (risk ? '<span class="page-tag p2" style="margin-left:4px;" data-tip="Risk classification from Editor-in-Chief.">RISK: ' + escHtml(risk) + '</span>' : '') +
+          '<span class="page-position" data-tip="Position in the horizontal chronicle sequence.">' + (i+1) + ' / ' + total + '</span>' +
+        '</div>' +
+        '<h1 class="page-headline" data-tip="Main headline for this chronicle entry.">' + escHtml(art.title) + '</h1>' +
+        '<hr class="page-rule">' +
+        '<div class="page-exec" data-tip="Primary editorial summary. Always visible. Rendered in multi-column broadsheet format.">' + body + '</div>' +
+        sourceLinksHtml +
+        '<div class="tier-drawers">' +
+          '<div class="vote-anchor">' +
+            '<div class="vote-trigger" data-tip="Open Atomic Evaluator. Rate this article across 7 evolutionary metrics.">&#9677; EVALUATE ARTICLE</div>' +
+            '<div class="vote-popup"><div class="vote-popup-title">7 Metrics — ' + escHtml(art.title) + '</div>' + buildMetricRows(art.id) + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // Initialize nav state
+    document.getElementById('btn-prev').disabled = true;
+    document.getElementById('btn-next').disabled = total <= 1;
+  }
+
+  // ===== KEYBOARD NAV =====
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft')  navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+  });
+
+  renderUI();
+</script>
+</body>
+</html>

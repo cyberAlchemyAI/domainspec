@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 018 B: Signal/Noise (EXPLORE)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===== SIGNAL/NOISE — Gen 018 B — EXPLORE =====
+     Radical departure from the 70/30 topology.
+     Hypothesis: the sidebar is dead weight. Test a full-width, dense, single-column
+     "dispatch terminal" that maximises vertical reading cadence.
+     Palette: pitch black · phosphor green · white · dead grey
+     Aesthetic references: NOAA Emergency Broadcast · Police Dispatch Terminal ·
+                           Le Monde front page · Cold War Radar Console
+     Topology: Full-width · Article as Transmission Packet · Left priority bar
+  =============================================== */
+
+  :root {
+    --bg:        #050505;
+    --bg-row:    #090909;
+    --bg-open:   #0d0d0d;
+    --text:      #f0f0f0;
+    --text-sub:  #888;
+    --text-dim:  #3a3a3a;
+    --green:     #39ff14;  /* phosphor green */
+    --green-dim: #1a6608;
+    --red:       #ff3b30;
+    --border:    #1c1c1c;
+    --border-mid:#2a2a2a;
+    --mono:      'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ===== GLOBAL TOOLTIP ===== */
+  #tt {
+    position: fixed;
+    z-index: 9999;
+    background: #111;
+    color: var(--green);
+    border: 1px solid var(--green-dim);
+    padding: 5px 9px;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    line-height: 1.5;
+    max-width: 260px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.08s;
+    letter-spacing: 0.01em;
+    white-space: pre-wrap;
+  }
+  #tt.show { opacity: 1; }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 700;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border-mid);
+    display: flex;
+    align-items: stretch;
+  }
+
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 24px;
+    border-right: 1px solid var(--border-mid);
+    flex-shrink: 0;
+  }
+  .top-bar-pub {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: default;
+  }
+  .top-bar-strategy {
+    font-size: 0.62rem;
+    color: var(--green);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: default;
+  }
+
+  /* Scrolling ticker */
+  .top-bar-ticker {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: relative;
+  }
+  .ticker-inner {
+    white-space: nowrap;
+    font-size: 0.62rem;
+    color: var(--text-sub);
+    letter-spacing: 0.06em;
+    animation: ticker-scroll 40s linear infinite;
+  }
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+  .ticker-sep { margin: 0 24px; color: var(--border-mid); }
+  .ticker-key { color: var(--green); margin-right: 6px; }
+
+  /* Global fitness on top-right */
+  .top-bar-gf {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 24px;
+    border-left: 1px solid var(--border-mid);
+    flex-shrink: 0;
+  }
+  .gf-label {
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    cursor: default;
+  }
+  .gf-btns { display: flex; gap: 2px; }
+  .gf-btn {
+    width: 28px; height: 24px;
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    color: var(--text-sub);
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.12s;
+  }
+  .gf-btn:hover { border-color: var(--green); color: var(--green); }
+  .gf-btn.active { background: var(--green); border-color: var(--green); color: var(--bg); }
+
+  /* ===== DISPATCH HEADER ===== */
+  .dispatch-header {
+    padding: 40px 56px 32px;
+    border-bottom: 2px solid var(--border-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .dispatch-title {
+    font-size: 3.6rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    text-transform: uppercase;
+    cursor: default;
+  }
+  .dispatch-title span {
+    color: var(--green);
+    display: block;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .dispatch-meta {
+    text-align: right;
+    font-size: 0.7rem;
+    color: var(--text-sub);
+    line-height: 1.8;
+    cursor: default;
+  }
+  .dispatch-meta .dm-val { color: var(--text); font-weight: 600; }
+
+  /* ===== PACKET LIST ===== */
+  .packet-list {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 56px 120px;
+  }
+
+  /* ===== TRANSMISSION PACKET ===== */
+  .packet {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .packet:hover { background: var(--bg-row); }
+
+  /* Packet header row — always visible */
+  .packet-header {
+    display: grid;
+    grid-template-columns: 40px 36px 160px auto 1fr 100px;
+    align-items: center;
+    gap: 0;
+    padding: 14px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .pkt-num {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: default;
+  }
+
+  /* Priority indicator: vertical color bar */
+  .pkt-priority {
+    width: 3px;
+    height: 32px;
+    margin: 0 14px;
+    flex-shrink: 0;
+    cursor: default;
+  }
+  .pkt-priority.p1 { background: var(--red); }
+  .pkt-priority.p2 { background: var(--green); }
+  .pkt-priority.p3 { background: var(--text-sub); }
+
+  .pkt-tag {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-right: 16px;
+    cursor: default;
+    white-space: nowrap;
+  }
+  .pkt-tag.p1 { color: var(--red); }
+  .pkt-tag.p2 { color: var(--green); }
+
+  .pkt-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text);
+    padding-right: 24px;
+    line-height: 1.3;
+  }
+
+  .pkt-impact {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    cursor: default;
+    padding: 0 16px;
+  }
+  .pkt-impact strong { color: var(--text-sub); }
+
+  .pkt-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .pkt-toggle {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    padding: 4px 8px;
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-weight: 600;
+    transition: 0.12s;
+    flex-shrink: 0;
+  }
+  .packet.open .pkt-toggle {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .pkt-eval-btn {
+    width: 24px; height: 24px;
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    border-radius: 50%;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.12s;
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+  .pkt-eval-btn:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  /* Packet body — collapses */
+  .packet-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease;
+  }
+  .packet.open .packet-body { max-height: 2000px; }
+
+  .packet-body-inner {
+    padding: 0 0 28px 76px; /* align with title column */
+    border-top: 1px solid var(--border);
+  }
+
+  /* EXEC content */
+  .pkt-exec {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--text);
+    padding: 20px 0 16px;
+    max-width: 720px;
+  }
+  .pkt-exec p { margin-bottom: 10px; }
+  .pkt-exec p:last-child { margin-bottom: 0; }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #4b5563; text-decoration: none; border: 1px dashed #374151; padding: 2px 6px; }
+  .source-link:hover { color: #10b981; border-color: #10b981; }
+
+  /* Data blocks */
+  .data-block-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    margin-right: 6px;
+    margin-top: 8px;
+    transition: 0.12s;
+    background: transparent;
+    font-family: var(--mono);
+    user-select: none;
+  }
+  .data-block-toggle:hover { border-color: var(--text-sub); color: var(--text-sub); }
+  .data-block-toggle.active { border-color: var(--green-dim); color: var(--green); }
+
+  .data-block {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.28s ease;
+    margin-top: 0;
+  }
+  .data-block.open { max-height: 800px; margin-top: 12px; }
+
+  .data-block-inner {
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--text-sub);
+    background: var(--bg-open);
+    border-left: 2px solid var(--green-dim);
+    padding: 14px 18px;
+    max-width: 720px;
+    position: relative;
+  }
+  .data-block-inner::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -9px;
+    left: 12px;
+    background: var(--bg-open);
+    padding: 0 6px;
+    font-size: 0.56rem;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+  .data-block-inner strong { color: var(--text); }
+  .data-block-inner code { color: var(--green); font-size: 0.76rem; }
+  .data-block-inner .graph-header {
+    color: var(--text-dim);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  /* ===== EVAL DRAWER ===== */
+  .eval-drawer {
+    position: fixed;
+    top: 0; right: -320px;
+    width: 300px;
+    height: 100vh;
+    background: #0a0a0a;
+    border-left: 1px solid var(--border-mid);
+    z-index: 800;
+    transition: right 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .eval-drawer.open { right: 0; }
+
+  .eval-drawer-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .eval-drawer-title {
+    font-size: 0.62rem;
+    color: var(--green);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .eval-drawer-close {
+    background: transparent;
+    border: none;
+    color: var(--text-sub);
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: var(--mono);
+    line-height: 1;
+  }
+  .eval-drawer-close:hover { color: var(--text); }
+
+  .eval-drawer-article {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--text-sub);
+    line-height: 1.4;
+  }
+  .eval-drawer-article strong { color: var(--text); font-size: 0.78rem; display: block; margin-bottom: 2px; }
+
+  .eval-metrics { padding: 16px 20px; flex: 1; }
+
+  .eval-metric-row {
+    margin-bottom: 14px;
+  }
+  .eval-metric-label {
+    font-size: 0.58rem;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    display: block;
+    cursor: default;
+  }
+  .eval-score-row { display: flex; gap: 3px; }
+  .eval-score-btn {
+    flex: 1;
+    height: 28px;
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    color: var(--text-sub);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.12s;
+  }
+  .eval-score-btn:hover { border-color: var(--green); color: var(--green); }
+  .eval-score-btn.active { background: var(--green); border-color: var(--green); color: var(--bg); }
+  .eval-voted-msg {
+    font-size: 0.6rem;
+    color: var(--green);
+    font-weight: 700;
+    padding: 6px 0;
+    text-align: center;
+  }
+
+  /* Scrim behind drawer */
+  .eval-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 799;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .eval-scrim.show { opacity: 1; pointer-events: auto; }
+</style>
+</head>
+<body>
+
+<!-- ===== GLOBAL TOOLTIP ===== -->
+<div id="tt"></div>
+
+<!-- ===== EVAL DRAWER ===== -->
+<div class="eval-drawer" id="evalDrawer">
+  <div class="eval-drawer-header">
+    <span class="eval-drawer-title"
+      data-tip="Atomic Evaluator: rate this article across 7 evolutionary metrics. All votes route to the Darwin-Gödel Engine.">
+      ◉ Atomic Evaluator
+    </span>
+    <button class="eval-drawer-close" onclick="closeEval()"
+      data-tip="Close the evaluator. Votes already cast are saved.">✕</button>
+  </div>
+  <div class="eval-drawer-article" id="drawerArticleTitle">
+    <strong>—</strong>
+    Select an article to evaluate.
+  </div>
+  <div class="eval-metrics" id="drawerMetrics"></div>
+</div>
+<div class="eval-scrim" id="evalScrim" onclick="closeEval()"></div>
+
+<!-- ===== TOP BAR ===== -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span class="top-bar-pub"
+      data-tip="O Grafo Diário — The Daily Graph. A publication synthesized from the Vault's knowledge graph by the Editor-in-Chief Agent.">
+      O Grafo Diário
+    </span>
+    <span class="top-bar-strategy"
+      data-tip="EXPLORE: Darwin Engine tested a radical new topology. Full-width dispatch terminal vs. proven 70/30 sidebar layout.">
+      EXPLORE
+    </span>
+  </div>
+
+  <div class="top-bar-ticker">
+    <div class="ticker-inner" id="tickerInner">
+      <span class="ticker-key">GEN 018 B</span> Signal/Noise Dispatch Terminal
+      <span class="ticker-sep">///</span>
+      <span class="ticker-key">HYPOTHESIS</span> Sidebar is dead weight — full-width maximises vertical reading cadence
+      <span class="ticker-sep">///</span>
+      <span class="ticker-key">MUTATION</span> Topology: 70/30 → Full-width single column
+      <span class="ticker-sep">///</span>
+      <span class="ticker-key">PALETTE</span> Pitch black · Phosphor green · Dead white
+      <span class="ticker-sep">///</span>
+      <span class="ticker-key">AESTHETIC</span> NOAA Emergency Broadcast · Police Dispatch Terminal · Le Monde
+    </div>
+  </div>
+
+  <div class="top-bar-gf"
+    data-tip="Global Fitness: overall template rating. Feeds Darwin Engine. Use ◉ on each article for granular per-metric votes.">
+    <span class="gf-label">Global Fitness</span>
+    <div class="gf-btns" id="gfBtns">
+      <button class="gf-btn" data-score="1" data-tip="Score 1: Strongly reject this topology." onclick="castGF(1)">1</button>
+      <button class="gf-btn" data-score="2" data-tip="Score 2: Weak negative. Topology has issues." onclick="castGF(2)">2</button>
+      <button class="gf-btn" data-score="3" data-tip="Score 3: Neutral. Acceptable but not elite." onclick="castGF(3)">3</button>
+      <button class="gf-btn" data-score="4" data-tip="Score 4: Positive signal. Engine should exploit." onclick="castGF(4)">4</button>
+      <button class="gf-btn" data-score="5" data-tip="Score 5: Strongly confirm. Anchor this topology." onclick="castGF(5)">5</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DISPATCH HEADER ===== -->
+<header class="dispatch-header">
+  <div>
+    <div class="dispatch-title"
+      data-tip="The Daily Graph. Each edition is a structured report of the system's most active knowledge nodes and decisions.">
+      <span>O Grafo Diário</span>
+      The Daily<br>Graph
+    </div>
+  </div>
+  <div class="dispatch-meta" id="dispatchMeta"
+    data-tip="Edition metadata: date, generation ID, article count. Produced by the Editor-in-Chief from the Vault's daily activity graph.">
+    <div>EDITION <span class="dm-val" id="metaDate">—</span></div>
+    <div>GENERATION <span class="dm-val">GEN_018_B</span></div>
+    <div>ARTICLES <span class="dm-val" id="metaCount">—</span></div>
+    <div>STRATEGY <span class="dm-val" style="color:var(--green)">EXPLORE</span></div>
+  </div>
+</header>
+
+<!-- ===== PACKET LIST ===== -->
+<main class="packet-list" id="packetList"></main>
+
+<script>
+  // ===== TOOLTIP ENGINE =====
+  (function() {
+    const tt = document.getElementById('tt');
+    let hideTimer;
+    document.addEventListener('mousemove', e => {
+      let x = e.clientX + 16, y = e.clientY + 16;
+      if (x + 280 > window.innerWidth) x = e.clientX - 280;
+      if (y + 90 > window.innerHeight) y = e.clientY - 80;
+      tt.style.left = x + 'px';
+      tt.style.top  = y + 'px';
+    });
+    document.addEventListener('mouseover', e => {
+      const el = e.target.closest('[data-tip]');
+      clearTimeout(hideTimer);
+      if (el && el.dataset.tip) {
+        tt.textContent = el.dataset.tip;
+        tt.classList.add('show');
+      } else {
+        tt.classList.remove('show');
+      }
+    });
+    document.addEventListener('mouseout', () => {
+      hideTimer = setTimeout(() => tt.classList.remove('show'), 60);
+    });
+  })();
+
+  // ===== METRICS =====
+  const METRICS = [
+    { key: 'editorial_density', label: 'Editorial Density', tip: 'Is the information-to-word ratio optimal? 1=too sparse, 5=maximum density with zero filler.' },
+    { key: 'structure',         label: 'Structure',          tip: 'Does the 3-tier hierarchy (exec/tech/graph) serve this article\'s content? 1=broken, 5=perfect.' },
+    { key: 'tone',              label: 'Tone',               tip: 'Is the editorial voice calibrated? Precise without being arid, analytical without being cold.' },
+    { key: 'form',              label: 'Form',               tip: 'Is the visual presentation appropriate for this article\'s information type?' },
+    { key: 'topology',          label: 'Topology',           tip: 'Does the spatial layout aid navigation and scanning? 1=disorienting, 5=effortless.' },
+    { key: 'visual_entropy',    label: 'Visual Entropy',     tip: 'Amount of visual noise. 1=chaotic/overwhelming, 5=pure signal, no distractions.' },
+    { key: 'interaction',       label: 'Interaction',        tip: 'Do hover states, expand triggers, and vote mechanics feel responsive and intuitive?' }
+  ];
+
+  const SCORE_TIPS = ['','Score 1: Strongly reject.','Score 2: Weak negative.','Score 3: Neutral.','Score 4: Positive signal.','Score 5: Strongly confirm — elite fitness.'];
+
+  // ===== PAYLOAD =====
+  const mockPayload = {
+    metadata: { date: "2026-03-25", stats: { sessions: 31, decisions: 17, specChanges: 12 } },
+    articles: [
+      {
+        id: "art_ranganathan", tag: "P1 • ARQUITETURA",
+        title: "A Integração de Ranganathan",
+        body: "<p>A percepção foi necessária: nosso sistema anterior baseado em &quot;Assuntos&quot; (subpastas fixas) estava quebrando a escalabilidade do Cofre. Adotamos oficialmente a Classificação Facetada de S. R. Ranganathan, forçando o Grafo Diário a ler os dados por atributos multidimensionais em vez de hierarquias fixas.</p><p>O impacto imediato foi a dissolução das divisões artificiais entre domínios. A ontologia agora conversa diretamente com o sistema de inferência evolutiva.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "art_darwin", tag: "P1 • EVOLUÇÃO",
+        title: "Darwin-Gödel Engine: Primeiro Ciclo Real",
+        body: "<p>O motor evolutivo produziu sua primeira requisição de mutação computada por dados reais. Sete votos distribuídos em cinco gerações geraram um gradiente de fitness claro: Gen 010 lidera com 4.0, Gen 015 B afunda em 1.5. O sinal mais forte: <em>o Operador rejeita entropia visual alta.</em></p><p>Gen 018 B é a aposta radical: remover o sidebar inteiramente e testar se a topologia full-width eleva a densidade editorial percebida.</p>",
+        meta: { impact: 9.0, risk: "low", source_files: [] }
+      },
+      {
+        id: "art_validation", tag: "P2 • PIPELINE",
+        title: "Migração do Pipeline CCB: Validação em Camadas",
+        body: "<p>O workflow de validação de documentos CCB foi completamente reestruturado. A abordagem anterior processava cada documento de forma isolada. A nova arquitetura introduz um Quality Gate de Kit: nenhum documento avança sem que o kit inteiro passe pela validação cruzada.</p>",
+        meta: { impact: 6.5, risk: "medium", source_files: [] }
+      },
+      {
+        id: "art_topology", tag: "P2 • SISTEMA",
+        title: "Ontologia Visual: Exploração 3D do Grafo de Conhecimento",
+        body: "<p>Um novo modo de navegação emergiu: a visualização tridimensional do grafo de conhecimento do Cofre. Nós são renderizados como esferas com massa gravitacional proporcional à sua centralidade no grafo. Arestas pulsam com frequência proporcional à atividade do nó.</p>",
+        meta: { impact: 5.5, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload;
+  try {
+    payload = (window.parent && window.parent.currentPayload && window.parent.currentPayload.articles)
+      ? window.parent.currentPayload : mockPayload;
+  } catch(e) { payload = mockPayload; }
+
+  // ===== VOTE STATE =====
+  const votes = {};
+  let currentArticle = null;
+
+  // ===== DRAWER =====
+  function openEval(artId, artTitle) {
+    currentArticle = artId;
+    document.getElementById('drawerArticleTitle').innerHTML = `<strong>${escHtml(artTitle)}</strong>${escHtml(artId)}`;
+    document.getElementById('drawerMetrics').innerHTML = METRICS.map(m => `
+      <div class="eval-metric-row">
+        <span class="eval-metric-label" data-tip="${m.tip}">${m.label}</span>
+        <div class="eval-score-row" id="eval_${m.key}_${artId}">
+          ${[1,2,3,4,5].map(n => `
+            <button class="eval-score-btn" data-score="${n}"
+              data-tip="${SCORE_TIPS[n]}"
+              onclick="castMetric('${m.key}','${artId}',${n},'eval_${m.key}_${artId}')">${n}</button>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+    // Re-apply any already-voted states
+    METRICS.forEach(m => {
+      const key = `${m.key}_${artId}`;
+      if (votes[key]) {
+        const score = votes[key];
+        const el = document.getElementById(`eval_${m.key}_${artId}`);
+        if (el) {
+          el.querySelectorAll('.eval-score-btn').forEach(b => {
+            b.classList.toggle('active', parseInt(b.dataset.score) === score);
+          });
+        }
+      }
+    });
+    document.getElementById('evalDrawer').classList.add('open');
+    document.getElementById('evalScrim').classList.add('show');
+  }
+
+  function closeEval() {
+    document.getElementById('evalDrawer').classList.remove('open');
+    document.getElementById('evalScrim').classList.remove('show');
+  }
+
+  function castMetric(metricKey, artId, score, blockId) {
+    const el = document.getElementById(blockId);
+    if (!el) return;
+    votes[`${metricKey}_${artId}`] = score;
+    el.querySelectorAll('.eval-score-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.score) === score);
+    });
+    try {
+      if (window.parent && window.parent.registerAtomicVote) {
+        window.parent.registerAtomicVote({
+          metric_name: metricKey,
+          score: score,
+          comment: `[Article: ${artId}] Gen 018 B atomic vote`
+        });
+      }
+    } catch(e) {}
+  }
+
+  // ===== GLOBAL FITNESS =====
+  let gfVoted = false;
+  function castGF(score) {
+    if (gfVoted) return;
+    gfVoted = true;
+    document.querySelectorAll('.gf-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.score) === score);
+    });
+    try {
+      if (window.parent && window.parent.registerAtomicVote) {
+        window.parent.registerAtomicVote({
+          metric_name: 'global_fitness',
+          score: score,
+          comment: 'Gen 018 B overall template fitness vote'
+        });
+      }
+    } catch(e) {}
+  }
+
+  // ===== PACKET TOGGLE =====
+  function togglePacket(idx) {
+    const pkt = document.getElementById(`pkt_${idx}`);
+    if (!pkt) return;
+    pkt.classList.toggle('open');
+  }
+
+  function toggleDataBlock(btn, blockId) {
+    btn.classList.toggle('active');
+    const block = document.getElementById(blockId);
+    if (block) block.classList.toggle('open');
+  }
+
+  // ===== RENDER =====
+  function renderUI() {
+    const meta = payload.metadata || {};
+    const articles = payload.articles || [];
+
+    document.getElementById('metaDate').textContent  = meta.date   || '—';
+    document.getElementById('metaCount').textContent = articles.length || '—';
+
+    // Ticker
+    const stats = meta.stats || {};
+    document.getElementById('tickerInner').innerHTML =
+      `<span class="ticker-key">GEN 018 B</span> Signal/Noise Dispatch Terminal` +
+      `<span class="ticker-sep">///</span><span class="ticker-key">SESSIONS</span>${stats.sessions || '—'}` +
+      `<span class="ticker-sep">///</span><span class="ticker-key">DECISIONS</span>${stats.decisions || '—'}` +
+      `<span class="ticker-sep">///</span><span class="ticker-key">SPEC CHANGES</span>${stats.specChanges || '—'}` +
+      `<span class="ticker-sep">///</span><span class="ticker-key">HYPOTHESIS</span> Full-width topology vs. 70/30 sidebar` +
+      `<span class="ticker-sep">///</span><span class="ticker-key">AESTHETIC</span> Dispatch Terminal · Phosphor Green · Mono-dominant`;
+
+    // Packets
+    document.getElementById('packetList').innerHTML = articles.map((art, idx) => {
+      const num = String(idx + 1).padStart(3, '0');
+      const priorityClass = art.tag && art.tag.startsWith('P1') ? 'p1' : 'p2';
+      const tagClass = priorityClass;
+      const impact = art.meta ? art.meta.impact : null;
+      const exec  = art.body || '<p>No content available.</p>';
+      const sourceFiles = (art.meta && art.meta.source_files) || [];
+      const sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+        let name = f.split('/').pop();
+        return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+      }).join('') + '</div>' : '';
+
+      const priorityTip = priorityClass === 'p1'
+        ? 'P1: Highest editorial priority. Structural or architectural change with system-wide impact. Shown in red.'
+        : 'P2: High priority. Pipeline or domain-level change. Shown in green.';
+
+      return `
+        <div class="packet" id="pkt_${idx}">
+          <div class="packet-header" onclick="togglePacket(${idx})"
+            data-tip="Click to expand this transmission packet and read the full report. ◉ opens the metric evaluator.">
+            <span class="pkt-num"
+              data-tip="Packet ${num}. Articles are ordered by editorial impact score, descending.">${num}</span>
+            <div class="pkt-priority ${priorityClass}"
+              data-tip="${priorityTip}"></div>
+            <span class="pkt-tag ${tagClass}"
+              data-tip="${priorityTip}">${escHtml(art.tag || '—')}</span>
+            <span class="pkt-title">${escHtml(art.title)}</span>
+            ${impact !== null ? `
+              <span class="pkt-impact"
+                data-tip="Impact Score (0–10): Editorial weight from the Vault's knowledge graph. Governs article ordering in the dispatch.">
+                IMPACT <strong>${impact}</strong>
+              </span>
+            ` : '<span class="pkt-impact"></span>'}
+            <div class="pkt-actions" onclick="event.stopPropagation()">
+              <button class="pkt-eval-btn"
+                data-tip="Open Atomic Evaluator for this article. Rate across 7 evolutionary metrics. Votes feed the Darwin-Gödel Engine."
+                onclick="openEval('${art.id}', '${escAttr(art.title)}')">&#9677;</button>
+              <button class="pkt-toggle"
+                data-tip="Expand/collapse this transmission packet to read the full report."
+                onclick="togglePacket(${idx})">EXPAND</button>
+            </div>
+          </div>
+
+          <div class="packet-body">
+            <div class="packet-body-inner">
+
+              <div class="pkt-exec">${exec}</div>
+              ${sourceLinksHtml}
+
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escHtml(s) {
+    if (!s) return '';
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(s) {
+    return (s || '').replace(/'/g, '\\\'');
+  }
+
+  renderUI();
+</script>
+</body>
+</html>

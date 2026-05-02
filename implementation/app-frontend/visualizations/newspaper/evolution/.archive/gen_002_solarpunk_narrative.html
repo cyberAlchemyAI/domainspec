@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 002: Solarpunk Narrative</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #d8eee7;      
+    --bg-container: #dff0ea; 
+    --bg-card: #ffffff;      
+    --text-main: #0a4d3c;    
+    --text-muted: #4e7a6b;   
+    --text-reading: #1f3830; 
+    --radius-lg: 16px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 { font-size: 2.2rem; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -1px; }
+  .meta { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; }
+
+  /* ========================================= */
+  /* NOVIDADE GEN 002: O EDITORIAL (NOTÍCIA SOLTA) */
+  /* ========================================= */
+  .editorial {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 32px 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 12px 32px rgba(10, 77, 60, 0.06);
+    position: relative;
+  }
+  
+  .editorial-tag {
+    position: absolute;
+    top: -12px;
+    left: 40px;
+    background: var(--text-main);
+    color: var(--bg-card);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+
+  .editorial-title {
+    font-family: 'Newsreader', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+  }
+
+  .editorial-body {
+    font-family: 'Newsreader', serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-reading);
+  }
+  .editorial-body p { margin-bottom: 16px; }
+  .editorial-body p:last-child { margin-bottom: 0; }
+  
+  .editorial-body .highlight {
+    background: rgba(10, 77, 60, 0.08);
+    padding: 0 4px;
+    border-radius: 4px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+
+  /* ========================================= */
+  /* ARCOS (O GRAFO / EVIDÊNCIAS)              */
+  /* ========================================= */
+  
+  .section-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    padding-left: 8px;
+  }
+
+  details.arc {
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(10, 77, 60, 0.03);
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 24px 32px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: opacity 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { opacity: 0.8; }
+
+  .icon {
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text-main);
+  }
+  details.arc:not([open]) .icon::after { content: '+'; }
+  details.arc[open] .icon::after { content: '×'; font-size: 1.2rem; }
+
+  .content {
+    padding: 0 32px 32px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .content p { margin-top: 0; margin-bottom: 24px; }
+
+  .node {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-main);
+    box-shadow: 0 2px 12px rgba(10, 77, 60, 0.02);
+  }
+  .node:last-child { margin-bottom: 0; }
+  
+  .node-title { font-weight: 500; font-size: 0.95rem; }
+  .node-meta { font-family: monospace; font-size: 0.9rem; color: var(--text-main); }
+  .node-id { opacity: 0.4; font-weight: 700; margin-right: 12px; }
+
+</style>
+</head>
+<body>
+<div class="wrapper">
+  
+  <header>
+    <h1>O Grafo Diário</h1>
+    <div class="meta">Ecossistema ZefraHub · 24 Mar 2026</div>
+  </header>
+
+  <!-- Editorial (A "notícia solta") -->
+  <article class="editorial">
+    <div class="editorial-tag">Síntese de Ontem</div>
+    <h2 class="editorial-title">O Cofre Torna-se Consciente de Si Mesmo</h2>
+    <div class="editorial-body">
+      <p>Ontem foi um dia de fundações arquitetônicas pesadas. O sistema formalizou a adoção dos princípios de Biblioteconomia de S. R. Ranganathan como o seu quarto pilar intelectual — uma movimentação que resultará em uma governança informacional muito mais estrita nas próximas semanas.</p>
+      
+      <p>Simultaneamente, o <span class="highlight">Pipeline CCB</span> sofreu o dia mais tenso de sua migração "lift and shift" para o novo domínio <span class="highlight">documents_validation</span>. O código principal foi relocado com sucesso, porém auditorias massivas nas redes de segurança (testes) revelaram furos críticos que barrarão qualquer merge em produção até segunda ordem.</p>
+    </div>
+  </article>
+
+  <div class="section-label">A Matriz Subjacente (O Grafo)</div>
+
+  <!-- Arcos Expansíveis -->
+  <details class="arc" open>
+    <summary>
+      <span>Ontologia & Consciência</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O ecossistema expande suas raízes: alinha-se formalmente aos princípios da Biblioteconomia e cultiva este mesmo Grafo Diário como mecanismo de retro-alimentação consciente.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id">P1</span> Biblioteconomia Integrada à Constituição</span>
+        <span class="node-meta">8.0</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id">P2</span> Governance Workflows: Backlog & README</span>
+        <span class="node-meta">8.0</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="arc">
+    <summary>
+      <span>Migração CCB</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O domínio validation é estabelecido com relocação de arquivos, mas furos na rede de testes exigem fix imediato.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id">P2</span> Domain Scaffolding & Relocação</span>
+        <span class="node-meta">7.0</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id">P4</span> CCB Spec Audit: Gaps Identificados</span>
+        <span class="node-meta">5.0</span>
+      </div>
+    </div>
+  </details>
+
+</div>
+</body>
+</html>

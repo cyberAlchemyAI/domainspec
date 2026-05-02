@@ -1,0 +1,17 @@
+{
+  "name": "harness-app-release",
+  "version": "0.2.0",
+  "description": "Harness Phase 1 app-release workspace: multi-tab interview UI backed by domain_knowledge/",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test --test-reporter=spec lib/*.test.mjs server.test.mjs"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

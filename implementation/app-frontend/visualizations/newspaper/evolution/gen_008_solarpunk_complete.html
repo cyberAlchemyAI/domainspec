@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 008: Solarpunk Completo (Hideable 3-Col)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  /* GENETICA BASE: Solarpunk Dusk */
+  :root {
+    --bg-page: #b5c2bf;      
+    --bg-container: #c4d1ce; 
+    --bg-card: #e5ecea;      
+    --text-main: #19332d;    
+    --text-muted: #4a6e64;   
+    --text-reading: #254038; 
+    --border-subtle: rgba(25, 51, 45, 0.08);
+    --accent: #2e6659;
+
+    --radius-lg: 12px;
+    --radius-sm: 8px;
+  }
+
+  body.theme-smoke {
+    --bg-page: #2a3331; --bg-container: #34403d; --bg-card: #3f4d49; 
+    --text-main: #d3dfdc; --text-muted: #8caba4; --text-reading: #c2d1cd; 
+    --border-subtle: rgba(211, 223, 220, 0.08); --accent: #7ca89f;
+  }
+
+  body {
+    background-color: var(--bg-page); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    transition: all 0.4s ease;
+  }
+
+  /* ========================================= */
+  /* COMPONENTES PERIFÉRICOS                   */
+  /* ========================================= */
+
+  /* MENU ESQUERDO (CORES) */
+  .side-param-menu {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 240px; background: var(--text-main); color: var(--bg-page);
+    transform: translateX(-220px); transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1); z-index: 1000; padding: 32px 20px 32px 16px;
+  }
+  .side-param-menu::after { content: ''; position: absolute; top: 0; right: -20px; bottom: 0; width: 40px; cursor: pointer; }
+  .side-param-menu:hover { transform: translateX(0); }
+  .menu-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; opacity: 0.6; }
+  .param-btn { display: block; width: 100%; text-align: left; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: inherit; padding: 8px 12px; border-radius: 4px; margin-bottom: 6px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;}
+  .param-btn:hover { background: rgba(255,255,255,0.1); }
+  .param-btn.active { background: var(--bg-page); color: var(--text-main); font-weight: 600; }
+
+  /* BOTÃO DE RANKING */
+  .fitness-ranker {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 12px 24px; border-radius: 30px;
+    display: flex; gap: 12px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 900;
+  }
+  .rank-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+  .rank-btn { background: var(--bg-container); border: none; padding: 6px 16px; border-radius: 20px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: background 0.2s;}
+  .rank-btn:hover { background: var(--text-main); color: var(--bg-page); }
+
+  /* ========================================= */
+  /* NOVIDADE: PAINEL DIREITO (ESTATISTICAS)   */
+  /* ESCONDIDO NO HOVER                        */
+  /* ========================================= */
+  .side-meta-menu {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 340px; 
+    background: var(--bg-container); border-left: 1px solid var(--border-subtle);
+    transform: translateX(320px); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); 
+    z-index: 1000; padding: 32px 24px; overflow-y: auto;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+  }
+  
+  /* A área invisível grossa que captura o mouse e puxa o menu */
+  .side-meta-menu::after { 
+    content: ''; position: absolute; top: 0; left: -20px; bottom: 0; width: 40px; cursor: pointer; 
+  }
+  .side-meta-menu-trigger {
+    position: absolute; top: 50%; left: 8px; transform: translateY(-50%) rotate(-90deg);
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--text-muted); pointer-events: none; white-space: nowrap;
+  }
+
+  .side-meta-menu:hover { transform: translateX(0); }
+  .side-meta-menu:hover .side-meta-menu-trigger { opacity: 0; }
+
+  .meta-panel { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); padding: 20px; margin-bottom: 24px;}
+  .panel-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; border-bottom: 1px dashed var(--border-subtle); padding-bottom: 8px;}
+  
+  .stat-item { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; font-size: 0.85rem; font-weight: 600; }
+  .stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--text-main); }
+  .stat-bar { height: 4px; background: var(--bg-container); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+  .stat-fill { height: 100%; background: var(--accent); }
+
+  .genealogy-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+  .genealogy-tree { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-main); border-left: 2px solid var(--border-subtle); padding-left: 12px;}
+  .gene-node { margin-bottom: 8px; position: relative;}
+  .gene-node::before { content: ''; position: absolute; left: -14px; top: 8px; width: 10px; height: 2px; background: var(--border-subtle); }
+  .gene-node.active-gen { color: var(--accent); font-weight: 700; }
+
+  /* ========================================= */
+  /* LAYOUT GERAL DO APP (INDEX + LEITOR)      */
+  /* ========================================= */
+  
+  header {
+    display: flex; justify-content: space-between; align-items: center; padding: 16px 40px 16px 60px;
+    border-bottom: 1px solid var(--border-subtle); background: var(--bg-page); z-index: 10;
+  }
+  .brand h1 { font-family: 'Newsreader', serif; font-size: 1.6rem; font-weight: 600; margin: 0; letter-spacing: -0.5px; }
+
+  .app-container { display: flex; flex: 1; overflow: hidden; }
+
+  /* COLUNA 1: NAVEGABILIDADE (O GRAFO) */
+  .pane-index {
+    width: 320px; min-width: 320px; background: var(--bg-container); border-right: 1px solid var(--border-subtle);
+    overflow-y: auto; padding: 24px 24px 24px 40px;
+  }
+  .section-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; margin-top: 24px;}
+  .arc-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; padding-left: 8px; color: var(--text-main); }
+  .node {
+    background: var(--bg-card); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 6px;
+    border: 1px solid var(--border-subtle); cursor: pointer; transition: all 0.2s;
+  }
+  .node:hover { background: var(--bg-page); border-color: var(--text-main); transform: translateX(2px); }
+  .node.active { background: var(--text-main); color: var(--bg-page); border-color: var(--text-main); }
+  .node.active .node-id { color: var(--bg-page); opacity: 0.7; }
+  .node.active .node-meta { color: var(--bg-page); }
+  .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;}
+  .node-title { font-weight: 600; font-size: 0.85rem; line-height: 1.3;}
+  .node-id { opacity: 0.5; font-weight: 700; margin-right: 8px; font-size: 0.8rem; }
+  .node-meta { font-family: monospace; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+
+  /* COLUNA 2: O LEITOR (CONTEXTO) */
+  .pane-reader {
+    flex: 1; background: var(--bg-page); overflow-y: auto; padding: 40px 100px 100px 60px; position: relative; scroll-behavior: smooth;
+  }
+  .reader-content { max-width: 700px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .article-tag { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; border: 1px solid var(--border-subtle); background: var(--bg-container); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 24px; }
+  .article-title { font-family: 'Newsreader', serif; font-size: 2.8rem; font-weight: 600; line-height: 1.1; margin: 0 0 24px 0; letter-spacing: -1px; color: var(--text-main); }
+  .article-body { font-family: 'Newsreader', serif; font-size: 1.25rem; line-height: 1.6; color: var(--text-reading); }
+  .article-body p { margin-bottom: 24px; margin-top: 0;}
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); text-decoration: none; border: 1px dashed var(--border-subtle); padding: 2px 8px; border-radius: 2px; }
+  .source-link:hover { color: var(--accent); }
+
+  /* TOOLTIPS CSS */
+  .intent-tip { position: relative; cursor: help; border-bottom: 1px dotted var(--text-muted); display: inline-block;}
+  .intent-tip::before {
+    content: attr(data-intent); position: absolute; bottom: 150%; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--text-main); color: var(--bg-page); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 500; padding: 6px 12px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 500;
+  }
+  .intent-tip:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<!-- MENU LATERAL ESQUERDO (CORES) -->
+<nav class="side-param-menu">
+  <div class="menu-title">Tonalidade / Gen 008</div>
+  <button class="param-btn color-btn active" onclick="setColorTheme('')">Amazonian Dusk</button>
+  <button class="param-btn color-btn" onclick="setColorTheme('theme-smoke')">Fumaça (Escuro Suave)</button>
+</nav>
+
+<!-- MENU LATERAL DIREITO OCULTO (ESTATISTICAS & META) -->
+<aside class="side-meta-menu">
+  <div class="side-meta-menu-trigger">Diagnostics Hover</div>
+  
+  <div class="meta-panel">
+    <div class="panel-title">Diagnóstico do Vault</div>
+    <div style="margin-bottom: 20px;">
+      <div class="stat-item"><span>Sessões Ingeridas</span> <span class="stat-val">25</span></div>
+      <div class="stat-bar"><div class="stat-fill" style="width: 85%"></div></div>
+    </div>
+    <div style="margin-bottom: 20px;">
+      <div class="stat-item"><span>Decisões Fundativas</span> <span class="stat-val">12</span></div>
+      <div class="stat-bar"><div class="stat-fill" style="width: 40%"></div></div>
+    </div>
+    <div>
+      <div class="stat-item"><span>Alterações em Specs</span> <span class="stat-val">08</span></div>
+      <div class="stat-bar"><div class="stat-fill" style="width: 25%"></div></div>
+    </div>
+  </div>
+
+  <div class="meta-panel">
+    <div class="panel-title">Lore Visual (Gen 008)</div>
+    <div class="genealogy-text">
+      <strong>Painel Dinâmico:</strong> O painel de diagnóstico não compete mais por espaço na leitura. Ele aguarda no leste da tela, revelando-se apenas na intenção do *hover* físico do usuário.
+    </div>
+    <div class="genealogy-tree">
+      <div class="gene-node">Gen 001: Solarpunk Base</div>
+      <div class="gene-node">Gen 004: Midtones/Dusk</div>
+      <div class="gene-node">Gen 007: Split-Pane Reader</div>
+      <div class="gene-node active-gen">Gen 008: Hideable 3-Col (Current)</div>
+    </div>
+  </div>
+</aside>
+
+
+<!-- HEADER -->
+<header>
+  <div class="brand"><h1>O Grafo Diário</h1></div>
+  <div style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted); display:flex; align-items:center; gap: 16px;">
+    <span id="dateDisp">LOADING... // ED. 008</span>
+    <div style="display:flex; flex-direction:column; align-items:flex-end;">
+      <span style="font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">GLOBAL FITNESS</span>
+      <div class="vote-group" id="vote_global_page" style="margin-top: 4px; display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+      <input type="text" class="comment-input" id="input_global_page" placeholder="Reason..." style="display:none; width: 150px; padding: 4px; border: 1px solid var(--border-subtle); background: var(--bg-container); color: var(--text-main); font-family: inherit; font-size: 0.75rem; margin-top: 4px; outline: none; border-radius:4px;" onkeydown="if(event.key==='Enter') commitVote('global_fitness', null, 'vote_global_page')">
+    </div>
+  </div>
+</header>
+
+
+<!-- APP CONTENT -->
+<div class="app-container">
+  
+  <!-- INDICE -->
+  <aside class="pane-index" id="nav-container">
+    <!-- JS Nav Injected -->
+  </aside>
+
+  <!-- LEITOR -->
+  <main class="pane-reader">
+    <div id="reader-container" class="reader-content"></div>
+  </main>
+
+</div>
+
+<script>
+  // MOCK DATABASE FOR SOLARPUNK STYLE VOTING
+  const mockPayload = {
+    metadata: { date: "2026-03-24", stats: { sessions: 25, decisions: 12, specChanges: 8 } },
+    articles: [
+      { id: 'art1', tag: 'P1 • ARQUITETURA', title: 'Integração de Ranganathan',
+        body: '<p>Adotamos oficialmente a Classificação Facetada de S. R. Ranganathan, forçando o Grafo Diário a ler os dados por atributos multidimensionais.</p>',
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload = (window.parent && window.parent.currentPayload) ? window.parent.currentPayload : mockPayload;
+  let dynamicDatabase = {};
+
+  function renderUI() {
+    if (payload && payload.metadata) {
+      document.getElementById('dateDisp').innerText = payload.metadata.date + ' // ED. 008';
+    }
+    
+    if (payload && payload.articles) {
+      let navHtml = '<div class="section-label">A Matriz Subjacente</div>';
+      
+      payload.articles.forEach((art, index) => {
+        let bodyHtml = art.body || '';
+        let sourceFiles = (art.meta && art.meta.source_files) || [];
+        let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+          let name = f.split('/').pop();
+          return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+        }).join('') + '</div>' : '';
+
+        dynamicDatabase[art.id] = `
+          <div style="display: flex; justify-content: space-between; align-items:flex-start; margin-bottom: 24px;">
+            <span class="article-tag" style="margin-bottom:0;">${art.tag || 'DYNAMIC'}</span>
+            <button class="param-btn active" style="width: auto; padding: 6px 16px; border-radius: 20px; font-weight: 700; white-space: nowrap; margin: 0; display:flex; gap: 8px; align-items:center;" onclick="window.top.location.href='/ontology-visualization'">↘ ENTER THE GRAPH</button>
+          </div>
+          <h1 class="article-title">${art.title}</h1>
+          <div class="article-body">
+            ${bodyHtml}
+            ${sourceLinksHtml}
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 48px; border-top: 1px solid var(--border-subtle); padding-top: 24px;">
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">ATOMIC EVALUATORS</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <!-- Left Column -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">EDITORIAL DENSITY</span>
+                    <div class="vote-group" id="vote_den_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_den_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('editorial_density', '${art.id}', 'vote_den_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">STRUCTURE</span>
+                    <div class="vote-group" id="vote_str_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_str_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('structure', '${art.id}', 'vote_str_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">TONE</span>
+                    <div class="vote-group" id="vote_ton_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_ton_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('tone', '${art.id}', 'vote_ton_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">FORM</span>
+                    <div class="vote-group" id="vote_for_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_for_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('form', '${art.id}', 'vote_for_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+              </div>
+              <!-- Right Column -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">TOPOLOGY</span>
+                    <div class="vote-group" id="vote_top_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_top_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('topology', '${art.id}', 'vote_top_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">VISUAL ENTROPY</span>
+                    <div class="vote-group" id="vote_vis_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_vis_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('visual_entropy', '${art.id}', 'vote_vis_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.70rem; font-weight: 700; color: var(--text-main); text-transform: uppercase;">INTERACTION MECHANICS</span>
+                    <div class="vote-group" id="vote_int_${art.id}" style="display:flex; gap:2px; background:var(--bg-card); padding:2px; border: 1px solid var(--border-subtle); border-radius:4px;"></div>
+                  </div>
+                  <input type="text" class="comment-input" id="input_int_${art.id}" placeholder="Comment..." onkeydown="if(event.key==='Enter') commitVote('interaction_mechanics', '${art.id}', 'vote_int_${art.id}')" style="display:none; width:100%; padding: 8px 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); font-family: inherit; font-size: 0.85rem; margin-top: 8px; outline: none; border-radius:4px;">
+                </div>
+              </div>
+            </div>
+          </div>`;
+          
+        navHtml += `
+          <div class="node ${index === 0 ? 'active' : ''}" id="btn-${art.id}" onclick="loadContent('${art.id}')">
+            <div class="node-header">
+              <span class="node-title"><span class="node-id">${art.id}</span> ${art.title}</span>
+              <span class="node-meta">${art.meta ? art.meta.impact : ''}</span>
+            </div>
+          </div>`;
+      });
+      
+      document.getElementById('nav-container').innerHTML = navHtml;
+      if (payload.articles.length > 0) {
+        loadContent(payload.articles[0].id);
+      } else {
+        document.getElementById('reader-container').innerHTML = '<p>No generic payload data available.</p>';
+      }
+    }
+  }
+
+  function loadContent(id) {
+    document.querySelectorAll('.pane-index .node').forEach(n => n.classList.remove('active'));
+    let el = document.getElementById('btn-' + id);
+    if(el) el.classList.add('active');
+    
+    const container = document.getElementById('reader-container');
+    container.style.opacity = '0';
+    setTimeout(() => {
+      container.innerHTML = dynamicDatabase[id];
+      container.style.opacity = '1';
+      initVoteButtons(); // reinit for new content
+    }, 150);
+  }
+
+  let pendingVotes = {};
+
+  function initVoteButtons() {
+    document.querySelectorAll('.vote-group').forEach(container => {
+      const id = container.id;
+      const parts = id.replace('vote_', '').split('_');
+      const articleId = parts.pop();
+      const metricKey = parts.join('_');
+      let metricName = metricKey;
+      
+      if (metricKey === 'den') metricName = 'editorial_density';
+      else if (metricKey === 'str') metricName = 'structure';
+      else if (metricKey === 'ton') metricName = 'tone';
+      else if (metricKey === 'top') metricName = 'topology';
+      else if (metricKey === 'vis') metricName = 'visual_entropy';
+      else if (metricKey === 'int') metricName = 'interaction_mechanics';
+      else if (metricKey === 'for') metricName = 'form';
+      else if (metricKey === 'global') metricName = 'global_fitness';
+      
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button style="border: none; background: transparent; color: var(--text-main); font-family: 'JetBrains Mono', monospace; font-size: 0.80rem; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 700; transition: background-color 0.2s, color 0.2s;" class="vote-btn-scale" onmouseover="this.style.background='var(--text-main)'; this.style.color='var(--bg-page)';" onmouseout="if(!this.classList.contains('active')){this.style.background='transparent'; this.style.color='var(--text-main)';}" onclick="registerVote('${metricName}', '${articleId === 'global' ? '' : articleId}', ${n}, '${id}')">${n}</button>`;
+      }
+      container.innerHTML = btns;
+    });
+  }
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if(container && container.classList.contains('voted')) return; 
+
+    if(container) {
+      container.querySelectorAll('.vote-btn-scale').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = 'transparent'; btn.style.color = 'var(--text-main)';
+        if (parseInt(btn.innerText) === score) {
+          btn.classList.add('active');
+          btn.style.background = 'var(--accent)'; btn.style.color = 'var(--bg-page)';
+        }
+      });
+    }
+    
+    pendingVotes[blockId] = { metricName, articleId, score };
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    if(inputEl) {
+      inputEl.style.display = 'block';
+      inputEl.focus();
+    }
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+    
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+    
+    const container = document.getElementById(blockId);
+    if(container) container.classList.add('voted');
+    
+    if (window.parent && window.parent.registerAtomicVote) {
+      let componentContext = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         comment: reason ? `[${componentContext}] ${reason}` : `[${componentContext}] No comment`
+      });
+    }
+    
+    if(container) {
+      container.innerHTML = `<span class="vote-success-msg" style="display:inline-block; margin-top:2px; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:#10b981; font-weight:700;">✓ SYNCED: ${state.score}/5</span>`;
+    }
+    if (inputEl) inputEl.style.display = 'none';
+  }
+
+  function setColorTheme(themeName) {
+    document.body.className = themeName;
+    document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  window.onload = () => {
+    renderUI();
+  };
+</script>
+
+</body>
+</html>

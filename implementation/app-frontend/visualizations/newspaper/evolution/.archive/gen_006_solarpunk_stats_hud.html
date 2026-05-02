@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 006: Stats HUD Mutante</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #b5c2bf;      
+    --bg-container: #c4d1ce; 
+    --bg-card: #e5ecea;      
+    --text-main: #19332d;    
+    --text-muted: #4a6e64;   
+    --text-reading: #254038; 
+    --border-subtle: rgba(25, 51, 45, 0.08);
+
+    /* UI Genetics */
+    --radius-lg: 12px;
+    --radius-sm: 8px;
+    
+    /* Density Base */
+    --space-card: 32px 40px;
+    --space-arc: 24px 32px;
+    --space-node: 16px 20px;
+    
+    /* Variaveis do HUD Futurista */
+    --hud-bg: #050a08;
+    --hud-text: #b5c2bf;
+    --hud-accent: #00ff88;
+    --hud-danger: #ff3366;
+    --hud-warn: #ffcc00;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--text-main);
+    padding-bottom: 12px;
+  }
+
+  .brand h1 { font-size: 2.2em; font-weight: 700; margin: 0; letter-spacing: -1px; line-height: 1; }
+  
+  /* ========================================= */
+  /* NOVIDADE: HUD DE ESTATÍSTICA FUTURISTA    */
+  /* ========================================= */
+  
+  .meta-trigger {
+    position: relative;
+    font-size: 0.9em;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: crosshair;
+    padding: 8px 16px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  
+  .meta-trigger:hover {
+    background: var(--text-main);
+    color: var(--bg-page);
+    border-color: var(--text-main);
+  }
+
+  .stats-hud {
+    position: absolute;
+    top: 100%; right: 0;
+    margin-top: 12px;
+    width: 340px;
+    background: var(--hud-bg);
+    border: 1px solid var(--hud-accent);
+    border-radius: 8px;
+    padding: 24px;
+    color: var(--hud-text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8em;
+    box-shadow: 0 20px 40px rgba(0, 255, 136, 0.15), inset 0 0 20px rgba(0, 255, 136, 0.05);
+    
+    /* Hidden by default, scale up on hover */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.95);
+    transform-origin: top right;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+  }
+
+  .meta-trigger:hover .stats-hud {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Scanlines over the HUD */
+  .stats-hud::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(0deg, rgba(255,255,255,0.02) 50%, transparent 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    border-radius: 8px;
+  }
+
+  .hud-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed var(--border-subtle);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    color: var(--hud-accent);
+    font-weight: 700;
+  }
+
+  .stat-row {
+    margin-bottom: 16px;
+  }
+  .stat-row:last-child { margin-bottom: 0; }
+  
+  .stat-data {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .stat-val { color: #fff; font-weight: 700; }
+
+  .stat-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .stat-fill {
+    height: 100%;
+    background: var(--hud-accent);
+  }
+  .fill-danger { background: var(--hud-danger); }
+  .fill-warn { background: var(--hud-warn); }
+
+
+  /* ========================================= */
+  /* EDITORIAL E ARCOS (Mantidos da Gen 004)   */
+  /* ========================================= */
+  .editorial {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-card);
+    margin-bottom: 40px;
+    border: 1px solid var(--border-subtle);
+    position: relative;
+  }
+  
+  .editorial-tag {
+    position: absolute;
+    top: -12px;
+    left: 40px;
+    background: var(--text-main);
+    color: var(--bg-card);
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+
+  .editorial-title {
+    font-family: 'Newsreader', serif;
+    font-size: 2em;
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+  }
+
+  .editorial-body {
+    font-family: 'Newsreader', serif;
+    font-size: 1.15em;
+    line-height: 1.6;
+    color: var(--text-reading);
+  }
+  .editorial-body p { margin-bottom: 16px; margin-top: 0;}
+  .editorial-body p:last-child { margin-bottom: 0; }
+  
+  .section-label {
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    padding-left: 8px;
+  }
+
+  details.arc {
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+    border: 1px solid var(--border-subtle);
+    transition: all 0.4s ease;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: var(--space-arc);
+    font-size: 1.25em;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: opacity 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { opacity: 0.8; }
+
+  .icon {
+    font-size: 1.5em;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text-main);
+  }
+  details.arc:not([open]) .icon::after { content: '+'; }
+  details.arc[open] .icon::after { content: '×'; font-size: 1.2em; }
+
+  .content {
+    padding: 0 32px 32px;
+    font-size: 1em;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .content p { margin-top: 0; margin-bottom: 24px; }
+
+  .node {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: var(--space-node);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+  }
+  .node:last-child { margin-bottom: 0; }
+  
+  .node-title { font-weight: 500; font-size: 0.95em; }
+  .node-meta { font-family: monospace; font-size: 0.9em; color: var(--text-main); font-weight: 500; }
+  .node-id { opacity: 0.4; font-weight: 700; margin-right: 12px; }
+
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  
+  <header>
+    <div class="brand">
+      <h1>O Grafo Diário</h1>
+    </div>
+    
+    <!-- O GATILHO DO HUD FUTURISTA -->
+    <div class="meta-trigger">
+      Hover: Data Matrix
+      
+      <!-- O HUD -->
+      <div class="stats-hud">
+        <div class="hud-header">
+          <span>SYS.DIAGNOSTICS</span>
+          <span>T-MINUS 24H</span>
+        </div>
+        
+        <div class="stat-row">
+          <div class="stat-data">
+            <span>Sessões Completadas</span>
+            <span class="stat-val">25</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" style="width: 85%"></div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-data">
+            <span>Decisões Fundamentais</span>
+            <span class="stat-val" style="color: var(--hud-warn)">12</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill fill-warn" style="width: 40%"></div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-data">
+            <span>Especificações Alteradas</span>
+            <span class="stat-val">08</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" style="width: 25%"></div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-data">
+            <span>Contradições Lógicas</span>
+            <span class="stat-val" style="color: var(--hud-danger)">00</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill fill-danger" style="width: 5%"></div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-data">
+            <span>Nós Promovidos (Zettel)</span>
+            <span class="stat-val">03</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <article class="editorial">
+    <div class="editorial-tag">Síntese de Ontem</div>
+    <h2 class="editorial-title">O Cofre Torna-se Consciente de Si Mesmo</h2>
+    <div class="editorial-body">
+      <p>Ontem foi um dia de fundações arquitetônicas pesadas. O sistema formalizou a adoção dos princípios de Biblioteconomia de S. R. Ranganathan como o seu quarto pilar intelectual — uma movimentação que resultará em uma governança informacional muito mais estrita nas próximas semanas.</p>
+    </div>
+  </article>
+
+  <div class="section-label">A Matriz Subjacente (O Grafo)</div>
+
+  <details class="arc" open>
+    <summary>
+      <span>Ontologia & Consciência</span>
+      <span class="icon"></span>
+    </summary>
+    <div class="content">
+      <p>O ecossistema cultiva este mesmo Grafo Diário como mecanismo de retro-alimentação consciente.</p>
+      
+      <div class="node">
+        <span class="node-title"><span class="node-id">P1</span> Biblioteconomia Integrada à Constituição</span>
+        <span class="node-meta">8.0</span>
+      </div>
+      <div class="node">
+        <span class="node-title"><span class="node-id">P2</span> Governance Workflows: Backlog & README</span>
+        <span class="node-meta">8.0</span>
+      </div>
+    </div>
+  </details>
+
+</div>
+
+</body>
+</html>

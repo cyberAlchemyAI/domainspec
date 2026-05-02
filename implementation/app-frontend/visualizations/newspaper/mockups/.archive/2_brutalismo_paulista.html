@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário: Brutalismo Paulista</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-concrete: #e4e4e4; 
+    --text-heavy: #1a1a1a;
+    --masp-red: #d32f2f;
+    --border-heavy: #1a1a1a;
+  }
+  
+  body {
+    background: var(--bg-concrete);
+    color: var(--text-heavy);
+    font-family: 'Archivo', sans-serif;
+    padding: 0; margin: 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    min-height: 100vh;
+  }
+
+  /* The Red MASP Pillar */
+  .pillar {
+    background: var(--masp-red);
+    border-right: 4px solid var(--border-heavy);
+  }
+
+  .content { padding: 40px; max-width: 900px; }
+
+  h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 4rem;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -2px;
+    margin-bottom: 40px;
+    border-bottom: 8px solid var(--border-heavy);
+    padding-bottom: 10px;
+  }
+
+  details.module {
+    border: 4px solid var(--border-heavy);
+    margin-bottom: 24px;
+    background: #fff;
+    box-shadow: 8px 8px 0px var(--border-heavy);
+    transition: transform 0.1s;
+  }
+  details.module:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0px var(--border-heavy); }
+
+  summary {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.5rem;
+    padding: 24px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  summary::-webkit-details-marker { display: none; }
+  
+  details.module[open] summary {
+    border-bottom: 4px solid var(--border-heavy);
+    background: var(--bg-concrete);
+  }
+
+  .indicator { color: var(--masp-red); }
+  details.module[open] .indicator::after { content: "—"; }
+  details.module:not([open]) .indicator::after { content: "+"; }
+
+  .data-block { padding: 24px; }
+  
+  .synthesis {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    padding-left: 16px;
+    border-left: 4px solid var(--masp-red);
+  }
+
+  .item {
+    display: flex;
+    border-top: 2px solid var(--border-heavy);
+    padding: 12px 0;
+    font-weight: 600;
+  }
+  .item-id { width: 60px; color: var(--masp-red); }
+  .item-title { flex: 1; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="pillar"></div>
+  <div class="content">
+    <h1>O GRAFO<br>DIÁRIO</h1>
+
+    <details class="module" open>
+      <summary>
+        <span>01 / ESTRUTURA ONTOLÓGICA</span>
+        <span class="indicator"></span>
+      </summary>
+      <div class="data-block">
+        <div class="synthesis">Fundação Ranganathan acoplada. O sistema reflete sua própria arquitetura através do novo jornal interno.</div>
+        <div class="item">
+          <span class="item-id">P1</span>
+          <span class="item-title">Biblioteconomia Integrada à Constituição</span>
+        </div>
+        <div class="item">
+          <span class="item-id">P2</span>
+          <span class="item-title">Governance Workflows: Backlog & README Patterns</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="module">
+      <summary>
+        <span>02 / OPERAÇÃO CCB</span>
+        <span class="indicator"></span>
+      </summary>
+      <div class="data-block">
+        <div class="synthesis">Lift-and-shift operacionalizado. Domínio validation estabelecido sob estresse de testes.</div>
+        <div class="item">
+          <span class="item-id">P2</span>
+          <span class="item-title">Domain Scaffolding & Relocação de Serviços</span>
+        </div>
+        <div class="item">
+          <span class="item-id">P4</span>
+          <span class="item-title">Revert de Mudanças Não-Aprovadas nos Testes</span>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>
+</body>
+</html>

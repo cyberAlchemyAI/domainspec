@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "django",
+      "runtimeExecutable": "/Users/victorboscaro/house_project/venv/bin/python",
+      "runtimeArgs": ["manage.py", "runserver", "0.0.0.0:8000"],
+      "port": 8000
+    }
+  ],
+  "autoVerify": false
+}

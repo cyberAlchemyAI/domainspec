@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 015 A: Explore Ambient</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #0a0b10;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+    --border: rgba(255, 255, 255, 0.08);
+    --panel-bg: rgba(20, 21, 31, 0.6);
+  }
+  
+  body {
+    margin: 0; padding: 0;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* AMBIENT HEADER */
+  header {
+    padding: 60px 20px 40px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+  header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: -1px;
+    margin: 0;
+    color: var(--text-main);
+  }
+  header p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-top: 10px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 150px 20px;
+  }
+
+  /* ARTICLE STYLING */
+  .article {
+    margin-bottom: 80px;
+    padding: 40px;
+    background: var(--panel-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    transition: transform 0.4s ease, border-color 0.4s ease;
+    position: relative;
+  }
+  .article:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  .article-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .article-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0 0 24px 0;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .article-body {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+  }
+  .article-body p { margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--text-main); font-weight: 500; }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); text-decoration: none; border: 1px dashed rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 3px; }
+  .source-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  .tech-block, .graph-block {
+    margin-bottom: 1.5rem;
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+  }
+  .graph-block {
+    border-left: 2px solid var(--accent);
+  }
+
+  /* SPECIFIC VOTE ICON */
+  .vote-icon {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+  }
+  .vote-icon:hover {
+    background: rgba(56,189,248,0.15);
+    border-color: rgba(56,189,248,0.5);
+    color: #38bdf8;
+  }
+
+  .vote-popup {
+    position: absolute;
+    top: 50px; right: 16px;
+    background: rgba(7, 8, 11, 0.97);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 16px;
+    width: 220px;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .vote-icon:hover .vote-popup,
+  .vote-popup:hover {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .vote-popup-title {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+  }
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .metric-name {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    flex: 1;
+  }
+  .metric-btns {
+    display: flex;
+    gap: 3px;
+  }
+  .metric-btn {
+    width: 22px; height: 22px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 3px;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.6rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .metric-btn:hover { background: rgba(56,189,248,0.2); border-color: #38bdf8; color: #38bdf8; }
+  .metric-btn.active { background: #38bdf8; border-color: #38bdf8; color: #000; font-weight: 800; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>O Grafo Diário</h1>
+  <p id="dateStr">LOADING PAYLOAD...</p>
+</header>
+
+<div class="container" id="contentContainer">
+  <!-- Articles injected here -->
+</div>
+
+
+<script>
+  let pendingVotes = {};
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if (!container || container.classList.contains('voted')) return;
+
+    container.querySelectorAll('.metric-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (parseInt(btn.innerText) === score) btn.classList.add('active');
+    });
+
+    pendingVotes[blockId] = { metricName, articleId, score };
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if(!state) return;
+
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+
+    if (window.parent && window.parent.registerAtomicVote) {
+      // Create schema. If registerAtomicVote is legacy, it will map it. But we send new fields so it can adapt
+      let componentContext = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+         metric_name: state.metricName,
+         score: state.score,
+         reason: reason ? `[${componentContext}] ${reason}` : `[${componentContext}] No comment`
+      });
+    }
+
+    const container = document.getElementById(blockId);
+    if(container) {
+      container.classList.add('voted');
+      container.innerHTML = `<span style="padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #10b981;">✓ RECORDED: ${state.score}/5</span>`;
+    }
+    
+    const commentBlock = document.getElementById(blockId.replace('vote_', 'comment_'));
+    if(commentBlock) commentBlock.style.display = 'none';
+  }
+
+  const mockPayload = {
+    metadata: { date: "2026-03-25" },
+    articles: [
+      {
+        id: "art_explore_1", tag: "AMBIENT DISCOVERY", title: "Information Density Solved",
+        body: "<p>By expanding whitespace and dropping high-contrast borders, we lower visual entropy.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  const payload = (window.parent && window.parent.currentPayload && window.parent.currentPayload.articles) ? window.parent.currentPayload : mockPayload;
+
+  function renderArticles() {
+    document.getElementById('dateStr').innerText = `DATA SYNC // ${payload.metadata.date}`;
+    let html = '';
+    
+    payload.articles.forEach(art => {
+      let bodyHtml = art.body || '';
+      let sourceFiles = (art.meta && art.meta.source_files) || [];
+      let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+        let name = f.split('/').pop();
+        return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+      }).join('') + '</div>' : '';
+
+      html += `
+        <article class="article">
+          <div class="article-tag">${art.tag}</div>
+          <h2 class="article-title">${art.title}</h2>
+          <div class="article-body">
+            ${bodyHtml}
+            ${sourceLinksHtml}
+          </div>
+
+          <div class="vote-icon" title="Vote on specifics">&#9677;
+            <div class="vote-popup">
+              <div class="vote-popup-title">SPECIFIC VOTES</div>
+              <div class="metric-row">
+                <div class="metric-name">Topology</div>
+                <div class="metric-btns">
+                  ${[1,2,3,4,5].map(n => `<button class="metric-btn" onclick="registerVote('topology','${art.id}',${n},'vote_topology_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-name">Visual Entropy</div>
+                <div class="metric-btns">
+                  ${[1,2,3,4,5].map(n => `<button class="metric-btn" onclick="registerVote('visual_entropy','${art.id}',${n},'vote_ve_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-name">Readability</div>
+                <div class="metric-btns">
+                  ${[1,2,3,4,5].map(n => `<button class="metric-btn" onclick="registerVote('readability','${art.id}',${n},'vote_read_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+    
+    document.getElementById('contentContainer').innerHTML = html;
+  }
+
+  renderArticles();
+</script>
+</body>
+</html>

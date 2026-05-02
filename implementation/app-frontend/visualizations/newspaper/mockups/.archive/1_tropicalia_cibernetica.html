@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grafo Diário: Tropicália Cibernética</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #060e0a; /* Dark Amazonian night */
+    --bg-surface: #0a1610;
+    --border: #142e20;
+    --text-primary: #e8f5e9;
+    --text-secondary: #81c784;
+    --accent-vibrant: #d4ed31; /* Cyber-lime / acid yellow */
+    --accent-earth: #ff8a65;  /* Terra incognita orange */
+  }
+  
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+    padding: 40px 20px;
+    background-image: radial-gradient(circle at 100% 0%, rgba(212, 237, 49, 0.05) 0%, transparent 50%);
+  }
+
+  .container { max-width: 800px; margin: 0 auto; }
+
+  header {
+    border-bottom: 2px solid var(--accent-vibrant);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    color: var(--accent-vibrant);
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  /* Progressive Disclosure via Details/Summary */
+  details.arc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  
+  details.arc > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    transition: background 0.2s;
+  }
+  details.arc > summary::-webkit-details-marker { display: none; }
+  details.arc > summary:hover { background: #0c1c14; }
+  
+  details.arc[open] > summary {
+    border-bottom: 1px solid var(--border);
+    color: var(--accent-earth);
+  }
+
+  .arc-indicator {
+    display: inline-block;
+    width: 12px; height: 12px;
+    background: var(--accent-vibrant);
+    border-radius: 50%;
+    margin-right: 16px;
+  }
+
+  .arc-content {
+    padding: 20px;
+    font-size: 0.95rem;
+  }
+  
+  .context-graph {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: rgba(129, 199, 132, 0.05);
+    padding: 12px;
+    border-left: 2px solid var(--accent-vibrant);
+    margin-bottom: 20px;
+  }
+
+  .node {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .node:last-child { border-bottom: none; }
+  
+  .node-id { color: var(--accent-earth); font-family: 'Space Mono', monospace; font-size: 0.8rem; width: 40px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>O_Grafo_Diario</h1>
+    <div class="subtitle">
+      <span>Manifesto Epistêmico v1.0</span>
+      <span style="font-family: 'Space Mono'">2026.03.24</span>
+    </div>
+  </header>
+
+  <details class="arc" open>
+    <summary><span class="arc-indicator"></span> 01. Ontologia & Consciência</summary>
+    <div class="arc-content">
+      <div class="context-graph">
+        [SYS] Fundações de Ranganathan ativadas. O vault agora possui auto-percepção arquitetônica.
+      </div>
+      <div class="node">
+        <span class="node-id">P1</span>
+        <span>Biblioteconomia Integrada à Constituição</span>
+        <span style="font-family:'Space Mono'">Imp: 8</span>
+      </div>
+      <div class="node">
+        <span class="node-id">P2</span>
+        <span>Governance Workflows Criados</span>
+        <span style="font-family:'Space Mono'">Imp: 8</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="arc">
+    <summary><span class="arc-indicator" style="background: var(--accent-earth)"></span> 02. Migração CCB</summary>
+    <div class="arc-content">
+      <div class="context-graph">
+        [SYS] Scaffolding do domínio documents_validation. Test coverage gaps identificados.
+      </div>
+      <div class="node">
+        <span class="node-id">P2</span>
+        <span>Domain Scaffolding Completo</span>
+        <span style="font-family:'Space Mono'">Imp: 7</span>
+      </div>
+      <div class="node">
+        <span class="node-id">P4</span>
+        <span>Audit de Testes & Gaps</span>
+        <span style="font-family:'Space Mono'">Imp: 5</span>
+      </div>
+    </div>
+  </details>
+</div>
+</body>
+</html>

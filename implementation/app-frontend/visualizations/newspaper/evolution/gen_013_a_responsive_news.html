@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gen 013 A: Kinetic Print & Rich Content</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #f8f9fa;
+    --bg-panel: #ffffff;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --success: #10b981;
+    --danger: #ef4444;
+  }
+
+  body {
+    background-color: var(--bg-page); color: var(--text-main); font-family: 'Inter', sans-serif;
+    margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden;
+  }
+
+  /* UBIQUITOUS HOVER TRANSITIONS */
+  * { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease; box-sizing: border-box; }
+
+  /* SIDE DIAGNOSTICS MENU (INSTANT DISMISSAL) */
+  #sideMenu {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 380px; 
+    background: var(--bg-panel); border-left: 1px solid var(--border);
+    transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000; padding: 32px 24px; box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+  }
+  #sideMenu.active { transform: translateX(0); }
+  
+  .menu-header { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid var(--text-main); padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;}
+  .close-btn { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); padding: 4px 8px; border-radius: 4px; }
+  .close-btn:hover { background: #f3f4f6; color: var(--text-main); }
+
+  /* TRIGGER BUTTON */
+  #menuTrigger {
+    position: fixed; top: 24px; right: 24px; z-index: 900;
+    background: #111827; color: #fff; border: none; padding: 10px 20px; border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  #menuTrigger:hover { transform: translateY(-2px); background: var(--accent); box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2); }
+
+  /* LEFT NAV MATRIX */
+  .matrix-pane {
+    width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border);
+    padding: 32px 24px; overflow-y: auto; height: 100%;
+  }
+  .brand { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;}
+  .date { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 40px; display: block; border-bottom: 1px solid var(--border); padding-bottom: 24px;}
+  
+  .node {
+    padding: 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;
+    cursor: pointer; background: var(--bg-page);
+  }
+  .node:hover { border-color: var(--text-muted); background: var(--bg-panel); transform: translateX(4px);}
+  .node.active { border-color: var(--accent); border-left: 4px solid var(--accent); background: #eff6ff;}
+  .node-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;}
+  .node-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); display:flex; gap: 8px;}
+
+  /* MAIN CONTENT PANE */
+  .content-pane { flex: 1; padding: 48px 80px; overflow-y: auto; height: 100%; }
+  
+  .news-block { background: var(--bg-panel); padding: 48px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 48px; position:relative; }
+  .news-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; padding: 6px 12px; background: #f3f4f6; border-radius: 4px; margin-bottom: 24px;}
+  
+  .news-title { font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin: 0 0 24px 0; letter-spacing: -1px;}
+  .news-body { font-size: 1.15rem; line-height: 1.8; color: #374151; }
+  .news-body p { margin-bottom: 24px; }
+  .news-body strong { color: var(--text-main); }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .source-link { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #9ca3af; text-decoration: none; border: 1px dashed #d1d5db; padding: 2px 8px; border-radius: 3px; }
+  .source-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* SPECIFIC VOTE ICON */
+  .vote-icon {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.15);
+    color: rgba(0,0,0,0.3);
+    font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+  }
+  .vote-icon:hover {
+    background: rgba(37,99,235,0.1);
+    border-color: rgba(37,99,235,0.4);
+    color: var(--accent);
+  }
+
+  .vote-popup {
+    position: absolute;
+    top: 50px; right: 16px;
+    background: rgba(7, 8, 11, 0.97);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 16px;
+    width: 220px;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .vote-icon:hover .vote-popup,
+  .vote-popup:hover {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .vote-popup-title {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+  }
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .metric-name {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    flex: 1;
+  }
+  .metric-btns {
+    display: flex;
+    gap: 3px;
+  }
+  .metric-btn {
+    width: 22px; height: 22px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 3px;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.6rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .metric-btn:hover { background: rgba(56,189,248,0.2); border-color: #38bdf8; color: #38bdf8; }
+  .metric-btn.active { background: #38bdf8; border-color: #38bdf8; color: #000; font-weight: 800; }
+
+  .vote-label { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;}
+
+</style>
+</head>
+<body>
+
+<button id="menuTrigger">DIAGNOSTICS & TELEMETRY</button>
+
+<aside id="sideMenu">
+  <div class="menu-header">
+    System Telemetry 
+    <button class="close-btn" id="closeMenuBtn">✕</button>
+  </div>
+  <div style="font-family: monospace; font-size: 0.8rem; line-height: 1.6; color: var(--text-muted);">
+    <p>> SESSIONS: <strong style="color:var(--text-main)">142</strong></p>
+    <p>> IMPACT LEVEL: <strong style="color:var(--text-main)">HIGH</strong></p>
+    <br>
+    <p>Gen 013 A implements definitive atomic feedback UI, ubiquitous hover affordances, and an instant-dismiss side layer to reduce friction.</p>
+  </div>
+</aside>
+
+<!-- LEFT NAVIGATION -->
+<div class="matrix-pane">
+  <div class="brand">O Grafo Diário</div>
+  <div class="date" id="dateStr">LOADING...</div>
+  <div id="navContainer"></div>
+</div>
+
+<!-- RIGHT CONTENT PANE -->
+<main class="content-pane" id="contentContainer" style="padding-bottom: 120px;">
+</main>
+
+
+<script>
+  // INSTANT MENU DISMISSAL LOGIC
+  const menu = document.getElementById('sideMenu');
+  const trigger = document.getElementById('menuTrigger');
+  const closeBtn = document.getElementById('closeMenuBtn');
+
+  trigger.addEventListener('click', () => {
+    menu.classList.add('active');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    menu.classList.remove('active');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (menu.classList.contains('active')) {
+      if (!menu.contains(e.target) && !trigger.contains(e.target)) {
+        menu.classList.remove('active');
+      }
+    }
+  });
+
+  const mockPayload = {
+    metadata: { date: "2026-03-24", stats: { sessions: 25, decisions: 12, specChanges: 8 } },
+    articles: [
+      {
+        id: "item_gen014", type: "architectural_decision", tag: "P1 • ACADEMIC STYLE", title: "Integração de S. R. Ranganathan",
+        body: "<p>A transição epistemológica do nosso Cofre impôs a Classificação Facetada.</p>",
+        meta: { impact: 8.0, risk: "low", source_files: [] }
+      }
+    ]
+  };
+
+  let payload = (window.parent && window.parent.currentPayload) ? window.parent.currentPayload : mockPayload;
+
+  function renderUI() {
+    document.getElementById('dateStr').innerText = `DATA SYNC // ${payload.metadata.date}`;
+    let navHTML = '';
+    let contentHTML = '';
+
+    payload.articles.forEach((art, idx) => {
+      // NAV NODE
+      navHTML += `
+        <div class="node ${idx === 0 ? 'active' : ''}" id="nav_${art.id}" onclick="activateArticle('${art.id}')">
+          <div class="node-title">${art.title}</div>
+          <div class="node-meta"><span>${art.tag}</span> <span style="margin-left:auto; color:var(--accent)">IMP: ${art.meta.impact}</span></div>
+        </div>
+      `;
+      // ARTICLE BLOCK
+      let bodyText = art.body || '';
+      let sourceFiles = (art.meta && art.meta.source_files) || [];
+      let sourceLinksHtml = sourceFiles.length ? '<div class="source-links">' + sourceFiles.map(f => {
+        let name = f.split('/').pop();
+        return `<a href="/api/doc?path=${f}" target="_blank" class="source-link">↗ ${name}</a>`;
+      }).join('') + '</div>' : '';
+      contentHTML += `
+        <article class="news-block" id="art_${art.id}" style="display: ${idx === 0 ? 'block' : 'none'};">
+          <div class="news-tag">${art.tag}</div>
+          <h1 class="news-title">${art.title}</h1>
+          <div class="news-body">${bodyText}${sourceLinksHtml}</div>
+          
+          <div class="vote-icon" title="Vote on specifics">&#9677;
+            <div class="vote-popup">
+              <div class="vote-popup-title">SPECIFIC VOTES</div>
+              <div class="metric-row">
+                <div class="metric-name">Topology</div>
+                <div class="metric-btns">
+                  ${[1,2,3,4,5].map(n => `<button class="metric-btn" onclick="registerVote('topology','${art.id}',${n},'vote_topology_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-name">Visual Entropy</div>
+                <div class="metric-btns">
+                  ${[1,2,3,4,5].map(n => `<button class="metric-btn" onclick="registerVote('visual_entropy','${art.id}',${n},'vote_ve_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-name">Readability</div>
+                <div class="metric-btns">
+                  ${[1,2,3,4,5].map(n => `<button class="metric-btn" onclick="registerVote('readability','${art.id}',${n},'vote_read_${art.id}');event.stopPropagation()">${n}</button>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    document.getElementById('navContainer').innerHTML = navHTML;
+    document.getElementById('contentContainer').innerHTML = contentHTML;
+  }
+
+  function activateArticle(id) {
+    document.querySelectorAll('.node').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav_' + id).classList.add('active');
+    document.querySelectorAll('.news-block').forEach(el => el.style.display = 'none');
+    document.getElementById('art_' + id).style.display = 'block';
+  }
+
+  // STANDARDIZED VOTING (Protocol v1.0.0)
+  let pendingVotes = {};
+
+  function registerVote(metricName, articleId, score, blockId) {
+    const container = document.getElementById(blockId);
+    if (!container || container.classList.contains('voted')) return;
+
+    container.querySelectorAll('.metric-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (parseInt(btn.innerText) === score) btn.classList.add('active');
+    });
+
+    pendingVotes[blockId] = { metricName, articleId, score };
+  }
+
+  function commitVote(metricName, articleId, blockId) {
+    const state = pendingVotes[blockId];
+    if (!state) return;
+
+    const inputEl = document.getElementById(blockId.replace('vote_', 'input_'));
+    const reason = inputEl ? inputEl.value : '';
+
+    if (window.parent && window.parent.registerAtomicVote) {
+      let context = articleId ? `Article: ${articleId}` : 'Overall Page';
+      window.parent.registerAtomicVote({
+        metric_name: state.metricName,
+        score: state.score,
+        comment: reason ? `[${context}] ${reason}` : `[${context}] No comment`
+      });
+    }
+
+    const container = document.getElementById(blockId);
+    if (container) {
+      container.classList.add('voted');
+      container.innerHTML = `<span style="padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--success); font-weight: 700;">✓ RECORDED: ${state.score}/5</span>`;
+    }
+    if (inputEl) inputEl.style.display = 'none';
+  }
+
+  renderUI();
+</script>
+</body>
+</html>

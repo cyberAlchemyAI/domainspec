@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "date": "2026-04-13",
+    "generated_at": "2026-04-14T01:30:00.000000+00:00",
+    "editorial_vectors": {
+      "form": "narrative",
+      "tone": "technical",
+      "structure": "hierarchical"
+    },
+    "stats": {
+      "sessions": 1,
+      "decisions": 4,
+      "spec_changes": 2
+    }
+  },
+  "articles": [
+    {
+      "id": "2026-04-13-1640-extraction-tier3-codebase-validation",
+      "type": "architectural_decision",
+      "tag": "Extraction | Pipeline",
+      "title": "Extraction Tier 3 Plan Hardened Through Live Codebase Validation; 12 Architectural Issues Resolved Before Implementation",
+      "body": "<p><strong>A comprehensive GitNexus-driven review of the extraction-tier3-implementation-plan identified and resolved twelve critical architectural issues, preventing costly rework downstream.</strong> The plan was validated against the live codebase with systematic class coverage tracking and design decision approval from Victor. Key architectural decisions approved include: proper persistence layering via PersistStep→use_cases, restoration of original Contrato→Kit sequencing, Celery retry semantics with max_retries=3, and bundled test migration strategy.</p><p>The plan was patched to v0.2.0 with 19 sequential edits addressing event typing fixes, step ordering restoration, and introduction of a MultipleCCBGuardStep guard. The design was simplified versus the original plan: nine support classes (gates, strategies, CascadingStep) remain deferred, reducing scope while maintaining architectural integrity. <strong>This hardened blueprint now serves as the authoritative specification for extraction tier 3 implementation, with all major design trade-offs explicitly documented and approved.</strong></p>",
+      "meta": {
+        "impact": 8.1,
+        "risk": "low",
+        "source_files": [
+          "specs/002-ccb-validation-workflow/docs/extraction-refactor/docs/refactor/extraction-tier3-implementation-plan.md",
+          "specs/002-ccb-validation-workflow/docs/extraction-refactor/docs/code-tagging/extraction-tier3-tagging-audit.md"
+        ]
+      }
+    }
+  ]
+}
