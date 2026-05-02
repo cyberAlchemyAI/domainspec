@@ -1,0 +1,16 @@
+{
+  "name": "domainspec-runtime-workspace",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "workspaces": [
+    "backend",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "check": "pnpm -r check",
+    "dev": "pnpm -r --parallel dev",
+    "dev:backend": "pnpm --filter @domainspec/backend dev",
+    "dev:web": "pnpm --filter @domainspec/web dev"
+  }
+}
