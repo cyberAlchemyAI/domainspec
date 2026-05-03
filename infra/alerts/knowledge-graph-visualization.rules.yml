@@ -1,0 +1,65 @@
+groups:
+  - name: knowledge-graph-visualization
+    rules:
+      - alert: KnowledgeGraphHttp5xxRateHigh
+        expr: |
+          sum(rate(kg_http_requests_total{status_class="5xx"}[5m]))
+          /
+          clamp_min(sum(rate(kg_http_requests_total[5m])), 1)
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          feature: knowledge-graph-visualization
+        annotations:
+          summary: "knowledge-graph-visualization: HTTP 5xx rate above 5%"
+          source_rule: "O8"
+          runbook: "docs/features/knowledge-graph-visualization/observability.md"
+
+      - alert: KnowledgeGraphHttpLatencyP95High
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum(rate(kg_http_request_duration_ms_bucket{route=~"/knowledge-graph/.*"}[5m])) by (le, route)
+          )
+          > 250
+        for: 10m
+        labels:
+          severity: warning
+          feature: knowledge-graph-visualization
+        annotations:
+          summary: "knowledge-graph-visualization: endpoint p95 latency above 250ms"
+          source_rule: "O8"
+          runbook: "docs/features/knowledge-graph-visualization/observability.md"
+
+      - alert: KnowledgeGraphQueryLatencyP95High
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum(rate(kg_query_duration_ms_bucket[5m])) by (le, query_name)
+          )
+          > 120
+        for: 10m
+        labels:
+          severity: warning
+          feature: knowledge-graph-visualization
+        annotations:
+          summary: "knowledge-graph-visualization: query p95 latency above 120ms"
+          source_rule: "O4"
+          runbook: "docs/features/knowledge-graph-visualization/observability.md"
+
+      - alert: KnowledgeGraphPayloadP95High
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum(rate(kg_response_payload_bytes_bucket{route=~"/knowledge-graph/.*"}[15m])) by (le, route)
+          )
+          > 25000
+        for: 15m
+        labels:
+          severity: warning
+          feature: knowledge-graph-visualization
+        annotations:
+          summary: "knowledge-graph-visualization: response payload p95 above 25KB"
+          source_rule: "O8"
+          runbook: "docs/features/knowledge-graph-visualization/observability.md"

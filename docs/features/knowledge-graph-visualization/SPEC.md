@@ -1,256 +1,175 @@
+---
+feature: knowledge-graph-visualization
+version: current
+status: draft
+updatedAt: 2026-05-03
+---
+
 # Knowledge Graph Visualization
 
 ## Overview
 
-Knowledge Graph Visualization provides a navigable UI that helps users understand what a set of feature specs and aspect docs represents as one coherent system.
+Knowledge Graph Visualization remakes the feature around a mirror-first model: documentation files become first-class cards, and the relationship graph is rendered from the same canonical concept and edge source.
 
-Wave 1 delivers the V1 vision: Capability Atlas Board. It prioritizes fast comprehension, feature-to-capability navigation, taxonomy visibility, and concept drill-down backed by canonical DomainSpec relationships.
+The baseline interaction is deterministic:
 
-Wave 2 extends the module with the V2 vision: Relationship Constellation Canvas. It introduces multi-hop analysis, deterministic path tracing, and typed relationship-family projections.
+- one mirror card per source file (at minimum SPEC, domain, operations),
+- one graph projection built from canonical Feature Concept Graph edges,
+- one persisted projection snapshot written to the database from parsed markdown sources,
+- click any concept to navigate to its definition target,
+- show a concept detail card with related context (summary, inbound relations, outbound relations, evidence links).
 
-Wave 3 extends the module with the V3 vision: Dependency Matrix + Trace Storyboard. It introduces governance-grade risk scoring, dependency state lifecycles, storyboard publication, and bounded exception handling.
+This current scope favors explainability over visual novelty. Every card and graph edge must be traceable to a concrete documentation definition.
 
 ## What This Module Owns
 
-- Feature atlas navigation across documented features.
-- Capability neighborhood exploration for a selected feature capability.
-- Concept inspector context for taxonomy type, aspect evidence, and relationship neighbors.
-- Canonical vocabulary projection from DomainSpec taxonomy and relationships.
-- Deterministic shortest-path tracing across cross-feature graph segments.
-- Multi-hop neighborhood exploration with bounded depth.
-- Typed edge-family projections for analysis lenses.
-- Feature-pair dependency matrix generation with per-pair risk scores.
-- Governance risk lifecycle state management for dependency pairs.
-- Release impact storyboard publication and trace evidence contracts.
-- Bounded temporary mitigation via approved risk exceptions.
-
-## Module Map
-
-```mermaid
-graph TD
-  Atlas[GetFeatureAtlas]
-  Neighborhood[GetCapabilityNeighborhood]
-  NeighborhoodDepth[GetNeighborhoodByDepth]
-  ShortestPath[GetShortestCrossFeaturePath]
-  TypedProjection[GetEdgeTypedProjection]
-  Matrix[GetDependencyMatrix]
-  Storyboard[GetImpactStoryboard]
-  Inspector[GetConceptInspectorContext]
-  ScoreOp[ComputeDependencyRiskScore]
-  StoryboardOp[BuildImpactStoryboard]
-  ExceptionOp[ApproveRiskException]
-  RiskState[DependencyRiskState]
-
-  Snapshot[GraphSnapshot]
-  Node[GraphNode]
-  Edge[GraphEdge]
-  Capability[CapabilityAnchor]
-  Filter[ViewFilter]
-
-  API[KnowledgeGraphReadAPI]
-
-  API --> Atlas
-  API --> Neighborhood
-  API --> NeighborhoodDepth
-  API --> ShortestPath
-  API --> TypedProjection
-  API --> Matrix
-  API --> Storyboard
-  API --> ScoreOp
-  API --> StoryboardOp
-  API --> ExceptionOp
-  API --> Inspector
-
-  Atlas --> Snapshot
-  Atlas --> Capability
-  Atlas --> Node
-
-  Neighborhood --> Capability
-  Neighborhood --> Node
-  Neighborhood --> Edge
-
-  NeighborhoodDepth --> Node
-  NeighborhoodDepth --> Edge
-  ShortestPath --> Edge
-  TypedProjection --> Edge
-  Matrix --> Snapshot
-  Matrix --> Edge
-  Matrix --> Node
-  Storyboard --> Edge
-  Storyboard --> Node
-
-  ScoreOp --> Matrix
-  StoryboardOp --> Storyboard
-  ExceptionOp --> RiskState
-
-  Inspector --> Node
-  Inspector --> Edge
-
-  Filter --> Atlas
-  Filter --> Neighborhood
-  Filter --> NeighborhoodDepth
-
-  TraceWF[TraceSelectionWorkflow] --> ShortestPath
-  TraceWF --> TypedProjection
-  MultiHopWF[MultiHopAnalysisWorkflow] --> NeighborhoodDepth
-  MultiHopWF --> TypedProjection
-  RiskWF[RiskAssessmentWorkflow] --> ScoreOp
-  RiskWF --> Matrix
-  ReleaseWF[ReleaseImpactWorkflow] --> StoryboardOp
-  ReleaseWF --> Storyboard
-  ReleaseWF --> ExceptionOp
-
-  ProjectionBuilt[ProjectionBuilt] --> Atlas
-  TraceComputed[TraceComputed] --> ShortestPath
-  LensSaved[LensSaved] --> TypedProjection
-  RiskRaised[DependencyRiskRaised] --> Matrix
-  RiskMitigated[DependencyRiskMitigated] --> Matrix
-  StoryboardPublished[StoryboardPublished] --> Storyboard
-```
+- Mirror cards for feature files (SPEC, domain, operations, and other aspects when present).
+- Canonical relationship graph projection from documented concepts and edges.
+- Markdown ingestion/parsing and projection persistence into database-backed read models.
+- Deterministic concept selection and deep-link resolution to concept definitions.
+- Concept detail card projection with relation context and evidence references.
+- Read API contracts for cards, graph nodes/edges, concept details, and definition targets.
 
 ## Capabilities
 
-| Capability                                                                                       | What                                                                                   | Key Aspects                                                                                                                                                                 | Detail                                                                               |
-| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [V1 Capability Atlas Board](capabilities/v1-capability-atlas-board.md)                           | Navigate features and capabilities with taxonomy-aware context                         | [Queries](queries.md), [Interfaces](interfaces.md), [Mappings](mappings.md), [Stories](STORIES.md)                                                                          | Feature atlas, capability neighborhood preview, concept inspector context            |
-| [V2 Relationship Constellation Canvas](capabilities/v2-relationship-constellation-canvas.md)     | Analyze multi-hop relationships and deterministic paths                                | [Queries](queries.md), [Mappings](mappings.md), [Workflows](workflows.md), [Events](events.md), [Stories](STORIES.md)                                                       | Depth-based neighborhood analysis, shortest path tracing, typed relation-family lens |
-| [V3 Dependency Matrix + Trace Storyboard](capabilities/v3-dependency-matrix-trace-storyboard.md) | Govern dependency risk with matrix scores, storyboard evidence, and exception controls | [Operations](operations.md), [States](states.md), [Queries](queries.md), [Interfaces](interfaces.md), [Events](events.md), [Workflows](workflows.md), [Stories](STORIES.md) | Matrix scoring, risk-state lifecycle, release impact narrative, mitigation override  |
+| Capability                                                                                 | What                                                                  | Key Aspects                                                                                                             | Detail                                                                         |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Mirror Cards + Relationship Graph Navigator](#mirror-cards--relationship-graph-navigator) | Render docs-as-cards and canonical concept graph from the same source | [Domain](domain.md), [Queries](queries.md), [Interfaces](interfaces.md), [Mappings](mappings.md), [UI Spec](UI-SPEC.md) | Mirror cards, relation graph, concept click, definition deep-link, detail card |
 
-## Domain Concepts
+### Mirror Cards + Relationship Graph Navigator
 
-| Concept                                                                      | ID                                                           | Type          | Description                                                           |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------- | --------------------------------------------------------------------- |
-| [GraphSnapshot](domain.md#graphsnapshot)                                     | knowledge-graph-visualization.GraphSnapshot                  | Entity        | Immutable snapshot metadata for a generated visualization graph       |
-| [GraphNode](domain.md#graphnode)                                             | knowledge-graph-visualization.GraphNode                      | Value Object  | Canonical concept node representation                                 |
-| [GraphEdge](domain.md#graphedge)                                             | knowledge-graph-visualization.GraphEdge                      | Value Object  | Canonical typed relation between two concept nodes                    |
-| [CapabilityAnchor](domain.md#capabilityanchor)                               | knowledge-graph-visualization.CapabilityAnchor               | Value Object  | Stable capability address for feature navigation                      |
-| [ViewFilter](domain.md#viewfilter)                                           | knowledge-graph-visualization.ViewFilter                     | Value Object  | User-selected filter envelope for atlas and neighborhood views        |
-| [VisualizationProfile](domain.md#visualizationprofile)                       | knowledge-graph-visualization.VisualizationProfile           | Value Object  | Named view profile with default filter settings                       |
-| [FeaturePairImpact](domain.md#featurepairimpact)                             | knowledge-graph-visualization.FeaturePairImpact              | Value Object  | One dependency matrix cell with risk score and governance state       |
-| [TraceStep](domain.md#tracestep)                                             | knowledge-graph-visualization.TraceStep                      | Value Object  | One ordered impact storyboard step                                    |
-| [RiskException](domain.md#riskexception)                                     | knowledge-graph-visualization.RiskException                  | Value Object  | Temporary approved mitigation override for a dependency pair          |
-| [RiskBand](domain.md#riskband)                                               | knowledge-graph-visualization.RiskBand                       | Enum          | Risk-state band used for scoring and governance decisions             |
-| [RiskExceptionStatus](domain.md#riskexceptionstatus)                         | knowledge-graph-visualization.RiskExceptionStatus            | Enum          | Exception lifecycle status values                                     |
-| [GetFeatureAtlas](queries.md#getfeatureatlas)                                | knowledge-graph-visualization.GetFeatureAtlas                | Query         | Returns feature cards and capability anchors under filters            |
-| [GetCapabilityNeighborhood](queries.md#getcapabilityneighborhood)            | knowledge-graph-visualization.GetCapabilityNeighborhood      | Query         | Returns first-hop graph neighborhood for one capability               |
-| [GetConceptInspectorContext](queries.md#getconceptinspectorcontext)          | knowledge-graph-visualization.GetConceptInspectorContext     | Query         | Returns concept evidence and related edges for inspector panel        |
-| [GetShortestCrossFeaturePath](queries.md#getshortestcrossfeaturepath)        | knowledge-graph-visualization.GetShortestCrossFeaturePath    | Query         | Returns deterministic shortest path between two concepts              |
-| [GetNeighborhoodByDepth](queries.md#getneighborhoodbydepth)                  | knowledge-graph-visualization.GetNeighborhoodByDepth         | Query         | Returns depth-bounded graph neighborhood for analysis                 |
-| [GetEdgeTypedProjection](queries.md#getedgetypedprojection)                  | knowledge-graph-visualization.GetEdgeTypedProjection         | Query         | Returns grouped relation projections by edge type and family          |
-| [GetDependencyMatrix](queries.md#getdependencymatrix)                        | knowledge-graph-visualization.GetDependencyMatrix            | Query         | Returns governance dependency matrix cells for selected filters       |
-| [GetImpactStoryboard](queries.md#getimpactstoryboard)                        | knowledge-graph-visualization.GetImpactStoryboard            | Query         | Returns ordered impact storyboard for a selected dependency pair      |
-| [KnowledgeGraphReadAPI](interfaces.md#external-knowledgegraphreadapi-rest)   | knowledge-graph-visualization.KnowledgeGraphReadAPI          | Interface     | Read-only API for atlas, neighborhood, and concept inspector          |
-| [ComputeDependencyRiskScore](operations.md#computedependencyriskscore)       | knowledge-graph-visualization.ComputeDependencyRiskScore     | Operation     | Computes dependency risk score and governance state for one pair      |
-| [BuildImpactStoryboard](operations.md#buildimpactstoryboard)                 | knowledge-graph-visualization.BuildImpactStoryboard          | Operation     | Builds publishable release impact storyboard                          |
-| [ApproveRiskException](operations.md#approveriskexception)                   | knowledge-graph-visualization.ApproveRiskException           | Operation     | Applies temporary mitigation override for Warning or Critical pairs   |
-| [DependencyRiskState](states.md#dependencyriskstate)                         | knowledge-graph-visualization.DependencyRiskState            | State Machine | Risk lifecycle across Stable, Watch, Warning, Critical, and Mitigated |
-| [IndexToGraphMapping](mappings.md#indextographmapping)                       | knowledge-graph-visualization.IndexToGraphMapping            | Mapping       | Index metadata to graph snapshot, nodes, and edges                    |
-| [FeatureDocsToCapabilityCards](mappings.md#featuredocstocapabilitycards)     | knowledge-graph-visualization.FeatureDocsToCapabilityCards   | Mapping       | Feature docs to atlas capability cards                                |
-| [GraphToCanvasProjection](mappings.md#graphtocanvasprojection)               | knowledge-graph-visualization.GraphToCanvasProjection        | Mapping       | Graph query output to constellation canvas nodes and edges            |
-| [RelationshipFamilyProjection](mappings.md#relationshipfamilyprojection)     | knowledge-graph-visualization.RelationshipFamilyProjection   | Mapping       | Edge list grouped into structural and behavioral families             |
-| [GraphToDependencyMatrixMapping](mappings.md#graphtodependencymatrixmapping) | knowledge-graph-visualization.GraphToDependencyMatrixMapping | Mapping       | Graph and scoring output to dependency matrix cells                   |
-| [PathToStoryboardMapping](mappings.md#pathtostoryboardmapping)               | knowledge-graph-visualization.PathToStoryboardMapping        | Mapping       | Path and risk context to storyboard output                            |
-| [TraceSelectionWorkflow](workflows.md#traceselectionworkflow)                | knowledge-graph-visualization.TraceSelectionWorkflow         | Workflow      | Deterministic path selection and projection flow                      |
-| [MultiHopAnalysisWorkflow](workflows.md#multihopanalysisworkflow)            | knowledge-graph-visualization.MultiHopAnalysisWorkflow       | Workflow      | Depth-based neighborhood and relation-family analysis flow            |
-| [RiskAssessmentWorkflow](workflows.md#riskassessmentworkflow)                | knowledge-graph-visualization.RiskAssessmentWorkflow         | Workflow      | Pair-wise risk recomputation and escalation flow                      |
-| [ReleaseImpactWorkflow](workflows.md#releaseimpactworkflow)                  | knowledge-graph-visualization.ReleaseImpactWorkflow          | Workflow      | Storyboard-driven release decision and exception flow                 |
-| [ProjectionBuilt](events.md#projectionbuilt)                                 | knowledge-graph-visualization.ProjectionBuilt                | Event         | Projection synchronization completed                                  |
-| [TraceComputed](events.md#tracecomputed)                                     | knowledge-graph-visualization.TraceComputed                  | Event         | Deterministic path result computed                                    |
-| [LensSaved](events.md#lenssaved)                                             | knowledge-graph-visualization.LensSaved                      | Event         | Analyst lens settings persisted                                       |
-| [DependencyRiskRaised](events.md#dependencyriskraised)                       | knowledge-graph-visualization.DependencyRiskRaised           | Event         | Risk escalation signal for governance triage                          |
-| [DependencyRiskMitigated](events.md#dependencyriskmitigated)                 | knowledge-graph-visualization.DependencyRiskMitigated        | Event         | Mitigation approval signal for exception-driven overrides             |
-| [StoryboardPublished](events.md#storyboardpublished)                         | knowledge-graph-visualization.StoryboardPublished            | Event         | Storyboard publication signal for release evidence                    |
+The user opens the knowledge graph page and immediately sees mirror cards representing documentation files. The graph next to the cards uses the same concept registry and canonical relationships so both views remain synchronized.
 
-## Concept Registry
+When the user selects a concept from a card or the graph:
 
-| Concept                                                                      | ID                                                           | Type          |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------- |
-| [GraphSnapshot](domain.md#graphsnapshot)                                     | knowledge-graph-visualization.GraphSnapshot                  | Entity        |
-| [GraphNode](domain.md#graphnode)                                             | knowledge-graph-visualization.GraphNode                      | Value Object  |
-| [GraphEdge](domain.md#graphedge)                                             | knowledge-graph-visualization.GraphEdge                      | Value Object  |
-| [CapabilityAnchor](domain.md#capabilityanchor)                               | knowledge-graph-visualization.CapabilityAnchor               | Value Object  |
-| [ViewFilter](domain.md#viewfilter)                                           | knowledge-graph-visualization.ViewFilter                     | Value Object  |
-| [VisualizationProfile](domain.md#visualizationprofile)                       | knowledge-graph-visualization.VisualizationProfile           | Value Object  |
-| [FeaturePairImpact](domain.md#featurepairimpact)                             | knowledge-graph-visualization.FeaturePairImpact              | Value Object  |
-| [TraceStep](domain.md#tracestep)                                             | knowledge-graph-visualization.TraceStep                      | Value Object  |
-| [RiskException](domain.md#riskexception)                                     | knowledge-graph-visualization.RiskException                  | Value Object  |
-| [RiskBand](domain.md#riskband)                                               | knowledge-graph-visualization.RiskBand                       | Enum          |
-| [RiskExceptionStatus](domain.md#riskexceptionstatus)                         | knowledge-graph-visualization.RiskExceptionStatus            | Enum          |
-| [GetFeatureAtlas](queries.md#getfeatureatlas)                                | knowledge-graph-visualization.GetFeatureAtlas                | Query         |
-| [GetCapabilityNeighborhood](queries.md#getcapabilityneighborhood)            | knowledge-graph-visualization.GetCapabilityNeighborhood      | Query         |
-| [GetConceptInspectorContext](queries.md#getconceptinspectorcontext)          | knowledge-graph-visualization.GetConceptInspectorContext     | Query         |
-| [GetShortestCrossFeaturePath](queries.md#getshortestcrossfeaturepath)        | knowledge-graph-visualization.GetShortestCrossFeaturePath    | Query         |
-| [GetNeighborhoodByDepth](queries.md#getneighborhoodbydepth)                  | knowledge-graph-visualization.GetNeighborhoodByDepth         | Query         |
-| [GetEdgeTypedProjection](queries.md#getedgetypedprojection)                  | knowledge-graph-visualization.GetEdgeTypedProjection         | Query         |
-| [GetDependencyMatrix](queries.md#getdependencymatrix)                        | knowledge-graph-visualization.GetDependencyMatrix            | Query         |
-| [GetImpactStoryboard](queries.md#getimpactstoryboard)                        | knowledge-graph-visualization.GetImpactStoryboard            | Query         |
-| [KnowledgeGraphReadAPI](interfaces.md#external-knowledgegraphreadapi-rest)   | knowledge-graph-visualization.KnowledgeGraphReadAPI          | Interface     |
-| [ComputeDependencyRiskScore](operations.md#computedependencyriskscore)       | knowledge-graph-visualization.ComputeDependencyRiskScore     | Operation     |
-| [BuildImpactStoryboard](operations.md#buildimpactstoryboard)                 | knowledge-graph-visualization.BuildImpactStoryboard          | Operation     |
-| [ApproveRiskException](operations.md#approveriskexception)                   | knowledge-graph-visualization.ApproveRiskException           | Operation     |
-| [DependencyRiskState](states.md#dependencyriskstate)                         | knowledge-graph-visualization.DependencyRiskState            | State Machine |
-| [IndexToGraphMapping](mappings.md#indextographmapping)                       | knowledge-graph-visualization.IndexToGraphMapping            | Mapping       |
-| [FeatureDocsToCapabilityCards](mappings.md#featuredocstocapabilitycards)     | knowledge-graph-visualization.FeatureDocsToCapabilityCards   | Mapping       |
-| [GraphToCanvasProjection](mappings.md#graphtocanvasprojection)               | knowledge-graph-visualization.GraphToCanvasProjection        | Mapping       |
-| [RelationshipFamilyProjection](mappings.md#relationshipfamilyprojection)     | knowledge-graph-visualization.RelationshipFamilyProjection   | Mapping       |
-| [GraphToDependencyMatrixMapping](mappings.md#graphtodependencymatrixmapping) | knowledge-graph-visualization.GraphToDependencyMatrixMapping | Mapping       |
-| [PathToStoryboardMapping](mappings.md#pathtostoryboardmapping)               | knowledge-graph-visualization.PathToStoryboardMapping        | Mapping       |
-| [TraceSelectionWorkflow](workflows.md#traceselectionworkflow)                | knowledge-graph-visualization.TraceSelectionWorkflow         | Workflow      |
-| [MultiHopAnalysisWorkflow](workflows.md#multihopanalysisworkflow)            | knowledge-graph-visualization.MultiHopAnalysisWorkflow       | Workflow      |
-| [RiskAssessmentWorkflow](workflows.md#riskassessmentworkflow)                | knowledge-graph-visualization.RiskAssessmentWorkflow         | Workflow      |
-| [ReleaseImpactWorkflow](workflows.md#releaseimpactworkflow)                  | knowledge-graph-visualization.ReleaseImpactWorkflow          | Workflow      |
-| [ProjectionBuilt](events.md#projectionbuilt)                                 | knowledge-graph-visualization.ProjectionBuilt                | Event         |
-| [TraceComputed](events.md#tracecomputed)                                     | knowledge-graph-visualization.TraceComputed                  | Event         |
-| [LensSaved](events.md#lenssaved)                                             | knowledge-graph-visualization.LensSaved                      | Event         |
-| [DependencyRiskRaised](events.md#dependencyriskraised)                       | knowledge-graph-visualization.DependencyRiskRaised           | Event         |
-| [DependencyRiskMitigated](events.md#dependencyriskmitigated)                 | knowledge-graph-visualization.DependencyRiskMitigated        | Event         |
-| [StoryboardPublished](events.md#storyboardpublished)                         | knowledge-graph-visualization.StoryboardPublished            | Event         |
+1. the selected concept becomes focused,
+2. the detail card shows related information and edges,
+3. the user can open the exact definition anchor from that detail card.
 
-## Aspect Docs
+## Concepts
 
-- [Domain](domain.md) - Graph structure and filter value objects
-- [Queries](queries.md) - Atlas, neighborhood, and concept inspector read contracts
-- [Operations](operations.md) - Governance scoring, storyboard build, and exception approval operations
-- [States](states.md) - Dependency risk lifecycle state machine
-- [Interfaces](interfaces.md) - External and internal read interface contracts
-- [Mappings](mappings.md) - Index and docs shape transformations
-- [V1 Capability](capabilities/v1-capability-atlas-board.md) - Learnability-first interaction contract
-- [Events](events.md) - Analysis lifecycle and lens signals
-- [Workflows](workflows.md) - Deterministic trace and multi-hop analysis orchestration
-- [V2 Capability](capabilities/v2-relationship-constellation-canvas.md) - Analysis-first graph interaction contract
-- [V3 Capability](capabilities/v3-dependency-matrix-trace-storyboard.md) - Governance-first matrix and storyboard contract
-- [Stories](STORIES.md) - Acceptance scenarios and coverage matrix
-- [Decisions](DECISIONS.md) - Confirmed and open Wave 1, Wave 2, and Wave 3 choices
-- [Tasks](TASKS.md) - Wave execution plan
+| Concept                                                                       | ID                                                           | Type            | Description                                                            |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------- | ---------------------------------------------------------------------- |
+| [FeatureDocument](domain.md#featuredocument)                                  | knowledge-graph-visualization.FeatureDocument                | Entity          | Source documentation file tracked as graph/card input                  |
+| [ConceptDefinition](domain.md#conceptdefinition)                              | knowledge-graph-visualization.ConceptDefinition              | Entity          | Canonical concept definition parsed from docs                          |
+| [MirrorProjection](domain.md#mirrorprojection)                                | knowledge-graph-visualization.MirrorProjection               | Entity          | Snapshot containing synchronized cards and graph aggregates            |
+| [ExplorationSession](domain.md#explorationsession)                            | knowledge-graph-visualization.ExplorationSession             | Entity          | User exploration state for focused concept and opened definition       |
+| [RelationshipEdge](domain.md#relationshipedge)                                | knowledge-graph-visualization.RelationshipEdge               | Value Object    | Canonical edge connecting two concept IDs                              |
+| [DefinitionPointer](domain.md#definitionpointer)                              | knowledge-graph-visualization.DefinitionPointer              | Value Object    | File-path plus anchor target for concept deep-link navigation          |
+| [MirrorCardView](domain.md#mirrorcardview)                                    | knowledge-graph-visualization.MirrorCardView                 | View Model      | Card representation for one mirrored documentation file                |
+| [ConceptDetailCard](domain.md#conceptdetailcard)                              | knowledge-graph-visualization.ConceptDetailCard              | View Model      | Detail projection for selected concept and related relations           |
+| [AspectKind](domain.md#aspectkind)                                            | knowledge-graph-visualization.AspectKind                     | Enum            | Supported file categories represented as cards                         |
+| [FreshnessStatus](domain.md#freshnessstatus)                                  | knowledge-graph-visualization.FreshnessStatus                | Enum            | Card freshness marker for sync confidence                              |
+| [ExplorationState](states.md#explorationstate)                                | knowledge-graph-visualization.ExplorationState               | State Machine   | Lifecycle from idle view to focused concept and opened definition      |
+| [RebuildMirrorProjection](operations.md#rebuildmirrorprojection)              | knowledge-graph-visualization.RebuildMirrorProjection        | Operation       | Rebuilds mirror cards and graph from docs sources                      |
+| [SelectConcept](operations.md#selectconcept)                                  | knowledge-graph-visualization.SelectConcept                  | Operation       | Focuses one concept from card or graph interaction                     |
+| [OpenDefinition](operations.md#opendefinition)                                | knowledge-graph-visualization.OpenDefinition                 | Operation       | Resolves and opens definition anchor for selected concept              |
+| [GetMirrorCards](queries.md#getmirrorcards)                                   | knowledge-graph-visualization.GetMirrorCards                 | Query           | Returns mirror card list for the feature                               |
+| [GetRelationshipGraph](queries.md#getrelationshipgraph)                       | knowledge-graph-visualization.GetRelationshipGraph           | Query           | Returns concept nodes and canonical relation edges                     |
+| [GetConceptDetailCard](queries.md#getconceptdetailcard)                       | knowledge-graph-visualization.GetConceptDetailCard           | Query           | Returns detail card projection for selected concept                    |
+| [GetDefinitionPointer](queries.md#getdefinitionpointer)                       | knowledge-graph-visualization.GetDefinitionPointer           | Query           | Returns file and anchor target for selected concept                    |
+| [KnowledgeGraphAPI](interfaces.md#external-knowledgegraphapi-rest)            | knowledge-graph-visualization.KnowledgeGraphAPI              | Interface       | External read API for cards, graph, and concept detail navigation      |
+| [KnowledgeGraphModule](interfaces.md#internal-knowledgegraphmodule-interface) | knowledge-graph-visualization.KnowledgeGraphModule           | Interface       | Internal module contract for card/graph/query operations               |
+| [DocumentToConceptMapping](mappings.md#documenttoconceptmapping)              | knowledge-graph-visualization.DocumentToConceptMapping       | Mapping         | Maps docs concept and relationship tables into projection entities     |
+| [DocumentToMirrorCardAdapter](mappings.md#documenttomirrorcardadapter)        | knowledge-graph-visualization.DocumentToMirrorCardAdapter    | Adapter         | Shapes file metadata into mirror card view model                       |
+| [ConceptToDetailCardAdapter](mappings.md#concepttodetailcardadapter)          | knowledge-graph-visualization.ConceptToDetailCardAdapter     | Adapter         | Shapes selected concept context into detail card view model            |
+| [MirrorInteractionWorkflow](workflows.md#mirrorinteractionworkflow)           | knowledge-graph-visualization.MirrorInteractionWorkflow      | Workflow        | End-to-end flow across card rendering, graph focus, and deep-link open |
+| [CardSyncPolicy](workflows.md#cardsyncpolicy)                                 | knowledge-graph-visualization.CardSyncPolicy                 | Policy          | Enforces minimum mirrored file coverage and staleness handling         |
+| [MirrorProjectionBuilt](events.md#mirrorprojectionbuilt)                      | knowledge-graph-visualization.MirrorProjectionBuilt          | Event           | Projection rebuild completion signal                                   |
+| [ConceptSelected](events.md#conceptselected)                                  | knowledge-graph-visualization.ConceptSelected                | Event           | Concept focus change signal                                            |
+| [DefinitionOpened](events.md#definitionopened)                                | knowledge-graph-visualization.DefinitionOpened               | Event           | Deep-link navigation signal                                            |
+| [Graph Canvas Route](UI-SPEC.md#route-table)                                  | ui.knowledge-graph-visualization.route.canvas                | Page            | Main page rendering cards, graph, and details                          |
+| [KnowledgeGraphPageLayout](UI-SPEC.md#component-inventory)                    | ui.knowledge-graph-visualization.KnowledgeGraphPageLayout    | Layout          | Layout wrapper for knowledge graph page                                |
+| [MirrorCardGrid](UI-SPEC.md#component-inventory)                              | ui.knowledge-graph-visualization.MirrorCardGrid              | Component       | Card list reflecting source files                                      |
+| [RelationshipGraphCanvas](UI-SPEC.md#component-inventory)                     | ui.knowledge-graph-visualization.RelationshipGraphCanvas     | Component       | Graph view showing concepts and canonical edges                        |
+| [ConceptDetailPanel](UI-SPEC.md#component-inventory)                          | ui.knowledge-graph-visualization.ConceptDetailPanel          | Component       | Detail card for focused concept                                        |
+| [useMirrorGraph](UI-SPEC.md#data-flow)                                        | ui.knowledge-graph-visualization.useMirrorGraph              | Hook            | Hook that fetches mirror cards and graph data                          |
+| [useConceptFocus](UI-SPEC.md#data-flow)                                       | ui.knowledge-graph-visualization.useConceptFocus             | Hook            | Hook for concept focus and detail loading                              |
+| [GraphDataBinding](UI-SPEC.md#ui-concept-registry)                            | ui.knowledge-graph-visualization.GraphDataBinding            | Binding         | Binding from UI hooks to read queries                                  |
+| [ConceptFocusBinding](UI-SPEC.md#ui-concept-registry)                         | ui.knowledge-graph-visualization.ConceptFocusBinding         | Binding         | Binding from UI click to SelectConcept operation                       |
+| [DefinitionNavigationBinding](UI-SPEC.md#ui-concept-registry)                 | ui.knowledge-graph-visualization.DefinitionNavigationBinding | Binding         | Binding from detail action to OpenDefinition operation                 |
+| [NavigateToDefinitionAction](UI-SPEC.md#ui-concept-registry)                  | ui.knowledge-graph-visualization.NavigateToDefinitionAction  | Action          | User-triggered action for opening definition links                     |
+| [FocusStateIndicator](UI-SPEC.md#ui-concept-registry)                         | ui.knowledge-graph-visualization.FocusStateIndicator         | State Indicator | Visual state marker for exploration lifecycle                          |
+
+## Feature Concept Graph
+
+| From                                                         | Edge         | To                                                       | Evidence                                              | Notes                                   |
+| ------------------------------------------------------------ | ------------ | -------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------- |
+| knowledge-graph-visualization.DocumentToConceptMapping       | maps         | knowledge-graph-visualization.FeatureDocument            | mappings.md#documenttoconceptmapping                  | Parse file metadata into source records |
+| knowledge-graph-visualization.DocumentToConceptMapping       | maps         | knowledge-graph-visualization.ConceptDefinition          | mappings.md#documenttoconceptmapping                  | Parse concept table rows                |
+| knowledge-graph-visualization.DocumentToMirrorCardAdapter    | shapes       | knowledge-graph-visualization.MirrorCardView             | mappings.md#documenttomirrorcardadapter               | One card per mirrored file              |
+| knowledge-graph-visualization.ConceptToDetailCardAdapter     | shapes       | knowledge-graph-visualization.ConceptDetailCard          | mappings.md#concepttodetailcardadapter                | Related info projection                 |
+| knowledge-graph-visualization.CardSyncPolicy                 | applies      | knowledge-graph-visualization.RebuildMirrorProjection    | workflows.md#cardsyncpolicy                           | Enforce required file coverage          |
+| knowledge-graph-visualization.MirrorInteractionWorkflow      | orchestrates | knowledge-graph-visualization.RebuildMirrorProjection    | workflows.md#mirrorinteractionworkflow                | Initial page projection                 |
+| knowledge-graph-visualization.MirrorInteractionWorkflow      | orchestrates | knowledge-graph-visualization.SelectConcept              | workflows.md#mirrorinteractionworkflow                | Click interaction                       |
+| knowledge-graph-visualization.MirrorInteractionWorkflow      | orchestrates | knowledge-graph-visualization.OpenDefinition             | workflows.md#mirrorinteractionworkflow                | Deep-link open flow                     |
+| knowledge-graph-visualization.RebuildMirrorProjection        | produces     | knowledge-graph-visualization.MirrorProjectionBuilt      | operations.md#rebuildmirrorprojection                 | Rebuild completion event                |
+| knowledge-graph-visualization.SelectConcept                  | produces     | knowledge-graph-visualization.ConceptSelected            | operations.md#selectconcept                           | Focus event                             |
+| knowledge-graph-visualization.OpenDefinition                 | produces     | knowledge-graph-visualization.DefinitionOpened           | operations.md#opendefinition                          | Definition navigation event             |
+| knowledge-graph-visualization.ConceptSelected                | transitions  | knowledge-graph-visualization.ExplorationState           | states.md#explorationstate                            | ProjectionReady -> ConceptFocused       |
+| knowledge-graph-visualization.DefinitionOpened               | transitions  | knowledge-graph-visualization.ExplorationState           | states.md#explorationstate                            | ConceptFocused -> DefinitionOpened      |
+| knowledge-graph-visualization.GetMirrorCards                 | queries      | knowledge-graph-visualization.MirrorProjection           | queries.md#getmirrorcards                             | Read card projection                    |
+| knowledge-graph-visualization.GetRelationshipGraph           | queries      | knowledge-graph-visualization.MirrorProjection           | queries.md#getrelationshipgraph                       | Read graph projection                   |
+| knowledge-graph-visualization.GetConceptDetailCard           | queries      | knowledge-graph-visualization.ConceptDefinition          | queries.md#getconceptdetailcard                       | Read concept details                    |
+| knowledge-graph-visualization.GetDefinitionPointer           | queries      | knowledge-graph-visualization.ConceptDefinition          | queries.md#getdefinitionpointer                       | Resolve deep-link target                |
+| knowledge-graph-visualization.KnowledgeGraphAPI              | exposes      | knowledge-graph-visualization.GetMirrorCards             | interfaces.md#external-knowledgegraphapi-rest         | Cards endpoint                          |
+| knowledge-graph-visualization.KnowledgeGraphAPI              | exposes      | knowledge-graph-visualization.GetRelationshipGraph       | interfaces.md#external-knowledgegraphapi-rest         | Graph endpoint                          |
+| knowledge-graph-visualization.KnowledgeGraphAPI              | exposes      | knowledge-graph-visualization.GetConceptDetailCard       | interfaces.md#external-knowledgegraphapi-rest         | Detail endpoint                         |
+| knowledge-graph-visualization.KnowledgeGraphAPI              | exposes      | knowledge-graph-visualization.GetDefinitionPointer       | interfaces.md#external-knowledgegraphapi-rest         | Definition target endpoint              |
+| knowledge-graph-visualization.KnowledgeGraphAPI              | exposes      | knowledge-graph-visualization.OpenDefinition             | interfaces.md#external-knowledgegraphapi-rest         | Definition open endpoint                |
+| knowledge-graph-visualization.KnowledgeGraphModule           | exposes      | knowledge-graph-visualization.SelectConcept              | interfaces.md#internal-knowledgegraphmodule-interface | Internal click flow contract            |
+| ui.knowledge-graph-visualization.GraphDataBinding            | fetches      | knowledge-graph-visualization.GetMirrorCards             | UI-SPEC.md#data-flow                                  | Card fetch binding                      |
+| ui.knowledge-graph-visualization.GraphDataBinding            | fetches      | knowledge-graph-visualization.GetRelationshipGraph       | UI-SPEC.md#data-flow                                  | Graph fetch binding                     |
+| ui.knowledge-graph-visualization.ConceptFocusBinding         | mutates      | knowledge-graph-visualization.SelectConcept              | UI-SPEC.md#data-flow                                  | Concept focus binding                   |
+| ui.knowledge-graph-visualization.DefinitionNavigationBinding | mutates      | knowledge-graph-visualization.OpenDefinition             | UI-SPEC.md#data-flow                                  | Definition open binding                 |
+| ui.knowledge-graph-visualization.route.canvas                | renders      | ui.knowledge-graph-visualization.MirrorCardGrid          | UI-SPEC.md#page-layouts                               | Card area                               |
+| ui.knowledge-graph-visualization.route.canvas                | renders      | ui.knowledge-graph-visualization.RelationshipGraphCanvas | UI-SPEC.md#page-layouts                               | Graph area                              |
+| ui.knowledge-graph-visualization.route.canvas                | renders      | ui.knowledge-graph-visualization.ConceptDetailPanel      | UI-SPEC.md#page-layouts                               | Detail area                             |
+| ui.knowledge-graph-visualization.KnowledgeGraphPageLayout    | wraps        | ui.knowledge-graph-visualization.route.canvas            | UI-SPEC.md#route-table                                | Shared shell                            |
+| ui.knowledge-graph-visualization.MirrorCardGrid              | consumes     | ui.knowledge-graph-visualization.useMirrorGraph          | UI-SPEC.md#data-flow                                  | Card data hook                          |
+| ui.knowledge-graph-visualization.RelationshipGraphCanvas     | consumes     | ui.knowledge-graph-visualization.useConceptFocus         | UI-SPEC.md#data-flow                                  | Focus hook                              |
+| ui.knowledge-graph-visualization.ConceptDetailPanel          | displays     | knowledge-graph-visualization.ConceptDetailCard          | UI-SPEC.md#component-inventory                        | Detail card render                      |
+| ui.knowledge-graph-visualization.FocusStateIndicator         | reflects     | knowledge-graph-visualization.ExplorationState           | UI-SPEC.md#state-to-ui-mapping                        | Exploration state badge                 |
+| knowledge-graph-visualization.MirrorProjection               | contains     | knowledge-graph-visualization.RelationshipEdge           | domain.md#mirrorprojection                            | Edge set ownership                      |
+| knowledge-graph-visualization.MirrorProjection               | contains     | knowledge-graph-visualization.MirrorCardView             | domain.md#mirrorprojection                            | Card set ownership                      |
+| knowledge-graph-visualization.ConceptDefinition              | contains     | knowledge-graph-visualization.DefinitionPointer          | domain.md#conceptdefinition                           | Deep-link target ownership              |
+
+## Aspects
+
+- [Domain](domain.md) - Entities, value objects, enums for mirror and graph projection
+- [Operations](operations.md) - Rebuild, concept selection, and definition open operations
+- [Queries](queries.md) - Cards, graph, details, and definition pointer read models
+- [Interfaces](interfaces.md) - External and internal API/module contracts
+- [Mappings](mappings.md) - Doc parsing and UI projection transformations
+- [Workflows](workflows.md) - Interaction workflow and sync policy
+- [Events](events.md) - Projection and interaction lifecycle signals
+- [States](states.md) - Exploration lifecycle transitions
+- [Stories](STORIES.md) - User journeys and acceptance checks
+- [UI Spec](UI-SPEC.md) - Page, components, bindings, and accessibility contract
+- [Test Spec](TEST-SPEC.md) - Deterministic verification obligations
+- [Tasks](TASKS.md) - Ordered execution backlog
+- [Decisions](DECISIONS.md) - Locked and open design choices
+- [Work Pack](WORK-PACK.md) - Planner execution baseline
 
 ## Cross-Feature Dependencies
 
-| Depends On                                                          | Relationship | Why                                                                             |
-| ------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------- |
-| [payment-processing](../payment-processing/SPEC.md)                 | queries      | Uses mature concept and aspect patterns as canonical visualization input sample |
-| [domainspec-gsd-integration](../domainspec-gsd-integration/SPEC.md) | queries      | Uses cross-feature dependency and produces-for semantics as sample graph edges  |
+| Depends On                                                          | Relationship | Why                                                                  |
+| ------------------------------------------------------------------- | ------------ | -------------------------------------------------------------------- |
+| [payment-processing](../payment-processing/SPEC.md)                 | queries      | Uses canonical concept and edge patterns as seeded projection data   |
+| [domainspec-gsd-integration](../domainspec-gsd-integration/SPEC.md) | queries      | Uses cross-feature relationship samples to validate navigation paths |
 
 ## Produces For
 
-| Consumer               | Via       | What                                                                   |
-| ---------------------- | --------- | ---------------------------------------------------------------------- |
-| DomainSpec maintainers | Query     | Fast feature and capability navigation with taxonomy context           |
-| Feature authors        | Query     | Concept inspector evidence for doc-quality and link checks             |
-| Governance reviewers   | Mapping   | Canonical relation projection for dependency previews                  |
-| Governance leads       | Query     | Dependency matrix with risk score and effective state per feature pair |
-| Release managers       | Query     | Impact storyboard evidence for release risk decisions                  |
-| Governance approvers   | Operation | Controlled exception path to temporary Mitigated state                 |
-
-## Stories
-
-See [STORIES.md](STORIES.md) for V1, V2, and V3 user stories and acceptance checks.
+| Consumer                | Via       | What                                                          |
+| ----------------------- | --------- | ------------------------------------------------------------- |
+| Feature authors         | Query     | Mirror cards proving one-to-one file coverage                 |
+| DomainSpec maintainers  | Query     | Canonical graph for concept relationship review               |
+| Documentation reviewers | Query     | Concept detail card with related edges and evidence anchors   |
+| Frontend implementers   | Interface | Stable contracts for card, graph, and deep-link interactions  |
+| Governance reviewers    | Query     | Relationship traceability from selected concept to definition |
 
 ## References
 
-- [Wave plan](TASKS.md)
-- [Wave 1 checkpoint](WAVE1-CHECKPOINT.md)
-- [Wave 2 checkpoint](WAVE2-CHECKPOINT.md)
-- [Wave 3 checkpoint](WAVE3-CHECKPOINT.md)
-- [Test specification](TEST-SPEC.md)
-- [Pipeline report](PIPELINE-REPORT.md)
-- [Decisions](DECISIONS.md)
+- [Relationship vocabulary](../../../RELATIONSHIPS.md)
+- [Taxonomy reference](../../../TAXONOMY.md)
+- [Feature concept graph template](../../templates/FEATURE-CONCEPT-GRAPH.md)

@@ -1,7 +1,7 @@
 ---
 name: domainspec-task-session
 description: Run one implementation plan task as a guided interactive session with option trade-offs, gate checks, completion criteria, and sync updates.
-argument-hint: "<task-id-or-file> [--auto] [--dry-run]"
+argument-hint: "<explicit-plan-file-path> [--auto] [--dry-run]"
 agent: domainspec-task-executor
 allowed-tools: Read, Write, Glob, Grep, AskQuestions, Task, Bash
 ---
@@ -18,11 +18,12 @@ Read first:
 - implementation/domainspec/plan/TRACEABILITY.md
 - implementation/domainspec/ADLC-ALIGNMENT.md
 
-Resolve target task from either:
+Resolve target task from:
 
-- task ID (for example: `CTX-01`, `INF-03`, `GOV-02`)
 - explicit file path under `implementation/domainspec/plan/`
-  </context>
+
+Do not use this command for work-pack tasks under `docs/features/{feature}/work-pack/tasks/`; route those to `domainspec-implement <feature>`.
+</context>
 
 <flags>
 - `--auto`: choose the recommended option for each decision and continue without interactive prompts.
@@ -38,8 +39,9 @@ Resolve target task from either:
 
 1. Read framework constraints from `domainspec/CHANGELOG.md`.
 2. Resolve the target task file:
-   - If input is an ID, map by filename prefix in `implementation/domainspec/plan/**`.
-   - If ambiguous, ask a focused clarification question.
+   - Require an explicit file path under `implementation/domainspec/plan/`.
+   - If input references `TASK-*` or `docs/features/{feature}/work-pack/tasks/*.md`, return BLOCK and instruct to run `domainspec-implement <feature>`.
+   - If input is not an explicit path under `implementation/domainspec/plan/`, return BLOCK with the accepted path pattern.
 3. Parse task objective, dependencies, implementation tasks, deliverables, and done criteria.
 
 ## Step 1 - Build Decision Pack (Interactive)
@@ -100,7 +102,8 @@ Resolve target task from either:
 
 <error-handling>
 - Task not found -> BLOCK with candidate matches.
-- Ambiguous task ID -> ask clarification before any mutation.
+- Input is a work-pack task (`TASK-*` or `docs/features/{feature}/work-pack/tasks/*.md`) -> BLOCK and route to `domainspec-implement <feature>`.
+- Input is not an explicit file path under `implementation/domainspec/plan/` -> BLOCK with accepted usage.
 - Unresolved blocker decision -> BLOCK.
 - Gate failure -> BLOCK with ordered remediation.
 - Validation failures after retries -> FLAG with required follow-up actions.

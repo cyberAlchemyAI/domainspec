@@ -16,6 +16,17 @@
 |         | {feature}.{Name} | Operation     |             |
 |         | {feature}.{Name} | State Machine |             |
 
+## Feature Concept Graph
+
+<!-- Use canonical edge names from RELATIONSHIPS.md and keep one relationship per row. -->
+
+| From                 | Edge     | To                   | Evidence                 | Notes |
+| -------------------- | -------- | -------------------- | ------------------------ | ----- |
+| {feature}.RuleA      | enforces | {feature}.OperationA | operations.md#operationa |       |
+| {feature}.OperationA | produces | {feature}.EventA     | operations.md#operationa |       |
+| {feature}.QueryA     | queries  | {feature}.EntityA    | queries.md#querya        |       |
+| {feature}.InterfaceA | exposes  | {feature}.OperationA | interfaces.md#interfacea |       |
+
 ## Aspects
 
 <!-- Link only to aspect files that exist for this feature. Delete unused lines. -->

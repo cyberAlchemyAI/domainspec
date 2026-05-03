@@ -63,6 +63,20 @@ Governance thresholds:
 | [{ConceptName}](queries.md#{anchor})    | {feature}.{ConceptName} | Query     |
 | [{ConceptName}](interfaces.md#{anchor}) | {feature}.{ConceptName} | Interface |
 
+## Feature Concept Graph
+
+<!--
+Declare typed relationships with canonical edge names from RELATIONSHIPS.md.
+Use one relationship per row and include an evidence anchor when available.
+-->
+
+| From                 | Edge     | To                   | Evidence                 | Notes            |
+| -------------------- | -------- | -------------------- | ------------------------ | ---------------- |
+| {feature}.RuleA      | enforces | {feature}.OperationA | operations.md#operationa | {optional notes} |
+| {feature}.OperationA | produces | {feature}.EventA     | operations.md#operationa | {optional notes} |
+| {feature}.QueryA     | queries  | {feature}.EntityA    | queries.md#querya        | {optional notes} |
+| {feature}.InterfaceA | exposes  | {feature}.OperationA | interfaces.md#interfacea | {optional notes} |
+
 ## Aspect Docs
 
 <!-- Link only to aspect files that exist for this feature. Delete unused lines. -->

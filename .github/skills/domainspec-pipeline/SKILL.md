@@ -94,9 +94,12 @@ Created/updated by this skill (cumulative):
    - Medium/high complexity: work-pack mandatory before any mutation step.
    - If medium/high and missing, create `WORK-PACK.md` from `domainspec/templates/work-pack.md`.
    - If work-pack grows (for example >3 tasks, >3 waves, or >250 lines), split into modular files under `docs/features/{feature}/work-pack/` and keep `WORK-PACK.md` as manifest.
+   - For medium/high complexity, require a first architecture wave: `work-pack/waves/W0.md`.
+   - For medium/high complexity, require `WORK-PACK.md` to include `Pipeline Stage Coverage` with all canonical stages (including skipped stages with explicit reason).
 6. Set planner gate fields in `WORK-PACK.md` for medium/high execution:
    - `plannerGateStatus: pass|block`
    - `complexity: low|medium|high`
+   - `architectureWave: W0`
    - `activePlanRef: <path>`
    - `lastPlannedAt: <ISO-8601>`
 7. If complexity is high, auto-select `gsd-phase` execution mode for task orchestration unless user explicitly requests `native`.
@@ -104,6 +107,10 @@ Created/updated by this skill (cumulative):
 ## Step 1a — Work-Pack Gate (hard gate)
 
 - For medium/high complexity, require `docs/features/{feature}/WORK-PACK.md` before mutation.
+- Require `work-pack/waves/W0.md` and a `W0` row in the manifest wave board.
+- Require `W0` to be `completed` before any mutation-capable stage (Steps 2-7d).
+- Require `WORK-PACK.md` `Pipeline Stage Coverage` matrix containing all canonical stages: `plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`.
+- Require each stage row to include wave mapping and status (`not-started|in-progress|completed|skipped`), with `skipReason` when status is `skipped`.
 - Require task-local planning entries (`work-pack/tasks/*.md`) containing at minimum:
   - `## Gaps and Questions`
   - `## Decision Lock`
@@ -126,6 +133,7 @@ Created/updated by this skill (cumulative):
 - Before each mutation-capable stage (Steps 2–7d), revalidate planner gate from `WORK-PACK.md` when complexity is medium/high.
 - If `plannerGateStatus != pass`, return BLOCK and re-enter planning.
 - If plan is stale due scope change, update work-pack and decision lock before continuing.
+- If `W0` or `Pipeline Stage Coverage` is stale relative to current scope, return BLOCK, refresh planning artifacts, and only then continue.
 
 ## Step 2 — Spec
 
@@ -294,7 +302,7 @@ Created/updated by this skill (cumulative):
 - Pre-flight failures (no domainspec/, no docs/) → BLOCK with setup instructions.
 - Brownfield scope gate failure (missing startpoint artifacts or blocked project decisions) → BLOCK with `domainspec-start` remediation.
 - Planner questions unanswered → cannot proceed, re-prompt user.
-- Missing required work-pack artifacts for medium/high complexity → BLOCK before Step 1b.
+- Missing required work-pack artifacts for medium/high complexity (including `W0` architecture wave and full stage coverage matrix) → BLOCK before Step 1b.
 - Planner gate not PASS before mutation stage → BLOCK and return to planning.
 - Decision gate unresolved or missing decisions artifact → BLOCK before step 2; do not generate specs, tests, or code.
 - Spec generation fails → BLOCK at step 2, report what is missing.

@@ -94,9 +94,14 @@ Created/updated by this skill (cumulative):
    - Medium/high complexity: work-pack mandatory before any mutation step.
    - If medium/high and missing, create `WORK-PACK.md` from `domainspec/templates/work-pack.md`.
    - If work-pack grows (for example >3 tasks, >3 waves, or >250 lines), split into modular files under `docs/features/{feature}/work-pack/` and keep `WORK-PACK.md` as manifest.
+   - For medium/high complexity, require a first architecture wave: `work-pack/waves/W0.md`.
+   - For medium/high complexity, require `WORK-PACK.md` to include `Pipeline Stage Coverage` with all canonical stages (including skipped stages with explicit reason).
+   - For medium/high complexity, seed mandatory closure tasks at creation time: feature verification, alignment audit, and layering audit.
+   - For medium/high complexity, require `WORK-PACK.md` to include `Architecture-Guided Task Directives` mapping exact DomainSpec coverage IDs (for example `R1`, `R2`) to architecture-linked implementation instructions.
 6. Set planner gate fields in `WORK-PACK.md` for medium/high execution:
    - `plannerGateStatus: pass|block`
    - `complexity: low|medium|high`
+   - `architectureWave: W0`
    - `activePlanRef: <path>`
    - `lastPlannedAt: <ISO-8601>`
 7. If complexity is high, auto-select `gsd-phase` execution mode for task orchestration unless user explicitly requests `native`.
@@ -104,10 +109,25 @@ Created/updated by this skill (cumulative):
 ## Step 1a — Work-Pack Gate (hard gate)
 
 - For medium/high complexity, require `docs/features/{feature}/WORK-PACK.md` before mutation.
+- Require `work-pack/waves/W0.md` and a `W0` row in the manifest wave board.
+- Require `W0` to be `completed` before any mutation-capable stage (Steps 2-7d).
+- Require `WORK-PACK.md` `Pipeline Stage Coverage` matrix containing all canonical stages: `plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`, `verify-feature`, `audit-alignment`, `audit-layering`.
+- Require work-pack task seeding for closure obligations (medium/high): one task each for `domainspec-verify-feature`, `domainspec-audit-alignment`, and `domainspec-audit-layering`.
+- Require `Architecture-Guided Task Directives` matrix for medium/high work-packs:
+  - one row per mutation-capable task
+  - exact coverage IDs from docs (concept/rule/calculation/workflow/query/endpoint IDs)
+  - architecture references to `domainspec/ARCHITECTURE.md` and, when applicable, `docs/UI-ARCHITECTURE.md` and `docs/INFRA-ARCHITECTURE.md`
+  - imperative directives describing correct layer placement (domain/application/interface/infra)
+  - verification evidence targets (tests/audits/commands)
+- If `ui-pipeline` stage is not `skipped`, require directive evidence to include `UI-SPEC.md` and at least one UI architecture reference.
 - Require task-local planning entries (`work-pack/tasks/*.md`) containing at minimum:
   - `## Gaps and Questions`
   - `## Decision Lock`
   - wave assignment metadata.
+- For newly planned or refreshed tasks, require additional task-local sections:
+  - `## DomainSpec Coverage`
+  - `## Architecture References`
+  - `## Implementation Directives`
 - Cross-task blockers may be stored in `work-pack/shared/` and linked from manifest.
 - If required work-pack artifacts are missing or incomplete, return BLOCK and stop before Step 1b.
 
@@ -126,6 +146,7 @@ Created/updated by this skill (cumulative):
 - Before each mutation-capable stage (Steps 2–7d), revalidate planner gate from `WORK-PACK.md` when complexity is medium/high.
 - If `plannerGateStatus != pass`, return BLOCK and re-enter planning.
 - If plan is stale due scope change, update work-pack and decision lock before continuing.
+- If `W0`, `Pipeline Stage Coverage`, or `Architecture-Guided Task Directives` are stale relative to current scope, return BLOCK, refresh planning artifacts, and only then continue.
 
 ## Step 2 — Spec
 

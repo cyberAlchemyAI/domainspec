@@ -28,13 +28,20 @@ Inputs:
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Resolve mode: `native` by default, `gsd-phase` when requested.
 3. If the feature already has implementation files, run `domainspec-audit-alignment` and `domainspec-audit-layering` as **parallel subagents**, then consolidate obligations into a single remediation backlog.
-4. In `native`, produce DomainSpec plan directly.
-5. In `gsd-phase`, run GSD plan-phase orchestration and collect PLAN artifacts.
-6. Map each delegated task back to DomainSpec concept IDs and acceptance obligations, including both semantic and layering findings.
-7. Return normalized plan with assumptions and risk notes.
+4. Ensure `docs/features/{feature}/WORK-PACK.md` exists and is the planning manifest entrypoint.
+5. Enforce mandatory first wave `W0` for architecture and governance baseline:
+   - Ensure `work-pack/waves/W0.md` exists.
+   - Capture architecture constraints from `domainspec/ARCHITECTURE.md` plus `docs/UI-ARCHITECTURE.md` and `docs/INFRA-ARCHITECTURE.md` when present.
+   - Require explicit W0 exit gate covering dependency-direction and boundary checks.
+6. Enforce `Pipeline Stage Coverage` matrix in `WORK-PACK.md` with all canonical stages (`plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`) plus wave mapping and status per row.
+7. In `native`, produce DomainSpec plan directly.
+8. In `gsd-phase`, run GSD plan-phase orchestration and collect PLAN artifacts.
+9. Map each delegated task back to DomainSpec concept IDs and acceptance obligations, including both semantic and layering findings.
+10. Return normalized plan with assumptions and risk notes, including W0 and stage-coverage references.
 </process>
 
 <authority-rule>
 - DomainSpec docs are semantic source of truth.
 - GSD outputs are orchestration evidence and must not override DomainSpec rules.
+- W0 architecture baseline and full stage coverage are mandatory planning outputs.
 </authority-rule>

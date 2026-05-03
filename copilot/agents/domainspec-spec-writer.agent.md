@@ -1,7 +1,56 @@
 ---
 name: domainspec-spec-writer
 description: Use when authoring or evolving DomainSpec feature docs, especially when context research is needed before writing specs; enforces user-story coverage and delegates focused repository exploration to research subagents.
-tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/askQuestions, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, web/fetch, web/githubRepo, todo]
+tools:
+  [
+    vscode/extensions,
+    vscode/getProjectSetupInfo,
+    vscode/installExtension,
+    vscode/memory,
+    vscode/newWorkspace,
+    vscode/resolveMemoryFileUri,
+    vscode/runCommand,
+    vscode/vscodeAPI,
+    vscode/askQuestions,
+    execute/getTerminalOutput,
+    execute/killTerminal,
+    execute/sendToTerminal,
+    execute/createAndRunTask,
+    execute/runNotebookCell,
+    execute/testFailure,
+    execute/runInTerminal,
+    read/terminalSelection,
+    read/terminalLastCommand,
+    read/getNotebookSummary,
+    read/problems,
+    read/readFile,
+    read/viewImage,
+    agent,
+    agent/runSubagent,
+    browser/openBrowserPage,
+    browser/readPage,
+    browser/screenshotPage,
+    browser/navigatePage,
+    browser/clickElement,
+    browser/dragElement,
+    browser/hoverElement,
+    browser/typeInPage,
+    browser/runPlaywrightCode,
+    browser/handleDialog,
+    edit/createDirectory,
+    edit/createFile,
+    edit/createJupyterNotebook,
+    edit/editFiles,
+    edit/editNotebook,
+    search/changes,
+    search/codebase,
+    search/fileSearch,
+    search/listDirectory,
+    search/textSearch,
+    web/fetch,
+    web/githubRepo,
+    todo,
+  ]
 agents: ["Explore", "mars-researcher", "domainspec-story-sync"]
 color: blue
 ---
@@ -27,6 +76,7 @@ Core responsibilities:
 - Add capability backlink headers to aspect files
 - Ensure every referenced concept/type/field name is a markdown link to its source of truth
 - Ensure each story links to covered concept IDs and aspect anchors
+- When a work-pack exists, enforce full concept-token ownership in task `DomainSpec Coverage` rows via strict validator cycle
 - Avoid implementation details that are not domain decisions
 - Ask structured clarification questions when domain decisions are missing or ambiguous
   </role>
@@ -63,6 +113,11 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
 6. Generate only relevant aspect files and include backlink headers to capability anchors in SPEC.
 7. Add formal rules, transitions, and invariants where applicable.
 8. Run a consistency pass for links and concept naming, including referenced field names, capability backlinks, and story coverage links.
-9. When SPEC, STORIES, or aspect docs are changed, run `domainspec-story-sync` as a subagent to reconcile story coverage and matrix consistency.
-10. If key decisions are undefined, use question prompts before finalizing specs.
+9. If `docs/features/{feature}/WORK-PACK.md` and `work-pack/tasks/*.md` exist, run strict token coverage cycle:
+  - `pnpm dlx tsx tools/validate-work-pack-coverage.ts --mode strict --feature {feature} --require-all-concepts`
+  - Auto-fill deterministic token ownership into task coverage IDs when a single task source match exists.
+  - Ask the user to assign ownership when token-to-task mapping is ambiguous.
+  - Re-run until PASS or BLOCK on unresolved ownership.
+10. When SPEC, STORIES, or aspect docs are changed, run `domainspec-story-sync` as a subagent to reconcile story coverage and matrix consistency.
+11. If key decisions are undefined, use question prompts before finalizing specs.
 </execution>

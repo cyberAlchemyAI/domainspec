@@ -10,6 +10,11 @@
     "build": "pnpm -r build",
     "check": "pnpm -r check",
     "dev": "pnpm -r --parallel dev",
+    "dev:local": "pnpm -r --parallel dev",
+    "dev:local:poker-docs": "KG_DOCS_IMPORT_PATH=$(pwd)/../../validation/poker-team/docs/features pnpm -r --parallel dev",
+    "db:up": "docker compose -f infra/docker-compose.dev.yml up -d postgres",
+    "db:down": "docker compose -f infra/docker-compose.dev.yml down",
+    "db:logs": "docker compose -f infra/docker-compose.dev.yml logs -f postgres",
     "dev:backend": "pnpm --filter @domainspec/backend dev",
     "dev:web": "pnpm --filter @domainspec/web dev"
   }

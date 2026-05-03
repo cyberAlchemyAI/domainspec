@@ -75,7 +75,7 @@ Read first:
 3. Route DomainSpec intents only to DomainSpec skills:
    - project kickoff, baseline, or scope gating -> `domainspec-start`
    - docs bootstrap -> `domainspec-init`
-   - interactive execution of one plan task with options and gate handling -> `domainspec-task-session <task-id>`
+    - work-pack task implementation (`TASK-*` or `docs/features/{feature}/work-pack/tasks/*.md`) -> `domainspec-implement <feature>`
    - full feature delivery -> `domainspec-pipeline <feature>`
    - command guidance -> `domainspec-help`
    - explicit stage intent -> the matching specialist command
@@ -84,12 +84,13 @@ Read first:
   - Options:
     - "Project kickoff / baseline" -> `domainspec-start`
     - "Docs bootstrap" -> `domainspec-init`
-    - "Run one plan task interactively" -> `domainspec-task-session <task-id>` (ask for task id)
+    - "Implement work-pack task(s)" -> `domainspec-implement <feature>` (ask for feature)
     - "Full feature delivery" -> `domainspec-pipeline <feature>`
     - "Command guidance" -> `domainspec-help`
     - "I want a specific command" -> ask the user for the exact `domainspec-*` command.
 5. After the user selects an option (or provides an exact `domainspec-*` command), execute the selected route immediately in the same turn.
 6. Return the selected route as an exact command line plus rationale.
+7. Do not route work-pack tasks to `domainspec-task-session`. `domainspec-task-session` remains direct-advanced only when the user explicitly invokes it with an explicit file path under `implementation/domainspec/plan/`.
 </routing-policy>
 
 <compatibility-guardrails>

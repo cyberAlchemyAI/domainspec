@@ -35,6 +35,16 @@ Inputs include:
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Validate artifact completeness and structural quality, including capability-driven SPEC layout and `## Stories` link behavior.
 3. Validate automated verification evidence.
+3a. **TEST-SPEC obligation coverage gate (MANDATORY):**
+   a. Parse `docs/features/{feature}/TEST-SPEC.md` `## Test Catalogue` and collect the expected obligation ID set.
+   b. Build covered obligation ID set by scanning executable test sources and automated test outputs for IDs embedded in test names (`KGV1-[A-Z0-9-]+`).
+   c. Verify every expected obligation ID is represented by at least one executable test or deterministic evidence row.
+   d. Emit coverage summary with counts and lists: expected, covered, uncovered, orphan.
+   e. Enforce severity:
+      - Any uncovered `P0` ID from `V1 Pipeline Must-Pass Subset` -> **BLOCK**.
+      - Any uncovered non-`P0` ID -> **FLAG**.
+      - Coverage gate contributes no downgrade only when uncovered IDs = 0.
+   f. Never accept aggregate command pass counts alone as full obligation coverage evidence.
 4. When delegated evidence exists, validate consistency between GSD verification outputs and DomainSpec acceptance obligations.
 5. Validate unresolved semantic and layering drift with risk level, including missing capability backlinks in aspect docs.
 6. **Production Readiness gate** — when feature has backend implementation:
@@ -47,5 +57,6 @@ Inputs include:
    b. Check SPEC.md for a `## Deferred Obligations` section. If obligations exist and are not yet implemented, flag each with severity based on age and business impact.
    c. Check dependent features' `events.md` for events this feature should consume. Verify handlers exist and are not stubs.
    d. Scan for dead code: deprecated files, imports from non-existent modules. Flag as HIGH.
-8. Return verdict with required next actions.
+8. Enforce final verdict floor from TEST-SPEC obligation coverage gate before publishing result.
+9. Return verdict with required next actions.
 </process>

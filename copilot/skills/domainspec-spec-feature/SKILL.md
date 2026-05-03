@@ -30,5 +30,11 @@ Target location:
 3. Generate relevant aspect files from templates.
 4. Add formal rules, formulas, transitions, and invariants where applicable.
 5. Validate cross-links, referenced field-name links, and concept ID naming.
-6. Summarize what is ready and what remains undefined.
+6. If `docs/features/{feature}/WORK-PACK.md` and `work-pack/tasks/*.md` exist, run strict token coverage validation:
+   - `pnpm dlx tsx tools/validate-work-pack-coverage.ts --mode strict --feature {feature} --require-all-concepts`
+7. Resolve missing token ownership automatically when deterministic:
+   - If exactly one task `DomainSpec Coverage` source row matches the concept source aspect, append token to that task `Coverage IDs`.
+8. If ownership is ambiguous (no candidate or multiple candidates), ask the user to choose target task via selectable question and apply the answer.
+9. Re-run validation until PASS or BLOCK on unresolved ownership questions.
+10. Summarize what is ready and what remains undefined.
 </process>
