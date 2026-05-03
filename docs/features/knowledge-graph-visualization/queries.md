@@ -1,312 +1,151 @@
 # Queries: Knowledge Graph Visualization
 
-## GetFeatureAtlas
+## GetMirrorCards
 
 **Type:** Query (read-only)
-**Actor:** Authenticated documentation reader
+**Actor:** Authenticated user
 
 ### Input
 
-| Field               | Type                               | Required | Description                                                               |
-| ------------------- | ---------------------------------- | -------- | ------------------------------------------------------------------------- |
-| profileId           | string                             | no       | Optional [VisualizationProfile](domain.md#visualizationprofile).profileId |
-| filter              | [ViewFilter](domain.md#viewfilter) | no       | Optional filter override                                                  |
-| includeCapabilities | boolean                            | no       | Includes capability anchors when true                                     |
+| Field                  | Type    | Required | Description                       |
+| ---------------------- | ------- | -------- | --------------------------------- |
+| featureId              | string  | yes      | Feature slug                      |
+| includeOptionalAspects | boolean | no       | Include non-required aspect files |
 
 ### Filters
 
-| Field      | Type                                           | Default | Description                                |
-| ---------- | ---------------------------------------------- | ------- | ------------------------------------------ |
-| pillar     | string                                         | all     | Restrict features by pillar                |
-| status     | [FeatureDocStatus](domain.md#featuredocstatus) | all     | Restrict by feature status                 |
-| priority   | string                                         | all     | Restrict by priority                       |
-| tag        | string                                         | none    | Filter by one tag                          |
-| searchText | string                                         | none    | Match on feature title or capability title |
+| Field       | Type     | Default                            | Description                       |
+| ----------- | -------- | ---------------------------------- | --------------------------------- |
+| aspectKinds | string[] | `['SPEC','DOMAIN','OPERATIONS']`   | Restrict returned card categories |
+| freshness   | string[] | `['up-to-date','stale','missing']` | Filter by card freshness status   |
 
 ### Output
 
-| Field        | Type     | Source                                                | Description                           |
-| ------------ | -------- | ----------------------------------------------------- | ------------------------------------- |
-| snapshotId   | string   | [GraphSnapshot](domain.md#graphsnapshot).snapshotId   | Snapshot reference                    |
-| generatedAt  | string   | [GraphSnapshot](domain.md#graphsnapshot).generatedAt  | Freshness timestamp                   |
-| featureCount | number   | [GraphSnapshot](domain.md#graphsnapshot).featureCount | Result feature count                  |
-| features[]   | object[] | [CapabilityAnchor](domain.md#capabilityanchor)        | Feature cards with capability anchors |
+| Field                 | Type    | Source                                                   | Description              |
+| --------------------- | ------- | -------------------------------------------------------- | ------------------------ |
+| cards[].filePath      | string  | [MirrorCardView](domain.md#mirrorcardview).filePath      | Mirrored file path       |
+| cards[].title         | string  | [MirrorCardView](domain.md#mirrorcardview).title         | Card label               |
+| cards[].aspectKind    | string  | [MirrorCardView](domain.md#mirrorcardview).aspectKind    | File category            |
+| cards[].conceptCount  | integer | [MirrorCardView](domain.md#mirrorcardview).conceptCount  | Concepts present in file |
+| cards[].relationCount | integer | [MirrorCardView](domain.md#mirrorcardview).relationCount | Related graph edges      |
+| cards[].freshness     | string  | [MirrorCardView](domain.md#mirrorcardview).freshness     | Sync status              |
 
 ### Reads From
 
-| Entity                                         | Relationship | Fields Used                                        |
-| ---------------------------------------------- | ------------ | -------------------------------------------------- |
-| [GraphSnapshot](domain.md#graphsnapshot)       | queries      | snapshotId, generatedAt, featureCount              |
-| [CapabilityAnchor](domain.md#capabilityanchor) | queries      | featureId, capabilityKey, capabilityTitle, summary |
-| [GraphNode](domain.md#graphnode)               | queries      | featureId, conceptType, status, tags               |
+| Entity                                         | Relationship | Fields Used      |
+| ---------------------------------------------- | ------------ | ---------------- |
+| [MirrorProjection](domain.md#mirrorprojection) | queries      | cards, featureId |
 
 ---
 
-## GetCapabilityNeighborhood
+## GetRelationshipGraph
 
 **Type:** Query (read-only)
-**Actor:** Authenticated documentation reader
+**Actor:** Authenticated user
 
 ### Input
 
-| Field         | Type                               | Required | Description                          |
-| ------------- | ---------------------------------- | -------- | ------------------------------------ |
-| featureId     | string                             | yes      | Feature namespace                    |
-| capabilityKey | string                             | yes      | Capability identifier inside feature |
-| depth         | number                             | no       | Neighborhood depth, V1 max = 1       |
-| filter        | [ViewFilter](domain.md#viewfilter) | no       | Optional edge and node filter        |
+| Field     | Type   | Required | Description  |
+| --------- | ------ | -------- | ------------ |
+| featureId | string | yes      | Feature slug |
 
 ### Filters
 
-| Field            | Type                                   | Default | Description                                |
-| ---------------- | -------------------------------------- | ------- | ------------------------------------------ |
-| conceptTypes     | [ConceptType](domain.md#concepttype)[] | all     | Restrict neighbor node types               |
-| edgeTypes        | [EdgeType](domain.md#edgetype)[]       | all     | Restrict edge types                        |
-| crossFeatureOnly | boolean                                | false   | Include only cross-feature edges when true |
+| Field        | Type     | Default             | Description                        |
+| ------------ | -------- | ------------------- | ---------------------------------- |
+| edgeKinds    | string[] | all canonical kinds | Restrict edge labels in graph      |
+| conceptTypes | string[] | all types           | Restrict graph node taxonomy types |
 
 ### Output
 
-| Field      | Type     | Source                                              | Description                        |
-| ---------- | -------- | --------------------------------------------------- | ---------------------------------- |
-| snapshotId | string   | [GraphSnapshot](domain.md#graphsnapshot).snapshotId | Snapshot reference                 |
-| capability | object   | [CapabilityAnchor](domain.md#capabilityanchor)      | Selected capability anchor         |
-| nodes[]    | object[] | [GraphNode](domain.md#graphnode)                    | Neighbor concept nodes             |
-| edges[]    | object[] | [GraphEdge](domain.md#graphedge)                    | Typed edges between returned nodes |
+| Field                 | Type   | Source                                                        | Description          |
+| --------------------- | ------ | ------------------------------------------------------------- | -------------------- |
+| nodes[].conceptId     | string | [ConceptDefinition](domain.md#conceptdefinition).conceptId    | Node concept ID      |
+| nodes[].name          | string | [ConceptDefinition](domain.md#conceptdefinition).name         | Node display name    |
+| nodes[].taxonomyType  | string | [ConceptDefinition](domain.md#conceptdefinition).taxonomyType | Taxonomy type        |
+| edges[].fromConceptId | string | [RelationshipEdge](domain.md#relationshipedge).fromConceptId  | Edge origin          |
+| edges[].edge          | string | [RelationshipEdge](domain.md#relationshipedge).edge           | Canonical edge label |
+| edges[].toConceptId   | string | [RelationshipEdge](domain.md#relationshipedge).toConceptId    | Edge destination     |
+| edges[].evidence      | string | [RelationshipEdge](domain.md#relationshipedge).evidence       | Evidence link        |
 
 ### Reads From
 
-| Entity                                         | Relationship | Fields Used                                                      |
-| ---------------------------------------------- | ------------ | ---------------------------------------------------------------- |
-| [CapabilityAnchor](domain.md#capabilityanchor) | queries      | featureId, capabilityKey, capabilityTitle, specPath, specAnchor  |
-| [GraphNode](domain.md#graphnode)               | queries      | conceptId, conceptType, title, sourcePath, sourceAnchor          |
-| [GraphEdge](domain.md#graphedge)               | queries      | edgeType, fromConceptId, toConceptId, crossFeature, evidencePath |
+| Entity                                           | Relationship | Fields Used                   |
+| ------------------------------------------------ | ------------ | ----------------------------- |
+| [MirrorProjection](domain.md#mirrorprojection)   | queries      | nodeCount, edgeCount, edges   |
+| [ConceptDefinition](domain.md#conceptdefinition) | queries      | conceptId, name, taxonomyType |
 
 ---
 
-## GetConceptInspectorContext
+## GetConceptDetailCard
 
 **Type:** Query (read-only)
-**Actor:** Authenticated documentation reader
+**Actor:** Authenticated user
 
 ### Input
 
-| Field           | Type    | Required | Description                       |
-| --------------- | ------- | -------- | --------------------------------- |
-| conceptId       | string  | yes      | Node identifier                   |
-| includeIncoming | boolean | no       | Includes incoming edges when true |
-| includeOutgoing | boolean | no       | Includes outgoing edges when true |
+| Field     | Type   | Required | Description         |
+| --------- | ------ | -------- | ------------------- |
+| featureId | string | yes      | Feature slug        |
+| conceptId | string | yes      | Selected concept ID |
 
 ### Filters
 
-| Field     | Type                             | Default | Description               |
-| --------- | -------------------------------- | ------- | ------------------------- |
-| edgeTypes | [EdgeType](domain.md#edgetype)[] | all     | Optional edge-type filter |
+| Field           | Type    | Default | Description                    |
+| --------------- | ------- | ------- | ------------------------------ |
+| includeInbound  | boolean | true    | Include inbound related edges  |
+| includeOutbound | boolean | true    | Include outbound related edges |
 
 ### Output
 
-| Field                | Type     | Source                                         | Description                              |
-| -------------------- | -------- | ---------------------------------------------- | ---------------------------------------- |
-| concept              | object   | [GraphNode](domain.md#graphnode)               | Primary concept node                     |
-| linkedCapabilities[] | object[] | [CapabilityAnchor](domain.md#capabilityanchor) | Capabilities that reference this concept |
-| neighborEdges[]      | object[] | [GraphEdge](domain.md#graphedge)               | Incoming and outgoing typed edges        |
+| Field               | Type                                             | Source                                                               | Description            |
+| ------------------- | ------------------------------------------------ | -------------------------------------------------------------------- | ---------------------- |
+| conceptId           | string                                           | [ConceptDetailCard](domain.md#conceptdetailcard).conceptId           | Selected concept ID    |
+| title               | string                                           | [ConceptDetailCard](domain.md#conceptdetailcard).title               | Display title          |
+| summary             | string                                           | [ConceptDetailCard](domain.md#conceptdetailcard).summary             | Concept summary        |
+| definition.filePath | string                                           | [ConceptDetailCard](domain.md#conceptdetailcard).definition.filePath | Definition file path   |
+| definition.anchor   | string                                           | [ConceptDetailCard](domain.md#conceptdetailcard).definition.anchor   | Definition anchor      |
+| inboundRelations    | [RelationshipEdge](domain.md#relationshipedge)[] | [ConceptDetailCard](domain.md#conceptdetailcard).inboundRelations    | Related incoming edges |
+| outboundRelations   | [RelationshipEdge](domain.md#relationshipedge)[] | [ConceptDetailCard](domain.md#conceptdetailcard).outboundRelations   | Related outgoing edges |
 
 ### Reads From
 
-| Entity                                         | Relationship | Fields Used                                                        |
-| ---------------------------------------------- | ------------ | ------------------------------------------------------------------ |
-| [GraphNode](domain.md#graphnode)               | queries      | conceptId, featureId, conceptType, title, sourcePath, sourceAnchor |
-| [GraphEdge](domain.md#graphedge)               | queries      | edgeType, fromConceptId, toConceptId, crossFeature, evidencePath   |
-| [CapabilityAnchor](domain.md#capabilityanchor) | queries      | featureId, capabilityKey, specPath, specAnchor                     |
+| Entity                                           | Relationship | Fields Used                                 |
+| ------------------------------------------------ | ------------ | ------------------------------------------- |
+| [ConceptDefinition](domain.md#conceptdefinition) | queries      | conceptId, name, summary, definitionPointer |
+| [MirrorProjection](domain.md#mirrorprojection)   | queries      | edges                                       |
 
 ---
 
-## GetShortestCrossFeaturePath
+## GetDefinitionPointer
 
 **Type:** Query (read-only)
-**Actor:** Architecture analyst
+**Actor:** Authenticated user
 
 ### Input
 
-| Field              | Type    | Required | Description                               |
-| ------------------ | ------- | -------- | ----------------------------------------- |
-| sourceConceptId    | string  | yes      | Path starting concept                     |
-| targetConceptId    | string  | yes      | Path target concept                       |
-| maxDepth           | number  | no       | Maximum explored path depth, default 4    |
-| preferCrossFeature | boolean | no       | Prioritizes cross-feature edges when true |
+| Field     | Type   | Required | Description         |
+| --------- | ------ | -------- | ------------------- |
+| featureId | string | yes      | Feature slug        |
+| conceptId | string | yes      | Selected concept ID |
 
 ### Filters
 
-| Field               | Type                                   | Default | Description                              |
-| ------------------- | -------------------------------------- | ------- | ---------------------------------------- |
-| edgeTypes           | [EdgeType](domain.md#edgetype)[]       | all     | Restrict path edge types                 |
-| blockedConceptTypes | [ConceptType](domain.md#concepttype)[] | none    | Exclude specific concept types from path |
+| Field             | Type    | Default | Description                |
+| ----------------- | ------- | ------- | -------------------------- |
+| preferExactAnchor | boolean | true    | Require exact anchor match |
 
 ### Output
 
-| Field     | Type     | Source                           | Description                          |
-| --------- | -------- | -------------------------------- | ------------------------------------ |
-| traceId   | string   | derived                          | Deterministic trace identifier       |
-| nodes[]   | object[] | [GraphNode](domain.md#graphnode) | Ordered path nodes                   |
-| edges[]   | object[] | [GraphEdge](domain.md#graphedge) | Ordered path edges                   |
-| pathScore | number   | derived                          | Ranking score used for selected path |
+| Field    | Type    | Source                                                    | Description            |
+| -------- | ------- | --------------------------------------------------------- | ---------------------- |
+| filePath | string  | [DefinitionPointer](domain.md#definitionpointer).filePath | Relative markdown path |
+| anchor   | string  | [DefinitionPointer](domain.md#definitionpointer).anchor   | Markdown anchor        |
+| lineHint | integer | [DefinitionPointer](domain.md#definitionpointer).lineHint | Optional line hint     |
+| label    | string  | [DefinitionPointer](domain.md#definitionpointer).label    | Link label             |
 
 ### Reads From
 
-| Entity                           | Relationship | Fields Used                                        |
-| -------------------------------- | ------------ | -------------------------------------------------- |
-| [GraphNode](domain.md#graphnode) | queries      | conceptId, featureId, conceptType                  |
-| [GraphEdge](domain.md#graphedge) | queries      | edgeType, fromConceptId, toConceptId, crossFeature |
-
----
-
-## GetNeighborhoodByDepth
-
-**Type:** Query (read-only)
-**Actor:** Architecture analyst
-
-### Input
-
-| Field         | Type                               | Required | Description                       |
-| ------------- | ---------------------------------- | -------- | --------------------------------- |
-| rootConceptId | string                             | yes      | Starting concept for exploration  |
-| depth         | number                             | yes      | Exploration depth in range [1..4] |
-| filter        | [ViewFilter](domain.md#viewfilter) | no       | Optional concept and edge filters |
-
-### Filters
-
-| Field            | Type                                   | Default | Description                     |
-| ---------------- | -------------------------------------- | ------- | ------------------------------- |
-| edgeTypes        | [EdgeType](domain.md#edgetype)[]       | all     | Restrict edge kinds             |
-| conceptTypes     | [ConceptType](domain.md#concepttype)[] | all     | Restrict node kinds             |
-| crossFeatureOnly | boolean                                | false   | Restrict to cross-feature edges |
-
-### Output
-
-| Field            | Type     | Source                           | Description                        |
-| ---------------- | -------- | -------------------------------- | ---------------------------------- |
-| rootConceptId    | string   | input                            | Root concept reference             |
-| nodes[]          | object[] | [GraphNode](domain.md#graphnode) | Reachable concepts within depth    |
-| edges[]          | object[] | [GraphEdge](domain.md#graphedge) | Reachable typed edges within depth |
-| maxObservedDepth | number   | derived                          | Max depth reached in result        |
-
-### Reads From
-
-| Entity                           | Relationship | Fields Used                                        |
-| -------------------------------- | ------------ | -------------------------------------------------- |
-| [GraphNode](domain.md#graphnode) | queries      | conceptId, featureId, conceptType, title           |
-| [GraphEdge](domain.md#graphedge) | queries      | edgeType, fromConceptId, toConceptId, crossFeature |
-
----
-
-## GetEdgeTypedProjection
-
-**Type:** Query (read-only)
-**Actor:** Architecture analyst
-
-### Input
-
-| Field                  | Type                             | Required | Description                              |
-| ---------------------- | -------------------------------- | -------- | ---------------------------------------- |
-| contextConceptIds[]    | string[]                         | yes      | Concept set for projection               |
-| edgeTypes[]            | [EdgeType](domain.md#edgetype)[] | no       | Optional edge-type constraints           |
-| includeFamilyBreakdown | boolean                          | no       | Includes grouped family counts when true |
-
-### Filters
-
-| Field                   | Type    | Default | Description                                |
-| ----------------------- | ------- | ------- | ------------------------------------------ |
-| includeCrossFeatureOnly | boolean | false   | Restrict projection to cross-feature edges |
-
-### Output
-
-| Field            | Type     | Source                                        | Description                        |
-| ---------------- | -------- | --------------------------------------------- | ---------------------------------- |
-| projectedEdges[] | object[] | [GraphEdge](domain.md#graphedge)              | Filtered edge projection           |
-| familyCounts     | object   | derived                                       | Edge counts by relationship family |
-| evidencePaths[]  | string[] | [GraphEdge](domain.md#graphedge).evidencePath | Traceability evidence              |
-
-### Reads From
-
-| Entity                           | Relationship | Fields Used                                                      |
-| -------------------------------- | ------------ | ---------------------------------------------------------------- |
-| [GraphEdge](domain.md#graphedge) | queries      | edgeType, fromConceptId, toConceptId, crossFeature, evidencePath |
-
----
-
-## GetDependencyMatrix
-
-**Type:** Query (read-only)
-**Actor:** Governance lead, release manager, architecture reviewer
-
-### Input
-
-| Field            | Type                           | Required | Description                                                           |
-| ---------------- | ------------------------------ | -------- | --------------------------------------------------------------------- |
-| snapshotId       | string                         | no       | Optional [GraphSnapshot](domain.md#graphsnapshot).snapshotId override |
-| minRiskBand      | [RiskBand](domain.md#riskband) | no       | Optional minimum band filter                                          |
-| includeMitigated | boolean                        | no       | Includes Mitigated cells when true                                    |
-
-### Filters
-
-| Field           | Type   | Default | Description                |
-| --------------- | ------ | ------- | -------------------------- |
-| sourceFeatureId | string | all     | Restrict matrix rows       |
-| targetFeatureId | string | all     | Restrict matrix columns    |
-| pillar          | string | all     | Restrict by feature pillar |
-
-### Output
-
-| Field        | Type     | Source                                                     | Description                 |
-| ------------ | -------- | ---------------------------------------------------------- | --------------------------- |
-| snapshotId   | string   | [GraphSnapshot](domain.md#graphsnapshot).snapshotId        | Snapshot used for matrix    |
-| cells[]      | object[] | [FeaturePairImpact](domain.md#featurepairimpact)           | Risk matrix cells           |
-| maxRiskScore | number   | [FeaturePairImpact](domain.md#featurepairimpact).riskScore | Highest score in result set |
-
-### Reads From
-
-| Entity                                           | Relationship | Fields Used                                                           |
-| ------------------------------------------------ | ------------ | --------------------------------------------------------------------- |
-| [GraphSnapshot](domain.md#graphsnapshot)         | queries      | snapshotId, generatedAt                                               |
-| [FeaturePairImpact](domain.md#featurepairimpact) | queries      | sourceFeatureId, targetFeatureId, riskScore, riskBand, effectiveState |
-| [RiskException](domain.md#riskexception)         | queries      | exceptionId, sourceFeatureId, targetFeatureId, status, expiresAt      |
-
----
-
-## GetImpactStoryboard
-
-**Type:** Query (read-only)
-**Actor:** Governance lead, release manager
-
-### Input
-
-| Field           | Type   | Required | Description                  |
-| --------------- | ------ | -------- | ---------------------------- |
-| sourceFeatureId | string | yes      | Matrix source feature        |
-| targetFeatureId | string | yes      | Matrix target feature        |
-| releaseWindowId | string | no       | Optional release scope       |
-| maxDepth        | number | no       | Optional traversal depth cap |
-
-### Filters
-
-| Field                   | Type    | Default | Description                                   |
-| ----------------------- | ------- | ------- | --------------------------------------------- |
-| includeAlternativePaths | boolean | false   | Include non-primary path candidates when true |
-
-### Output
-
-| Field           | Type                           | Source                                                           | Description                    |
-| --------------- | ------------------------------ | ---------------------------------------------------------------- | ------------------------------ |
-| storyboardId    | string                         | derived                                                          | Storyboard identifier          |
-| sourceFeatureId | string                         | [FeaturePairImpact](domain.md#featurepairimpact).sourceFeatureId | Storyboard source feature      |
-| targetFeatureId | string                         | [FeaturePairImpact](domain.md#featurepairimpact).targetFeatureId | Storyboard target feature      |
-| riskScore       | number                         | [FeaturePairImpact](domain.md#featurepairimpact).riskScore       | Risk score used for storyboard |
-| riskBand        | [RiskBand](domain.md#riskband) | [FeaturePairImpact](domain.md#featurepairimpact).riskBand        | Risk band used for storyboard  |
-| steps[]         | object[]                       | [TraceStep](domain.md#tracestep)                                 | Ordered impact steps           |
-
-### Reads From
-
-| Entity                                           | Relationship | Fields Used                                                           |
-| ------------------------------------------------ | ------------ | --------------------------------------------------------------------- |
-| [FeaturePairImpact](domain.md#featurepairimpact) | queries      | sourceFeatureId, targetFeatureId, riskScore, riskBand, effectiveState |
-| [GraphNode](domain.md#graphnode)                 | queries      | conceptId, title, featureId, sourcePath                               |
-| [GraphEdge](domain.md#graphedge)                 | queries      | edgeType, fromConceptId, toConceptId, evidencePath                    |
+| Entity                                           | Relationship | Fields Used       |
+| ------------------------------------------------ | ------------ | ----------------- |
+| [ConceptDefinition](domain.md#conceptdefinition) | queries      | definitionPointer |

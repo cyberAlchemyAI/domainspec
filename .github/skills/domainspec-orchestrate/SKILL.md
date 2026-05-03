@@ -20,7 +20,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
 3. If the request is DomainSpec natural language without an explicit command, map to one specialist command:
    - kickoff, discovery, or baseline gating -> `domainspec-start`
    - docs bootstrap -> `domainspec-init`
-   - interactive execution of one plan task with options and gate handling -> `domainspec-task-session <task-id>`
+   - work-pack task implementation (`TASK-*` or `docs/features/{feature}/work-pack/tasks/*.md`) -> `domainspec-implement <feature>`
    - end-to-end feature delivery -> `domainspec-pipeline <feature>`
    - feature spec authoring -> `domainspec-spec-feature <feature>`
    - story sync -> `domainspec-sync-user-stories <feature>`
@@ -33,6 +33,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
    - audits/readiness -> `domainspec-audit-alignment`, `domainspec-audit-layering`, `domainspec-verify-feature <feature>`, or `domainspec-readiness-gate <feature> [--profile ...]`
    - command guidance -> `domainspec-help`
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
+   - If a work-pack task ID is provided without resolvable feature context, ask for feature name and then route to `domainspec-implement <feature>`.
 5. Planner-first enforcement for mutation-capable routes:
    - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-implement`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegate execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
    - Read-only guidance and verification-only commands may bypass planner preflight.
@@ -44,6 +45,8 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
 - DomainSpec-only entrypoint routing: do not route DomainSpec intent into `gsd-*` flows unless the user explicitly asks for GSD.
 - No removals, renames, or behavior changes to existing `domainspec-*` specialist commands.
 - Preserve existing specialist command semantics; this skill only normalizes entrypoint intent.
+- Do not route work-pack tasks (`docs/features/{feature}/work-pack/tasks/*.md`) to `domainspec-task-session`; always route to `domainspec-implement <feature>`.
+- Treat `domainspec-task-session` as direct-advanced only when explicitly invoked with an explicit file path under `implementation/domainspec/plan/`.
 </routing-guardrails>
 
 <output-contract>

@@ -336,8 +336,11 @@ Every feature starts with `SPEC.md`. It contains:
 2. **Concept table** — every domain concept in the feature with its ID and meta-type; this is the **source of truth** for the global registry
 3. **Aspect links** — which files exist for this feature
 4. **Cross-feature dependencies** — what this feature depends on and what it produces for others
+5. **Feature concept graph** — typed `From | Edge | To` rows using canonical relationship edges from `RELATIONSHIPS.md`, with evidence links to aspect docs
 
 Starting with SPEC.md forces you to name and classify every concept before detailing them. Once you have a concept table, the structure of the remaining aspect files follows naturally.
+
+For authoring, reuse the graph section scaffold in `docs/templates/FEATURE-CONCEPT-GRAPH.md`.
 
 ### Operations drive most documentation
 

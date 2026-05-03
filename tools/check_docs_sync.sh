@@ -7,6 +7,8 @@ COPILOT_README="$FRAMEWORK_ROOT/copilot/README.md"
 CHANGELOG="$FRAMEWORK_ROOT/CHANGELOG.md"
 TEMPLATES_DIR="$FRAMEWORK_ROOT/templates"
 COPILOT_SKILLS_DIR="$FRAMEWORK_ROOT/copilot/skills"
+RELATIONSHIP_VALIDATOR="$FRAMEWORK_ROOT/tools/validate-relationships.ts"
+WORK_PACK_VALIDATOR="$FRAMEWORK_ROOT/tools/validate-work-pack-coverage.ts"
 
 failures=0
 
@@ -83,6 +85,8 @@ require_file "$COPILOT_README"
 require_file "$CHANGELOG"
 require_dir "$TEMPLATES_DIR"
 require_dir "$COPILOT_SKILLS_DIR"
+require_file "$RELATIONSHIP_VALIDATOR"
+require_file "$WORK_PACK_VALIDATOR"
 
 if [[ $failures -gt 0 ]]; then
   echo "check_docs_sync: FAIL ($failures issues)"
@@ -148,6 +152,24 @@ while IFS= read -r template; do
     report_violation "Canonical README template table lists missing template file: $template"
   fi
 done <<< "$listed_templates"
+
+if ! (
+  cd "$FRAMEWORK_ROOT"
+  pnpm dlx tsx tools/validate-relationships.ts --mode warn
+); then
+  report_violation "Relationship vocabulary validator execution failed"
+else
+  report_ok "Relationship vocabulary scan completed (warn mode)"
+fi
+
+if ! (
+  cd "$FRAMEWORK_ROOT"
+  pnpm dlx tsx tools/validate-work-pack-coverage.ts --mode warn
+); then
+  report_violation "Work-pack coverage validator execution failed"
+else
+  report_ok "Work-pack coverage scan completed (warn mode)"
+fi
 
 if [[ $failures -gt 0 ]]; then
   echo "check_docs_sync: FAIL ($failures issues)"

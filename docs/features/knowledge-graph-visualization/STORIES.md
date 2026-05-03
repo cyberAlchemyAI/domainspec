@@ -1,227 +1,106 @@
-# Knowledge Graph Visualization - User Stories
+# User Stories: Knowledge Graph Visualization
 
-> Source of storytelling truth for [knowledge-graph-visualization](SPEC.md).
+> Navigate by capability: [Mirror Coverage and Graph Parity](#mirror-coverage-and-graph-parity) · [Concept Deep-Link and Detail Card](#concept-deep-link-and-detail-card)
 
-## US-V1-01 Quickly Understand Feature Landscape
+## Mirror Coverage and Graph Parity
 
-**Classic format**
-As a documentation reader, I want to browse a pillar-grouped atlas of features and capabilities, so that I can understand what the system contains in a few minutes.
+### US-1: Mirror cards for required docs
 
-**BDD scenario**
-Given the visualization module has a generated snapshot
-When I open the atlas view
-Then I see features grouped by pillar, with capability anchors and current documentation status
+As a **feature author**, I want **one card per required source file (SPEC, domain, operations)**, so that **I can verify documentation coverage quickly**.
 
-**Acceptance checks**
-
-- [ ] Atlas is retrieved by [GetFeatureAtlas](queries.md#getfeatureatlas).
-- [ ] Each card shows feature id, title, status, and priority.
-- [ ] Capability anchors come from [CapabilityAnchor](domain.md#capabilityanchor).
-- [ ] Snapshot freshness uses [GraphSnapshot](domain.md#graphsnapshot).generatedAt.
-
-**Capability link**: [V1 Capability Atlas Board](capabilities/v1-capability-atlas-board.md)
-
----
-
-## US-V1-02 Drill Down Into Capability Neighborhood
-
-**Classic format**
-As a technical reader, I want to open one capability and see its immediate concept neighborhood, so that I can understand local relationships without graph overload.
-
-**BDD scenario**
-Given I selected one feature capability
-When I open neighborhood preview
-Then I receive depth-1 nodes and typed edges connected to that capability context
+**Given** the feature docs exist
+**When** I open the knowledge graph page
+**Then** I see cards for SPEC, domain, and operations at minimum
 
 **Acceptance checks**
 
-- [ ] Neighborhood is retrieved by [GetCapabilityNeighborhood](queries.md#getcapabilityneighborhood).
-- [ ] V1 depth is limited to one hop.
-- [ ] Edges are labeled only with values from [EdgeType](domain.md#edgetype).
-- [ ] Cross-feature edges indicate whether [GraphEdge](domain.md#graphedge).crossFeature is true.
+- [ ] Required mirror cards are always present.
+- [ ] Each card shows file path, concept count, relation count, and freshness status.
 
-**Capability link**: [V1 Capability Atlas Board](capabilities/v1-capability-atlas-board.md)
+**Domain coverage**
 
----
+- Concepts: [FeatureDocument](domain.md#featuredocument), [MirrorCardView](domain.md#mirrorcardview)
+- States/Rules: [ExplorationState](states.md#explorationstate)
+- Interfaces/Flows: [KnowledgeGraphAPI](interfaces.md#external-knowledgegraphapi-rest), [MirrorInteractionWorkflow](workflows.md#mirrorinteractionworkflow)
 
-## US-V1-03 Inspect One Concept With Evidence
+**Capability links**
 
-**Classic format**
-As a feature author, I want to inspect a concept and see its evidence links, so that I can validate where each concept is defined and connected.
+- [Mirror Cards + Relationship Graph Navigator](SPEC.md#mirror-cards--relationship-graph-navigator)
 
-**BDD scenario**
-Given I selected one concept from atlas or neighborhood
-When I open the inspector panel
-Then I see concept metadata, incoming/outgoing edges, and evidence path references
+### US-2: Graph mirrors canonical relationships
 
-**Acceptance checks**
+As a **documentation reviewer**, I want **the graph to render canonical relations from feature docs**, so that **the visual graph and the written spec never diverge**.
 
-- [ ] Inspector context is retrieved by [GetConceptInspectorContext](queries.md#getconceptinspectorcontext).
-- [ ] Concept metadata includes concept type and source path from [GraphNode](domain.md#graphnode).
-- [ ] Inspector lists linked capabilities and neighbor edges.
-- [ ] Evidence paths come from [GraphEdge](domain.md#graphedge).evidencePath or [GraphNode](domain.md#graphnode).sourcePath.
-
-**Capability link**: [V1 Capability Atlas Board](capabilities/v1-capability-atlas-board.md)
-
----
-
-## US-V1-04 Preview Cross-Feature Connections
-
-**Classic format**
-As an architecture reviewer, I want to preview first-hop cross-feature relations while browsing, so that I can quickly spot coupling between features.
-
-**BDD scenario**
-Given a selected capability has cross-feature relationships
-When neighborhood preview renders
-Then I can identify target feature and relationship type for each cross-feature edge
+**Given** feature concepts and feature concept graph rows are defined
+**When** I open the graph canvas
+**Then** I see nodes and edges that match canonical concept IDs and canonical edge labels
 
 **Acceptance checks**
 
-- [ ] Cross-feature previews include `produces-for`, `triggers-cross`, and `enforces-cross` when present.
-- [ ] Each preview includes target feature id, edge type, and evidence path.
-- [ ] All preview labels match [EdgeType](domain.md#edgetype).
+- [ ] Graph only contains canonical relationship labels.
+- [ ] Graph edge endpoints resolve to known concept IDs.
 
-**Capability link**: [V1 Capability Atlas Board](capabilities/v1-capability-atlas-board.md)
+**Domain coverage**
 
----
+- Concepts: [RelationshipEdge](domain.md#relationshipedge), [MirrorProjection](domain.md#mirrorprojection), [RebuildMirrorProjection](operations.md#rebuildmirrorprojection)
+- States/Rules: [ExplorationState](states.md#explorationstate)
+- Interfaces/Flows: [GetRelationshipGraph](queries.md#getrelationshipgraph), [DocumentToConceptMapping](mappings.md#documenttoconceptmapping)
 
-## US-V2-01 Find Shortest Cross-Feature Path
+**Capability links**
 
-**Classic format**
-As an architecture analyst, I want to find the deterministic shortest path between two concepts across features, so that I can quickly understand coupling and propagation chains.
+- [Mirror Cards + Relationship Graph Navigator](SPEC.md#mirror-cards--relationship-graph-navigator)
 
-**BDD scenario**
-Given I selected source and target concepts
-When I run shortest-path analysis
-Then I receive a deterministic ranked path with canonical edge labels and evidence paths
+## Concept Deep-Link and Detail Card
 
-**Acceptance checks**
+### US-3: Click concept to open definition
 
-- [ ] Path retrieval uses [GetShortestCrossFeaturePath](queries.md#getshortestcrossfeaturepath).
-- [ ] Path ranking follows policy in [TraceSelectionWorkflow](workflows.md#traceselectionworkflow).
-- [ ] Returned edges use only [EdgeType](domain.md#edgetype).
-- [ ] Trace payload semantics align with [TraceComputed](events.md#tracecomputed).
+As a **developer**, I want **clicking a concept to resolve its definition target**, so that **I can jump directly to the source definition**.
 
-**Capability link**: [V2 Relationship Constellation Canvas](capabilities/v2-relationship-constellation-canvas.md)
-
----
-
-## US-V2-02 Explore Multi-Hop Neighborhoods
-
-**Classic format**
-As an architecture analyst, I want to expand a concept neighborhood by depth with filters, so that I can inspect relationship density and downstream reach.
-
-**BDD scenario**
-Given I selected a root concept and depth
-When I run neighborhood analysis
-Then I receive nodes and edges reachable within the selected depth and filter constraints
+**Given** a concept node is selected
+**When** I trigger open definition
+**Then** the system resolves file and anchor and opens the target
 
 **Acceptance checks**
 
-- [ ] Neighborhood retrieval uses [GetNeighborhoodByDepth](queries.md#getneighborhoodbydepth).
-- [ ] Depth validation follows [MultiHopAnalysisWorkflow](workflows.md#multihopanalysisworkflow).
-- [ ] Returned node and edge sets are bounded by requested depth.
-- [ ] Projection freshness is compatible with [ProjectionBuilt](events.md#projectionbuilt).
+- [ ] Every selectable concept has a resolved definition pointer.
+- [ ] Open definition fails with explicit diagnostics when anchor is missing.
 
-**Capability link**: [V2 Relationship Constellation Canvas](capabilities/v2-relationship-constellation-canvas.md)
+**Domain coverage**
 
----
+- Concepts: [DefinitionPointer](domain.md#definitionpointer), [OpenDefinition](operations.md#opendefinition)
+- States/Rules: [ExplorationState](states.md#explorationstate)
+- Interfaces/Flows: [GetDefinitionPointer](queries.md#getdefinitionpointer), [KnowledgeGraphAPI](interfaces.md#external-knowledgegraphapi-rest)
 
-## US-V2-03 Analyze Typed Relationship Families
+**Capability links**
 
-**Classic format**
-As an architecture analyst, I want to group edges into relationship families, so that I can reason about structural, behavioral, governance, cross-feature, and lifecycle coupling.
+- [Mirror Cards + Relationship Graph Navigator](SPEC.md#mirror-cards--relationship-graph-navigator)
 
-**BDD scenario**
-Given I have a concept context and edge filters
-When I request typed projection
-Then I receive projected edges and family counts with traceable evidence paths
+### US-4: Related details card for selected concept
 
-**Acceptance checks**
+As a **maintainer**, I want **a detail card for the selected concept with related inbound and outbound relations**, so that **I can understand context without manually searching multiple files**.
 
-- [ ] Typed projection uses [GetEdgeTypedProjection](queries.md#getedgetypedprojection).
-- [ ] Family grouping follows [RelationshipFamilyProjection](mappings.md#relationshipfamilyprojection).
-- [ ] Family counts reconcile with projected edge count.
-- [ ] Lens persistence semantics are compatible with [LensSaved](events.md#lenssaved).
-
-**Capability link**: [V2 Relationship Constellation Canvas](capabilities/v2-relationship-constellation-canvas.md)
-
----
-
-## US-V3-01 Review Dependency Matrix Risk Bands
-
-**Classic format**
-As a governance lead, I want to review dependency matrix cells by risk band, so that I can prioritize cross-feature pairs that require release scrutiny.
-
-**BDD scenario**
-Given matrix data is refreshed for the current snapshot
-When I open the dependency matrix with a minimum risk-band filter
-Then I receive feature-pair cells with score, risk band, and effective state metadata
+**Given** a concept is focused
+**When** detail data is loaded
+**Then** the detail card shows summary, definition link, and related edges
 
 **Acceptance checks**
 
-- [ ] Matrix retrieval uses [GetDependencyMatrix](queries.md#getdependencymatrix).
-- [ ] Score and band semantics align with [ComputeDependencyRiskScore](operations.md#computedependencyriskscore).
-- [ ] Effective state transitions align with [DependencyRiskState](states.md#dependencyriskstate).
-- [ ] Raised-risk transitions align with [DependencyRiskRaised](events.md#dependencyriskraised).
+- [ ] Detail card always matches the currently focused concept.
+- [ ] Inbound and outbound relationships are shown with evidence links.
 
-**Capability link**: [V3 Dependency Matrix + Trace Storyboard](capabilities/v3-dependency-matrix-trace-storyboard.md)
+**Domain coverage**
 
----
+- Concepts: [ConceptDetailCard](domain.md#conceptdetailcard), [SelectConcept](operations.md#selectconcept)
+- States/Rules: [ExplorationState](states.md#explorationstate)
+- Interfaces/Flows: [GetConceptDetailCard](queries.md#getconceptdetailcard), [ConceptToDetailCardAdapter](mappings.md#concepttodetailcardadapter)
 
-## US-V3-02 Analyze Release Impact Storyboard
+**Capability links**
 
-**Classic format**
-As a release manager, I want a deterministic impact storyboard for one high-risk pair, so that I can justify release decisions with traceable evidence.
-
-**BDD scenario**
-Given I selected one source-target pair from the matrix
-When I request release impact analysis
-Then a published storyboard returns ordered steps with evidence paths and risk context
-
-**Acceptance checks**
-
-- [ ] Storyboard generation uses [BuildImpactStoryboard](operations.md#buildimpactstoryboard).
-- [ ] Storyboard retrieval uses [GetImpactStoryboard](queries.md#getimpactstoryboard).
-- [ ] Storyboard steps align with [TraceStep](domain.md#tracestep) and [PathToStoryboardMapping](mappings.md#pathtostoryboardmapping).
-- [ ] Publication signal aligns with [StoryboardPublished](events.md#storyboardpublished).
-
-**Capability link**: [V3 Dependency Matrix + Trace Storyboard](capabilities/v3-dependency-matrix-trace-storyboard.md)
-
----
-
-## US-V3-03 Approve Temporary Risk Exception
-
-**Classic format**
-As a governance approver, I want to approve a bounded risk exception for a warning or critical pair, so that urgent releases can proceed with explicit accountability.
-
-**BDD scenario**
-Given a dependency pair is in Warning or Critical state
-When I approve an exception with justification and expiry
-Then the pair effective state becomes Mitigated while preserving the computed risk score
-
-**Acceptance checks**
-
-- [ ] Exception approval uses [ApproveRiskException](operations.md#approveriskexception).
-- [ ] Exception constraints follow rules R1-R5 in [ApproveRiskException](operations.md#approveriskexception).
-- [ ] Transition to Mitigated follows [DependencyRiskState](states.md#dependencyriskstate).
-- [ ] Mitigation signal aligns with [DependencyRiskMitigated](events.md#dependencyriskmitigated).
-
-**Capability link**: [V3 Dependency Matrix + Trace Storyboard](capabilities/v3-dependency-matrix-trace-storyboard.md)
-
----
+- [Mirror Cards + Relationship Graph Navigator](SPEC.md#mirror-cards--relationship-graph-navigator)
 
 ## Story Coverage Matrix
 
-| Story ID | Capability                              | Core Concepts                                                                                                      | Core Queries                                                          |
-| -------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| US-V1-01 | V1 Capability Atlas Board               | [GraphSnapshot](domain.md#graphsnapshot), [CapabilityAnchor](domain.md#capabilityanchor)                           | [GetFeatureAtlas](queries.md#getfeatureatlas)                         |
-| US-V1-02 | V1 Capability Atlas Board               | [GraphNode](domain.md#graphnode), [GraphEdge](domain.md#graphedge)                                                 | [GetCapabilityNeighborhood](queries.md#getcapabilityneighborhood)     |
-| US-V1-03 | V1 Capability Atlas Board               | [GraphNode](domain.md#graphnode), [GraphEdge](domain.md#graphedge), [CapabilityAnchor](domain.md#capabilityanchor) | [GetConceptInspectorContext](queries.md#getconceptinspectorcontext)   |
-| US-V1-04 | V1 Capability Atlas Board               | [GraphEdge](domain.md#graphedge)                                                                                   | [GetCapabilityNeighborhood](queries.md#getcapabilityneighborhood)     |
-| US-V2-01 | V2 Relationship Constellation Canvas    | [GraphNode](domain.md#graphnode), [GraphEdge](domain.md#graphedge)                                                 | [GetShortestCrossFeaturePath](queries.md#getshortestcrossfeaturepath) |
-| US-V2-02 | V2 Relationship Constellation Canvas    | [GraphNode](domain.md#graphnode), [GraphEdge](domain.md#graphedge)                                                 | [GetNeighborhoodByDepth](queries.md#getneighborhoodbydepth)           |
-| US-V2-03 | V2 Relationship Constellation Canvas    | [GraphEdge](domain.md#graphedge)                                                                                   | [GetEdgeTypedProjection](queries.md#getedgetypedprojection)           |
-| US-V3-01 | V3 Dependency Matrix + Trace Storyboard | [FeaturePairImpact](domain.md#featurepairimpact), [RiskBand](domain.md#riskband)                                   | [GetDependencyMatrix](queries.md#getdependencymatrix)                 |
-| US-V3-02 | V3 Dependency Matrix + Trace Storyboard | [TraceStep](domain.md#tracestep), [FeaturePairImpact](domain.md#featurepairimpact)                                 | [GetImpactStoryboard](queries.md#getimpactstoryboard)                 |
-| US-V3-03 | V3 Dependency Matrix + Trace Storyboard | [RiskException](domain.md#riskexception), [FeaturePairImpact](domain.md#featurepairimpact)                         | [GetDependencyMatrix](queries.md#getdependencymatrix)                 |
+| Capability                        | Story IDs  | Covered Concepts                                                                                                                                     | Notes                                          |
+| --------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Mirror Coverage and Graph Parity  | US-1, US-2 | knowledge-graph-visualization.FeatureDocument, knowledge-graph-visualization.MirrorProjection, knowledge-graph-visualization.RebuildMirrorProjection | Covers file parity and graph parity            |
+| Concept Deep-Link and Detail Card | US-3, US-4 | knowledge-graph-visualization.DefinitionPointer, knowledge-graph-visualization.GetConceptDetailCard, knowledge-graph-visualization.OpenDefinition    | Covers click-to-definition and related details |

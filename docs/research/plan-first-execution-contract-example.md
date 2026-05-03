@@ -63,6 +63,7 @@ Modular structure:
 - `docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-A.md`
 - `docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-B.md`
 - `docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-C.md`
+- `docs/features/knowledge-graph-visualization/work-pack/waves/W0.md`
 - `docs/features/knowledge-graph-visualization/work-pack/waves/W1.md`
 - `docs/features/knowledge-graph-visualization/work-pack/waves/W2.md`
 - `docs/features/knowledge-graph-visualization/work-pack/waves/W3.md`
@@ -80,8 +81,11 @@ Example status table:
 Manifest control fields should also show planner authority state:
 
 - `plannerGateStatus: pass`
+- `architectureWave: W0`
 - `activePlanRef: work-pack/waves/W1.md`
 - `lastPlannedAt: 2026-05-02T00:00:00Z`
+
+`WORK-PACK.md` should also contain `Pipeline Stage Coverage` with all canonical stages, wave mapping, and status.
 
 ## Step 4: Questions and trade-offs before mutation
 
@@ -171,6 +175,16 @@ Stop conditions: if prior wave evidence is incomplete, return BLOCK and list mis
 ## Step 5: Wave plan across tasks
 
 Wave files coordinate task execution while preserving one feature context.
+
+### W0 (architecture baseline and stage coverage lock)
+
+- capture architecture constraints from DomainSpec and project constitutions
+- lock wave entry/exit criteria against dependency and boundary rules
+- populate full pipeline stage coverage matrix before mutation waves
+
+Exit gate:
+
+- W0 marked complete and all stages listed in manifest coverage table
 
 ### W1 (planning and decision lock)
 

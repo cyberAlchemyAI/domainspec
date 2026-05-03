@@ -1,231 +1,96 @@
 # Mappings: Knowledge Graph Visualization
 
-## IndexToGraphMapping
+## DocumentToConceptMapping
 
-**From:** Feature index artifacts (`feature-map`, `features-index`, per-feature `SPEC.md` links)
-**To:** [GraphSnapshot](domain.md#graphsnapshot), [GraphNode](domain.md#graphnode), [GraphEdge](domain.md#graphedge)
+**From:** Markdown feature docs (`SPEC.md`, `domain.md`, `operations.md`, optional aspects)
+**To:** [FeatureDocument](domain.md#featuredocument), [ConceptDefinition](domain.md#conceptdefinition), [RelationshipEdge](domain.md#relationshipedge)
 **Direction:** Inbound
 
 ### Field Mapping
 
-| Source Field                      | Target Field                                         | Transform  | Notes                                                             |
-| --------------------------------- | ---------------------------------------------------- | ---------- | ----------------------------------------------------------------- |
-| features-index.generatedAt        | [GraphSnapshot](domain.md#graphsnapshot).generatedAt | direct     | Snapshot timestamp                                                |
-| features-index.features[].feature | [GraphNode](domain.md#graphnode).featureId           | direct     | Feature namespace                                                 |
-| features-index.features[].domain  | [GraphNode](domain.md#graphnode).conceptId           | direct     | Uses canonical domain ID when present                             |
-| features-index.features[].title   | [GraphNode](domain.md#graphnode).title               | direct     | Concept display title                                             |
-| features-index.features[].status  | [GraphNode](domain.md#graphnode).status              | normalized | Normalize to [FeatureDocStatus](domain.md#featuredocstatus)       |
-| feature-map rows                  | [GraphEdge](domain.md#graphedge).edgeType            | inferred   | Relationship inferred from dependency tables and capability links |
-| spec anchors                      | [GraphEdge](domain.md#graphedge).evidencePath        | direct     | Stores source evidence path                                       |
+| Source Field                     | Target Field                                                  | Transform         | Notes                                               |
+| -------------------------------- | ------------------------------------------------------------- | ----------------- | --------------------------------------------------- |
+| file path                        | [FeatureDocument](domain.md#featuredocument).path             | direct            | Relative docs path                                  |
+| file category                    | [FeatureDocument](domain.md#featuredocument).aspectKind       | normalize         | Map file name to [AspectKind](domain.md#aspectkind) |
+| heading anchor                   | [ConceptDefinition](domain.md#conceptdefinition).sourceAnchor | normalize         | Lowercase markdown anchor                           |
+| concept table row ID             | [ConceptDefinition](domain.md#conceptdefinition).conceptId    | direct            | Canonical concept ID                                |
+| feature graph row `From/Edge/To` | [RelationshipEdge](domain.md#relationshipedge)                | direct + validate | Edge must be canonical                              |
 
 ### Defaults
 
-| Target Field                                               | Default Value | Condition                                   |
-| ---------------------------------------------------------- | ------------- | ------------------------------------------- |
-| [GraphSnapshot](domain.md#graphsnapshot).staleAfterMinutes | 60            | Missing freshness config                    |
-| [GraphNode](domain.md#graphnode).tags                      | []            | Source tags absent                          |
-| [GraphEdge](domain.md#graphedge).crossFeature              | false         | Source does not indicate cross-feature edge |
+| Target Field                                             | Default Value           | Condition              |
+| -------------------------------------------------------- | ----------------------- | ---------------------- |
+| [FeatureDocument](domain.md#featuredocument).updatedAt   | index timestamp         | Always                 |
+| [ConceptDefinition](domain.md#conceptdefinition).summary | `"No summary provided"` | Empty description cell |
+| [RelationshipEdge](domain.md#relationshipedge).notes     | `""`                    | Notes cell missing     |
 
 ### Validation
 
-| Field                                                          | Validation                                   | On Failure                         |
-| -------------------------------------------------------------- | -------------------------------------------- | ---------------------------------- |
-| [GraphNode](domain.md#graphnode).conceptId                     | Unique in snapshot                           | Drop node and emit mapping warning |
-| [GraphEdge](domain.md#graphedge).edgeType                      | Must exist in [EdgeType](domain.md#edgetype) | Reject edge                        |
-| [GraphEdge](domain.md#graphedge).fromConceptId and toConceptId | Both nodes must exist                        | Reject edge                        |
+| Field                                                        | Validation                     | On Failure     |
+| ------------------------------------------------------------ | ------------------------------ | -------------- |
+| [RelationshipEdge](domain.md#relationshipedge).edge          | Must exist in RELATIONSHIPS.md | Reject rebuild |
+| [RelationshipEdge](domain.md#relationshipedge).fromConceptId | Must resolve concept ID        | Reject rebuild |
+| [RelationshipEdge](domain.md#relationshipedge).toConceptId   | Must resolve concept ID        | Reject rebuild |
 
 ---
 
-## FeatureDocsToCapabilityCards
+## DocumentToMirrorCardAdapter
 
-**From:** Feature capability sections in `SPEC.md`
-**To:** [CapabilityAnchor](domain.md#capabilityanchor)
-**Direction:** Inbound
-
-### Field Mapping
-
-| Source Field         | Target Field                                                   | Transform | Notes                       |
-| -------------------- | -------------------------------------------------------------- | --------- | --------------------------- |
-| spec feature id      | [CapabilityAnchor](domain.md#capabilityanchor).featureId       | direct    | Canonical feature namespace |
-| capability title     | [CapabilityAnchor](domain.md#capabilityanchor).capabilityTitle | direct    | Display title               |
-| capability link slug | [CapabilityAnchor](domain.md#capabilityanchor).capabilityKey   | slugify   | Stable key per feature      |
-| spec path            | [CapabilityAnchor](domain.md#capabilityanchor).specPath        | direct    | Relative path               |
-| capability anchor    | [CapabilityAnchor](domain.md#capabilityanchor).specAnchor      | direct    | Heading fragment            |
-| capability summary   | [CapabilityAnchor](domain.md#capabilityanchor).summary         | direct    | Optional short summary      |
-
-### Defaults
-
-| Target Field                                           | Default Value         | Condition                 |
-| ------------------------------------------------------ | --------------------- | ------------------------- |
-| [CapabilityAnchor](domain.md#capabilityanchor).summary | "No summary provided" | Capability summary absent |
-
-### Validation
-
-| Field                                                        | Validation                      | On Failure                         |
-| ------------------------------------------------------------ | ------------------------------- | ---------------------------------- |
-| [CapabilityAnchor](domain.md#capabilityanchor).capabilityKey | Unique inside feature           | Reject duplicate capability anchor |
-| [CapabilityAnchor](domain.md#capabilityanchor).specAnchor    | Must resolve in source document | Reject capability anchor           |
-
----
-
-## ConceptToInspectorView
-
-**From:** [GraphNode](domain.md#graphnode) plus [GraphEdge](domain.md#graphedge) evidence
-**To:** Inspector DTO used by [GetConceptInspectorContext](queries.md#getconceptinspectorcontext)
+**From:** [FeatureDocument](domain.md#featuredocument) + parsed counts
+**To:** [MirrorCardView](domain.md#mirrorcardview)
 **Direction:** Outbound
 
 ### Field Mapping
 
-| Source Field                                  | Target Field             | Transform | Notes                    |
-| --------------------------------------------- | ------------------------ | --------- | ------------------------ |
-| [GraphNode](domain.md#graphnode).conceptId    | concept.id               | direct    | Inspector primary key    |
-| [GraphNode](domain.md#graphnode).title        | concept.title            | direct    | Inspector display title  |
-| [GraphNode](domain.md#graphnode).sourcePath   | concept.source.path      | direct    | Linkable evidence source |
-| [GraphNode](domain.md#graphnode).sourceAnchor | concept.source.anchor    | direct    | Linkable heading anchor  |
-| [GraphEdge](domain.md#graphedge).edgeType     | relations[].type         | direct    | Canonical relation label |
-| [GraphEdge](domain.md#graphedge).evidencePath | relations[].evidencePath | direct    | Traceability evidence    |
+| Source Field                                            | Target Field                                             | Transform | Notes                               |
+| ------------------------------------------------------- | -------------------------------------------------------- | --------- | ----------------------------------- |
+| [FeatureDocument](domain.md#featuredocument).path       | [MirrorCardView](domain.md#mirrorcardview).filePath      | direct    | Unique card key                     |
+| [FeatureDocument](domain.md#featuredocument).aspectKind | [MirrorCardView](domain.md#mirrorcardview).title         | derive    | Title from aspect kind              |
+| parsed concept count                                    | [MirrorCardView](domain.md#mirrorcardview).conceptCount  | direct    | Count per file                      |
+| parsed relation count                                   | [MirrorCardView](domain.md#mirrorcardview).relationCount | direct    | Count per file                      |
+| checksum comparison                                     | [MirrorCardView](domain.md#mirrorcardview).freshness     | derive    | `up-to-date`, `stale`, or `missing` |
 
 ### Defaults
 
-| Target Field | Default Value | Condition                                    |
-| ------------ | ------------- | -------------------------------------------- |
-| relations[]  | []            | Concept has no matched edges in filter scope |
+| Target Field                                             | Default Value | Condition              |
+| -------------------------------------------------------- | ------------- | ---------------------- |
+| [MirrorCardView](domain.md#mirrorcardview).conceptCount  | 0             | No concept rows parsed |
+| [MirrorCardView](domain.md#mirrorcardview).relationCount | 0             | No graph rows parsed   |
 
 ### Validation
 
-| Field               | Validation                   | On Failure                                         |
-| ------------------- | ---------------------------- | -------------------------------------------------- |
-| concept.source.path | Must be a relative docs path | Replace with fallback source path and mark warning |
+| Field                                               | Validation                       | On Failure              |
+| --------------------------------------------------- | -------------------------------- | ----------------------- |
+| [MirrorCardView](domain.md#mirrorcardview).filePath | Must be unique in one projection | Reject projection write |
 
 ---
 
-## GraphToCanvasProjection
+## ConceptToDetailCardAdapter
 
-**From:** [GetNeighborhoodByDepth](queries.md#getneighborhoodbydepth) and [GetShortestCrossFeaturePath](queries.md#getshortestcrossfeaturepath) outputs
-**To:** Constellation canvas DTO
+**From:** [ConceptDefinition](domain.md#conceptdefinition) + related [RelationshipEdge](domain.md#relationshipedge)[]
+**To:** [ConceptDetailCard](domain.md#conceptdetailcard)
 **Direction:** Outbound
 
 ### Field Mapping
 
-| Source Field                                   | Target Field                  | Transform | Notes                          |
-| ---------------------------------------------- | ----------------------------- | --------- | ------------------------------ |
-| [GraphNode](domain.md#graphnode).conceptId     | canvas.nodes[].id             | direct    | Stable node identity           |
-| [GraphNode](domain.md#graphnode).conceptType   | canvas.nodes[].kind           | direct    | Taxonomy type for styling      |
-| [GraphNode](domain.md#graphnode).featureId     | canvas.nodes[].group          | direct    | Feature-based grouping         |
-| [GraphEdge](domain.md#graphedge).edgeType      | canvas.edges[].type           | direct    | Canonical relation label       |
-| [GraphEdge](domain.md#graphedge).fromConceptId | canvas.edges[].source         | direct    | Source node id                 |
-| [GraphEdge](domain.md#graphedge).toConceptId   | canvas.edges[].target         | direct    | Target node id                 |
-| [GraphEdge](domain.md#graphedge).crossFeature  | canvas.edges[].isCrossFeature | direct    | Highlights cross-feature edges |
+| Source Field                                                       | Target Field                                                       | Transform | Notes              |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------ | --------- | ------------------ |
+| [ConceptDefinition](domain.md#conceptdefinition).conceptId         | [ConceptDetailCard](domain.md#conceptdetailcard).conceptId         | direct    | Selected concept   |
+| [ConceptDefinition](domain.md#conceptdefinition).name              | [ConceptDetailCard](domain.md#conceptdetailcard).title             | direct    | Header label       |
+| [ConceptDefinition](domain.md#conceptdefinition).summary           | [ConceptDetailCard](domain.md#conceptdetailcard).summary           | direct    | Summary text       |
+| [ConceptDefinition](domain.md#conceptdefinition).definitionPointer | [ConceptDetailCard](domain.md#conceptdetailcard).definition        | direct    | Deep-link target   |
+| edges where to = conceptId                                         | [ConceptDetailCard](domain.md#conceptdetailcard).inboundRelations  | filter    | Incoming relations |
+| edges where from = conceptId                                       | [ConceptDetailCard](domain.md#conceptdetailcard).outboundRelations | filter    | Outgoing relations |
 
 ### Defaults
 
-| Target Field              | Default Value | Condition                           |
-| ------------------------- | ------------- | ----------------------------------- |
-| canvas.nodes[].importance | 1             | Source importance score unavailable |
-| canvas.edges[].weight     | 1             | Source edge weight unavailable      |
+| Target Field      | Default Value | Condition         |
+| ----------------- | ------------- | ----------------- |
+| inboundRelations  | []            | No incoming edges |
+| outboundRelations | []            | No outgoing edges |
 
 ### Validation
 
-| Field                            | Validation                                   | On Failure  |
-| -------------------------------- | -------------------------------------------- | ----------- |
-| canvas.edges[].type              | Must exist in [EdgeType](domain.md#edgetype) | Reject edge |
-| canvas.edges[].source and target | Must reference existing canvas.nodes[].id    | Reject edge |
-
----
-
-## RelationshipFamilyProjection
-
-**From:** [GraphEdge](domain.md#graphedge)[]
-**To:** Relation family summary DTO
-**Direction:** Outbound
-
-### Field Mapping
-
-| Source Field                                  | Target Field                           | Transform | Notes                                      |
-| --------------------------------------------- | -------------------------------------- | --------- | ------------------------------------------ |
-| [GraphEdge](domain.md#graphedge).edgeType     | family                                 | classify  | Maps each edge type into one family bucket |
-| [GraphEdge](domain.md#graphedge).edgeId       | familyCounts[family].count             | aggregate | Increments family edge count               |
-| [GraphEdge](domain.md#graphedge).crossFeature | familyCounts[family].crossFeatureCount | aggregate | Increments cross-feature count             |
-
-### Defaults
-
-| Target Field | Default Value | Condition                |
-| ------------ | ------------- | ------------------------ |
-| familyCounts | `{}`          | No edges matched filters |
-
-### Validation
-
-| Field              | Validation                                             | On Failure                                          |
-| ------------------ | ------------------------------------------------------ | --------------------------------------------------- |
-| family             | Must map from canonical [EdgeType](domain.md#edgetype) | Reject edge from family summary                     |
-| familyCounts total | Must equal projected edge count                        | Reject family summary and return projection warning |
-
----
-
-## GraphToDependencyMatrixMapping
-
-**From:** [GraphEdge](domain.md#graphedge)[], [GraphNode](domain.md#graphnode)[], and [ComputeDependencyRiskScore](operations.md#computedependencyriskscore) results
-**To:** [FeaturePairImpact](domain.md#featurepairimpact) matrix cells
-**Direction:** Bidirectional
-
-### Field Mapping
-
-| Source Field                         | Target Field                                                                         | Transform | Notes                      |
-| ------------------------------------ | ------------------------------------------------------------------------------------ | --------- | -------------------------- |
-| source/target feature ids from edges | [FeaturePairImpact](domain.md#featurepairimpact).sourceFeatureId and targetFeatureId | direct    | Matrix cell coordinates    |
-| C1                                   | [FeaturePairImpact](domain.md#featurepairimpact).structuralCouplingRatio             | direct    | Structural ratio           |
-| C2                                   | [FeaturePairImpact](domain.md#featurepairimpact).crossFeaturePropagationRatio        | direct    | Cross-feature ratio        |
-| C3                                   | [FeaturePairImpact](domain.md#featurepairimpact).governanceExposureRatio             | direct    | Governance ratio           |
-| C4                                   | [FeaturePairImpact](domain.md#featurepairimpact).lifecycleVolatilityRatio            | direct    | Lifecycle ratio            |
-| C5                                   | [FeaturePairImpact](domain.md#featurepairimpact).riskScore                           | direct    | Risk score                 |
-| C6                                   | [FeaturePairImpact](domain.md#featurepairimpact).riskBand                            | direct    | Computed risk band         |
-| C6 plus exception state              | [FeaturePairImpact](domain.md#featurepairimpact).effectiveState                      | direct    | Effective governance state |
-
-### Defaults
-
-| Target Field                                                       | Default Value | Condition                    |
-| ------------------------------------------------------------------ | ------------- | ---------------------------- |
-| [FeaturePairImpact](domain.md#featurepairimpact).riskScore         | 0             | No qualifying edges for pair |
-| [FeaturePairImpact](domain.md#featurepairimpact).riskBand          | Stable        | No qualifying edges for pair |
-| [FeaturePairImpact](domain.md#featurepairimpact).activeExceptionId | null          | No active exception          |
-
-### Validation
-
-| Field                               | Validation                                   | On Failure         |
-| ----------------------------------- | -------------------------------------------- | ------------------ |
-| sourceFeatureId and targetFeatureId | Must differ                                  | Reject matrix cell |
-| riskScore                           | Must be integer in range [0, 100]            | Reject matrix cell |
-| riskBand                            | Must be valid [RiskBand](domain.md#riskband) | Reject matrix cell |
-
----
-
-## PathToStoryboardMapping
-
-**From:** [GetShortestCrossFeaturePath](queries.md#getshortestcrossfeaturepath), [BuildImpactStoryboard](operations.md#buildimpactstoryboard), and [FeaturePairImpact](domain.md#featurepairimpact)
-**To:** Storyboard DTO for [GetImpactStoryboard](queries.md#getimpactstoryboard)
-**Direction:** Outbound
-
-### Field Mapping
-
-| Source Field               | Target Field                                   | Transform | Notes                                               |
-| -------------------------- | ---------------------------------------------- | --------- | --------------------------------------------------- |
-| query path nodes and edges | storyboard.steps[]                             | sequence  | Ordered into [TraceStep](domain.md#tracestep) items |
-| matrix cell source/target  | storyboard.sourceFeatureId and targetFeatureId | direct    | Matrix coordinates                                  |
-| matrix cell risk score     | storyboard.riskScore                           | direct    | Score context                                       |
-| matrix cell risk band      | storyboard.riskBand                            | direct    | Governance context                                  |
-| edge evidence paths        | storyboard.evidencePaths[]                     | aggregate | Unique evidence path list                           |
-
-### Defaults
-
-| Target Field               | Default Value | Condition                       |
-| -------------------------- | ------------- | ------------------------------- |
-| storyboard.steps[]         | []            | No path found under constraints |
-| storyboard.evidencePaths[] | []            | No evidence paths available     |
-
-### Validation
-
-| Field                           | Validation                                   | On Failure               |
-| ------------------------------- | -------------------------------------------- | ------------------------ |
-| storyboard.steps[].edgeType     | Must exist in [EdgeType](domain.md#edgetype) | Reject step              |
-| storyboard.steps[].evidencePath | Must be non-empty                            | Reject step              |
-| storyboard source and target    | Must match matrix cell pair                  | Reject storyboard output |
+| Field      | Validation                           | On Failure                                  |
+| ---------- | ------------------------------------ | ------------------------------------------- |
+| definition | `filePath` and `anchor` must resolve | Return explicit unresolved-definition error |

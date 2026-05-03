@@ -12,7 +12,8 @@ Primary outcome:
 
 1. Medium/high complexity tasks must produce a structured plan artifact before any spec or code mutation.
 2. The plan must capture context gaps, decision options with trade-offs, locked decisions, and wave-by-wave execution.
-3. Pipeline and readiness stages must enforce this contract consistently.
+3. Medium/high plans must start with Wave `W0` for architecture baseline and full stage coverage lock.
+4. Pipeline and readiness stages must enforce this contract consistently.
 
 ## Why this matters
 
@@ -72,15 +73,23 @@ Required sections:
    - selected option
    - rationale
    - source and timestamp
-5. Wave execution plan
+5. Architecture baseline wave (`W0`)
+   - architecture constraints from `domainspec/ARCHITECTURE.md`
+   - UI/infra constitutions when applicable
+   - explicit W0 exit gate before mutation-capable stages
+6. Pipeline stage coverage matrix
+   - all canonical stages listed (including skipped stages)
+   - stage-to-wave mapping
+   - status and skip reason when skipped
+7. Wave execution plan
    - dependencies
    - gates
    - done criteria
    - evidence outputs
-6. Structured execution prompt
+8. Structured execution prompt
    - compact execution contract for downstream agents
    - explicit boundaries (what not to do)
-7. Traceability links
+9. Traceability links
    - each wave step linked to feature aspect files
 
 ### Rule 2a: Work-pack must scale without bloat
@@ -104,6 +113,7 @@ Recommended modular layout:
 - `docs/features/{feature}/work-pack/tasks/TASK-A.md`
 - `docs/features/{feature}/work-pack/tasks/TASK-B.md`
 - `docs/features/{feature}/work-pack/tasks/TASK-C.md`
+- `docs/features/{feature}/work-pack/waves/W0.md`
 - `docs/features/{feature}/work-pack/waves/W1.md`
 - `docs/features/{feature}/work-pack/waves/W2.md`
 - `docs/features/{feature}/work-pack/waves/W3.md`
@@ -119,7 +129,10 @@ Manifest invariants:
 1. The manifest must always exist.
 2. The manifest must link all active module files.
 3. The manifest must contain current status per wave.
-4. Gates evaluate the manifest plus linked modules as one logical artifact.
+4. The manifest must include Wave `W0` with architecture baseline objective and completion status.
+5. The manifest must include a pipeline stage coverage matrix with all canonical stages.
+6. Stages marked `skipped` must include an explicit skip reason.
+7. Gates evaluate the manifest plus linked modules as one logical artifact.
 
 ### Rule 3: No mutation before decision lock
 
@@ -128,6 +141,8 @@ If blocker-level decisions are unresolved (task-local or cross-task), return BLO
 ### Rule 4: Wave-by-wave execution only
 
 For medium/high work, execution must follow the defined wave sequence. A blocked gate in one wave blocks later waves.
+
+`W0` is the mandatory first wave and must complete before spec/test/code mutation waves.
 
 ### Rule 5: Readiness profile required at completion
 
@@ -146,10 +161,11 @@ Pipeline exists to enforce the plan contract end-to-end, not to replace it.
 Integration points:
 
 1. Planner/orchestrator run complexity gate.
-2. Decision gate enforces task-level and cross-task lock before mutation.
-3. Specialist skills execute waves from the work-pack manifest and linked wave modules.
-4. Verifier checks required artifacts and evidence.
-5. Readiness stage emits final profile-based verdict.
+2. Planner enforces `W0` architecture baseline and full stage coverage matrix.
+3. Decision gate enforces task-level and cross-task lock before mutation.
+4. Specialist skills execute waves from the work-pack manifest and linked wave modules.
+5. Verifier checks required artifacts and evidence.
+6. Readiness stage emits final profile-based verdict.
 
 ## Planner authority and invocation policy
 
@@ -166,6 +182,7 @@ Recommended manifest control fields:
 
 - `plannerGateStatus`: pass | block
 - `complexity`: low | medium | high
+- `architectureWave`: W0
 - `activePlanRef`: path to current plan artifact
 - `lastPlannedAt`: ISO timestamp
 
@@ -239,6 +256,8 @@ Must validate planner gate status before writing changes. If invalid, they must 
 - `docs/features/{feature}/WORK-PACK.md`
 - `docs/features/{feature}/work-pack/` module files (when split mode is active)
 - `docs/features/{feature}/work-pack/tasks/*.md` with task-local gaps/questions and decisions
+- `docs/features/{feature}/work-pack/waves/W0.md` with architecture baseline and exit gate
+- `WORK-PACK.md` pipeline stage coverage matrix listing all canonical stages
 - `docs/features/{feature}/DECISIONS.md` (or profile-specific decision artifact)
 - updated SPEC/test artifacts with wave trace links
 - readiness verdict with selected profile and evidence

@@ -33,6 +33,16 @@ Output:
 2. Extract expected behaviors and contracts from docs.
 3. Inspect implementation evidence in code and tests.
 4. Classify each item as compliant, partial, missing, or extra.
+4a. **Test obligation coverage gate (MANDATORY):**
+   a. Parse `docs/features/{feature}/TEST-SPEC.md` `## Test Catalogue` and build the expected obligation ID set (for example `KGV1-*`).
+   b. Build implemented-evidence ID set by scanning executable test sources and automated test outputs for obligation IDs in test names (`KGV1-[A-Z0-9-]+`).
+   c. For each expected ID, verify at least one executable test or deterministic evidence row references that exact ID.
+   d. Emit coverage summary with counts and lists: expected IDs, covered IDs, uncovered IDs, orphan IDs.
+   e. Severity policy:
+      - Any uncovered ID in `V1 Pipeline Must-Pass Subset` (`P0`) -> **BLOCK**.
+      - Any uncovered non-`P0` ID -> **FLAG**.
+      - **PASS** only when uncovered IDs = 0.
+   f. Never treat aggregate command pass counts alone as sufficient obligation coverage evidence.
 5. **Infrastructure Binding audit** — for each feature with implementation:
    a. Identify all repository/gateway ports defined in domain layer (types, interfaces).
    b. For each port, verify a real (DB-backed) adapter exists in `infrastructure/repositories/`.
@@ -48,5 +58,6 @@ Output:
    b. Search for deprecated files: files with `@deprecated` JSDoc tags, imports from non-existent modules, or references to non-existent schema tables. Flag as HIGH with remediation: delete dead code.
    c. Cross-reference `events.md` "Consumed by" tables: for each declared consumer, verify the consuming handler exists and is wired (not a stub). Flag missing handlers as BLOCK.
    d. Cross-reference other features' `events.md` for events this feature should consume (check SPEC.md dependencies): verify handlers exist. Flag missing as HIGH.
-7. Emit prioritized remediation actions.
+7. Enforce verdict floor from obligation coverage gate before finalizing report.
+8. Emit prioritized remediation actions.
 </process>
