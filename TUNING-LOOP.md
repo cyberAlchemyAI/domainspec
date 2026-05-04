@@ -16,7 +16,7 @@ Canonical drift/convergence reference:
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        PIPELINE RUN (sync)                            │
 │                                                                       │
-│  research → analyze → summarize → discovery → plan → spec →           │
+│  research → findings → discovery → plan → spec →                      │
 │  stories → tests → implement → verify → emit-signals                   │
 │                                                                  │    │
 │                                              ┌───────────────────┘    │
@@ -59,7 +59,7 @@ Canonical drift/convergence reference:
                                                └──────────► (loop restarts)
 ```
 
-**Note on subagents-strategy.** The `research → analyze → summarize` upstream stages may be executed manually OR via the `subagents-strategy` mechanism (see `vault/discovery/vault-foundations/subagents-strategy.md`). Subagents-strategy is a **tool**, not itself a pipeline stage in drift-convergence. The three-file `/research/` output set produced by a subagents-strategy dispatch (`subagents-strategy.md`, `subagents-research.md`, `subagents-findings.md`) feeds into the `discovery` stage downstream.
+**Note on domainspec-subagents-strategy.** The `research → findings` upstream stages may be executed manually OR via the `domainspec-subagents-strategy` mechanism (see `vault/discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md`). Subagents-strategy is a **tool**, not itself a pipeline stage in drift-convergence. When a dispatch is used, its three-file `/research/` output set maps directly onto these stages: `domainspec-subagents-strategy.md` is the dispatch record, `domainspec-subagents-research.md` is the `research` artifact (raw evidence), `domainspec-subagents-findings.md` is the `findings` artifact (synthesis on top, analysis below — see domainspec-subagents-strategy D-11). The `findings` then feeds the `discovery` stage downstream. `analyze` and `summarize` are no longer separate stages — analysis is co-located inside `findings` per D-11.
 
 **Note on knowledge graphs.** This pipeline shows only the **specs path** — discovery feeds the existing `plan → spec → ...` chain. A knowledge-graph path (discovery becoming a knowledge node rather than a spec) is planned but out of scope for this version. The eventual knowledge graphs will be: (1) ontology + domain-knowledge (combined for now), (2) application.
 

@@ -2,7 +2,6 @@
 tags: [vault, ontology, research, taxonomy-history, upper-ontologies, structure, governance, synthesis]
 node_type: research
 is_session: false
-session_ref: null
 layer: ontology
 nature: explanatory, reference
 status: draft
@@ -1242,4 +1241,4 @@ JEL revisions happen inside the AEA Executive Committee with little public visib
 | Document | Type | Description |
 |----------|------|-------------|
 | [../scope-and-domain-axes.md](../scope-and-domain-axes.md) | `derives-from` | This consolidated evidence survey resolves OQ-1 through OQ-4 of the parent discovery and defers OQ-5 and OQ-6. Combines the four T-track research outputs (T1 empirical history, T2 upper ontologies, T3 tree-vs-DAG-vs-lattice, T4 governance) and their original SYNTHESIS into a single document. |
-| [../../../ontology-conventions.md](../../../ontology-conventions.md) | `refines` | The structural commitment (§4), growth rule set (§3), and scope definitions from §8 are the direct inputs to the constitution amendments. |
+| [../../../ontology-conventions.md](../../../ontology-conventions.md) | `cites` | The structural commitment (§4), growth rule set (§3), and scope definitions from §8 are the direct inputs to the constitution amendments. |

@@ -150,5 +150,5 @@ Classification rules constitute the contract between domain logic and analytics.
 
 | Document | Type | Description |
 |----------|------|-------------|
-| [[folder-structure-constitution]] | `contextualizes` | Folder structure constitution applies these principles to directory organization |
+| [[folder-structure-constitution]] | `cites` | Folder structure constitution applies these principles to directory organization |
 | [[system-premises]] | `derives-from` | P1, P3, P6 directly motivate these development practices |

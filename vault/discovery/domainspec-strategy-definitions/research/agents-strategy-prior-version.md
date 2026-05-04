@@ -1,5 +1,5 @@
-<!-- SUPERSEDED on 2026-05-02 by vault/discovery/vault-foundations/subagents-strategy.md (concept renamed agents-strategy → subagents-strategy and the two duplicates merged). Preserved as historical context. -->
-<!-- Preserved as historical context. The canonical version of this document is vault/discovery/vault-foundations/agents-strategy.md (from agents-strategy-rules/agents-strategy.md), which follows the standard discovery template. This file was the earlier draft at vault/discovery/agents-strategy.md. -->
+<!-- SUPERSEDED on 2026-05-02 by vault/discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md (concept renamed agents-strategy → domainspec-subagents-strategy and the two duplicates merged; moved out of domainspec-vault-foundations/ on 2026-05-02 in the foundations split). Preserved as historical context. -->
+<!-- Preserved as historical context. The canonical version is now at vault/discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md. This file was the earlier draft at vault/discovery/agents-strategy.md. -->
 ---
 tags: [vault, agents, dispatch, orchestration, agents-strategy]
 node_type: discovery

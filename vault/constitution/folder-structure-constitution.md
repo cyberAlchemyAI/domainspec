@@ -223,5 +223,7 @@ domains/stock/
 | Document                            | Type             | Description                                                        |
 | ----------------------------------- | ---------------- | ------------------------------------------------------------------ |
 | [[system-premises]]        | `derives-from`   | P4 (domains are hypotheses) applies directly to this structure     |
-| [[fidc-and-credit-rights]] | `contextualizes` | Code domains mirror business market domains                        |
+| [[fidc-and-credit-rights]] | `cites` | Code domains mirror business market domains                        |
 | [folder-structure (skill)](../../../.claude/skills/custom/folder-structure.md) | `operationalizes` | Condensed skill for agent execution |
+| [[development-practices-constitution]] | `cited-by` | Development practices constitution cites this folder-structure constitution as the directory-organization application of its principles. |
+| [[event-system-constitution]] | `cited-by` | Event-system constitution cites this folder-structure constitution to locate event_log_service.py, event_catalog.py, and domain folders. |

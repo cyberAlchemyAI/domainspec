@@ -33,6 +33,13 @@ Use these artifacts as contracts:
 - domainspec/RELATIONSHIPS.md
 - domainspec/TEST-PIPELINE.md
 - docs/features/{feature}/*.md
+- docs/features/{feature}/discovery/<slug>.md (any discovery file under the `discovery/` subfolder; required input alongside SPEC.md when present)
+
+Discovery as a required source (soft gate — planner never blocks):
+- If any discovery exists under `docs/features/{feature}/discovery/` (glob `*.md`) → read it as planning input alongside SPEC.md and cite it in the readiness summary.
+- If the feature SPEC frontmatter sets `discovery_waived: true` → proceed, but list the feature under a flagged item in the readiness summary as "Discovery waived (reason: <discovery_waiver_reason>). Audit signal preserved." Do not block.
+- If neither a discovery file nor a `discovery_waived: true` waiver exists → emit a single recommendation line at the start of the plan: "Recommend writing discovery first or invoking with `--skip-discovery`. Continuing." Then proceed; do not halt.
+- The planner only flags discovery state; it never blocks on it.
 </context>
 
 <execution>

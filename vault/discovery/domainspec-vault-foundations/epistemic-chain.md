@@ -2,13 +2,12 @@
 tags: [vault, ontology, epistemic-chain, classification, governance]
 node_type: discovery
 is_session: false
-session_ref: null
 layer: ontology
 nature: explanatory, reference
 status: draft
 veracidade: low
 convicção: high
-version: 0.2.0
+version: 0.3.0
 last_updated: 2026-05-02
 ---
 
@@ -297,6 +296,18 @@ The loop is closed. New observations become research; research becomes discovery
 
 ---
 
+### D-9 — Discovery is canonical; sessions and research feed into it
+
+**Decision:** Discovery documents are the canonical artifact in the epistemic chain. Research files and session logs feed *into* discoveries — they record provenance, evidence, and the reasoning trail — but they do not override the text of the discovery itself. When a session log and a discovery document disagree about the status or content of a decision, the discovery wins; the session log is treated as provenance only. Changing a decision requires editing the discovery document directly. The session log records that the edit happened, but it cannot substitute for the edit.
+
+**Rationale:** Without this rule, the epistemic chain has two competing canons: the discovery (a consolidated decision record) and the session log (an exploratory transcript). Session logs are by their nature time-ordered and conversational — they capture the flow of reasoning, including dead ends and reversals. Treating them as authoritative would mean the "current state" of a decision could only be reconstructed by reading every session in order, which is exactly the failure mode discoveries were introduced to solve (D-2). Promoting the discovery to canonical status keeps the on-disk text as the single point of truth, while preserving session logs in their proper role as the provenance of how the discovery got to its current shape.
+
+**Consequence:** Every "Settled" status in a discovery means "settled on disk in the discovery doc." A decision that exists only in a session log — even if the session declared it resolved — is not yet settled in the chain; it is a pending edit awaiting promotion into a discovery. Audits that check decision status must read discoveries, not sessions. This rule closes OQ-NEW-2 from `vault/sessions/2026-05-02-1820-vault-foundations-oq-resolutions-and-recovery.md` and the T2 tension surfaced in `vault/discovery/robot-talks-definitions/examples/robots-discussing.md` Turn 2.
+
+**Status:** Settled.
+
+---
+
 ## Alternatives Considered
 
 ### A-1 — Keep `discovery` to mean both exploration and consolidation
@@ -412,4 +423,8 @@ The loop is closed. New observations become research; research becomes discovery
 | [scope-and-domain-axes.md](scope-and-domain-axes.md) | `derives-from` | This discovery extends the meta-classification work begun in scope-and-domain-axes; D-1 of that discovery (orthogonality demotion) is a concrete example of the epistemic chain in action. |
 | [ontology-conventions.md](../../ontology-conventions.md) | `refines` | This discovery proposes amendments: adding `research` as a named `node_type` value and clarifying the epistemic chain model for the existing `node_type` definitions. |
 | [confidence-levels.md](../../confidence-levels.md) | `derives-from` | The `veracidade` axis defined there is the promotion mechanism for premise → axiom (D-3); the `status` lifecycle informs the maturity model of the chain. |
-| `vault/discovery/research/epistemic-chain-evidence-survey.md` | `derives-from` | The parallel evidence survey by W2 (running in parallel with this draft — file may not yet exist at time of writing; forward-reference declared). |
+| `research/epistemic-chain-evidence-survey.md` | `derives-from` | The parallel evidence survey by W2 (running in parallel with this draft — file may not yet exist at time of writing; forward-reference declared). |
+| `vault/sessions/2026-05-02-1820-vault-foundations-oq-resolutions-and-recovery.md` | `provenance-for` | Session that surfaced OQ-NEW-2 (discovery vs session canonicity); D-9 records the resolution on disk. |
+| `vault/discovery/robot-talks-definitions/examples/robots-discussing.md` | `provenance-for` | Turn 2 raised the T2 tension between session logs and discovery text as competing canons; D-9 settles it in favor of the discovery. |
+| `vault/discovery/domainspec-vault-edges/research/domainspec-subagents-strategy.md` | `cited-by` | The vault-edges domainspec-subagents-strategy research cites D-1 through D-9 here as canonical chain edges that constrain its edge catalog. |
+| `vault/discovery/robot-talks-definitions/robot-talks.md` | `cited-by` | The robot-talks discovery cites D-9 (discovery is canonical, sessions are provenance only) as a precedence rule. |

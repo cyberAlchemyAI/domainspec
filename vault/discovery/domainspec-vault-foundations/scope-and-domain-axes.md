@@ -2,7 +2,6 @@
 tags: [vault, ontology, agents, classification]
 node_type: discovery
 is_session: false
-session_ref: null
 layer: ontology
 nature: explanatory, reference
 status: exploratory
@@ -371,7 +370,7 @@ Drawn from documents in the current vault, partitioned by `scope`. The disciplin
 - `event-system` — our specific event system implementation: the constitution, the specification, the behavioral rules. Covers `event-system-constitution.md` and downstream specs.
 - `folder-structure` — our vault and codebase directory layout: conventions, enforcement, rationale. Covers `folder-structure-constitution.md`.
 - `frontend` — our frontend architecture, axioms, premises, and constitutions. Covers `frontend-constitution.md`, `frontend-axioms.md`, `frontend-premises.md`.
-- `agent-system` — the dispatch and orchestration layer: subagent model, multi-agent premises, robot-talks protocol. Covers `subagents-strategy-premises.md`, `robot-talks-constitution.md`, `robot-talks-premises.md`.
+- `agent-system` — the dispatch and orchestration layer: subagent model, multi-agent premises, robot-talks protocol. Covers `domainspec-subagents-strategy-premises.md`, `robot-talks-constitution.md`, `robot-talks-premises.md`.
 - `commit-discipline` — git commit conventions and development practices. Covers `commit-message-constitution.md`, `development-practices-constitution.md`.
 - `vault-navigation` — human and agent navigation guides for the vault: how to read it, how to traverse it. Covers `agent-navigation.md`, `human-navigation.md`.
 
@@ -400,8 +399,11 @@ These are not commitments. They are orientation points for the implementation pl
 | Document | Type | Description |
 |----------|------|-------------|
 | [ontology-conventions.md](../../ontology-conventions.md) | `refines` | This discovery proposes amendments to the conventions: split `layer` into `scope` + `domain`, demote orthogonality to premise, document the density gradient as productive correlation. |
-| [confidence-levels.md](../../confidence-levels.md) | `depends-on` | Uses the existing 2×2 `veracidade` × `convicção` matrix; specifically, classifies orthogonality as a "strategic bet" (low veracidade, high convicção) using that matrix. |
-| [ontology-architecture-draft.md](../../ontology-architecture-draft.md) | `contextualizes` | The Bayesian agent described there is the future instrumentation layer that would promote orthogonality from heuristic to measured rule. |
+| [confidence-levels.md](../../confidence-levels.md) | `derives-from` | Uses the existing 2×2 `veracidade` × `convicção` matrix; specifically, classifies orthogonality as a "strategic bet" (low veracidade, high convicção) using that matrix. |
+| [ontology-architecture-draft.md](../../ontology-architecture-draft.md) | `cites` | The Bayesian agent described there is the future instrumentation layer that would promote orthogonality from heuristic to measured rule. |
 | [conceptual/epistemic-principles.md](../../conceptual/epistemic-principles.md) | `questions` | The Orthogonality Principle entry needs revision — current text presents it as if it were measurable; this discovery flags it as currently a heuristic. |
 | [research/scope-and-domain-axes-evidence.md](research/scope-and-domain-axes-evidence.md) | `derives-from` | Consolidated evidence survey resolving OQ-1 through OQ-4. Combines empirical history of taxonomy evolution (Linnaean biology, MeSH, DDC, Wikipedia categories), upper-ontology survey (BFO, DOLCE, SUMO, Cyc, schema.org, WordNet), structural analysis (tree vs DAG vs lattice), and governance survey (Wikidata, OBO Foundry, ACM CCS, JEL, MSC, schema.org pending) into a single research document. The original four parallel research tracks (T1–T4) and their synthesis are preserved as named appendix sections within. |
 | `implementation-plan TBD` | `superseded-by` | The implementation plan that operationalizes these decisions has not yet been written. This discovery is the input to that plan. |
+| [epistemic-chain.md](epistemic-chain.md) | `derives` | The epistemic-chain discovery extends the meta-classification work begun here; D-1 (orthogonality demotion) is the canonical example it cites. |
+| [../../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed an in-content rename sweep (`vault-foundations` → `domainspec-vault-foundations` and related `subagents-*` → `domainspec-*` references). |
+| `vault/discovery/domainspec-vault-edges/research/domainspec-subagents-strategy.md` | `cited-by` | The vault-edges domainspec-subagents-strategy research cites D-3, D-5, D-10 here as a structural constraint on edge typology (typed-DAG with tree-constrained `subclass-of`). |

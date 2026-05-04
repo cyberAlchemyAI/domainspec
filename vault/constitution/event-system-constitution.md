@@ -585,7 +585,7 @@ When reviewing a PR that emits events, verify:
 | Document | Type | Description |
 |----------|------|-------------|
 | [[development-practices-constitution]] | `derives-from` | Amendment process and agent autonomy rules live there |
-| [[folder-structure-constitution]] | `contextualizes` | Defines where event_log_service.py, event_catalog.py, and domains live |
+| [[folder-structure-constitution]] | `cites` | Defines where event_log_service.py, event_catalog.py, and domains live |
 | [[system-axioms]] | `derives-from` | AX-SYS-4 (Immutability) and AX-SYS-5 (Observability) are the bedrock constraints |
 | [[system-premises]] | `derives-from` | P-SYS-9 (Streams), P-SYS-10 (Fail-Open), and P-SYS-11 (Hashes) shape the rules |
 | [[system-premises]] | `derives-from` | P-SYS-6 (Implied Knowledge is Lost Knowledge) motivates the strict catalog contract |

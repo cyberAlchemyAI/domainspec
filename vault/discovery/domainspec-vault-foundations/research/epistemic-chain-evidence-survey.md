@@ -3,7 +3,6 @@ tags: [vault, ontology, research, epistemic-chain, evidence-survey]
 node_type: discovery
 # Forward-looking note: under the model being finalized in vault/discovery/epistemic-chain.md, this would be node_type: research
 is_session: false
-session_ref: null
 layer: ontology
 nature: reference
 status: draft
@@ -656,9 +655,9 @@ The following are concrete examples W1 should weave into the discovery to make t
 
 | Document | Type | Description |
 |----------|------|-------------|
-| `vault/discovery/epistemic-chain.md` | `informs` | This survey provides the concrete evidence base for W1's discovery |
+| `../epistemic-chain.md` | `informs` | This survey provides the concrete evidence base for W1's discovery |
 | `vault/ontology-conventions.md` | `derives-from` | The node_type definitions used throughout this survey |
 | `vault/confidence-levels.md` | `derives-from` | The maturity lifecycle used to assess promotion candidates |
 | `vault/axiom/ontology-axioms.md` | `questions` | AX-ONT-7 classification as axiom is challenged by this survey |
-| `vault/discovery/research/T1-empirical-history.md` | `contextualizes` | Part of the research wave surveyed here |
-| `vault/discovery/research/SYNTHESIS.md` | `contextualizes` | Synthesis document surveyed here |
+| `vault/discovery/research/T1-empirical-history.md` | `cites` | Part of the research wave surveyed here |
+| `vault/discovery/research/SYNTHESIS.md` | `cites` | Synthesis document surveyed here |

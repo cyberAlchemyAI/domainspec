@@ -199,9 +199,11 @@ This premise is false if: Tensioning without line-of-code citations produces equ
 
 | Node | Relationship | Purpose |
 |------|--------------|---------|
-| [robot-talks-constitution.md](../constitution/robot-talks-constitution.md) | `operationalized-by` | Constitutional rules that implement these premises |
+| [robot-talks-constitution.md](../constitution/robot-talks-constitution.md) | `codified-as` | Constitutional rules that codify these premises |
 | [robot-talks-discovery.md](../../specs/ontology/possible_constitutions/robot-talks/robot-talks-discovery.md) | `grounded-by` | Theoretical argument connecting premises to orchestration |
 | [tese-orquestracao-por-pulso.md](../../docs/business-philosopher/assuntos/orquestracao-multi-agente/tese-orquestracao-por-pulso.md) | `instantiates` | Pulsed orchestration thesis (P-RT-5) |
+| [discovery/robot-talks-definitions/robot-talks.md](../discovery/robot-talks-definitions/robot-talks.md) | `derives` | The robot-talks discovery consolidates and explains the 8 working premises (P-RT-1 through P-RT-8) defined here. |
+| [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed an in-content rename sweep (`subagents-*` → `domainspec-*`). |
 
 ---
 

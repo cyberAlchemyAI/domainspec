@@ -107,4 +107,11 @@ The highest level. Information considered true until explicitly refuted. Serves 
 
 ---
 
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| [discovery/domainspec-vault-foundations/epistemic-chain.md](discovery/domainspec-vault-foundations/epistemic-chain.md) | `derives` | The epistemic-chain discovery uses the `veracidade` axis defined here as the promotion mechanism for premise → axiom (D-3); the `status` lifecycle informs the chain's maturity model. |
+| `sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md` | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session bootstrapped this `## Connections` block as Tier-1 of the `inverse-edge-fix` discovery's plan. |
+| [discovery/domainspec-vault-foundations/scope-and-domain-axes.md](discovery/domainspec-vault-foundations/scope-and-domain-axes.md) | `derives` | The scope-and-domain-axes discovery derives from the 2x2 `veracidade` x `convicção` matrix defined here, classifying orthogonality as a "strategic bet" using that matrix. |
 
