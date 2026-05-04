@@ -156,20 +156,6 @@ In `vault/premise/old-edge-policy.md` (target side, symmetric for `contradicts`)
 | `vault/discovery/domainspec-vault-edges/findings.md` | `created-by` | The session that produced findings.md also surfaced this conflict. |
 ```
 
-## Deprecated edges — do NOT use
-
-| Old edge | Use instead |
-|----------|-------------|
-| `references`, `contextualizes` | `cites` |
-| `produces` / `produced-by` | `derives-from` / `derives` |
-| `provenance-for` | `creates` |
-| `resolves` | `closes-question` (sessions) or `supersedes` (documents) |
-| `questions` | `opens-question` |
-| `depends-on` | `derives-from` |
-| `exemplifies`, `instance-of`, `instantiates` | (deferred — do not use until admitted) |
-| `updates`, `deprecates` | use `version:` / `status:` frontmatter, not edges |
-| `grounds`, `grounded-by` | (none — write the forward edge from the catalog above) |
-
 ## See also
 
 - `vault/ontology-conventions.md` — Section 8 (bidirectionality rule with both carve-outs: skills/agents forward-only-by-target, and sessions forward-only-by-source) and **Appendix C** (full 21-edge catalog with cardinality and node-type constraints).
