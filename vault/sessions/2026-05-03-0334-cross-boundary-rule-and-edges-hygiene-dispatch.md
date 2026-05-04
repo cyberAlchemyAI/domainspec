@@ -103,3 +103,4 @@ Investigated cross-boundary edges (vault → `.claude/skills/*` and vault → `.
 | `../discovery/domainspec-vault-foundations/README.md` | `modifies` | Folder renamed from `vault-foundations/`; README is the navigable file at the new path. |
 | `../templates/domainspec-research.md` | `modifies` | Renamed from `subagents-research`. |
 | `../templates/domainspec-findings.md` | `modifies` | Renamed from `subagents-findings`. |
+| `./2026-05-04-1205-disallowed-edges-audit-and-r15-rewrite.md` | `contradicts` | The 2026-05-04 session corrected this session's REPLACE rename (`subagents-` → `domainspec-`) by applying the intended PREPEND pattern (`subagents-` → `domainspec-subagents-`) via a 39-file content sweep. |

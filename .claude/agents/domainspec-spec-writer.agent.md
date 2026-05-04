@@ -2,7 +2,7 @@
 name: domainspec-spec-writer
 description: Use when authoring or evolving DomainSpec feature docs, especially when context research is needed before writing specs; delegates focused repository exploration to research subagents.
 tools: [Bash, Read, Edit, Write, Glob, Grep, Task, Skill, TodoWrite, WebFetch, WebSearch, NotebookEdit, AskUserQuestion]
-agents: ["Explore", "domainspec-researcher"]
+agents: ["Explore", "mars-researcher"]
 color: blue
 ---
 
@@ -60,7 +60,7 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
   - When efficiency is equal or uncertain, default to DomainSpec-first navigation: (a) links from SPEC.md and aspect docs, (b) docs index artifacts and tags, (c) broader repository search.
   - For this efficiency pass, prioritize existing navigational artifacts: docs/index/feature-map.md, docs/index/features-index.json, docs/index/tag-index.json, and frontmatter tags (status/pillar/domain/audience/priority/lang/owners/dependencies/includes).
   - Prefer `Explore` for broad codebase discovery (quick/medium/thorough as needed).
-  - Use `domainspec-researcher` for focused domain decision research.
+  - Use `mars-researcher` for focused domain decision research.
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
 3. Start from SPEC.md and concept inventory using gathered context.
 4. Generate only relevant aspect files for the feature.

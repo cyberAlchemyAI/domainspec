@@ -1,5 +1,5 @@
 ---
-description: How to declare bidirectional relationships in ## Connections blocks — pick the right edge in under 30 seconds. Bidirectionality applies between vault nodes; outgoing edges into `.claude/skills/*` and `.claude/agents/*` are forward-only by design.
+description: How to declare bidirectional relationships in ## Connections blocks — pick the right edge in under 30 seconds. Bidirectionality applies between vault nodes; outgoing edges into `.claude/skills/*` and `.claude/agents/*` are forward-only by target, and edges originating from session nodes (`is_session: true`) are forward-only by source.
 ---
 
 # Edges Cheatsheet
@@ -13,6 +13,8 @@ Pick the correct edge name (forward + inverse) when wiring a vault document into
 Every edge **between vault nodes** is declared on **both** endpoints. The source document writes the forward edge in its `## Connections` block; the target document writes the inverse in its own `## Connections` block. Both lines are explicit Markdown — there is no SQL-layer inference of the missing side. The forward/inverse name pair is **fixed by the catalog below** — authors do not coin inverses ad hoc. `contradicts` is the only symmetric edge: both sides use the same name `contradicts`.
 
 **Formal carve-out (skills/agents).** Vault → `.claude/skills/*` and vault → `.claude/agents/*` edges are **legal-by-design forward-only**. The target file carries no `## Connections` block and no inverse is required or expected. These files are operational artifacts (skill prompts, agent definitions), not vault graph nodes. The audit script must NOT flag these as asymmetric. See the dedicated "Exception" section below for the formal statement.
+
+**Formal carve-out (sessions).** *Edges originating from a session node (`is_session: true`) are forward-only by source: they live on the session's `## Connections` block, but no inverse row is written on the target document. The auditor skips bidirectionality checks for edges whose source has `is_session: true`.* See the dedicated "Exception — forward-only edges from session nodes" section below for the formal statement.
 
 If a relationship does not fit any catalog edge, do not invent one — propose it through a discovery in `vault/discovery/`.
 
@@ -28,6 +30,20 @@ Vault documents MAY declare forward edges (e.g., `cites`, `operationalized-by`, 
 **Why:** skill files and agent files are operational artifacts that govern runtime behavior. They are not vault graph nodes — they have no `node_type`, no `veracidade`, no `convicção`, and they are not part of the epistemic chain. Treating them as graph nodes would force them to carry vault frontmatter and to participate in bidirectionality, which conflates governance artifacts with knowledge artifacts.
 
 **Scope.** This carve-out is limited to `.claude/skills/**` and `.claude/agents/**`. Other non-vault paths (e.g., `.planning/**`, `.github/**`, sibling repos) remain a separate question — see OQ-C in `vault/discovery/curator-pipeline-integration/discovery.md`.
+
+## Exception — forward-only edges from session nodes
+
+*Edges originating from a session node (`is_session: true`) are forward-only by source: they live on the session's `## Connections` block, but no inverse row is written on the target document. The auditor skips bidirectionality checks for edges whose source has `is_session: true`.*
+
+- The session document writes the forward edge in its `## Connections` block as usual (e.g., `creates`, `modifies`, `revisits`, `refutes`, `consumes`, `opens-question`, `closes-question`, `continues-from`).
+- The target vault document does NOT write an inverse row for the session edge.
+- The audit script must NOT flag these forward-only edges as asymmetric or missing-inverse — bidirectionality checks are skipped whenever the source has `is_session: true`.
+
+**Why:** sessions are processes, not knowledge artifacts. Forcing every session edge to land an inverse row on the target pollutes long-lived vault documents with churn from transient working sittings, inverts ownership (the session is the authoring locus, not the target), and inflates document edit volume without epistemic gain. Session provenance is preserved on the session itself.
+
+**Scope.** This carve-out is limited to edges whose **source** has `is_session: true`. It is orthogonal to the skills/agents carve-out above (which is keyed on the **target** path). Both exceptions remain in force simultaneously.
+
+**Canonical source.** This rule mirrors `vault/ontology-conventions.md` §8 verbatim. If the wording diverges, §8 wins.
 
 ## Connections block format
 
@@ -80,6 +96,8 @@ Place this block near the bottom of the document. One row per outgoing edge.
 | `consumes` | `consumed-by` | Session A read or used B as input without deriving new claims from it. Distinct from `derives-from` (which carries lineage). |
 
 > Session-specific edges are only valid when the source document has `is_session: true`. Document-specific edges have node-type constraints — see Appendix C for the exact source/target matrix.
+>
+> **Forward-only by source.** Every edge in this section originates from a session node. Per `vault/ontology-conventions.md` §8 and the "Exception — forward-only edges from session nodes" carve-out above, no inverse row is written on the target. The Example 2 below is illustrative of the forward direction only — the inverse rows shown in the catalog (`created-by`, `modified-by`, etc.) are name fixings for documentation, not authoring obligations on session targets.
 
 ## Examples
 
@@ -154,6 +172,6 @@ In `vault/premise/old-edge-policy.md` (target side, symmetric for `contradicts`)
 
 ## See also
 
-- `vault/ontology-conventions.md` — Section 8 (bidirectionality rule with skills/agents carve-out) and **Appendix C** (full 21-edge catalog with cardinality and node-type constraints).
+- `vault/ontology-conventions.md` — Section 8 (bidirectionality rule with both carve-outs: skills/agents forward-only-by-target, and sessions forward-only-by-source) and **Appendix C** (full 21-edge catalog with cardinality and node-type constraints).
 - `.claude/skills/custom/frontmatter.md` — frontmatter cheatsheet (every doc starts with `## Objective`).
 - `.claude/skills/custom/frontmatter-semantics.md` — definitions of every frontmatter tag.

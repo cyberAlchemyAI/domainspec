@@ -64,22 +64,22 @@ Invoke the agent with a briefing that contains:
 - The original Context + Goal (from Step 1, user-confirmed in Step 2).
 - The user-confirmed working folder path.
 
-The agent persists `<working_folder>/research/domainspec-subagents-research.md` per the template at `templates/domainspec-subagents-research.md`.
+The agent persists `<working_folder>/research/domainspec-research.md` per the template at `templates/domainspec-research.md`.
 
 ### Step 6 — Dispatch `domainspec-findings-writer`
 
 Invoke the agent with a briefing that contains:
 
-- The path to the freshly-written `domainspec-subagents-research.md`.
+- The path to the freshly-written `domainspec-research.md`.
 - The original Context + Goal.
 
-The agent reads research.md and persists `<working_folder>/research/domainspec-subagents-findings.md` per the template at `templates/domainspec-subagents-findings.md`. The output MUST satisfy R16 (three sections in order), R17 (every Findings/Analysis claim cites research.md), R18 (Dispatch record schema fully populated), R21+R22 (four-component grade with `(judgment)` markers on coverage / independence / fidelity).
+The agent reads research.md and persists `<working_folder>/research/domainspec-findings.md` per the template at `templates/domainspec-findings.md`. The output MUST satisfy R16 (three sections in order), R17 (every Findings/Analysis claim cites research.md), R18 (Dispatch record schema fully populated), R21+R22 (four-component grade with `(judgment)` markers on coverage / independence / fidelity).
 
 ### Step 7 — User-gate discovery promotion (R6b)
 
 Present the findings file to the user and ask:
 
-> *"Findings written to `<path>/domainspec-subagents-findings.md`. Promote this to a discovery node? A discovery captures explored design space — options considered, trade-offs, decisions taken — so future work can build on it without re-doing the exploration."*
+> *"Findings written to `<path>/domainspec-findings.md`. Promote this to a discovery node? A discovery captures explored design space — options considered, trade-offs, decisions taken — so future work can build on it without re-doing the exploration."*
 
 If the user confirms, classify the discovery's scope and propose the target path family:
 
@@ -106,5 +106,5 @@ Before treating the dispatch as complete:
 
 - **Rules**: [vault/constitution/domainspec-subagents-strategy-constitution.md](../../../vault/constitution/domainspec-subagents-strategy-constitution.md) — 24 rules.
 - **Rationale & falsification**: [vault/premise/domainspec-subagents-strategy-premises.md](../../../vault/premise/domainspec-subagents-strategy-premises.md).
-- **Templates**: [templates/domainspec-subagents-research.md](../../../templates/domainspec-subagents-research.md), [templates/domainspec-subagents-findings.md](../../../templates/domainspec-subagents-findings.md).
+- **Templates**: [templates/domainspec-research.md](../../../templates/domainspec-research.md), [templates/domainspec-findings.md](../../../templates/domainspec-findings.md).
 - **Writer agents** (defined under `.claude/agents/`): `domainspec-research-writer`, `domainspec-findings-writer`, `domainspec-discovery-writer`.

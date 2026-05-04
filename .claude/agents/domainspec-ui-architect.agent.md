@@ -3,7 +3,7 @@ name: domainspec-ui-architect
 description: Defines and maintains frontend architecture constitution for DomainSpec projects. Detects existing UI stack, asks interactive questions to fill gaps, produces UI-ARCHITECTURE.md, and scaffolds initial setup.
 tools: [Bash, Read, Edit, Write, Glob, Grep, Task, Skill, TodoWrite, WebFetch, WebSearch, NotebookEdit, AskUserQuestion]
 agents:
-  ["Explore", "domainspec-researcher", "gsd-ui-researcher", "gsd-ui-checker"]
+  ["Explore", "mars-researcher", "gsd-ui-researcher", "gsd-ui-checker"]
 color: "#7C3AED"
 ---
 

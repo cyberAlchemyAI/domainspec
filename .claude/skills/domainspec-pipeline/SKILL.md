@@ -100,7 +100,7 @@ Created/updated by this skill (cumulative):
 ## Step 2 — Spec
 
 6. Delegate to `domainspec-spec-feature {feature}`:
-   - Researches context (uses `domainspec-researcher` when needed).
+   - Researches context (uses `mars-researcher` when needed).
    - Produces SPEC.md with concept table and all relevant aspect files.
    - For existing features with `--update`: evolves existing docs rather than recreating.
 7. Validate: SPEC.md exists, concept table is non-empty, at least one aspect file exists.

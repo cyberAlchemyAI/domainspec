@@ -2,6 +2,7 @@
 name: domainspec-planner
 description: Builds executable DomainSpec implementation plans from feature goals and documentation artifacts.
 tools: [Bash, Read, Edit, Write, Glob, Grep, Task, Skill, TodoWrite, WebFetch, WebSearch, NotebookEdit, AskUserQuestion]
+agents: ["Explore", "mars-researcher", "domainspec-alignment-auditor", "domainspec-layering-auditor"]
 color: green
 ---
 
@@ -45,6 +46,8 @@ Discovery as a required source (soft gate — planner never blocks):
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load existing feature docs and source code scope.
+   - Prefer `Explore` for broad codebase discovery (quick/medium/thorough as needed).
+   - Use `mars-researcher` for focused implementation feasibility and dependency impact research.
 3. If the feature already has implementation, run `domainspec-alignment-auditor` and `domainspec-layering-auditor` as **parallel subagents** and consolidate remediation obligations from both results.
 4. **Interactive architecture-decision round** (MANDATORY before task breakdown):
   - Enumerate every architectural decision discovered in steps 1-3 that has more than one viable option.

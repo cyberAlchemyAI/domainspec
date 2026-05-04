@@ -89,11 +89,14 @@ importance_rationale: "{sentence}"
 
 ## Step 4 — Bootstrap edges via domainspec-vault-metadata-curator
 
-The session node must be wired into the graph bidirectionally. Do NOT write the `## Connections` block yourself — delegate to the agent that owns the edge catalog.
+The session node's outbound edges must be wired into the graph **forward-only from the session**. Do NOT write the `## Connections` block yourself — delegate to the agent that owns the edge catalog.
+
+> **Session edge rule (canonical doctrine: `vault/ontology-conventions.md` §8):**
+> *Edges originating from a session node (`is_session: true`) are forward-only by source: they live on the session's `## Connections` block, but no inverse row is written on the target document. The auditor skips bidirectionality checks for edges whose source has `is_session: true`.*
 
 Spawn the `domainspec-vault-metadata-curator` agent in **`bootstrap <session-file-path>`** mode. Brief it with:
 
-- **Session file path** (the file you just wrote in Step 3).
+- **Session file path** (the file you just wrote in Step 3). The session has `is_session: true` in its frontmatter — the curator MUST recognize this and apply the forward-only rule (no inverse rows on targets).
 - **Per-file edge intent** for every entry in "Files touched" — pick exactly one per file, derived from what actually happened in the session:
   - `creates` — new file produced this session (did not exist before).
   - `modifies` — edited a pre-existing file (any kind of edit, including added sections).
@@ -105,7 +108,7 @@ Spawn the `domainspec-vault-metadata-curator` agent in **`bootstrap <session-fil
 
 The curator will:
 - Write the `## Connections` block on the session file using catalog edges only.
-- Write the inverse row on every target file (adding a `## Connections` block to any target that lacks one).
+- **NOT** write any inverse row on any target file. Because the session source has `is_session: true`, edges are forward-only by source per `vault/ontology-conventions.md` §8 — target documents are not modified, and no `## Connections` block is added to a target that lacks one.
 - Refuse to invent edges; flag illegal cases as `NEEDS_HUMAN`.
 
 If the curator returns any `NEEDS_HUMAN` items, surface them to the user before considering the session closed. If it returns a regression report, halt and surface that immediately — do not proceed.

@@ -310,6 +310,14 @@ Vault documents MAY declare forward edges (e.g., `cites`, `operationalized-by`, 
 
 **Scope.** This carve-out is limited to `.claude/skills/**` and `.claude/agents/**`. Other non-vault paths (`.planning/**`, `.github/**`, sibling repos) remain a separate question — see OQ-C in `vault/discovery/curator-pipeline-integration/discovery.md`. Operationally, this carve-out is also restated in `.claude/skills/custom/edges.md` (Exception section) and `.claude/skills/custom/edge-catalog.md` (authoring rules).
 
+### Carve-out: edges originating from session nodes
+
+*Edges originating from a session node (`is_session: true`) are forward-only by source: they live on the session's `## Connections` block, but no inverse row is written on the target document. The auditor skips bidirectionality checks for edges whose source has `is_session: true`.*
+
+**Rationale.** Sessions are transient activity records — provenance for what happened in a single sitting, not stable graph nodes that anchor reference structure. Propagating an inverse row from every session into every document the session touched would accumulate noise on stable docs over time without adding signal: a constitution does not gain epistemic weight from being listed as `modified-by` a hundred sessions, and the session-side `## Connections` block already preserves the same provenance. Sessions are one-sided by design.
+
+**Auditor implication.** The asymmetry check skips edges whose source has `is_session: true`, alongside the existing skips for forward-only-by-target carve-outs into `.claude/skills/**` and `.claude/agents/**`.
+
 For the full catalog of 21 forward edges (40 names total counting inverses) with their directionality and usage criteria, see [Appendix C: Edge Type Catalog](#appendix-c-edge-type-catalog).
 
 > `contradicts` is the most valuable edge type: it flags inconsistencies that must be resolved before a document moves up a level. Its **absence does not mean the vault is contradiction-free** — only that no contradictions have been formally identified yet.
