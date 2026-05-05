@@ -20,6 +20,7 @@ export function parseDomainspecYamlBlock(
 
   let inDomainspec = false;
   let section: "none" | "concept" | "edges" = "none";
+  let conceptSubsection: "none" | "spec_ref" = "none";
 
   const concept: ExtractedConcept = {
     id: "",
@@ -52,12 +53,14 @@ export function parseDomainspecYamlBlock(
           currentEdge = null;
         }
         section = "concept";
+        conceptSubsection = "none";
       } else {
         if (currentEdge) {
           pushEdge(currentEdge, edges);
           currentEdge = null;
         }
         section = "edges";
+        conceptSubsection = "none";
       }
       continue;
     }
@@ -79,6 +82,49 @@ export function parseDomainspecYamlBlock(
       if (concernMatch?.[1]) {
         concept.concern = parseScalar(concernMatch[1]);
         continue;
+      }
+
+      if (/^spec_ref\s*:\s*$/.test(trimmed)) {
+        conceptSubsection = "spec_ref";
+        concept.spec_ref = concept.spec_ref || { path: "" };
+        continue;
+      }
+
+      if (conceptSubsection === "spec_ref") {
+        const pathMatch = /^path\s*:\s*(.+)$/.exec(trimmed);
+        if (pathMatch?.[1]) {
+          concept.spec_ref = concept.spec_ref || { path: "" };
+          concept.spec_ref.path = parseScalar(pathMatch[1]);
+          continue;
+        }
+
+        const sectionMatch = /^section\s*:\s*(.+)$/.exec(trimmed);
+        if (sectionMatch?.[1]) {
+          concept.spec_ref = concept.spec_ref || { path: "" };
+          concept.spec_ref.section = parseScalar(sectionMatch[1]);
+          continue;
+        }
+
+        const lineMatch = /^line\s*:\s*(.+)$/.exec(trimmed);
+        if (lineMatch?.[1]) {
+          const rawLine = parseScalar(lineMatch[1]);
+          if (/^[1-9][0-9]*$/.test(rawLine)) {
+            concept.spec_ref = concept.spec_ref || { path: "" };
+            concept.spec_ref.line = Number(rawLine);
+          } else {
+            issues.push(
+              makeIssue(
+                "CT-PARSE-004",
+                "MEDIUM",
+                `Invalid spec_ref.line '${rawLine}' (expected positive integer)`,
+                file,
+                lineNo,
+                symbol,
+              ),
+            );
+          }
+          continue;
+        }
       }
 
       continue;

@@ -126,6 +126,55 @@ test("validate-code-tags accepts matching fixture concepts and edges", () => {
   }
 });
 
+test("validate-code-tags fails on stale spec_ref path mismatch", () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), "domainspec-code-tag-test-"));
+  const outputPath = join(tempRoot, "code-tags.json");
+  const featuresRoot = createTempFeaturesRoot(tempRoot);
+
+  try {
+    const extractResult = runExtract(outputPath);
+    assert.equal(
+      extractResult.status,
+      0,
+      extractResult.stderr || extractResult.stdout,
+    );
+
+    const extracted = JSON.parse(readFileSync(outputPath, "utf-8"));
+    assert.equal(Array.isArray(extracted.tags), true);
+    assert.equal(extracted.tags.length > 0, true);
+
+    extracted.tags[0].concept.spec_ref.path = "docs/features/unknown/SPEC.md";
+    writeFileSync(
+      outputPath,
+      JSON.stringify(extracted, null, 2) + "\n",
+      "utf-8",
+    );
+
+    const validateResult = runTsxScript([
+      validateScript,
+      "--input",
+      outputPath,
+      "--features-root",
+      featuresRoot,
+      "--mode",
+      "strict",
+      "--json",
+    ]);
+
+    assert.equal(validateResult.status, 1, validateResult.stderr);
+
+    const payload = JSON.parse(validateResult.stdout);
+    assert.equal(payload.ok, false);
+    assert.equal(payload.blockingIssues > 0, true);
+    assert.equal(
+      payload.report.some((entry: { code: string }) => entry.code === "CT-017"),
+      true,
+    );
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
 test("compare-code-tag-drift passes when code and docs triples align", () => {
   const tempRoot = mkdtempSync(join(tmpdir(), "domainspec-code-tag-test-"));
   const outputPath = join(tempRoot, "code-tags.json");

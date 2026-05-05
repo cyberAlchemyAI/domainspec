@@ -12,10 +12,17 @@ export type ExtractedEdge = {
   evidence?: string;
 };
 
+export type ExtractedSpecRef = {
+  path: string;
+  line?: number;
+  section?: string;
+};
+
 export type ExtractedConcept = {
   id: string;
   type: string;
   concern?: Concern | string;
+  spec_ref?: ExtractedSpecRef;
 };
 
 export type ExtractedTag = {

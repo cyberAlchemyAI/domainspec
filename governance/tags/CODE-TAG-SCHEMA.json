@@ -28,6 +28,25 @@
             "concern": {
               "type": "string",
               "enum": ["biz", "sys"]
+            },
+            "spec_ref": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "section": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
             }
           }
         },

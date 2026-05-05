@@ -178,6 +178,8 @@ function validateTag(
   const conceptId = (tag.concept.id || "").trim();
   const conceptType = (tag.concept.type || "").trim();
   const concern = (tag.concept.concern || "").trim();
+  const specRefPath = (tag.concept.spec_ref?.path || "").trim();
+  const specRefLine = tag.concept.spec_ref?.line;
 
   const symbolKey = `${tag.file}::${tag.symbol}`;
 
@@ -234,7 +236,11 @@ function validateTag(
     );
   }
 
-  if (conceptId && !context.conceptCatalog.has(conceptId)) {
+  const sourceConcept = conceptId
+    ? context.conceptCatalog.get(conceptId)
+    : undefined;
+
+  if (conceptId && !sourceConcept) {
     out.push(
       issue(
         "CT-013",
@@ -245,6 +251,83 @@ function validateTag(
         tag,
       ),
     );
+  }
+
+  if (tag.concept.spec_ref) {
+    if (!specRefPath) {
+      out.push(
+        issue(
+          "CT-016",
+          "CRITICAL",
+          "spec_ref.path is required when concept.spec_ref is declared",
+          tag.file,
+          tag.line,
+          tag,
+        ),
+      );
+    } else if (!specRefPath.endsWith("/SPEC.md") && specRefPath !== "SPEC.md") {
+      out.push(
+        issue(
+          "CT-016",
+          "MEDIUM",
+          `Invalid spec_ref.path '${specRefPath}' (expected path ending with /SPEC.md)`,
+          tag.file,
+          tag.line,
+          tag,
+        ),
+      );
+    }
+
+    if (
+      specRefLine !== undefined &&
+      (!Number.isInteger(specRefLine) || specRefLine < 1)
+    ) {
+      out.push(
+        issue(
+          "CT-019",
+          "MEDIUM",
+          `Invalid spec_ref.line '${String(specRefLine)}' (expected positive integer)`,
+          tag.file,
+          tag.line,
+          tag,
+        ),
+      );
+    }
+
+    if (sourceConcept && specRefPath) {
+      const expectedPath = normalizeSpecPath(sourceConcept.specPath);
+      const providedPath = normalizeSpecPath(specRefPath);
+
+      if (providedPath !== expectedPath) {
+        out.push(
+          issue(
+            "CT-017",
+            "HIGH",
+            `spec_ref.path '${specRefPath}' does not match canonical source '${sourceConcept.specPath}' for concept '${conceptId}'`,
+            tag.file,
+            tag.line,
+            tag,
+          ),
+        );
+      }
+
+      if (
+        Number.isInteger(specRefLine) &&
+        specRefLine !== undefined &&
+        specRefLine !== sourceConcept.line
+      ) {
+        out.push(
+          issue(
+            "CT-018",
+            "MEDIUM",
+            `spec_ref.line '${specRefLine}' does not match canonical line '${sourceConcept.line}' for concept '${conceptId}'`,
+            tag.file,
+            tag.line,
+            tag,
+          ),
+        );
+      }
+    }
   }
 
   const existingConcept = context.symbolConcept.get(symbolKey);
@@ -661,6 +744,18 @@ function getArg(name: string): string | undefined {
 
 function hasFlag(name: string): boolean {
   return args.includes(name);
+}
+
+function normalizeSpecPath(pathValue: string): string {
+  const normalized = pathValue.replace(/\\/g, "/").replace(/^\.\//, "").trim();
+
+  const anchor = "docs/features/";
+  const anchorIndex = normalized.lastIndexOf(anchor);
+  if (anchorIndex >= 0) {
+    return normalized.slice(anchorIndex);
+  }
+
+  return normalized;
 }
 
 function fail(entries: TagIssue[]): never {

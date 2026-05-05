@@ -20,3 +20,20 @@ From framework root:
 - `pnpm run code-tags:drift`
 - `pnpm run code-tags:test`
 - `pnpm run check:code-tags`
+
+## Optional SPEC Trace Link
+
+Code tags may include an explicit concept source reference:
+
+```yaml
+domainspec:
+	concept:
+		id: payment.MaxAmountRule
+		type: Rule
+		spec_ref:
+			path: docs/features/payments/SPEC.md
+			line: 7
+			section: Concept Registry
+```
+
+When provided, validator checks `spec_ref.path` and `spec_ref.line` against the canonical concept catalog source.

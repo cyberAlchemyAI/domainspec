@@ -14,6 +14,10 @@ domainspec:
     id: payment.MaxAmountRule
     type: Rule
     concern: biz
+    spec_ref:
+      path: docs/features/payments/SPEC.md
+      line: 7
+      section: Concept Registry
   edges:
     - edge: enforces
       to: payment.ProcessPayment
@@ -30,6 +34,9 @@ domainspec:
 ### Optional
 
 - `domainspec.concept.concern` (`biz` or `sys`)
+- `domainspec.concept.spec_ref.path` (relative SPEC path)
+- `domainspec.concept.spec_ref.line` (row line in SPEC concept table)
+- `domainspec.concept.spec_ref.section` (for example `Concept Registry`)
 - `domainspec.edges` (array)
 - `domainspec.edges[].edge`
 - `domainspec.edges[].to`
@@ -41,6 +48,7 @@ domainspec:
 - Inverse aliases are not allowed.
 - `concept.type` must match taxonomy labels from `TAXONOMY.md`.
 - `edges[].edge` must be canonical labels from `RELATIONSHIPS.md`.
+- When present, `concept.spec_ref` must point to the same SPEC source row resolved from `concept.id`.
 
 ## Positive Example
 

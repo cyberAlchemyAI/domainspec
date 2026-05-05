@@ -75,6 +75,10 @@ domainspec:
     id: payment.MaxAmountRule
     type: Rule
     concern: biz
+    spec_ref:
+      path: docs/features/payments/SPEC.md
+      line: 7
+      section: Concept Registry
   edges:
     - edge: enforces
       to: payment.ProcessPayment
