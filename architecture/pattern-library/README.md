@@ -3,8 +3,16 @@
 Use this library as a selective context source during implementation.
 
 - Load only the concept files required for the current task.
-- Pair concept files with relationship cards from ARCHITECTURE-PATTERN-LIBRARY.md.
-- Keep examples aligned with ARCHITECTURE.md layering and functional style.
+- Pair concept files with relationship cards from ../ARCHITECTURE-PATTERN-LIBRARY.md.
+- Keep examples aligned with architecture foundations, layering, and dependency references.
+
+## Architecture References
+
+- [architecture-foundations](ARCHITECTURE-FOUNDATIONS.md)
+- [layering-reference](LAYERING-REFERENCE.md)
+- [dependency-rules](DEPENDENCY-RULES.md)
+- [testing-alignment](TESTING-ALIGNMENT.md)
+- [observability-alignment](OBSERVABILITY-ALIGNMENT.md)
 
 ## Backend Concepts
 
