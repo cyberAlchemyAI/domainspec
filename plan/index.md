@@ -58,12 +58,14 @@ Expected output:
 1. Complete [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md).
 2. Complete [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md).
 3. Complete [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md).
+4. Complete [governance/GOV-06-code-relationship-tags-governance.md](governance/GOV-06-code-relationship-tags-governance.md).
 
 Expected output:
 
 - Executable governance chain.
 - Automated validation.
 - Blocking and escalation policy in operation.
+- Source-level relationship tags with deterministic graph extraction and validation.
 
 ### Step 4 - Close the Saturn Governance Loop
 
@@ -246,10 +248,11 @@ WIP rule:
 
 ## Governance
 
-| ID     | Priority | Task                                           | File                                                                                                               |
-| ------ | -------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| GOV-01 | P0       | Axioms, constitution, and tags execution model | [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md) |
-| GOV-02 | P0       | Governance validation scripts and automation   | [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md)           |
-| GOV-03 | P0       | Blocking gates and escalation policy           | [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md)                           |
-| GOV-04 | P0       | ADLC implementation closure scorecard          | [governance/GOV-04-adlc-closure-scorecard.md](governance/GOV-04-adlc-closure-scorecard.md)                         |
-| GOV-05 | P1       | Victor material intake and linkage placeholder | [governance/GOV-05-victor-material-intake.md](governance/GOV-05-victor-material-intake.md)                         |
+| ID     | Priority | Task                                                  | File                                                                                                               |
+| ------ | -------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| GOV-01 | P0       | Axioms, constitution, and tags execution model        | [governance/GOV-01-axioms-constitution-tags-execution.md](governance/GOV-01-axioms-constitution-tags-execution.md) |
+| GOV-02 | P0       | Governance validation scripts and automation          | [governance/GOV-02-governance-validation-scripts.md](governance/GOV-02-governance-validation-scripts.md)           |
+| GOV-03 | P0       | Blocking gates and escalation policy                  | [governance/GOV-03-blocking-gates-policy.md](governance/GOV-03-blocking-gates-policy.md)                           |
+| GOV-04 | P0       | ADLC implementation closure scorecard                 | [governance/GOV-04-adlc-closure-scorecard.md](governance/GOV-04-adlc-closure-scorecard.md)                         |
+| GOV-05 | P1       | Victor material intake and linkage placeholder        | [governance/GOV-05-victor-material-intake.md](governance/GOV-05-victor-material-intake.md)                         |
+| GOV-06 | P0       | Code relationship tags and graph ingestion governance | [governance/GOV-06-code-relationship-tags-governance.md](governance/GOV-06-code-relationship-tags-governance.md)   |

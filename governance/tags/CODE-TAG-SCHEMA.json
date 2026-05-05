@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://domainspec.dev/schema/code-tag.schema.json",
+  "title": "DomainSpec Code Tag",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["domainspec"],
+  "properties": {
+    "domainspec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept"],
+      "properties": {
+        "concept": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 3,
+              "pattern": "^[a-z][a-z0-9-]*(\\.[A-Za-z0-9_./:-]+)+$"
+            },
+            "type": {
+              "type": "string",
+              "minLength": 2
+            },
+            "concern": {
+              "type": "string",
+              "enum": ["biz", "sys"]
+            }
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["edge", "to"],
+            "properties": {
+              "edge": {
+                "type": "string",
+                "pattern": "^[a-z][a-z-]*$"
+              },
+              "to": {
+                "type": "string",
+                "minLength": 3,
+                "pattern": "^[a-z][a-z0-9-]*(\\.[A-Za-z0-9_./:-]+)+$"
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
