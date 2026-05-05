@@ -5,3 +5,4 @@ dist/
 .pnpm-store/
 .env
 .env.*
+governance/tags/code-tags.json
