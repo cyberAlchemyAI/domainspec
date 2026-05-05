@@ -25,9 +25,10 @@ not-started
 
 ## Architecture References
 
-- [ARCHITECTURE.md - Layer Model](../../../../ARCHITECTURE.md#layer-model)
-- [ARCHITECTURE.md - Rule and Calculation Pattern](../../../../ARCHITECTURE.md#rule--calculation-pattern)
-- [ARCHITECTURE.md - Interface and Adapters Layer](../../../../ARCHITECTURE.md#interface--adapters-layer)
+- [Architecture Index](../../../../../architecture/ARCHITECTURE.md)
+- [Architecture Foundations - Layer Model](../../../../../architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md#layer-model)
+- [Layering Reference - Interface / Adapters Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer)
+- [Architecture Pattern Library](../../../../../architecture/ARCHITECTURE-PATTERN-LIBRARY.md)
 
 ## Implementation Directives
 
@@ -40,16 +41,15 @@ not-started
 
 ## Reusable legacy Assets
 
-| Asset                                                                                                                                                                                          | Reuse Mode            | Required Adaptation                                                                                                                                                   |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [backend/src/knowledge-graph-docs-import.ts](../../../../backend/src/knowledge-graph-docs-import.ts) helpers (`listMarkdownFiles`, `extractFrontmatter`, `extractHeadingSections`, `toAnchor`) | reuse with adaptation | Keep traversal/anchor normalization utilities; replace heading-based concept extraction with strict parsing of current `Concepts` and `Feature Concept Graph` tables. |
-| [backend/src/knowledge-graph-repository.ts](../../../../backend/src/knowledge-graph-repository.ts) transaction/init flow (`loadIntoRuntime`, `ensureInitialized`, `readData`)                  | reuse with adaptation | Keep lifecycle and transaction structure; replace table schema/mapping with current MirrorProjection/Card/Edge storage aligned to `domain.md`.                        |
-| [backend/src/knowledge-graph.ts](../../../../backend/src/knowledge-graph.ts) canonical guards (`CONCEPT_TYPES`, `EDGE_TYPES`, `isConceptType`, `isEdgeType`)                                   | reuse mostly as-is    | Reuse canonical validation sets and guard helpers in parser validation layer.                                                                                         |
-| [backend/src/server.test.ts](../../../../backend/src/server.test.ts) anchor helper pattern (`collectMarkdownAnchors`)                                                                          | reuse with adaptation | Reuse heading-anchor assertions for deep-link verification while updating expected anchors to current concept IDs and pointers.                                       |
+| Asset                                                                                                                                                       | Reuse Mode            | Required Adaptation                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [backend/src/server.ts](../../../../../backend/src/server.ts) Fastify bootstrap (`buildServer`)                                                             | reuse with adaptation | Reuse server bootstrap and register parser/projection endpoints through adapter boundary handlers.                            |
+| [backend/src/server.test.ts](../../../../../backend/src/server.test.ts) inject lifecycle pattern                                                            | reuse with adaptation | Reuse Node test + Fastify inject lifecycle pattern to validate parser/rebuild routes and responses.                           |
+| Removed legacy parser modules (`backend/src/knowledge-graph-docs-import.ts`, `backend/src/knowledge-graph-repository.ts`, `backend/src/knowledge-graph.ts`) | re-implement          | Recreate parser, repository, and canonical guards from current DomainSpec contracts; do not restore deleted modules verbatim. |
 
 ## legacy Carryover Limits
 
-- Do not reuse legacy in-memory seed datasets from [backend/src/knowledge-graph.ts](../../../../backend/src/knowledge-graph.ts); current source of truth must be markdown parse + database persistence.
+- Do not recreate deleted in-memory seed datasets from `backend/src/knowledge-graph.ts`; current source of truth must be markdown parse + database persistence.
 - Do not reuse legacy capability-centric concept IDs as final IDs for current mirror-card projection.
 
 ## Execution Steps

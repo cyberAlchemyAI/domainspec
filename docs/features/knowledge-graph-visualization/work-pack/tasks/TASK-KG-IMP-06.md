@@ -23,8 +23,8 @@ not-started
 
 ## Architecture References
 
-- [ARCHITECTURE.md - DomainSpec Mapping](../../../../ARCHITECTURE.md#domainspec-mapping)
-- [ARCHITECTURE.md - Interface and Adapters Layer](../../../../ARCHITECTURE.md#interface--adapters-layer)
+- [Architecture Pattern Library](../../../../../architecture/ARCHITECTURE-PATTERN-LIBRARY.md)
+- [Layering Reference - Interface / Adapters Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer)
 
 ## Implementation Directives
 
@@ -35,7 +35,7 @@ not-started
 ## Execution Steps
 
 1. Execute alignment audit command.
-2. Publish [ALIGNMENT-REPORT.md](../../ALIGNMENT-REPORT.md).
+2. Publish `ALIGNMENT-REPORT.md` (feature root).
 3. Map findings to specific contract IDs and implementation files.
 4. Feed required follow-ups back into task board.
 

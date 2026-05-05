@@ -22,8 +22,8 @@ not-started
 
 ## Architecture References
 
-- [ARCHITECTURE.md - Layer Model](../../../../ARCHITECTURE.md#layer-model)
-- [ARCHITECTURE.md - Testing Strategy](../../../../ARCHITECTURE.md#testing-strategy)
+- [Architecture Foundations - Layer Model](../../../../../architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md#layer-model)
+- [Testing Alignment](../../../../../architecture/pattern-library/TESTING-ALIGNMENT.md)
 
 ## Implementation Directives
 
@@ -35,7 +35,7 @@ not-started
 
 1. Collect latest test and implementation evidence from W1/W2 tasks.
 2. Execute verification command.
-3. Publish [VERIFICATION.md](../../VERIFICATION.md) with verdict and action matrix.
+3. Publish `VERIFICATION.md` (feature root) with verdict and action matrix.
 4. Update work-pack stage coverage statuses accordingly.
 
 ## Completion Criteria

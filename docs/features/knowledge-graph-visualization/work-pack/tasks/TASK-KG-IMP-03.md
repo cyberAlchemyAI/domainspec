@@ -24,9 +24,9 @@ not-started
 
 ## Architecture References
 
-- [UI-ARCHITECTURE.md](../../../../docs/UI-ARCHITECTURE.md)
-- [ARCHITECTURE.md - UI Concepts](../../../../ARCHITECTURE.md#ui-concepts)
-- [ARCHITECTURE.md - Interface and Adapters Layer](../../../../ARCHITECTURE.md#interface--adapters-layer)
+- [UI-ARCHITECTURE.md](../../../../UI-ARCHITECTURE.md)
+- [Architecture Pattern Library - UI Concepts](../../../../../architecture/ARCHITECTURE-PATTERN-LIBRARY.md)
+- [Layering Reference - Interface / Adapters Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer)
 
 ## Implementation Directives
 
@@ -38,18 +38,18 @@ not-started
 
 ## Reusable legacy Assets
 
-| Asset                                                                                                                                                                                                                   | Reuse Mode            | Required Adaptation                                                                                                       |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [apps/web/src/lib/api.ts](../../../../apps/web/src/lib/api.ts) and [apps/web/src/lib/query-keys.ts](../../../../apps/web/src/lib/query-keys.ts)                                                                         | reuse mostly as-is    | Keep transport/error/key helpers and add current endpoint query keys.                                                     |
-| [apps/web/src/components/knowledge-graph/NeighborhoodCanvas.tsx](../../../../apps/web/src/components/knowledge-graph/NeighborhoodCanvas.tsx)                                                                            | reuse with adaptation | Reuse deterministic ReactFlow rendering shell; adapt labels/data bindings to current mirror-card + canonical graph model. |
-| [apps/web/src/components/knowledge-graph/InspectorPanel.tsx](../../../../apps/web/src/components/knowledge-graph/InspectorPanel.tsx)                                                                                    | reuse with adaptation | Reuse detail panel structure; adapt fields to current `ConceptDetailCard` and definition pointer action.                  |
-| [apps/web/src/hooks/useConceptInspector.ts](../../../../apps/web/src/hooks/useConceptInspector.ts) and [apps/web/src/hooks/useFeatureAtlas.ts](../../../../apps/web/src/hooks/useFeatureAtlas.ts) async loading pattern | reuse with adaptation | Reuse request lifecycle and error handling; retarget to current query endpoints.                                          |
-| [apps/web/src/App.tsx](../../../../apps/web/src/App.tsx) URL-state and lens synchronization patterns                                                                                                                    | reuse partially       | Reuse state synchronization mechanics only where they map to current interaction contracts.                               |
+| Asset                                                                                                                                                                             | Reuse Mode            | Required Adaptation                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [apps/web/src/App.tsx](../../../../../apps/web/src/App.tsx) page shell composition baseline                                                                                       | reuse with adaptation | Expand starter page into three synchronized regions (cards, graph, detail) using current UI-SPEC contracts.                |
+| [apps/web/src/main.tsx](../../../../../apps/web/src/main.tsx) app bootstrap and root mounting pattern                                                                             | reuse mostly as-is    | Keep root bootstrap and wire providers/config needed by current query and interaction hooks.                               |
+| [apps/web/src/styles.css](../../../../../apps/web/src/styles.css) baseline styling entrypoint                                                                                     | reuse with adaptation | Reuse global stylesheet entrypoint and introduce current design tokens/layout classes from UI-SPEC.                        |
+| [apps/web/package.json](../../../../../apps/web/package.json) dependency and script surface                                                                                       | reuse with adaptation | Reuse dependency/scripts baseline while adding current test/build script requirements for KG interactions.                 |
+| Removed legacy UI modules (`apps/web/src/lib/api.ts`, `apps/web/src/lib/query-keys.ts`, `apps/web/src/components/knowledge-graph/*`, `apps/web/src/hooks/useConceptInspector.ts`) | re-implement          | Recreate API client, hooks, and graph/detail components in current module layout; do not restore deleted modules verbatim. |
 
 ## legacy Carryover Limits
 
 - Do not reuse legacy component naming/contract assumptions (`AtlasPanel`, `HolisticFeaturePanel`) as authoritative current UX semantics.
-- Do not depend on [apps/web/src/hooks/useEdgeTypeProjection.ts](../../../../apps/web/src/hooks/useEdgeTypeProjection.ts) without backend endpoint support.
+- Do not depend on deleted hook `apps/web/src/hooks/useEdgeTypeProjection.ts` without backend endpoint support.
 
 ## Execution Steps
 

@@ -40,7 +40,7 @@ Rebuild the Knowledge Graph feature as a mirror-first product surface where:
 ## Hard Constraints
 
 - Required mirror cards must include `SPEC.md`, `domain.md`, and `operations.md`.
-- Feature concept graph edges must use canonical labels from [RELATIONSHIPS.md](../../../../RELATIONSHIPS.md).
+- Feature concept graph edges must use canonical labels from [RELATIONSHIPS.md](../../../../../RELATIONSHIPS.md).
 - Every graph edge endpoint must resolve to a known concept ID in feature concept tables.
 - Deep-link open must return explicit error diagnostics when target cannot be resolved.
 
@@ -55,23 +55,20 @@ Rebuild the Knowledge Graph feature as a mirror-first product surface where:
 
 ### Reuse with adaptation
 
-- [backend/src/knowledge-graph-docs-import.ts](../../../../backend/src/knowledge-graph-docs-import.ts): markdown traversal/frontmatter/anchor helpers and overlay flow.
-- [backend/src/knowledge-graph-repository.ts](../../../../backend/src/knowledge-graph-repository.ts): DB init transaction, schema bootstrap pattern, runtime load lifecycle.
-- [backend/src/server.ts](../../../../backend/src/server.ts): request parsing and validation helper pattern, database-availability gate, observability hook placement.
-- [apps/web/src/lib/api.ts](../../../../apps/web/src/lib/api.ts): API transport and normalized error parsing.
-- [backend/src/server.test.ts](../../../../backend/src/server.test.ts): Fastify inject harness and contract assertion structure.
-- [apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts](../../../../apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts): Playwright route mocking and deterministic UI assertions.
+- [backend/src/server.ts](../../../../../backend/src/server.ts): Fastify app bootstrap, route registration pattern, and baseline health contract.
+- [backend/src/server.test.ts](../../../../../backend/src/server.test.ts): inject harness pattern for endpoint-level contract tests.
+- [apps/web/src/App.tsx](../../../../../apps/web/src/App.tsx): base component composition shell for feature surface insertion.
+- [apps/web/src/main.tsx](../../../../../apps/web/src/main.tsx): client bootstrap and root render wiring.
 
 ### Reuse as-is
 
-- [backend/src/auth.ts](../../../../backend/src/auth.ts) and [backend/src/scopes.ts](../../../../backend/src/scopes.ts): scope-token and authorization behavior.
-- Canonical taxonomy/edge guards in [backend/src/knowledge-graph.ts](../../../../backend/src/knowledge-graph.ts): `CONCEPT_TYPES`, `EDGE_TYPES`, `isConceptType`, `isEdgeType`.
+- No KG-specific reusable module remains as-is in current baseline; treat projection/graph contracts as fresh implementation from docs.
 
 ### Do not reuse unchanged
 
-- legacy in-memory seed and capability-centric runtime model in [backend/src/knowledge-graph.ts](../../../../backend/src/knowledge-graph.ts).
-- legacy endpoint assumptions in UI hooks/components that do not exist in current contracts.
-- [apps/web/src/hooks/useEdgeTypeProjection.ts](../../../../apps/web/src/hooks/useEdgeTypeProjection.ts) contract `/knowledge-graph/projections/edge-types` unless backend route is implemented.
+- Deleted legacy modules under `backend/src/knowledge-graph*.ts` and repository-import helpers must not be restored verbatim.
+- Deleted legacy endpoint assumptions in UI hooks/components must not be reintroduced unless backed by current interfaces.
+- `apps/web/src/hooks/useEdgeTypeProjection.ts` legacy contract `/knowledge-graph/projections/edge-types` must not be reused unless that route is explicitly implemented in this cycle.
 
 ## Success Criteria
 

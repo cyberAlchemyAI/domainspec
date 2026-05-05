@@ -25,9 +25,9 @@ not-started
 
 ## Architecture References
 
-- [ARCHITECTURE.md - Interface and Adapters Layer](../../../../ARCHITECTURE.md#interface--adapters-layer)
-- [ARCHITECTURE.md - Application Layer](../../../../ARCHITECTURE.md#application-layer)
-- [ARCHITECTURE.md - Domain Mapping](../../../../ARCHITECTURE.md#domainspec-mapping)
+- [Layering Reference - Interface / Adapters Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer)
+- [Layering Reference - Application Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#application-layer)
+- [Dependency Rules](../../../../../architecture/pattern-library/DEPENDENCY-RULES.md)
 
 ## Implementation Directives
 
@@ -38,13 +38,12 @@ not-started
 
 ## Reusable legacy Assets
 
-| Asset                                                                                                                                            | Reuse Mode            | Required Adaptation                                                                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------- | --------------------------------------------------------------------------------------------------------- |
-| [backend/src/server.ts](../../../../backend/src/server.ts) helper functions (`parseBooleanQuery`, `parseStringListQuery`, `sendValidationError`) | reuse with adaptation | Reuse query parsing/validation helpers for current endpoints and contracts.                               |
-| [backend/src/server.ts](../../../../backend/src/server.ts) runtime gate (`ensureDataAvailable`)                                                  | reuse with adaptation | Keep database availability gate, but wire it to current projection repository loading rules.              |
-| [backend/src/auth.ts](../../../../backend/src/auth.ts) and [backend/src/scopes.ts](../../../../backend/src/scopes.ts)                            | reuse as-is           | Keep scope token and missing-scope behavior for current API routes.                                       |
-| [backend/src/knowledge-graph-use-cases.ts](../../../../backend/src/knowledge-graph-use-cases.ts) server-to-use-case delegation pattern           | reuse with adaptation | Preserve route-to-use-case boundary and replace legacy use-case bindings with current operations/queries. |
-| [backend/src/server.test.ts](../../../../backend/src/server.test.ts) Fastify inject contract tests                                               | reuse with adaptation | Reuse 401/400/404/200 response pattern tests for new current endpoint paths and payload shapes.           |
+| Asset                                                                                                                     | Reuse Mode            | Required Adaptation                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [backend/src/server.ts](../../../../../backend/src/server.ts) route/bootstrap boundary pattern                            | reuse with adaptation | Reuse Fastify app bootstrap and add current KG read endpoints with explicit adapter-to-application wiring.   |
+| [backend/src/server.test.ts](../../../../../backend/src/server.test.ts) Fastify inject contract test pattern              | reuse with adaptation | Reuse request injection, status assertions, and lifecycle cleanup pattern for current endpoint contracts.    |
+| [backend/src/index.ts](../../../../../backend/src/index.ts) process entrypoint pattern                                    | reuse with adaptation | Reuse startup composition pattern when wiring KG repositories/use-cases at process boundary.                 |
+| Removed legacy route modules (`backend/src/auth.ts`, `backend/src/scopes.ts`, `backend/src/knowledge-graph-use-cases.ts`) | re-implement          | Rebuild auth/scope guards and use-case adapters in current module layout instead of restoring deleted files. |
 
 ## legacy Carryover Limits
 

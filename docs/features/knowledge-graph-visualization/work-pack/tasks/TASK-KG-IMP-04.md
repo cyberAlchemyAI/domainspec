@@ -24,8 +24,8 @@ not-started
 
 ## Architecture References
 
-- [ARCHITECTURE.md - Testing Strategy](../../../../ARCHITECTURE.md#testing-strategy)
-- [TEST-PIPELINE.md](../../../../TEST-PIPELINE.md)
+- [Testing Alignment](../../../../../architecture/pattern-library/TESTING-ALIGNMENT.md)
+- [TEST-PIPELINE.md](../../../../../TEST-PIPELINE.md)
 
 ## Implementation Directives
 
@@ -36,16 +36,16 @@ not-started
 
 ## Reusable legacy Assets
 
-| Asset                                                                                                                                                                                             | Reuse Mode            | Required Adaptation                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [backend/src/server.test.ts](../../../../backend/src/server.test.ts) `createServer` injection harness and response-pattern tests                                                                  | reuse with adaptation | Reuse setup and 401/400/404/200 assertion style; retarget to current API paths and IDs.                                                                  |
-| [backend/src/server.test.ts](../../../../backend/src/server.test.ts) markdown anchor helper (`collectMarkdownAnchors`)                                                                            | reuse mostly as-is    | Keep anchor validation helper for current definition pointer evidence checks.                                                                            |
-| [apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts](../../../../apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts) route mocking utilities (`mockApiRoutes`, focused UI assertions) | reuse with adaptation | Reuse Playwright mock-route and deterministic assertion patterns while replacing legacy payload fixtures with current mirror-card/graph/detail fixtures. |
-| [backend/package.json](../../../../backend/package.json) test script segmentation (`test:kg:p0`, `test:kg:p1`)                                                                                    | reuse with adaptation | Keep phased test execution model and map script filters to KG naming/test IDs.                                                                           |
+| Asset                                                                                                                              | Reuse Mode            | Required Adaptation                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [backend/src/server.test.ts](../../../../../backend/src/server.test.ts) `buildServer` injection harness and response-pattern tests | reuse with adaptation | Reuse setup and health-route assertion style; expand to current KG API paths and payload contracts.                              |
+| [backend/package.json](../../../../../backend/package.json) backend test script segmentation surface                               | reuse with adaptation | Keep phased execution model and map script filters to KG naming/test IDs as current suites are added.                            |
+| [apps/web/package.json](../../../../../apps/web/package.json) frontend test script/dependency surface                              | reuse with adaptation | Reuse baseline frontend script surface while adding Playwright/E2E coverage for current KG interactions.                         |
+| Removed legacy E2E artifact (`apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts`)                                           | re-implement          | Recreate deterministic KG Playwright specs from current UI-SPEC and TEST-SPEC; do not restore deleted fixture/model assumptions. |
 
 ## legacy Carryover Limits
 
-- legacy test IDs (`KG-*`) are not valid completion evidence for KG contracts.
+- Legacy test IDs not present in current `TEST-SPEC.md` are not valid completion evidence for KG contracts.
 - Any E2E assertions coupled to legacy holistic/semantic zoom endpoints must be rewritten to current route/API behavior.
 
 ## Execution Steps

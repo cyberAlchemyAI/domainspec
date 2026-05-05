@@ -22,9 +22,9 @@ not-started
 
 ## Architecture References
 
-- [ARCHITECTURE.md - Layer Model](../../../../ARCHITECTURE.md#layer-model)
-- [ARCHITECTURE.md - Application Layer](../../../../ARCHITECTURE.md#application-layer)
-- [ARCHITECTURE.md - Interface and Adapters Layer](../../../../ARCHITECTURE.md#interface--adapters-layer)
+- [Architecture Foundations - Layer Model](../../../../../architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md#layer-model)
+- [Layering Reference - Application Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#application-layer)
+- [Layering Reference - Interface / Adapters Layer](../../../../../architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer)
 
 ## Implementation Directives
 
@@ -35,7 +35,7 @@ not-started
 ## Execution Steps
 
 1. Execute layering audit command.
-2. Publish [LAYERING-ALIGNMENT-REPORT.md](../../LAYERING-ALIGNMENT-REPORT.md).
+2. Publish `LAYERING-ALIGNMENT-REPORT.md` (feature root).
 3. For each finding, map offending code path to target layer and remediation action.
 4. Update WORK-PACK and wave board with final audit status.
 
