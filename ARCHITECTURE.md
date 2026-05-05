@@ -2,6 +2,11 @@
 
 > Purpose: map DomainSpec concepts into a practical software architecture with strict domain isolation and a functional programming style (types + functions, no classes).
 
+Companion artifact for selective implementation context:
+
+- `ARCHITECTURE-PATTERN-LIBRARY.md` (one pattern card per taxonomy type and relationship type, organized for composable context packs)
+- `pattern-library/README.md` (one file per taxonomy concept with descriptive implementation examples)
+
 ## Principles
 
 1. Domain-first: domain model is the source of truth, implementation follows docs.
