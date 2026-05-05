@@ -158,18 +158,19 @@ Use flags to control scope:
 
 Each pipeline stage can also be run independently:
 
-| Stage         | Command                                                         | Agent             |
-| ------------- | --------------------------------------------------------------- | ----------------- |
-| Spec          | `@domainspec-spec-writer domainspec-spec-feature <feature>`     | spec-writer       |
-| Stories       | `@domainspec-story-sync domainspec-sync-user-stories <feature>` | story-sync        |
-| Tests         | `@domainspec-test-designer domainspec-generate-tests <feature>` | test-designer     |
-| Backend       | `@domainspec-implementer domainspec-implement <feature>`        | implementer       |
-| Code tags     | `@domainspec-code-tagger domainspec-tag-code <feature>`         | code-tagger       |
-| UI            | `@domainspec-ui-architect domainspec-ui-pipeline <feature>`     | ui-architect      |
-| Observability | `@domainspec-planner domainspec-instrument-otel <feature>`      | otel-instrumenter |
-| OTel Verify   | `@domainspec-planner domainspec-otel-verify <feature>`          | otel-verifier     |
-| Infra         | `@domainspec-infra-architect domainspec-infra-deploy <feature>` | infra-architect   |
-| Verify        | `@domainspec-verifier domainspec-verify-feature <feature>`      | verifier          |
+| Stage         | Command                                                                           | Agent             |
+| ------------- | --------------------------------------------------------------------------------- | ----------------- | --------------- |
+| Spec          | `@domainspec-spec-writer domainspec-spec-feature <feature>`                       | spec-writer       |
+| Stories       | `@domainspec-story-sync domainspec-sync-user-stories <feature>`                   | story-sync        |
+| Tests         | `@domainspec-test-designer domainspec-generate-tests <feature>`                   | test-designer     |
+| Context       | `@domainspec-context-builder domainspec-context-builder <feature> --task <TASK-ID | task-path>`       | context-builder |
+| Backend       | `@domainspec-implementer domainspec-implement <feature>`                          | implementer       |
+| Code tags     | `@domainspec-code-tagger domainspec-tag-code <feature>`                           | code-tagger       |
+| UI            | `@domainspec-ui-architect domainspec-ui-pipeline <feature>`                       | ui-architect      |
+| Observability | `@domainspec-planner domainspec-instrument-otel <feature>`                        | otel-instrumenter |
+| OTel Verify   | `@domainspec-planner domainspec-otel-verify <feature>`                            | otel-verifier     |
+| Infra         | `@domainspec-infra-architect domainspec-infra-deploy <feature>`                   | infra-architect   |
+| Verify        | `@domainspec-verifier domainspec-verify-feature <feature>`                        | verifier          |
 
 ## Interview-First Discovery
 
@@ -676,6 +677,7 @@ Direct specialist commands remain callable as advanced/internal invocations.
 | `domainspec-sync-user-stories`      | 3     | Generate/refresh STORIES.md from aspect docs                                                              |
 | `domainspec-sync-registry`          | 7     | Sync registry and glossary from all SPEC.md concept tables                                                |
 | `domainspec-generate-tests`         | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                                   |
+| `domainspec-context-builder`        | 4–5   | Build minimal deterministic task context packs before implementation                                      |
 | `domainspec-implement`              | 5     | Implement backend code from documented contracts                                                          |
 | `domainspec-tag-code`               | 5     | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                     |
 | `domainspec-ui-pipeline`            | 6     | Full UI lifecycle — spec → tests → implement → audit                                                      |
@@ -720,6 +722,7 @@ Each agent handles a specific concern autonomously:
 | `domainspec-spec-writer`       | Authors/evolves feature specs with research and story coverage   |
 | `mars-researcher`              | Investigates implementation decisions via domain navigation      |
 | `domainspec-test-designer`     | Derives test specs and Playwright E2E scaffolds from docs        |
+| `domainspec-context-builder`   | Builds task-ready minimal context packs using links and indexes  |
 | `domainspec-implementer`       | Implements production code and tests from approved artifacts     |
 | `domainspec-code-tagger`       | Applies and validates source code tags after implementation      |
 | `domainspec-registry-sync`     | Synchronizes registry and glossary from SPEC concept tables      |
@@ -798,7 +801,7 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)                 | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)                   | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)                 | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.0.2)                      |
+| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.0.3)                      |
 | [templates/](templates/SPEC.md)                      | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                               | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)               | Copilot agent pack overview                                                  |

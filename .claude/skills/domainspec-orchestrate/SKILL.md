@@ -21,6 +21,7 @@ Read command definitions under `.claude/skills/domainspec-*/SKILL.md`, package d
    - kickoff, discovery, or baseline gating -> `domainspec-start`
    - docs bootstrap -> `domainspec-init`
    - interactive execution of one plan task with options and gate handling -> `domainspec-task-session <task-id>`
+   - task-ready context pack preparation -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - end-to-end feature delivery -> `domainspec-pipeline <feature>`
    - feature spec authoring -> `domainspec-spec-feature <feature>`
    - story sync -> `domainspec-sync-user-stories <feature>`
@@ -34,8 +35,9 @@ Read command definitions under `.claude/skills/domainspec-*/SKILL.md`, package d
    - audits/readiness -> `domainspec-audit-alignment`, `domainspec-audit-layering`, `domainspec-verify-feature <feature>`, or `domainspec-readiness-gate <feature> [--profile ...]`
    - command guidance -> `domainspec-help`
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
+   - If the user asks to improve implementation predictability before coding, prefer `domainspec-context-builder <feature> --task <TASK-ID|task-path>`.
 5. Planner-first enforcement for mutation-capable routes:
-   - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-implement`, `domainspec-tag-code`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegate execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
+   - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-context-builder`, `domainspec-implement`, `domainspec-tag-code`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegate execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
    - Read-only guidance and verification-only commands may bypass planner preflight.
 6. Return and run the routed command with resolved arguments.
 7. In responses, show both recommended orchestrator route and direct specialist command when useful, labeling direct use as advanced/internal.

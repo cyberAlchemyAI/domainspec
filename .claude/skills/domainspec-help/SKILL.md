@@ -20,4 +20,5 @@ Read command definitions under domainspec/claude/skills/, package docs under dom
 3. If a command-name is provided, show detailed usage and prerequisites.
 4. Recommend next command based on detected docs and feature readiness.
 	- If the request asks to apply or fix code tags after implementation, recommend `domainspec-tag-code <feature>`.
+	- If the request asks to prepare minimal deterministic task context before implementation, recommend `domainspec-context-builder <feature> --task <task-id>`.
 </process>

@@ -20,6 +20,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-sync-user-stories`      | Sync `STORIES.md` from capability and aspect docs                                                                                                        |
 | `domainspec-sync-registry`          | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                |
 | `domainspec-generate-tests`         | Derive backend and/or UI test obligations from docs                                                                                                      |
+| `domainspec-context-builder`        | Build minimal deterministic task context packs from task links, architecture references, composability patterns, and indexed snippets                    |
 | `domainspec-implement`              | Implement backend code from approved contracts                                                                                                           |
 | `domainspec-tag-code`               | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                                                                    |
 | `domainspec-ui-pipeline`            | Run the UI lifecycle from UI spec to implementation and audit                                                                                            |
@@ -54,6 +55,7 @@ Recommended default: start from `domainspec-orchestrate`. All other `domainspec-
 | `domainspec-spec-writer`       | Authors capability-driven specs and enforces story coverage                       |
 | `mars-researcher`              | Navigates DomainSpec artifacts with structured research output                    |
 | `domainspec-test-designer`     | Derives executable test obligations from formal docs                              |
+| `domainspec-context-builder`   | Builds task-ready minimal context packs for predictable implementation output     |
 | `domainspec-implementer`       | Implements from approved specs with audit and verification gates                  |
 | `domainspec-code-tagger`       | Applies and validates source code tags after implementation changes               |
 | `domainspec-registry-sync`     | Synchronizes registry and glossary from concept inventories                       |
@@ -100,6 +102,7 @@ Common examples:
 - `@domainspec-orchestrator domainspec-orchestrate "start DomainSpec in auto mode"`
 - `@domainspec-orchestrator domainspec-orchestrate "run pipeline for payment-processing"`
 - `@domainspec-orchestrator domainspec-orchestrate "generate tests for settlement-recovery"`
+- `@domainspec-orchestrator domainspec-orchestrate "build task context for knowledge-graph-visualization TASK-KG-IMP-01"`
 
 Then run the full pipeline:
 
@@ -114,11 +117,12 @@ Advanced direct stage commands (unchanged):
 3. `domainspec-spec-feature <feature>`
 4. `domainspec-sync-user-stories <feature>`
 5. `domainspec-generate-tests <feature>`
-6. `domainspec-implement <feature>`
-7. `domainspec-tag-code <feature>`
-8. `domainspec-ui-pipeline <feature>`
-9. `domainspec-verify-feature <feature>`
-10. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
+6. `domainspec-context-builder <feature> --task <TASK-ID|task-path>`
+7. `domainspec-implement <feature>`
+8. `domainspec-tag-code <feature>`
+9. `domainspec-ui-pipeline <feature>`
+10. `domainspec-verify-feature <feature>`
+11. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
 
 ## Installation
 

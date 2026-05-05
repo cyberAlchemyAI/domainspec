@@ -23,6 +23,18 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.3] - 2026-05-05
+
+### Added
+
+- **`domainspec-context-builder` skill** — new task-context preparation command that assembles minimal deterministic context packs from task links, docs indexes, architecture references, composability patterns, and symbol-level code snippets.
+- **`domainspec-context-builder` agent** — specialized retrieval agent focused on link-first/index-first context selection with explicit inclusion/exclusion rationale and mode-based context budgets (`lean`, `standard`, `deep`).
+
+### Changed
+
+- **Orchestrator and help routing** — natural-language requests for implementation-context preparation now route to `domainspec-context-builder`, with guidance surfaced in command help and orchestrator policies.
+- **Architecture retrieval topology** — architecture references now support context-builder workflows through the consolidated `architecture/` index + pattern-library layout while preserving root compatibility entrypoints.
+
 ## [2.0.2] - 2026-04-27
 
 ### Added

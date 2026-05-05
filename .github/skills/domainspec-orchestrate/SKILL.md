@@ -21,6 +21,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
    - kickoff, discovery, or baseline gating -> `domainspec-start`
    - docs bootstrap -> `domainspec-init`
    - work-pack task implementation (`TASK-*` or `docs/features/{feature}/work-pack/tasks/*.md`) -> `domainspec-implement <feature>`
+   - task context pack preparation for implementation predictability -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - end-to-end feature delivery -> `domainspec-pipeline <feature>`
    - feature spec authoring -> `domainspec-spec-feature <feature>`
    - story sync -> `domainspec-sync-user-stories <feature>`

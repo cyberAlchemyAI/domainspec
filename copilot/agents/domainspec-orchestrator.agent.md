@@ -76,6 +76,7 @@ Read first:
    - project kickoff, baseline, or scope gating -> `domainspec-start`
    - docs bootstrap -> `domainspec-init`
     - work-pack task implementation (`TASK-*` or `docs/features/{feature}/work-pack/tasks/*.md`) -> `domainspec-implement <feature>`
+  - task context pack preparation for implementation predictability -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - full feature delivery -> `domainspec-pipeline <feature>`
    - command guidance -> `domainspec-help`
    - explicit stage intent -> the matching specialist command
@@ -84,6 +85,7 @@ Read first:
   - Options:
     - "Project kickoff / baseline" -> `domainspec-start`
     - "Docs bootstrap" -> `domainspec-init`
+    - "Build task context pack" -> `domainspec-context-builder <feature>` (ask for feature/task)
     - "Implement work-pack task(s)" -> `domainspec-implement <feature>` (ask for feature)
     - "Full feature delivery" -> `domainspec-pipeline <feature>`
     - "Command guidance" -> `domainspec-help`
