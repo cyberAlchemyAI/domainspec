@@ -19,4 +19,5 @@ Read command definitions under domainspec/claude/skills/, package docs under dom
 2. List available domainspec-* commands and one-line purpose.
 3. If a command-name is provided, show detailed usage and prerequisites.
 4. Recommend next command based on detected docs and feature readiness.
+	- If the request asks to apply or fix code tags after implementation, recommend `domainspec-tag-code <feature>`.
 </process>

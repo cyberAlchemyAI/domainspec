@@ -26,7 +26,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 This skill orchestrates the full pipeline described in domainspec/README.md:
 
 ```
-plan → spec → stories → tests → implement → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → emit-signals → observer
+plan → spec → stories → tests → implement → tag-code → ui-pipeline → observability-spec → instrument-otel → otel-verify → infra-deploy → registry-sync → verify → emit-signals → observer
 ```
 
 Each step delegates to the specialist agent/skill responsible for that stage.
@@ -47,6 +47,8 @@ Created/updated by this skill (cumulative):
 - docs/features/{feature}/TEST-SPEC.md
 - docs/features/{feature}/DECISIONS.md (when unresolved multi-option decisions exist)
 - Backend source files (entities, operations, use-cases, adapters, tests)
+- governance/tags/code-tags.json
+- governance/tags/CODE-TAG-DRIFT-REPORT.md
 - docs/features/{feature}/UI-SPEC.md (if UI applies)
 - Frontend pages, components, hooks, E2E tests (if UI applies)
 - docs/features/{feature}/observability.md
@@ -173,6 +175,7 @@ Created/updated by this skill (cumulative):
 
 12. Delegate to `domainspec-implement {feature}`:
     - Implements entities, operations, state machines, events, interfaces from documented contracts.
+    - Applies post-implementation source tagging via `domainspec-tag-code <feature>`.
     - Runs tests and reports pass/fail.
     - For existing features: runs alignment + layering audits first, then applies fixes.
 13. Run automated checks. If tests fail, attempt fix (max 2 iterations), then FLAG.

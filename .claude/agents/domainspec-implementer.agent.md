@@ -1,7 +1,22 @@
 ---
 name: domainspec-implementer
 description: Implements production code and tests from approved DomainSpec artifacts.
-tools: [Bash, Read, Edit, Write, Glob, Grep, Task, Skill, TodoWrite, WebFetch, WebSearch, NotebookEdit, AskUserQuestion]
+tools:
+  [
+    Bash,
+    Read,
+    Edit,
+    Write,
+    Glob,
+    Grep,
+    Task,
+    Skill,
+    TodoWrite,
+    WebFetch,
+    WebSearch,
+    NotebookEdit,
+    AskUserQuestion,
+  ]
 color: orange
 ---
 
@@ -45,8 +60,9 @@ Required inputs:
   - If `gsd-phase`, delegate via `.claude/skills/domainspec-execute-phase-bridge/SKILL.md`, which maps DomainSpec tasks into GSD phase execution and preserves concept-level traceability.
 5. Implement in dependency order: contracts, core logic, adapters.
 6. Add or update tests linked to source clauses.
-7. Run automated checks and summarize results with traceability.
-8. **Emit signals** — follow `.claude/skills/domainspec-emit-signals/SKILL.md` to append any alignment gaps, spec gaps, rework, decisions, or patterns discovered during implementation to `docs/signals/pipeline-signals.jsonl`.
+7. Delegate to `domainspec-code-tagger` (or run `domainspec-tag-code <feature> --mode strict`) to apply source tags after code edits.
+8. Run automated checks and summarize results with traceability.
+9. **Emit signals** — follow `.claude/skills/domainspec-emit-signals/SKILL.md` to append any alignment gaps, spec gaps, rework, decisions, or patterns discovered during implementation to `docs/signals/pipeline-signals.jsonl`.
 </execution>
 
 <delegation-contract>
@@ -55,6 +71,7 @@ Execution modes:
 - `gsd-phase`: use GSD phase execution orchestration for task flow, checkpoints, and summaries.
 
 Delegation references:
+
 - DomainSpec bridge: `.claude/skills/domainspec-execute-phase-bridge/SKILL.md`
 - GSD executor: `.claude/skills/gsd-execute-phase/SKILL.md`
 

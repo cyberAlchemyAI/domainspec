@@ -164,6 +164,7 @@ Each pipeline stage can also be run independently:
 | Stories       | `@domainspec-story-sync domainspec-sync-user-stories <feature>` | story-sync        |
 | Tests         | `@domainspec-test-designer domainspec-generate-tests <feature>` | test-designer     |
 | Backend       | `@domainspec-implementer domainspec-implement <feature>`        | implementer       |
+| Code tags     | `@domainspec-code-tagger domainspec-tag-code <feature>`         | code-tagger       |
 | UI            | `@domainspec-ui-architect domainspec-ui-pipeline <feature>`     | ui-architect      |
 | Observability | `@domainspec-planner domainspec-instrument-otel <feature>`      | otel-instrumenter |
 | OTel Verify   | `@domainspec-planner domainspec-otel-verify <feature>`          | otel-verifier     |
@@ -640,10 +641,11 @@ Short names within a feature's own files. Full namespace in registry entries and
 6. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
 7. **Generate test obligations** — backend TEST-SPEC from aspect docs; Playwright E2E from UI-SPEC
 8. **Implement backend** — write code against the documented contracts and derived tests
-9. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
-10. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
-11. **Infrastructure sync** — update prometheus.yml and alert rules from observability specs + SLOs
-12. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
+9. **Tag source code** — apply DomainSpec docstring tags and run extract/validate/drift checks
+10. **Design & implement UI** — generate UI-SPEC, scaffold pages, run E2E tests
+11. **Derive observability** — create `observability.md` from aspect docs using OBSERVABILITY.md rules
+12. **Infrastructure sync** — update prometheus.yml and alert rules from observability specs + SLOs
+13. **Verify** — alignment audit, layering audit, PASS/FLAG/BLOCK verdict
 
 ---
 
@@ -675,6 +677,7 @@ Direct specialist commands remain callable as advanced/internal invocations.
 | `domainspec-sync-registry`          | 7     | Sync registry and glossary from all SPEC.md concept tables                                                |
 | `domainspec-generate-tests`         | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                                   |
 | `domainspec-implement`              | 5     | Implement backend code from documented contracts                                                          |
+| `domainspec-tag-code`               | 5     | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                     |
 | `domainspec-ui-pipeline`            | 6     | Full UI lifecycle — spec → tests → implement → audit                                                      |
 | `domainspec-ui-architecture`        | 6     | Create or evolve project-wide UI-ARCHITECTURE.md                                                          |
 | `domainspec-ui-implement`           | 6     | Implement frontend pages from UI-SPEC + UI-ARCHITECTURE                                                   |
@@ -718,6 +721,7 @@ Each agent handles a specific concern autonomously:
 | `mars-researcher`              | Investigates implementation decisions via domain navigation      |
 | `domainspec-test-designer`     | Derives test specs and Playwright E2E scaffolds from docs        |
 | `domainspec-implementer`       | Implements production code and tests from approved artifacts     |
+| `domainspec-code-tagger`       | Applies and validates source code tags after implementation      |
 | `domainspec-registry-sync`     | Synchronizes registry and glossary from SPEC concept tables      |
 | `domainspec-story-sync`        | Maintains STORIES.md aligned with capability changes             |
 | `domainspec-alignment-auditor` | Audits implementation fidelity against DomainSpec docs           |
@@ -760,6 +764,8 @@ All templates live in [templates/](templates/):
 | [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)             | End-to-end pipeline execution report                  |
 | [work-pack.md](templates/work-pack.md)                         | Plan-first execution manifest and wave/task status    |
 | [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)                 | Signal contract documentation schema                  |
+| [domainspec-research.md](templates/domainspec-research.md)     | Structured research findings and evidence synthesis   |
+| [domainspec-findings.md](templates/domainspec-findings.md)     | Canonical findings register for governance decisions  |
 | [agent-runner.md](templates/agent-runner.md)                   | Self-hosted agent runner architecture                 |
 | [use-case.md](templates/use-case.md)                           | Use-case decomposition and boundaries                 |
 | [project-overview.md](templates/project-overview.md)           | Initial project context summary                       |

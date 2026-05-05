@@ -33,15 +33,16 @@ Inputs:
 4. Build implementation task list from documented concepts and behaviors.
 5. In `gsd-phase` mode, delegate orchestration to GSD execution flow and normalize outputs back to DomainSpec traceability.
 6. Implement code and tests in small verifiable increments.
-7. **Post-implementation infrastructure binding check:**
+7. Run `domainspec-tag-code <feature> --mode strict` to add/update code tags after implementation changes and enforce tag validation gates.
+8. **Post-implementation infrastructure binding check:**
    a. For each repository port used by the feature, verify a real DB-backed adapter is bound in all production-path files (routes, entry point). Flag stub/in-memory repos as BLOCK.
    b. If the feature introduces or modifies database tables: ensure migration files exist (`drizzle-kit generate`), `migrate.ts` runner exists and is called on startup, and Dockerfile includes migration files.
    c. If the feature defines lifecycle operations (seed, bootstrap): verify they are wired into the app startup sequence before `app.listen()`.
    d. If any infrastructure binding gaps are found, fix them before proceeding.
-8. **Cross-feature stub prohibition:**
+9. **Cross-feature stub prohibition:**
    a. NEVER create stub/placeholder files in another feature's use-case or domain directory. If implementation requires a handler that belongs to feature B, stop and document the obligation instead of creating an empty function.
    b. If a cross-feature event consumer is needed (e.g., feature A emits event, feature B reacts), add a `## Deferred Obligations` entry to the consuming feature's SPEC.md with: source feature, event name, expected behavior, and the commit/PR that identified the need.
    c. If existing stubs are found in the feature's code during pre-implementation audit (step 3), treat them as implementation tasks — either implement fully with tests or delete and update docs.
-9. Run automated checks and report failures with remediation.
-10. In --strict mode, stop on first doc-code mismatch and request spec fix.
+10. Run automated checks and report failures with remediation.
+11. In --strict mode, stop on first doc-code mismatch and request spec fix.
 </process>

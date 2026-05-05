@@ -21,6 +21,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-sync-registry`          | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                |
 | `domainspec-generate-tests`         | Derive backend and/or UI test obligations from docs                                                                                                      |
 | `domainspec-implement`              | Implement backend code from approved contracts                                                                                                           |
+| `domainspec-tag-code`               | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                                                                    |
 | `domainspec-ui-pipeline`            | Run the UI lifecycle from UI spec to implementation and audit                                                                                            |
 | `domainspec-ui-architecture`        | Define or evolve project-wide UI architecture                                                                                                            |
 | `domainspec-ui-implement`           | Implement frontend pages from `UI-SPEC.md`                                                                                                               |
@@ -54,6 +55,7 @@ Recommended default: start from `domainspec-orchestrate`. All other `domainspec-
 | `mars-researcher`              | Navigates DomainSpec artifacts with structured research output                    |
 | `domainspec-test-designer`     | Derives executable test obligations from formal docs                              |
 | `domainspec-implementer`       | Implements from approved specs with audit and verification gates                  |
+| `domainspec-code-tagger`       | Applies and validates source code tags after implementation changes               |
 | `domainspec-registry-sync`     | Synchronizes registry and glossary from concept inventories                       |
 | `domainspec-story-sync`        | Keeps stories aligned with evolving capabilities                                  |
 | `domainspec-alignment-auditor` | Audits implementation fidelity against DomainSpec contracts                       |
@@ -113,9 +115,10 @@ Advanced direct stage commands (unchanged):
 4. `domainspec-sync-user-stories <feature>`
 5. `domainspec-generate-tests <feature>`
 6. `domainspec-implement <feature>`
-7. `domainspec-ui-pipeline <feature>`
-8. `domainspec-verify-feature <feature>`
-9. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
+7. `domainspec-tag-code <feature>`
+8. `domainspec-ui-pipeline <feature>`
+9. `domainspec-verify-feature <feature>`
+10. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
 
 ## Installation
 

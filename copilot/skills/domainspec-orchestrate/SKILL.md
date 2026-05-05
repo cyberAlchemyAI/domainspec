@@ -26,6 +26,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
    - story sync -> `domainspec-sync-user-stories <feature>`
    - test derivation -> `domainspec-generate-tests <feature>`
    - backend implementation -> `domainspec-implement <feature>`
+   - post-implementation code tagging -> `domainspec-tag-code <feature>`
    - UI lifecycle -> `domainspec-ui-pipeline <feature>`
    - observability instrumentation -> `domainspec-instrument-otel <feature>`
    - observability verification -> `domainspec-otel-verify <feature>`
@@ -35,7 +36,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
    - If a work-pack task ID is provided without resolvable feature context, ask for feature name and then route to `domainspec-implement <feature>`.
 5. Planner-first enforcement for mutation-capable routes:
-   - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-implement`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegate execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
+   - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-implement`, `domainspec-tag-code`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegate execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
    - Read-only guidance and verification-only commands may bypass planner preflight.
 6. Return and run the routed command with resolved arguments.
 7. In responses, show both recommended orchestrator route and direct specialist command when useful, labeling direct use as advanced/internal.

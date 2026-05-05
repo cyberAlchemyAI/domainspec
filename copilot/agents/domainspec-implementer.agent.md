@@ -1,7 +1,55 @@
 ---
 name: domainspec-implementer
 description: Implements production code and tests from approved DomainSpec artifacts.
-tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/askQuestions, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, web/fetch, web/githubRepo, todo]
+tools:
+  [
+    vscode/extensions,
+    vscode/getProjectSetupInfo,
+    vscode/installExtension,
+    vscode/memory,
+    vscode/newWorkspace,
+    vscode/resolveMemoryFileUri,
+    vscode/runCommand,
+    vscode/vscodeAPI,
+    vscode/askQuestions,
+    execute/getTerminalOutput,
+    execute/killTerminal,
+    execute/sendToTerminal,
+    execute/createAndRunTask,
+    execute/runNotebookCell,
+    execute/testFailure,
+    execute/runInTerminal,
+    read/terminalSelection,
+    read/terminalLastCommand,
+    read/getNotebookSummary,
+    read/problems,
+    read/readFile,
+    read/viewImage,
+    agent/runSubagent,
+    browser/openBrowserPage,
+    browser/readPage,
+    browser/screenshotPage,
+    browser/navigatePage,
+    browser/clickElement,
+    browser/dragElement,
+    browser/hoverElement,
+    browser/typeInPage,
+    browser/runPlaywrightCode,
+    browser/handleDialog,
+    edit/createDirectory,
+    edit/createFile,
+    edit/createJupyterNotebook,
+    edit/editFiles,
+    edit/editNotebook,
+    search/changes,
+    search/codebase,
+    search/fileSearch,
+    search/listDirectory,
+    search/textSearch,
+    web/fetch,
+    web/githubRepo,
+    todo,
+  ]
 color: orange
 ---
 
@@ -47,7 +95,8 @@ Required inputs:
   - If `gsd-phase`, delegate via `.github/skills/domainspec-execute-phase-bridge/SKILL.md`, which maps DomainSpec tasks into GSD phase execution and preserves concept-level traceability.
 5. Implement in dependency order: contracts, core logic, adapters.
 6. Add or update tests linked to source clauses.
-7. Run automated checks and summarize results with traceability.
+7. Delegate to `domainspec-code-tagger` (or run `domainspec-tag-code <feature> --mode strict`) to apply source tags after code edits.
+8. Run automated checks and summarize results with traceability.
 </execution>
 
 <delegation-contract>
@@ -56,6 +105,7 @@ Execution modes:
 - `gsd-phase`: use GSD phase execution orchestration for task flow, checkpoints, and summaries.
 
 Delegation references:
+
 - DomainSpec bridge: `.github/skills/domainspec-execute-phase-bridge/SKILL.md`
 - GSD executor: `.github/skills/gsd-execute-phase/SKILL.md`
 

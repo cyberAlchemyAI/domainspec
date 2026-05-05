@@ -27,6 +27,7 @@ Inputs:
 4. Build implementation task list from documented concepts and behaviors.
 5. In `gsd-phase` mode, delegate orchestration to GSD execution flow and normalize outputs back to DomainSpec traceability.
 6. Implement code and tests in small verifiable increments.
-7. Run automated checks and report failures with remediation.
-8. In --strict mode, stop on first doc-code mismatch and request spec fix.
+7. Run `domainspec-tag-code <feature> --mode strict` to add/update code tags after implementation changes and enforce tag validation gates.
+8. Run automated checks and report failures with remediation.
+9. In --strict mode, stop on first doc-code mismatch and request spec fix.
 </process>

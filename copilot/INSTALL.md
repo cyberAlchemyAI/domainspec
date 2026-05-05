@@ -77,8 +77,10 @@ Run these checks from repository root:
 ```bash
 test -n "$(ls .github/agents/domainspec-*.agent.md 2>/dev/null)"
 test -f .github/agents/domainspec-orchestrator.agent.md
+test -f .github/agents/domainspec-code-tagger.agent.md
 test -d .github/skills/domainspec-orchestrate
 test -d .github/skills/domainspec-pipeline
+test -d .github/skills/domainspec-tag-code
 test -d .github/skills/domainspec-plan-phase-bridge
 test -d .github/skills/domainspec-execute-phase-bridge
 test -d .github/skills/domainspec-ui-phase-bridge
