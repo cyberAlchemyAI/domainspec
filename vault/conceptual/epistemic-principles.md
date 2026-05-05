@@ -124,6 +124,6 @@ Before adding a principle to this catalog, it must pass:
 
 | Document | Type | Description |
 |----------|------|-------------|
-| [ontology-conventions.md](file:///Users/victorboscaro/house_project/docs/vault/ontology-conventions.md) | `contextualizes` | The Orthogonality Principle is the governing constraint of the conventions |
-| [event-system-foundations.md](file:///Users/victorboscaro/house_project/docs/vault/conceptual/event-system-foundations.md) | `contextualizes` | Event Sourcing as Ledger principle applied to the event system |
-| [ontology-architecture-draft.md](file:///Users/victorboscaro/house_project/docs/vault/ontology-architecture-draft.md) | `contextualizes` | Occam's Razor applied to the technology choices |
+| [ontology-conventions.md](file:///Users/victorboscaro/house_project/docs/vault/ontology-conventions.md) | `cites` | The Orthogonality Principle is the governing constraint of the conventions |
+| [event-system-foundations.md](file:///Users/victorboscaro/house_project/docs/vault/conceptual/event-system-foundations.md) | `cites` | Event Sourcing as Ledger principle applied to the event system |
+| [ontology-architecture-draft.md](file:///Users/victorboscaro/house_project/docs/vault/ontology-architecture-draft.md) | `cites` | Occam's Razor applied to the technology choices |

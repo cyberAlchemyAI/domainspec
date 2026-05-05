@@ -16,7 +16,8 @@ Canonical drift/convergence reference:
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        PIPELINE RUN (sync)                            │
 │                                                                       │
-│  plan → spec → stories → tests → implement → verify → emit-signals   │
+│  research → findings → discovery → plan → spec →                      │
+│  stories → tests → implement → verify → emit-signals                   │
 │                                                                  │    │
 │                                              ┌───────────────────┘    │
 │                                              ▼                        │
@@ -57,6 +58,10 @@ Canonical drift/convergence reference:
                                                │
                                                └──────────► (loop restarts)
 ```
+
+**Note on domainspec-subagents-strategy.** The `research → findings` upstream stages may be executed manually OR via the `domainspec-subagents-strategy` mechanism (see `vault/discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md`). Subagents-strategy is a **tool**, not itself a pipeline stage in drift-convergence. When a dispatch is used, its three-file `/research/` output set maps directly onto these stages: `domainspec-subagents-strategy.md` is the dispatch record, `domainspec-subagents-research.md` is the `research` artifact (raw evidence), `domainspec-subagents-findings.md` is the `findings` artifact (synthesis on top, analysis below — see domainspec-subagents-strategy D-11). The `findings` then feeds the `discovery` stage downstream. `analyze` and `summarize` are no longer separate stages — analysis is co-located inside `findings` per D-11.
+
+**Note on knowledge graphs.** This pipeline shows only the **specs path** — discovery feeds the existing `plan → spec → ...` chain. A knowledge-graph path (discovery becoming a knowledge node rather than a spec) is planned but out of scope for this version. The eventual knowledge graphs will be: (1) ontology + domain-knowledge (combined for now), (2) application.
 
 ---
 
@@ -484,5 +489,6 @@ This tuning loop system evolves with DomainSpec:
 | **v1.8.x** (planned) | Signal compaction tool, additional signal types from standalone audits                                         |
 | **v1.9.x** (planned) | Integration with code-to-spec binding (G11) — new signal types for orphan detection                            |
 | **v2.0** (planned)   | Cloud agent reflection in CI, closed-loop auto-tuning, production incident signals                             |
+| **v2.x** (planned)   | Knowledge-graph path: discovery → knowledge node (ontology + domain-knowledge graph, application graph)                                                         |
 
 Changes to the tuning loop itself follow DomainSpec's own Via Negativa principle: add complexity only when its absence has caused measurable harm. If a threshold produces false positives, adjust it. If a signal type is never emitted, remove it. The loop should be as lean as the codebase it governs.

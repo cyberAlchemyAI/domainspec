@@ -1,7 +1,7 @@
 ---
 name: domainspec-pipeline
 description: End-to-end feature pipeline — from business idea to verified implementation in one command. Orchestrates planning, spec writing, story generation, test derivation, backend implementation, optional UI lifecycle, observability derivation, infrastructure sync, and verification.
-argument-hint: "<feature-name> [--backend-only] [--skip-ui] [--skip-observability] [--skip-instrumentation] [--skip-otel-verify] [--skip-infra] [--spec-only] [--test-only] [--dry-run]"
+argument-hint: "<feature-name> [--skip-discovery <reason>] [--backend-only] [--skip-ui] [--skip-observability] [--skip-instrumentation] [--skip-otel-verify] [--skip-infra] [--spec-only] [--test-only] [--dry-run]"
 agent: domainspec-planner
 allowed-tools: Read, Write, Bash, Glob, Grep, AskQuestions, WebFetch, Task
 ---
@@ -11,6 +11,7 @@ Execute the full DomainSpec feature lifecycle in one pass — from a feature nam
 </objective>
 
 <flags>
+- `--skip-discovery <reason>`: Bypass the Step 0 discovery existence check. Requires a one-line reason. Propagates to every subordinate skill (`domainspec-spec-feature`, `domainspec-planner`, etc.) and is recorded as a waiver in the resulting spec frontmatter (`discovery_waived: true`, `discovery_waiver_reason: <reason>`).
 - `--spec-only`: Stop after generating SPEC + aspect files + stories (Steps 1–3). Review before building.
 - `--test-only`: Stop after generating TEST-SPEC (Steps 1–4). Review test obligations before implementing.
 - `--backend-only`: Run backend implementation and skip UI pipeline entirely.
@@ -69,6 +70,24 @@ Created/updated by this skill (cumulative):
     - Compatibility fallback accepted: `docs/shared/cash-game-management-governance.md`.
     - If neither file exists, return BLOCK and require `domainspec-init` (or copy `domainspec/templates/governance-baseline.md` manually) before continuing.
 3. If --dry-run, output the execution plan (which steps apply, which delegate skills) and stop.
+3b. Parse `--skip-discovery <reason>` from invocation args. If present, capture `skipDiscovery = true` and `skipDiscoveryReason = <reason>`; otherwise default to `false`. The flag, when set, MUST be appended to every subordinate skill invocation in subsequent steps (see "Flag plumbing" below).
+
+## Step 0 — Discovery existence check
+
+3c. Determine the feature slug from the invocation arg (`<feature-name>` → kebab-case slug).
+3d. Search BOTH discovery locations:
+    - `vault/discovery/<topic>-definitions/<slug>.md` (knowledge-graph location; `<topic>` may be wildcard-globbed since the topic prefix is unknown at pipeline entry).
+    - `docs/features/<feature>/discovery/<slug>.md` (feature-folder location).
+3e. Resolution rules:
+    - **Found** in either location → record `discoveryFound = true` and proceed to Step 1.
+    - **Missing** AND `skipDiscovery = true` → proceed; the flag and reason propagate to every subordinate skill (see "Flag plumbing"). The waiver is recorded in the resulting SPEC.md frontmatter as `discovery_waived: true` and `discovery_waiver_reason: <skipDiscoveryReason>`. `domainspec-spec-feature` is responsible for stamping the waiver during Step 2.
+    - **Missing** AND `skipDiscovery = false` → HALT with a soft recommendation block. Emit verbatim:
+      - "No discovery exists for <feature>."
+      - "Write the discovery first via `.claude/skills/custom/discovery-writing.md`."
+      - "Override with `--skip-discovery <reason>` to proceed without one."
+      - "Or invoke `domainspec-interviewer` for help classifying scope (knowledge → vault, application → feature folder)."
+      Do NOT proceed to Step 1 or any subsequent step until the user resolves (either by writing a discovery and re-invoking, or by re-invoking with `--skip-discovery <reason>`).
+3f. **Flag plumbing**: when `skipDiscovery = true`, append `--skip-discovery "<skipDiscoveryReason>"` to the argv passed to every subordinate skill that this pipeline dispatches downstream — including but not limited to `domainspec-spec-feature`, `domainspec-planner`, `domainspec-sync-user-stories`, `domainspec-generate-tests`, `domainspec-implement`, `domainspec-ui-pipeline`, `domainspec-instrument-otel`, `domainspec-otel-verify`, `domainspec-infra-deploy`, `domainspec-verify-feature`. Subordinate skills decide whether they consume or simply forward the flag; the pipeline's responsibility is propagation, not interpretation.
 
 ## Step 1 — Plan
 
@@ -81,7 +100,7 @@ Created/updated by this skill (cumulative):
 ## Step 2 — Spec
 
 6. Delegate to `domainspec-spec-feature {feature}`:
-   - Researches context (uses `domainspec-researcher` when needed).
+   - Researches context (uses `mars-researcher` when needed).
    - Produces SPEC.md with concept table and all relevant aspect files.
    - For existing features with `--update`: evolves existing docs rather than recreating.
 7. Validate: SPEC.md exists, concept table is non-empty, at least one aspect file exists.

@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: reference
 status: consolidated
-version: 1.4.0
-last_updated: 2026-04-10
+version: 2.0.0
+last_updated: 2026-05-02
 ---
 
 # Vault Conventions
@@ -17,11 +17,11 @@ last_updated: 2026-04-10
 
 ## Objective
 
-This document defines the **classification system** of the vault — an **adaptive** system designed to **reduce the entropy of the knowledge base** by enforcing orthogonal labeling.
+This document is the canonical reference for vault classification — the required frontmatter fields, the controlled vocabularies for each label, the confidence dimensions (`veracidade` and `convicção`), and the catalog of edge types. Every node in the vault is governed by it.
 
-The core mathematical objective is: every classification label should be **statistically independent** from every other label. When labels are orthogonal, each one contributes maximum unique information and zero redundancy. Adding a label that correlates with existing labels increases noise without increasing knowledge. Removing a label that was truly independent destroys information that no other label can recover. (See [Appendix A](#appendix-a-mathematical-foundation) for the formal framework.)
+The classification system operates under the **orthogonality discipline**: each label is aimed at contributing information no other label provides, so the corpus stays low-redundancy as it grows. Orthogonality is currently a strategic bet, not a verified property — it is recorded as a premise in [`scope-and-domain-axes.md`](discovery/domainspec-vault-foundations/scope-and-domain-axes.md) D-1 (`veracidade: low`, `convicção: high`), pending the corpus-measurement layer that would let it graduate. Until then the discipline is enforced by review, not by computation. (See [Appendix A](#appendix-a-mathematical-foundation) for the framework we are aiming toward.)
 
-The system is **not static**. As the vault grows, labels may be added, merged, split, or retired. The only invariant is the orthogonality constraint: every label must earn its place by contributing information that no other label provides. This makes the ontology self-correcting — redundant labels are detected and eliminated, and missing dimensions are surfaced when existing labels fail to disambiguate nodes.
+The system is growable: labels may be added, merged, split, or retired as the vault evolves. When this constitution disagrees with an upstream discovery about a value's status, the discovery wins ([`epistemic-chain.md`](discovery/domainspec-vault-foundations/epistemic-chain.md) D-9).
 
 This document specifies the exact frontmatter fields, the classification system (node types, layers, natures, tags), the confidence dimensions, and the full catalog of edge types with their directionality rules.
 
@@ -53,9 +53,8 @@ For the philosophical foundations behind these choices, see `ontology-constituti
 ```yaml
 ---
 tags: [list of topical tags]           # Domain/topic labels only — see Tag System
-node_type: axiom | premise | constitution | discovery | implementation-plan | spec | audit | conceptual | essay | test | backlog | readme
+node_type: axiom | premise | constitution | discovery | implementation-plan | spec | audit | conceptual | test | backlog | readme | research | domainspec-subagents-strategy | subagents-research | subagents-findings | discussion
 is_session: true | false               # Is this a conversation/session record?
-session_ref: <session-id> | null       # Optional — the session that produced this document
 layer: ontology | architecture | market | domain | application  # Multi-value allowed
 nature: explanatory | procedural | reference | technical        # Multi-value allowed
 status: draft | exploratory | active | consolidated | evergreen
@@ -89,6 +88,22 @@ The clearest way to assign `node_type` is to ask: *"If someone challenges this d
 | `test`                | "Run the tests and see if they pass"                                     |
 | `backlog`             | "Prioritize it, schedule it, or close it — it tracks pending work"       |
 | `readme`              | "Update it to reflect what's actually in the directory"                  |
+| `research`            | "It's exploration of options or evidence — supersede it with a discovery decision" |
+| `domainspec-subagents-strategy`  | "Change it through governance, not informally"                           |
+| `subagents-research`  | "It's the raw evidence produced by a domainspec-subagents-strategy dispatch — challenge by tracing back to the strategy's prompts and source data" |
+| `subagents-findings`  | "It's the synthesis of subagents-research nodes from a single dispatch — challenge a claim by tracing it back to the research it cites" |
+| `discussion`          | "It's multi-perspective debate — close it with a discovery or escalate"  |
+
+### Linking rule for the `domainspec-subagents-strategy` / `subagents-research` / `subagents-findings` triad
+
+These three node types are mutually dependent and **must always be linked** when they coexist:
+
+- A `domainspec-subagents-strategy` document records the dispatch (who, what mode, what budget).
+- One or more `subagents-research` documents are produced by that dispatch — each `subagents-research` declares `derives-from` → the `domainspec-subagents-strategy` that produced it.
+- A `subagents-findings` document synthesizes one or more `subagents-research` nodes — the `subagents-findings` declares `derives-from` → every `subagents-research` it cites, AND `derives-from` → the originating `domainspec-subagents-strategy`.
+- A `subagents-research` node may declare `contradicts` → another `subagents-research` node when their evidence disagrees. Contradiction between researches is a first-class signal — it is what the `subagents-findings` synthesis is supposed to surface, not hide.
+
+A `subagents-research` or `subagents-findings` node without its corresponding `domainspec-subagents-strategy` link (or vice versa) is malformed. The grader (domainspec-subagents-strategy D-8 fidelity component) checks this triad at dispatch close.
 
 ### Why it matters
 
@@ -104,7 +119,7 @@ These three labels often get confused because they all relate to "trust." But th
 
 Example: `system-axioms.md` is `node_type: axiom` (permanent role — it's a foundational claim), `status: consolidated` (maturity — it's been reviewed), `convicção: high` (bet — we are committed to it). If it were brand new, it would still be `node_type: axiom` but `status: draft`. The role doesn't change; the maturity does.
 
-The twelve `node_type` values — `axiom`, `premise`, `constitution`, `discovery`, `implementation-plan`, `spec`, `audit`, `conceptual`, `essay`, `test`, `backlog`, `readme` — each represent a distinct role with precise boundaries. For the full value definitions and differentiation criteria, see [Appendix B: Label Value Catalog](#appendix-b-label-value-catalog).
+The sixteen `node_type` values — `axiom`, `premise`, `constitution`, `discovery`, `implementation-plan`, `spec`, `audit`, `conceptual`, `test`, `backlog`, `readme`, `research`, `domainspec-subagents-strategy`, `subagents-research`, `subagents-findings`, `discussion` — each represent a distinct role with precise boundaries. For the full value definitions and differentiation criteria, see [Appendix B: Label Value Catalog](#appendix-b-label-value-catalog).
 
 > **The knowledge lifecycle flow:** Documents naturally progress through epistemic roles: `discovery` (exploring possibilities) → `implementation-plan` (prescribing execution) → `spec` (describing current behavior). An `audit` document evaluates a `spec` against reality and feeds back into the cycle by spawning new discoveries or plans.
 
@@ -115,8 +130,6 @@ The twelve `node_type` values — `axiom`, `premise`, `constitution`, `discovery
 > **Why `session` is not a node_type:** Making `session` a `node_type` loses information. A session that defines the classification system plays a different role (`conceptual`) than a session that fixes a bug (`spec`). Being a conversation is captured by `is_session: true` — a boolean flag independent of the role. The `node_type` should reflect **what role the session's output plays**, not that it was a conversation.
 
 > **When to read sessions:** Sessions are **provenance**, not reference material. They preserve the reasoning context behind decisions — the "why", not the "what". Agents should read specs, constitutions, and code to understand how the system works. Only read sessions when tracing *why* a specific decision was made — e.g., when a rule seems arbitrary or an architectural choice needs its original tradeoff analysis. (See [P-ONT-8](premise/ontology-premises.md) for the foundational premise.)
-
-> **`session_ref` vs. `is_session`:** These are orthogonal provenance fields. `is_session: true` marks a document as *being* the session record itself (the scratchpad, the conversation log). `session_ref: <id>` marks any document as *having been produced by* a specific session — a spec, a constitution amendment, a discovery written during that session. A session log has `is_session: true` and typically `session_ref: null`. A spec written in session `m9k4w` has `is_session: false` and `session_ref: m9k4w`. The `session_ref` field enables forward tracing: given a session ID, find everything it produced.
 
 > **Why `business` is not a node_type:** A document about the market plays the same role as any other `conceptual` document — background context with no enforcement power. The market/external scope is captured by `layer: market`. Using `node_type: business` would correlate almost perfectly with `layer: market`, violating orthogonality.
 
@@ -225,14 +238,14 @@ The interplay between the two dimensions creates four archetypes:
 
 ### Applicability
 
-These dimensions are **meaningful for `axiom`, `premise`, `discovery`, and `audit`** — node types that make a claim, bet, or evaluative judgment.
+These dimensions are **meaningful for `axiom`, `premise`, and `audit`** — node types that make a single claim, bet, or evaluative judgment.
 
 - **`axiom`** — "We take this as foundational." `veracidade` measures how well-established this is externally. `convicção` measures how deeply committed we are to building on it.
 - **`premise`** — "We believe this, but may be wrong." The 2×2 matrix is most useful here: are we betting on something unproven? Have we proven something we're ignoring?
-- **`discovery`** — "We explored these possibilities." `veracidade` measures how well-researched the options are. `convicção` measures how seriously the team is considering acting on the findings.
 - **`audit`** — "We assessed the current state." `veracidade` measures how current and thorough the findings are. `convicção` measures how committed the team is to addressing the identified issues.
 
-For `constitution`, `implementation-plan`, `spec`, `conceptual`, and `test`, these fields should be **omitted**:
+For `discovery`, `constitution`, `implementation-plan`, `spec`, `conceptual`, and `test`, these fields should be **omitted**:
+- A `discovery` maps a design space — multiple options, multiple confidence levels per option. A single `veracidade`/`convicção` score per document doesn't fit; per-option confidence belongs inline in the body. If the discovery's exploration converges on a claim, that claim graduates into a `premise` or `axiom`, which carries the labels.
 - A `constitution` is either ratified or not — that's `status`. If it's tested in practice, that's `status: consolidated` or `evergreen`.
 - An `implementation-plan` is procedural — it prescribes steps, not beliefs. Its maturity is captured by `status`.
 - A `spec` is either accurate or drifted — that's also `status`.
@@ -269,24 +282,47 @@ Declare relationships in the `## Connections` section of each document:
 ```markdown
 | Document | Type | Description |
 |----------|------|-------------|
-| `other.md` | `resolves` | description of the relationship |
+| `other.md` | `derives-from` | description of the relationship |
 ```
 
 ### Directionality Principle
 
-Edges in the Markdown layer can be **bidirectional** to maximize explicit information (e.g., a child declaring `derives-from` parent, and the parent declaring `grounds` child).
+**Edges between vault nodes must be declared on both endpoints.** Every relationship in the vault between two vault nodes appears in two `## Connections` blocks: the source document declares the forward edge (e.g., `derives-from`), and the target document declares the inverse (e.g., `derives`). Both sides are written explicitly in Markdown — there is no SQL-layer inference.
 
-> **Bidirectionality and Deduplication:** While Markdown allows and encourages bidirectional edges to increase local node information density, this creates duplicate records of the same structural fact. To prevent visual noise and graph traversal loops, the **visualization and query layers must deduplicate these edges**. For example, `derives-from → B` and `B grounds → A` represent the same edge and should be visualized as a single directed line.
+**Why both sides:** local readability. Opening either document shows the relationship without external tooling. The cost is duplication; the mitigation is a periodic audit script that flags asymmetric edges (one side declares the relationship, the other doesn't) — those are bugs, not freedom.
 
-> **Bidirectionality at the SQL layer:** The `ontology_edges` table stores *both directions* as computed rows derived from the Markdown declarations. This makes agent queries efficient ("what documents depend on this axiom?" is a simple `WHERE target = X` query).
+**The forward/inverse name pair** is fixed by the catalog (Appendix C). Authors do not invent inverses ad-hoc. `contradicts` is the only symmetric edge — both sides use the same name.
 
-For the full catalog of 13 edge types with their directionality and usage criteria, see [Appendix C: Edge Type Catalog](#appendix-c-edge-type-catalog).
+**Carve-out (skills/agents): forward-only edges into `.claude/skills/*` and `.claude/agents/*` are legal-by-design.** Vault documents MAY declare forward edges (`cites`, `operationalized-by`, `proposes-edit`, etc.) targeting `.claude/skills/**` and `.claude/agents/**` files. Those targets are NOT vault graph nodes — they have no `node_type` and no `## Connections` block. No inverse is required or expected on the target. The audit script must NOT flag these forward-only edges as asymmetric. See "Carve-out: edges into skill and agent files" immediately below for the formal statement and rationale.
+
+**Migration note**: documents authored before this rule shipped may declare only one side. They are non-conformant and will be swept by the audit-driven migration; do not rely on the SQL/visualization layer to materialize the missing direction.
+
+### Carve-out: edges into skill and agent files
+
+Vault documents MAY declare forward edges (e.g., `cites`, `operationalized-by`, `proposes-edit`) into `.claude/skills/*.md` and `.claude/agents/*.md` files. These edges are **legal-by-design and forward-only**:
+
+- The source vault document writes the forward edge in its `## Connections` block as usual.
+- The target skill/agent file does NOT carry a `## Connections` block.
+- No inverse row is written or expected on the target.
+- The audit script must NOT flag these forward-only edges as asymmetric or missing-inverse.
+
+**Rationale.** Skill files (`.claude/skills/**`) and agent files (`.claude/agents/**`) are operational artifacts that govern runtime behavior. They are not vault graph nodes — they have no `node_type`, no `veracidade`, no `convicção`, and they do not participate in the epistemic chain. Treating them as graph nodes would force them to carry vault frontmatter and to participate in bidirectionality, conflating governance artifacts with knowledge artifacts.
+
+**Scope.** This carve-out is limited to `.claude/skills/**` and `.claude/agents/**`. Other non-vault paths (`.planning/**`, `.github/**`, sibling repos) remain a separate question — see OQ-C in `vault/discovery/curator-pipeline-integration/discovery.md`. Operationally, this carve-out is also restated in `.claude/skills/custom/edges.md` (Exception section) and `.claude/skills/custom/edge-catalog.md` (authoring rules).
+
+### Carve-out: edges originating from session nodes
+
+*Edges originating from a session node (`is_session: true`) are forward-only by source: they live on the session's `## Connections` block, but no inverse row is written on the target document. The auditor skips bidirectionality checks for edges whose source has `is_session: true`.*
+
+**Rationale.** Sessions are transient activity records — provenance for what happened in a single sitting, not stable graph nodes that anchor reference structure. Propagating an inverse row from every session into every document the session touched would accumulate noise on stable docs over time without adding signal: a constitution does not gain epistemic weight from being listed as `modified-by` a hundred sessions, and the session-side `## Connections` block already preserves the same provenance. Sessions are one-sided by design.
+
+**Auditor implication.** The asymmetry check skips edges whose source has `is_session: true`, alongside the existing skips for forward-only-by-target carve-outs into `.claude/skills/**` and `.claude/agents/**`.
+
+For the full catalog of 21 forward edges (40 names total counting inverses) with their directionality and usage criteria, see [Appendix C: Edge Type Catalog](#appendix-c-edge-type-catalog).
 
 > `contradicts` is the most valuable edge type: it flags inconsistencies that must be resolved before a document moves up a level. Its **absence does not mean the vault is contradiction-free** — only that no contradictions have been formally identified yet.
 
 > `validates` is the mechanism for a document to increase its `veracidade` over time.
-
-> **Using `grounds`:** `grounds` is the theoretical inverse of `derives-from`. You may use it to explicitly declare foundations, but remember the deduplication rule applies when viewing the graph as a whole.
 
 ---
 
@@ -294,9 +330,9 @@ For the full catalog of 13 edge types with their directionality and usage criter
 
 > **A new label or node should only be created if it adds orthogonal information to what already exists.**
 
-This is the single governing constraint of the entire ontology. In information-theoretic terms: two signals are orthogonal when their **mutual information is zero** — knowing one tells you nothing about the other. Each orthogonal signal contributes maximum unique entropy to the system. A redundant signal increases the description length without increasing knowledge.
+Orthogonality is **a guiding rule** for how labels and nodes are added to the ontology: each new label or node should contribute information that no existing label or node already carries. In information-theoretic terms, two labels are orthogonal when knowing one tells you nothing about the other — their **mutual information is zero**. This is a discipline applied at review time — not a property the system currently measures. See [Appendix A](#appendix-a-mathematical-foundation) for the framework, and [`scope-and-domain-axes.md`](discovery/domainspec-vault-foundations/scope-and-domain-axes.md) D-1 for why it is recorded as a premise rather than an axiom.
 
-This principle applies at **two levels**:
+This guiding rule applies at **two levels**:
 
 ### Level 1: Labels (Classification Dimensions)
 
@@ -367,6 +403,8 @@ The following are unresolved design questions about the classification system. T
 
 ## Appendix A: Mathematical Foundation
 
+> **This appendix is a guiding principle, not a measurement.** The formulas below describe the framework the classification system is aimed toward — once the corpus-measurement layer lands (see [`scope-and-domain-axes.md`](discovery/domainspec-vault-foundations/scope-and-domain-axes.md) OQ-6), they become tests. Until then, orthogonality is enforced by review under the discipline described in [Section 9: The Orthogonality Principle](#the-orthogonality-principle).
+
 The ontology's classification system can be formalized using **information theory**. This appendix provides the mathematical framework that underpins the Orthogonality Principle.
 
 ### The Setup
@@ -434,14 +472,18 @@ The mental test for assigning `node_type`: *"If someone challenges this document
 | `axiom`               | Foundational commitment taken as given. Hardest to change. Revising one requires rethinking everything built on it.                                                                                                                                          | "That's foundational — revisiting it breaks everything built on it"      | `system-axioms.md`: "History is Immutable"                                  |
 | `premise`             | Working bet — an informed hypothesis that guides decisions but may be disproven. Carries explicit confidence labels.                                                                                                                                         | "Show me evidence and we'll update it"                                   | `system-premises.md`: "Polars is the right choice"                          |
 | `constitution`        | An enforceable rule the team has formally ratified. Versioned and amended through governance.                                                                                                                                                                | "Change it through governance, not informally"                           | `event-system-constitution.md`                                              |
-| `discovery`           | Exploratory document that maps the possibility space for a decision or feature. Investigates options, trade-offs, and feasibility without prescribing action. May carry confidence labels as a strategic bet.                                                | "It's exploration — enrich it or supersede it with a decision"           | `discovery-gravity-strategies.md`, `cloud-vision-migration-discovery.md`    |
+| `discovery`           | Exploratory document that maps the possibility space for a decision or feature. Investigates options, trade-offs, and feasibility without prescribing action. Confidence labels (`veracidade` / `convicção`) are **omitted** — a discovery holds multiple options at varying confidence; per-option confidence belongs inline in the body. **Location**: discoveries may live in `vault/discovery/` (vault-internal — schema, ontology, agents) OR in application/feature folders (work-context — feature design, refactor scoping). A discovery in either location may amend a canonical vault file (e.g., add a `node_type` value to `ontology-conventions.md`) by following the schema-evolution gate; the discovery is the authorized channel regardless of where it lives. | "It's exploration — enrich it or supersede it with a decision"           | `discovery-gravity-strategies.md`, `cloud-vision-migration-discovery.md`    |
 | `implementation-plan` | Actionable execution roadmap with phases, checkboxes, dependencies, and success criteria. Prescribes the steps to achieve a goal.                                                                                                                            | "Follow it, update it if scope changed, or supersede it with a new plan" | `ccb-refactor-phases.md`, `gcp-infrastructure-migration.md`                 |
 | `spec`                | Behavioral description of how a part of the system works. A living technical document that stays in sync with code.                                                                                                                                          | "Update it if the code changed"                                          | `ccb-spec-v1.md`, `business-rules.md`                                       |
 | `audit`               | Evaluative document that assesses the current state of the system against constitutions, axioms, or quality standards. Identifies violations, risks, and gaps.                                                                                               | "Run the audit again and see if the findings still hold"                 | `shared-services-refactor.md`                                               |
 | `conceptual`          | Explanatory context that grounds understanding without prescribing behavior. Covers background knowledge, vocabulary, domain context, market reality.                                                                                                        | "It's context — you can enrich or correct it"                            | `fidc-and-credit-rights.md`, `dictionary-business.md`, `mission.md`         |
-| `essay`               | A committed argument from lived experience. First-person reflection that compresses observation into a structural claim. Neither exploratory (too committed) nor operational (no enforcement); its role is to expose reasoning so readers can engage with it. Authorial voice is part of the meaning. | "It's a committed argument from experience — engage with the reasoning or counter it with a better one" | `manifesto.md`, `abstraction-as-art.md`, `knowledge-topology.md`            |
 | `test`                | A record of executable validation. Documents test coverage analysis, test implementation decisions, gap identification, and pass/fail results. Its primary epistemic role is generating evidence that increases the `veracidade` of specs and constitutions. | "Run the tests and see if they pass"                                     | Session covering test coverage gaps, test writing, or test failure analysis |
 | `backlog`             | A prioritized list of pending work items, feature requests, technical debt, or open questions awaiting scheduling. Tracks *what needs to be done* without prescribing *how*.                                                                                 | "Prioritize it, schedule it, or close it — it tracks pending work"       | `backlog.md`                                                                |
+| `research`            | Exploration and evidence-gathering produced by a single investigation (one agent, one pass, or one source). Feeds into a discovery; never authoritative on its own. May declare `contradicts` → another `research` when evidence disagrees. See `vault/discovery/domainspec-vault-foundations/epistemic-chain.md` D-2. | "It's exploration of options or evidence — supersede it with a discovery decision" | Standalone research notes feeding a discovery |
+| `domainspec-subagents-strategy`  | Dispatch-strategy document carrying mode, capability tiers, and lifecycle for a multi-agent task. The originating node for a dispatch's `subagents-research` and `subagents-findings` outputs — both must `derives-from` the strategy. See `vault/discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md` D-10, D-11.                                                                                       | "Change it through governance, not informally"                           | Strategy doc governing how subagents are dispatched                         |
+| `subagents-research`  | Raw evidence produced by a domainspec-subagents-strategy dispatch. One file per child subagent, or a consolidated file. Always linked to its parent strategy via `derives-from`. | "It's the raw evidence produced by a domainspec-subagents-strategy dispatch — challenge by tracing back to the strategy's prompts and source data" | `domainspec-subagents-research.md` from a dispatch |
+| `subagents-findings`  | Synthesis of subagents-research nodes from a single dispatch. One file per dispatch. Cites every research file via `derives-from` and the parent strategy via `derives-from`. | "It's the synthesis of subagents-research nodes from a single dispatch — challenge a claim by tracing it back to the research it cites" | `domainspec-subagents-findings.md` from a dispatch |
+| `discussion`          | Multi-perspective debate log. Captures tensions; resolves to a discovery or remains open. See `vault/discovery/robot-talks-definitions/examples/robots-discussing.md` (this conversation).                                                                    | "It's multi-perspective debate — close it with a discovery or escalate"  | Robot-talks debate log capturing cross-layer tensions                       |
 
 ### `layer` Values
 
@@ -499,12 +541,10 @@ For documents that genuinely span multiple layers, use multi-value: `layer: arch
 | **axiom** | Well-established principle in the industry / academia | Novel assumption with no external validation |
 | **premise** | Hypothesis tested in production or backed by concrete data | Untested working bet |
 | **constitution** | Rule followed for weeks/months; violations caught and corrected | Brand new, not yet tested in practice |
-| **discovery** | Options thoroughly researched with concrete data, benchmarks, or PoCs | Quick brainstorm without evidence or validation |
 | **implementation-plan** | Plan tested against reality; phases completed successfully | Untested roadmap based on assumptions |
 | **spec** | Description matches current code behavior exactly | Code has drifted from the spec |
 | **audit** | Findings verified against current codebase; issues reproduced | Audit based on stale code or incomplete review |
 | **conceptual** | Content verified against authoritative sources | Author's interpretation, not cross-checked |
-| **essay** | Argument grounded in concrete built-and-observed experience — specific artifacts, numbers, moments the author can point to | Speculation dressed as experience; generalization with no concrete referent |
 | **test** | All tests pass and cover the claimed business rules | Tests are stale, skipped, or cover the wrong behavior |
 | **backlog** | Items are current, prioritized, and reflect real pending work | Stale items that were completed or abandoned without updating |
 
@@ -512,22 +552,70 @@ For documents that genuinely span multiple layers, use multi-value: `layer: arch
 
 ## Appendix C: Edge Type Catalog
 
-| Type | Direction (read as: A → B means...) | When to use |
-|------|--------------------------------------|-------------|
-| `resolves` | A offers a solution to the problem stated in B | A is a resolution or answer |
-| `derives-from` | A was motivated by, built upon, or physically generated by B | The canonical parent→child chain. Covers both intellectual motivation AND physical causation (e.g., bug report → fix session). |
-| `implements` | A is the concrete implementation of B | B is a spec or constitution; A is the code or concrete doc |
-| `validates` | A provides evidence or tests that prove B | Increases B's `veracidade` over time |
-| `exemplifies` | A is a concrete example of B | B is abstract; A is an instance |
-| `refines` | A is a more detailed version of B | Incremental depth, same topic |
-| `contextualizes` | A provides purely informational background for B | No functional dependency — if there is one, use `derives-from` |
-| `depends-on` | A does not function without B | Stronger than `derives-from`: runtime dependency |
-| `alternative-to` | A is a competing, discarded, or parallel alternative to B | Design decision not taken |
-| `contradicts` | A is in tension with or refutes B ⚠️ | Flags inconsistency — must be resolved before promotion |
-| `questions` | A raises open questions about B | Used in exploratory/draft nodes |
-| `updates` | A is a more recent, incremental version of B | Minor version changes |
-| `supersedes` | A is the direct structural successor of B, making B obsolete | Major version succession |
-| `deprecates` | A replaces B informally or partially, marking B as no longer authoritative | Soft retirement |
+The vault has **21 forward edges** organized into three categories: universal (apply to both sessions and documents), document-specific (don't apply to sessions), and session-specific (only sessions originate them). Per the Directionality Principle (Section 8), every forward edge has an inverse name and both must be declared in Markdown on the respective endpoints — except when the target is a `.claude/skills/*` or `.claude/agents/*` file (see Section 8 carve-out).
+
+### Universal edges
+
+| Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
+|---------|---------|--------------------|--------------------|-------------|------------|
+| `derives-from` | `derives` | any | any | N:M | A draws intellectual or evidential basis from B. The chain backbone — research derives from strategy, discovery derives from research, premise derives from discovery, etc. |
+| `cites` | `cited-by` | any | any | N:M | A cites B as supporting a load-bearing claim. Removing the cite weakens the argument. Replaces the deprecated `references` and `contextualizes`. |
+| `contradicts` | `contradicts` (symmetric) | any | any | N:M | A logically conflicts with B. Must be resolved before either document promotes. The same edge name is declared on both sides. |
+| `supersedes` | `superseded-by` | discovery, implementation-plan, constitution, spec | (same node_type) | 1:1 | A wholesale replaces B. B becomes historical. |
+
+### Document-specific edges
+
+| Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
+|---------|---------|--------------------|--------------------|-------------|------------|
+| `codified-as` | `codifies` | premise, axiom, discovery | constitution | 1:N | A is rendered as an enforceable rule by B. Chain-mandated (epistemic-chain.md D-4). |
+| `operationalized-by` | `operationalizes` | constitution, discovery | skill | 1:N | A is executed as runnable behavior by skill B. Chain-mandated (epistemic-chain.md D-4). |
+| `implements` | `implemented-by` | implementation-plan | discovery | N:1 | A executes the decisions recorded in B. |
+| `validates` | `validated-by` | audit, test, research, subagents-research | premise, axiom, spec | N:M | A provides evidence about B. Increases B's `veracidade` over time. Chain-mandated (epistemic-chain.md D-5). |
+| `refines` | `refined-by` | discovery, spec | discovery, spec, constitution | N:1 | A makes B more specific without replacing it. Distinct from `supersedes` (replacement) and `derives-from` (origin). |
+| `governed-by` | `governs` | discovery, implementation-plan, spec | discovery, constitution | N:1 | A's behavior is bound by the rules of B. |
+| `subclass-of` | `superclass-of` | conceptual, premise (also domain-axis values) | conceptual, premise | N:1 (tree-constrained) | A is a more specific kind of B. Tree, not DAG — multiple inheritance forbidden. |
+| `part-of` | `has-part` | conceptual, spec | conceptual, spec | N:1 | A is a structural component of B. |
+| `alternative-to` | `has-alternative` | discovery (Alternatives section) | discovery | 1:N | A was considered as a competing path before B's decision was made. |
+
+### Session-specific edges
+
+All have source `node_type` matching `is_session: true` documents. Sessions are processes; these edges encode what the session *did*.
+
+| Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
+|---------|---------|--------------------|--------------------|-------------|------------|
+| `continues-from` | `continued-by` | session | session | 1:1 | A is a temporal continuation of B; same investigation across two sittings. |
+| `creates` | `created-by` | session | any | N:M | A produced B as output. Replaces the deprecated `provenance-for`. |
+| `modifies` | `modified-by` | session | any | N:M | A changed B's content (without wholesale replacement). |
+| `revisits` | `revisited-by` | session | discovery, premise | N:M | A reconsidered the questions or decisions recorded in B without necessarily refuting them. |
+| `refutes` | `refuted-by` | session | session, discovery, premise | N:M | A actively argues against B. Stronger than `contradicts` because it is intentional. |
+| `opens-question` | `question-opened-by` | session | discovery | N:M | A surfaces a new open question recorded in B's `## Open Questions` section. |
+| `closes-question` | `question-closed-by` | session | discovery | N:M | A resolves an open question previously recorded in B. |
+| `consumes` | `consumed-by` | session | any | N:M | A read or used B as input without deriving new claims from it. Distinct from `derives-from` (which carries intellectual lineage). |
+
+### Edges deprecated by this catalog
+
+The following edges from previous versions of this constitution are no longer canonical. Existing vault documents using them should migrate (audit script enumerates non-conformant edges):
+
+| Old edge | Folds into | Notes |
+|----------|------------|-------|
+| `resolves` | `closes-question` (for sessions) or `supersedes` (for documents) | Was ambiguous about whether the relationship was structural or session-driven. |
+| `references` | `cites` | Generic-mention edges collapse into `cites` with prose for nuance. |
+| `contextualizes` | `cites` | Same reasoning. |
+| `exemplifies` | (defer) | Was the inverse of `instance-of`, which is also deferred until first vault use. |
+| `depends-on` | `derives-from` | Distinction between intellectual derivation and runtime dependency was rarely needed in practice. |
+| `questions` | `opens-question` | Session-specific framing now explicit. |
+| `updates` | (none — use `version:` frontmatter) | Minor version bumps are tracked in frontmatter, not as edges. |
+| `deprecates` | (none — use `status: deprecated`) | Deprecation is a state of the document, not a relationship to another. |
+| `produces` / `produced-by` | `derives-from` / `derives` | Per the bidirectionality rule, the canonical direction is `derives-from`. |
+| `provenance-for` | `creates` | Sessions create the documents whose provenance they are. |
+| `grounds`, `grounded-by` | (none) | Old SQL-layer inverses; with bidirectional Markdown, inverses are explicit and named in this catalog. |
+
+### Authoring rules
+
+1. **Both sides must declare (between vault nodes).** A `## Connections` block on the source declares the forward edge; the target document declares the inverse. Both forms are in this catalog. Asymmetric declarations between vault nodes are bugs. **Exception:** edges into `.claude/skills/*.md` and `.claude/agents/*.md` are forward-only by design — those targets are not vault graph nodes, carry no `## Connections` block, and require no inverse. See Section 8 "Carve-out: edges into skill and agent files" for the formal statement.
+2. **Do not invent edges.** If a relationship does not fit, propose a new edge through a discovery document — do not coin one inline.
+3. **`contradicts` is special.** Both sides use the same name (it is symmetric). Both must still declare.
+4. **Sessions ship `## Connections` too.** Older sessions used `## Contradictions`, `## Files touched`, etc. — those are non-conformant and will be migrated.
 
 ---
 
@@ -537,7 +625,7 @@ Every vault document carries up to 7 classification labels. Each answers a diffe
 
 | Label | Question | What it captures | Independent of |
 |-------|----------|-----------------|----------------|
-| **`node_type`** | *What role does this document play?* | Kind of claim: axiom, premise, constitution, discovery, implementation-plan, spec, audit, conceptual, essay, test, backlog | All others — an axiom can be about any layer, any nature, any status |
+| **`node_type`** | *What role does this document play?* | Kind of claim: axiom, premise, constitution, discovery, implementation-plan, spec, audit, conceptual, test, backlog, readme, research, domainspec-subagents-strategy, subagents-research, subagents-findings, discussion (16 values) | All others — an axiom can be about any layer, any nature, any status |
 | **`layer`** | *What part of the system does it concern?* | Topical scope: ontology, architecture, market, domain, application | `node_type` (a constitution can be about architecture or market), `nature` (scope ≠ format) |
 | **`nature`** | *What structural format does it use?* | Reading instruction: explanatory prose, step-by-step, lookup table, or schema | `node_type` (a constitution can be a checklist or a schema), `layer` (format ≠ scope) |
 | **`status`** | *How mature/trusted is it?* | Lifecycle position: draft → exploratory → active → consolidated → evergreen | `node_type` (an axiom starts as draft too), `nature` (format doesn't affect maturity) |
@@ -548,3 +636,12 @@ Every vault document carries up to 7 classification labels. Each answers a diffe
 > **Why not fewer labels?** If we merged `node_type` and `status` into one dimension, we couldn't distinguish "this is an axiom in draft" from "this is a premise that's consolidated." If we merged `layer` and `nature`, we couldn't distinguish "a market document written as a reference table" from "a market document written as a how-to." Each label captures information that NO other label can express.
 
 ---
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md` | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session landed Section 8's formal carve-out for forward-only edges into `.claude/skills/**` and `.claude/agents/**`, and bootstrapped this `## Connections` block. |
+| `discovery/domainspec-vault-foundations/research/scope-and-domain-axes-evidence.md` | `cited-by` | The scope-and-domain-axes evidence survey cites this conventions document as the direct input for §3 growth rules, §4 structural commitment, and §8 scope definitions. |
+| `premise/ontology-premises.md` | `derives` | This conventions document codifies (and therefore derives from) the ontology premises. |
+| `discovery/domainspec-vault-edges/research/domainspec-subagents-strategy.md` | `cited-by` | The vault-edges domainspec-subagents-strategy research cites this conventions document as the constitution whose Appendix C edge catalog the research is positioned to refine. |

@@ -144,3 +144,12 @@ The Vault cannot be overwritten silently. The system uses two types of logs:
 Traditional vector-search RAG fails on ontologies because it chunks paragraphs and loses the structural meaning. 
 The **Information Keeper** relies on **Contextual Embeddings**. When embedding a node, it includes the surrounding graph context (what files link to it via `derives-from` or `contradicts`). 
 When a user asks a question, an LLM router determines the optimal "Entry Node", drops the Information Keeper into the graph at that exact location, and allows it to crawl the explicitly typed edges to construct a highly accurate answer.
+
+---
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md` | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session bootstrapped this `## Connections` block as Tier-1 of the `inverse-edge-fix` discovery's plan. |
+| [discovery/domainspec-vault-foundations/scope-and-domain-axes.md](discovery/domainspec-vault-foundations/scope-and-domain-axes.md) | `cited-by` | The scope-and-domain-axes discovery cites the Bayesian agent described here as the future instrumentation layer that would promote orthogonality from heuristic to measured rule. |

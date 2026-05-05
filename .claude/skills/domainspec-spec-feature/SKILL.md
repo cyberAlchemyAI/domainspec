@@ -21,6 +21,21 @@ Target location:
 </context>
 
 <process>
+0. **Discovery-existence precondition (soft gate).** Before any spec-authoring step:
+   1. Determine the feature slug from the invocation context (the `<feature-name>` argument, path, or briefing).
+   2. Parse skill arguments for `--skip-discovery`. If present, the next non-flag token (or the value after `=`) is the one-line waiver reason; capture it as `discovery_waiver_reason`. If `--skip-discovery` is absent, treat the gate as armed.
+   3. Search for an existing discovery at BOTH:
+      - `vault/discovery/<topic>-definitions/<slug>.md` (knowledge scope)
+      - `docs/features/<feature>/discovery/<slug>.md` (application scope)
+   4. If found → proceed to existing logic (step 1 below).
+   5. If MISSING AND `--skip-discovery` was passed:
+      - Proceed to existing logic, AND ensure the resulting SPEC.md frontmatter includes `discovery_waived: true` plus `discovery_waiver_reason: "<one-line reason supplied by user>"`. (The spec-writer agent applies the writeback during SPEC.md creation/update.)
+   6. If MISSING AND no flag → HALT with a recommendation block (NOT a hard refuse). The exact wording must include:
+      - "No discovery exists for <feature>."
+      - Pointer: "Write the discovery first via `.claude/skills/custom/discovery-writing.md`."
+      - Override: "Or pass `--skip-discovery` (with a one-line waiver reason) to proceed without one."
+      - Bounce option: "Or invoke `domainspec-interviewer` for help classifying scope (knowledge → vault, application → feature folder)."
+      - Wait for user response. Do NOT proceed until user resolves.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Create or update SPEC.md and concept table.
 3. Generate relevant aspect files from templates.

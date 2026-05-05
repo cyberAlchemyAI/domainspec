@@ -310,13 +310,15 @@ Robot-talks MUST always:
 
 | Node | Relationship | Purpose |
 |------|--------------|---------|
-| [robot-talks-premises.md](../premise/robot-talks-premises.md) | `operationalized-by` | 8 working hypotheses (P-RT-1 through P-RT-8) with test-for-falsification and evidence |
+| [robot-talks-premises.md](../premise/robot-talks-premises.md) | `codifies` | Constitutional rules codify the 8 working hypotheses (P-RT-1 through P-RT-8) declared in the premises. |
 | [robot-talks (skill)](../../../.claude/skills/robot-talks/SKILL.md) | `operationalized-by` | Slash-command skill: `/robot-talks` |
 | [robot-talks-discovery.md](../../../specs/ontology/possible_constitutions/robot-talks/robot-talks-discovery.md) | `grounded-by` | Theoretical argument for why this pattern works |
 | [CLAUDE.md Route 10](../../../CLAUDE.md) | `integrated-into` | Robot-talks routing in agent context router |
 | [tese-orquestracao-por-pulso.md](../../business-philosopher/assuntos/orquestracao-multi-agente/tese-orquestracao-por-pulso.md) | `instantiates` | Robot-talks are pulsed orchestration applied to investigation |
 | [frontend-backend-alignment (POC sessions)](../../../claude/current_conversations/) | `validated-by` | 4 agents, 4 tensions identified, demonstrates scope decomposition and synthesis |
 | [development-practices-constitution.md](./development-practices-constitution.md) | `informs` | Governance patterns |
+| [discovery/robot-talks-definitions/robot-talks.md](../discovery/robot-talks-definitions/robot-talks.md) | `codifies` | The robot-talks discovery names this constitution as the enforceable rule set (PM-1 through PM-8 plus R1–R7) that codifies its consolidated premises. |
+| [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed an in-content rename sweep (`subagents-*` → `domainspec-*`). |
 ---
 
 ## Version History

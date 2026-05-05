@@ -46,16 +46,7 @@ What kind of claim the document makes and how it participates in the knowledge g
 ## `is_session` — Is this a conversation record?
 
 - `true` — the document IS a session log (scratchpad, conversation transcript).
-- `false` — everything else, including docs produced *by* a session (use `session_ref` for provenance).
-
----
-
-## `session_ref` — Provenance pointer (optional)
-
-The session ID that produced this document. Enables forward tracing ("what did session X produce?"). Orthogonal to `is_session`:
-
-- A session log: `is_session: true`, `session_ref: null`
-- A spec written during session `m9k4w`: `is_session: false`, `session_ref: m9k4w`
+- `false` — everything else, including docs produced *by* a session.
 
 ---
 

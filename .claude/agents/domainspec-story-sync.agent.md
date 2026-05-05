@@ -2,7 +2,7 @@
 name: domainspec-story-sync
 description: Maintains user-story files in DomainSpec features and keeps story coverage aligned with capability and aspect changes.
 tools: [Bash, Read, Edit, Write, Glob, Grep, Task, Skill, TodoWrite, WebFetch, WebSearch, NotebookEdit, AskUserQuestion]
-agents: ["Explore", "domainspec-researcher"]
+agents: ["Explore", "mars-researcher"]
 color: orange
 ---
 

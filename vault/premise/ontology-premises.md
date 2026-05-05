@@ -229,5 +229,5 @@ AX-ONT-1 (minimize retrieval entropy)
 | Document | Type | Description |
 |----------|------|-------------|
 | [[ontology-axioms]] | `derives-from` | All premises derive from one or more axioms |
-| [[ontology-conventions]] | `implements` | The label schema is a direct implementation of these premises |
-| [[ontology-constitution]] | `contextualizes` | The constitution describes the intellectual foundations; these premises are the working bets |
+| [[ontology-conventions]] | `derives-from` | The label schema is a direct codification of these premises |
+| [[ontology-constitution]] | `cites` | The constitution describes the intellectual foundations; these premises are the working bets |

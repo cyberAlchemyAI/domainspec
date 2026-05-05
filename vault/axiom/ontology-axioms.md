@@ -274,8 +274,8 @@ AX-ONT-7 (reasoning is navigation; topology engineered)   ← ROOT
 
 | Document | Type | Description |
 |----------|------|-------------|
-| [[system-axioms]] | `contextualizes` | System axioms are the architecture-layer equivalent; these are the ontology-layer equivalent |
+| [[system-axioms]] | `cites` | System axioms are the architecture-layer equivalent; these are the ontology-layer equivalent |
 | [[ontology-premises]] | `derives-from` | Ontology premises sit on top of these axioms |
 | [[ontology-conventions]] | `derives-from` | The label schema is a direct implementation of AX-ONT-1 and AX-ONT-2 |
 | [[confidence-levels]] | `derives-from` | The maturity lifecycle implements P-ONT-9 (adaptivity) |
-| [[ontology-constitution]] | `contextualizes` | The constitution describes the intellectual foundations; these axioms formalize the mathematical commitments |
+| [[ontology-constitution]] | `cites` | The constitution describes the intellectual foundations; these axioms formalize the mathematical commitments |

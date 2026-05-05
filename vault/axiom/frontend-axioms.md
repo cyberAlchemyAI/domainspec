@@ -53,5 +53,5 @@ These axioms are immutable within the React paradigm. Changing an axiom requires
 | Document | Relationship | Description |
 |----------|--------------|-------------|
 | [[frontend-premises]] | `inform` | Premises operationalize these axioms |
-| [[frontend-constitution]] | `derive-from` | Constitutional rules implement these axioms |
+| [[frontend-constitution]] | `derives-from` | Constitutional rules implement these axioms |
 | [[development-practices-constitution]] | `aligns-with` | Core Principle: "Pure Domain Slices" mirrors A1 |

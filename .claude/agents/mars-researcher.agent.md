@@ -1,5 +1,5 @@
 ---
-name: domainspec-researcher
+name: mars-researcher
 description: Researches technical decisions needed to implement DomainSpec-defined behavior.
 tools: [Bash, Read, Edit, Write, Glob, Grep, Task, Skill, TodoWrite, WebFetch, WebSearch, NotebookEdit, AskUserQuestion]
 color: pink
