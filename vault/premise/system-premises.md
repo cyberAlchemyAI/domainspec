@@ -60,6 +60,8 @@ Polars offers better performance and a cleaner API than Pandas for the kind of c
 
 Documentation is the source code of intent; Python/TypeScript is merely the compiled execution of that intent by an agent or human. If the codebase and the documentation diverge, it is a compilation error. We do not reverse-engineer intent from undocumented code.
 
+> **Promoted on 2026-05-05** — this premise is the informal predecessor of `AX-DS-1 — The domain document is the source; code is its compiled image` in `vault/axiom/domainspec-axioms.md`. The axiom is the load-bearing version (with the data-processing-inequality formalization); this entry is preserved for provenance. Treat AX-DS-1 as the authoritative statement and cite this only for historical context.
+
 ### P-SYS-4 — Architectural Complexity is Justified by Conceptual Correctness
 `convicção: high` `veracidade: high`
 
@@ -122,3 +124,5 @@ Database auto-increment primary keys are fragile constraints of physical storage
 | [premise/domainspec-subagents-strategy-premises.md](./domainspec-subagents-strategy-premises.md) | `derives` | domainspec-subagents-strategy-premises cites P-SYS-3 and P-SYS-7 as the ground for P-SS-6 (briefing) and P-SS-10 (evaluated artifacts). |
 | [constitution/domainspec-subagents-strategy-constitution.md](../constitution/domainspec-subagents-strategy-constitution.md) | `derives` | domainspec-subagents-strategy-constitution cites P-SYS-3 and P-SYS-7 as the ground for R10 (briefing) and R21 (grading). |
 | [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed an in-content rename sweep (`subagents-*` → `domainspec-*`). |
+| [[domainspec-axioms]] | `cited-by` | AX-DS-1 in `vault/axiom/domainspec-axioms.md` is the formal promotion of P-SYS-3 from premise to axiom (with the data-processing-inequality formalization). P-SYS-3 is preserved here for provenance; AX-DS-1 is the authoritative version. |
+| [[domainspec-premises]] | `cited-by` | DomainSpec premises cite system premises: P-DS-6 (LLM-agnostic agents) and P-DS-10 (decisions as graph nodes) are methodology-layer extensions of P-SYS-7 (refactoring as primary mechanism) and P-SYS-5 (boundaries as hypotheses). |

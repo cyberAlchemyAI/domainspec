@@ -84,3 +84,4 @@ This axiom justifies: the central Event Catalog contract, strict validation of `
 | [[development-practices-constitution]] | `derives-from` | AX-SYS-1 and AX-SYS-2 justify deterministic pipelines and domain isolation — expressed as `derives-from` on that document |
 | [[event-system-constitution]] | `derives-from` | AX-SYS-4 and AX-SYS-5 enforce immutability and observability — expressed as `derives-from` on that document |
 | [[ontology-axioms]] | `cited-by` | Ontology axioms cite system axioms as the architecture-layer equivalent of these ontology-layer commitments. |
+| [[domainspec-axioms]] | `cited-by` | DomainSpec axioms cite system axioms as the architecture-layer foundation: AX-DS-1 leans on AX-SYS-1 and AX-SYS-2; AX-DS-3 leans on AX-SYS-2; AX-DS-4 leans on AX-SYS-4. |

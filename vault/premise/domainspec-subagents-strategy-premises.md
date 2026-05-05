@@ -272,6 +272,7 @@ This premise is false if: evaluations correlate poorly with downstream outcome q
 | [robot-talks-premises.md](./robot-talks-premises.md) | `extends` | Generalizes P-RT-2 / P-RT-6 / P-RT-7 / P-RT-8 from investigation to all subagent dispatch |
 | [robot-talks-constitution.md](../constitution/robot-talks-constitution.md) | `generalizes` | Robot-talks is a specialization of dispatch; these premises cover the broader pattern |
 | [system-premises.md](./system-premises.md) | `derives-from` | P-SYS-3 (docs as source) and P-SYS-7 (revisability) ground P-SS-6 and P-SS-10 |
+| [[domainspec-premises]] | `derives-from` | The domainspec-subagents-strategy premises (P-SS-*) are domain-specific specializations of P-DS-1 (multi-agent decomposition holds the L1→L2 invariant) and P-DS-8 (recommend-don't-auto-invoke for fan-out skills). |
 | `domainspec-subagents-strategy-constitution.md` *(forthcoming)* | `codified-as` | Declarative rules derived from these premises |
 | `domainspec-subagents-strategy` skill *(forthcoming)* | `operationalized-by` | Executable behavior that enforces the constitution at dispatch time and emits the two-file artifact set (research + findings) |
 | [domainspec-subagents-strategy.md §D-11](../discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md) | `produces` | Two-file `/research/` output set — `domainspec-subagents-research.md` + `domainspec-subagents-findings.md` — emitted per fan-out/recursion dispatch (P-SS-9). Strategy proposal lives in chat only. |

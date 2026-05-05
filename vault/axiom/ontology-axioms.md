@@ -279,3 +279,4 @@ AX-ONT-7 (reasoning is navigation; topology engineered)   ← ROOT
 | [[ontology-conventions]] | `derives-from` | The label schema is a direct implementation of AX-ONT-1 and AX-ONT-2 |
 | [[confidence-levels]] | `derives-from` | The maturity lifecycle implements P-ONT-9 (adaptivity) |
 | [[ontology-constitution]] | `cites` | The constitution describes the intellectual foundations; these axioms formalize the mathematical commitments |
+| [[domainspec-axioms]] | `cited-by` | DomainSpec axioms cite ontology axioms as the knowledge-organization foundation: AX-DS-3 (no orphan behavior) is the methodology-layer counterpart of AX-ONT-4 (implicit knowledge is lost); AX-DS-4 (decision space preservation) is the methodology-layer counterpart of AX-ONT-5 (explicit questions increase information). |

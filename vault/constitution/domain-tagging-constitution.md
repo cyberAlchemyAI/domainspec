@@ -495,3 +495,4 @@ When reviewing a PR that touches business-relevant code:
 | `docs/vault/constitution/development-practices-constitution.md` | `derives-from` | Amendment process and agent autonomy rules |
 | `docs/vault/ontology-conventions.md` | `aligns-with` | Frontmatter schema and classification system |
 | `specs/ontology/discovery-vault-code-bridge.md` | `extends` | This constitution governs the code→domain side (Side B) of the vault-code bridge |
+| [[domainspec-axioms]] | `cited-by` | AX-DS-2 (one vocabulary across spec and code) cites this constitution as the declared `@biz` anchor contract; current enforcement gap is tracked as P-DS-13 in `domainspec-premises.md`. |

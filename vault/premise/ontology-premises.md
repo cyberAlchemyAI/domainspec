@@ -231,3 +231,4 @@ AX-ONT-1 (minimize retrieval entropy)
 | [[ontology-axioms]] | `derives-from` | All premises derive from one or more axioms |
 | [[ontology-conventions]] | `derives-from` | The label schema is a direct codification of these premises |
 | [[ontology-constitution]] | `cites` | The constitution describes the intellectual foundations; these premises are the working bets |
+| [[domainspec-premises]] | `cited-by` | DomainSpec premises cite ontology premises: P-DS-9 (mechanical registry sync) operationalizes the AX-ONT-2/AX-ONT-3 commitments at the methodology layer. |
