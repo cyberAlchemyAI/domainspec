@@ -32,6 +32,11 @@ Output:
    - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
    - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
+1a. Apply delegation tuning + tracking to delegated stages (`gsd-ui-researcher`, `gsd-ui-checker`):
+   - Use per-stage profile (`quick|standard|deep`) with lowest-cost viable default; avoid `xhigh` unless explicitly required.
+   - On suspected-stuck after `high|xhigh`, retry once with reduced thinking and narrowed scope before final BLOCK.
+   - Append one telemetry row per delegated stage to `docs/signals/delegation-tuning.jsonl` with profile, thinking budget, outcome, retries, and notes.
+   - If telemetry append fails, continue but return FLAG details with remediation.
 2. Read docs/UI-ARCHITECTURE.md — this is the authoritative constraint.
 3. Load feature SPEC.md, interfaces.md, operations.md, queries.md, states.md, STORIES.md.
 4. Extract UI-relevant information:

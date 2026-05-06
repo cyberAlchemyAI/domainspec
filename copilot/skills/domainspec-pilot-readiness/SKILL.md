@@ -26,6 +26,11 @@ Framework constraints:
    - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
    - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
    - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
+0a. Apply delegation tuning + tracking for all delegated stages in this command:
+  - Use per-stage profile (`quick|standard|deep`) with lowest-cost viable default; avoid `xhigh` unless explicitly required.
+  - On suspected-stuck after `high|xhigh`, retry once with reduced thinking and narrowed scope before final BLOCK.
+  - Append one telemetry row per delegated stage to `docs/signals/delegation-tuning.jsonl` with profile, thinking budget, outcome, retries, and notes.
+  - If telemetry append fails, continue but return FLAG details with remediation.
 0. DomainSpec-first discovery
 - If feature is unknown, discover candidates in `domainspec/docs/features/` first.
 - Build initial gap map from DomainSpec source docs.

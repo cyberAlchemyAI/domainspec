@@ -65,6 +65,7 @@ Created/updated by this skill (cumulative):
 ## Pre-flight
 
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
+   1a. Apply delegation tuning + tracking policy to every delegated stage in this pipeline: - Select profile per stage before delegation: `quick` (`sonnet` + low), `standard` (`sonnet` + medium), or `deep` (high-capability + high). - Default to lowest-cost viable profile; avoid `xhigh` unless explicitly required. - If a delegated stage is suspected-stuck after a `high|xhigh` attempt, retry once with reduced thinking and narrowed scope before final BLOCK. - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` with: `timestamp`, `skill`, `feature`, `stage`, `delegatedCommand`, `delegationProfile`, `thinkingBudget`, `outcome`, `suspectedStuck`, `retryCount`, `durationMs` (when available), and `notes`. - If telemetry append fails, continue execution but return FLAG details with remediation to restore delegation tracking.
 2. Check if docs/features/{feature}/ exists:
    - If exists → this is an **evolution** of an existing feature. Load SPEC.md and all aspect files.
    - If missing → this is a **new feature**. Ensure docs/ directory exists (run `domainspec-init` if needed).
@@ -290,12 +291,13 @@ Created/updated by this skill (cumulative):
 
 33. After verification verdict, emit structured signals to `docs/signals/pipeline-signals.jsonl`:
     a. **Per-step signals:** For each step executed, emit a `step-verdict` signal with verdict, retries, files touched, tests added.
-    b. **Economy signal:** Emit one `overhead` signal with aggregate counters — steps executed/skipped, agent delegations, human questions, retries, overhead ratio.
+    b. **Economy signal:** Emit one `overhead` signal with aggregate counters — steps executed/skipped, agent delegations, human questions, retries, overhead ratio, and delegation profile distribution (`quick|standard|deep`).
     c. **Quality signals:** For each alignment gap, spec gap, or governance gap found during the run, emit the corresponding signal type (`alignment-gap`, `spec-gap`, `governance-gap`).
     d. **Rework signals:** For each step that required retries or human correction, emit a `rework` signal with root cause and iteration count.
     e. **Decision signals:** For significant design decisions made during the run, emit a `decision` signal.
     f. **Proposal signals:** For each skill improvement idea identified, emit a `proposal` signal with target file and rationale.
     g. **Pattern signals:** For reusable insights worth tracking, emit a `pattern` signal.
+    h. **Delegation telemetry confirmation:** Ensure delegated-stage rows were appended to `docs/signals/delegation-tuning.jsonl` and include suspected-stuck/retry counts.
 34. Signal format follows `domainspec/templates/SIGNAL-SCHEMA.md`. Each signal is one JSON line appended to the JSONL file with `source: "session-epilogue"`.
 35. Enforce session completeness invariants before completion:
     - If any `step-verdict` exists, emit exactly one `overhead` signal.

@@ -34,6 +34,11 @@ Uses:
    - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
    - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read framework references and detect mode (`greenfield`, `brownfield`, `auto`).
+1a. Apply delegation tuning + tracking for delegated stages in this command (`domainspec-interview-scope`, optional `domainspec-init`):
+   - Use lowest-cost viable profile (`quick|standard|deep`) and avoid `xhigh` unless explicitly required.
+   - On suspected-stuck after `high|xhigh`, retry once with reduced thinking and narrowed scope before final BLOCK.
+   - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` including profile, thinking budget, outcome, retries, and notes.
+   - If telemetry append fails, continue but return FLAG details with remediation.
 2. Delegate scoped discovery to `domainspec-interview-scope`.
    - `auto` must inspect the repository and choose mode.
    - If `--audit-only`, stop after discovery and gate verdict.

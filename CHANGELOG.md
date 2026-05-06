@@ -23,6 +23,34 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.8] - 2026-05-06
+
+### Added
+
+- **Delegation tuning ledger** - added `docs/signals/delegation-tuning.jsonl` as an append-only telemetry stream for delegated stage outcomes, retries, and stuck signals.
+- **Delegation telemetry schema guide** - added `docs/signals/DELEGATION-TUNING.md` to define required JSONL fields and operational handling.
+
+### Changed
+
+- **Delegation policy rollout** - all DomainSpec delegator skills (pipeline, UI pipeline, start, bridges, implement, readiness flows) now require per-stage profile selection (`quick`, `standard`, `deep`) with cost-aware defaults.
+- **Stuck recovery consistency** - delegated stages across delegator skills now apply one bounded retry with reduced thinking after suspected-stuck `high|xhigh` attempts before final BLOCK.
+- **Telemetry failure handling** - delegation-capable commands now return explicit FLAG remediation when telemetry append fails, without hiding primary stage outcomes.
+
+## [2.0.7] - 2026-05-06
+
+### Changed
+
+- **`domainspec-orchestrate` delegation tuning policy** - orchestration now applies stage-level model/thinking profiles (`quick`, `standard`, `deep`) to reduce latency while preserving risk-appropriate reasoning.
+- **Stuck-retry de-escalation** - when a high-thinking delegated stage is suspected-stuck, orchestrator now retries once with reduced thinking and narrowed scope before final BLOCK.
+- **Routing output diagnostics** - route decisions now include delegation profile and thinking budget fields for execution transparency.
+
+## [2.0.6] - 2026-05-06
+
+### Changed
+
+- **`domainspec-orchestrate` subagent liveness verification** - orchestrator now applies a per-stage liveness gate, classifies suspected stuck delegates, retries once with bounded execution, and returns `blocked-at-<stage>(subagent-stuck)` when retry also fails.
+- **Routing output contract visibility** - orchestrator route responses now include subagent verification state, stage health, and retry evidence so stuck stages are explicit.
+
 ## [2.0.5] - 2026-05-06
 
 ### Changed

@@ -6,35 +6,35 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 
 ### Public Commands
 
-| Command                             | Purpose                                                                                                                                                                                         |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `domainspec-orchestrate`            | Unified user-facing entrypoint: interpret natural-language DomainSpec intent, run specialist stages via subagent delegation, and enforce post-spec task refresh/create before downstream stages |
-| `domainspec-start`                  | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, and optional init                                                                                            |
-| `domainspec-help`                   | Show command reference and recommend the next step                                                                                                                                              |
-| `domainspec-init`                   | Bootstrap docs structure and governance baseline                                                                                                                                                |
-| `domainspec-interview-scope`        | Run greenfield or brownfield discovery interviews before specification starts                                                                                                                   |
-| `domainspec-brownfield-translation` | Translate an implemented project into as-is DomainSpec feature specs plus governance and ontology gap artifacts                                                                                 |
-| `domainspec-decision-gate`          | Resolve blocker-level multi-option decisions and persist a decisions artifact before downstream mutation                                                                                        |
-| `domainspec-pipeline`               | Run the full lifecycle with planner/work-pack gates for medium/high tasks before mutation (plan -> spec -> stories -> tests -> implementation -> verify)                                        |
-| `domainspec-spec-feature`           | Author or evolve feature specs and aspect documents                                                                                                                                             |
-| `domainspec-sync-user-stories`      | Sync `STORIES.md` from capability and aspect docs                                                                                                                                               |
-| `domainspec-sync-registry`          | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                                                       |
-| `domainspec-generate-tests`         | Derive backend and/or UI test obligations from docs                                                                                                                                             |
-| `domainspec-context-builder`        | Build minimal deterministic task context packs from task links, architecture references, composability patterns, and indexed snippets                                                           |
-| `domainspec-implement`              | Implement backend code from approved contracts                                                                                                                                                  |
-| `domainspec-tag-code`               | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                                                                                                           |
-| `domainspec-ui-pipeline`            | Run the UI lifecycle from UI spec to implementation and audit                                                                                                                                   |
-| `domainspec-ui-architecture`        | Define or evolve project-wide UI architecture                                                                                                                                                   |
-| `domainspec-ui-implement`           | Implement frontend pages from `UI-SPEC.md`                                                                                                                                                      |
-| `domainspec-instrument-otel`        | Instrument backend with OTel metrics derived from docs                                                                                                                                          |
-| `domainspec-otel-verify`            | Verify OTel coverage and produce observability report                                                                                                                                           |
-| `domainspec-infra-architecture`     | Define infrastructure constitution and scaffold IaC                                                                                                                                             |
-| `domainspec-infra-deploy`           | Sync deployment, monitoring, and alerts from docs                                                                                                                                               |
-| `domainspec-audit-alignment`        | Audit docs-versus-code implementation alignment                                                                                                                                                 |
-| `domainspec-audit-layering`         | Audit layering drift and misplaced domain logic                                                                                                                                                 |
-| `domainspec-verify-feature`         | Produce PASS/FLAG/BLOCK readiness verdict                                                                                                                                                       |
-| `domainspec-readiness-gate`         | Unified profile-driven readiness gate (`pilot`, `release-candidate`, `production`)                                                                                                              |
-| `domainspec-pilot-readiness`        | Prepare a feature for pilot rollout                                                                                                                                                             |
+| Command                             | Purpose                                                                                                                                                                                                                                       |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domainspec-orchestrate`            | Unified user-facing entrypoint: interpret natural-language DomainSpec intent, run specialist stages via subagent delegation, enforce post-spec task refresh/create before downstream stages, and surface stuck-subagent verification evidence |
+| `domainspec-start`                  | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, and optional init                                                                                                                                          |
+| `domainspec-help`                   | Show command reference and recommend the next step                                                                                                                                                                                            |
+| `domainspec-init`                   | Bootstrap docs structure and governance baseline                                                                                                                                                                                              |
+| `domainspec-interview-scope`        | Run greenfield or brownfield discovery interviews before specification starts                                                                                                                                                                 |
+| `domainspec-brownfield-translation` | Translate an implemented project into as-is DomainSpec feature specs plus governance and ontology gap artifacts                                                                                                                               |
+| `domainspec-decision-gate`          | Resolve blocker-level multi-option decisions and persist a decisions artifact before downstream mutation                                                                                                                                      |
+| `domainspec-pipeline`               | Run the full lifecycle with planner/work-pack gates for medium/high tasks before mutation (plan -> spec -> stories -> tests -> implementation -> verify)                                                                                      |
+| `domainspec-spec-feature`           | Author or evolve feature specs and aspect documents                                                                                                                                                                                           |
+| `domainspec-sync-user-stories`      | Sync `STORIES.md` from capability and aspect docs                                                                                                                                                                                             |
+| `domainspec-sync-registry`          | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                                                                                                     |
+| `domainspec-generate-tests`         | Derive backend and/or UI test obligations from docs                                                                                                                                                                                           |
+| `domainspec-context-builder`        | Build minimal deterministic task context packs from task links, architecture references, composability patterns, and indexed snippets                                                                                                         |
+| `domainspec-implement`              | Implement backend code from approved contracts                                                                                                                                                                                                |
+| `domainspec-tag-code`               | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                                                                                                                                                         |
+| `domainspec-ui-pipeline`            | Run the UI lifecycle from UI spec to implementation and audit                                                                                                                                                                                 |
+| `domainspec-ui-architecture`        | Define or evolve project-wide UI architecture                                                                                                                                                                                                 |
+| `domainspec-ui-implement`           | Implement frontend pages from `UI-SPEC.md`                                                                                                                                                                                                    |
+| `domainspec-instrument-otel`        | Instrument backend with OTel metrics derived from docs                                                                                                                                                                                        |
+| `domainspec-otel-verify`            | Verify OTel coverage and produce observability report                                                                                                                                                                                         |
+| `domainspec-infra-architecture`     | Define infrastructure constitution and scaffold IaC                                                                                                                                                                                           |
+| `domainspec-infra-deploy`           | Sync deployment, monitoring, and alerts from docs                                                                                                                                                                                             |
+| `domainspec-audit-alignment`        | Audit docs-versus-code implementation alignment                                                                                                                                                                                               |
+| `domainspec-audit-layering`         | Audit layering drift and misplaced domain logic                                                                                                                                                                                               |
+| `domainspec-verify-feature`         | Produce PASS/FLAG/BLOCK readiness verdict                                                                                                                                                                                                     |
+| `domainspec-readiness-gate`         | Unified profile-driven readiness gate (`pilot`, `release-candidate`, `production`)                                                                                                                                                            |
+| `domainspec-pilot-readiness`        | Prepare a feature for pilot rollout                                                                                                                                                                                                           |
 
 Recommended default: start from `domainspec-orchestrate`. All other `domainspec-*` specialist commands remain fully supported as advanced/internal direct invocations.
 
@@ -104,6 +104,24 @@ Common examples:
 - `@domainspec-orchestrator domainspec-orchestrate "spec payment-processing"` (delegates spec writer, then delegated task refresh/create, then story sync)
 - `@domainspec-orchestrator domainspec-orchestrate "generate tests for settlement-recovery"`
 - `@domainspec-orchestrator domainspec-orchestrate "build task context for knowledge-graph-visualization TASK-KG-IMP-01"`
+
+### Orchestrator Delegation Tuning
+
+`domainspec-orchestrate` applies a stage-level delegation profile to reduce latency while preserving quality:
+
+- `quick` profile: `sonnet` + low thinking for deterministic/read-heavy stages.
+- `standard` profile: `sonnet` + medium thinking for docs/planning synthesis.
+- `deep` profile: high-capability model + high thinking for high-risk mutation/architecture stages.
+
+Default policy is cost-aware: start with the lowest viable profile, avoid `xhigh` by default, and on suspected stuck runs retry once with reduced thinking and narrowed scope before blocking.
+
+### Delegation Telemetry Ledger
+
+Delegation-capable commands append per-stage telemetry rows to:
+
+- `docs/signals/delegation-tuning.jsonl`
+
+Each row records profile, thinking budget, stage outcome, stuck classification, retry count, and notes so delegation behavior can be reviewed later.
 
 Then run the full pipeline:
 

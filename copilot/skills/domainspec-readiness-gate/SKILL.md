@@ -23,6 +23,11 @@ Inputs:
 
 <process>
 1. Read `domainspec/CHANGELOG.md` and feature readiness artifacts.
+1a. Apply delegation tuning + tracking to delegated readiness stages (`domainspec-pilot-readiness`, `domainspec-verify-feature`):
+   - Use per-stage profile (`quick|standard|deep`) with lowest-cost viable default; avoid `xhigh` unless explicitly required.
+   - On suspected-stuck after `high|xhigh`, retry once with reduced thinking and narrowed scope before final BLOCK.
+   - Append one telemetry row per delegated stage to `docs/signals/delegation-tuning.jsonl` with profile, thinking budget, outcome, retries, and notes.
+   - If telemetry append fails, continue but return FLAG details with remediation.
 2. Resolve profile:
    - default: `pilot`
    - supported: `pilot`, `release-candidate`, `production`

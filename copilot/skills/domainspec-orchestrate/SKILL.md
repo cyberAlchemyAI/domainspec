@@ -47,10 +47,24 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
 5. Planner-first enforcement for mutation-capable routes:
    - For `domainspec-pipeline`, `domainspec-spec-feature`, `domainspec-plan-phase-bridge`, `domainspec-generate-tests`, `domainspec-context-builder`, `domainspec-implement`, `domainspec-tag-code`, `domainspec-ui-pipeline`, and mutation-capable readiness flows, require delegated execution to establish or validate planner preflight and work-pack gate (`docs/features/{feature}/WORK-PACK.md`) before mutation.
    - Read-only guidance and verification-only commands may bypass planner preflight.
+5a. Delegation tuning policy (model + thinking budget):
+   - Choose the lowest-cost profile that still satisfies stage risk/ambiguity; do not start at `xhigh` thinking by default.
+   - `quick` profile: prefer `sonnet` with `low` thinking for deterministic/read-heavy stages (`domainspec-help`, `domainspec-init`, `domainspec-sync-registry`, `domainspec-sync-user-stories`, `domainspec-context-builder` in `lean|standard`).
+   - `standard` profile: prefer `sonnet` with `medium` thinking for docs/planning synthesis (`domainspec-spec-feature`, `domainspec-generate-tests`, `domainspec-plan-phase-bridge`, `domainspec-audit-alignment`, `domainspec-audit-layering`, readiness/audit stages).
+   - `deep` profile: prefer high-capability model with `high` thinking for high-risk mutation/architecture stages (`domainspec-implement`, `domainspec-pipeline`, `domainspec-ui-pipeline`, `domainspec-infra-architecture`, `domainspec-infra-deploy`, blocker-level `domainspec-decision-gate`).
+   - Escalation rule: move to a higher profile only when unresolved ambiguity, safety risk, or architecture impact justifies it.
+   - De-escalation rule: when a `high|xhigh` stage is suspected-stuck, retry once with reduced thinking (`medium` or `low`) and a narrowed stage prompt before final block.
+   - If user preference is speed/cost-first, bias to `sonnet` + `low|medium` except for safety-critical stages.
 6. Execution model requirements:
    - Every routed specialist stage must run through a delegated subagent call, including single-stage routes.
    - Do not execute specialist logic inline in the orchestrator.
    - Capture each stage result before advancing to the next stage.
+   - Run a subagent liveness verification gate after every delegated stage:
+     - Mark stage `healthy` only when the delegated call returns a terminal outcome (`completed`, `blocked`, or `failed`) with stage evidence.
+     - If a delegated stage does not return a terminal outcome or appears stalled, mark it `suspected-stuck`.
+     - On `suspected-stuck`: capture last available stage output/evidence, retry the same delegated stage once, then stop with `blocked-at-<stage>(subagent-stuck)` if the retry is also non-terminal.
+    - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` with: `timestamp`, `skill`, `stage`, `delegatedCommand`, `delegationProfile`, `thinkingBudget`, `outcome`, `suspectedStuck`, `retryCount`, `durationMs` (when available), and `notes`.
+    - If telemetry append fails, continue execution but return FLAG details with remediation to restore delegation tracking.
    - After any successful delegated `domainspec-spec-feature <feature>` stage, immediately run delegated `domainspec-plan-phase-bridge <feature> --mode native` to refresh or create `WORK-PACK.md` and `work-pack/tasks/*.md` artifacts before continuing.
    - For multi-stage workflows, stop on first BLOCK/failure and return the blocking stage, evidence, and remediation.
 7. Return and run the routed command or pipeline stages with resolved arguments.
@@ -86,6 +100,12 @@ Return:
   1. <domainspec-\* command>
   2. <... when pipeline>
 - Execution result: completed | blocked-at-<stage>
+- Subagent verification: enabled
+- Stage health: healthy | stuck-at-<stage>
+- Verification evidence: <stage attempts, last-progress evidence, retry action>
+- Delegation profile: quick | standard | deep
+- Thinking budget: low | medium | high | xhigh
+- Delegation telemetry: docs/signals/delegation-tuning.jsonl (appended)
 - Mode: default-entrypoint | direct-advanced
 - Notes: <why this route>
 ```

@@ -103,7 +103,19 @@ Read first:
     - "I want a specific command" -> ask the user for the exact `domainspec-*` command.
 5. Execution model requirements:
    - Every routed command or stage must execute through delegated subagent invocation.
+   - Apply delegation tuning profile per delegated stage:
+     - `quick`: prefer `sonnet` with `low` thinking for deterministic/read-heavy stages.
+     - `standard`: prefer `sonnet` with `medium` thinking for docs/planning synthesis stages.
+     - `deep`: prefer high-capability model with `high` thinking for high-risk mutation/architecture stages.
+     - Default to the lowest-cost viable profile; avoid starting at `xhigh` thinking unless explicitly required.
    - Capture each stage result before continuing.
+  - Verify delegated stage liveness after each stage:
+    - Stage is `healthy` only when delegated execution returns a terminal outcome (`completed`, `blocked`, `failed`) with evidence.
+    - Stage is `suspected-stuck` when delegated execution is non-terminal/stalled.
+    - On `suspected-stuck`, capture last available output/evidence, retry once with safer bounded execution, then stop with `blocked-at-<stage>(subagent-stuck)` if retry is also non-terminal.
+     - On `suspected-stuck` after a `high|xhigh` attempt, retry with reduced thinking (`medium` or `low`) and narrowed stage scope before final block.
+   - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` with: `timestamp`, `skill`, `stage`, `delegatedCommand`, `delegationProfile`, `thinkingBudget`, `outcome`, `suspectedStuck`, `retryCount`, `durationMs` (when available), and `notes`.
+   - If telemetry append fails, continue execution but return FLAG details with remediation to restore delegation tracking.
    - For multi-stage pipelines, run sequentially and stop on first BLOCK/failure; return stage-level evidence and remediation.
 6. After the user selects an option (or provides an exact `domainspec-*` command), execute the selected route immediately in the same turn.
 7. Do not route work-pack tasks to `domainspec-task-session`. `domainspec-task-session` remains direct-advanced only when the user explicitly invokes it with an explicit file path under `implementation/domainspec/plan/`.
@@ -140,6 +152,12 @@ Return:
   2. <... when pipeline>
 - Execution: executed immediately after selection
 - Result: completed | blocked-at-<stage>
+- Subagent verification: enabled
+- Stage health: healthy | stuck-at-<stage>
+- Verification evidence: <stage attempts, last-progress evidence, retry action>
+- Delegation profile: quick | standard | deep
+- Thinking budget: low | medium | high | xhigh
+- Delegation telemetry: docs/signals/delegation-tuning.jsonl (appended)
 - Mode: default-entrypoint | direct-advanced
 - Why: <short rationale>
 ```

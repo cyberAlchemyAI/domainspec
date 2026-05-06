@@ -801,7 +801,7 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)                 | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)                   | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)                 | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.0.3)                      |
+| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.0.8)                      |
 | [templates/](templates/SPEC.md)                      | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                               | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)               | Copilot agent pack overview                                                  |

@@ -52,6 +52,12 @@ Created/updated by this skill:
 ## Pre-flight checks
 
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
+   1a. Apply delegation tuning + tracking to each delegated stage in this UI pipeline:
+   - Select per-stage profile: `quick` (`sonnet` + low), `standard` (`sonnet` + medium), `deep` (high-capability + high).
+   - Default to lowest-cost viable profile; avoid `xhigh` unless explicitly required.
+   - On suspected-stuck after `high|xhigh`, retry once with reduced thinking and narrowed stage scope before final BLOCK.
+   - Append one telemetry row per delegated stage to `docs/signals/delegation-tuning.jsonl` with stage outcome, profile, thinking budget, retry count, and notes.
+   - If telemetry append fails, continue execution but return FLAG details with remediation.
 2. Validate feature prerequisites:
    a. Confirm docs/features/{feature}/SPEC.md exists → BLOCK if missing.
    b. Confirm docs/features/{feature}/interfaces.md exists and has HTTP endpoints → BLOCK if missing.
