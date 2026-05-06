@@ -1,10 +1,16 @@
 import type { MirrorProjectionRepositoryPort } from "./ports.js";
 import { createKnowledgeGraphError } from "../domain/errors.js";
-import type { DefinitionPointer } from "../domain/models.js";
+import {
+  inferAspectKind,
+  type AspectKind,
+  type DefinitionPointer,
+} from "../domain/models.js";
 
 export interface GetDefinitionPointerInput {
+  projectKey: string;
   featureId: string;
   conceptId: string;
+  aspectHint?: AspectKind;
   preferExactAnchor?: boolean;
 }
 
@@ -12,18 +18,35 @@ export type GetDefinitionPointerQuery = (
   input: GetDefinitionPointerInput,
 ) => DefinitionPointer;
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.GetDefinitionPointer
+ *     type: Query
+ *   edges:
+ *     - edge: queries
+ *       to: knowledge-graph-visualization.ConceptDefinition
+ *     - edge: queries
+ *       to: knowledge-graph-visualization.DocumentationWorkspace
+ */
 export function makeGetDefinitionPointerQuery(
   repository: MirrorProjectionRepositoryPort,
 ): GetDefinitionPointerQuery {
   return function getDefinitionPointer(
     input: GetDefinitionPointerInput,
   ): DefinitionPointer {
-    const projection = repository.getLatestProjection(input.featureId);
+    const projection = repository.getLatestProjection({
+      projectKey: input.projectKey,
+      featureId: input.featureId,
+    });
     if (!projection) {
       throw createKnowledgeGraphError(
         "MIRROR_PROJECTION_NOT_FOUND",
         "No projection snapshot is available for the requested feature",
-        { featureId: input.featureId },
+        {
+          projectKey: input.projectKey,
+          featureId: input.featureId,
+        },
       );
     }
 
@@ -36,6 +59,7 @@ export function makeGetDefinitionPointerQuery(
         "CONCEPT_NOT_FOUND",
         "Concept was not found in the latest projection",
         {
+          projectKey: input.projectKey,
           featureId: input.featureId,
           conceptId: input.conceptId,
         },
@@ -48,6 +72,7 @@ export function makeGetDefinitionPointerQuery(
         "DEFINITION_POINTER_NOT_FOUND",
         "Concept definition pointer is unavailable",
         {
+          projectKey: input.projectKey,
           featureId: input.featureId,
           conceptId: input.conceptId,
         },
@@ -64,6 +89,7 @@ export function makeGetDefinitionPointerQuery(
         "DEFINITION_ANCHOR_NOT_FOUND",
         "Concept definition anchor is not exact",
         {
+          projectKey: input.projectKey,
           featureId: input.featureId,
           conceptId: input.conceptId,
           expectedAnchor: concept.sourceAnchor,
@@ -72,6 +98,11 @@ export function makeGetDefinitionPointerQuery(
       );
     }
 
-    return pointer;
+    const aspectKind = input.aspectHint ?? inferAspectKind(pointer.filePath);
+
+    return {
+      ...pointer,
+      aspectKind,
+    };
   };
 }

@@ -1,16 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { isAbsolute, relative, resolve } from "node:path";
 
 import type { DefinitionAnchorResolverPort } from "../application/ports.js";
 import { normalizeFilePath } from "../domain/models.js";
 
-interface FeatureDocsDefinitionAnchorResolverConfig {
-  readonly featuresRootDir: string;
-}
-
-export function createFeatureDocsDefinitionAnchorResolver(
-  config: FeatureDocsDefinitionAnchorResolverConfig,
-): DefinitionAnchorResolverPort {
+export function createFeatureDocsDefinitionAnchorResolver(): DefinitionAnchorResolverPort {
   return {
     resolvePointer(input) {
       const normalizedPath = normalizeFilePath(input.pointer.filePath);
@@ -21,11 +15,25 @@ export function createFeatureDocsDefinitionAnchorResolver(
         };
       }
 
-      const absolutePath = resolve(
-        config.featuresRootDir,
-        input.featureId,
-        normalizedPath,
+      const featureDir = resolve(
+        input.scope.featureDocsRootDir,
+        input.scope.featureId,
       );
+      if (!isPathWithin(input.scope.workspaceRootDir, featureDir)) {
+        return {
+          fileExists: false,
+          anchorExists: false,
+        };
+      }
+
+      const absolutePath = resolve(featureDir, normalizedPath);
+      if (!isPathWithin(featureDir, absolutePath)) {
+        return {
+          fileExists: false,
+          anchorExists: false,
+        };
+      }
+
       if (!existsSync(absolutePath)) {
         return {
           fileExists: false,
@@ -44,6 +52,14 @@ export function createFeatureDocsDefinitionAnchorResolver(
       };
     },
   };
+}
+
+function isPathWithin(basePath: string, targetPath: string): boolean {
+  const relativePath = relative(basePath, targetPath);
+  return (
+    relativePath === "" ||
+    (!relativePath.startsWith("..") && !isAbsolute(relativePath))
+  );
 }
 
 function extractAnchors(markdown: string): Set<string> {

@@ -6,273 +6,1003 @@
   },
   "mode": "standard",
   "strict": true,
-  "generatedAt": "2026-05-05",
+  "generatedAt": "2026-05-06",
+  "frameworkConstraints": [
+    {
+      "version": "2.0.8",
+      "source": "domainspec/CHANGELOG.md",
+      "applied": "Reviewed delegation profile and telemetry additions; no extra retrieval constraints beyond strict context-builder contract."
+    },
+    {
+      "version": "2.0.4",
+      "source": "domainspec/CHANGELOG.md",
+      "applied": "Enforced selector-level relevance, obligation binding, interested-data subset extraction, and mode budgets."
+    }
+  ],
+  "plannerGate": {
+    "status": "pass",
+    "source": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
+    "selector": "Planner Control Fields/plannerGateStatus"
+  },
   "budget": {
     "maxFiles": 14,
     "maxExcerptLines": 280,
     "selectedFiles": 14,
-    "selectedSnippetCount": 30,
+    "selectedSnippetCount": 39,
+    "selectedExcerptLines": 218,
     "noiseRatio": 0
   },
+  "rankingMethod": "score=(1-signal)*0.45 + cost*0.30 + ambiguity*0.25",
   "obligationMatrix": [
     {
-      "obligationId": "O0",
-      "title": "Planner gate pass and W1 stage scope lock",
-      "source": ["docs/features/knowledge-graph-visualization/WORK-PACK.md"]
-    },
-    {
       "obligationId": "O1",
-      "title": "Implement concept-detail, definition-pointer, and open-definition API contracts",
+      "title": "Planner gate must be PASS before context artifact writes",
       "source": [
-        "docs/features/knowledge-graph-visualization/interfaces.md",
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md"
+        "docs/features/knowledge-graph-visualization/WORK-PACK.md#planner-control-fields"
       ]
     },
     {
       "obligationId": "O2",
-      "title": "Preserve detail/definition query filters and output contracts",
+      "title": "GetMirrorCards and GetRelationshipGraph contracts include board-level fields and filters",
       "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#domainspec-coverage",
+        "docs/features/knowledge-graph-visualization/queries.md#getmirrorcards",
+        "docs/features/knowledge-graph-visualization/queries.md#getrelationshipgraph"
+      ]
+    },
+    {
+      "obligationId": "O3",
+      "title": "GetConceptDetailCard and GetDefinitionPointer contracts remain scope-aware and deterministic",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#domainspec-coverage",
         "docs/features/knowledge-graph-visualization/queries.md#getconceptdetailcard",
         "docs/features/knowledge-graph-visualization/queries.md#getdefinitionpointer"
       ]
     },
     {
-      "obligationId": "O3",
-      "title": "Keep selection semantics and explicit error diagnostics in application layer",
+      "obligationId": "O4",
+      "title": "Interface contracts include KnowledgeGraphAPI endpoints plus KnowledgeGraphModule and ProjectSourceRegistry mappings",
+      "source": [
+        "docs/features/knowledge-graph-visualization/interfaces.md#external-knowledgegraphapi-rest",
+        "docs/features/knowledge-graph-visualization/interfaces.md#internal-knowledgegraphmodule-interface",
+        "docs/features/knowledge-graph-visualization/interfaces.md#internal-projectsourceregistry-interface"
+      ]
+    },
+    {
+      "obligationId": "O5",
+      "title": "Registered source-key scope propagation for (projectKey, featureId) is enforced before all handlers",
+      "source": [
+        "docs/features/knowledge-graph-visualization/operations.md#resolveprojectionscope",
+        "docs/features/knowledge-graph-visualization/interfaces.md#internal-projectsourceregistry-interface",
+        "docs/features/knowledge-graph-visualization/DECISIONS.md"
+      ]
+    },
+    {
+      "obligationId": "O6",
+      "title": "SelectConcept validates whiteboard card id/type and returns deterministic diagnostics",
       "source": [
         "docs/features/knowledge-graph-visualization/operations.md#selectconcept",
         "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#implementation-directives"
       ]
     },
     {
-      "obligationId": "O4",
-      "title": "Open-definition enforces session match plus pointer/anchor resolution with stable errors",
+      "obligationId": "O7",
+      "title": "OpenDefinition enforces session match and pointer/anchor resolution with stable errors",
       "source": [
         "docs/features/knowledge-graph-visualization/operations.md#opendefinition",
         "docs/features/knowledge-graph-visualization/interfaces.md#post-apiknowledge-graphconceptsconceptidopen-definition"
       ]
     },
     {
-      "obligationId": "O5",
-      "title": "Boundary split: adapters own HTTP parsing/serialization, application owns semantics",
+      "obligationId": "O8",
+      "title": "Mapping adapters shape mirror cards and concept detail card payloads",
       "source": [
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#implementation-directives",
-        "architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer",
-        "architecture/pattern-library/LAYERING-REFERENCE.md#application-layer"
-      ]
-    },
-    {
-      "obligationId": "O6",
-      "title": "Layer dependency constraints enforced for stage-1 implementation",
-      "source": ["architecture/pattern-library/DEPENDENCY-RULES.md"]
-    },
-    {
-      "obligationId": "O7",
-      "title": "Concept detail shaping follows ConceptToDetailCardAdapter",
-      "source": [
+        "docs/features/knowledge-graph-visualization/mappings.md#documenttomirrorcardadapter",
         "docs/features/knowledge-graph-visualization/mappings.md#concepttodetailcardadapter"
       ]
     },
     {
-      "obligationId": "O8",
-      "title": "Stage-1 verification matrix coverage for API/operation/interface mappings",
-      "source": [
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#interface-contract-obligations",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#interface-field-mapping-obligations-interfacesmd"
-      ]
-    },
-    {
       "obligationId": "O9",
-      "title": "Locked decision: open-definition with no selection surfaces validation messaging path",
+      "title": "Layer responsibilities and dependency boundaries keep HTTP concerns in adapters and semantics in application",
       "source": [
-        "user-lock:open-definition-no-selection-validation-message-2026-05-05",
-        "docs/features/knowledge-graph-visualization/UI-SPEC.md#opendefinitionaction",
-        "docs/features/knowledge-graph-visualization/operations.md#opendefinition"
+        "architecture/pattern-library/LAYERING-REFERENCE.md#layer-responsibilities",
+        "architecture/pattern-library/DEPENDENCY-RULES.md#layer-dependency-constraints",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#implementation-directives"
       ]
     },
     {
       "obligationId": "O10",
-      "title": "Locked decision: backend scope covers full concept detail + definition + open-definition contracts",
+      "title": "Verification coverage includes KG-BE-API-001..013, KG-BE-IFMAP-001..011, KG-BE-OP-011..020, and unresolved scope-gap obligations",
       "source": [
-        "user-lock:backend-full-interface-contract-2026-05-05",
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md",
-        "docs/features/knowledge-graph-visualization/interfaces.md"
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#interface-contract-obligations-interfacesmd",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#interface-field-mapping-obligations-interfacesmd",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#uncovered-formal-gaps"
       ]
     },
     {
       "obligationId": "O11",
-      "title": "Reuse Fastify bootstrap/inject patterns for deterministic route testing",
-      "source": ["backend/src/server.ts", "backend/src/server.test.ts"]
+      "title": "Decision locks D-KG-005, D-KG-007, D-KG-009 remain mandatory",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#decision-lock",
+        "docs/features/knowledge-graph-visualization/DECISIONS.md"
+      ]
+    },
+    {
+      "obligationId": "O12",
+      "title": "Reusable legacy asset patterns are preserved for server bootstrap, request inject harness, and process composition",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#reusable-legacy-assets",
+        "backend/src/server.ts",
+        "backend/src/server.test.ts",
+        "backend/src/index.ts"
+      ]
+    },
+    {
+      "obligationId": "O13",
+      "title": "Interested-data relationship subset is derived strictly from SPEC feature concept graph edges",
+      "source": [
+        "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph"
+      ]
+    },
+    {
+      "obligationId": "O14",
+      "title": "Legacy carryover limits prevent restoring removed legacy route surface as primary API",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#legacy-carryover-limits"
+      ]
     }
   ],
   "selected": [
     {
       "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md",
-      "reason": "Task authority",
+      "reason": "Primary task contract and coverage-ID authority.",
+      "score": {
+        "signal": 0.99,
+        "cost": 0.55,
+        "ambiguity": 0.06,
+        "value": 0.18
+      },
       "selectors": [
-        "#goal",
-        "#domainspec-coverage",
-        "#architecture-references",
-        "#implementation-directives",
-        "#execution-steps",
-        "#completion-criteria",
-        "#decision-lock"
+        {
+          "type": "heading",
+          "value": "DomainSpec Coverage",
+          "line": 16
+        },
+        {
+          "type": "heading",
+          "value": "Architecture References",
+          "line": 26
+        },
+        {
+          "type": "heading",
+          "value": "Implementation Directives",
+          "line": 32
+        },
+        {
+          "type": "heading",
+          "value": "Reusable legacy Assets",
+          "line": 42
+        },
+        {
+          "type": "heading",
+          "value": "legacy Carryover Limits",
+          "line": 51
+        },
+        {
+          "type": "heading",
+          "value": "Completion Criteria",
+          "line": 64
+        },
+        {
+          "type": "heading",
+          "value": "Decision Lock",
+          "line": 82
+        }
       ],
-      "obligationRefs": ["O1", "O2", "O3", "O4", "O5", "O8", "O9", "O10"]
+      "excerpts": [
+        {
+          "startLine": 16,
+          "endLine": 24,
+          "purpose": "Coverage links and IDs used to seed obligations"
+        },
+        {
+          "startLine": 32,
+          "endLine": 40,
+          "purpose": "Implementation directives and behavioral constraints"
+        },
+        {
+          "startLine": 42,
+          "endLine": 49,
+          "purpose": "Legacy reusable asset directives"
+        },
+        {
+          "startLine": 82,
+          "endLine": 89,
+          "purpose": "Decision lock bindings"
+        }
+      ],
+      "obligationRefs": [
+        "O2",
+        "O3",
+        "O4",
+        "O5",
+        "O6",
+        "O7",
+        "O8",
+        "O9",
+        "O10",
+        "O11",
+        "O12",
+        "O14"
+      ]
     },
     {
       "path": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
-      "reason": "Planner gate and stage scope",
+      "reason": "Planner gate and task-board scope lock.",
+      "score": {
+        "signal": 0.78,
+        "cost": 0.2,
+        "ambiguity": 0.1,
+        "value": 0.18
+      },
       "selectors": [
-        "Planner Control Fields/plannerGateStatus",
-        "Task Status Board/KG-IMP-02",
-        "Wave Status Board/W1"
+        {
+          "type": "heading",
+          "value": "Planner Control Fields",
+          "line": 7
+        },
+        {
+          "type": "table-row",
+          "value": "plannerGateStatus=pass",
+          "line": 11
+        },
+        {
+          "type": "heading",
+          "value": "Task Status Board",
+          "line": 18
+        },
+        {
+          "type": "table-row",
+          "value": "KG-IMP-02",
+          "line": 22
+        }
       ],
-      "obligationRefs": ["O0", "O8", "O10"]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/work-pack/shared/03-cross-task-decisions.md",
-      "reason": "Decision lock authority for open-definition behavior",
-      "selectors": [
-        "Selected Decisions/D-KG-003",
-        "Selected Decisions/D-KG-005",
-        "Decision Application Rules"
+      "excerpts": [
+        {
+          "startLine": 7,
+          "endLine": 12,
+          "purpose": "Planner gate verification"
+        },
+        {
+          "startLine": 18,
+          "endLine": 23,
+          "purpose": "Task scope lock evidence"
+        }
       ],
-      "obligationRefs": ["O9", "O10"]
+      "obligationRefs": ["O1", "O10"]
     },
     {
-      "path": "docs/features/knowledge-graph-visualization/queries.md",
-      "reason": "Detail and definition query contracts",
+      "path": "docs/features/knowledge-graph-visualization/DECISIONS.md",
+      "reason": "Decision-lock authority for open-definition mode and strict scope policy.",
+      "score": {
+        "signal": 0.92,
+        "cost": 0.12,
+        "ambiguity": 0.06,
+        "value": 0.1
+      },
       "selectors": [
-        "#getconceptdetailcard/Input",
-        "#getconceptdetailcard/Filters",
-        "#getconceptdetailcard/Output",
-        "#getdefinitionpointer/Input",
-        "#getdefinitionpointer/Filters",
-        "#getdefinitionpointer/Output"
+        {
+          "type": "bullet",
+          "value": "D-KG-005",
+          "line": 14
+        },
+        {
+          "type": "bullet",
+          "value": "D-KG-007",
+          "line": 19
+        },
+        {
+          "type": "bullet",
+          "value": "D-KG-009",
+          "line": 21
+        }
       ],
-      "obligationRefs": ["O1", "O2", "O10"]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/interfaces.md",
-      "reason": "External and internal API interface contracts",
-      "selectors": [
-        "### GET /api/knowledge-graph/concepts/:conceptId",
-        "### GET /api/knowledge-graph/concepts/:conceptId/definition",
-        "### POST /api/knowledge-graph/concepts/:conceptId/open-definition",
-        "## Internal: KnowledgeGraphModule Interface"
-      ],
-      "obligationRefs": ["O1", "O4", "O10"]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/operations.md",
-      "reason": "Selection/open semantics and error model",
-      "selectors": [
-        "#selectconcept/Rules",
-        "#selectconcept/Postconditions",
-        "#selectconcept/Error States",
-        "#opendefinition/Rules",
-        "#opendefinition/Calculations",
-        "#opendefinition/Postconditions",
-        "#opendefinition/Error States"
-      ],
-      "obligationRefs": ["O3", "O4", "O9", "O10"]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/mappings.md",
-      "reason": "Concept detail adapter contract",
-      "selectors": [
-        "#concepttodetailcardadapter/Field Mapping",
-        "#concepttodetailcardadapter/Defaults",
-        "#concepttodetailcardadapter/Validation"
-      ],
-      "obligationRefs": ["O7", "O10"]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/TEST-SPEC.md",
-      "reason": "Stage-1 verification obligations",
-      "selectors": [
-        "Operation Rule Obligations/KG-BE-OP-011..020",
-        "Interface Contract Obligations/KG-BE-API-007..013",
-        "Interface Field-Mapping Obligations/KG-BE-IFMAP-006..011",
-        "Form/Interaction Validation Obligations/KG-UI-FORM-001"
-      ],
-      "obligationRefs": ["O8", "O9", "O10"]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/UI-SPEC.md",
-      "reason": "UI validation contract for no-selection open-definition path",
-      "selectors": [
-        "Data Flow/POST /api/knowledge-graph/concepts/:conceptId/open-definition",
-        "### OpenDefinitionAction",
-        "Error Code -> UI Message Mapping"
-      ],
-      "obligationRefs": ["O9", "O10"]
-    },
-    {
-      "path": "architecture/ARCHITECTURE.md",
-      "reason": "Architecture retrieval authority",
-      "selectors": ["#retrieval-map", "#canonical-companions"],
-      "obligationRefs": ["O5", "O6"]
-    },
-    {
-      "path": "architecture/pattern-library/LAYERING-REFERENCE.md",
-      "reason": "Layer responsibility constraints",
-      "selectors": [
-        "#application-layer",
-        "#interface--adapters-layer",
-        "#module-boundary-guidelines"
-      ],
-      "obligationRefs": ["O5", "O6"]
-    },
-    {
-      "path": "architecture/pattern-library/DEPENDENCY-RULES.md",
-      "reason": "Import/dependency boundary checks",
-      "selectors": [
-        "## Layer Dependency Constraints",
-        "## Static Enforcement",
-        "## Violation Heuristic"
-      ],
-      "obligationRefs": ["O6"]
-    },
-    {
-      "path": "backend/src/server.ts",
-      "reason": "Reusable Fastify route bootstrap pattern",
-      "selectors": [
-        "symbol: buildServer",
-        "call: registerKnowledgeGraphRoutes(app, options.knowledgeGraph)",
-        "route: app.get('/health')"
+      "excerpts": [
+        {
+          "startLine": 14,
+          "endLine": 21,
+          "purpose": "Gate-selected decision constraints for this task"
+        }
       ],
       "obligationRefs": ["O5", "O11"]
     },
     {
-      "path": "backend/src/server.test.ts",
-      "reason": "Reusable inject lifecycle and contract test harness",
+      "path": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "reason": "Feature graph authority for relationship interested-data subset and contract linkage.",
+      "score": {
+        "signal": 0.88,
+        "cost": 0.35,
+        "ambiguity": 0.16,
+        "value": 0.2
+      },
       "selectors": [
-        "test: health endpoint returns ok",
-        "test: rebuild persists projection and read endpoints return latest snapshot",
-        "pattern: app.inject(...) + t.after(async () => app.close())"
+        {
+          "type": "heading",
+          "value": "Feature Concept Graph",
+          "line": 139
+        },
+        {
+          "type": "table-row",
+          "value": "GetMirrorCards..ProjectSourceRegistry linkage",
+          "lineStart": 160,
+          "lineEnd": 173
+        },
+        {
+          "type": "table-row",
+          "value": "MirrorProjection ownership rows",
+          "lineStart": 186,
+          "lineEnd": 188
+        }
       ],
-      "obligationRefs": ["O8", "O11"]
+      "excerpts": [
+        {
+          "startLine": 139,
+          "endLine": 145,
+          "purpose": "Graph subset derivation seed"
+        },
+        {
+          "startLine": 160,
+          "endLine": 173,
+          "purpose": "Query/interface relation rows tied to API obligations"
+        },
+        {
+          "startLine": 186,
+          "endLine": 188,
+          "purpose": "Containment relationships for graph payload context"
+        }
+      ],
+      "obligationRefs": ["O2", "O4", "O13"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/queries.md",
+      "reason": "Read API contract details for cards, graph, detail, and definition pointer queries.",
+      "score": {
+        "signal": 0.97,
+        "cost": 0.42,
+        "ambiguity": 0.09,
+        "value": 0.16
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "GetMirrorCards",
+          "line": 3
+        },
+        {
+          "type": "heading",
+          "value": "GetRelationshipGraph",
+          "line": 48
+        },
+        {
+          "type": "table-rows",
+          "value": "activeAspect/viewLevel/selectedFeatureId/selectedGroupKey",
+          "lineStart": 61,
+          "lineEnd": 64
+        },
+        {
+          "type": "heading",
+          "value": "GetConceptDetailCard",
+          "line": 100
+        },
+        {
+          "type": "heading",
+          "value": "GetDefinitionPointer",
+          "line": 148
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 4,
+          "purpose": "Mirror cards query identity"
+        },
+        {
+          "startLine": 48,
+          "endLine": 49,
+          "purpose": "Relationship graph query identity"
+        },
+        {
+          "startLine": 61,
+          "endLine": 64,
+          "purpose": "Board-level input semantics"
+        },
+        {
+          "startLine": 100,
+          "endLine": 101,
+          "purpose": "Concept detail query identity"
+        },
+        {
+          "startLine": 148,
+          "endLine": 149,
+          "purpose": "Definition pointer query identity"
+        }
+      ],
+      "obligationRefs": ["O2", "O3"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/interfaces.md",
+      "reason": "Endpoint/interface field mappings for external and internal contracts.",
+      "score": {
+        "signal": 0.98,
+        "cost": 0.44,
+        "ambiguity": 0.11,
+        "value": 0.17
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "GET /api/knowledge-graph/mirror-cards",
+          "line": 28
+        },
+        {
+          "type": "heading",
+          "value": "GET /api/knowledge-graph/graph",
+          "line": 51
+        },
+        {
+          "type": "heading",
+          "value": "GET /api/knowledge-graph/concepts/:conceptId",
+          "line": 79
+        },
+        {
+          "type": "heading",
+          "value": "GET /api/knowledge-graph/concepts/:conceptId/definition",
+          "line": 104
+        },
+        {
+          "type": "heading",
+          "value": "POST /api/knowledge-graph/concepts/:conceptId/open-definition",
+          "line": 127
+        },
+        {
+          "type": "heading",
+          "value": "Internal: KnowledgeGraphModule Interface",
+          "line": 153
+        },
+        {
+          "type": "heading",
+          "value": "Internal: ProjectSourceRegistry Interface",
+          "line": 169
+        },
+        {
+          "type": "table-row",
+          "value": "getMirrorCards/getRelationshipGraph/getConceptDetailCard/getDefinitionPointer",
+          "lineStart": 162,
+          "lineEnd": 165
+        },
+        {
+          "type": "table-row",
+          "value": "resolveProjectionScope(input)",
+          "line": 175
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 28,
+          "endLine": 30,
+          "purpose": "Mirror-cards endpoint contract anchor"
+        },
+        {
+          "startLine": 51,
+          "endLine": 53,
+          "purpose": "Graph endpoint contract anchor"
+        },
+        {
+          "startLine": 79,
+          "endLine": 81,
+          "purpose": "Concept-detail endpoint contract anchor"
+        },
+        {
+          "startLine": 104,
+          "endLine": 106,
+          "purpose": "Definition-pointer endpoint contract anchor"
+        },
+        {
+          "startLine": 127,
+          "endLine": 129,
+          "purpose": "Open-definition endpoint contract anchor"
+        },
+        {
+          "startLine": 153,
+          "endLine": 155,
+          "purpose": "Internal module interface anchor"
+        },
+        {
+          "startLine": 169,
+          "endLine": 175,
+          "purpose": "ProjectSourceRegistry scope contract"
+        }
+      ],
+      "obligationRefs": ["O4", "O5", "O7"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/operations.md",
+      "reason": "Operational semantics and deterministic error code authority.",
+      "score": {
+        "signal": 0.97,
+        "cost": 0.38,
+        "ambiguity": 0.08,
+        "value": 0.15
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "ResolveProjectionScope",
+          "line": 3
+        },
+        {
+          "type": "table-row",
+          "value": "MIRROR_SOURCE_PROJECT_UNKNOWN/MIRROR_SOURCE_FEATURE_UNAVAILABLE/MIRROR_SOURCE_ROOT_INVALID",
+          "lineStart": 33,
+          "lineEnd": 35
+        },
+        {
+          "type": "heading",
+          "value": "SelectConcept",
+          "line": 101
+        },
+        {
+          "type": "table-row",
+          "value": "WHITEBOARD_CARD_NOT_FOUND/CONCEPT_SELECTION_SOURCE_INVALID/CONCEPT_SCOPE_MISMATCH",
+          "lineStart": 146,
+          "lineEnd": 148
+        },
+        {
+          "type": "heading",
+          "value": "OpenDefinition",
+          "line": 153
+        },
+        {
+          "type": "table-row",
+          "value": "DEFINITION_SESSION_MISMATCH/DEFINITION_POINTER_NOT_FOUND/DEFINITION_ANCHOR_NOT_FOUND/DEFINITION_SCOPE_MISMATCH",
+          "lineStart": 199,
+          "lineEnd": 202
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 16,
+          "endLine": 22,
+          "purpose": "Scope resolution rules"
+        },
+        {
+          "startLine": 33,
+          "endLine": 35,
+          "purpose": "Scope error diagnostics"
+        },
+        {
+          "startLine": 119,
+          "endLine": 124,
+          "purpose": "Selection card validation rules"
+        },
+        {
+          "startLine": 146,
+          "endLine": 148,
+          "purpose": "Selection deterministic errors"
+        },
+        {
+          "startLine": 169,
+          "endLine": 174,
+          "purpose": "Open-definition semantic rules"
+        },
+        {
+          "startLine": 199,
+          "endLine": 202,
+          "purpose": "Open-definition deterministic errors"
+        }
+      ],
+      "obligationRefs": ["O5", "O6", "O7"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/mappings.md",
+      "reason": "Adapter contracts for mirror card and detail card shaping.",
+      "score": {
+        "signal": 0.84,
+        "cost": 0.22,
+        "ambiguity": 0.12,
+        "value": 0.17
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "DocumentToMirrorCardAdapter",
+          "line": 37
+        },
+        {
+          "type": "heading",
+          "value": "ConceptToDetailCardAdapter",
+          "line": 68
+        },
+        {
+          "type": "table-row",
+          "value": "definition validation",
+          "line": 94
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 37,
+          "endLine": 43,
+          "purpose": "Mirror card adapter contract"
+        },
+        {
+          "startLine": 68,
+          "endLine": 74,
+          "purpose": "Concept detail adapter contract"
+        }
+      ],
+      "obligationRefs": ["O8"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/TEST-SPEC.md",
+      "reason": "Verification ID and unresolved scope-gap authority.",
+      "score": {
+        "signal": 0.95,
+        "cost": 0.34,
+        "ambiguity": 0.15,
+        "value": 0.16
+      },
+      "selectors": [
+        {
+          "type": "table-row",
+          "value": "KG-BE-OP-011",
+          "line": 50
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-OP-020",
+          "line": 59
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-API-001",
+          "line": 106
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-API-013",
+          "line": 118
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-IFMAP-001",
+          "line": 124
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-IFMAP-011",
+          "line": 134
+        },
+        {
+          "type": "heading",
+          "value": "Uncovered Formal Gaps",
+          "line": 228
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 50,
+          "endLine": 51,
+          "purpose": "Operation ID range start"
+        },
+        {
+          "startLine": 59,
+          "endLine": 59,
+          "purpose": "Operation ID range end"
+        },
+        {
+          "startLine": 106,
+          "endLine": 107,
+          "purpose": "API ID range start"
+        },
+        {
+          "startLine": 118,
+          "endLine": 118,
+          "purpose": "API ID range end"
+        },
+        {
+          "startLine": 124,
+          "endLine": 125,
+          "purpose": "IFMAP ID range start"
+        },
+        {
+          "startLine": 134,
+          "endLine": 134,
+          "purpose": "IFMAP ID range end"
+        },
+        {
+          "startLine": 228,
+          "endLine": 231,
+          "purpose": "Explicit unresolved scope-gap obligations"
+        }
+      ],
+      "obligationRefs": ["O10"]
+    },
+    {
+      "path": "architecture/pattern-library/LAYERING-REFERENCE.md",
+      "reason": "Layer responsibility split for adapter/application concerns.",
+      "score": {
+        "signal": 0.86,
+        "cost": 0.18,
+        "ambiguity": 0.1,
+        "value": 0.14
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Layer Responsibilities",
+          "line": 5
+        },
+        {
+          "type": "heading",
+          "value": "Application Layer",
+          "line": 18
+        },
+        {
+          "type": "heading",
+          "value": "Interface / Adapters Layer",
+          "line": 39
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 6,
+          "purpose": "Layering section anchor"
+        },
+        {
+          "startLine": 18,
+          "endLine": 21,
+          "purpose": "Application-layer scope"
+        },
+        {
+          "startLine": 39,
+          "endLine": 42,
+          "purpose": "Interface/adapters scope"
+        }
+      ],
+      "obligationRefs": ["O9"]
+    },
+    {
+      "path": "architecture/pattern-library/DEPENDENCY-RULES.md",
+      "reason": "Dependency boundary checks for architecture drift prevention.",
+      "score": {
+        "signal": 0.8,
+        "cost": 0.12,
+        "ambiguity": 0.08,
+        "value": 0.15
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Layer Dependency Constraints",
+          "line": 5
+        },
+        {
+          "type": "heading",
+          "value": "Static Enforcement",
+          "line": 12
+        },
+        {
+          "type": "heading",
+          "value": "Violation Heuristic",
+          "line": 20
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 8,
+          "purpose": "Allowed dependency directions"
+        },
+        {
+          "startLine": 12,
+          "endLine": 13,
+          "purpose": "Enforcement mechanisms"
+        },
+        {
+          "startLine": 20,
+          "endLine": 22,
+          "purpose": "Drift-blocking heuristic"
+        }
+      ],
+      "obligationRefs": ["O9"]
+    },
+    {
+      "path": "backend/src/server.ts",
+      "reason": "Legacy bootstrap and route registration pattern reused with adaptation.",
+      "score": {
+        "signal": 0.89,
+        "cost": 0.18,
+        "ambiguity": 0.08,
+        "value": 0.12
+      },
+      "selectors": [
+        {
+          "type": "symbol",
+          "value": "buildServer",
+          "lineStart": 13,
+          "lineEnd": 25
+        },
+        {
+          "type": "call",
+          "value": "app.get('/health')",
+          "line": 18
+        },
+        {
+          "type": "call",
+          "value": "registerKnowledgeGraphRoutes(app, options.knowledgeGraph)",
+          "line": 23
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 13,
+          "endLine": 19,
+          "purpose": "Server bootstrap boundary"
+        },
+        {
+          "startLine": 23,
+          "endLine": 25,
+          "purpose": "Route registration call"
+        }
+      ],
+      "obligationRefs": ["O12"]
+    },
+    {
+      "path": "backend/src/server.test.ts",
+      "reason": "Inject lifecycle and deterministic contract diagnostics pattern.",
+      "score": {
+        "signal": 0.83,
+        "cost": 0.26,
+        "ambiguity": 0.14,
+        "value": 0.19
+      },
+      "selectors": [
+        {
+          "type": "test",
+          "value": "rebuild persists projection and read endpoints return latest snapshot",
+          "line": 32
+        },
+        {
+          "type": "test",
+          "value": "concept detail, definition, and open-definition endpoints satisfy stage-2 contract",
+          "line": 115
+        },
+        {
+          "type": "test",
+          "value": "open-definition returns deterministic mismatch diagnostics",
+          "line": 201
+        },
+        {
+          "type": "test",
+          "value": "rebuild rejects unknown project with deterministic code",
+          "line": 259
+        },
+        {
+          "type": "test",
+          "value": "rebuild rejects invalid feature path escapes before file reads",
+          "line": 288
+        },
+        {
+          "type": "call",
+          "value": "app.inject(...)",
+          "line": 45
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 32,
+          "endLine": 33,
+          "purpose": "Projection/read contract harness"
+        },
+        {
+          "startLine": 115,
+          "endLine": 116,
+          "purpose": "Stage-2 endpoint contract harness"
+        },
+        {
+          "startLine": 201,
+          "endLine": 202,
+          "purpose": "Mismatch diagnostic harness"
+        },
+        {
+          "startLine": 259,
+          "endLine": 260,
+          "purpose": "Unknown project diagnostic harness"
+        },
+        {
+          "startLine": 288,
+          "endLine": 289,
+          "purpose": "Root escape diagnostic harness"
+        },
+        {
+          "startLine": 45,
+          "endLine": 46,
+          "purpose": "Inject invocation pattern"
+        }
+      ],
+      "obligationRefs": ["O10", "O12"]
+    },
+    {
+      "path": "backend/src/index.ts",
+      "reason": "Process entrypoint composition pattern with scope-related env adapters.",
+      "score": {
+        "signal": 0.87,
+        "cost": 0.2,
+        "ambiguity": 0.09,
+        "value": 0.14
+      },
+      "selectors": [
+        {
+          "type": "symbol",
+          "value": "optionalEnv",
+          "line": 3
+        },
+        {
+          "type": "symbol",
+          "value": "start",
+          "line": 13
+        },
+        {
+          "type": "call",
+          "value": "buildServer({...knowledgeGraph})",
+          "line": 17
+        },
+        {
+          "type": "call",
+          "value": "server.listen",
+          "line": 25
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 4,
+          "purpose": "Optional env normalization pattern"
+        },
+        {
+          "startLine": 13,
+          "endLine": 17,
+          "purpose": "Entrypoint composition start"
+        },
+        {
+          "startLine": 19,
+          "endLine": 22,
+          "purpose": "Knowledge-graph runtime option wiring"
+        },
+        {
+          "startLine": 25,
+          "endLine": 25,
+          "purpose": "Server startup boundary"
+        }
+      ],
+      "obligationRefs": ["O5", "O12"]
     }
   ],
   "excluded": [
     {
-      "path": "docs/features/knowledge-graph-visualization/domain.md",
-      "reason": "No uncovered stage-1 obligations remain after query/interface/mapping selectors resolve contract details."
+      "path": "docs/features/knowledge-graph-visualization/UI-SPEC.md",
+      "reason": "No uncovered TASK-KG-IMP-02 obligations remained after decision/task + operations/interfaces evidence."
     },
     {
-      "path": "docs/features/knowledge-graph-visualization/DECISIONS.md",
-      "reason": "Cross-task decision lock file is narrower and directly mapped to stage-1 obligations."
+      "path": "docs/features/knowledge-graph-visualization/work-pack/shared/03-cross-task-decisions.md",
+      "reason": "Contains D-KG-005 guidance but lacks D-KG-007 and D-KG-009 constraints required by this task."
     },
     {
-      "path": "backend/src/index.ts",
-      "reason": "Entrypoint startup composition is optional for this task; route/bootstrap and test harness are already covered."
-    },
-    {
-      "path": "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md",
-      "reason": "No uncovered layer obligations remain after selecting Layering Reference and Dependency Rules."
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "Used during retrieval-map resolution only; direct pattern-library selectors already close architecture obligations."
     },
     {
       "path": "docs/index/feature-map.md",
@@ -285,6 +1015,18 @@
     {
       "path": "docs/index/tag-index.json",
       "reason": "Not present"
+    },
+    {
+      "path": "backend/src/auth.ts",
+      "reason": "Legacy module intentionally removed; task requires re-implementation in current layout, not restoration."
+    },
+    {
+      "path": "backend/src/scopes.ts",
+      "reason": "Legacy module intentionally removed; task requires re-implementation in current layout, not restoration."
+    },
+    {
+      "path": "backend/src/knowledge-graph-use-cases.ts",
+      "reason": "Legacy module intentionally removed; task requires re-implementation in current layout, not restoration."
     }
   ],
   "interestedData": {

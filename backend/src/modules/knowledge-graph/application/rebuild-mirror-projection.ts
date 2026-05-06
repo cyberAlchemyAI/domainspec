@@ -2,12 +2,15 @@ import type {
   CanonicalEdgeVocabularyPort,
   FeatureDocsParserPort,
   MirrorProjectionRepositoryPort,
+  ProjectSourceRegistryPort,
 } from "./ports.js";
 import { createKnowledgeGraphError } from "../domain/errors.js";
 import {
   buildSnapshotId,
+  compareConceptDefinitions,
   compareFeatureDocuments,
   compareRelationshipEdges,
+  inferAspectKind,
   normalizeFilePath,
   REQUIRED_MIRROR_FILES,
 } from "../domain/models.js";
@@ -21,6 +24,7 @@ import type {
 } from "../domain/models.js";
 
 export interface RebuildMirrorProjectionCommand {
+  projectKey: string;
   featureId: string;
   sourceFiles: string[];
   requestedBy: string;
@@ -35,6 +39,7 @@ export interface RebuildMirrorProjectionResult {
 }
 
 export interface RebuildMirrorProjectionDependencies {
+  projectSourceRegistry: ProjectSourceRegistryPort;
   docsParser: FeatureDocsParserPort;
   canonicalEdgeVocabulary: CanonicalEdgeVocabularyPort;
   repository: MirrorProjectionRepositoryPort;
@@ -47,24 +52,39 @@ export type RebuildMirrorProjectionUseCase = (
 export function makeRebuildMirrorProjectionUseCase(
   dependencies: RebuildMirrorProjectionDependencies,
 ): RebuildMirrorProjectionUseCase {
-  const { docsParser, canonicalEdgeVocabulary, repository } = dependencies;
+  const {
+    projectSourceRegistry,
+    docsParser,
+    canonicalEdgeVocabulary,
+    repository,
+  } = dependencies;
 
   return async function rebuildMirrorProjection(
     command: RebuildMirrorProjectionCommand,
   ): Promise<RebuildMirrorProjectionResult> {
+    const projectKey = command.projectKey.trim();
     const featureId = command.featureId.trim();
     const sourceFiles = command.sourceFiles.map(normalizeFilePath);
 
-    if (featureId.length === 0 || sourceFiles.length === 0) {
+    if (
+      projectKey.length === 0 ||
+      featureId.length === 0 ||
+      sourceFiles.length === 0
+    ) {
       throw createKnowledgeGraphError(
         "MIRROR_REBUILD_INPUT_INVALID",
-        "featureId and sourceFiles are required",
+        "projectKey, featureId, and sourceFiles are required",
       );
     }
 
+    const scope = projectSourceRegistry.resolveProjectionScope({
+      projectKey,
+      featureId,
+    });
+
     const generatedAt = command.generatedAt ?? new Date().toISOString();
     const parsedDocuments = await docsParser.scanFeatureFiles({
-      featureId,
+      scope,
       sourceFiles,
       indexedAt: generatedAt,
     });
@@ -73,11 +93,13 @@ export function makeRebuildMirrorProjectionUseCase(
 
     const specDocument = findSpecDocument(parsedDocuments);
     const { concepts, edges } = docsParser.parseSpec({
-      featureId,
+      scope,
       specContent: specDocument.content,
     });
 
-    const canonicalEdges = await canonicalEdgeVocabulary.loadCanonicalEdges();
+    const canonicalEdges = await canonicalEdgeVocabulary.loadCanonicalEdges({
+      scope,
+    });
     validateCanonicalEdges(edges, canonicalEdges);
     validateEdgeEndpoints(
       edges,
@@ -85,26 +107,42 @@ export function makeRebuildMirrorProjectionUseCase(
     );
 
     const featureDocuments = materializeFeatureDocuments(
+      scope.projectKey,
       featureId,
       parsedDocuments,
     );
-    const cards = materializeMirrorCards(featureDocuments, concepts, edges);
+    const cards = materializeMirrorCards(
+      scope.projectKey,
+      featureDocuments,
+      concepts,
+      edges,
+    );
     const sortedEdges = [...edges].sort(compareRelationshipEdges);
+    const sortedConcepts = [...concepts].sort(compareConceptDefinitions);
 
     const projection: MirrorProjection = {
       snapshotId: buildSnapshotId(
+        scope.projectKey,
         featureId,
         generatedAt,
-        concepts,
+        sortedConcepts,
         sortedEdges,
       ),
+      projectKey: scope.projectKey,
       featureId,
       generatedAt,
-      nodeCount: concepts.length,
+      nodeCount: sortedConcepts.length,
       edgeCount: sortedEdges.length,
-      concepts,
+      concepts: sortedConcepts,
       cards,
       edges: sortedEdges,
+      whiteboard: materializeWhiteboardProjection({
+        projectKey: scope.projectKey,
+        featureId,
+        concepts: sortedConcepts,
+        cards,
+        edges: sortedEdges,
+      }),
     };
 
     repository.saveProjection(projection);
@@ -208,6 +246,7 @@ function validateEdgeEndpoints(
 }
 
 function materializeFeatureDocuments(
+  projectKey: string,
   featureId: string,
   parsedDocuments: ParsedSourceDocument[],
 ): FeatureDocument[] {
@@ -215,6 +254,7 @@ function materializeFeatureDocuments(
     .filter((document) => document.exists)
     .map((document) => ({
       id: `${featureId}:${document.filePath}`,
+      projectKey,
       featureId,
       path: document.filePath,
       aspectKind: document.aspectKind,
@@ -225,6 +265,7 @@ function materializeFeatureDocuments(
 }
 
 function materializeMirrorCards(
+  projectKey: string,
   featureDocuments: FeatureDocument[],
   concepts: ConceptDefinition[],
   edges: RelationshipEdge[],
@@ -256,6 +297,7 @@ function materializeMirrorCards(
     const fileName =
       normalizeFilePath(document.path).split("/").at(-1) ?? document.path;
     return {
+      projectKey,
       filePath: document.path,
       title: document.aspectKind,
       aspectKind: document.aspectKind,
@@ -264,6 +306,99 @@ function materializeMirrorCards(
       freshness: "up-to-date",
     };
   });
+}
+
+function materializeWhiteboardProjection(input: {
+  projectKey: string;
+  featureId: string;
+  concepts: ConceptDefinition[];
+  cards: MirrorCardView[];
+  edges: RelationshipEdge[];
+}): MirrorProjection["whiteboard"] {
+  const conceptById = new Map(
+    input.concepts.map((concept) => [concept.conceptId, concept]),
+  );
+
+  const aspectCards = input.cards.map((card) => ({
+    cardId: `aspect:${card.filePath}`,
+    cardType: "aspect" as const,
+    title: card.title,
+    projectKey: input.projectKey,
+    featureId: input.featureId,
+    conceptId: null,
+    groupKey: card.aspectKind,
+    aspectKind: card.aspectKind,
+  }));
+
+  const featureConceptIds = new Set<string>();
+  for (const concept of input.concepts) {
+    if (
+      concept.taxonomyType.toLowerCase() === "feature" ||
+      concept.conceptId.startsWith("feature.")
+    ) {
+      featureConceptIds.add(concept.conceptId);
+    }
+  }
+  featureConceptIds.add(`feature.${input.featureId}`);
+
+  const featureCards = Array.from(featureConceptIds)
+    .sort((left, right) => left.localeCompare(right))
+    .map((conceptId) => {
+      const concept = conceptById.get(conceptId);
+      const title = concept?.name ?? conceptId.split(".").at(-1) ?? conceptId;
+      return {
+        cardId: `feature:${conceptId}`,
+        cardType: "feature" as const,
+        title,
+        projectKey: input.projectKey,
+        featureId: input.featureId,
+        conceptId,
+        groupKey: "feature",
+        aspectKind: concept ? inferAspectKind(concept.sourceFilePath) : "SPEC",
+      };
+    });
+
+  const featureEdges = input.edges.filter(
+    (edge) =>
+      featureConceptIds.has(edge.fromConceptId) &&
+      featureConceptIds.has(edge.toConceptId),
+  );
+
+  const conceptCards = input.concepts
+    .map((concept) => {
+      const fileName =
+        normalizeFilePath(concept.sourceFilePath).split("/").at(-1) ??
+        concept.sourceFilePath;
+      return {
+        cardId: `concept:${concept.conceptId}`,
+        cardType: "concept" as const,
+        title: concept.name,
+        projectKey: input.projectKey,
+        featureId: input.featureId,
+        conceptId: concept.conceptId,
+        groupKey: fileName,
+        aspectKind: inferAspectKind(concept.sourceFilePath),
+      };
+    })
+    .sort((left, right) => left.conceptId!.localeCompare(right.conceptId!));
+
+  return {
+    aspect: {
+      level: "aspect",
+      cards: aspectCards,
+      edges: [],
+    },
+    feature: {
+      level: "feature",
+      cards: featureCards,
+      edges: featureEdges,
+    },
+    concept: {
+      level: "concept",
+      cards: conceptCards,
+      edges: input.edges,
+    },
+  };
 }
 
 function parseEvidenceSourceFile(evidence: string): string | null {

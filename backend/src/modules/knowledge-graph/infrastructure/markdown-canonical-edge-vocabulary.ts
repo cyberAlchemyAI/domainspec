@@ -3,17 +3,10 @@ import { readFileSync } from "node:fs";
 import type { CanonicalEdgeVocabularyPort } from "../application/ports.js";
 import { createKnowledgeGraphError } from "../domain/errors.js";
 
-interface MarkdownCanonicalEdgeVocabularyConfig {
-  readonly relationshipsFilePath: string;
-}
-
-export function createMarkdownCanonicalEdgeVocabulary(
-  config: MarkdownCanonicalEdgeVocabularyConfig,
-): CanonicalEdgeVocabularyPort {
-  const relationshipsFilePath = config.relationshipsFilePath;
-
+export function createMarkdownCanonicalEdgeVocabulary(): CanonicalEdgeVocabularyPort {
   return {
-    async loadCanonicalEdges(): Promise<Set<string>> {
+    async loadCanonicalEdges(input): Promise<Set<string>> {
+      const relationshipsFilePath = input.scope.relationshipsFilePath;
       let content = "";
 
       try {

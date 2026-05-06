@@ -4,18 +4,19 @@ import type {
   ExplorationSession,
   MirrorProjection,
   ParsedSourceDocument,
+  ProjectionScope,
   RelationshipEdge,
   SelectionSource,
 } from "../domain/models.js";
 
 export interface ScanFeatureFilesInput {
-  featureId: string;
+  scope: ProjectionScope;
   sourceFiles: string[];
   indexedAt: string;
 }
 
 export interface ParseSpecInput {
-  featureId: string;
+  scope: ProjectionScope;
   specContent: string;
 }
 
@@ -31,28 +32,53 @@ export interface FeatureDocsParserPort {
   parseSpec(input: ParseSpecInput): ParseSpecOutput;
 }
 
+export interface ResolveProjectionScopeInput {
+  projectKey: string;
+  featureId: string;
+}
+
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.ProjectSourceRegistry
+ *     type: Interface
+ *   edges:
+ *     - edge: exposes
+ *       to: knowledge-graph-visualization.ResolveProjectionScope
+ */
+export interface ProjectSourceRegistryPort {
+  resolveProjectionScope(input: ResolveProjectionScopeInput): ProjectionScope;
+}
+
 export interface CanonicalEdgeVocabularyPort {
-  loadCanonicalEdges(): Promise<Set<string>>;
+  loadCanonicalEdges(input: { scope: ProjectionScope }): Promise<Set<string>>;
 }
 
 export interface MirrorProjectionRepositoryPort {
   saveProjection(projection: MirrorProjection): void;
-  getLatestProjection(featureId: string): MirrorProjection | null;
+  getLatestProjection(input: {
+    projectKey: string;
+    featureId: string;
+  }): MirrorProjection | null;
   close(): void;
 }
 
 export interface ExplorationSessionStorePort {
   setSelectedConcept(input: {
+    projectKey: string;
     featureId: string;
     sessionId: string;
     conceptId: string;
     source: SelectionSource;
   }): ExplorationSession;
   getSession(input: {
+    projectKey: string;
     featureId: string;
     sessionId: string;
   }): ExplorationSession | null;
+  getSessionById(sessionId: string): ExplorationSession | null;
   setLastDefinitionTarget(input: {
+    projectKey: string;
     featureId: string;
     sessionId: string;
     target: string;
@@ -60,7 +86,10 @@ export interface ExplorationSessionStorePort {
 }
 
 export interface DefinitionAnchorResolverPort {
-  resolvePointer(input: { featureId: string; pointer: DefinitionPointer }): {
+  resolvePointer(input: {
+    scope: ProjectionScope;
+    pointer: DefinitionPointer;
+  }): {
     fileExists: boolean;
     anchorExists: boolean;
   };

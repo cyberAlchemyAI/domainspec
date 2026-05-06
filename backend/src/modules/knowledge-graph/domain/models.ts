@@ -35,10 +35,17 @@ const REQUIRED_FILE_ORDER: Map<string, number> = new Map(
 
 export type FreshnessStatus = "up-to-date" | "stale" | "missing";
 
-export type SelectionSource = "card" | "graph";
+export type SelectionSource = "card" | "graph" | "rail" | "board" | "detail";
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.FeatureDocument
+ *     type: Entity
+ */
 export interface FeatureDocument {
   id: string;
+  projectKey: string;
   featureId: string;
   path: string;
   aspectKind: AspectKind;
@@ -51,6 +58,7 @@ export interface DefinitionPointer {
   anchor: string;
   lineHint: number;
   label: string;
+  aspectKind?: AspectKind;
 }
 
 export interface ConceptDefinition {
@@ -71,7 +79,14 @@ export interface RelationshipEdge {
   notes: string;
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.MirrorCardView
+ *     type: View Model
+ */
 export interface MirrorCardView {
+  projectKey: string;
   filePath: string;
   title: string;
   aspectKind: AspectKind;
@@ -80,8 +95,53 @@ export interface MirrorCardView {
   freshness: FreshnessStatus;
 }
 
+export type WhiteboardViewLevel = "aspect" | "feature" | "concept";
+
+export type WhiteboardCardType =
+  | "aspect"
+  | "feature"
+  | "story"
+  | "concept-group"
+  | "concept";
+
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.WhiteboardCard
+ *     type: View Model
+ */
+export interface WhiteboardCard {
+  cardId: string;
+  cardType: WhiteboardCardType;
+  title: string;
+  projectKey: string;
+  featureId: string;
+  conceptId: string | null;
+  groupKey: string | null;
+  aspectKind: AspectKind | null;
+}
+
+export interface WhiteboardLevelProjection {
+  level: WhiteboardViewLevel;
+  cards: WhiteboardCard[];
+  edges: RelationshipEdge[];
+}
+
+export interface WhiteboardProjection {
+  aspect: WhiteboardLevelProjection;
+  feature: WhiteboardLevelProjection;
+  concept: WhiteboardLevelProjection;
+}
+
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.MirrorProjection
+ *     type: Entity
+ */
 export interface MirrorProjection {
   snapshotId: string;
+  projectKey: string;
   featureId: string;
   generatedAt: string;
   nodeCount: number;
@@ -89,23 +149,47 @@ export interface MirrorProjection {
   concepts: ConceptDefinition[];
   cards: MirrorCardView[];
   edges: RelationshipEdge[];
+  whiteboard: WhiteboardProjection;
 }
 
 export interface ConceptDetailCard {
   conceptId: string;
   title: string;
   summary: string;
+  aspectKind: AspectKind;
   definition: DefinitionPointer;
   inboundRelations: RelationshipEdge[];
   outboundRelations: RelationshipEdge[];
+  relatedStories: string[];
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.ExplorationSession
+ *     type: Entity
+ */
 export interface ExplorationSession {
   sessionId: string;
+  projectKey: string;
   featureId: string;
   selectedConceptId: string;
   selectedSource: SelectionSource;
   lastDefinitionTarget: string | null;
+}
+
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.ProjectionScope
+ *     type: Value Object
+ */
+export interface ProjectionScope {
+  projectKey: string;
+  featureId: string;
+  workspaceRootDir: string;
+  featureDocsRootDir: string;
+  relationshipsFilePath: string;
 }
 
 export interface ParsedSourceDocument {
@@ -201,12 +285,14 @@ export function compareRelationshipEdges(
 }
 
 export function buildSnapshotId(
+  projectKey: string,
   featureId: string,
   generatedAt: string,
   concepts: ConceptDefinition[],
   edges: RelationshipEdge[],
 ): string {
   const payload = {
+    projectKey,
     featureId,
     generatedAt,
     concepts: concepts.map((concept) => concept.conceptId),

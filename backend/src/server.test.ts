@@ -60,6 +60,7 @@ test("rebuild persists projection and read endpoints return latest snapshot", as
   const cardsResponse = await app.inject({
     method: "GET",
     url: "/api/knowledge-graph/mirror-cards?featureId=knowledge-graph-visualization",
+    headers: READ_SCOPE_HEADERS,
   });
 
   assert.equal(cardsResponse.statusCode, 200);
@@ -76,6 +77,7 @@ test("rebuild persists projection and read endpoints return latest snapshot", as
   const graphResponse = await app.inject({
     method: "GET",
     url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization",
+    headers: READ_SCOPE_HEADERS,
   });
 
   assert.equal(graphResponse.statusCode, 200);
@@ -98,6 +100,7 @@ test("rebuild persists projection and read endpoints return latest snapshot", as
     "mutates",
     "orchestrates",
     "produces",
+    "produces-for",
     "queries",
     "reflects",
     "renders",
@@ -136,7 +139,8 @@ test("concept detail, definition, and open-definition endpoints satisfy stage-2 
 
   const graphResponse = await app.inject({
     method: "GET",
-    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization",
+    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
   });
   const graphBody = graphResponse.json() as {
     nodes: Array<{ conceptId: string }>;
@@ -222,7 +226,8 @@ test("open-definition returns deterministic mismatch diagnostics", async (t) => 
 
   const graphResponse = await app.inject({
     method: "GET",
-    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization",
+    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
   });
   const graphBody = graphResponse.json() as {
     nodes: Array<{ conceptId: string }>;
@@ -253,4 +258,274 @@ test("open-definition returns deterministic mismatch diagnostics", async (t) => 
   assert.equal(mismatchResponse.statusCode, 409);
   const mismatchBody = mismatchResponse.json() as { code: string };
   assert.equal(mismatchBody.code, "DEFINITION_SESSION_MISMATCH");
+});
+
+test("rebuild rejects unknown project with deterministic code", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-scope-unknown-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      projectKey: "unknown-project",
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  assert.equal(response.statusCode, 404);
+  const body = response.json() as { code: string };
+  assert.equal(body.code, "MIRROR_SOURCE_PROJECT_UNKNOWN");
+});
+
+test("graph query maps board-level fields and validates selected group card", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-graph-board-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  const conceptGraphResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(conceptGraphResponse.statusCode, 200);
+  const conceptGraphBody = conceptGraphResponse.json() as {
+    board: { viewLevel: string; activeAspect: string };
+    nodes: Array<{ groupKey: string | null }>;
+  };
+  assert.equal(conceptGraphBody.board.viewLevel, "concept");
+  assert.equal(conceptGraphBody.board.activeAspect, "SPEC");
+
+  const selectedGroupKey = conceptGraphBody.nodes.find(
+    (node) => node.groupKey !== null,
+  )?.groupKey;
+  assert.ok(selectedGroupKey);
+
+  const scopedResponse = await app.inject({
+    method: "GET",
+    url: `/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC&selectedGroupKey=${encodeURIComponent(
+      selectedGroupKey!,
+    )}&cardTypes=concept`,
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(scopedResponse.statusCode, 200);
+  const scopedBody = scopedResponse.json() as {
+    board: { selectedGroupKey: string | null };
+    nodes: Array<{ cardType: string; groupKey: string | null }>;
+  };
+  assert.equal(scopedBody.board.selectedGroupKey, selectedGroupKey);
+  assert.ok(scopedBody.nodes.every((node) => node.cardType === "concept"));
+  assert.ok(
+    scopedBody.nodes.every((node) => node.groupKey === selectedGroupKey),
+  );
+
+  const invalidGroupResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC&selectedGroupKey=missing-group",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(invalidGroupResponse.statusCode, 404);
+  const invalidGroupBody = invalidGroupResponse.json() as { code: string };
+  assert.equal(invalidGroupBody.code, "WHITEBOARD_CARD_NOT_FOUND");
+});
+
+test("concept detail selection enforces whiteboard card validation diagnostics", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-card-validation-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  const graphResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(graphResponse.statusCode, 200);
+  const graphBody = graphResponse.json() as {
+    nodes: Array<{ conceptId: string | null; cardId: string }>;
+  };
+  assert.ok(graphBody.nodes.length > 1);
+
+  const conceptId = graphBody.nodes[0]!.conceptId!;
+  const alternateConceptId = graphBody.nodes[1]!.conceptId!;
+  const sessionId = "session-card-validation";
+
+  const missingCardResponse = await app.inject({
+    method: "GET",
+    url: `/api/knowledge-graph/concepts/${encodeURIComponent(conceptId)}?featureId=knowledge-graph-visualization&sessionId=${sessionId}&source=board&viewLevel=concept&activeAspect=SPEC&selectedCardType=concept&selectedCardId=${encodeURIComponent(
+      "concept:missing.concept",
+    )}`,
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(missingCardResponse.statusCode, 404);
+  const missingCardBody = missingCardResponse.json() as { code: string };
+  assert.equal(missingCardBody.code, "WHITEBOARD_CARD_NOT_FOUND");
+
+  const mappingMismatchResponse = await app.inject({
+    method: "GET",
+    url: `/api/knowledge-graph/concepts/${encodeURIComponent(conceptId)}?featureId=knowledge-graph-visualization&sessionId=${sessionId}&source=board&viewLevel=concept&activeAspect=SPEC&selectedCardType=concept&selectedCardId=${encodeURIComponent(
+      `concept:${alternateConceptId}`,
+    )}`,
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(mappingMismatchResponse.statusCode, 422);
+  const mappingMismatchBody = mappingMismatchResponse.json() as {
+    code: string;
+  };
+  assert.equal(mappingMismatchBody.code, "WHITEBOARD_CARD_MAPPING_UNRESOLVED");
+});
+
+test("concept and definition operations return scope mismatch diagnostics for reused session IDs", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-scope-mismatch-`);
+  const projectRootDir = resolve(process.cwd(), "..");
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir,
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+      projectSources: [
+        {
+          projectKey: "alt-project",
+          workspaceRootDir: projectRootDir,
+          featureDocsRootDir: resolve(projectRootDir, "docs", "features"),
+          relationshipsFilePath: resolve(projectRootDir, "RELATIONSHIPS.md"),
+          status: "active",
+        },
+      ],
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      projectKey: "domainspec-core",
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  const graphResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/graph?projectKey=domainspec-core&featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
+  });
+  const graphBody = graphResponse.json() as {
+    nodes: Array<{ conceptId: string | null }>;
+  };
+  const conceptId = graphBody.nodes[0]!.conceptId!;
+  const sessionId = "session-scope-mismatch";
+
+  const baselineSelectionResponse = await app.inject({
+    method: "GET",
+    url: `/api/knowledge-graph/concepts/${encodeURIComponent(conceptId)}?projectKey=domainspec-core&featureId=knowledge-graph-visualization&sessionId=${sessionId}&source=board&viewLevel=concept&activeAspect=SPEC`,
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(baselineSelectionResponse.statusCode, 200);
+
+  const conceptScopeMismatchResponse = await app.inject({
+    method: "GET",
+    url: `/api/knowledge-graph/concepts/${encodeURIComponent(conceptId)}?projectKey=alt-project&featureId=knowledge-graph-visualization&sessionId=${sessionId}&source=board&viewLevel=concept&activeAspect=SPEC`,
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(conceptScopeMismatchResponse.statusCode, 409);
+  const conceptScopeMismatchBody = conceptScopeMismatchResponse.json() as {
+    code: string;
+  };
+  assert.equal(conceptScopeMismatchBody.code, "CONCEPT_SCOPE_MISMATCH");
+
+  const definitionScopeMismatchResponse = await app.inject({
+    method: "POST",
+    url: `/api/knowledge-graph/concepts/${encodeURIComponent(conceptId)}/open-definition?projectKey=alt-project&featureId=knowledge-graph-visualization`,
+    headers: READ_SCOPE_HEADERS,
+    payload: {
+      sessionId,
+      conceptId,
+    },
+  });
+  assert.equal(definitionScopeMismatchResponse.statusCode, 409);
+  const definitionScopeMismatchBody =
+    definitionScopeMismatchResponse.json() as {
+      code: string;
+    };
+  assert.equal(definitionScopeMismatchBody.code, "DEFINITION_SCOPE_MISMATCH");
+});
+
+test("rebuild rejects invalid feature path escapes before file reads", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-scope-root-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      projectKey: "domainspec-core",
+      featureId: "../escape",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  assert.equal(response.statusCode, 422);
+  const body = response.json() as { code: string };
+  assert.equal(body.code, "MIRROR_SOURCE_ROOT_INVALID");
 });

@@ -9,9 +9,9 @@
   "generatedAt": "2026-05-06",
   "frameworkConstraints": [
     {
-      "version": "2.0.5",
+      "version": "2.0.8",
       "source": "CHANGELOG.md",
-      "applied": "Reviewed latest framework policy; no additional context-builder selection constraints beyond existing strict context gates."
+      "applied": "Reviewed latest framework policy; delegation profile and telemetry additions do not change strict selector/obligation retrieval constraints for context-builder artifacts."
     },
     {
       "version": "2.0.4",

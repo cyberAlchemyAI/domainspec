@@ -5,19 +5,27 @@ import type {
   CanonicalEdgeVocabularyPort,
   FeatureDocsParserPort,
   MirrorProjectionRepositoryPort,
+  ProjectSourceRegistryPort,
 } from "./ports.js";
 import { makeRebuildMirrorProjectionUseCase } from "./rebuild-mirror-projection.js";
-import { isKnowledgeGraphError } from "../domain/errors.js";
+import {
+  createKnowledgeGraphError,
+  isKnowledgeGraphError,
+} from "../domain/errors.js";
 import type {
   MirrorProjection,
   ParsedSourceDocument,
+  ProjectionScope,
 } from "../domain/models.js";
 
 interface TestContext {
+  projectSourceRegistry: ProjectSourceRegistryPort;
   parser: FeatureDocsParserPort;
   canonicalVocabulary: CanonicalEdgeVocabularyPort;
   repository: MirrorProjectionRepositoryPort;
   savedProjections: MirrorProjection[];
+  scopeCalls: number;
+  scanCalls: number;
 }
 
 test("rebuild rejects missing required mirror file", async () => {
@@ -41,6 +49,7 @@ test("rebuild rejects missing required mirror file", async () => {
   });
 
   const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
     docsParser: context.parser,
     canonicalEdgeVocabulary: context.canonicalVocabulary,
     repository: context.repository,
@@ -49,6 +58,7 @@ test("rebuild rejects missing required mirror file", async () => {
   await assert.rejects(
     async () =>
       useCase({
+        projectKey: "domainspec-core",
         featureId: "knowledge-graph-visualization",
         sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
         requestedBy: "test",
@@ -81,6 +91,7 @@ test("rebuild rejects non-canonical edge labels", async () => {
   });
 
   const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
     docsParser: context.parser,
     canonicalEdgeVocabulary: context.canonicalVocabulary,
     repository: context.repository,
@@ -89,6 +100,7 @@ test("rebuild rejects non-canonical edge labels", async () => {
   await assert.rejects(
     async () =>
       useCase({
+        projectKey: "domainspec-core",
         featureId: "knowledge-graph-visualization",
         sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
         requestedBy: "test",
@@ -118,6 +130,7 @@ test("rebuild rejects unknown edge endpoints", async () => {
   });
 
   const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
     docsParser: context.parser,
     canonicalEdgeVocabulary: context.canonicalVocabulary,
     repository: context.repository,
@@ -126,6 +139,7 @@ test("rebuild rejects unknown edge endpoints", async () => {
   await assert.rejects(
     async () =>
       useCase({
+        projectKey: "domainspec-core",
         featureId: "knowledge-graph-visualization",
         sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
         requestedBy: "test",
@@ -136,6 +150,129 @@ test("rebuild rejects unknown edge endpoints", async () => {
       return true;
     },
   );
+});
+
+test("rebuild rejects unknown project before parser scan", async () => {
+  const context = createTestContext({
+    scannedDocuments: requiredParsedDocuments(),
+    parsedConceptIds: ["knowledge-graph-visualization.FeatureDocument"],
+    parsedEdges: [],
+    canonicalEdges: ["maps"],
+    scopeError: createKnowledgeGraphError(
+      "MIRROR_SOURCE_PROJECT_UNKNOWN",
+      "Unknown or disabled source project",
+      { projectKey: "unknown" },
+    ),
+  });
+
+  const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
+    docsParser: context.parser,
+    canonicalEdgeVocabulary: context.canonicalVocabulary,
+    repository: context.repository,
+  });
+
+  await assert.rejects(
+    async () =>
+      useCase({
+        projectKey: "unknown",
+        featureId: "knowledge-graph-visualization",
+        sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+        requestedBy: "test",
+      }),
+    (error) => {
+      assert.ok(isKnowledgeGraphError(error));
+      assert.equal(error.code, "MIRROR_SOURCE_PROJECT_UNKNOWN");
+      return true;
+    },
+  );
+
+  assert.equal(context.scopeCalls, 1);
+  assert.equal(context.scanCalls, 0);
+});
+
+test("rebuild rejects unavailable feature before parser scan", async () => {
+  const context = createTestContext({
+    scannedDocuments: requiredParsedDocuments(),
+    parsedConceptIds: ["knowledge-graph-visualization.FeatureDocument"],
+    parsedEdges: [],
+    canonicalEdges: ["maps"],
+    scopeError: createKnowledgeGraphError(
+      "MIRROR_SOURCE_FEATURE_UNAVAILABLE",
+      "Feature docs directory is unavailable for the selected source",
+      {
+        projectKey: "domainspec-core",
+        featureId: "missing-feature",
+      },
+    ),
+  });
+
+  const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
+    docsParser: context.parser,
+    canonicalEdgeVocabulary: context.canonicalVocabulary,
+    repository: context.repository,
+  });
+
+  await assert.rejects(
+    async () =>
+      useCase({
+        projectKey: "domainspec-core",
+        featureId: "missing-feature",
+        sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+        requestedBy: "test",
+      }),
+    (error) => {
+      assert.ok(isKnowledgeGraphError(error));
+      assert.equal(error.code, "MIRROR_SOURCE_FEATURE_UNAVAILABLE");
+      return true;
+    },
+  );
+
+  assert.equal(context.scopeCalls, 1);
+  assert.equal(context.scanCalls, 0);
+});
+
+test("rebuild rejects invalid source root/path before parser scan", async () => {
+  const context = createTestContext({
+    scannedDocuments: requiredParsedDocuments(),
+    parsedConceptIds: ["knowledge-graph-visualization.FeatureDocument"],
+    parsedEdges: [],
+    canonicalEdges: ["maps"],
+    scopeError: createKnowledgeGraphError(
+      "MIRROR_SOURCE_ROOT_INVALID",
+      "Resolved feature directory escapes feature docs root",
+      {
+        projectKey: "domainspec-core",
+        featureId: "../escape",
+      },
+    ),
+  });
+
+  const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
+    docsParser: context.parser,
+    canonicalEdgeVocabulary: context.canonicalVocabulary,
+    repository: context.repository,
+  });
+
+  await assert.rejects(
+    async () =>
+      useCase({
+        projectKey: "domainspec-core",
+        featureId: "../escape",
+        sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+        requestedBy: "test",
+      }),
+    (error) => {
+      assert.ok(isKnowledgeGraphError(error));
+      assert.equal(error.code, "MIRROR_SOURCE_ROOT_INVALID");
+      return true;
+    },
+  );
+
+  assert.equal(context.scopeCalls, 1);
+  assert.equal(context.scanCalls, 0);
 });
 
 test("rebuild materializes and persists one projection snapshot", async () => {
@@ -158,12 +295,14 @@ test("rebuild materializes and persists one projection snapshot", async () => {
   });
 
   const useCase = makeRebuildMirrorProjectionUseCase({
+    projectSourceRegistry: context.projectSourceRegistry,
     docsParser: context.parser,
     canonicalEdgeVocabulary: context.canonicalVocabulary,
     repository: context.repository,
   });
 
   const result = await useCase({
+    projectKey: "domainspec-core",
     featureId: "knowledge-graph-visualization",
     sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
     requestedBy: "test",
@@ -171,11 +310,15 @@ test("rebuild materializes and persists one projection snapshot", async () => {
   });
 
   assert.equal(context.savedProjections.length, 1);
+  assert.equal(result.projection.projectKey, "domainspec-core");
   assert.equal(result.projection.featureId, "knowledge-graph-visualization");
   assert.equal(result.cardCount, 3);
   assert.equal(result.coverageRatio, 1);
   assert.equal(result.projection.edges.length, 1);
   assert.ok(result.projection.snapshotId.startsWith("snapshot-"));
+  assert.equal(result.projection.whiteboard.aspect.level, "aspect");
+  assert.equal(result.projection.whiteboard.feature.level, "feature");
+  assert.equal(result.projection.whiteboard.concept.level, "concept");
   assert.deepEqual(
     result.projection.cards.map((card) => card.filePath),
     ["SPEC.md", "domain.md", "operations.md"],
@@ -234,11 +377,34 @@ function createTestContext(input: {
     notes: string;
   }[];
   canonicalEdges: string[];
+  scopeError?: Error;
+  scope?: ProjectionScope;
 }): TestContext {
   const savedProjections: MirrorProjection[] = [];
+  let scopeCalls = 0;
+  let scanCalls = 0;
+
+  const resolvedScope: ProjectionScope = input.scope ?? {
+    projectKey: "domainspec-core",
+    featureId: "knowledge-graph-visualization",
+    workspaceRootDir: "/workspace/domainspec",
+    featureDocsRootDir: "/workspace/domainspec/docs/features",
+    relationshipsFilePath: "/workspace/domainspec/RELATIONSHIPS.md",
+  };
+
+  const projectSourceRegistry: ProjectSourceRegistryPort = {
+    resolveProjectionScope() {
+      scopeCalls += 1;
+      if (input.scopeError) {
+        throw input.scopeError;
+      }
+      return resolvedScope;
+    },
+  };
 
   const parser: FeatureDocsParserPort = {
     async scanFeatureFiles() {
+      scanCalls += 1;
       return input.scannedDocuments;
     },
     parseSpec() {
@@ -281,9 +447,16 @@ function createTestContext(input: {
   };
 
   return {
+    projectSourceRegistry,
     parser,
     canonicalVocabulary,
     repository,
     savedProjections,
+    get scopeCalls() {
+      return scopeCalls;
+    },
+    get scanCalls() {
+      return scanCalls;
+    },
   };
 }

@@ -8,7 +8,7 @@
 - Strict relevance gate: on
 - Planner preflight gate: PASS (`plannerGateStatus=pass` in WORK-PACK.md)
 - Framework constraints applied:
-  - CHANGELOG 2.0.5 reviewed (no extra context-builder constraints)
+  - CHANGELOG 2.0.8 reviewed (delegation profile/telemetry policy added; no extra retrieval constraints for context-builder artifacts)
   - CHANGELOG 2.0.4 enforced (strict relevance, interested-data subset, selector-bound index schema, mode budgets)
 - Files selected: 14
 - Snippets selected: 25

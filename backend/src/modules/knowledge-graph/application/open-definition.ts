@@ -3,13 +3,17 @@ import type {
   ExplorationSessionStorePort,
 } from "./ports.js";
 import { createKnowledgeGraphError } from "../domain/errors.js";
-import type { DefinitionPointer } from "../domain/models.js";
+import type { AspectKind, DefinitionPointer } from "../domain/models.js";
+import type { ProjectionScope } from "../domain/models.js";
 import type { GetDefinitionPointerQuery } from "./get-definition-pointer.js";
 
 export interface OpenDefinitionCommand {
+  projectKey: string;
   featureId: string;
   sessionId: string;
   conceptId: string;
+  scope: ProjectionScope;
+  aspectHint?: AspectKind;
 }
 
 export interface OpenDefinitionResult {
@@ -22,6 +26,15 @@ export type OpenDefinitionUseCase = (
   command: OpenDefinitionCommand,
 ) => OpenDefinitionResult;
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.OpenDefinition
+ *     type: Operation
+ *   edges:
+ *     - edge: produces
+ *       to: knowledge-graph-visualization.DefinitionOpened
+ */
 export function makeOpenDefinitionUseCase(dependencies: {
   getDefinitionPointer: GetDefinitionPointerQuery;
   sessionStore: ExplorationSessionStorePort;
@@ -32,32 +45,69 @@ export function makeOpenDefinitionUseCase(dependencies: {
   return function openDefinition(
     command: OpenDefinitionCommand,
   ): OpenDefinitionResult {
-    const session = sessionStore.getSession({
+    const scopedSession = sessionStore.getSession({
+      projectKey: command.projectKey,
       featureId: command.featureId,
       sessionId: command.sessionId,
     });
 
-    if (!session || session.selectedConceptId !== command.conceptId) {
+    if (!scopedSession) {
+      const sessionById = sessionStore.getSessionById(command.sessionId);
+      if (
+        sessionById &&
+        (sessionById.projectKey !== command.projectKey ||
+          sessionById.featureId !== command.featureId)
+      ) {
+        throw createKnowledgeGraphError(
+          "DEFINITION_SCOPE_MISMATCH",
+          "Definition request scope does not match session scope",
+          {
+            sessionId: command.sessionId,
+            expectedProjectKey: sessionById.projectKey,
+            expectedFeatureId: sessionById.featureId,
+            receivedProjectKey: command.projectKey,
+            receivedFeatureId: command.featureId,
+          },
+        );
+      }
+
       throw createKnowledgeGraphError(
         "DEFINITION_SESSION_MISMATCH",
         "Session focus does not match requested concept",
         {
+          projectKey: command.projectKey,
           featureId: command.featureId,
           sessionId: command.sessionId,
-          selectedConceptId: session?.selectedConceptId ?? null,
+          selectedConceptId: null,
+          requestedConceptId: command.conceptId,
+        },
+      );
+    }
+
+    if (scopedSession.selectedConceptId !== command.conceptId) {
+      throw createKnowledgeGraphError(
+        "DEFINITION_SESSION_MISMATCH",
+        "Session focus does not match requested concept",
+        {
+          projectKey: command.projectKey,
+          featureId: command.featureId,
+          sessionId: command.sessionId,
+          selectedConceptId: scopedSession.selectedConceptId,
           requestedConceptId: command.conceptId,
         },
       );
     }
 
     const pointer = getDefinitionPointer({
+      projectKey: command.projectKey,
       featureId: command.featureId,
       conceptId: command.conceptId,
+      aspectHint: command.aspectHint,
       preferExactAnchor: true,
     });
 
     const resolution = anchorResolver.resolvePointer({
-      featureId: command.featureId,
+      scope: command.scope,
       pointer,
     });
 
@@ -66,6 +116,7 @@ export function makeOpenDefinitionUseCase(dependencies: {
         "DEFINITION_POINTER_NOT_FOUND",
         "Definition pointer file does not exist",
         {
+          projectKey: command.projectKey,
           featureId: command.featureId,
           conceptId: command.conceptId,
           filePath: pointer.filePath,
@@ -78,6 +129,7 @@ export function makeOpenDefinitionUseCase(dependencies: {
         "DEFINITION_ANCHOR_NOT_FOUND",
         "Definition pointer anchor does not exist",
         {
+          projectKey: command.projectKey,
           featureId: command.featureId,
           conceptId: command.conceptId,
           filePath: pointer.filePath,
@@ -88,6 +140,7 @@ export function makeOpenDefinitionUseCase(dependencies: {
 
     const target = `${pointer.filePath}#${pointer.anchor}`;
     sessionStore.setLastDefinitionTarget({
+      projectKey: command.projectKey,
       featureId: command.featureId,
       sessionId: command.sessionId,
       target,
