@@ -72,12 +72,28 @@ in-progress
 
 - Test command output snapshots.
 - Traceability update linking every test ID to evidence.
-- Latest evidence (2026-05-06): Playwright run currently failing (13 tests), primarily selector and readiness expectations after whiteboard pivot updates.
+- Latest evidence (2026-05-06):
+  - `pnpm --filter @domainspec/backend check` - pass
+  - `pnpm --filter @domainspec/backend test` - pass (`tests=22`, `fail=0`)
+  - `pnpm --filter @domainspec/web check` - pass
+  - `pnpm --filter @domainspec/web test:e2e` - pass (`16 passed`)
+  - Added deterministic backend scope/IFMAP tests in `backend/src/server.test.ts`.
+  - Refreshed aspect->feature->concept->open-definition UI journey coverage in `apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.journey.spec.ts`.
+
+## Readiness Evidence Matrix (2026-05-06)
+
+| Obligation Slice                                                                                                                        | Evidence                                                                                                                                                                                                        | Status | Follow-up |
+| --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | --------- |
+| TEST-SPEC API + IFMAP deterministic mapping (`KG-BE-API-001`, `KG-BE-API-004`, `KG-BE-IFMAP-001`, `KG-BE-IFMAP-002`, `KG-BE-IFMAP-004`) | Backend tests: `KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 ...`, `KG-BE-API-004 KG-BE-IFMAP-004 ...` in `backend/src/server.test.ts`                                                                         | pass   | none      |
+| Cross-project scope guards (unknown/disabled source, unavailable feature, strict `(projectKey, featureId)` isolation)                   | Backend tests in `backend/src/server.test.ts` covering `MIRROR_SOURCE_PROJECT_UNKNOWN`, `MIRROR_SOURCE_FEATURE_UNAVAILABLE`, and snapshot isolation checks                                                      | pass   | none      |
+| Whiteboard transition chain (`aspect -> feature -> concept`) and definition open behavior (`KG-UI-JRN-003`)                             | Playwright test `KG-UI-JRN-003 aspect -> feature -> concept transitions and open-definition remain deterministic` in `apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.journey.spec.ts` | pass   | none      |
+| Full relevant suites (backend + web + e2e)                                                                                              | `pnpm --filter @domainspec/backend check`, `pnpm --filter @domainspec/backend test`, `pnpm --filter @domainspec/web check`, `pnpm --filter @domainspec/web test:e2e`                                            | pass   | none      |
 
 ## Gaps and Questions
 
 - Non-functional threshold baselines need confirmation for local environment variance.
 - Formalize cross-project scope IDs in TEST-SPEC once approved.
+- Mandatory W3 audit command entrypoints are not available in this shell runtime (`domainspec-audit-alignment` and `domainspec-audit-layering` returned `command not found`); execute via the delegated DomainSpec runtime and publish generated reports in W3.
 
 ## Decision Lock
 

@@ -1,0 +1,1132 @@
+{
+  "feature": "knowledge-graph-visualization",
+  "task": {
+    "id": "TASK-KG-IMP-04",
+    "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md"
+  },
+  "mode": "standard",
+  "strict": true,
+  "generatedAt": "2026-05-06",
+  "frameworkConstraints": [
+    {
+      "version": "2.0.8",
+      "source": "domainspec/CHANGELOG.md",
+      "applied": "Reviewed delegation profile/telemetry updates; no additional retrieval constraints beyond strict context-builder schema."
+    },
+    {
+      "version": "2.0.4",
+      "source": "domainspec/CHANGELOG.md",
+      "applied": "Enforced selector-level relevance, obligation binding, interested-data subset extraction, and mode budgets."
+    }
+  ],
+  "plannerGate": {
+    "status": "pass",
+    "source": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
+    "selector": "Planner Control Fields/plannerGateStatus"
+  },
+  "budget": {
+    "maxFiles": 14,
+    "maxExcerptLines": 280,
+    "selectedFiles": 14,
+    "selectedSnippetCount": 68,
+    "selectedExcerptLines": 273,
+    "noiseRatio": 0.1
+  },
+  "rankingMethod": "score=(1-signal)*0.45 + cost*0.30 + ambiguity*0.25",
+  "obligationMatrix": [
+    {
+      "obligationId": "O1",
+      "title": "Task authority remains bound to TASK-KG-IMP-04 coverage table, directives, completion criteria, and decision lock.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md#domainspec-coverage",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md#implementation-directives",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md#completion-criteria",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md#decision-lock"
+      ]
+    },
+    {
+      "obligationId": "O2",
+      "title": "Event obligations cover MirrorProjectionBuilt, ConceptSelected, and DefinitionOpened producer/consumer behavior.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/events.md#mirrorprojectionbuilt",
+        "docs/features/knowledge-graph-visualization/events.md#conceptselected",
+        "docs/features/knowledge-graph-visualization/events.md#definitionopened",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#event-obligations-eventsmd"
+      ]
+    },
+    {
+      "obligationId": "O3",
+      "title": "Operation and scope obligations enforce deterministic (projectKey, featureId) propagation and explicit scope diagnostics.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/operations.md#resolveprojectionscope",
+        "docs/features/knowledge-graph-visualization/operations.md#rebuildmirrorprojection",
+        "docs/features/knowledge-graph-visualization/operations.md#selectconcept",
+        "docs/features/knowledge-graph-visualization/operations.md#opendefinition",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#uncovered-formal-gaps"
+      ]
+    },
+    {
+      "obligationId": "O4",
+      "title": "TEST-SPEC ranges in the task contract map to executable backend and UI test IDs.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md#domainspec-coverage",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#backend-test-catalogue",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#ui-e2e-test-catalogue"
+      ]
+    },
+    {
+      "obligationId": "O5",
+      "title": "US-1..US-4 acceptance remains the authority for UI journey behavior and detail semantics.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/STORIES.md#us-1-mirror-cards-for-required-docs",
+        "docs/features/knowledge-graph-visualization/STORIES.md#us-2-graph-mirrors-canonical-relationships",
+        "docs/features/knowledge-graph-visualization/STORIES.md#us-3-click-concept-to-open-definition",
+        "docs/features/knowledge-graph-visualization/STORIES.md#us-4-related-details-card-for-selected-concept"
+      ]
+    },
+    {
+      "obligationId": "O6",
+      "title": "Whiteboard-first and cross-project capability contract remains tied to SPEC concept graph semantics.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/SPEC.md#overview",
+        "docs/features/knowledge-graph-visualization/SPEC.md#cross-project-documentation-scope",
+        "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph"
+      ]
+    },
+    {
+      "obligationId": "O7",
+      "title": "Architecture testing constraints map each layer/doc section to deterministic test derivation and traceability.",
+      "source": [
+        "architecture/pattern-library/TESTING-ALIGNMENT.md#layer-to-test-mapping",
+        "TEST-PIPELINE.md#test-generation-rules",
+        "TEST-PIPELINE.md#playwright-test-scaffold-convention"
+      ]
+    },
+    {
+      "obligationId": "O8",
+      "title": "Reusable backend harness adaptation preserves deterministic API response patterns and scope diagnostics.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md#reusable-legacy-assets",
+        "backend/src/server.test.ts"
+      ]
+    },
+    {
+      "obligationId": "O9",
+      "title": "Test execution remains script-bound for backend and frontend suites.",
+      "source": ["backend/package.json", "apps/web/package.json"]
+    },
+    {
+      "obligationId": "O10",
+      "title": "Playwright runtime config preserves deterministic host/port/runtime settings for E2E runs.",
+      "source": ["apps/web/playwright.config.ts"]
+    },
+    {
+      "obligationId": "O11",
+      "title": "UI journeys remain deterministic via shared KG API mocks and route/state assertions.",
+      "source": [
+        "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.journey.spec.ts",
+        "apps/web/e2e/knowledge-graph-visualization/mock-api.ts"
+      ]
+    }
+  ],
+  "selected": [
+    {
+      "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-04.md",
+      "reason": "Primary task contract and strict coverage-ID authority.",
+      "score": {
+        "signal": 0.99,
+        "cost": 0.42,
+        "ambiguity": 0.04,
+        "value": 0.15
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "DomainSpec Coverage",
+          "line": 16
+        },
+        {
+          "type": "heading",
+          "value": "Implementation Directives",
+          "line": 31
+        },
+        {
+          "type": "table-row",
+          "value": "backend/src/server.test.ts reusable harness row",
+          "line": 45
+        },
+        {
+          "type": "heading",
+          "value": "Completion Criteria",
+          "line": 63
+        },
+        {
+          "type": "heading",
+          "value": "Decision Lock",
+          "line": 82
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 16,
+          "endLine": 24,
+          "purpose": "Coverage IDs and seed links"
+        },
+        {
+          "startLine": 31,
+          "endLine": 38,
+          "purpose": "Implementation directives including strict scope invariants"
+        },
+        {
+          "startLine": 41,
+          "endLine": 48,
+          "purpose": "Reusable legacy assets and adaptation guidance"
+        },
+        {
+          "startLine": 63,
+          "endLine": 64,
+          "purpose": "Completion criteria anchor"
+        },
+        {
+          "startLine": 82,
+          "endLine": 86,
+          "purpose": "Decision lock bindings"
+        }
+      ],
+      "obligationRefs": ["O1", "O4", "O8"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/TEST-SPEC.md",
+      "reason": "Authoritative test-ID ranges, uncovered formal gaps, and UI journey/state targets.",
+      "score": {
+        "signal": 0.98,
+        "cost": 0.34,
+        "ambiguity": 0.05,
+        "value": 0.14
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "State Machine Obligations (states.md)",
+          "line": 16
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-OP-001",
+          "line": 40
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-ERR-001",
+          "line": 91
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-API-001",
+          "line": 106
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-IFMAP-001",
+          "line": 124
+        },
+        {
+          "type": "table-row",
+          "value": "KG-BE-EVT-001..009",
+          "lineStart": 140,
+          "lineEnd": 148
+        },
+        {
+          "type": "table-row",
+          "value": "KG-UI-NAV-001",
+          "line": 186
+        },
+        {
+          "type": "table-row",
+          "value": "KG-UI-JRN-001..004",
+          "lineStart": 187,
+          "lineEnd": 190
+        },
+        {
+          "type": "table-row",
+          "value": "KG-UI-STATE-001..004",
+          "lineStart": 203,
+          "lineEnd": 206
+        },
+        {
+          "type": "heading",
+          "value": "Uncovered Formal Gaps",
+          "line": 228
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 16,
+          "endLine": 22,
+          "purpose": "State obligation anchor"
+        },
+        {
+          "startLine": 40,
+          "endLine": 40,
+          "purpose": "Operation rule seed"
+        },
+        {
+          "startLine": 91,
+          "endLine": 91,
+          "purpose": "Error-state seed"
+        },
+        {
+          "startLine": 106,
+          "endLine": 106,
+          "purpose": "API contract seed"
+        },
+        {
+          "startLine": 124,
+          "endLine": 126,
+          "purpose": "Field mapping seed"
+        },
+        {
+          "startLine": 140,
+          "endLine": 143,
+          "purpose": "Event obligation rows"
+        },
+        {
+          "startLine": 186,
+          "endLine": 190,
+          "purpose": "Navigation and journey IDs"
+        },
+        {
+          "startLine": 196,
+          "endLine": 197,
+          "purpose": "Form diagnostics IDs"
+        },
+        {
+          "startLine": 203,
+          "endLine": 203,
+          "purpose": "State reflection seed"
+        },
+        {
+          "startLine": 228,
+          "endLine": 232,
+          "purpose": "Cross-project scope gaps"
+        }
+      ],
+      "obligationRefs": ["O2", "O3", "O4", "O11"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/operations.md",
+      "reason": "Contract-level rules and error codes for scope resolution and definition-open flow.",
+      "score": {
+        "signal": 0.97,
+        "cost": 0.36,
+        "ambiguity": 0.07,
+        "value": 0.16
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "ResolveProjectionScope",
+          "line": 3
+        },
+        {
+          "type": "table-row",
+          "value": "R1/R2 project and feature scope rules",
+          "lineStart": 20,
+          "lineEnd": 21
+        },
+        {
+          "type": "table-row",
+          "value": "MIRROR_SOURCE_PROJECT_UNKNOWN and MIRROR_SOURCE_ROOT_INVALID",
+          "lineStart": 33,
+          "lineEnd": 35
+        },
+        {
+          "type": "heading",
+          "value": "RebuildMirrorProjection",
+          "line": 39
+        },
+        {
+          "type": "table-row",
+          "value": "R0 projection scope precondition",
+          "line": 58
+        },
+        {
+          "type": "heading",
+          "value": "SelectConcept",
+          "line": 101
+        },
+        {
+          "type": "table-row",
+          "value": "R0 session scope match",
+          "line": 123
+        },
+        {
+          "type": "heading",
+          "value": "OpenDefinition",
+          "line": 153
+        },
+        {
+          "type": "table-row",
+          "value": "R0 scope match and DEFINITION_SESSION_MISMATCH",
+          "lineStart": 173,
+          "lineEnd": 199
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 7,
+          "purpose": "Scope resolution operation contract"
+        },
+        {
+          "startLine": 16,
+          "endLine": 21,
+          "purpose": "Scope existence and feature-root rules"
+        },
+        {
+          "startLine": 54,
+          "endLine": 58,
+          "purpose": "Rebuild scope precondition"
+        },
+        {
+          "startLine": 87,
+          "endLine": 90,
+          "purpose": "Rebuild error-state anchors"
+        },
+        {
+          "startLine": 119,
+          "endLine": 123,
+          "purpose": "SelectConcept scope rule"
+        },
+        {
+          "startLine": 169,
+          "endLine": 173,
+          "purpose": "OpenDefinition scope rule"
+        },
+        {
+          "startLine": 195,
+          "endLine": 199,
+          "purpose": "OpenDefinition deterministic mismatch error code"
+        }
+      ],
+      "obligationRefs": ["O2", "O3", "O4"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/events.md",
+      "reason": "Event payload and consumer authority for task-declared event coverage IDs.",
+      "score": {
+        "signal": 0.94,
+        "cost": 0.18,
+        "ambiguity": 0.05,
+        "value": 0.12
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "MirrorProjectionBuilt",
+          "line": 3
+        },
+        {
+          "type": "heading",
+          "value": "ConceptSelected",
+          "line": 27
+        },
+        {
+          "type": "heading",
+          "value": "DefinitionOpened",
+          "line": 50
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 7,
+          "purpose": "MirrorProjectionBuilt producer and transition anchor"
+        },
+        {
+          "startLine": 27,
+          "endLine": 31,
+          "purpose": "ConceptSelected producer and transition anchor"
+        },
+        {
+          "startLine": 50,
+          "endLine": 54,
+          "purpose": "DefinitionOpened producer and transition anchor"
+        }
+      ],
+      "obligationRefs": ["O2"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/STORIES.md",
+      "reason": "US-1..US-4 acceptance behavior and traceability for UI journeys.",
+      "score": {
+        "signal": 0.93,
+        "cost": 0.29,
+        "ambiguity": 0.08,
+        "value": 0.17
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "US-1: Mirror cards for required docs",
+          "line": 7
+        },
+        {
+          "type": "heading",
+          "value": "US-2: Graph mirrors canonical relationships",
+          "line": 30
+        },
+        {
+          "type": "heading",
+          "value": "US-3: Click concept to open definition",
+          "line": 55
+        },
+        {
+          "type": "heading",
+          "value": "US-4: Related details card for selected concept",
+          "line": 78
+        },
+        {
+          "type": "heading",
+          "value": "US-5: Project-scoped projection using poker-team docs",
+          "line": 103
+        },
+        {
+          "type": "table-row",
+          "value": "Story Coverage Matrix rows for US-1..US-4",
+          "lineStart": 131,
+          "lineEnd": 132
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 7,
+          "endLine": 10,
+          "purpose": "US-1 acceptance intent"
+        },
+        {
+          "startLine": 30,
+          "endLine": 33,
+          "purpose": "US-2 acceptance intent"
+        },
+        {
+          "startLine": 55,
+          "endLine": 58,
+          "purpose": "US-3 acceptance intent"
+        },
+        {
+          "startLine": 78,
+          "endLine": 81,
+          "purpose": "US-4 acceptance intent"
+        },
+        {
+          "startLine": 103,
+          "endLine": 106,
+          "purpose": "Cross-project scope story anchor"
+        },
+        {
+          "startLine": 131,
+          "endLine": 132,
+          "purpose": "Story coverage traceability"
+        }
+      ],
+      "obligationRefs": ["O5", "O3", "O11"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "reason": "Whiteboard-first capability contract and feature-graph edge authority for interested-data extraction.",
+      "score": {
+        "signal": 0.92,
+        "cost": 0.31,
+        "ambiguity": 0.1,
+        "value": 0.2
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Overview",
+          "line": 10
+        },
+        {
+          "type": "heading",
+          "value": "Cross-Project Documentation Scope",
+          "line": 79
+        },
+        {
+          "type": "table-row",
+          "value": "ResolveProjectionScope/RebuildMirrorProjection/SelectConcept/OpenDefinition concept rows",
+          "lineStart": 107,
+          "lineEnd": 110
+        },
+        {
+          "type": "table-row",
+          "value": "MirrorProjectionBuilt/ConceptSelected/DefinitionOpened event rows",
+          "lineStart": 123,
+          "lineEnd": 125
+        },
+        {
+          "type": "heading",
+          "value": "Feature Concept Graph",
+          "line": 139
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 10,
+          "endLine": 15,
+          "purpose": "Whiteboard-first and cross-project overview"
+        },
+        {
+          "startLine": 79,
+          "endLine": 82,
+          "purpose": "Cross-project capability section"
+        },
+        {
+          "startLine": 107,
+          "endLine": 110,
+          "purpose": "Operation concept IDs"
+        },
+        {
+          "startLine": 123,
+          "endLine": 125,
+          "purpose": "Event concept IDs"
+        },
+        {
+          "startLine": 139,
+          "endLine": 146,
+          "purpose": "Feature concept graph edge authority"
+        }
+      ],
+      "obligationRefs": ["O6", "O3", "O2"]
+    },
+    {
+      "path": "architecture/pattern-library/TESTING-ALIGNMENT.md",
+      "reason": "Layer-to-test obligations for deterministic architecture-to-verification mapping.",
+      "score": {
+        "signal": 0.86,
+        "cost": 0.08,
+        "ambiguity": 0.04,
+        "value": 0.09
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Layer-to-Test Mapping",
+          "line": 5
+        },
+        {
+          "type": "heading",
+          "value": "Canonical Pipeline Reference",
+          "line": 17
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 10,
+          "purpose": "Layer to test-type obligations"
+        },
+        {
+          "startLine": 17,
+          "endLine": 19,
+          "purpose": "Canonical pipeline linkage"
+        }
+      ],
+      "obligationRefs": ["O7"]
+    },
+    {
+      "path": "TEST-PIPELINE.md",
+      "reason": "Test derivation rules and Playwright scaffold/traceability conventions.",
+      "score": {
+        "signal": 0.9,
+        "cost": 0.21,
+        "ambiguity": 0.06,
+        "value": 0.12
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Test Generation Rules",
+          "line": 24
+        },
+        {
+          "type": "heading",
+          "value": "UI E2E Test Generation Rules",
+          "line": 291
+        },
+        {
+          "type": "heading",
+          "value": "Playwright Test Scaffold Convention",
+          "line": 421
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 24,
+          "endLine": 26,
+          "purpose": "Derivation rule anchor"
+        },
+        {
+          "startLine": 291,
+          "endLine": 301,
+          "purpose": "UI E2E derivation prerequisites and scope"
+        },
+        {
+          "startLine": 421,
+          "endLine": 422,
+          "purpose": "Scaffold convention anchor"
+        }
+      ],
+      "obligationRefs": ["O7", "O11"]
+    },
+    {
+      "path": "backend/src/server.test.ts",
+      "reason": "Reusable buildServer harness and deterministic scope diagnostics for backend contract adaptation.",
+      "score": {
+        "signal": 0.95,
+        "cost": 0.3,
+        "ambiguity": 0.08,
+        "value": 0.15
+      },
+      "selectors": [
+        {
+          "type": "symbol",
+          "value": "buildServer import",
+          "line": 7
+        },
+        {
+          "type": "constant",
+          "value": "knowledge-graph rebuild payload featureId",
+          "line": 49
+        },
+        {
+          "type": "assertion",
+          "value": "DEFINITION_SESSION_MISMATCH",
+          "line": 260
+        },
+        {
+          "type": "assertion",
+          "value": "MIRROR_SOURCE_PROJECT_UNKNOWN",
+          "line": 289
+        },
+        {
+          "type": "scope-case",
+          "value": "cross-project mismatch with alt-project",
+          "lineStart": 451,
+          "lineEnd": 481
+        },
+        {
+          "type": "scope-case",
+          "value": "feature path escape rejection",
+          "lineStart": 521,
+          "lineEnd": 530
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 7,
+          "endLine": 7,
+          "purpose": "Reusable harness symbol"
+        },
+        {
+          "startLine": 117,
+          "endLine": 119,
+          "purpose": "Stage-2 contract test entrypoint"
+        },
+        {
+          "startLine": 250,
+          "endLine": 260,
+          "purpose": "Open-definition mismatch diagnostic assertion"
+        },
+        {
+          "startLine": 280,
+          "endLine": 281,
+          "purpose": "Unknown project input scope"
+        },
+        {
+          "startLine": 451,
+          "endLine": 452,
+          "purpose": "Baseline scoped rebuild parameters"
+        },
+        {
+          "startLine": 521,
+          "endLine": 522,
+          "purpose": "Invalid feature scope input"
+        },
+        {
+          "startLine": 530,
+          "endLine": 530,
+          "purpose": "Root-invalid deterministic error assertion"
+        }
+      ],
+      "obligationRefs": ["O8", "O3", "O4"]
+    },
+    {
+      "path": "backend/package.json",
+      "reason": "Backend test execution scripts for deterministic suite runs.",
+      "score": {
+        "signal": 0.84,
+        "cost": 0.06,
+        "ambiguity": 0.03,
+        "value": 0.08
+      },
+      "selectors": [
+        {
+          "type": "object-key",
+          "value": "scripts",
+          "line": 6
+        },
+        {
+          "type": "object-key",
+          "value": "test",
+          "line": 11
+        },
+        {
+          "type": "object-key",
+          "value": "test:ci",
+          "line": 12
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 6,
+          "endLine": 12,
+          "purpose": "Backend test script surface"
+        }
+      ],
+      "obligationRefs": ["O9"]
+    },
+    {
+      "path": "apps/web/package.json",
+      "reason": "Frontend E2E execution script and Playwright dependency surface.",
+      "score": {
+        "signal": 0.86,
+        "cost": 0.06,
+        "ambiguity": 0.03,
+        "value": 0.08
+      },
+      "selectors": [
+        {
+          "type": "object-key",
+          "value": "scripts.test:e2e",
+          "line": 11
+        },
+        {
+          "type": "object-key",
+          "value": "devDependencies.@playwright/test",
+          "line": 18
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 7,
+          "endLine": 11,
+          "purpose": "Web script surface for dev/build/check/e2e"
+        },
+        {
+          "startLine": 18,
+          "endLine": 18,
+          "purpose": "Playwright dependency pin"
+        }
+      ],
+      "obligationRefs": ["O9"]
+    },
+    {
+      "path": "apps/web/playwright.config.ts",
+      "reason": "Deterministic E2E runtime topology for host, port, and server bootstrap.",
+      "score": {
+        "signal": 0.88,
+        "cost": 0.11,
+        "ambiguity": 0.04,
+        "value": 0.1
+      },
+      "selectors": [
+        {
+          "type": "property",
+          "value": "testDir",
+          "line": 9
+        },
+        {
+          "type": "property",
+          "value": "use.baseURL",
+          "line": 15
+        },
+        {
+          "type": "property",
+          "value": "use.trace",
+          "line": 16
+        },
+        {
+          "type": "property",
+          "value": "webServer.command",
+          "line": 26
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 9,
+          "endLine": 17,
+          "purpose": "Playwright runtime defaults"
+        },
+        {
+          "startLine": 25,
+          "endLine": 27,
+          "purpose": "Web server bootstrap command and port"
+        }
+      ],
+      "obligationRefs": ["O10", "O9"]
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.journey.spec.ts",
+      "reason": "Existing journey contract for US-1..US-4 and route/state propagation assertions.",
+      "score": {
+        "signal": 0.9,
+        "cost": 0.24,
+        "ambiguity": 0.07,
+        "value": 0.13
+      },
+      "selectors": [
+        {
+          "type": "import",
+          "value": "installKnowledgeGraphApiMocks",
+          "line": 2
+        },
+        {
+          "type": "call",
+          "value": "beforeEach installs API mocks",
+          "line": 10
+        },
+        {
+          "type": "test",
+          "value": "US-1 renders required mirror cards",
+          "line": 13
+        },
+        {
+          "type": "test",
+          "value": "US-2 renders canonical edges and known card IDs",
+          "line": 24
+        },
+        {
+          "type": "test",
+          "value": "US-3 drill flow and open-definition",
+          "line": 37
+        },
+        {
+          "type": "assertion",
+          "value": "viewLevel and selectedGroupKey URL propagation",
+          "lineStart": 48,
+          "lineEnd": 65
+        },
+        {
+          "type": "test",
+          "value": "US-4 selecting concept updates detail panel",
+          "line": 83
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 2,
+          "endLine": 2,
+          "purpose": "Shared deterministic mock dependency"
+        },
+        {
+          "startLine": 10,
+          "endLine": 13,
+          "purpose": "Mock install and US-1 test anchor"
+        },
+        {
+          "startLine": 24,
+          "endLine": 27,
+          "purpose": "US-2 canonical edge journey anchor"
+        },
+        {
+          "startLine": 37,
+          "endLine": 39,
+          "purpose": "US-3 journey entrypoint"
+        },
+        {
+          "startLine": 48,
+          "endLine": 49,
+          "purpose": "Feature-level URL propagation assertion"
+        },
+        {
+          "startLine": 57,
+          "endLine": 57,
+          "purpose": "Group-level URL propagation assertion"
+        },
+        {
+          "startLine": 83,
+          "endLine": 86,
+          "purpose": "US-4 detail panel journey anchor"
+        }
+      ],
+      "obligationRefs": ["O11", "O5"]
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/mock-api.ts",
+      "reason": "Deterministic UI fixture model for scope keys, mismatch diagnostics, and board-level filtering.",
+      "score": {
+        "signal": 0.89,
+        "cost": 0.24,
+        "ambiguity": 0.06,
+        "value": 0.12
+      },
+      "selectors": [
+        {
+          "type": "symbol",
+          "value": "installKnowledgeGraphApiMocks",
+          "line": 156
+        },
+        {
+          "type": "state",
+          "value": "selectedConceptBySession",
+          "line": 157
+        },
+        {
+          "type": "payload-field",
+          "value": "projectKey and featureId deterministic values",
+          "lineStart": 166,
+          "lineEnd": 167
+        },
+        {
+          "type": "payload-field",
+          "value": "projectKey and featureId graph payload values",
+          "lineStart": 193,
+          "lineEnd": 194
+        },
+        {
+          "type": "error-code",
+          "value": "DEFINITION_SESSION_MISMATCH",
+          "line": 248
+        },
+        {
+          "type": "payload-field",
+          "value": "target filePath#anchor",
+          "line": 267
+        },
+        {
+          "type": "routing",
+          "value": "viewLevel and selectedGroupKey search-param shaping",
+          "lineStart": 284,
+          "lineEnd": 290
+        },
+        {
+          "type": "filter",
+          "value": "selectedGroupKey filtering for feature and concept views",
+          "lineStart": 339,
+          "lineEnd": 348
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 156,
+          "endLine": 157,
+          "purpose": "Mock installation entrypoint and session map"
+        },
+        {
+          "startLine": 166,
+          "endLine": 167,
+          "purpose": "Deterministic scope payload fields"
+        },
+        {
+          "startLine": 193,
+          "endLine": 194,
+          "purpose": "Graph payload scope fields"
+        },
+        {
+          "startLine": 246,
+          "endLine": 248,
+          "purpose": "Session mismatch negative-path response"
+        },
+        {
+          "startLine": 267,
+          "endLine": 267,
+          "purpose": "Open-definition target derivation"
+        },
+        {
+          "startLine": 284,
+          "endLine": 290,
+          "purpose": "Board-level view and group-scope parsing"
+        },
+        {
+          "startLine": 339,
+          "endLine": 340,
+          "purpose": "Concept-level selectedGroupKey filtering"
+        },
+        {
+          "startLine": 345,
+          "endLine": 348,
+          "purpose": "Board payload propagation of selectedGroupKey"
+        }
+      ],
+      "obligationRefs": ["O11", "O3"]
+    }
+  ],
+  "excluded": [
+    {
+      "path": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
+      "reason": "Consulted for planner preflight only; no uncovered TASK-KG-IMP-04 obligation required retention after task and test-spec selection."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Not present"
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Not present"
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Not present"
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts",
+      "reason": "Intentionally removed by task contract; re-implementation is required instead of legacy restoration."
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.navigation.spec.ts",
+      "reason": "Navigation obligations already covered by TEST-SPEC IDs plus journey selectors and Playwright config."
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.forms.spec.ts",
+      "reason": "Form obligations captured by TEST-SPEC rows and deterministic mock-api diagnostics selectors."
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.states.spec.ts",
+      "reason": "State obligations captured by TEST-SPEC and journey URL/state propagation selectors."
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.responsive.spec.ts",
+      "reason": "Responsive derivation already closed by TEST-PIPELINE + Playwright config selectors for this strict pack."
+    },
+    {
+      "path": "apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.accessibility.spec.ts",
+      "reason": "Accessibility derivation already closed by TEST-SPEC and TEST-PIPELINE selectors for this strict pack."
+    },
+    {
+      "path": "apps/web/test-results/**/error-context.md",
+      "reason": "Ephemeral run artifacts; non-normative evidence excluded under strict relevance gate."
+    }
+  ],
+  "interestedData": {
+    "relationships": [
+      "applies",
+      "consumes",
+      "contains",
+      "displays",
+      "exposes",
+      "fetches",
+      "maps",
+      "mutates",
+      "orchestrates",
+      "produces",
+      "queries",
+      "reflects",
+      "renders",
+      "shapes",
+      "transitions",
+      "wraps"
+    ]
+  },
+  "blockers": []
+}

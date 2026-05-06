@@ -78,24 +78,24 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 ## Pipeline Stage Coverage
 
-| Stage                 | Required | Wave Mapping | Status      | Evidence                | Skip Reason                     |
-| --------------------- | -------- | ------------ | ----------- | ----------------------- | ------------------------------- |
-| plan                  | yes      | W0           | completed   | WORK-PACK.md            | -                               |
-| architecture-baseline | yes      | W0           | completed   | WORK-PACK.md directives | -                               |
-| spec                  | yes      | W0, W1       | completed   | SPEC.md                 | -                               |
-| stories               | yes      | W0, W1       | completed   | STORIES.md              | -                               |
-| tests                 | yes      | W2           | in-progress | TEST-SPEC.md            | failing E2E assertions          |
-| backend-implement     | yes      | W1, W2       | in-progress | backend test suite pass | pending whiteboard pivot deltas |
-| ui-pipeline           | yes      | W2           | in-progress | web check/build pass    | pending E2E stabilization       |
-| observability-spec    | yes      | W2           | not-started | pending                 | pending                         |
-| instrument-otel       | yes      | W2           | not-started | pending                 | pending                         |
-| otel-verify           | yes      | W2, W3       | not-started | pending                 | pending                         |
-| infra-deploy          | yes      | W2, W3       | not-started | pending                 | pending                         |
-| registry-sync         | yes      | W2, W3       | not-started | pending                 | pending                         |
-| verify-readiness      | yes      | W3           | not-started | pending                 | pending                         |
-| verify-feature        | yes      | W3           | not-started | pending                 | pending                         |
-| audit-alignment       | yes      | W3           | not-started | pending                 | pending                         |
-| audit-layering        | yes      | W3           | not-started | pending                 | pending                         |
+| Stage                 | Required | Wave Mapping | Status      | Evidence                                      | Skip Reason                       |
+| --------------------- | -------- | ------------ | ----------- | --------------------------------------------- | --------------------------------- |
+| plan                  | yes      | W0           | completed   | WORK-PACK.md                                  | -                                 |
+| architecture-baseline | yes      | W0           | completed   | WORK-PACK.md directives                       | -                                 |
+| spec                  | yes      | W0, W1       | completed   | SPEC.md                                       | -                                 |
+| stories               | yes      | W0, W1       | completed   | STORIES.md                                    | -                                 |
+| tests                 | yes      | W2           | in-progress | TEST-SPEC.md + TASK-KG-IMP-04 evidence matrix | readiness publication in progress |
+| backend-implement     | yes      | W1, W2       | in-progress | backend test suite pass                       | pending whiteboard pivot deltas   |
+| ui-pipeline           | yes      | W2           | in-progress | web check + test:e2e pass                     | readiness publication in progress |
+| observability-spec    | yes      | W2           | not-started | pending                                       | pending                           |
+| instrument-otel       | yes      | W2           | not-started | pending                                       | pending                           |
+| otel-verify           | yes      | W2, W3       | not-started | pending                                       | pending                           |
+| infra-deploy          | yes      | W2, W3       | not-started | pending                                       | pending                           |
+| registry-sync         | yes      | W2, W3       | not-started | pending                                       | pending                           |
+| verify-readiness      | yes      | W3           | not-started | pending                                       | pending                           |
+| verify-feature        | yes      | W3           | not-started | pending                                       | pending                           |
+| audit-alignment       | yes      | W3           | not-started | pending                                       | pending                           |
+| audit-layering        | yes      | W3           | not-started | pending                                       | pending                           |
 
 ## Decision Lock Summary
 
@@ -107,10 +107,10 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 ## Blockers
 
-| Blocker ID | Scope      | Description                                                                            | Owner    | Next Action                                                            | Target Date |
-| ---------- | ---------- | -------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- | ----------- |
-| B-KG-001   | cross-task | Pending decision on deterministic layout engine for graph canvas                       | web-core | Evaluate client-side deterministic layout options                      | 2026-05-05  |
-| B-KG-002   | cross-task | Playwright suite failing on mirrored-card and concept-focus selectors after spec pivot | web-core | Align UI/E2E selectors and state waits to current whiteboard contracts | 2026-05-07  |
+| Blocker ID | Scope      | Description                                                                | Owner    | Next Action                                                   | Target Date |
+| ---------- | ---------- | -------------------------------------------------------------------------- | -------- | ------------------------------------------------------------- | ----------- |
+| B-KG-001   | cross-task | Resolved: deterministic layout decision applied (`D-KG-004`).              | web-core | Keep monitoring through W3 verification outputs               | 2026-05-06  |
+| B-KG-002   | cross-task | Resolved: Playwright selector/state stabilization completed (`16 passed`). | web-core | Keep regression checks in readiness and verify-feature stages | 2026-05-06  |
 
 ## Notes
 
@@ -121,9 +121,10 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 ## Change Log
 
-| Date       | Change                                                                                                     | Author  |
-| ---------- | ---------------------------------------------------------------------------------------------------------- | ------- |
-| 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence | Copilot |
-| 2026-05-06 | Added KG-IMP-08 to track terminal-safe docs validation execution and prevent parent-shell termination      | Copilot |
-| 2026-05-03 | Initial current remake work-pack created from user-defined interaction model                               | Copilot |
-| 2026-05-03 | Added detailed split-mode work-pack files under work-pack/shared, work-pack/tasks, and work-pack/waves     | Copilot |
+| Date       | Change                                                                                                              | Author  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- | ------- |
+| 2026-05-06 | Updated KG-IMP-04 readiness evidence references; backend/web/E2E suites are passing and W2 blockers marked resolved | Copilot |
+| 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence          | Copilot |
+| 2026-05-06 | Added KG-IMP-08 to track terminal-safe docs validation execution and prevent parent-shell termination               | Copilot |
+| 2026-05-03 | Initial current remake work-pack created from user-defined interaction model                                        | Copilot |
+| 2026-05-03 | Added detailed split-mode work-pack files under work-pack/shared, work-pack/tasks, and work-pack/waves              | Copilot |

@@ -289,6 +289,205 @@ test("rebuild rejects unknown project with deterministic code", async (t) => {
   assert.equal(body.code, "MIRROR_SOURCE_PROJECT_UNKNOWN");
 });
 
+test("KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 mirror-cards maps feature and aspect filters deterministically", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-ifmap-cards-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  const response = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/mirror-cards?featureId=knowledge-graph-visualization&includeOptionalAspects=false&aspectKinds=SPEC,OPERATIONS",
+    headers: READ_SCOPE_HEADERS,
+  });
+
+  assert.equal(response.statusCode, 200);
+  const body = response.json() as {
+    featureId: string;
+    cards: Array<{ aspectKind: string }>;
+  };
+
+  assert.equal(body.featureId, "knowledge-graph-visualization");
+  assert.deepEqual(body.cards.map((card) => card.aspectKind).sort(), [
+    "OPERATIONS",
+    "SPEC",
+  ]);
+});
+
+test("KG-BE-API-004 KG-BE-IFMAP-004 graph applies edgeKinds filter", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-ifmap-graph-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  const baselineResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=aspect&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
+  });
+
+  assert.equal(baselineResponse.statusCode, 200);
+  const baselineBody = baselineResponse.json() as {
+    edges: Array<{ edge: string }>;
+  };
+
+  assert.ok(baselineBody.edges.length > 0);
+  const selectedEdgeKind = baselineBody.edges[0]!.edge;
+
+  const response = await app.inject({
+    method: "GET",
+    url: `/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=aspect&activeAspect=SPEC&edgeKinds=${encodeURIComponent(
+      selectedEdgeKind,
+    )}`,
+    headers: READ_SCOPE_HEADERS,
+  });
+
+  assert.equal(response.statusCode, 200);
+  const body = response.json() as {
+    board: { viewLevel: string; activeAspect: string };
+    edges: Array<{ edge: string }>;
+  };
+
+  assert.equal(body.board.viewLevel, "aspect");
+  assert.equal(body.board.activeAspect, "SPEC");
+  assert.ok(body.edges.length > 0);
+  assert.ok(body.edges.every((edge) => edge.edge === selectedEdgeKind));
+});
+
+test("cross-project scope guards reject disabled project keys and unavailable features", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-scope-guards-`);
+  const projectRootDir = resolve(process.cwd(), "..");
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir,
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+      projectSources: [
+        {
+          projectKey: "disabled-project",
+          workspaceRootDir: projectRootDir,
+          featureDocsRootDir: resolve(projectRootDir, "docs", "features"),
+          relationshipsFilePath: resolve(projectRootDir, "RELATIONSHIPS.md"),
+          status: "disabled",
+        },
+      ],
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const disabledProjectResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/mirror-cards?projectKey=disabled-project&featureId=knowledge-graph-visualization",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(disabledProjectResponse.statusCode, 404);
+  const disabledProjectBody = disabledProjectResponse.json() as {
+    code: string;
+  };
+  assert.equal(disabledProjectBody.code, "MIRROR_SOURCE_PROJECT_UNKNOWN");
+
+  const missingFeatureResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/graph?projectKey=domainspec-core&featureId=missing-feature&viewLevel=aspect&activeAspect=SPEC",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(missingFeatureResponse.statusCode, 404);
+  const missingFeatureBody = missingFeatureResponse.json() as {
+    code: string;
+  };
+  assert.equal(missingFeatureBody.code, "MIRROR_SOURCE_FEATURE_UNAVAILABLE");
+});
+
+test("cross-project scope guards isolate snapshots per (projectKey, featureId)", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-scope-isolation-`);
+  const projectRootDir = resolve(process.cwd(), "..");
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir,
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+      projectSources: [
+        {
+          projectKey: "alt-project",
+          workspaceRootDir: projectRootDir,
+          featureDocsRootDir: resolve(projectRootDir, "docs", "features"),
+          relationshipsFilePath: resolve(projectRootDir, "RELATIONSHIPS.md"),
+          status: "active",
+        },
+      ],
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const rebuildAltProjectResponse = await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      projectKey: "alt-project",
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+  assert.equal(rebuildAltProjectResponse.statusCode, 200);
+
+  const altProjectCardsResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/mirror-cards?projectKey=alt-project&featureId=knowledge-graph-visualization",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(altProjectCardsResponse.statusCode, 200);
+
+  const defaultProjectCardsResponse = await app.inject({
+    method: "GET",
+    url: "/api/knowledge-graph/mirror-cards?projectKey=domainspec-core&featureId=knowledge-graph-visualization",
+    headers: READ_SCOPE_HEADERS,
+  });
+  assert.equal(defaultProjectCardsResponse.statusCode, 404);
+  const defaultProjectBody = defaultProjectCardsResponse.json() as {
+    code: string;
+  };
+  assert.equal(defaultProjectBody.code, "MIRROR_PROJECTION_NOT_FOUND");
+});
+
 test("graph query maps board-level fields and validates selected group card", async (t) => {
   const tempDir = mkdtempSync(`${tmpdir()}/kg-stage2-graph-board-`);
   const app = buildServer({

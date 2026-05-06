@@ -34,10 +34,27 @@ test.describe("Knowledge Graph Visualization - Journeys", () => {
    * @source docs/features/knowledge-graph-visualization/STORIES.md#us-3-click-concept-to-open-definition
    * @story KG-UI-JRN-003
    */
-  test("US-3 drill flow propagates selected feature/group and opens definition", async ({
+  test("KG-UI-JRN-003 aspect -> feature -> concept transitions and open-definition remain deterministic", async ({
     page,
   }) => {
     await page.goto("/knowledge-graph");
+
+    await page
+      .getByRole("button", {
+        name: "Activate DOMAIN aspect",
+      })
+      .click();
+
+    await expect(page).toHaveURL(/activeAspect=DOMAIN/);
+    await expect(page).toHaveURL(/viewLevel=aspect/);
+
+    await page
+      .getByRole("button", {
+        name: "Activate SPEC aspect",
+      })
+      .click();
+
+    await expect(page).toHaveURL(/activeAspect=SPEC/);
 
     await page
       .getByRole("button", {
@@ -73,6 +90,7 @@ test.describe("Knowledge Graph Visualization - Journeys", () => {
     await expect(page.locator(".focus-indicator .state-badge")).toHaveText(
       "Definition Opened",
     );
+    await expect(page.getByText(/Definition opened:/i)).toBeVisible();
     await expect(page).toHaveURL(/#documentationworkspace$/i);
   });
 
