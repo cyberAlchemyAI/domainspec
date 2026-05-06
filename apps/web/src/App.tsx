@@ -1,20 +1,41 @@
+import { useMemo } from "react";
+
 import { useConceptFocus } from "./hooks/useConceptFocus";
 import { useMirrorGraph } from "./hooks/useMirrorGraph";
 import { KnowledgeGraphPageLayout } from "./layouts/KnowledgeGraphPageLayout";
-import { DEFAULT_FEATURE_ID } from "./lib/api";
+import { DEFAULT_FEATURE_ID, DEFAULT_PROJECT_KEY } from "./lib/api";
 
 const KNOWLEDGE_GRAPH_ROUTE = "/knowledge-graph";
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: ui.knowledge-graph-visualization.route.canvas
+ *     type: Page
+ *     concern: sys
+ *   edges:
+ *     - edge: renders
+ *       to: ui.knowledge-graph-visualization.MirrorCardGrid
+ *     - edge: renders
+ *       to: ui.knowledge-graph-visualization.RelationshipGraphCanvas
+ *     - edge: renders
+ *       to: ui.knowledge-graph-visualization.ConceptDetailPanel
+ */
 export function App() {
+  const scope = useMemo(resolveRouteScope, []);
   const currentPath = currentPathname();
   const isKnowledgeGraphRoute =
     currentPath === "/" || currentPath === KNOWLEDGE_GRAPH_ROUTE;
 
-  const mirrorGraph = useMirrorGraph(DEFAULT_FEATURE_ID);
+  const mirrorGraph = useMirrorGraph(scope);
   const conceptFocus = useConceptFocus({
-    featureId: DEFAULT_FEATURE_ID,
-    nodes: mirrorGraph.nodes,
-    edges: mirrorGraph.edges,
+    projectKey: mirrorGraph.projectKey,
+    featureId: mirrorGraph.featureId,
+    activeAspect: mirrorGraph.navigation.activeAspect,
+    viewLevel: mirrorGraph.navigation.viewLevel,
+    selectedFeatureId: mirrorGraph.navigation.selectedFeatureId,
+    selectedGroupKey: mirrorGraph.navigation.selectedGroupKey,
+    selectedCard: mirrorGraph.selectedCard,
     projectionReady:
       !mirrorGraph.loading &&
       mirrorGraph.errorMessage === null &&
@@ -31,49 +52,30 @@ export function App() {
     );
   }
 
-  if (mirrorGraph.loading && mirrorGraph.snapshotId === null) {
-    return (
-      <main className="kg-screen-state">
-        <h1>Building projection...</h1>
-        <p>
-          Loading mirror cards and relationship graph from backend contracts.
-        </p>
-      </main>
-    );
-  }
-
-  if (mirrorGraph.errorMessage && mirrorGraph.snapshotId === null) {
-    return (
-      <main className="kg-screen-state">
-        <h1>Unable to load knowledge graph</h1>
-        <p>{mirrorGraph.errorMessage}</p>
-        <button
-          type="button"
-          onClick={() => void mirrorGraph.refreshProjection()}
-        >
-          Retry
-        </button>
-      </main>
-    );
-  }
-
   return (
     <KnowledgeGraphPageLayout
       currentPath={currentPath}
-      featureId={DEFAULT_FEATURE_ID}
+      projectKey={mirrorGraph.projectKey}
+      featureId={mirrorGraph.featureId}
       generatedAt={mirrorGraph.generatedAt}
+      loading={mirrorGraph.loading}
       syncing={mirrorGraph.syncing}
       cards={mirrorGraph.cards}
+      board={mirrorGraph.board}
       nodes={mirrorGraph.nodes}
       edges={mirrorGraph.edges}
-      selectedConceptId={conceptFocus.selectedConceptId}
+      selectedCard={mirrorGraph.selectedCard}
       state={conceptFocus.state}
       detail={conceptFocus.detail}
       detailMessage={conceptFocus.message ?? mirrorGraph.errorMessage}
+      detailMessageTone={conceptFocus.messageTone}
       openingDefinition={conceptFocus.openingDefinition}
       onRefreshProjection={() => void mirrorGraph.refreshProjection()}
-      onSelectConcept={(conceptId, source) => {
-        void conceptFocus.selectConcept(conceptId, source);
+      onSelectAspect={(aspectKind) => {
+        mirrorGraph.selectAspect(aspectKind, "rail");
+      }}
+      onSelectWhiteboardCard={(node, source) => {
+        mirrorGraph.selectWhiteboardCard(node, source);
       }}
       onOpenDefinition={() => {
         void conceptFocus.openFocusedDefinition();
@@ -88,4 +90,24 @@ function currentPathname(): string {
   }
 
   return window.location.pathname;
+}
+
+function resolveRouteScope() {
+  if (typeof window === "undefined") {
+    return {
+      projectKey: DEFAULT_PROJECT_KEY,
+      featureId: DEFAULT_FEATURE_ID,
+    };
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const projectKey = params.get("projectKey")?.trim();
+  const featureId = params.get("featureId")?.trim();
+
+  return {
+    projectKey:
+      projectKey && projectKey.length > 0 ? projectKey : DEFAULT_PROJECT_KEY,
+    featureId:
+      featureId && featureId.length > 0 ? featureId : DEFAULT_FEATURE_ID,
+  };
 }

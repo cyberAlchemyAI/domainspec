@@ -1,34 +1,53 @@
 import { AppSidebar } from "../components/layout/AppSidebar";
-import { ConceptDetailPanel } from "../components/knowledge-graph/ConceptDetailPanel";
+import { AspectCardRail } from "../components/knowledge-graph/AspectCardRail";
+import { CardInspectorPanel } from "../components/knowledge-graph/CardInspectorPanel";
 import { FocusStateIndicator } from "../components/knowledge-graph/FocusStateIndicator";
-import { MirrorCardGrid } from "../components/knowledge-graph/MirrorCardGrid";
-import { RelationshipGraphCanvas } from "../components/knowledge-graph/RelationshipGraphCanvas";
+import { WhiteboardCanvas } from "../components/knowledge-graph/WhiteboardCanvas";
 import type { ExplorationState } from "../hooks/useConceptFocus";
+import type { SelectedWhiteboardCard } from "../hooks/useMirrorGraph";
 import type {
+  AspectKind,
   ConceptDetailCard,
+  GraphBoard,
   GraphEdge,
   GraphNode,
   MirrorCard,
+  SelectionSource,
 } from "../lib/api";
 
 interface KnowledgeGraphPageLayoutProps {
   currentPath: string;
+  projectKey: string;
   featureId: string;
   generatedAt: string | null;
+  loading: boolean;
   syncing: boolean;
   cards: MirrorCard[];
+  board: GraphBoard;
   nodes: GraphNode[];
   edges: GraphEdge[];
-  selectedConceptId: string | null;
+  selectedCard: SelectedWhiteboardCard | null;
   state: ExplorationState;
   detail: ConceptDetailCard | null;
   detailMessage: string | null;
+  detailMessageTone: "info" | "error" | null;
   openingDefinition: boolean;
   onRefreshProjection: () => void;
-  onSelectConcept: (conceptId: string, source: "card" | "graph") => void;
+  onSelectAspect: (aspectKind: AspectKind) => void;
+  onSelectWhiteboardCard: (node: GraphNode, source: SelectionSource) => void;
   onOpenDefinition: () => void;
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: ui.knowledge-graph-visualization.KnowledgeGraphPageLayout
+ *     type: Layout
+ *     concern: sys
+ *   edges:
+ *     - edge: wraps
+ *       to: ui.knowledge-graph-visualization.route.canvas
+ */
 export function KnowledgeGraphPageLayout(props: KnowledgeGraphPageLayoutProps) {
   return (
     <div className="kg-shell">
@@ -37,12 +56,16 @@ export function KnowledgeGraphPageLayout(props: KnowledgeGraphPageLayoutProps) {
       <main className="kg-content">
         <header className="kg-header">
           <div>
-            <p className="kg-header__eyebrow">{props.featureId}</p>
+            <p className="kg-header__eyebrow">
+              {props.projectKey} / {props.featureId}
+            </p>
             <h1>Knowledge Graph Visualization</h1>
             <p className="kg-header__meta">
               {props.generatedAt
                 ? `Projection generated at ${formatTimestamp(props.generatedAt)}`
-                : "Projection not generated yet."}
+                : props.loading
+                  ? "Building projection from mirrored docs..."
+                  : "Projection not generated yet."}
             </p>
           </div>
 
@@ -60,22 +83,24 @@ export function KnowledgeGraphPageLayout(props: KnowledgeGraphPageLayoutProps) {
         </header>
 
         <section className="kg-panels">
-          <MirrorCardGrid
+          <AspectCardRail
             cards={props.cards}
-            nodes={props.nodes}
-            selectedConceptId={props.selectedConceptId}
-            onSelectConcept={props.onSelectConcept}
+            activeAspect={props.board.activeAspect}
+            onSelectAspect={props.onSelectAspect}
           />
-          <RelationshipGraphCanvas
+          <WhiteboardCanvas
+            board={props.board}
             nodes={props.nodes}
             edges={props.edges}
-            selectedConceptId={props.selectedConceptId}
-            onSelectConcept={props.onSelectConcept}
+            selectedCardId={props.selectedCard?.cardId ?? null}
+            onSelectCard={props.onSelectWhiteboardCard}
           />
-          <ConceptDetailPanel
+          <CardInspectorPanel
+            selectedCard={props.selectedCard}
             detail={props.detail}
             state={props.state}
             message={props.detailMessage}
+            messageTone={props.detailMessageTone}
             openingDefinition={props.openingDefinition}
             onOpenDefinition={props.onOpenDefinition}
           />

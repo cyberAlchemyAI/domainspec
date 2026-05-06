@@ -1,10 +1,15 @@
 import { expect, test } from "@playwright/test";
+import { installKnowledgeGraphApiMocks } from "./mock-api";
 
 /**
  * @source docs/UI-ARCHITECTURE.md#breakpoint-contract
  * @story KG-UI-RSP-001
  */
 test.describe("Knowledge Graph Visualization - Responsive", () => {
+  test.beforeEach(async ({ page }) => {
+    await installKnowledgeGraphApiMocks(page);
+  });
+
   const breakpoints = [
     { name: "mobile", width: 390, height: 844 },
     { name: "tablet", width: 768, height: 1024 },
@@ -20,13 +25,13 @@ test.describe("Knowledge Graph Visualization - Responsive", () => {
       await page.goto("/knowledge-graph");
 
       await expect(
-        page.getByRole("heading", { name: "Mirror Cards" }),
+        page.getByRole("heading", { name: "Aspect Rail" }),
       ).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "Relationship Graph" }),
+        page.getByRole("heading", { name: "Whiteboard Canvas" }),
       ).toBeVisible();
       await expect(
-        page.getByRole("heading", { name: "Concept Detail" }),
+        page.getByRole("heading", { name: "Card Inspector" }),
       ).toBeVisible();
     });
   }

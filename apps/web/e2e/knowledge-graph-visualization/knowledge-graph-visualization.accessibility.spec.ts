@@ -1,37 +1,45 @@
 import type { Locator, Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
+import { installKnowledgeGraphApiMocks } from "./mock-api";
 
 /**
  * @source docs/features/knowledge-graph-visualization/UI-SPEC.md#accessibility-requirements
  * @story KG-UI-A11Y-001..002
  */
 test.describe("Knowledge Graph Visualization - Accessibility", () => {
+  test.beforeEach(async ({ page }) => {
+    await installKnowledgeGraphApiMocks(page);
+  });
+
   test("keyboard navigation reaches card focus, graph fallback, and detail action with visible focus", async ({
     page,
   }) => {
     await page.goto("/knowledge-graph");
 
-    const cardFocusButton = page
-      .locator('button[aria-label*="from card"]')
+    const aspectButton = page
+      .getByRole("button", { name: "Activate SPEC aspect" })
       .first();
-    const graphFallbackButton = page
-      .locator(".graph-node-fallback button")
+    const boardButton = page
+      .getByRole("button", {
+        name: "Focus feature card Knowledge Graph Visualization",
+      })
       .first();
     const openDefinitionButton = page.getByRole("button", {
-      name: "Open definition",
+      name: "Open definition for focused concept",
     });
 
-    await expect(cardFocusButton).toBeVisible();
-    await expect(graphFallbackButton).toBeVisible();
+    await expect(aspectButton).toBeVisible();
+    await expect(boardButton).toBeVisible();
     await expect(openDefinitionButton).toBeVisible();
 
-    await tabToElement(page, cardFocusButton);
-    await assertVisibleFocus(cardFocusButton);
-
-    await tabToElement(page, graphFallbackButton);
-    await assertVisibleFocus(graphFallbackButton);
+    await tabToElement(page, aspectButton);
+    await assertVisibleFocus(aspectButton);
     await page.keyboard.press("Enter");
-    await expect(page.getByText("Concept Focused")).toBeVisible();
+
+    await tabToElement(page, boardButton);
+    await assertVisibleFocus(boardButton);
+    await page.keyboard.press("Enter");
+    await expect(page.getByText("selectedFeatureId=")).toBeVisible();
 
     await tabToElement(page, openDefinitionButton);
     await assertVisibleFocus(openDefinitionButton);
@@ -43,21 +51,22 @@ test.describe("Knowledge Graph Visualization - Accessibility", () => {
     await page.goto("/knowledge-graph");
 
     await expect(
-      page.getByRole("img", { name: "Concept relationship graph" }),
+      page.getByRole("img", { name: "Deterministic whiteboard canvas" }),
     ).toBeVisible();
     await expect(
       page.locator('button[aria-label="Open definition for focused concept"]'),
     ).toBeVisible();
+    await expect(page.locator('button[aria-current="true"]')).toBeVisible();
 
     await expect(
       page.locator(".focus-indicator[aria-live='polite']"),
     ).toBeVisible();
     await expect(
-      page.locator(".detail-status[aria-live='polite']"),
+      page.locator(".inspector-status[aria-live='polite']"),
     ).toBeVisible();
     await expect(
       page.locator(
-        ".detail-placeholder[aria-live='polite'], .detail-card[aria-live='polite']",
+        ".inspector-placeholder[aria-live='polite'], .inspector-card[aria-live='polite']",
       ),
     ).toBeVisible();
   });

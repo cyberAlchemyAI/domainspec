@@ -11,6 +11,16 @@ const stateLabel: Record<ExplorationState, string> = {
   DefinitionOpened: "Definition Opened",
 };
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: ui.knowledge-graph-visualization.FocusStateIndicator
+ *     type: State Indicator
+ *     concern: sys
+ *   edges:
+ *     - edge: reflects
+ *       to: knowledge-graph-visualization.ExplorationState
+ */
 export function FocusStateIndicator(props: FocusStateIndicatorProps) {
   return (
     <div className="focus-indicator" aria-live="polite">

@@ -1,16 +1,20 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ApiError,
   DEFAULT_FEATURE_ID,
+  DEFAULT_PROJECT_KEY,
   getConceptDetailCard,
-  getDefinitionPointer,
   openDefinition,
+  type AspectKind,
   type ConceptDetailCard,
   type DefinitionPointer,
-  type GraphEdge,
-  type GraphNode,
+  type ProjectionScopeInput,
+  type WhiteboardCardType,
+  type WhiteboardViewLevel,
 } from "../lib/api";
+import { queryKeys } from "../lib/query-keys";
+import type { SelectedWhiteboardCard } from "./useMirrorGraph";
 
 export type ExplorationState =
   | "Idle"
@@ -22,30 +26,41 @@ interface ConceptFocusState {
   sessionId: string;
   state: ExplorationState;
   selectedConceptId: string | null;
-  selectedSource: "card" | "graph" | null;
   detail: ConceptDetailCard | null;
   message: string | null;
+  messageTone: "info" | "error" | null;
   openingDefinition: boolean;
 }
 
-interface UseConceptFocusInput {
-  featureId?: string;
-  nodes: GraphNode[];
-  edges: GraphEdge[];
+interface UseConceptFocusInput extends ProjectionScopeInput {
+  activeAspect: AspectKind;
+  viewLevel: WhiteboardViewLevel;
+  selectedFeatureId: string | null;
+  selectedGroupKey: string | null;
+  selectedCard: SelectedWhiteboardCard | null;
   projectionReady: boolean;
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: ui.knowledge-graph-visualization.useConceptFocus
+ *     type: Hook
+ *     concern: sys
+ */
 export function useConceptFocus(input: UseConceptFocusInput) {
+  const projectKey = input.projectKey ?? DEFAULT_PROJECT_KEY;
   const featureId = input.featureId ?? DEFAULT_FEATURE_ID;
   const [focus, setFocus] = useState<ConceptFocusState>({
-    sessionId: crypto.randomUUID(),
+    sessionId: safeSessionId(),
     state: "Idle",
     selectedConceptId: null,
-    selectedSource: null,
     detail: null,
     message: null,
+    messageTone: null,
     openingDefinition: false,
   });
+  const requestVersionRef = useRef(0);
 
   const state = useMemo<ExplorationState>(() => {
     if (focus.state === "DefinitionOpened") {
@@ -60,46 +75,135 @@ export function useConceptFocus(input: UseConceptFocusInput) {
     return "Idle";
   }, [focus.state, input.projectionReady]);
 
-  const selectConcept = useCallback(
-    async (conceptId: string, source: "card" | "graph") => {
-      const sessionId = focus.sessionId;
-      const baseDetail = deriveDetail(
-        input.nodes,
-        input.edges,
-        conceptId,
-        featureId,
-      );
-
+  useEffect(() => {
+    if (!input.projectionReady) {
+      requestVersionRef.current += 1;
       setFocus((previous) => ({
         ...previous,
-        state: "ConceptFocused",
-        selectedConceptId: conceptId,
-        selectedSource: source,
-        detail: baseDetail,
+        state: "Idle",
+        selectedConceptId: null,
+        detail: null,
         message: null,
+        messageTone: null,
       }));
+      return;
+    }
 
-      try {
-        const remoteDetail = await getConceptDetailCard(conceptId, featureId, {
-          sessionId,
-          source,
-        });
+    const selectedCard = input.selectedCard;
+    if (
+      !selectedCard ||
+      !isConceptualCard(selectedCard.cardType) ||
+      !selectedCard.conceptId
+    ) {
+      requestVersionRef.current += 1;
+      setFocus((previous) => ({
+        ...previous,
+        state: "ProjectionReady",
+        selectedConceptId: null,
+        detail: null,
+        message: null,
+        messageTone: null,
+      }));
+      return;
+    }
+
+    const requestVersion = ++requestVersionRef.current;
+    const detailKey = queryKeys.kg.detail(
+      projectKey,
+      featureId,
+      selectedCard.conceptId,
+      input.activeAspect,
+      input.viewLevel,
+      input.selectedFeatureId,
+      input.selectedGroupKey,
+    );
+    void detailKey;
+
+    setFocus((previous) => ({
+      ...previous,
+      state: "ConceptFocused",
+      selectedConceptId: selectedCard.conceptId,
+      detail:
+        previous.detail && previous.detail.conceptId === selectedCard.conceptId
+          ? previous.detail
+          : fallbackDetail(selectedCard, featureId),
+      message: null,
+      messageTone: null,
+    }));
+
+    void getConceptDetailCard(
+      selectedCard.conceptId,
+      {
+        projectKey,
+        featureId,
+      },
+      {
+        sessionId: focus.sessionId,
+        source: selectedCard.source,
+        includeInbound: true,
+        includeOutbound: true,
+        includeStories: true,
+        activeAspect: input.activeAspect,
+        viewLevel: input.viewLevel,
+        selectedFeatureId: input.selectedFeatureId,
+        selectedGroupKey: input.selectedGroupKey,
+        selectedCardId: selectedCard.cardId,
+        selectedCardType: selectedCard.cardType,
+      },
+    )
+      .then((detail) => {
+        if (requestVersion !== requestVersionRef.current) {
+          return;
+        }
+
         setFocus((previous) => ({
           ...previous,
-          detail: remoteDetail,
+          detail,
+          message: null,
+          messageTone: null,
         }));
-      } catch {
-        // Fallback detail from graph projection keeps interaction usable.
-      }
-    },
-    [featureId, focus.sessionId, input.edges, input.nodes],
-  );
+      })
+      .catch((error) => {
+        if (requestVersion !== requestVersionRef.current) {
+          return;
+        }
 
+        if (error instanceof ApiError) {
+          setFocus((previous) => ({
+            ...previous,
+            message: `${error.message} (${error.code})`,
+            messageTone: "error",
+          }));
+        }
+      });
+  }, [
+    featureId,
+    focus.sessionId,
+    input.activeAspect,
+    input.projectionReady,
+    input.selectedCard,
+    input.selectedFeatureId,
+    input.selectedGroupKey,
+    input.viewLevel,
+    projectKey,
+  ]);
+
+  /**
+   * domainspec:
+   *   concept:
+   *     id: ui.knowledge-graph-visualization.DefinitionNavigationBinding
+   *     type: Binding
+   *     concern: sys
+   *   edges:
+   *     - edge: mutates
+   *       to: knowledge-graph-visualization.OpenDefinition
+   */
   const openFocusedDefinition = useCallback(async () => {
     if (!focus.selectedConceptId) {
       setFocus((previous) => ({
         ...previous,
-        message: "Select a concept before opening definition",
+        message: "Select a concept before opening definition.",
+        messageTone: "error",
       }));
       return;
     }
@@ -108,100 +212,100 @@ export function useConceptFocus(input: UseConceptFocusInput) {
       ...previous,
       openingDefinition: true,
       message: null,
+      messageTone: null,
     }));
 
     try {
+      const definitionKey = queryKeys.kg.definition(
+        projectKey,
+        featureId,
+        focus.selectedConceptId,
+      );
+      void definitionKey;
+
       const result = await openDefinition(
         {
           sessionId: focus.sessionId,
           conceptId: focus.selectedConceptId,
+          aspectHint: input.activeAspect,
         },
-        featureId,
+        {
+          projectKey,
+          featureId,
+        },
       );
-      const target = buildTarget(result);
+      const target = result.target ?? buildTarget(result);
 
       setFocus((previous) => ({
         ...previous,
         state: "DefinitionOpened",
         openingDefinition: false,
         message: `Definition opened: ${target}`,
+        messageTone: "info",
       }));
 
-      window.location.hash = target;
+      if (typeof window !== "undefined") {
+        window.location.hash = target;
+      }
       return;
     } catch (error) {
       if (error instanceof ApiError) {
         const mapped = mapDefinitionError(error.code);
         setFocus((previous) => ({
           ...previous,
+          state: "ConceptFocused",
           openingDefinition: false,
           message: mapped,
+          messageTone: "error",
         }));
         return;
       }
 
       setFocus((previous) => ({
         ...previous,
+        state: "ConceptFocused",
         openingDefinition: false,
         message: "Definition link is not available for this concept.",
+        messageTone: "error",
       }));
     }
-
-    try {
-      const pointer = await getDefinitionPointer(
-        focus.selectedConceptId,
-        featureId,
-      );
-      const fallbackTarget = buildTarget(pointer);
-      setFocus((previous) => ({
-        ...previous,
-        state: "DefinitionOpened",
-        message: `Definition opened: ${fallbackTarget}`,
-      }));
-      window.location.hash = fallbackTarget;
-    } catch {
-      // Keep mapped message from primary mutation call.
-    }
-  }, [featureId, focus.selectedConceptId, focus.sessionId]);
+  }, [
+    featureId,
+    focus.selectedConceptId,
+    focus.sessionId,
+    input.activeAspect,
+    projectKey,
+  ]);
 
   return {
     state,
+    selectedCard: input.selectedCard,
     selectedConceptId: focus.selectedConceptId,
-    selectedSource: focus.selectedSource,
     detail: focus.detail,
     message: focus.message,
+    messageTone: focus.messageTone,
     openingDefinition: focus.openingDefinition,
-    selectConcept,
     openFocusedDefinition,
   };
 }
 
-function deriveDetail(
-  nodes: GraphNode[],
-  edges: GraphEdge[],
-  conceptId: string,
+function fallbackDetail(
+  selectedCard: SelectedWhiteboardCard,
   featureId: string,
 ): ConceptDetailCard {
-  const node = nodes.find((candidate) => candidate.conceptId === conceptId);
-  const inboundRelations = edges.filter(
-    (edge) => edge.toConceptId === conceptId,
-  );
-  const outboundRelations = edges.filter(
-    (edge) => edge.fromConceptId === conceptId,
-  );
-
   return {
-    conceptId,
-    title: node?.name ?? conceptId,
-    summary: node?.summary ?? "No summary available.",
+    conceptId: selectedCard.conceptId ?? selectedCard.cardId,
+    title: selectedCard.title,
+    summary: selectedCard.summary,
     definition: {
       filePath: `docs/features/${featureId}/SPEC.md`,
       anchor: "concepts",
       lineHint: 0,
-      label: node?.name ?? conceptId,
+      label: selectedCard.title,
     },
-    inboundRelations,
-    outboundRelations,
+    inboundRelations: [],
+    outboundRelations: [],
+    relatedStories: [],
   };
 }
 
@@ -220,4 +324,19 @@ function mapDefinitionError(code: string): string {
 
 function buildTarget(pointer: DefinitionPointer): string {
   return `${pointer.filePath}#${pointer.anchor}`;
+}
+
+function safeSessionId(): string {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+
+  return `kg-session-${Date.now()}`;
+}
+
+function isConceptualCard(cardType: WhiteboardCardType): boolean {
+  return cardType === "concept" || cardType === "story";
 }

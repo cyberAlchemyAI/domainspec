@@ -10,7 +10,7 @@ Implement the current whiteboard UI surface with synchronized aspect rail, white
 
 ## Status
 
-in-progress
+completed
 
 ## DomainSpec Coverage
 
@@ -73,7 +73,9 @@ in-progress
 
 - Web check/build output.
 - Playwright E2E output for all KG UI IDs.
-- Latest evidence (2026-05-06): web typecheck and production build pass with three-pane layout components present.
+- Latest evidence (2026-05-06): `pnpm --filter @domainspec/web check` PASS (`tsc --noEmit`).
+- Latest evidence (2026-05-06): `pnpm --filter @domainspec/web build` PASS (`vite build`, dist emitted).
+- Latest evidence (2026-05-06): `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization` PASS (16/16).
 
 ## Gaps and Questions
 
