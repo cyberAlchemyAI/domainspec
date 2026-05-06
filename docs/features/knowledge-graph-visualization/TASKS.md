@@ -1,31 +1,35 @@
 # Tasks: Knowledge Graph Visualization
 
-## Ordered Tasks
+## Ordered Tasks (Whiteboard Pivot)
 
-1. docs: finalize current mirror-first contracts in SPEC, domain, operations, queries, and UI-SPEC.
-2. backend: implement projection rebuild pipeline from markdown docs to cards and graph, persisted into database-backed read storage.
-3. backend: implement read queries for mirror cards, graph, concept detail, and definition pointer.
-4. backend: implement select/open operations with explicit error diagnostics.
-5. ui: implement page layout with mirror card grid, relationship graph canvas, and concept detail panel.
-6. ui: wire click interactions for concept focus and definition open.
-7. test: add deterministic API, operation, and UI interaction tests from TEST-SPEC.
-8. verify: run feature verification and alignment/layering audits before readiness gate.
+1. ops/docs: enforce terminal-safe markdown link validation command pattern (no parent-shell `exit`) and keep per-file output visible.
+1. docs: finalize whiteboard-first contracts in [SPEC.md](SPEC.md), [operations.md](operations.md), [queries.md](queries.md), [interfaces.md](interfaces.md), [workflows.md](workflows.md), and [UI-SPEC.md](UI-SPEC.md).
+1. backend: implement projection index model for aspect cards + whiteboard cards/edges with scope key `(projectKey, featureId)`.
+1. backend: parse SPEC relationship index sources (Feature Concept Graph, Cross-Feature Dependencies, Produces For) into canonical whiteboard edges.
+1. backend: implement `GET /mirror-cards` for aspect rail and `GET /graph` for whiteboard board levels (`aspect`, `feature`, `concept`).
+1. backend: implement grouped concept-card derivation by aspect source file and story-card derivation for selected feature.
+1. backend: implement `SelectConcept` card-selection state model and `OpenDefinition` with aspect-aware pointer resolution.
+1. ui: implement three-surface layout (`AspectCardRail`, `WhiteboardCanvas`, `CardInspectorPanel`) and route-query state.
+1. ui: implement SPEC-level feature atlas board (feature cards + cross-feature edges).
+1. ui: implement feature drilldown board (concept groups + concept cards + story cards).
+1. ui: implement aspect/definition navigation (for example `MakeupBalance` opens domain visualization and description).
+1. test: add backend tests for board-level graph payloads, grouping, and relationship-index traceability.
+1. test: add UI tests for full flow: aspect select -> feature click -> grouped concept view -> concept click -> open definition.
+1. verify: run feature verification and alignment/layering audits before readiness gate.
 
-## Reuse Candidates from legacy Audit
+## Example Acceptance Path (Poker Team)
 
-1. parser and docs scanning utilities: reuse `backend/src/knowledge-graph-docs-import.ts` helper functions (`listMarkdownFiles`, `extractFrontmatter`, `toAnchor`) and adapt parsing to current concept table + feature graph contracts.
-2. database bootstrap pattern: reuse `backend/src/knowledge-graph-repository.ts` initialization/transaction flow (`loadIntoRuntime`, `ensureInitialized`, `readData`) while replacing schema and DTO mapping with current MirrorProjection entities.
-3. canonical taxonomy guards: reuse `backend/src/knowledge-graph.ts` canonical sets/guards (`CONCEPT_TYPES`, `EDGE_TYPES`, `isConceptType`, `isEdgeType`) for validation boundaries.
-4. api boundary and auth wiring: reuse `backend/src/server.ts` request parsing/validation helpers plus `backend/src/auth.ts` scope middleware.
-5. web transport layer: reuse `apps/web/src/lib/api.ts` and `apps/web/src/lib/query-keys.ts` request/error/key primitives.
-6. test harnesses: reuse backend inject harness in `backend/src/server.test.ts` and Playwright mock-route patterns in `apps/web/e2e/knowledge-graph-visualization/atlas.spec.ts`.
-7. replace rather than reuse: do not carry over legacy hardcoded seed model and legacy-only endpoints from `backend/src/knowledge-graph.ts`; these must be replaced by markdown-to-db current projections.
-8. replace or implement missing contract: legacy UI hook `apps/web/src/hooks/useEdgeTypeProjection.ts` targets `/knowledge-graph/projections/edge-types`, which is not implemented in backend routes and must be removed or implemented before reuse.
+1. Select source `projectKey=poker-team` and feature `player-makeup`.
+2. At SPEC aspect level, whiteboard shows feature cards and cross-feature relations.
+3. Click `player-makeup` card.
+4. Whiteboard shows grouped concept cards and story cards.
+5. Click concept `MakeupBalance`.
+6. Domain visualization opens with `MakeupBalance` description from `domain.md#makeupbalance`.
 
 ## Ownership Labels
 
 - docs: DomainSpec contracts and cross-link correctness.
-- backend: projection parsing, query contracts, and operation semantics.
-- ui: cards + graph + details interaction surface.
-- test: backend contracts and UI journeys.
+- backend: projection index, relationship extraction, and API contracts.
+- ui: aspect rail, whiteboard interactions, and detail navigation.
+- test: backend contract tests and whiteboard UI journeys.
 - verify: verification, alignment, and layering evidence publication.

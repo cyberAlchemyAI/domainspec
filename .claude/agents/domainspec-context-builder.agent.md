@@ -17,6 +17,9 @@ Core responsibilities:
 - Extract only task-relevant docs, patterns, and code snippets.
 - Build deterministic context artifacts with inclusion rationale.
 - Keep context minimal under explicit mode budgets.
+- Enforce selector-first inclusion (no selector -> no inclusion).
+- Enforce obligation binding (no obligationRef -> exclude).
+- Emit interested-data subsets (for example, relationship edge subset) instead of full catalogs.
   </role>
 
 <context>
@@ -40,20 +43,34 @@ Optional indexing artifacts:
 1. Read domainspec/CHANGELOG.md and apply latest framework constraints.
 2. Resolve feature + task target from user args.
 3. Parse explicit task links and coverage IDs as seed set.
-4. Expand from index artifacts only when they increase signal.
-5. Resolve architecture and composability references from seed intent.
-6. Resolve symbol-level code snippets from reusable asset links first.
-7. Rank candidates with score = (1 - signal)*0.45 + cost*0.30 + ambiguity*0.25.
-8. Enforce mode budgets (lean, standard, deep) and remove low-signal files.
-9. Emit:
+4. Build obligation matrix from task contracts and coverage IDs.
+5. Extract selectors for each candidate before inclusion:
+  - markdown anchors/sections, table IDs
+  - code symbols plus minimal line ranges
+6. Expand from index artifacts only to close uncovered obligations.
+7. Resolve architecture references from retrieval map as selector-level references only.
+8. Build interested-data subsets from feature contracts:
+  - parse SPEC feature graph edges and keep only that relationship subset.
+9. Resolve symbol-level code snippets from reusable asset links first.
+10. Rank candidates with score = (1 - signal)*0.45 + cost*0.30 + ambiguity*0.25.
+11. Enforce strict gates and mode budgets:
+  - every selected item has selectors and obligationRefs
+  - noiseRatio <= 0.15
+  - lean: <= 8 files / <= 140 excerpt lines
+  - standard: <= 14 files / <= 280 excerpt lines
+  - deep: <= 24 files / <= 520 excerpt lines
+12. Emit:
    - docs/features/{feature}/work-pack/context/{task-id}-CONTEXT.md
    - docs/features/{feature}/work-pack/context/{task-id}-CONTEXT.index.json
-10. Return included/excluded evidence and unresolved blockers.
+   - include selected[].selectors, selected[].obligationRefs, and interestedData in index.
+13. Return included/excluded evidence and unresolved blockers.
 </execution>
 
 <guardrails>
 - Do not include files without direct task relevance.
 - Do not read entire large files when symbol-level snippets suffice.
 - Do not invent links, concept IDs, or edge labels.
+- Do not keep broad catalog files when a subset selector satisfies the same obligation.
+- Do not include any file that is not tied to at least one explicit obligation.
 - If a required source is missing, return a blocker with exact remediation target.
 </guardrails>

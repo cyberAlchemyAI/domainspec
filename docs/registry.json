@@ -1,0 +1,2735 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-06T11:44:05.093Z",
+    "sourceOfTruth": "docs/features/**/SPEC.md",
+    "edgeSource": "docs/features/**/SPEC.md#feature-concept-graph",
+    "domainspecVersion": "2.0.4"
+  },
+  "concepts": [
+    {
+      "id": "domainspec-gsd-integration.DelegationMode",
+      "name": "DelegationMode",
+      "feature": "domainspec-gsd-integration",
+      "type": "Enum",
+      "description": "Execution mode selector for native or delegated orchestration",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "domainspec-gsd-integration.PlanPhaseBridge",
+      "name": "PlanPhaseBridge",
+      "feature": "domainspec-gsd-integration",
+      "type": "Operation",
+      "description": "Converts DomainSpec feature context into GSD phase planning inputs",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "domainspec-gsd-integration.ExecutePhaseBridge",
+      "name": "ExecutePhaseBridge",
+      "feature": "domainspec-gsd-integration",
+      "type": "Operation",
+      "description": "Runs delegated GSD execution and maps outputs back to DomainSpec traceability",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "domainspec-gsd-integration.VerifyPhaseBridge",
+      "name": "VerifyPhaseBridge",
+      "feature": "domainspec-gsd-integration",
+      "type": "Operation",
+      "description": "Normalizes GSD verification evidence for DomainSpec PASS/FLAG/BLOCK decisions",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "domainspec-gsd-integration.FeatureToPhaseMapping",
+      "name": "FeatureToPhaseMapping",
+      "feature": "domainspec-gsd-integration",
+      "type": "Mapping",
+      "description": "Mapping strategy from feature docs to phase identifiers and plan files",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "domainspec-gsd-integration.DelegatedExecutionWorkflow",
+      "name": "DelegatedExecutionWorkflow",
+      "feature": "domainspec-gsd-integration",
+      "type": "Workflow",
+      "description": "End-to-end delegated path across planning, execution, and verification",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "domainspec-gsd-integration.AuthorityPolicy",
+      "name": "AuthorityPolicy",
+      "feature": "domainspec-gsd-integration",
+      "type": "Policy",
+      "description": "Resolves conflicts between orchestration outputs and semantic docs",
+      "specPath": "docs/features/domainspec-gsd-integration/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.C12",
+      "name": "Constitution rule C12 (verifier BLOCK as merge-gate)",
+      "feature": "gitops-assessment",
+      "type": "Governance Rule",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.DriftCorrectionCommit",
+      "name": "Drift-correction first commit",
+      "feature": "gitops-assessment",
+      "type": "Governance Action",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.PrValidateWorkflow",
+      "name": "`.github/workflows/pr-validate.yml`",
+      "feature": "gitops-assessment",
+      "type": "CI Workflow",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.OverlaySyncWorkflow",
+      "name": "`.github/workflows/overlay-sync.yml`",
+      "feature": "gitops-assessment",
+      "type": "CI Workflow",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.TuningWorkflow",
+      "name": "`.github/workflows/domainspec-tuning.yml`",
+      "feature": "gitops-assessment",
+      "type": "CI Workflow",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.DeployWorkflow",
+      "name": "`.github/workflows/deploy.yml`",
+      "feature": "gitops-assessment",
+      "type": "CI Workflow",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.CompiledTreeStalenessWorkflow",
+      "name": "`.github/workflows/compiled-tree-staleness.yml`",
+      "feature": "gitops-assessment",
+      "type": "CI Workflow",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.InstallHooks",
+      "name": "`tools/install-hooks.sh`",
+      "feature": "gitops-assessment",
+      "type": "Bootstrap Script",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.CheckOverlaySync",
+      "name": "`tools/check-overlay-sync.sh`",
+      "feature": "gitops-assessment",
+      "type": "Validator",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ExtractCategorical",
+      "name": "`tools/extract-categorical.ts`",
+      "feature": "gitops-assessment",
+      "type": "Regenerator",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.InjectGeneratedHeader",
+      "name": "`tools/inject-generated-header.ts`",
+      "feature": "gitops-assessment",
+      "type": "Post-processor",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ValidateGeneratedHeaders",
+      "name": "`tools/validate-generated-headers.ts`",
+      "feature": "gitops-assessment",
+      "type": "Validator",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ValidateManifestCompleteness",
+      "name": "`tools/validate-manifest-completeness.ts`",
+      "feature": "gitops-assessment",
+      "type": "Validator",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BuildCompiledManifest",
+      "name": "`tools/build-compiled-manifest.ts`",
+      "feature": "gitops-assessment",
+      "type": "Manifest Builder",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.MigrateCategoricalPaths",
+      "name": "`tools/migrate-categorical-paths.sh`",
+      "feature": "gitops-assessment",
+      "type": "One-shot Migration",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ValidateNoGrandfatheredPaths",
+      "name": "`tools/validate-no-grandfathered-paths.ts`",
+      "feature": "gitops-assessment",
+      "type": "Validator",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.GeneratedTree",
+      "name": "`generated/` tree",
+      "feature": "gitops-assessment",
+      "type": "Compiled Artifact Root",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.CompiledManifest",
+      "name": "`docs/.compiled/manifest.json`",
+      "feature": "gitops-assessment",
+      "type": "Compiled Artifact Index",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.GeneratedHeader",
+      "name": "GENERATED-by header convention",
+      "feature": "gitops-assessment",
+      "type": "Artifact Convention",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SourceHash",
+      "name": "`@source-hash` annotation",
+      "feature": "gitops-assessment",
+      "type": "Traceability Annotation",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.CompiledTreeStaleTag",
+      "name": "`COMPILED_TREE_STALE` failure tag",
+      "feature": "gitops-assessment",
+      "type": "CI Failure Contract",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.CategoricalSunset",
+      "name": "`_categorical/` sunset trigger",
+      "feature": "gitops-assessment",
+      "type": "Migration Event",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SignalStream",
+      "name": "`docs/signals/pipeline-signals.jsonl`",
+      "feature": "gitops-assessment",
+      "type": "Append-only Signal Stream",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.TuningReport",
+      "name": "`docs/signals/TUNING-REPORT.md`",
+      "feature": "gitops-assessment",
+      "type": "Derived Report",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.MetaHealth",
+      "name": "`docs/META-HEALTH.md`",
+      "feature": "gitops-assessment",
+      "type": "Derived Report",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.PulumiProject",
+      "name": "`infra/Pulumi.yaml`",
+      "feature": "gitops-assessment",
+      "type": "IaC Project Descriptor",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.PulumiProdStack",
+      "name": "`infra/Pulumi.prod.yaml`",
+      "feature": "gitops-assessment",
+      "type": "IaC Stack Config",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.PulumiProgram",
+      "name": "`infra/index.ts`",
+      "feature": "gitops-assessment",
+      "type": "IaC Program",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.CloudInit",
+      "name": "`infra/cloud-init.yaml`",
+      "feature": "gitops-assessment",
+      "type": "Droplet Bootstrap",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.RuntimeCompose",
+      "name": "`infra/docker-compose.yml`",
+      "feature": "gitops-assessment",
+      "type": "Compose Manifest",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.Caddyfile",
+      "name": "`infra/Caddyfile`",
+      "feature": "gitops-assessment",
+      "type": "Reverse Proxy + TLS",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.PrometheusConfig",
+      "name": "`infra/prometheus.yml`",
+      "feature": "gitops-assessment",
+      "type": "Scrape Config",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.AlertRules",
+      "name": "`infra/alerts/`",
+      "feature": "gitops-assessment",
+      "type": "Alert Rules Directory",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.EncryptedSecrets",
+      "name": "`infra/secrets.enc.yaml`",
+      "feature": "gitops-assessment",
+      "type": "SOPS Encrypted Blob",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SopsRules",
+      "name": "`infra/.sops.yaml`",
+      "feature": "gitops-assessment",
+      "type": "SOPS Recipient Rules",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.MaintainerAgeKeys",
+      "name": "`secrets/keys/*.pub`",
+      "feature": "gitops-assessment",
+      "type": "Public Age Key Set",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ReconcilerTimer",
+      "name": "`infra/reconciler/reconciler.timer`",
+      "feature": "gitops-assessment",
+      "type": "systemd Timer",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ReconcilerService",
+      "name": "`infra/reconciler/reconciler.service`",
+      "feature": "gitops-assessment",
+      "type": "systemd Oneshot Service",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ReconcilerPathWatcher",
+      "name": "`infra/reconciler/reconciler-path.path`",
+      "feature": "gitops-assessment",
+      "type": "systemd Path Watcher",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ReconcileScript",
+      "name": "`infra/reconciler/reconcile.sh`",
+      "feature": "gitops-assessment",
+      "type": "Reconciliation Loop Body",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.DropletRepoClone",
+      "name": "`/opt/domainspec` clone path",
+      "feature": "gitops-assessment",
+      "type": "Filesystem Convention",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.DeployUser",
+      "name": "`deploy` user on droplet",
+      "feature": "gitops-assessment",
+      "type": "Service Account",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SopsAgeCiKey",
+      "name": "`SOPS_AGE_KEY` GitHub Actions secret",
+      "feature": "gitops-assessment",
+      "type": "CI Decrypt Key",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.DropletAgeKey",
+      "name": "Droplet age keypair",
+      "feature": "gitops-assessment",
+      "type": "Decryption Identity",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.VpsBootstrapRunbook",
+      "name": "`docs/runbooks/vps-bootstrap.md`",
+      "feature": "gitops-assessment",
+      "type": "Runbook",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SecretRotationRunbook",
+      "name": "`docs/runbooks/secret-rotation.md`",
+      "feature": "gitops-assessment",
+      "type": "Runbook (placeholder)",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.RegenBot",
+      "name": "`domainspec-bot` GitHub identity",
+      "feature": "gitops-assessment",
+      "type": "Automation Identity",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotBranchConvention",
+      "name": "`bot/<agent>/<feature>/<input-hash>` branch convention",
+      "feature": "gitops-assessment",
+      "type": "Branch Naming Rule",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotPrTitlePrefix",
+      "name": "bot-regen",
+      "feature": "gitops-assessment",
+      "type": "PR Convention",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotRegenLabel",
+      "name": "`bot-regen` label",
+      "feature": "gitops-assessment",
+      "type": "PR Label",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotAgentLabel",
+      "name": "`agent:<agent>` label",
+      "feature": "gitops-assessment",
+      "type": "PR Label",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotFeatureLabel",
+      "name": "`feature:<feature>` label",
+      "feature": "gitops-assessment",
+      "type": "PR Label",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotConditionalLabels",
+      "name": "`blocked` / `needs-clarification` / `superseded` / `non-substantive-regen` / `orphan-story` / `needs-infra-decision` labels",
+      "feature": "gitops-assessment",
+      "type": "PR Labels",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.ObligationDiff",
+      "name": "Obligation diff PR comment",
+      "feature": "gitops-assessment",
+      "type": "PR Comment Convention",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.InputHash",
+      "name": "Input hash",
+      "feature": "gitops-assessment",
+      "type": "Idempotency Key",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SemanticHash",
+      "name": "Semantic hash",
+      "feature": "gitops-assessment",
+      "type": "Structural-Equality Hash",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.HashAlgorithmVersion",
+      "name": "`sha256-v1` hash algorithm version",
+      "feature": "gitops-assessment",
+      "type": "Versioned Algorithm Tag",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.BotWriteScopeCheck",
+      "name": "`bot-write-scope` PR check",
+      "feature": "gitops-assessment",
+      "type": "CI Check",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.SupersessionProtocol",
+      "name": "Stale PR supersession protocol",
+      "feature": "gitops-assessment",
+      "type": "PR Lifecycle Rule",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.RegenEligibleAgents",
+      "name": "Five regen-eligible LLM-judgment agents (`spec-writer`, `implementer`, `task-executor`, `ui-architect`, `infra-architect`)",
+      "feature": "gitops-assessment",
+      "type": "Agent Set",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "gitops.InteractiveOnlyAgents",
+      "name": "Four interactive-only LLM-judgment agents (`orchestrator`, `interviewer`, `planner`, `mars-researcher`)",
+      "feature": "gitops-assessment",
+      "type": "Agent Set",
+      "description": "",
+      "specPath": "docs/features/gitops-assessment/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.FeatureDocument",
+      "name": "FeatureDocument",
+      "feature": "knowledge-graph-visualization",
+      "type": "Entity",
+      "description": "Source documentation file tracked as graph/card input",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.ConceptDefinition",
+      "name": "ConceptDefinition",
+      "feature": "knowledge-graph-visualization",
+      "type": "Entity",
+      "description": "Canonical concept definition parsed from docs",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.MirrorProjection",
+      "name": "MirrorProjection",
+      "feature": "knowledge-graph-visualization",
+      "type": "Entity",
+      "description": "Snapshot containing synchronized cards and graph aggregates",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.ExplorationSession",
+      "name": "ExplorationSession",
+      "feature": "knowledge-graph-visualization",
+      "type": "Entity",
+      "description": "User exploration state for focused concept and opened definition",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.RelationshipEdge",
+      "name": "RelationshipEdge",
+      "feature": "knowledge-graph-visualization",
+      "type": "Value Object",
+      "description": "Canonical edge connecting two concept IDs",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.DefinitionPointer",
+      "name": "DefinitionPointer",
+      "feature": "knowledge-graph-visualization",
+      "type": "Value Object",
+      "description": "File-path plus anchor target for concept deep-link navigation",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.MirrorCardView",
+      "name": "MirrorCardView",
+      "feature": "knowledge-graph-visualization",
+      "type": "View Model",
+      "description": "Card representation for one mirrored documentation file",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.ConceptDetailCard",
+      "name": "ConceptDetailCard",
+      "feature": "knowledge-graph-visualization",
+      "type": "View Model",
+      "description": "Detail projection for selected concept and related relations",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.AspectKind",
+      "name": "AspectKind",
+      "feature": "knowledge-graph-visualization",
+      "type": "Enum",
+      "description": "Supported file categories represented as cards",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.FreshnessStatus",
+      "name": "FreshnessStatus",
+      "feature": "knowledge-graph-visualization",
+      "type": "Enum",
+      "description": "Card freshness marker for sync confidence",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.ExplorationState",
+      "name": "ExplorationState",
+      "feature": "knowledge-graph-visualization",
+      "type": "State Machine",
+      "description": "Lifecycle from idle view to focused concept and opened definition",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.RebuildMirrorProjection",
+      "name": "RebuildMirrorProjection",
+      "feature": "knowledge-graph-visualization",
+      "type": "Operation",
+      "description": "Rebuilds mirror cards and graph from docs sources",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.SelectConcept",
+      "name": "SelectConcept",
+      "feature": "knowledge-graph-visualization",
+      "type": "Operation",
+      "description": "Focuses one concept from card or graph interaction",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.OpenDefinition",
+      "name": "OpenDefinition",
+      "feature": "knowledge-graph-visualization",
+      "type": "Operation",
+      "description": "Resolves and opens definition anchor for selected concept",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.GetMirrorCards",
+      "name": "GetMirrorCards",
+      "feature": "knowledge-graph-visualization",
+      "type": "Query",
+      "description": "Returns mirror card list for the feature",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.GetRelationshipGraph",
+      "name": "GetRelationshipGraph",
+      "feature": "knowledge-graph-visualization",
+      "type": "Query",
+      "description": "Returns concept nodes and canonical relation edges",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.GetConceptDetailCard",
+      "name": "GetConceptDetailCard",
+      "feature": "knowledge-graph-visualization",
+      "type": "Query",
+      "description": "Returns detail card projection for selected concept",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.GetDefinitionPointer",
+      "name": "GetDefinitionPointer",
+      "feature": "knowledge-graph-visualization",
+      "type": "Query",
+      "description": "Returns file and anchor target for selected concept",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.KnowledgeGraphAPI",
+      "name": "KnowledgeGraphAPI",
+      "feature": "knowledge-graph-visualization",
+      "type": "Interface",
+      "description": "External read API for cards, graph, and concept detail navigation",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.KnowledgeGraphModule",
+      "name": "KnowledgeGraphModule",
+      "feature": "knowledge-graph-visualization",
+      "type": "Interface",
+      "description": "Internal module contract for card/graph/query operations",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.DocumentToConceptMapping",
+      "name": "DocumentToConceptMapping",
+      "feature": "knowledge-graph-visualization",
+      "type": "Mapping",
+      "description": "Maps docs concept and relationship tables into projection entities",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.DocumentToMirrorCardAdapter",
+      "name": "DocumentToMirrorCardAdapter",
+      "feature": "knowledge-graph-visualization",
+      "type": "Adapter",
+      "description": "Shapes file metadata into mirror card view model",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.ConceptToDetailCardAdapter",
+      "name": "ConceptToDetailCardAdapter",
+      "feature": "knowledge-graph-visualization",
+      "type": "Adapter",
+      "description": "Shapes selected concept context into detail card view model",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.MirrorInteractionWorkflow",
+      "name": "MirrorInteractionWorkflow",
+      "feature": "knowledge-graph-visualization",
+      "type": "Workflow",
+      "description": "End-to-end flow across card rendering, graph focus, and deep-link open",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.CardSyncPolicy",
+      "name": "CardSyncPolicy",
+      "feature": "knowledge-graph-visualization",
+      "type": "Policy",
+      "description": "Enforces minimum mirrored file coverage and staleness handling",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.MirrorProjectionBuilt",
+      "name": "MirrorProjectionBuilt",
+      "feature": "knowledge-graph-visualization",
+      "type": "Event",
+      "description": "Projection rebuild completion signal",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.ConceptSelected",
+      "name": "ConceptSelected",
+      "feature": "knowledge-graph-visualization",
+      "type": "Event",
+      "description": "Concept focus change signal",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "knowledge-graph-visualization.DefinitionOpened",
+      "name": "DefinitionOpened",
+      "feature": "knowledge-graph-visualization",
+      "type": "Event",
+      "description": "Deep-link navigation signal",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.route.canvas",
+      "name": "Graph Canvas Route",
+      "feature": "knowledge-graph-visualization",
+      "type": "Page",
+      "description": "Main page rendering cards, graph, and details",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.KnowledgeGraphPageLayout",
+      "name": "KnowledgeGraphPageLayout",
+      "feature": "knowledge-graph-visualization",
+      "type": "Layout",
+      "description": "Layout wrapper for knowledge graph page",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.MirrorCardGrid",
+      "name": "MirrorCardGrid",
+      "feature": "knowledge-graph-visualization",
+      "type": "Component",
+      "description": "Card list reflecting source files",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.RelationshipGraphCanvas",
+      "name": "RelationshipGraphCanvas",
+      "feature": "knowledge-graph-visualization",
+      "type": "Component",
+      "description": "Graph view showing concepts and canonical edges",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.ConceptDetailPanel",
+      "name": "ConceptDetailPanel",
+      "feature": "knowledge-graph-visualization",
+      "type": "Component",
+      "description": "Detail card for focused concept",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.useMirrorGraph",
+      "name": "useMirrorGraph",
+      "feature": "knowledge-graph-visualization",
+      "type": "Hook",
+      "description": "Hook that fetches mirror cards and graph data",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.useConceptFocus",
+      "name": "useConceptFocus",
+      "feature": "knowledge-graph-visualization",
+      "type": "Hook",
+      "description": "Hook for concept focus and detail loading",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.GraphDataBinding",
+      "name": "GraphDataBinding",
+      "feature": "knowledge-graph-visualization",
+      "type": "Binding",
+      "description": "Binding from UI hooks to read queries",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.ConceptFocusBinding",
+      "name": "ConceptFocusBinding",
+      "feature": "knowledge-graph-visualization",
+      "type": "Binding",
+      "description": "Binding from UI click to SelectConcept operation",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.DefinitionNavigationBinding",
+      "name": "DefinitionNavigationBinding",
+      "feature": "knowledge-graph-visualization",
+      "type": "Binding",
+      "description": "Binding from detail action to OpenDefinition operation",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.NavigateToDefinitionAction",
+      "name": "NavigateToDefinitionAction",
+      "feature": "knowledge-graph-visualization",
+      "type": "Action",
+      "description": "User-triggered action for opening definition links",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "ui.knowledge-graph-visualization.FocusStateIndicator",
+      "name": "FocusStateIndicator",
+      "feature": "knowledge-graph-visualization",
+      "type": "State Indicator",
+      "description": "Visual state marker for exploration lifecycle",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentTransaction",
+      "name": "PaymentTransaction",
+      "feature": "payment-processing",
+      "type": "Entity",
+      "description": "A single payment attempt with amount, method, and lifecycle",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "shared.Money",
+      "name": "Money",
+      "feature": "payment-processing",
+      "type": "Value Object",
+      "description": "Amount + currency pair",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentMethod",
+      "name": "PaymentMethod",
+      "feature": "payment-processing",
+      "type": "Enum",
+      "description": "How the user pays (credit card, bank transfer, wallet)",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentStatus",
+      "name": "PaymentStatus",
+      "feature": "payment-processing",
+      "type": "State Machine",
+      "description": "Transaction lifecycle: Created → Processing → Completed/Failed",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.ProcessPayment",
+      "name": "ProcessPayment",
+      "feature": "payment-processing",
+      "type": "Operation",
+      "description": "Initiates a payment transaction",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.RefundPayment",
+      "name": "RefundPayment",
+      "feature": "payment-processing",
+      "type": "Operation",
+      "description": "Initiates a refund on a completed payment",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.RetryPayment",
+      "name": "RetryPayment",
+      "feature": "payment-processing",
+      "type": "Operation",
+      "description": "Retries a failed-retryable payment",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.FeeCalculation",
+      "name": "FeeCalculation",
+      "feature": "payment-processing",
+      "type": "Calculation",
+      "description": "Computes processing fee based on method and amount",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.MaxAmountRule",
+      "name": "MaxAmountRule",
+      "feature": "payment-processing",
+      "type": "Rule",
+      "description": "Payment amount must not exceed limit",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.MethodAvailabilityRule",
+      "name": "MethodAvailabilityRule",
+      "feature": "payment-processing",
+      "type": "Rule",
+      "description": "Payment method must be enabled for user's region",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.RetryPolicy",
+      "name": "RetryPolicy",
+      "feature": "payment-processing",
+      "type": "Policy",
+      "description": "Decides retry timing and max attempts",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentInitiated",
+      "name": "PaymentInitiated",
+      "feature": "payment-processing",
+      "type": "Event",
+      "description": "Fired when payment processing begins",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentCompleted",
+      "name": "PaymentCompleted",
+      "feature": "payment-processing",
+      "type": "Event",
+      "description": "Fired when gateway confirms payment",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentFailed",
+      "name": "PaymentFailed",
+      "feature": "payment-processing",
+      "type": "Event",
+      "description": "Fired when payment permanently fails",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.RefundCompleted",
+      "name": "RefundCompleted",
+      "feature": "payment-processing",
+      "type": "Event",
+      "description": "Fired when refund is confirmed",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.GetPaymentStatus",
+      "name": "GetPaymentStatus",
+      "feature": "payment-processing",
+      "type": "Query",
+      "description": "Retrieve current status of a transaction",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.GetPaymentHistory",
+      "name": "GetPaymentHistory",
+      "feature": "payment-processing",
+      "type": "Query",
+      "description": "List transactions for a user/order",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentAPI",
+      "name": "PaymentAPI",
+      "feature": "payment-processing",
+      "type": "Interface",
+      "description": "External REST API for payment operations",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.PaymentModule",
+      "name": "PaymentModule",
+      "feature": "payment-processing",
+      "type": "Interface",
+      "description": "Internal module interface for other services",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.RequestToTransaction",
+      "name": "RequestToTransaction",
+      "feature": "payment-processing",
+      "type": "Mapping",
+      "description": "API request → PaymentTransaction entity",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    },
+    {
+      "id": "payment.TransactionToResponse",
+      "name": "TransactionToResponse",
+      "feature": "payment-processing",
+      "type": "Mapping",
+      "description": "PaymentTransaction → API response",
+      "specPath": "docs/features/payment-processing/SPEC.md",
+      "codeAnchors": [],
+      "coverage": {
+        "specified": true,
+        "implemented": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "knowledge-graph-visualization.CardSyncPolicy",
+      "edge": "applies",
+      "to": "knowledge-graph-visualization.RebuildMirrorProjection",
+      "evidence": "workflows.md#cardsyncpolicy",
+      "notes": "Enforce required file coverage",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 102
+    },
+    {
+      "from": "knowledge-graph-visualization.ConceptDefinition",
+      "edge": "contains",
+      "to": "knowledge-graph-visualization.DefinitionPointer",
+      "evidence": "domain.md#conceptdefinition",
+      "notes": "Deep-link target ownership",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 135
+    },
+    {
+      "from": "knowledge-graph-visualization.ConceptSelected",
+      "edge": "transitions",
+      "to": "knowledge-graph-visualization.ExplorationState",
+      "evidence": "states.md#explorationstate",
+      "notes": "ProjectionReady -> ConceptFocused",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 109
+    },
+    {
+      "from": "knowledge-graph-visualization.ConceptToDetailCardAdapter",
+      "edge": "shapes",
+      "to": "knowledge-graph-visualization.ConceptDetailCard",
+      "evidence": "mappings.md#concepttodetailcardadapter",
+      "notes": "Related info projection",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 101
+    },
+    {
+      "from": "knowledge-graph-visualization.DefinitionOpened",
+      "edge": "transitions",
+      "to": "knowledge-graph-visualization.ExplorationState",
+      "evidence": "states.md#explorationstate",
+      "notes": "ConceptFocused -> DefinitionOpened",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 110
+    },
+    {
+      "from": "knowledge-graph-visualization.DocumentToConceptMapping",
+      "edge": "maps",
+      "to": "knowledge-graph-visualization.ConceptDefinition",
+      "evidence": "mappings.md#documenttoconceptmapping",
+      "notes": "Parse concept table rows",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 99
+    },
+    {
+      "from": "knowledge-graph-visualization.DocumentToConceptMapping",
+      "edge": "maps",
+      "to": "knowledge-graph-visualization.FeatureDocument",
+      "evidence": "mappings.md#documenttoconceptmapping",
+      "notes": "Parse file metadata into source records",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 98
+    },
+    {
+      "from": "knowledge-graph-visualization.DocumentToMirrorCardAdapter",
+      "edge": "shapes",
+      "to": "knowledge-graph-visualization.MirrorCardView",
+      "evidence": "mappings.md#documenttomirrorcardadapter",
+      "notes": "One card per mirrored file",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 100
+    },
+    {
+      "from": "knowledge-graph-visualization.GetConceptDetailCard",
+      "edge": "queries",
+      "to": "knowledge-graph-visualization.ConceptDefinition",
+      "evidence": "queries.md#getconceptdetailcard",
+      "notes": "Read concept details",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 113
+    },
+    {
+      "from": "knowledge-graph-visualization.GetDefinitionPointer",
+      "edge": "queries",
+      "to": "knowledge-graph-visualization.ConceptDefinition",
+      "evidence": "queries.md#getdefinitionpointer",
+      "notes": "Resolve deep-link target",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 114
+    },
+    {
+      "from": "knowledge-graph-visualization.GetMirrorCards",
+      "edge": "queries",
+      "to": "knowledge-graph-visualization.MirrorProjection",
+      "evidence": "queries.md#getmirrorcards",
+      "notes": "Read card projection",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 111
+    },
+    {
+      "from": "knowledge-graph-visualization.GetRelationshipGraph",
+      "edge": "queries",
+      "to": "knowledge-graph-visualization.MirrorProjection",
+      "evidence": "queries.md#getrelationshipgraph",
+      "notes": "Read graph projection",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 112
+    },
+    {
+      "from": "knowledge-graph-visualization.KnowledgeGraphAPI",
+      "edge": "exposes",
+      "to": "knowledge-graph-visualization.GetConceptDetailCard",
+      "evidence": "interfaces.md#external-knowledgegraphapi-rest",
+      "notes": "Detail endpoint",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 117
+    },
+    {
+      "from": "knowledge-graph-visualization.KnowledgeGraphAPI",
+      "edge": "exposes",
+      "to": "knowledge-graph-visualization.GetDefinitionPointer",
+      "evidence": "interfaces.md#external-knowledgegraphapi-rest",
+      "notes": "Definition target endpoint",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 118
+    },
+    {
+      "from": "knowledge-graph-visualization.KnowledgeGraphAPI",
+      "edge": "exposes",
+      "to": "knowledge-graph-visualization.GetMirrorCards",
+      "evidence": "interfaces.md#external-knowledgegraphapi-rest",
+      "notes": "Cards endpoint",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 115
+    },
+    {
+      "from": "knowledge-graph-visualization.KnowledgeGraphAPI",
+      "edge": "exposes",
+      "to": "knowledge-graph-visualization.GetRelationshipGraph",
+      "evidence": "interfaces.md#external-knowledgegraphapi-rest",
+      "notes": "Graph endpoint",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 116
+    },
+    {
+      "from": "knowledge-graph-visualization.KnowledgeGraphAPI",
+      "edge": "exposes",
+      "to": "knowledge-graph-visualization.OpenDefinition",
+      "evidence": "interfaces.md#external-knowledgegraphapi-rest",
+      "notes": "Definition open endpoint",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 119
+    },
+    {
+      "from": "knowledge-graph-visualization.KnowledgeGraphModule",
+      "edge": "exposes",
+      "to": "knowledge-graph-visualization.SelectConcept",
+      "evidence": "interfaces.md#internal-knowledgegraphmodule-interface",
+      "notes": "Internal click flow contract",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 120
+    },
+    {
+      "from": "knowledge-graph-visualization.MirrorInteractionWorkflow",
+      "edge": "orchestrates",
+      "to": "knowledge-graph-visualization.OpenDefinition",
+      "evidence": "workflows.md#mirrorinteractionworkflow",
+      "notes": "Deep-link open flow",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 105
+    },
+    {
+      "from": "knowledge-graph-visualization.MirrorInteractionWorkflow",
+      "edge": "orchestrates",
+      "to": "knowledge-graph-visualization.RebuildMirrorProjection",
+      "evidence": "workflows.md#mirrorinteractionworkflow",
+      "notes": "Initial page projection",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 103
+    },
+    {
+      "from": "knowledge-graph-visualization.MirrorInteractionWorkflow",
+      "edge": "orchestrates",
+      "to": "knowledge-graph-visualization.SelectConcept",
+      "evidence": "workflows.md#mirrorinteractionworkflow",
+      "notes": "Click interaction",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 104
+    },
+    {
+      "from": "knowledge-graph-visualization.MirrorProjection",
+      "edge": "contains",
+      "to": "knowledge-graph-visualization.MirrorCardView",
+      "evidence": "domain.md#mirrorprojection",
+      "notes": "Card set ownership",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 134
+    },
+    {
+      "from": "knowledge-graph-visualization.MirrorProjection",
+      "edge": "contains",
+      "to": "knowledge-graph-visualization.RelationshipEdge",
+      "evidence": "domain.md#mirrorprojection",
+      "notes": "Edge set ownership",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 133
+    },
+    {
+      "from": "knowledge-graph-visualization.OpenDefinition",
+      "edge": "produces",
+      "to": "knowledge-graph-visualization.DefinitionOpened",
+      "evidence": "operations.md#opendefinition",
+      "notes": "Definition navigation event",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 108
+    },
+    {
+      "from": "knowledge-graph-visualization.RebuildMirrorProjection",
+      "edge": "produces",
+      "to": "knowledge-graph-visualization.MirrorProjectionBuilt",
+      "evidence": "operations.md#rebuildmirrorprojection",
+      "notes": "Rebuild completion event",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 106
+    },
+    {
+      "from": "knowledge-graph-visualization.SelectConcept",
+      "edge": "produces",
+      "to": "knowledge-graph-visualization.ConceptSelected",
+      "evidence": "operations.md#selectconcept",
+      "notes": "Focus event",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 107
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.ConceptDetailPanel",
+      "edge": "displays",
+      "to": "knowledge-graph-visualization.ConceptDetailCard",
+      "evidence": "UI-SPEC.md#component-inventory",
+      "notes": "Detail card render",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 131
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.ConceptFocusBinding",
+      "edge": "mutates",
+      "to": "knowledge-graph-visualization.SelectConcept",
+      "evidence": "UI-SPEC.md#data-flow",
+      "notes": "Concept focus binding",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 123
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.DefinitionNavigationBinding",
+      "edge": "mutates",
+      "to": "knowledge-graph-visualization.OpenDefinition",
+      "evidence": "UI-SPEC.md#data-flow",
+      "notes": "Definition open binding",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 124
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.FocusStateIndicator",
+      "edge": "reflects",
+      "to": "knowledge-graph-visualization.ExplorationState",
+      "evidence": "UI-SPEC.md#state-to-ui-mapping",
+      "notes": "Exploration state badge",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 132
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.GraphDataBinding",
+      "edge": "fetches",
+      "to": "knowledge-graph-visualization.GetMirrorCards",
+      "evidence": "UI-SPEC.md#data-flow",
+      "notes": "Card fetch binding",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 121
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.GraphDataBinding",
+      "edge": "fetches",
+      "to": "knowledge-graph-visualization.GetRelationshipGraph",
+      "evidence": "UI-SPEC.md#data-flow",
+      "notes": "Graph fetch binding",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 122
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.KnowledgeGraphPageLayout",
+      "edge": "wraps",
+      "to": "ui.knowledge-graph-visualization.route.canvas",
+      "evidence": "UI-SPEC.md#route-table",
+      "notes": "Shared shell",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 128
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.MirrorCardGrid",
+      "edge": "consumes",
+      "to": "ui.knowledge-graph-visualization.useMirrorGraph",
+      "evidence": "UI-SPEC.md#data-flow",
+      "notes": "Card data hook",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 129
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.RelationshipGraphCanvas",
+      "edge": "consumes",
+      "to": "ui.knowledge-graph-visualization.useConceptFocus",
+      "evidence": "UI-SPEC.md#data-flow",
+      "notes": "Focus hook",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 130
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.route.canvas",
+      "edge": "renders",
+      "to": "ui.knowledge-graph-visualization.ConceptDetailPanel",
+      "evidence": "UI-SPEC.md#page-layouts",
+      "notes": "Detail area",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 127
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.route.canvas",
+      "edge": "renders",
+      "to": "ui.knowledge-graph-visualization.MirrorCardGrid",
+      "evidence": "UI-SPEC.md#page-layouts",
+      "notes": "Card area",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 125
+    },
+    {
+      "from": "ui.knowledge-graph-visualization.route.canvas",
+      "edge": "renders",
+      "to": "ui.knowledge-graph-visualization.RelationshipGraphCanvas",
+      "evidence": "UI-SPEC.md#page-layouts",
+      "notes": "Graph area",
+      "feature": "knowledge-graph-visualization",
+      "specPath": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "line": 126
+    }
+  ],
+  "validation": {
+    "unknownEdgeLabels": [],
+    "missingEndpoints": [],
+    "duplicateEdges": []
+  },
+  "orphans": {
+    "unanchoredConcepts": [
+      {
+        "conceptId": "domainspec-gsd-integration.DelegationMode",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "domainspec-gsd-integration.PlanPhaseBridge",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "domainspec-gsd-integration.ExecutePhaseBridge",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "domainspec-gsd-integration.VerifyPhaseBridge",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "domainspec-gsd-integration.FeatureToPhaseMapping",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "domainspec-gsd-integration.DelegatedExecutionWorkflow",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "domainspec-gsd-integration.AuthorityPolicy",
+        "feature": "domainspec-gsd-integration",
+        "specPath": "docs/features/domainspec-gsd-integration/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.C12",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.DriftCorrectionCommit",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.PrValidateWorkflow",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.OverlaySyncWorkflow",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.TuningWorkflow",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.DeployWorkflow",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.CompiledTreeStalenessWorkflow",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.InstallHooks",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.CheckOverlaySync",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ExtractCategorical",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.InjectGeneratedHeader",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ValidateGeneratedHeaders",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ValidateManifestCompleteness",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BuildCompiledManifest",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.MigrateCategoricalPaths",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ValidateNoGrandfatheredPaths",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.GeneratedTree",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.CompiledManifest",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.GeneratedHeader",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SourceHash",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.CompiledTreeStaleTag",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.CategoricalSunset",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SignalStream",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.TuningReport",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.MetaHealth",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.PulumiProject",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.PulumiProdStack",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.PulumiProgram",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.CloudInit",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.RuntimeCompose",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.Caddyfile",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.PrometheusConfig",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.AlertRules",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.EncryptedSecrets",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SopsRules",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.MaintainerAgeKeys",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ReconcilerTimer",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ReconcilerService",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ReconcilerPathWatcher",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ReconcileScript",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.DropletRepoClone",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.DeployUser",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SopsAgeCiKey",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.DropletAgeKey",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.VpsBootstrapRunbook",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SecretRotationRunbook",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.RegenBot",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotBranchConvention",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotPrTitlePrefix",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotRegenLabel",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotAgentLabel",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotFeatureLabel",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotConditionalLabels",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.ObligationDiff",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.InputHash",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SemanticHash",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.HashAlgorithmVersion",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.BotWriteScopeCheck",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.SupersessionProtocol",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.RegenEligibleAgents",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "gitops.InteractiveOnlyAgents",
+        "feature": "gitops-assessment",
+        "specPath": "docs/features/gitops-assessment/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.FeatureDocument",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.ConceptDefinition",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.MirrorProjection",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.ExplorationSession",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.RelationshipEdge",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.DefinitionPointer",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.MirrorCardView",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.ConceptDetailCard",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.AspectKind",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.FreshnessStatus",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.ExplorationState",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.RebuildMirrorProjection",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.SelectConcept",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.OpenDefinition",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.GetMirrorCards",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.GetRelationshipGraph",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.GetConceptDetailCard",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.GetDefinitionPointer",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.KnowledgeGraphAPI",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.KnowledgeGraphModule",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.DocumentToConceptMapping",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.DocumentToMirrorCardAdapter",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.ConceptToDetailCardAdapter",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.MirrorInteractionWorkflow",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.CardSyncPolicy",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.MirrorProjectionBuilt",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.ConceptSelected",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "knowledge-graph-visualization.DefinitionOpened",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.route.canvas",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.KnowledgeGraphPageLayout",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.MirrorCardGrid",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.RelationshipGraphCanvas",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.ConceptDetailPanel",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.useMirrorGraph",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.useConceptFocus",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.GraphDataBinding",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.ConceptFocusBinding",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.DefinitionNavigationBinding",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.NavigateToDefinitionAction",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "ui.knowledge-graph-visualization.FocusStateIndicator",
+        "feature": "knowledge-graph-visualization",
+        "specPath": "docs/features/knowledge-graph-visualization/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentTransaction",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "shared.Money",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentMethod",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentStatus",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.ProcessPayment",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.RefundPayment",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.RetryPayment",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.FeeCalculation",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.MaxAmountRule",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.MethodAvailabilityRule",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.RetryPolicy",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentInitiated",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentCompleted",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentFailed",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.RefundCompleted",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.GetPaymentStatus",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.GetPaymentHistory",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentAPI",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.PaymentModule",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.RequestToTransaction",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      },
+      {
+        "conceptId": "payment.TransactionToResponse",
+        "feature": "payment-processing",
+        "specPath": "docs/features/payment-processing/SPEC.md"
+      }
+    ],
+    "undefinedAnchors": []
+  },
+  "stats": {
+    "concepts": 129,
+    "anchors": 0,
+    "edges": 38,
+    "rawEdges": 38,
+    "unknownEdgeLabels": 0,
+    "missingEdgeEndpoints": 0,
+    "duplicateEdges": 0,
+    "unanchoredConcepts": 129,
+    "undefinedAnchors": 0
+  }
+}

@@ -11,17 +11,18 @@ Implement projection rebuild behavior that parses feature docs into domain entit
 
 ## Status
 
-not-started
+in-progress
 
 ## DomainSpec Coverage
 
-| Source                               | Coverage IDs                                                                                                                                                                  |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [domain.md](../../domain.md)         | FeatureDocument, ConceptDefinition, MirrorProjection, RelationshipEdge, MirrorCardView, ExplorationSession, DefinitionPointer, ConceptDetailCard, AspectKind, FreshnessStatus |
-| [operations.md](../../operations.md) | R1, R2, R3, R4, R5, C1, C2, C3                                                                                                                                                |
-| [mappings.md](../../mappings.md)     | DocumentToConceptMapping, DocumentToMirrorCardAdapter                                                                                                                         |
-| [SPEC.md](../../SPEC.md)             | Feature Concept Graph rows                                                                                                                                                    |
-| [TEST-SPEC.md](../../TEST-SPEC.md)   | KG-OP-001, KG-OP-002, KG-OP-005, KG-API-001, KG-API-002, KG-API-005                                                                                                           |
+| Source                               | Coverage IDs                                                                                                                                                                                 |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [domain.md](../../domain.md)         | DocumentationWorkspace, ProjectionScope, FeatureDocument, ConceptDefinition, MirrorProjection, RelationshipEdge, MirrorCardView, AspectKind, FreshnessStatus, WhiteboardCard, WhiteboardEdge |
+| [operations.md](../../operations.md) | ResolveProjectionScope R1-R3, RebuildMirrorProjection R0-R6, C1-C4                                                                                                                           |
+| [mappings.md](../../mappings.md)     | DocumentToConceptMapping, DocumentToMirrorCardAdapter, ConceptToDetailCardAdapter                                                                                                            |
+| [SPEC.md](../../SPEC.md)             | Feature Concept Graph, Cross-Feature Dependencies, Produces For relationship index sources                                                                                                   |
+| [interfaces.md](../../interfaces.md) | ProjectSourceRegistry scope resolution contract, rebuild request field mappings                                                                                                              |
+| [TEST-SPEC.md](../../TEST-SPEC.md)   | KG-BE-OP-001..010, KG-BE-ERR-001..004, uncovered cross-project scope gaps                                                                                                                    |
 
 ## Architecture References
 
@@ -34,9 +35,15 @@ not-started
 
 - Keep markdown file scanning and parsing in adapter/infrastructure layer.
 - Materialize parsed outputs into domain entities before projection persistence.
-- Keep canonical validations and rejection logic in application/use-case layer.
+- Keep scope resolution, canonical validations, and rejection logic in application/use-case layer.
+- Parse relationship index from all SPEC sources required by current contracts:
+  - Feature Concept Graph
+  - Cross-Feature Dependencies
+  - Produces For
 - Validate all relationship edges against canonical vocabulary before projection persistence.
 - Validate all edge endpoints against parsed concept IDs before projection persistence.
+- Enforce `(projectKey, featureId)` scope isolation before file-system access.
+- Materialize projection artifacts needed for whiteboard levels (`aspect`, `feature`, `concept`) while preserving deterministic ordering.
 - Preserve deterministic ordering for projection outputs to stabilize tests.
 
 ## Reusable legacy Assets
@@ -54,35 +61,41 @@ not-started
 
 ## Execution Steps
 
-1. Implement or extend parser to read concept table and feature concept graph table from feature SPEC.
-2. Normalize and validate concept IDs and edge labels.
-3. Build [FeatureDocument](../../domain.md#featuredocument), [ConceptDefinition](../../domain.md#conceptdefinition), and [RelationshipEdge](../../domain.md#relationshipedge) entities/value objects.
-4. Build mirror-card aggregates per required source file.
-5. Persist [MirrorProjection](../../domain.md#mirrorprojection) snapshot with cards and edges into database-backed read storage, then return it.
-6. Add unit tests for missing required files and invalid/unknown edge endpoints.
+1. Implement parser flow that starts from resolved [ProjectionScope](../../domain.md#projectionscope) and reads scoped feature docs only.
+2. Parse and normalize concept registry rows plus relationship index rows from all required SPEC sections.
+3. Validate edge labels against canonical vocabulary and edge endpoints against parsed concept IDs.
+4. Build [FeatureDocument](../../domain.md#featuredocument), [ConceptDefinition](../../domain.md#conceptdefinition), [RelationshipEdge](../../domain.md#relationshipedge), and scoped [MirrorCardView](../../domain.md#mirrorcardview) entities.
+5. Derive projection structures that can support whiteboard levels (`aspect`, `feature`, `concept`) with deterministic ordering.
+6. Persist one [MirrorProjection](../../domain.md#mirrorprojection) snapshot per `(projectKey, featureId)` scope key.
+7. Add unit/integration tests for missing required files, invalid labels/endpoints, unknown source project/feature, and invalid source-root path.
 
 ## Completion Criteria
 
 - Parser rejects missing required mirror files.
+- Parser rejects unknown/disabled source project and unavailable source feature with deterministic codes.
+- Parser rejects invalid source root/path escapes before file reads.
 - Parser rejects unknown edge labels and unknown endpoints.
 - Parsed docs are materialized into domain entity models before exposure.
 - Parsed markdown projection is persisted atomically in the database.
-- Projection output includes required cards and canonical edges.
-- KG-OP-001, KG-OP-002, and KG-OP-005 pass.
+- Projection output includes required aspect cards and relationship-index-derived canonical edges.
+- Projection payload supports whiteboard drill levels (`aspect`, `feature`, `concept`).
+- Required parser/persistence contracts pass, including cross-project scope guards.
 
 ## Verification Evidence
 
 - Backend test output linked in execution update.
 - Registry/projection stats snapshot attached to task update.
+- Latest evidence (2026-05-06): backend suite passes parser rejection and projection persistence tests.
 
 ## Gaps and Questions
 
-- Markdown table edge cases (separator styles, blank lines) must be validated against real docs samples.
+- Backfill missing formal test IDs for cross-project scope obligations tracked in [TEST-SPEC.md](../../TEST-SPEC.md#uncovered-formal-gaps).
 
 ## Decision Lock
 
-| Decision ID | Required | Status   | Note                     |
-| ----------- | -------- | -------- | ------------------------ |
-| D-KG-001    | yes      | selected | Required cards fixed     |
-| D-KG-002    | yes      | selected | Canonical edges required |
-| D-KG-003    | no       | selected | Not blocking parser core |
+| Decision ID | Required | Status   | Note                                              |
+| ----------- | -------- | -------- | ------------------------------------------------- |
+| D-KG-001    | yes      | selected | Required cards fixed                              |
+| D-KG-002    | yes      | selected | Canonical edges required                          |
+| D-KG-007    | yes      | selected | Registered project source policy                  |
+| D-KG-009    | yes      | selected | Strict `(projectKey, featureId)` scope invariants |

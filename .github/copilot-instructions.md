@@ -10,4 +10,11 @@
 - Keep DomainSpec routing DomainSpec-only by default; do not invoke `gsd-*` workflows unless the user explicitly asks for GSD.
 - Do not apply GSD workflows unless the user explicitly asks for them.
 - After completing any `gsd-*` command (or any deliverable it triggers: feature, bug fix, tests, docs, etc.), ALWAYS: (1) offer the user the next step by prompting via `ask_user`; repeat this feedback loop until the user explicitly indicates they are done.
+
+## Terminal Resilience Protocol
+
+- Treat shell execution as non-interactive by default.
+- Bound long-running commands with timeout or background tracking.
+- On terminal break/stall: capture output, kill stale session, retry once with safer flags, then return BLOCK with remediation if still failing.
+- Avoid `exit` in helper loops; return status codes so terminal sessions remain reusable.
 <!-- /GSD Configuration -->

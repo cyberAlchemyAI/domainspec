@@ -1,7 +1,16 @@
 import cors from "@fastify/cors";
 import Fastify from "fastify";
 
-export function buildServer() {
+import {
+  registerKnowledgeGraphRoutes,
+  type RegisterKnowledgeGraphRoutesOptions,
+} from "./modules/knowledge-graph/index.js";
+
+interface BuildServerOptions {
+  knowledgeGraph?: RegisterKnowledgeGraphRoutesOptions;
+}
+
+export function buildServer(options: BuildServerOptions = {}) {
   const app = Fastify({ logger: true });
 
   app.register(cors, { origin: true });
@@ -10,6 +19,8 @@ export function buildServer() {
     service: "domainspec-backend",
     status: "ok",
   }));
+
+  registerKnowledgeGraphRoutes(app, options.knowledgeGraph);
 
   return app;
 }

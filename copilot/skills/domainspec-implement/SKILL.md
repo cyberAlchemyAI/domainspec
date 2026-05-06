@@ -3,7 +3,7 @@ name: domainspec-implement
 description: Implement feature code from DomainSpec docs and generated test specifications.
 argument-hint: "<feature-name> [--strict] [--mode native|gsd-phase]"
 agent: domainspec-implementer
-allowed-tools: Read, Write, Bash, Glob, Grep, Task
+allowed-tools: Read, Write, Bash, Glob, Grep, AskQuestions, Task
 ---
 
 <objective>
@@ -31,9 +31,29 @@ Inputs:
 2. Resolve execution mode (`native` by default, `gsd-phase` when explicitly requested).
 3. If feature code already exists, run `domainspec-audit-alignment` and `domainspec-audit-layering` as **parallel subagents**, then convert combined findings to explicit tasks before edits.
 4. Build implementation task list from documented concepts and behaviors.
+4a. When implementing work-pack tasks (`TASK-*`), run `domainspec-context-builder <feature> --task <task-id> --mode standard --strict --emit both` before code edits.
+4b. Generate `docs/features/{feature}/work-pack/context/{task-id}-SCAFFOLD.md` from context artifacts by mapping obligations to:
+   - function-first signatures,
+   - layer boundaries (domain/application/infrastructure/interface),
+   - concrete file/symbol targets,
+   - verification obligations from `TEST-SPEC.md`.
+4c. Treat this scaffold as the implementation source-of-truth for the active task; if architecture/spec references conflict, stop and request decision-gate resolution before coding.
+4d. Run an implementation baseline interview gate before code edits:
+   - Detect architecture-pack gaps (missing `lib/architecture/` and missing architecture baseline docs such as `architecture/ARCHITECTURE.md`).
+   - Detect project decision gaps (missing `docs/PROJECT-DECISIONS.md` or no explicit architecture/data-layer decision for the feature).
+   - Detect database baseline gaps (no declared database engine and no project-local database lib/module definition).
+4e. If any baseline gap exists, run an interactive interview using AskQuestions and explain what each option entails:
+   - Architecture pack option (default: **Use current architecture pack**; alternatives: bootstrap canonical DomainSpec pack, or custom pack path).
+   - Whether persistent storage is required for this feature.
+   - Database engine choice when persistence is required (Postgres default, MySQL/MariaDB, SQLite, MongoDB, other) with brief trade-offs.
+   - Data access library choice for the selected engine (for example Drizzle, Prisma, TypeORM, Mongoose, native driver).
+4f. Persist interview outcomes to `docs/PROJECT-DECISIONS.md` under an `Implementation Baseline Interview` section and scaffold missing baseline assets:
+   - `lib/architecture/` (or project-equivalent) with selected architecture pack notes and layer boundaries.
+   - `lib/database/` (or project-equivalent) with selected engine and adapter entrypoint.
+   - If a blocker-level decision remains unresolved, stop and request `domainspec-decision-gate`.
 5. In `gsd-phase` mode, delegate orchestration to GSD execution flow and normalize outputs back to DomainSpec traceability.
 6. Implement code and tests in small verifiable increments.
-7. Run `domainspec-tag-code <feature> --mode strict` to add/update code tags after implementation changes and enforce tag validation gates.
+7. Run `domainspec-tag-code <feature> --mode strict` after implementation changes.
 8. **Post-implementation infrastructure binding check:**
    a. For each repository port used by the feature, verify a real DB-backed adapter is bound in all production-path files (routes, entry point). Flag stub/in-memory repos as BLOCK.
    b. If the feature introduces or modifies database tables: ensure migration files exist (`drizzle-kit generate`), `migrate.ts` runner exists and is called on startup, and Dockerfile includes migration files.

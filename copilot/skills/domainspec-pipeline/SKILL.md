@@ -158,6 +158,12 @@ Created/updated by this skill (cumulative):
    - For existing features with `--update`: evolves existing docs rather than recreating.
 7. Validate: SPEC.md exists, concept table is non-empty, at least one aspect file exists.
 
+## Step 2b — Task Refresh/Create (hard gate)
+
+7a. Delegate to `domainspec-plan-phase-bridge {feature} --mode native` immediately after successful spec mutation: - Refresh `docs/features/{feature}/WORK-PACK.md` to match latest spec scope. - Refresh or seed `docs/features/{feature}/work-pack/tasks/*.md` task artifacts for new or changed obligations.
+7b. Validate task-sync evidence before continuing: - `WORK-PACK.md` exists and reflects current scope. - Task files exist for current mutation scope and include task-local planning sections required by the planning bridge.
+7c. If delegated task refresh/create returns BLOCK or fails validation, stop pipeline at Step 2b with remediation.
+
 ## Step 3 — Stories
 
 8. Delegate to `domainspec-sync-user-stories {feature}`:
@@ -322,6 +328,7 @@ Created/updated by this skill (cumulative):
 - Planner gate not PASS before mutation stage → BLOCK and return to planning.
 - Decision gate unresolved or missing decisions artifact → BLOCK before step 2; do not generate specs, tests, or code.
 - Spec generation fails → BLOCK at step 2, report what is missing.
+- Task refresh/create after spec mutation fails → BLOCK at step 2b; do not proceed to stories/tests/implementation until work-pack and tasks are refreshed.
 - Test derivation finds incomplete docs → FLAG with specific gaps, continue to implement what is derivable.
 - Backend implementation test failures after 2 retries → FLAG, continue to UI if applicable.
 - UI pipeline BLOCK → report but do not revert backend implementation.
@@ -335,6 +342,7 @@ Created/updated by this skill (cumulative):
 - DomainSpec artifacts (SPEC, aspects, STORIES) define behavior — they are the source of truth.
 - This skill orchestrates the pipeline sequence — it never overrides delegate skill decisions.
 - Planner gate in `WORK-PACK.md` is authoritative for medium/high mutation progression.
+- Spec mutation is not complete until delegated task refresh/create succeeds after the spec stage.
 - When delegate skills ask interactive questions (planner, ui-architecture), those propagate to the user.
 - For brownfield scope, no downstream mutation step may run until the brownfield scope gate passes.
 - No downstream mutation step (SPEC, TEST-SPEC, implementation) may run while decision gate status is unresolved.

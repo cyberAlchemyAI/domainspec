@@ -1,8 +1,8 @@
-# TASK-KG-IMP-03 - UI Mirror Cards, Graph Canvas, and Concept Detail Interactions
+# TASK-KG-IMP-03 - Whiteboard UI, Aspect Navigation, and Inspector Interactions
 
 ## Goal
 
-Implement the current UI surface with synchronized mirror cards, relationship graph, and concept detail panel plus deep-link action.
+Implement the current whiteboard UI surface with synchronized aspect rail, whiteboard canvas, and card inspector panel plus open-definition action.
 
 ## Wave Assignment
 
@@ -10,17 +10,17 @@ Implement the current UI surface with synchronized mirror cards, relationship gr
 
 ## Status
 
-not-started
+in-progress
 
 ## DomainSpec Coverage
 
-| Source                             | Coverage IDs                                                                                                                                                                                                           |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [UI-SPEC.md](../../UI-SPEC.md)     | ui.knowledge-graph-visualization.route.canvas, KnowledgeGraphPageLayout, MirrorCardGrid, RelationshipGraphCanvas, ConceptDetailPanel, useMirrorGraph, useConceptFocus, NavigateToDefinitionAction, FocusStateIndicator |
-| [states.md](../../states.md)       | ExplorationState, I1, I2, I3                                                                                                                                                                                           |
-| [workflows.md](../../workflows.md) | MirrorInteractionWorkflow, CardSyncPolicy                                                                                                                                                                              |
-| [STORIES.md](../../STORIES.md)     | US-1, US-3, US-4                                                                                                                                                                                                       |
-| [TEST-SPEC.md](../../TEST-SPEC.md) | KG-UIE2E-001..004                                                                                                                                                                                                      |
+| Source                             | Coverage IDs                                                                                                                                                                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [UI-SPEC.md](../../UI-SPEC.md)     | ui.knowledge-graph-visualization.route.canvas, KnowledgeGraphPageLayout, AspectCardRail, WhiteboardCanvas, WhiteboardCard, CardInspectorPanel, useMirrorGraph, useConceptFocus, OpenDefinitionAction, FocusStateIndicator |
+| [states.md](../../states.md)       | ExplorationState, I1, I2, I3                                                                                                                                                                                              |
+| [workflows.md](../../workflows.md) | MirrorInteractionWorkflow, CardSyncPolicy                                                                                                                                                                                 |
+| [STORIES.md](../../STORIES.md)     | US-1, US-3, US-4                                                                                                                                                                                                          |
+| [TEST-SPEC.md](../../TEST-SPEC.md) | KG-UI-NAV-001, KG-UI-JRN-001..004, KG-UI-FORM-001..002, KG-UI-STATE-001..004, KG-UI-A11Y-001..002                                                                                                                         |
 
 ## Architecture References
 
@@ -30,11 +30,12 @@ not-started
 
 ## Implementation Directives
 
-- Implement exactly one page with three synchronized regions (cards, graph, detail).
+- Implement exactly one page with three synchronized regions (aspect rail, whiteboard canvas, inspector panel).
 - Use query/mutation hooks defined in UI-SPEC; avoid embedding transport logic in presentational components.
-- Keep focus-state transitions aligned with ExplorationState machine.
-- Ensure keyboard and accessibility behavior for concept selection and open-definition action.
-- Keep graph layout deterministic to stabilize E2E behavior.
+- Keep focus-state and board-level transitions aligned with ExplorationState and `viewLevel` contract.
+- Implement drill flow semantics: `aspect -> feature -> concept` with `selectedFeatureId` and `selectedGroupKey` propagation.
+- Ensure keyboard and accessibility behavior for card focus and open-definition action.
+- Keep whiteboard layout deterministic to stabilize E2E behavior.
 
 ## Reusable legacy Assets
 
@@ -54,31 +55,33 @@ not-started
 ## Execution Steps
 
 1. Implement route and layout shell.
-2. Implement mirror card grid with required-card visibility and freshness badges.
-3. Implement graph canvas with concept click behavior.
-4. Implement detail panel with inbound/outbound relation rendering and open-definition action.
-5. Integrate focus-state indicator and error-handling UX.
+2. Implement `AspectCardRail` with active aspect state and required-card guarantees.
+3. Implement `WhiteboardCanvas` for `viewLevel=aspect` feature-card board.
+4. Implement `WhiteboardCanvas` drilldown for `viewLevel=feature` concept-group and concept-card boards.
+5. Implement `CardInspectorPanel` for focused card detail and open-definition action.
+6. Integrate focus-state indicator, board-level state transitions, and error-handling UX.
 
 ## Completion Criteria
 
-- UI three-pane surface renders and updates in sync.
-- Concept click updates detail panel consistently.
+- UI three-region surface renders and updates in sync across aspect/feature/concept levels.
+- Aspect selection and board drilldown transitions are deterministic and URL/query-state consistent.
+- Concept click updates inspector panel consistently.
 - Open-definition action resolves target or shows explicit error message.
-- KG-UIE2E-001..004 pass.
+- Required UI navigation/journey/form/state/a11y obligations pass.
 
 ## Verification Evidence
 
 - Web check/build output.
 - Playwright E2E output for all KG UI IDs.
+- Latest evidence (2026-05-06): web typecheck and production build pass with three-pane layout components present.
 
 ## Gaps and Questions
 
-- Deterministic layout engine decision remains open.
-- Optional aspect-card default visibility remains open.
+- No open design decisions; pending work is verification stabilization after whiteboard contract pivot.
 
 ## Decision Lock
 
-| Decision ID | Required | Status  | Note                             |
-| ----------- | -------- | ------- | -------------------------------- |
-| D-KG-004    | yes      | pending | Layout engine choice             |
-| D-KG-006    | yes      | pending | Optional card visibility default |
+| Decision ID | Required | Status   | Note                               |
+| ----------- | -------- | -------- | ---------------------------------- |
+| D-KG-004    | yes      | selected | Server-deterministic layout        |
+| D-KG-006    | yes      | selected | Progressive optional-aspect reveal |

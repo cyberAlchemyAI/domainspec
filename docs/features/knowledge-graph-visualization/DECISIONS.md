@@ -14,8 +14,15 @@
 - D-KG-005 (definition open mode): Selected in-app markdown viewer as the default open-definition target to preserve flow continuity.
 - D-KG-006 (optional aspect visibility): Selected progressive reveal so required cards are always visible and optional aspects are suggested contextually.
 
+## Decision Gate Results (2026-05-06)
+
+- D-KG-007 (cross-project source policy): Selected registered source keys (`projectKey`) instead of arbitrary filesystem paths to keep projection scope auditable and safe.
+- D-KG-008 (external source pilot): Selected `poker-team` as the first external documentation source for validating cross-project projection behavior.
+- D-KG-009 (scope invariants): Selected strict `(projectKey, featureId)` scope propagation across rebuild, read, select, and open-definition operations.
+
 ## Deferred Scope
 
 - Multi-feature graph federation in a single canvas view.
 - Collaborative annotations and shared review comments on concept detail cards.
 - Automatic remediation suggestions for missing definition anchors.
+- Dynamic runtime registration of arbitrary project paths without registry governance.

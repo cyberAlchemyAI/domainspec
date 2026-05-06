@@ -91,12 +91,19 @@ Required inputs:
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Load feature docs and identify required implementation units.
 3. If feature code already exists, run `domainspec-alignment-auditor` and `domainspec-layering-auditor` as **parallel subagents** and consolidate findings into an implementation backlog.
-4. Select execution mode (`native` or `gsd-phase`).
+4. Run an implementation baseline interview gate before code edits:
+  - Detect architecture-pack gaps (missing `lib/architecture/` and missing architecture baseline docs such as `architecture/ARCHITECTURE.md`).
+  - Detect project decision gaps (missing `docs/PROJECT-DECISIONS.md` or no explicit architecture/data-layer decision for the feature).
+  - Detect database baseline gaps (no declared database engine and no project-local database lib/module definition).
+  - If gaps exist, delegate to `domainspec-interviewer` and run interactive questions with option explanations. Default architecture answer must be "use current architecture pack" when available.
+  - Persist selected options in `docs/PROJECT-DECISIONS.md` under `Implementation Baseline Interview` and scaffold missing baseline assets (`lib/architecture/`, `lib/database/`, or project-equivalent).
+  - If blocker decisions remain unresolved, stop and request `domainspec-decision-gate`.
+5. Select execution mode (`native` or `gsd-phase`).
   - If `gsd-phase`, delegate via `.github/skills/domainspec-execute-phase-bridge/SKILL.md`, which maps DomainSpec tasks into GSD phase execution and preserves concept-level traceability.
-5. Implement in dependency order: contracts, core logic, adapters.
-6. Add or update tests linked to source clauses.
-7. Delegate to `domainspec-code-tagger` (or run `domainspec-tag-code <feature> --mode strict`) to apply source tags after code edits.
-8. Run automated checks and summarize results with traceability.
+6. Implement in dependency order: contracts, core logic, adapters.
+7. Add or update tests linked to source clauses.
+8. Delegate to `domainspec-code-tagger` (or run `domainspec-tag-code <feature> --mode strict`) to apply source tags after code edits.
+9. Run automated checks and summarize results with traceability.
 </execution>
 
 <delegation-contract>

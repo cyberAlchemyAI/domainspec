@@ -11,16 +11,17 @@ Implement and run deterministic tests for API, operations, UI interactions, and 
 
 ## Status
 
-not-started
+in-progress
 
 ## DomainSpec Coverage
 
-| Source                             | Coverage IDs                                                       |
-| ---------------------------------- | ------------------------------------------------------------------ |
-| [events.md](../../events.md)       | MirrorProjectionBuilt, ConceptSelected, DefinitionOpened           |
-| [TEST-SPEC.md](../../TEST-SPEC.md) | KG-API-001..005, KG-OP-001..005, KG-UIE2E-001..004, KG-NF-001..004 |
-| [STORIES.md](../../STORIES.md)     | US-1, US-2, US-3, US-4                                             |
-| [SPEC.md](../../SPEC.md)           | current capability contract                                        |
+| Source                               | Coverage IDs                                                                                                                                                |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [events.md](../../events.md)         | MirrorProjectionBuilt, ConceptSelected, DefinitionOpened                                                                                                    |
+| [operations.md](../../operations.md) | ResolveProjectionScope, RebuildMirrorProjection, SelectConcept, OpenDefinition                                                                              |
+| [TEST-SPEC.md](../../TEST-SPEC.md)   | KG-BE-ST-001..015, KG-BE-OP-001..020, KG-BE-ERR-001..010, KG-BE-API-001..013, KG-BE-IFMAP-001..011, KG-UI-NAV-001, KG-UI-JRN-001..004, KG-UI-STATE-001..004 |
+| [STORIES.md](../../STORIES.md)       | US-1, US-2, US-3, US-4                                                                                                                                      |
+| [SPEC.md](../../SPEC.md)             | Whiteboard-first cross-project capability contract                                                                                                          |
 
 ## Architecture References
 
@@ -31,7 +32,10 @@ not-started
 
 - Convert each TEST-SPEC contract row into executable test case(s).
 - Keep deterministic fixtures and stable sorting for graph assertions.
+- Add explicit test coverage for strict `(projectKey, featureId)` scope invariants.
+- Add explicit test coverage for whiteboard board-level behavior (`aspect`, `feature`, `concept`).
 - Include negative-path coverage for unresolved anchors and unknown concept IDs.
+- Include negative-path coverage for unknown/disabled `projectKey`, unavailable scoped feature, and invalid scope propagation.
 - Publish evidence matrix linking tests to stories and coverage IDs.
 
 ## Reusable legacy Assets
@@ -51,13 +55,16 @@ not-started
 ## Execution Steps
 
 1. Add/refresh backend unit and integration tests for API and operation contracts.
-2. Add/refresh UI E2E tests for click-to-focus and click-to-definition behavior.
-3. Run full suite and collect deterministic outputs.
-4. Publish readiness evidence updates and map failures to follow-up actions.
+2. Add/refresh backend tests for cross-project scope guards from [TEST-SPEC.md](../../TEST-SPEC.md#uncovered-formal-gaps).
+3. Add/refresh UI E2E tests for aspect-to-feature-to-concept board transitions and click-to-definition behavior.
+4. Run full suite and collect deterministic outputs.
+5. Publish readiness evidence updates and map failures to follow-up actions.
 
 ## Completion Criteria
 
 - All required KG test IDs execute.
+- Cross-project scope obligations are represented by explicit automated tests.
+- Whiteboard drill-level behavior is covered by automated UI tests.
 - Failing tests are either fixed or documented with owner/date follow-up.
 - Pilot-readiness evidence package is published.
 
@@ -65,14 +72,18 @@ not-started
 
 - Test command output snapshots.
 - Traceability update linking every test ID to evidence.
+- Latest evidence (2026-05-06): Playwright run currently failing (13 tests), primarily selector and readiness expectations after whiteboard pivot updates.
 
 ## Gaps and Questions
 
 - Non-functional threshold baselines need confirmation for local environment variance.
+- Formalize cross-project scope IDs in TEST-SPEC once approved.
 
 ## Decision Lock
 
-| Decision ID | Required | Status  | Note                                     |
-| ----------- | -------- | ------- | ---------------------------------------- |
-| D-KG-004    | yes      | pending | Influences E2E determinism               |
-| D-KG-005    | no       | pending | Affects open-definition route assertions |
+| Decision ID | Required | Status   | Note                                |
+| ----------- | -------- | -------- | ----------------------------------- |
+| D-KG-004    | yes      | selected | Server-deterministic layout         |
+| D-KG-005    | yes      | selected | In-app definition open mode         |
+| D-KG-007    | yes      | selected | Registered source key policy        |
+| D-KG-009    | yes      | selected | Strict scope propagation invariants |

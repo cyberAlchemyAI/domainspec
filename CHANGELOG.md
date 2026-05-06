@@ -23,6 +23,24 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.5] - 2026-05-06
+
+### Changed
+
+- **`domainspec-orchestrate` delegation policy** - orchestration now requires delegated subagent execution for every routed specialist stage, including single-stage routes.
+- **Spec-to-task synchronization gate** - any route that runs `domainspec-spec-feature` now requires a delegated task refresh/create stage before continuation.
+- **`domainspec-pipeline` post-spec hard gate** - pipeline execution now enforces delegated work-pack and task refresh immediately after spec mutation.
+- **Command guidance artifacts** - help and copilot package docs now describe orchestrator-enforced post-spec task synchronization behavior.
+
+## [2.0.4] - 2026-05-05
+
+### Changed
+
+- **`domainspec-context-builder` strict relevance gate** — context selection now requires selector-level evidence and obligation binding for every included file; non-obligation context is excluded by default (`--strict` on).
+- **Interested-data subset policy** — relationship context is now narrowed to the exact edge labels present in `SPEC.md` feature graph rather than loading full relationship catalogs.
+- **Context index schema** — output index now requires `selected[].selectors`, `selected[].obligationRefs`, and `interestedData` subsets to make pack relevance auditable and deterministic.
+- **Mode budgets hardened** — lean/standard/deep now enforce explicit file and excerpt-line limits with a capped noise ratio (`<= 0.15`).
+
 ## [2.0.3] - 2026-05-05
 
 ### Added

@@ -11,17 +11,17 @@ Implement API and internal module contracts for mirror cards, graph query, conce
 
 ## Status
 
-not-started
+in-progress
 
 ## DomainSpec Coverage
 
-| Source                               | Coverage IDs                                                                              |
-| ------------------------------------ | ----------------------------------------------------------------------------------------- |
-| [queries.md](../../queries.md)       | GetMirrorCards, GetRelationshipGraph, GetConceptDetailCard, GetDefinitionPointer          |
-| [interfaces.md](../../interfaces.md) | KnowledgeGraphAPI, KnowledgeGraphModule, external REST endpoints, internal module methods |
-| [mappings.md](../../mappings.md)     | ConceptToDetailCardAdapter                                                                |
-| [operations.md](../../operations.md) | SelectConcept, OpenDefinition                                                             |
-| [TEST-SPEC.md](../../TEST-SPEC.md)   | KG-API-001, KG-API-002, KG-API-003, KG-API-004, KG-API-005, KG-OP-003, KG-OP-004          |
+| Source                               | Coverage IDs                                                                                                                                                             |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [queries.md](../../queries.md)       | GetMirrorCards, GetRelationshipGraph, GetConceptDetailCard, GetDefinitionPointer with `projectKey`, `activeAspect`, `viewLevel`, `selectedFeatureId`, `selectedGroupKey` |
+| [interfaces.md](../../interfaces.md) | KnowledgeGraphAPI, KnowledgeGraphModule, ProjectSourceRegistry, external REST endpoint field mappings                                                                    |
+| [mappings.md](../../mappings.md)     | ConceptToDetailCardAdapter                                                                                                                                               |
+| [operations.md](../../operations.md) | ResolveProjectionScope, SelectConcept, OpenDefinition                                                                                                                    |
+| [TEST-SPEC.md](../../TEST-SPEC.md)   | KG-BE-API-001..013, KG-BE-IFMAP-001..011, KG-BE-OP-011..020, uncovered scope-gap obligations                                                                             |
 
 ## Architecture References
 
@@ -32,9 +32,12 @@ not-started
 ## Implementation Directives
 
 - Keep endpoint parsing and serialization in adapters.
+- Resolve projection scope from `projectKey + featureId` before query or mutation handlers.
 - Keep concept-selection and definition-resolution semantics in use-case layer.
+- Implement board-level query semantics (`activeAspect`, `viewLevel`, `selectedFeatureId`, `selectedGroupKey`) in query handlers.
+- Enforce whiteboard card selection validation by card id and card type (`feature`, `story`, `concept-group`, `concept`).
 - Return explicit, stable error codes for unresolved concept or unresolved definition anchors.
-- Keep contracts backward-compatible with pending decision on definition target mode.
+- Keep contracts consistent with selected in-app definition-open mode.
 
 ## Reusable legacy Assets
 
@@ -52,29 +55,35 @@ not-started
 
 ## Execution Steps
 
-1. Implement read endpoints for cards, graph, detail, and definition pointer.
-2. Implement operation endpoint/module method for open-definition.
-3. Implement selection flow update and session-state persistence.
-4. Add contract tests for success and explicit error diagnostics.
+1. Add/verify `projectKey` and `featureId` mapping across rebuild, read, selection, and open-definition endpoints.
+2. Implement/verify graph read contract fields: `activeAspect`, `viewLevel`, `selectedFeatureId`, `selectedGroupKey`.
+3. Implement/verify selection semantics for whiteboard card types and scope-safe session updates.
+4. Implement/verify open-definition semantics with scope checks and deterministic diagnostics.
+5. Add/refresh contract tests for endpoint field mappings, auth/scope errors, and whiteboard card validation errors.
 
 ## Completion Criteria
 
 - All documented endpoint contracts are available.
+- All scope-aware endpoint field mappings are implemented and tested.
 - Error diagnostics match operation error states.
-- KG-API-001..005 and KG-OP-003..004 pass.
+- Board-level query and selection contracts pass for `aspect`, `feature`, and `concept` drill levels.
+- Cross-project scope errors are deterministic for unknown project, unavailable feature, and scope mismatch.
 
 ## Verification Evidence
 
 - API contract test logs.
 - Route-level check output for endpoint registration and handler mapping.
+- Latest evidence (2026-05-06): backend suite passes detail/definition/open-definition contract tests with explicit mismatch diagnostics.
 
 ## Gaps and Questions
 
-- Open-definition target mode decision (in-app vs editor deep-link) remains pending.
+- Backfill formal TEST-SPEC IDs for newly introduced scope-guard contracts.
 
 ## Decision Lock
 
-| Decision ID | Required | Status   | Note                     |
-| ----------- | -------- | -------- | ------------------------ |
-| D-KG-003    | yes      | selected | Click behavior required  |
-| D-KG-005    | yes      | pending  | Final target mode choice |
+| Decision ID | Required | Status   | Note                                |
+| ----------- | -------- | -------- | ----------------------------------- |
+| D-KG-003    | yes      | selected | Click behavior required             |
+| D-KG-005    | yes      | selected | In-app definition open mode         |
+| D-KG-007    | yes      | selected | Registered source-key policy        |
+| D-KG-009    | yes      | selected | Strict scope propagation invariants |

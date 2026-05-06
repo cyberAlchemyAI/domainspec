@@ -7,7 +7,7 @@ styling: css
 component-lib: xyflow
 color-mode: light-only
 created: 2026-05-02
-updated: 2026-05-02
+updated: 2026-05-05
 ---
 
 # Frontend Architecture Constitution
@@ -67,20 +67,27 @@ Base size: 16px.
 ## Layout
 
 ```
-+-----------------------------------------------------------+
-| Header: title + freshness + health                       |
-+-----------------------------+-----------------------------+
-| Atlas and filters           | Neighborhood graph          |
-| (feature + capabilities)    | (xyflow canvas)            |
-+-----------------------------+-----------------------------+
-| Concept inspector (evidence + incoming/outgoing edges)   |
-+-----------------------------------------------------------+
++-------------------------+-----------------------------------------------+
+| Sidebar navigation      | Header: title + projection freshness + state |
+| (Feature Atlas)         +------------------------+----------------------+
+|                         | Mirror cards           | Relationship graph   |
+|                         +------------------------+----------------------+
+|                         | Concept detail panel (inbound/outbound edges) |
++-------------------------+-----------------------------------------------+
 ```
 
 - Header: run status and quick metadata.
-- Left panel: server-filtered atlas and capability selection.
-- Right panel: graph visualization and edge context.
-- Bottom panel: inspector details with traceability evidence.
+- Left panel: navigation and route entrypoint.
+- Center panel: mirror cards and deterministic graph visualization.
+- Right/bottom panel: focused concept inspector with traceability evidence.
+
+## Breakpoint Contract
+
+| Breakpoint | Width Range | Contract                                                                     |
+| ---------- | ----------- | ---------------------------------------------------------------------------- |
+| mobile     | `<= 680px`  | Panels stack vertically; relation columns collapse to one column.            |
+| tablet     | `681-940px` | Sidebar becomes top bar; three UI regions remain visible in one-column flow. |
+| desktop    | `> 940px`   | Sidebar + content split; cards, graph, detail visible concurrently.          |
 
 ## Routing and Page Structure
 
@@ -90,9 +97,21 @@ Vite SPA route shell under `apps/web/src/`.
 apps/web/src/
 ├── App.tsx
 ├── components/
+│   ├── layout/
+│   │   └── AppSidebar.tsx
 │   └── knowledge-graph/
+│       ├── MirrorCardGrid.tsx
+│       ├── RelationshipGraphCanvas.tsx
+│       ├── ConceptDetailPanel.tsx
+│       └── FocusStateIndicator.tsx
 ├── hooks/
+│   ├── useMirrorGraph.ts
+│   └── useConceptFocus.ts
 ├── lib/
+│   ├── api.ts
+│   └── query-keys.ts
+├── layouts/
+│   └── KnowledgeGraphPageLayout.tsx
 ├── styles.css
 └── main.tsx
 ```
@@ -102,17 +121,21 @@ apps/web/src/
 ```
 apps/web/src/
 ├── components/
+│   ├── layout/
+│   │   └── AppSidebar.tsx
 │   └── knowledge-graph/
-│       ├── AtlasPanel.tsx
-│       ├── NeighborhoodCanvas.tsx
-│       └── InspectorPanel.tsx
+│       ├── MirrorCardGrid.tsx
+│       ├── RelationshipGraphCanvas.tsx
+│       ├── ConceptDetailPanel.tsx
+│       └── FocusStateIndicator.tsx
 ├── hooks/
-│   ├── useFeatureAtlas.ts
-│   ├── useNeighborhood.ts
-│   └── useConceptInspector.ts
+│   ├── useMirrorGraph.ts
+│   └── useConceptFocus.ts
 ├── lib/
 │   ├── api.ts
 │   └── query-keys.ts
+├── layouts/
+│   └── KnowledgeGraphPageLayout.tsx
 ├── App.tsx
 └── styles.css
 ```
@@ -158,4 +181,4 @@ apps/web/src/
 - Do not hide source evidence links when provided.
 - Do not add dark mode styles in V1.
 
-_Last updated: 2026-05-02_
+_Last updated: 2026-05-05_

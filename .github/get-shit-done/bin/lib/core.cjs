@@ -7,6 +7,25 @@ const path = require('path');
 const { execSync, execFileSync, spawnSync } = require('child_process');
 const { MODEL_PROFILES } = require('./model-profiles.cjs');
 
+const DEFAULT_GIT_TIMEOUT_MS = parsePositiveInt(process.env.GSD_GIT_TIMEOUT_MS, 20000);
+const DEFAULT_GIT_MAX_BUFFER = parsePositiveInt(process.env.GSD_GIT_MAX_BUFFER, 8 * 1024 * 1024);
+const TERMINAL_SAFE_ENV = {
+  ...process.env,
+  // Prevent git from opening interactive prompts that can wedge automation.
+  GIT_TERMINAL_PROMPT: process.env.GIT_TERMINAL_PROMPT || '0',
+  GCM_INTERACTIVE: process.env.GCM_INTERACTIVE || 'never',
+  GIT_ASKPASS: process.env.GIT_ASKPASS || 'echo',
+  SSH_ASKPASS: process.env.SSH_ASKPASS || 'echo',
+};
+
+function parsePositiveInt(value, fallback) {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+  return parsed;
+}
+
 // ─── Path helpers ────────────────────────────────────────────────────────────
 
 /** Normalize a relative path to always use forward slashes (cross-platform). */
@@ -329,6 +348,9 @@ function isGitIgnored(cwd, targetPath) {
     execFileSync('git', ['check-ignore', '-q', '--no-index', '--', targetPath], {
       cwd,
       stdio: 'pipe',
+      env: TERMINAL_SAFE_ENV,
+      timeout: DEFAULT_GIT_TIMEOUT_MS,
+      killSignal: 'SIGKILL',
     });
     return true;
   } catch {
@@ -445,7 +467,26 @@ function execGit(cwd, args) {
     cwd,
     stdio: 'pipe',
     encoding: 'utf-8',
+    env: TERMINAL_SAFE_ENV,
+    timeout: DEFAULT_GIT_TIMEOUT_MS,
+    maxBuffer: DEFAULT_GIT_MAX_BUFFER,
+    killSignal: 'SIGKILL',
   });
+
+  if (result.error) {
+    const timedOut = result.error.code === 'ETIMEDOUT';
+    const reason = timedOut
+      ? `git command timed out after ${DEFAULT_GIT_TIMEOUT_MS}ms`
+      : `git command failed before completion: ${result.error.message}`;
+    const stderr = (result.stderr ?? '').toString().trim();
+
+    return {
+      exitCode: timedOut ? 124 : 1,
+      stdout: (result.stdout ?? '').toString().trim(),
+      stderr: [stderr, reason].filter(Boolean).join('\n').trim(),
+    };
+  }
+
   return {
     exitCode: result.status ?? 1,
     stdout: (result.stdout ?? '').toString().trim(),

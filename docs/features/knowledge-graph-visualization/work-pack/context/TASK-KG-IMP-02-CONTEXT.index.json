@@ -1,0 +1,311 @@
+{
+  "feature": "knowledge-graph-visualization",
+  "task": {
+    "id": "TASK-KG-IMP-02",
+    "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md"
+  },
+  "mode": "standard",
+  "strict": true,
+  "generatedAt": "2026-05-05",
+  "budget": {
+    "maxFiles": 14,
+    "maxExcerptLines": 280,
+    "selectedFiles": 14,
+    "selectedSnippetCount": 30,
+    "noiseRatio": 0
+  },
+  "obligationMatrix": [
+    {
+      "obligationId": "O0",
+      "title": "Planner gate pass and W1 stage scope lock",
+      "source": ["docs/features/knowledge-graph-visualization/WORK-PACK.md"]
+    },
+    {
+      "obligationId": "O1",
+      "title": "Implement concept-detail, definition-pointer, and open-definition API contracts",
+      "source": [
+        "docs/features/knowledge-graph-visualization/interfaces.md",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md"
+      ]
+    },
+    {
+      "obligationId": "O2",
+      "title": "Preserve detail/definition query filters and output contracts",
+      "source": [
+        "docs/features/knowledge-graph-visualization/queries.md#getconceptdetailcard",
+        "docs/features/knowledge-graph-visualization/queries.md#getdefinitionpointer"
+      ]
+    },
+    {
+      "obligationId": "O3",
+      "title": "Keep selection semantics and explicit error diagnostics in application layer",
+      "source": [
+        "docs/features/knowledge-graph-visualization/operations.md#selectconcept",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#implementation-directives"
+      ]
+    },
+    {
+      "obligationId": "O4",
+      "title": "Open-definition enforces session match plus pointer/anchor resolution with stable errors",
+      "source": [
+        "docs/features/knowledge-graph-visualization/operations.md#opendefinition",
+        "docs/features/knowledge-graph-visualization/interfaces.md#post-apiknowledge-graphconceptsconceptidopen-definition"
+      ]
+    },
+    {
+      "obligationId": "O5",
+      "title": "Boundary split: adapters own HTTP parsing/serialization, application owns semantics",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md#implementation-directives",
+        "architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer",
+        "architecture/pattern-library/LAYERING-REFERENCE.md#application-layer"
+      ]
+    },
+    {
+      "obligationId": "O6",
+      "title": "Layer dependency constraints enforced for stage-1 implementation",
+      "source": ["architecture/pattern-library/DEPENDENCY-RULES.md"]
+    },
+    {
+      "obligationId": "O7",
+      "title": "Concept detail shaping follows ConceptToDetailCardAdapter",
+      "source": [
+        "docs/features/knowledge-graph-visualization/mappings.md#concepttodetailcardadapter"
+      ]
+    },
+    {
+      "obligationId": "O8",
+      "title": "Stage-1 verification matrix coverage for API/operation/interface mappings",
+      "source": [
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#interface-contract-obligations",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#interface-field-mapping-obligations-interfacesmd"
+      ]
+    },
+    {
+      "obligationId": "O9",
+      "title": "Locked decision: open-definition with no selection surfaces validation messaging path",
+      "source": [
+        "user-lock:open-definition-no-selection-validation-message-2026-05-05",
+        "docs/features/knowledge-graph-visualization/UI-SPEC.md#opendefinitionaction",
+        "docs/features/knowledge-graph-visualization/operations.md#opendefinition"
+      ]
+    },
+    {
+      "obligationId": "O10",
+      "title": "Locked decision: backend scope covers full concept detail + definition + open-definition contracts",
+      "source": [
+        "user-lock:backend-full-interface-contract-2026-05-05",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md",
+        "docs/features/knowledge-graph-visualization/interfaces.md"
+      ]
+    },
+    {
+      "obligationId": "O11",
+      "title": "Reuse Fastify bootstrap/inject patterns for deterministic route testing",
+      "source": ["backend/src/server.ts", "backend/src/server.test.ts"]
+    }
+  ],
+  "selected": [
+    {
+      "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-02.md",
+      "reason": "Task authority",
+      "selectors": [
+        "#goal",
+        "#domainspec-coverage",
+        "#architecture-references",
+        "#implementation-directives",
+        "#execution-steps",
+        "#completion-criteria",
+        "#decision-lock"
+      ],
+      "obligationRefs": ["O1", "O2", "O3", "O4", "O5", "O8", "O9", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
+      "reason": "Planner gate and stage scope",
+      "selectors": [
+        "Planner Control Fields/plannerGateStatus",
+        "Task Status Board/KG-IMP-02",
+        "Wave Status Board/W1"
+      ],
+      "obligationRefs": ["O0", "O8", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/work-pack/shared/03-cross-task-decisions.md",
+      "reason": "Decision lock authority for open-definition behavior",
+      "selectors": [
+        "Selected Decisions/D-KG-003",
+        "Selected Decisions/D-KG-005",
+        "Decision Application Rules"
+      ],
+      "obligationRefs": ["O9", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/queries.md",
+      "reason": "Detail and definition query contracts",
+      "selectors": [
+        "#getconceptdetailcard/Input",
+        "#getconceptdetailcard/Filters",
+        "#getconceptdetailcard/Output",
+        "#getdefinitionpointer/Input",
+        "#getdefinitionpointer/Filters",
+        "#getdefinitionpointer/Output"
+      ],
+      "obligationRefs": ["O1", "O2", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/interfaces.md",
+      "reason": "External and internal API interface contracts",
+      "selectors": [
+        "### GET /api/knowledge-graph/concepts/:conceptId",
+        "### GET /api/knowledge-graph/concepts/:conceptId/definition",
+        "### POST /api/knowledge-graph/concepts/:conceptId/open-definition",
+        "## Internal: KnowledgeGraphModule Interface"
+      ],
+      "obligationRefs": ["O1", "O4", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/operations.md",
+      "reason": "Selection/open semantics and error model",
+      "selectors": [
+        "#selectconcept/Rules",
+        "#selectconcept/Postconditions",
+        "#selectconcept/Error States",
+        "#opendefinition/Rules",
+        "#opendefinition/Calculations",
+        "#opendefinition/Postconditions",
+        "#opendefinition/Error States"
+      ],
+      "obligationRefs": ["O3", "O4", "O9", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/mappings.md",
+      "reason": "Concept detail adapter contract",
+      "selectors": [
+        "#concepttodetailcardadapter/Field Mapping",
+        "#concepttodetailcardadapter/Defaults",
+        "#concepttodetailcardadapter/Validation"
+      ],
+      "obligationRefs": ["O7", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/TEST-SPEC.md",
+      "reason": "Stage-1 verification obligations",
+      "selectors": [
+        "Operation Rule Obligations/KG-BE-OP-011..020",
+        "Interface Contract Obligations/KG-BE-API-007..013",
+        "Interface Field-Mapping Obligations/KG-BE-IFMAP-006..011",
+        "Form/Interaction Validation Obligations/KG-UI-FORM-001"
+      ],
+      "obligationRefs": ["O8", "O9", "O10"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/UI-SPEC.md",
+      "reason": "UI validation contract for no-selection open-definition path",
+      "selectors": [
+        "Data Flow/POST /api/knowledge-graph/concepts/:conceptId/open-definition",
+        "### OpenDefinitionAction",
+        "Error Code -> UI Message Mapping"
+      ],
+      "obligationRefs": ["O9", "O10"]
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "Architecture retrieval authority",
+      "selectors": ["#retrieval-map", "#canonical-companions"],
+      "obligationRefs": ["O5", "O6"]
+    },
+    {
+      "path": "architecture/pattern-library/LAYERING-REFERENCE.md",
+      "reason": "Layer responsibility constraints",
+      "selectors": [
+        "#application-layer",
+        "#interface--adapters-layer",
+        "#module-boundary-guidelines"
+      ],
+      "obligationRefs": ["O5", "O6"]
+    },
+    {
+      "path": "architecture/pattern-library/DEPENDENCY-RULES.md",
+      "reason": "Import/dependency boundary checks",
+      "selectors": [
+        "## Layer Dependency Constraints",
+        "## Static Enforcement",
+        "## Violation Heuristic"
+      ],
+      "obligationRefs": ["O6"]
+    },
+    {
+      "path": "backend/src/server.ts",
+      "reason": "Reusable Fastify route bootstrap pattern",
+      "selectors": [
+        "symbol: buildServer",
+        "call: registerKnowledgeGraphRoutes(app, options.knowledgeGraph)",
+        "route: app.get('/health')"
+      ],
+      "obligationRefs": ["O5", "O11"]
+    },
+    {
+      "path": "backend/src/server.test.ts",
+      "reason": "Reusable inject lifecycle and contract test harness",
+      "selectors": [
+        "test: health endpoint returns ok",
+        "test: rebuild persists projection and read endpoints return latest snapshot",
+        "pattern: app.inject(...) + t.after(async () => app.close())"
+      ],
+      "obligationRefs": ["O8", "O11"]
+    }
+  ],
+  "excluded": [
+    {
+      "path": "docs/features/knowledge-graph-visualization/domain.md",
+      "reason": "No uncovered stage-1 obligations remain after query/interface/mapping selectors resolve contract details."
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/DECISIONS.md",
+      "reason": "Cross-task decision lock file is narrower and directly mapped to stage-1 obligations."
+    },
+    {
+      "path": "backend/src/index.ts",
+      "reason": "Entrypoint startup composition is optional for this task; route/bootstrap and test harness are already covered."
+    },
+    {
+      "path": "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md",
+      "reason": "No uncovered layer obligations remain after selecting Layering Reference and Dependency Rules."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Not present"
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Not present"
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Not present"
+    }
+  ],
+  "interestedData": {
+    "relationships": [
+      "applies",
+      "consumes",
+      "contains",
+      "displays",
+      "exposes",
+      "fetches",
+      "maps",
+      "mutates",
+      "orchestrates",
+      "produces",
+      "queries",
+      "reflects",
+      "renders",
+      "shapes",
+      "transitions",
+      "wraps"
+    ]
+  },
+  "blockers": []
+}

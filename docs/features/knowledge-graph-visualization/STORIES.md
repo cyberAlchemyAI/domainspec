@@ -1,6 +1,6 @@
 # User Stories: Knowledge Graph Visualization
 
-> Navigate by capability: [Mirror Coverage and Graph Parity](#mirror-coverage-and-graph-parity) · [Concept Deep-Link and Detail Card](#concept-deep-link-and-detail-card)
+> Navigate by capability: [Mirror Coverage and Graph Parity](#mirror-coverage-and-graph-parity) · [Concept Deep-Link and Detail Card](#concept-deep-link-and-detail-card) · [Cross-Project Documentation Scope](#cross-project-documentation-scope)
 
 ## Mirror Coverage and Graph Parity
 
@@ -98,9 +98,36 @@ As a **maintainer**, I want **a detail card for the selected concept with relate
 
 - [Mirror Cards + Relationship Graph Navigator](SPEC.md#mirror-cards--relationship-graph-navigator)
 
+## Cross-Project Documentation Scope
+
+### US-5: Project-scoped projection using poker-team docs
+
+As a **DomainSpec maintainer**, I want **the knowledge graph to load docs from another registered project (for example poker-team)**, so that **one graph UI can inspect multiple project repositories without duplicating tooling**.
+
+**Given** `poker-team` is registered as an active documentation source
+**When** I request projection for `(projectKey=poker-team, featureId=auth-access-control)`
+**Then** cards, graph, and concept details are resolved from poker-team docs roots using canonical rules
+
+**Acceptance checks**
+
+- [ ] Scope resolution rejects unknown or disabled project keys with explicit diagnostics.
+- [ ] Rebuild and read contracts use the same `(projectKey, featureId)` scope.
+- [ ] Definition pointers open targets inside the selected source workspace only.
+
+**Domain coverage**
+
+- Concepts: [DocumentationWorkspace](domain.md#documentationworkspace), [ProjectionScope](domain.md#projectionscope), [ResolveProjectionScope](operations.md#resolveprojectionscope)
+- States/Rules: [ExplorationState](states.md#explorationstate)
+- Interfaces/Flows: [ProjectSourceRegistry](interfaces.md#internal-projectsourceregistry-interface), [KnowledgeGraphAPI](interfaces.md#external-knowledgegraphapi-rest)
+
+**Capability links**
+
+- [Cross-Project Documentation Scope](SPEC.md#cross-project-documentation-scope)
+
 ## Story Coverage Matrix
 
-| Capability                        | Story IDs  | Covered Concepts                                                                                                                                     | Notes                                          |
-| --------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| Mirror Coverage and Graph Parity  | US-1, US-2 | knowledge-graph-visualization.FeatureDocument, knowledge-graph-visualization.MirrorProjection, knowledge-graph-visualization.RebuildMirrorProjection | Covers file parity and graph parity            |
-| Concept Deep-Link and Detail Card | US-3, US-4 | knowledge-graph-visualization.DefinitionPointer, knowledge-graph-visualization.GetConceptDetailCard, knowledge-graph-visualization.OpenDefinition    | Covers click-to-definition and related details |
+| Capability                        | Story IDs  | Covered Concepts                                                                                                                                          | Notes                                          |
+| --------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Mirror Coverage and Graph Parity  | US-1, US-2 | knowledge-graph-visualization.FeatureDocument, knowledge-graph-visualization.MirrorProjection, knowledge-graph-visualization.RebuildMirrorProjection      | Covers file parity and graph parity            |
+| Concept Deep-Link and Detail Card | US-3, US-4 | knowledge-graph-visualization.DefinitionPointer, knowledge-graph-visualization.GetConceptDetailCard, knowledge-graph-visualization.OpenDefinition         | Covers click-to-definition and related details |
+| Cross-Project Documentation Scope | US-5       | knowledge-graph-visualization.DocumentationWorkspace, knowledge-graph-visualization.ProjectionScope, knowledge-graph-visualization.ResolveProjectionScope | Covers project registry and scoped projection  |

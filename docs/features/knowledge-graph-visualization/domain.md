@@ -2,6 +2,22 @@
 
 ## Entities
 
+### DocumentationWorkspace
+
+Represents one registered documentation source that the knowledge graph is allowed to project.
+
+| Field                 | Type   | Required | Description                                          |
+| --------------------- | ------ | -------- | ---------------------------------------------------- |
+| projectKey            | string | yes      | Stable project source key (for example `poker-team`) |
+| workspaceRootDir      | string | yes      | Absolute workspace root for the source project       |
+| featureDocsRootDir    | string | yes      | Root directory for `docs/features/*` under source    |
+| relationshipsFilePath | string | yes      | Canonical relationship vocabulary file for source    |
+| status                | string | yes      | `active` or `disabled` source availability           |
+
+**Operations:** [ResolveProjectionScope](operations.md#resolveprojectionscope)
+
+---
+
 ### FeatureDocument
 
 Represents one source markdown file used to build mirror cards and graph projection data.
@@ -9,6 +25,7 @@ Represents one source markdown file used to build mirror cards and graph project
 | Field      | Type                      | Required | Description                         |
 | ---------- | ------------------------- | -------- | ----------------------------------- |
 | id         | string                    | yes      | Stable file identifier              |
+| projectKey | string                    | yes      | Source project key                  |
 | featureId  | string                    | yes      | Owning feature slug                 |
 | path       | string                    | yes      | Relative markdown path              |
 | aspectKind | [AspectKind](#aspectkind) | yes      | File category mirrored in cards     |
@@ -44,6 +61,7 @@ Read-optimized aggregate snapshot that keeps cards and graph synchronized.
 | Field       | Type                                    | Required | Description                  |
 | ----------- | --------------------------------------- | -------- | ---------------------------- |
 | snapshotId  | string                                  | yes      | Projection snapshot ID       |
+| projectKey  | string                                  | yes      | Source project key           |
 | featureId   | string                                  | yes      | Feature owner of projection  |
 | generatedAt | string (ISO-8601)                       | yes      | Snapshot generation time     |
 | nodeCount   | integer                                 | yes      | Number of concept nodes      |
@@ -62,6 +80,7 @@ Tracks current interaction focus for one user on the knowledge graph page.
 | Field                | Type                                           | Required | Description               |
 | -------------------- | ---------------------------------------------- | -------- | ------------------------- |
 | sessionId            | string                                         | yes      | Session identifier        |
+| projectKey           | string                                         | yes      | Active source project key |
 | featureId            | string                                         | yes      | Active feature            |
 | selectedConceptId    | string                                         | no       | Currently focused concept |
 | selectedFilePath     | string                                         | no       | Card-selected source file |
@@ -74,6 +93,19 @@ Tracks current interaction focus for one user on the knowledge graph page.
 ---
 
 ## Value Objects
+
+### ProjectionScope
+
+Deterministic projection selector used across rebuild/read/select/open operations.
+
+| Field      | Type   | Constraint                                                               |
+| ---------- | ------ | ------------------------------------------------------------------------ |
+| projectKey | string | Must resolve to active [DocumentationWorkspace](#documentationworkspace) |
+| featureId  | string | Must exist under resolved `featureDocsRootDir`                           |
+
+**Equality:** by `(projectKey, featureId)`.
+
+---
 
 ### RelationshipEdge
 
@@ -95,12 +127,12 @@ One canonical graph edge between two concept IDs.
 
 Deep-link pointer to a concept definition.
 
-| Field    | Type    | Constraint                                 |
-| -------- | ------- | ------------------------------------------ |
-| filePath | string  | Relative markdown path under docs/features |
-| anchor   | string  | Existing markdown heading anchor           |
-| lineHint | integer | Positive when available, otherwise 0       |
-| label    | string  | Non-empty human label                      |
+| Field    | Type    | Constraint                                                |
+| -------- | ------- | --------------------------------------------------------- |
+| filePath | string  | Relative markdown path under resolved workspace docs root |
+| anchor   | string  | Existing markdown heading anchor                          |
+| lineHint | integer | Positive when available, otherwise 0                      |
+| label    | string  | Non-empty human label                                     |
 
 **Equality:** by `(filePath, anchor)`.
 
@@ -112,6 +144,7 @@ Card payload for one mirrored file shown in the UI grid.
 
 | Field         | Type                                | Constraint                       |
 | ------------- | ----------------------------------- | -------------------------------- |
+| projectKey    | string                              | Source project for this card     |
 | filePath      | string                              | Unique per feature projection    |
 | title         | string                              | Non-empty card title             |
 | aspectKind    | [AspectKind](#aspectkind)           | Must match source file kind      |
@@ -119,7 +152,7 @@ Card payload for one mirrored file shown in the UI grid.
 | relationCount | integer                             | `>= 0`                           |
 | freshness     | [FreshnessStatus](#freshnessstatus) | Derived from checksum comparison |
 
-**Equality:** by `filePath`.
+**Equality:** by `(projectKey, filePath)`.
 
 ---
 
