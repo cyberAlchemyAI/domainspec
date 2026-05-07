@@ -26,17 +26,20 @@ includes: []
 
 # Alignment Report: knowledge-graph-visualization
 
-Audit date: 2026-05-06
+Audit date: 2026-05-06 (rerun: TASK-KG-IMP-06 delegated stage)
 Framework semantics baseline: DomainSpec CHANGELOG 2.0.8 (`CHANGELOG.md`)
 
 ## Stage Preconditions and Execution Evidence
 
-- Strict tag-code precheck completed in strict mode:
-  - `extract-code-tags`: `files=35 taggedSymbols=42 issues=0`
-  - `validate-code-tags`: `tags=42 issues=0 blocking=0`
-  - `compare-code-tag-drift`: `docsTriples=42 codeTriples=43 docsOnly=0 codeOnly=0 directionMismatch=0 typeMismatch=0`
+- Planner mutation gate (`WORK-PACK.md`) is `pass` for feature-doc mutation scope.
+- Delegated command contract execution:
+  - Attempted: `domainspec-audit-alignment knowledge-graph-visualization`
+  - Runtime output: `domainspec-audit-alignment: command not found`
+  - Fallback used: deterministic manual audit against the DomainSpec command contract inputs (`domainspec/CHANGELOG.md`, feature docs, implementation files, executable evidence).
 - Backend executable evidence: `pnpm --filter @domainspec/backend test` passed `22/22` tests.
 - UI executable evidence: `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization` passed `16/16` Playwright tests.
+- Stub/dead-code scan over `backend/src/modules/knowledge-graph/{application,domain,interface,infrastructure}`: no blocking stub markers found.
+- Infrastructure migration sub-gate for `infrastructure/database/schema.ts` + `drizzle/`: not applicable in current repo topology (files/directories absent).
 
 ## Requirement Classification
 
@@ -53,6 +56,19 @@ Framework semantics baseline: DomainSpec CHANGELOG 2.0.8 (`CHANGELOG.md`)
 | KG-ALG-009 | extra     | EXTRA     | MEDIUM   | Selection source contract allows extra values (`card`, `graph`) beyond operation rule table (`rail`, `board`, `detail`).                                                | `docs/features/knowledge-graph-visualization/operations.md:126`, `backend/src/modules/knowledge-graph/application/select-concept.ts:73`, `backend/src/modules/knowledge-graph/interface/http-routes.ts:769`                                                                                                  | Either constrain implementation to documented set or expand operation contract explicitly. |
 | KG-ALG-010 | missing   | MISSING   | FLAG     | Mandatory test-obligation coverage gate fails: only `15/128` TEST-SPEC IDs are referenced by executable tests or deterministic verification evidence.                   | `docs/features/knowledge-graph-visualization/TEST-SPEC.md`, `backend/src/**/*.test.ts`, `apps/web/e2e/knowledge-graph-visualization/*.ts`, `docs/features/knowledge-graph-visualization/VERIFICATION.md`                                                                                                     | Add/retag tests for uncovered IDs and refresh verification artifact.                       |
 | KG-ALG-011 | partial   | PARTIAL   | MEDIUM   | TEST-SPEC contains obligations (`conceptTypes`, freshness filter) that do not exist in current interface/query contracts.                                               | `docs/features/knowledge-graph-visualization/TEST-SPEC.md:128`, `docs/features/knowledge-graph-visualization/TEST-SPEC.md:160`, `docs/features/knowledge-graph-visualization/interfaces.md:67`, `docs/features/knowledge-graph-visualization/queries.md:70`                                                  | Reconcile TEST-SPEC obligations with normative interface/query artifacts.                  |
+
+## Drift Contract/File Traceability (non-PASS findings)
+
+| Finding ID | Contract IDs / Contract References                                                             | Implementation files                                                                                                                                                                                                          |
+| ---------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| KG-ALG-004 | No TEST-SPEC ID currently maps this rebuild auth contract (gap); `interfaces.md` rebuild auth  | `backend/src/modules/knowledge-graph/interface/http-routes.ts`                                                                                                                                                                |
+| KG-ALG-005 | `KG-BE-EVT-005`, `KG-BE-EVT-007`, `KG-BE-EVT-009`                                              | `docs/features/knowledge-graph-visualization/events.md`; search evidence over `backend/src/modules/knowledge-graph/**`, `apps/web/src/**`                                                                                     |
+| KG-ALG-006 | Infrastructure binding gate in `domainspec-audit-alignment` process (no explicit TEST-SPEC ID) | `backend/src/modules/knowledge-graph/interface/http-routes.ts`; `backend/src/modules/knowledge-graph/application/session-store.ts`; `backend/src/modules/knowledge-graph/infrastructure/in-memory-project-source-registry.ts` |
+| KG-ALG-007 | `KG-BE-QRY-001`                                                                                | `backend/src/modules/knowledge-graph/interface/http-routes.ts`                                                                                                                                                                |
+| KG-ALG-008 | `KG-UI-STATE-002`, `KG-UI-STATE-003`                                                           | `apps/web/src/hooks/useConceptFocus.ts`                                                                                                                                                                                       |
+| KG-ALG-009 | `KG-BE-OP-015`, `KG-BE-OP-016`                                                                 | `backend/src/modules/knowledge-graph/application/select-concept.ts`; `backend/src/modules/knowledge-graph/interface/http-routes.ts`                                                                                           |
+| KG-ALG-010 | Coverage gate set from `KG-BE-*` + `KG-UI-*` catalogue IDs in `TEST-SPEC.md`                   | `backend/src/**/*.test.ts`; `apps/web/e2e/knowledge-graph-visualization/*.ts`; `docs/features/knowledge-graph-visualization/VERIFICATION.md`                                                                                  |
+| KG-ALG-011 | `KG-BE-IFMAP-005`, `KG-BE-QRY-003`, `KG-BE-QRY-007`                                            | `docs/features/knowledge-graph-visualization/interfaces.md`; `docs/features/knowledge-graph-visualization/queries.md`; `backend/src/modules/knowledge-graph/interface/http-routes.ts`                                         |
 
 ## Mandatory Test Obligation Coverage Gate
 
@@ -352,12 +368,22 @@ Orphan IDs:
 
 ## Remediation Actions (Priority Order)
 
-1. Add write-auth guard for `POST /api/knowledge-graph/rebuild` and introduce deterministic 401/403 tests.
-2. Resolve production in-memory binding blockers for scope/session adapters (replace adapters or approve explicit waivers).
-3. Implement or remove undocumented event consumers (`Observability pipeline`, `Analytics event stream`, `Audit log`) so `events.md` reflects executable truth.
-4. Align `GetMirrorCards` contract fields (`storyCount`, `isActive`) across queries docs, route payload, and tests.
-5. Reconcile selection-source contract (`rail|board|detail` vs `rail|board|detail|card|graph`) and update one canonical definition.
-6. Close TEST-SPEC obligation coverage gap by tagging executable tests with all expected IDs or adjusting TEST-SPEC to current executed scope.
+| Action ID    | Finding IDs | Remediation                                                                                                             | Owner    | Target date | Rerun evidence                                                                                                             |
+| ------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------- | -------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
+| A-KG-ALG-001 | KG-ALG-004  | Add write-scope guard for `POST /api/knowledge-graph/rebuild` and add deterministic 401/403 route tests.                | web-core | 2026-05-09  | `pnpm --filter @domainspec/backend test` + rerun alignment audit stage                                                     |
+| A-KG-ALG-002 | KG-ALG-005  | Implement consumers or trim/waive consumer claims in `events.md` with explicit governance rationale.                    | web-core | 2026-05-10  | code search evidence + rerun alignment audit stage                                                                         |
+| A-KG-ALG-003 | KG-ALG-006  | Replace production-path in-memory adapter bindings (or file formal waivers) for source registry/session store usage.    | web-core | 2026-05-10  | dependency wiring diff + rerun alignment audit stage                                                                       |
+| A-KG-ALG-004 | KG-ALG-007  | Align mirror-cards payload vs query contract (`storyCount`, `isActive`) and update tests/spec references.               | web-core | 2026-05-10  | backend contract tests + rerun alignment audit stage                                                                       |
+| A-KG-ALG-005 | KG-ALG-008  | Normalize UI state vocabulary between `UI-SPEC.md` and `useConceptFocus` state model.                                   | web-core | 2026-05-10  | `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization/knowledge-graph-visualization.states.spec.ts` |
+| A-KG-ALG-006 | KG-ALG-009  | Reconcile selection source contract and implementation value set in one canonical source (`operations.md` or code).     | web-core | 2026-05-10  | backend unit tests + rerun alignment audit stage                                                                           |
+| A-KG-ALG-007 | KG-ALG-010  | Close TEST-SPEC coverage deficit by embedding all expected IDs in executable tests or formally reducing obligation set. | web-core | 2026-05-11  | refreshed coverage summary in alignment/verification artifacts                                                             |
+| A-KG-ALG-008 | KG-ALG-011  | Reconcile `conceptTypes` and freshness-filter obligations across TEST-SPEC, interfaces, and query contracts.            | web-core | 2026-05-11  | docs diff + parser/check evidence + rerun alignment audit stage                                                            |
+
+Rerun sequence after remediation closure:
+
+1. Refresh deterministic verification evidence (`pnpm --filter @domainspec/backend test`, `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization`).
+2. Re-execute `domainspec-audit-alignment knowledge-graph-visualization` in delegated runtime (or deterministic fallback if command remains unavailable).
+3. Update this report verdict and close/open action rows based on new findings.
 
 ## Verdict
 

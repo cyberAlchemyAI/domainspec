@@ -25,16 +25,17 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 | KG-IMP-03 | Implement UI mirror cards + graph + detail interactions                    | high       | W1, W2         | ready            | in-progress |
 | KG-IMP-04 | Implement deterministic tests from TEST-SPEC and reach pilot readiness     | medium     | W2, W3         | ready-after-impl | in-progress |
 | KG-IMP-05 | Execute feature verification verdict (`domainspec-verify-feature`)         | high       | W3             | ready-after-impl | completed   |
-| KG-IMP-06 | Execute alignment audit (`domainspec-audit-alignment`)                     | high       | W3             | ready-after-impl | not-started |
+| KG-IMP-06 | Execute alignment audit (`domainspec-audit-alignment`)                     | high       | W3             | ready-after-impl | completed   |
 | KG-IMP-07 | Execute layering audit (`domainspec-audit-layering`)                       | high       | W3             | ready-after-impl | not-started |
+| KG-IMP-09 | Close alignment blockers and rerun audit to clear BLOCK verdict            | high       | W3             | ready-after-impl | not-started |
 
 ## Mandatory Closure Obligations
 
-| Obligation           | Required Command                                           | Task Mapping | Baseline Report              | Current State     |
-| -------------------- | ---------------------------------------------------------- | ------------ | ---------------------------- | ----------------- |
-| Feature verification | `domainspec-verify-feature knowledge-graph-visualization`  | KG-IMP-05    | VERIFICATION.md              | FLAG (2026-05-06) |
-| Alignment audit      | `domainspec-audit-alignment knowledge-graph-visualization` | KG-IMP-06    | ALIGNMENT-REPORT.md          | pending           |
-| Layering audit       | `domainspec-audit-layering knowledge-graph-visualization`  | KG-IMP-07    | LAYERING-ALIGNMENT-REPORT.md | pending           |
+| Obligation           | Required Command                                           | Task Mapping | Baseline Report              | Current State      |
+| -------------------- | ---------------------------------------------------------- | ------------ | ---------------------------- | ------------------ |
+| Feature verification | `domainspec-verify-feature knowledge-graph-visualization`  | KG-IMP-05    | VERIFICATION.md              | FLAG (2026-05-06)  |
+| Alignment audit      | `domainspec-audit-alignment knowledge-graph-visualization` | KG-IMP-06    | ALIGNMENT-REPORT.md          | BLOCK (2026-05-06) |
+| Layering audit       | `domainspec-audit-layering knowledge-graph-visualization`  | KG-IMP-07    | LAYERING-ALIGNMENT-REPORT.md | pending            |
 
 ## Architecture-Guided Task Directives
 
@@ -62,6 +63,7 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 - work-pack/tasks/TASK-KG-IMP-06.md
 - work-pack/tasks/TASK-KG-IMP-07.md
 - work-pack/tasks/TASK-KG-IMP-08.md
+- work-pack/tasks/TASK-KG-IMP-09.md
 - work-pack/waves/W0.md
 - work-pack/waves/W1.md
 - work-pack/waves/W2.md
@@ -94,7 +96,7 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 | registry-sync         | yes      | W2, W3       | not-started | pending                                       | pending                                     |
 | verify-readiness      | yes      | W3           | not-started | pending                                       | pending                                     |
 | verify-feature        | yes      | W3           | completed   | VERIFICATION.md                               | FLAG remediation open (`A-KG-VER-001..003`) |
-| audit-alignment       | yes      | W3           | not-started | pending                                       | pending                                     |
+| audit-alignment       | yes      | W3           | completed   | ALIGNMENT-REPORT.md                           | -                                           |
 | audit-layering        | yes      | W3           | not-started | pending                                       | pending                                     |
 
 ## Decision Lock Summary
@@ -123,6 +125,8 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 | Date       | Change                                                                                                                     | Author  |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------- | ------- |
+| 2026-05-07 | Added KG-IMP-09 to close `ALIGNMENT-REPORT.md` blockers (`A-KG-ALG-001..008`) and synchronized W3 tracking                 | Copilot |
+| 2026-05-06 | Completed KG-IMP-06 alignment task; refreshed `ALIGNMENT-REPORT.md` with non-PASS owner/date remediation + rerun plan      | Copilot |
 | 2026-05-06 | Completed KG-IMP-05 verification task; published `VERIFICATION.md` with `FLAG` verdict and owner-dated remediation actions | Copilot |
 | 2026-05-06 | Updated KG-IMP-04 readiness evidence references; backend/web/E2E suites are passing and W2 blockers marked resolved        | Copilot |
 | 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence                 | Copilot |

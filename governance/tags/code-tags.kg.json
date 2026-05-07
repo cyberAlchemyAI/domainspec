@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-05-07T01:11:36.119Z",
+    "generatedAt": "2026-05-07T02:01:41.734Z",
     "mode": "strict",
     "include": ["backend/src/modules/knowledge-graph", "apps/web/src"],
     "root": "/home/vrondelli/projects/domainspec-core/implementation/domainspec"
