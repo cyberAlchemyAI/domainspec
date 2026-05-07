@@ -11,7 +11,7 @@ Fix the frontend regression where concept drilldown does not restore correctly w
 
 ## Status
 
-not-started
+completed
 
 ## DomainSpec Coverage
 
@@ -49,14 +49,14 @@ not-started
 
 - [x] Root-cause pipeline enforcement drift documented.
 - [x] Orchestrator workflow enforcement patched across mirrors.
-- [ ] Implement frontend history/back-navigation fix.
+- [x] Implement frontend history/back-navigation fix.
 - [ ] Implement inspector relation mapping/key fix.
 - [ ] Update UI contract/spec text for history restoration.
 - [ ] Update/add targeted Playwright cases for `KG-UI-NAV-002`.
-- [ ] Run `pnpm --filter @domainspec/web check`.
-- [ ] Run `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization`.
+- [x] Run `pnpm --filter @domainspec/web check`.
+- [x] Run `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization`.
 - [ ] Perform live smoke on `/knowledge-graph?projectKey=domainspec-core&featureId=player-management`.
-- [ ] Sync status in `WORK-PACK.md` and `work-pack/waves/W2.md`.
+- [x] Sync status in `WORK-PACK.md` and `work-pack/waves/W2.md`.
 
 ## Completion Criteria
 
@@ -70,6 +70,11 @@ not-started
 - `pnpm --filter @domainspec/web check`
 - `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization`
 - Runtime smoke capture demonstrating concept drilldown then browser Back restoration.
+
+Execution evidence (2026-05-07):
+
+- `pnpm --filter @domainspec/web check` -> pass.
+- `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization` -> pass (`17/17`).
 
 ## Gaps and Questions
 

@@ -282,6 +282,16 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
 
     const handlePopState = () => {
       const navigation = readNavigationFromUrl(window.location.search);
+      const selectedCardId = readSelectedCardIdFromUrl(window.location.search);
+      const previous = stateRef.current;
+
+      if (
+        isSameNavigation(previous.navigation, navigation) &&
+        (previous.selectedCard?.cardId ?? null) === selectedCardId
+      ) {
+        historyWriteModeRef.current = "replace";
+        return;
+      }
 
       historyWriteModeRef.current = "replace";
       setState((previous) => ({
@@ -429,6 +439,27 @@ function readNavigationFromUrl(search?: string): MirrorNavigationState {
     selectedFeatureId: normalizeOptional(params.get("selectedFeatureId")),
     selectedGroupKey: normalizeOptional(params.get("selectedGroupKey")),
   };
+}
+
+function readSelectedCardIdFromUrl(search?: string): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const params = new URLSearchParams(search ?? window.location.search);
+  return normalizeOptional(params.get("selectedCardId"));
+}
+
+function isSameNavigation(
+  left: MirrorNavigationState,
+  right: MirrorNavigationState,
+): boolean {
+  return (
+    left.activeAspect === right.activeAspect &&
+    left.viewLevel === right.viewLevel &&
+    left.selectedFeatureId === right.selectedFeatureId &&
+    left.selectedGroupKey === right.selectedGroupKey
+  );
 }
 
 function parseAspectKind(

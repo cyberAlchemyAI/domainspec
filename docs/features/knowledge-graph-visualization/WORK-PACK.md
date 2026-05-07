@@ -28,7 +28,7 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 | KG-IMP-06 | Execute alignment audit (`domainspec-audit-alignment`)                      | high       | W3             | ready-after-impl | completed   |
 | KG-IMP-07 | Execute layering audit (`domainspec-audit-layering`)                        | high       | W3             | ready-after-impl | not-started |
 | KG-IMP-09 | Close alignment blockers and rerun audit to clear BLOCK verdict             | high       | W3             | ready-after-impl | completed   |
-| KG-IMP-10 | Fix frontend concept back-navigation and inspector relation rendering drift | high       | W2, W3         | ready            | not-started |
+| KG-IMP-10 | Fix frontend concept back-navigation and inspector relation rendering drift | high       | W2, W3         | ready            | completed   |
 
 ## Mandatory Closure Obligations
 
@@ -126,15 +126,16 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 ## Change Log
 
-| Date       | Change                                                                                                                                   | Author  |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| 2026-05-07 | Added KG-IMP-10 for frontend regression recovery (browser Back navigation + relation-rendering drift) and queued W2/W3 verification loop | Copilot |
-| 2026-05-07 | Completed KG-IMP-09 remediation wave; `ALIGNMENT-REPORT.md` moved to non-`BLOCK` (`FLAG` with owner-dated waivers)                       | Copilot |
-| 2026-05-07 | Added KG-IMP-09 to close `ALIGNMENT-REPORT.md` blockers (`A-KG-ALG-001..008`) and synchronized W3 tracking                               | Copilot |
-| 2026-05-06 | Completed KG-IMP-06 alignment task; refreshed `ALIGNMENT-REPORT.md` with non-PASS owner/date remediation + rerun plan                    | Copilot |
-| 2026-05-06 | Completed KG-IMP-05 verification task; published `VERIFICATION.md` with `FLAG` verdict and owner-dated remediation actions               | Copilot |
-| 2026-05-06 | Updated KG-IMP-04 readiness evidence references; backend/web/E2E suites are passing and W2 blockers marked resolved                      | Copilot |
-| 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence                               | Copilot |
-| 2026-05-06 | Added KG-IMP-08 to track terminal-safe docs validation execution and prevent parent-shell termination                                    | Copilot |
-| 2026-05-03 | Initial current remake work-pack created from user-defined interaction model                                                             | Copilot |
-| 2026-05-03 | Added detailed split-mode work-pack files under work-pack/shared, work-pack/tasks, and work-pack/waves                                   | Copilot |
+| Date       | Change                                                                                                                                       | Author  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| 2026-05-07 | Completed KG-IMP-10 recovery: patched frontend popstate/hash handling and reran required web verification (`web check` pass, KG E2E `17/17`) | Copilot |
+| 2026-05-07 | Added KG-IMP-10 for frontend regression recovery (browser Back navigation + relation-rendering drift) and queued W2/W3 verification loop     | Copilot |
+| 2026-05-07 | Completed KG-IMP-09 remediation wave; `ALIGNMENT-REPORT.md` moved to non-`BLOCK` (`FLAG` with owner-dated waivers)                           | Copilot |
+| 2026-05-07 | Added KG-IMP-09 to close `ALIGNMENT-REPORT.md` blockers (`A-KG-ALG-001..008`) and synchronized W3 tracking                                   | Copilot |
+| 2026-05-06 | Completed KG-IMP-06 alignment task; refreshed `ALIGNMENT-REPORT.md` with non-PASS owner/date remediation + rerun plan                        | Copilot |
+| 2026-05-06 | Completed KG-IMP-05 verification task; published `VERIFICATION.md` with `FLAG` verdict and owner-dated remediation actions                   | Copilot |
+| 2026-05-06 | Updated KG-IMP-04 readiness evidence references; backend/web/E2E suites are passing and W2 blockers marked resolved                          | Copilot |
+| 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence                                   | Copilot |
+| 2026-05-06 | Added KG-IMP-08 to track terminal-safe docs validation execution and prevent parent-shell termination                                        | Copilot |
+| 2026-05-03 | Initial current remake work-pack created from user-defined interaction model                                                                 | Copilot |
+| 2026-05-03 | Added detailed split-mode work-pack files under work-pack/shared, work-pack/tasks, and work-pack/waves                                       | Copilot |
