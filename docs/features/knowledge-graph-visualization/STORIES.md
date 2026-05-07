@@ -64,6 +64,7 @@ As a **developer**, I want **clicking a concept to resolve its definition target
 
 - [ ] Every selectable concept has a resolved definition pointer.
 - [ ] Open definition fails with explicit diagnostics when anchor is missing.
+- [ ] Browser Back returns from concept drilldown to the prior board level and scope.
 
 **Domain coverage**
 

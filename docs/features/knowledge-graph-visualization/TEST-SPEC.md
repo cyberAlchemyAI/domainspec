@@ -184,13 +184,14 @@
 
 ### Navigation and Journey Obligations
 
-| Test ID       | Obligation                                                                                      | Type       | Status | Source                                                      |
-| ------------- | ----------------------------------------------------------------------------------------------- | ---------- | ------ | ----------------------------------------------------------- |
-| KG-UI-NAV-001 | Navigate to `/knowledge-graph` and assert page shell plus three-pane layout renders.            | Navigation | ready  | `UI-SPEC.md#route-table`                                    |
-| KG-UI-JRN-001 | US-1 journey: opening page shows required mirror cards and required per-card metadata.          | Journey    | ready  | `STORIES.md#us-1-mirror-cards-for-required-docs`            |
-| KG-UI-JRN-002 | US-2 journey: graph renders canonical edges and known concept IDs on initial load.              | Journey    | ready  | `STORIES.md#us-2-graph-mirrors-canonical-relationships`     |
-| KG-UI-JRN-003 | US-3 journey: selecting a concept then triggering open-definition navigates to resolved target. | Journey    | ready  | `STORIES.md#us-3-click-concept-to-open-definition`          |
-| KG-UI-JRN-004 | US-4 journey: selecting a concept updates detail panel summary and inbound/outbound relations.  | Journey    | ready  | `STORIES.md#us-4-related-details-card-for-selected-concept` |
+| Test ID       | Obligation                                                                                        | Type       | Status | Source                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------- | ---------- | ------ | ----------------------------------------------------------- |
+| KG-UI-NAV-001 | Navigate to `/knowledge-graph` and assert page shell plus three-pane layout renders.              | Navigation | ready  | `UI-SPEC.md#route-table`                                    |
+| KG-UI-NAV-002 | Browser Back restores prior board state after concept drilldown (`concept -> feature -> aspect`). | Navigation | ready  | `UI-SPEC.md#interaction-contract`                           |
+| KG-UI-JRN-001 | US-1 journey: opening page shows required mirror cards and required per-card metadata.            | Journey    | ready  | `STORIES.md#us-1-mirror-cards-for-required-docs`            |
+| KG-UI-JRN-002 | US-2 journey: graph renders canonical edges and known concept IDs on initial load.                | Journey    | ready  | `STORIES.md#us-2-graph-mirrors-canonical-relationships`     |
+| KG-UI-JRN-003 | US-3 journey: selecting a concept then triggering open-definition navigates to resolved target.   | Journey    | ready  | `STORIES.md#us-3-click-concept-to-open-definition`          |
+| KG-UI-JRN-004 | US-4 journey: selecting a concept updates detail panel summary and inbound/outbound relations.    | Journey    | ready  | `STORIES.md#us-4-related-details-card-for-selected-concept` |
 
 ### Form/Interaction Validation Obligations
 
@@ -224,9 +225,9 @@
 | Backend operations (rules, calculations, postconditions, errors) | 46              |
 | Backend interfaces, events, queries                              | 52              |
 | Capability acceptance                                            | 4               |
-| UI E2E (navigation, journey, form, state, accessibility)         | 13 ready        |
+| UI E2E (navigation, journey, form, state, accessibility)         | 14 ready        |
 | UI responsive                                                    | 1 ready         |
-| Total                                                            | 131 (131 ready) |
+| Total                                                            | 132 (132 ready) |
 
 ## Coverage Reconciliation (2026-05-07)
 

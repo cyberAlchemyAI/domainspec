@@ -98,6 +98,7 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
   const [state, setState] = useState<MirrorGraphState>(initialState);
   const stateRef = useRef(state);
   const requestVersionRef = useRef(0);
+  const historyWriteModeRef = useRef<"replace" | "push">("replace");
 
   useEffect(() => {
     stateRef.current = state;
@@ -250,6 +251,19 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
 
     const query = params.toString();
     const nextUrl = `${window.location.pathname}${query.length > 0 ? `?${query}` : ""}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+    if (currentUrl === nextUrl) {
+      historyWriteModeRef.current = "replace";
+      return;
+    }
+
+    if (historyWriteModeRef.current === "push") {
+      window.history.pushState(null, "", nextUrl);
+      historyWriteModeRef.current = "replace";
+      return;
+    }
+
     window.history.replaceState(null, "", nextUrl);
   }, [
     featureId,
@@ -261,6 +275,34 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
     state.selectedCard?.cardId,
   ]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handlePopState = () => {
+      const navigation = readNavigationFromUrl(window.location.search);
+
+      historyWriteModeRef.current = "replace";
+      setState((previous) => ({
+        ...previous,
+        navigation,
+        selectedCard: null,
+      }));
+
+      void loadProjection({
+        forceRebuild: false,
+        includeCards: false,
+        navigation,
+      });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [loadProjection]);
+
   const selectAspect = useCallback(
     (aspectKind: AspectKind, source: SelectionSource = "rail") => {
       const nextNavigation: MirrorNavigationState = {
@@ -269,6 +311,8 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
         selectedFeatureId: null,
         selectedGroupKey: null,
       };
+
+      historyWriteModeRef.current = "push";
 
       setState((previous) => ({
         ...previous,
@@ -310,6 +354,8 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
         previous.navigation,
         node,
       );
+
+      historyWriteModeRef.current = "push";
 
       setState((current) => ({
         ...current,
@@ -363,6 +409,10 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
 }
 
 function readInitialNavigation(): MirrorNavigationState {
+  return readNavigationFromUrl();
+}
+
+function readNavigationFromUrl(search?: string): MirrorNavigationState {
   if (typeof window === "undefined") {
     return {
       activeAspect: "SPEC",
@@ -372,7 +422,7 @@ function readInitialNavigation(): MirrorNavigationState {
     };
   }
 
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(search ?? window.location.search);
   return {
     activeAspect: parseAspectKind(params.get("activeAspect"), "SPEC"),
     viewLevel: parseViewLevel(params.get("viewLevel"), "aspect"),

@@ -94,6 +94,12 @@ constitution: docs/UI-ARCHITECTURE.md
 3. Inspector shows description, inbound/outbound links, and evidence.
 4. Open definition action navigates to `filePath#anchor`.
 
+### Level 5: Browser Back Navigation
+
+1. User-driven board transitions append navigable route state to browser history.
+2. Using browser Back restores the prior board query state (`viewLevel`, `selectedFeatureId`, `selectedGroupKey`).
+3. Expected restoration order for drilldown is `concept -> feature -> aspect`.
+
 ---
 
 ## Component Inventory

@@ -371,6 +371,12 @@ function filterEdges(nodes: MockNode[], edges: MockEdge[]): MockEdge[] {
 
 function buildConceptDetail(conceptId: string) {
   const pointer = buildPointer(conceptId);
+  const relations = conceptEdges.map((edge) => ({
+    fromConceptId: toConceptId(edge.fromCardId),
+    edge: edge.edge,
+    toConceptId: toConceptId(edge.toCardId),
+    evidence: edge.evidence,
+  }));
 
   return {
     conceptId,
@@ -378,14 +384,23 @@ function buildConceptDetail(conceptId: string) {
     summary: `Detail projection for ${conceptId}.`,
     aspectKind: "SPEC",
     definition: pointer,
-    inboundRelations: conceptEdges.filter((edge) =>
-      edge.toCardId.endsWith(conceptId),
+    inboundRelations: relations.filter(
+      (edge) => edge.toConceptId === conceptId,
     ),
-    outboundRelations: conceptEdges.filter((edge) =>
-      edge.fromCardId.endsWith(conceptId),
+    outboundRelations: relations.filter(
+      (edge) => edge.fromConceptId === conceptId,
     ),
     relatedStories: ["story.us3-open-definition"],
   };
+}
+
+function toConceptId(cardId: string): string {
+  const delimiterIndex = cardId.indexOf(":");
+  if (delimiterIndex < 0 || delimiterIndex === cardId.length - 1) {
+    return cardId;
+  }
+
+  return cardId.slice(delimiterIndex + 1);
 }
 
 function buildPointer(conceptId: string) {

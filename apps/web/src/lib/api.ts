@@ -124,6 +124,16 @@ export interface GraphEdge {
   evidence: string;
 }
 
+export interface ConceptRelationEdge {
+  fromConceptId: string;
+  edge: string;
+  toConceptId: string;
+  evidence: string;
+  notes?: string;
+  fromCardId?: string;
+  toCardId?: string;
+}
+
 export interface MirrorCardsResponse {
   snapshotId: string;
   projectKey: string;
@@ -168,8 +178,8 @@ export interface ConceptDetailCard {
   summary: string;
   aspectKind?: AspectKind;
   definition: DefinitionPointer;
-  inboundRelations: GraphEdge[];
-  outboundRelations: GraphEdge[];
+  inboundRelations: ConceptRelationEdge[];
+  outboundRelations: ConceptRelationEdge[];
   relatedStories?: string[];
 }
 

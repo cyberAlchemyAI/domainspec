@@ -105,3 +105,48 @@ Reference flow for iterative demo:
 4. Board shows grouped concept cards and stories.
 5. Click concept `MakeupBalance`.
 6. Domain view opens with `domain.md#makeupbalance` detail.
+
+## Regression Recovery Plan (2026-05-07)
+
+### Why Pipeline Enforcement Slipped
+
+- Orchestrator contract mirrors drifted and enforcement depth was inconsistent across `.github`, `copilot`, and `.claude` registries.
+- Bugfix requests without explicit `TASK-*` were not fail-closed to task bootstrap (`domainspec-plan-phase-bridge`) before implementation.
+- Terminal interruption/cancel paths were not consistently treated as `suspected-stuck` before mutation continuation.
+
+### Enforcement Fix (Completed)
+
+1. Standardize orchestrator routing policy across mirrors to require bugfix task bootstrap before mutation.
+2. Require fail-closed behavior when no `WORK-PACK.md` + `work-pack/tasks/TASK-*.md` artifact exists.
+3. Require canceled/interrupted delegated stages to run terminal recovery and return terminal stage outcome before continuing.
+
+### Frontend Fix Plan (Task: KG-IMP-10)
+
+1. Navigation history semantics:
+
+- Ensure concept/card drilldowns create back-navigable entries.
+- Ensure browser Back/Forward restores URL-driven board state (`aspect/feature/concept`) deterministically.
+
+2. Inspector relation rendering semantics:
+
+- Align UI relation type with concept-detail payload fields (`fromConceptId`/`toConceptId`).
+- Remove duplicate React key warnings by using stable composite keys from concept relation endpoints.
+
+3. Spec and test alignment:
+
+- Update UI contract wording for browser history restoration behavior.
+- Add/refresh E2E coverage for `KG-UI-NAV-002` and related concept/open-definition journey assertions.
+
+4. Verification bundle:
+
+- `pnpm --filter @domainspec/web check`
+- `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization`
+- live smoke: `/knowledge-graph?projectKey=domainspec-core&featureId=player-management`
+
+### Todo Checklist
+
+- [x] Enforce bugfix pipeline/task bootstrap policy in orchestrator mirrors.
+- [ ] Implement back-navigation fix for concept drilldown state.
+- [ ] Fix inspector relation field mapping and unique key generation.
+- [ ] Update UI/spec and E2E cases for history restoration.
+- [ ] Publish verification evidence and sync work-pack statuses.

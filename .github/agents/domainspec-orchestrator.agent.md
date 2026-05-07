@@ -87,6 +87,14 @@ Read first:
      4. `domainspec-audit-alignment <feature>`
      5. `domainspec-audit-layering <feature>`
      6. `domainspec-verify-feature <feature>`
+   - frontend/backend bugfix or behavior regression without explicit `TASK-*` -> enforced bugfix pipeline:
+     1. `domainspec-plan-phase-bridge <feature> --mode native`
+     2. `domainspec-context-builder <feature> [--task <TASK-ID|task-path>] --mode standard --strict --emit both`
+     3. `domainspec-implement <feature>`
+     4. `domainspec-tag-code <feature>`
+     5. `domainspec-audit-alignment <feature>`
+     6. `domainspec-audit-layering <feature>`
+     7. `domainspec-verify-feature <feature>`
    - task context pack preparation for implementation predictability -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - full feature delivery -> `domainspec-pipeline <feature>`
    - command guidance -> `domainspec-help`
@@ -101,9 +109,35 @@ Read first:
     - "Full feature delivery" -> `domainspec-pipeline <feature>`
     - "Command guidance" -> `domainspec-help`
     - "I want a specific command" -> ask the user for the exact `domainspec-*` command.
+    - For bugfix/mutation requests with no existing `TASK-*`, require feature confirmation and run task bootstrap (`domainspec-plan-phase-bridge <feature> --mode native`) before implementation.
 5. Execution model requirements:
    - Every routed command or stage must execute through delegated subagent invocation.
+   - Apply delegation tuning profile per delegated stage:
+     - `quick`: prefer `sonnet` with `low` thinking for deterministic/read-heavy stages.
+     - `standard`: prefer `sonnet` with `medium` thinking for docs/planning synthesis stages.
+     - `deep`: prefer high-capability model with `high` thinking for high-risk mutation/architecture stages.
+     - Default to the lowest-cost viable profile; avoid starting at `xhigh` thinking unless explicitly required.
+   - Create a `stageRunId` per delegated stage.
+   - Before each delegated call, append a telemetry heartbeat row with `outcome: started` and that `stageRunId`.
+   - Enforce watchdog windows per delegation profile:
+     - `quick`: 8 minutes max
+     - `standard`: 15 minutes max
+     - `deep`: 25 minutes max
    - Capture each stage result before continuing.
+  - Verify delegated stage liveness after each stage:
+    - Stage is `healthy` only when delegated execution returns a terminal outcome (`completed`, `blocked`, `failed`) with evidence.
+     - Stage is `suspected-stuck` when delegated execution is non-terminal/stalled, watchdog budget is exceeded, or repeated non-progress loops occur (for example 12+ tool calls with no new evidence).
+    - Treat terminal `exit 0` without terminal stage completion evidence (or with lingering child processes) as `suspected-stuck`.
+    - Treat `rg`/search timeout stalls as non-progress loops (for example a search runs >20s or the same pattern+path pair times out twice without new evidence).
+     - On `suspected-stuck`, capture last available output/evidence, retry once with safer bounded execution and narrowed prompt scope.
+     - For `domainspec-context-builder` retries, cap to at most 6 read/search batches and 1 write batch, and prohibit repeated chunk-reads of generated context artifacts.
+     - Stop with `blocked-at-<stage>(subagent-stuck)` if retry is also non-terminal.
+     - On `suspected-stuck` after a `high|xhigh` attempt, retry with reduced thinking (`medium` or `low`) and narrowed stage scope before final block.
+   - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` with: `timestamp`, `skill`, `stage`, `delegatedCommand`, `delegationProfile`, `thinkingBudget`, `outcome`, `suspectedStuck`, `retryCount`, `durationMs` (when available), and `notes`.
+      - Include `stageRunId` in each row to correlate `started` heartbeat entries with terminal outcomes.
+   - If telemetry append fails, continue execution but return FLAG details with remediation to restore delegation tracking.
+  - For bugfix/mutation requests without explicit `TASK-*`, fail closed unless delegated `domainspec-plan-phase-bridge <feature> --mode native` updates `WORK-PACK.md` and creates/updates at least one `work-pack/tasks/TASK-*.md` artifact before mutation stages.
+  - If delegated execution is canceled/interrupted, treat stage as `suspected-stuck`, run terminal recovery once, and do not continue to mutation stages without a terminal stage outcome.
    - For multi-stage pipelines, run sequentially and stop on first BLOCK/failure; return stage-level evidence and remediation.
 6. After the user selects an option (or provides an exact `domainspec-*` command), execute the selected route immediately in the same turn.
 7. Do not route work-pack tasks to `domainspec-task-session`. `domainspec-task-session` remains direct-advanced only when the user explicitly invokes it with an explicit file path under `implementation/domainspec/plan/`.
@@ -112,11 +146,15 @@ Read first:
 <terminal-resilience-policy>
 - Treat terminal execution as non-interactive by default.
 - For long-running or uncertain commands, use bounded tracking (timeout or background terminal id with follow-up checks).
+- For `rg`/search commands, always scope to explicit include paths and use timeout guards (for example `timeout 20s rg ...`).
+- Do not run unscoped repository-root `rg` scans in delegated stages.
+- On two consecutive `rg` timeouts in the same stage, mark `suspected-stuck` and retry once with narrowed scope or non-`rg` retrieval.
 - If terminal execution breaks or stalls:
   1. capture last output,
   2. kill stale terminal/session,
   3. retry once with safer flags,
   4. stop with BLOCK + remediation when retry also fails.
+- If a command exits `0` but leaves lingering child processes for a stage expected to terminate, treat it as stalled and apply the same recovery sequence.
 - Avoid `exit` inside shell loops used by delegated stages; return status codes instead.
 </terminal-resilience-policy>
 
@@ -140,6 +178,13 @@ Return:
   2. <... when pipeline>
 - Execution: executed immediately after selection
 - Result: completed | blocked-at-<stage>
+- Subagent verification: enabled
+- Stage health: healthy | stuck-at-<stage>
+- Watchdog: stable | triggered-at-<stage>
+- Verification evidence: <stage attempts, last-progress evidence, retry action>
+- Delegation profile: quick | standard | deep
+- Thinking budget: low | medium | high | xhigh
+- Delegation telemetry: docs/signals/delegation-tuning.jsonl (appended)
 - Mode: default-entrypoint | direct-advanced
 - Why: <short rationale>
 ```

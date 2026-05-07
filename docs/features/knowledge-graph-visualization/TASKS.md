@@ -13,8 +13,12 @@
 1. ui: implement SPEC-level feature atlas board (feature cards + cross-feature edges).
 1. ui: implement feature drilldown board (concept groups + concept cards + story cards).
 1. ui: implement aspect/definition navigation (for example `MakeupBalance` opens domain visualization and description).
+1. governance: enforce bugfix workflow gate so mutation requests must bootstrap/update `WORK-PACK.md` and `TASK-*` before implementation.
+1. ui: fix browser Back/Forward restoration after concept drilldown (`aspect -> feature -> concept`).
+1. ui: align concept-detail relation rendering with concept-edge payload fields and eliminate duplicate-key warnings.
 1. test: add backend tests for board-level graph payloads, grouping, and relationship-index traceability.
 1. test: add UI tests for full flow: aspect select -> feature click -> grouped concept view -> concept click -> open definition.
+1. test: add regression coverage for browser Back restoration and inspector relation rendering stability on concept focus.
 1. verify: run feature verification and alignment/layering audits before readiness gate.
 
 ## Example Acceptance Path (Poker Team)

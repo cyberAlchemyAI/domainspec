@@ -87,11 +87,10 @@ export function CardInspectorPanel(props: CardInspectorPanelProps) {
                   <h5>Inbound relations</h5>
                   <ul>
                     {props.detail.inboundRelations.map((edge) => (
-                      <li
-                        key={`${edge.fromCardId}|${edge.edge}|${edge.toCardId}`}
-                      >
+                      <li key={buildRelationKey(edge, "inbound")}>
                         <span>
-                          {edge.fromCardId} <em>{edge.edge}</em> {edge.toCardId}
+                          {relationFrom(edge)} <em>{edge.edge}</em>{" "}
+                          {relationTo(edge)}
                         </span>
                         <span>{edge.evidence}</span>
                       </li>
@@ -102,11 +101,10 @@ export function CardInspectorPanel(props: CardInspectorPanelProps) {
                   <h5>Outbound relations</h5>
                   <ul>
                     {props.detail.outboundRelations.map((edge) => (
-                      <li
-                        key={`${edge.toCardId}|${edge.edge}|${edge.fromCardId}`}
-                      >
+                      <li key={buildRelationKey(edge, "outbound")}>
                         <span>
-                          {edge.fromCardId} <em>{edge.edge}</em> {edge.toCardId}
+                          {relationFrom(edge)} <em>{edge.edge}</em>{" "}
+                          {relationTo(edge)}
                         </span>
                         <span>{edge.evidence}</span>
                       </li>
@@ -149,4 +147,31 @@ export function CardInspectorPanel(props: CardInspectorPanelProps) {
       ) : null}
     </section>
   );
+}
+
+function relationFrom(edge: {
+  fromConceptId?: string;
+  fromCardId?: string;
+}): string {
+  return edge.fromConceptId ?? edge.fromCardId ?? "unknown";
+}
+
+function relationTo(edge: { toConceptId?: string; toCardId?: string }): string {
+  return edge.toConceptId ?? edge.toCardId ?? "unknown";
+}
+
+function buildRelationKey(
+  edge: {
+    fromConceptId?: string;
+    fromCardId?: string;
+    toConceptId?: string;
+    toCardId?: string;
+    edge: string;
+    evidence: string;
+  },
+  direction: "inbound" | "outbound",
+): string {
+  const from = relationFrom(edge);
+  const to = relationTo(edge);
+  return `${direction}|${from}|${edge.edge}|${to}|${edge.evidence}`;
 }

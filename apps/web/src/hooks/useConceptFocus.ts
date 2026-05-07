@@ -245,7 +245,7 @@ export function useConceptFocus(input: UseConceptFocusInput) {
       }));
 
       if (typeof window !== "undefined") {
-        window.location.hash = target;
+        window.location.hash = normalizeHashTarget(target);
       }
       return;
     } catch (error) {
@@ -324,6 +324,15 @@ function mapDefinitionError(code: string): string {
 
 function buildTarget(pointer: DefinitionPointer): string {
   return `${pointer.filePath}#${pointer.anchor}`;
+}
+
+function normalizeHashTarget(target: string): string {
+  const hashIndex = target.indexOf("#");
+  if (hashIndex >= 0 && hashIndex < target.length - 1) {
+    return `#${target.slice(hashIndex + 1)}`;
+  }
+
+  return target.startsWith("#") ? target : `#${target}`;
 }
 
 function safeSessionId(): string {

@@ -39,6 +39,14 @@ Read first:
      4. `domainspec-audit-alignment <feature>`
      5. `domainspec-audit-layering <feature>`
      6. `domainspec-verify-feature <feature>`
+    - frontend/backend bugfix or behavior regression without explicit `TASK-*` -> enforced bugfix pipeline:
+       1. `domainspec-plan-phase-bridge <feature> --mode native`
+       2. `domainspec-context-builder <feature> [--task <TASK-ID|task-path>] --mode standard --strict --emit both`
+       3. `domainspec-implement <feature>`
+       4. `domainspec-tag-code <feature>`
+       5. `domainspec-audit-alignment <feature>`
+       6. `domainspec-audit-layering <feature>`
+       7. `domainspec-verify-feature <feature>`
    - task context pack preparation for implementation predictability -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - full feature delivery -> `domainspec-pipeline <feature>`
    - command guidance -> `domainspec-help`
@@ -52,9 +60,13 @@ Read first:
    classifying scope (knowledge -> vault, application -> feature folder)."
    Do not auto-route until user resolves.
 5. Ask focused clarification questions when feature name, scope, or target stage is ambiguous.
+   - For bugfix/mutation requests with no existing `TASK-*`, require feature confirmation and run task bootstrap (`domainspec-plan-phase-bridge <feature> --mode native`) before implementation.
 6. Execution model requirements:
    - Every routed command or stage must execute through delegated subagent invocation.
    - Capture each stage result before continuing.
+   - Treat terminal `exit 0` without terminal stage completion evidence (or with lingering child processes) as `suspected-stuck`.
+   - For bugfix/mutation requests without explicit `TASK-*`, fail closed unless delegated `domainspec-plan-phase-bridge <feature> --mode native` updates `WORK-PACK.md` and creates/updates at least one `work-pack/tasks/TASK-*.md` artifact before mutation stages.
+   - If delegated execution is canceled/interrupted, treat stage as `suspected-stuck`, run terminal recovery once, and do not continue to mutation stages without a terminal stage outcome.
    - For multi-stage pipelines, run sequentially and stop on first BLOCK/failure; return stage-level evidence and remediation.
 7. Do not route work-pack tasks to `domainspec-task-session`. `domainspec-task-session` remains direct-advanced only when explicitly invoked with an explicit file path under `implementation/domainspec/plan/`.
 8. If the user asks a direct question, asks for design guidance, or requests implementation details, answer directly without routing wrapper text.
@@ -68,6 +80,7 @@ Read first:
    2. kill stale terminal/session,
    3. retry once with safer flags,
    4. stop with BLOCK + remediation when retry also fails.
+- If a command exits `0` but leaves lingering child processes for a stage expected to terminate, treat it as stalled and apply the same recovery sequence.
 - Avoid `exit` inside shell loops used by delegated stages; return status codes instead.
 </terminal-resilience-policy>
 
