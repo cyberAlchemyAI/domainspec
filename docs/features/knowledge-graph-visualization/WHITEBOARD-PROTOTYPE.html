@@ -1,0 +1,1653 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knowledge Graph Whiteboard Prototype</title>
+    <style>
+      :root {
+        --bg: #f2f5f9;
+        --panel: #ffffff;
+        --panel-soft: #eef3f9;
+        --ink: #16202b;
+        --muted: #5f6d7f;
+        --stroke: #d6deea;
+        --accent: #0f766e;
+        --chip: #d7e5f6;
+        --chip-active: #0f3f75;
+        --chip-active-ink: #ffffff;
+        --node: #ffffff;
+        --shadow: 0 8px 24px rgba(17, 33, 56, 0.08);
+        --enforces-cross: #7c3aed;
+        --queries: #0f766e;
+        --applies: #b45309;
+        --produces-for: #0c4a6e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        background: radial-gradient(
+          circle at 10% 0%,
+          #e9f0fb 0%,
+          var(--bg) 55%
+        );
+        color: var(--ink);
+        padding: 24px;
+      }
+
+      .whiteboard {
+        max-width: 1240px;
+        margin: 0 auto;
+        border: 1px solid var(--stroke);
+        border-radius: 16px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .head {
+        border-bottom: 1px solid var(--stroke);
+        padding: 16px 18px;
+        display: grid;
+        gap: 8px;
+        background: linear-gradient(180deg, #f9fbff 0%, #f1f6fe 100%);
+      }
+
+      .title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .sub {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .toolbar {
+        border-bottom: 1px solid var(--stroke);
+        padding: 14px 18px;
+        display: grid;
+        gap: 12px;
+        background: var(--panel-soft);
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-right: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .chip {
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 6px 11px;
+        font-size: 12px;
+        font-weight: 600;
+        background: var(--chip);
+        color: #1b334f;
+      }
+
+      .chip.active {
+        background: var(--chip-active);
+        color: var(--chip-active-ink);
+      }
+
+      .chip.filter {
+        cursor: pointer;
+        background: #f2f7ff;
+        border-color: #bfd3ef;
+      }
+
+      .chip.control {
+        cursor: pointer;
+        background: #f8fbff;
+        border-color: #bfd3ef;
+      }
+
+      .chip.control:hover {
+        background: #1d4f8a;
+        border-color: #1d4f8a;
+        color: #ffffff;
+      }
+
+      .mode-hint {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .chip.filter.is-on {
+        color: #ffffff;
+      }
+
+      .chip.filter[data-type="enforces-cross"].is-on {
+        background: var(--enforces-cross);
+        border-color: var(--enforces-cross);
+      }
+
+      .chip.filter[data-type="queries"].is-on {
+        background: var(--queries);
+        border-color: var(--queries);
+      }
+
+      .chip.filter[data-type="applies"].is-on {
+        background: var(--applies);
+        border-color: var(--applies);
+      }
+
+      .chip.filter[data-type="produces-for"].is-on {
+        background: var(--produces-for);
+        border-color: var(--produces-for);
+      }
+
+      .board {
+        position: relative;
+        min-height: 620px;
+        border-bottom: 1px solid var(--stroke);
+        overflow: hidden;
+        background: repeating-linear-gradient(
+          0deg,
+          #fbfdff,
+          #fbfdff 31px,
+          #eff4fc 31px,
+          #eff4fc 32px
+        );
+      }
+
+      .lane-strip {
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        right: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        z-index: 18;
+        pointer-events: none;
+      }
+
+      .board-viewport {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        touch-action: none;
+        cursor: grab;
+      }
+
+      .board-viewport.is-panning {
+        cursor: grabbing;
+      }
+
+      .board-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: 0 0;
+      }
+
+      #edgeLayer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .label-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .edge-label {
+        position: absolute;
+        max-width: 180px;
+        transform: translate(-50%, -50%);
+        padding: 0;
+        border-radius: 0;
+        font-size: 10px;
+        line-height: 1.1;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        pointer-events: auto;
+        cursor: pointer;
+        white-space: nowrap;
+        color: #334155;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+      }
+
+      .edge-label strong {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .edge-label.active {
+        color: #0f172a;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+      }
+
+      .edge-label.passive {
+        opacity: 0.62;
+        text-decoration: none;
+      }
+
+      .lane-chip {
+        position: static;
+        transform: none;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid #c6d4e8;
+        background: rgba(255, 255, 255, 0.92);
+        font-size: 10px;
+        color: #334155;
+        pointer-events: auto;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .lane-chip.active {
+        font-weight: 700;
+        box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.18);
+      }
+
+      .lane-edge-item {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: 1px solid #d3deef;
+        border-radius: 10px;
+        background: #ffffff;
+        padding: 8px 10px;
+        margin: 6px 0;
+        cursor: pointer;
+      }
+
+      .lane-edge-item strong {
+        display: block;
+        font-size: 12px;
+        color: #1e2f45;
+      }
+
+      .lane-edge-item span {
+        display: block;
+        margin-top: 3px;
+        font-size: 11px;
+        color: #5a6a7d;
+        line-height: 1.3;
+      }
+
+      .lane-edge-item:hover,
+      .lane-edge-item:focus-visible,
+      .lane-edge-item.active {
+        border-color: #1d4f8a;
+        box-shadow: 0 0 0 2px rgba(29, 79, 138, 0.16);
+        outline: none;
+      }
+
+      .node {
+        position: absolute;
+        width: 210px;
+        border-radius: 12px;
+        border: 1px solid #b9cbe2;
+        background: var(--node);
+        box-shadow: 0 6px 12px rgba(16, 28, 48, 0.08);
+        padding: 10px;
+      }
+
+      .node h3 {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.2;
+        letter-spacing: 0.01em;
+      }
+
+      .node p {
+        margin: 6px 0 0;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+
+      .node.feature-anchor {
+        border: 2px solid #0f3f75;
+        background: #f3f8ff;
+      }
+
+      .detail {
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--stroke);
+        font-size: 13px;
+      }
+
+      .detail strong {
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      .legend {
+        position: absolute;
+        right: 12px;
+        top: 44px;
+        width: min(390px, calc(100% - 24px));
+        min-width: 280px;
+        min-height: 150px;
+        max-height: calc(100% - 56px);
+        overflow: auto;
+        resize: both;
+        padding: 10px 12px 12px;
+        border: 1px solid #c8d5e8;
+        border-radius: 12px;
+        background: rgba(248, 251, 255, 0.98);
+        box-shadow: 0 10px 22px rgba(17, 33, 56, 0.14);
+        z-index: 20;
+      }
+
+      .legend[hidden] {
+        display: none;
+      }
+
+      .legend-head {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: grab;
+        user-select: none;
+      }
+
+      .legend-close {
+        border: 1px solid #c4d1e3;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #30445f;
+        font-size: 10px;
+        padding: 3px 8px;
+        cursor: pointer;
+      }
+
+      .legend-close:hover {
+        background: #eef4ff;
+      }
+
+      .legend-item {
+        font-size: 12px;
+        color: #233349;
+        line-height: 1.4;
+        margin: 4px 0;
+      }
+
+      .legend-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 4px 0 8px;
+      }
+
+      .legend-count {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #c9d7ea;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 11px;
+        color: #30445f;
+        background: #ffffff;
+      }
+
+      .legend-help {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        border: 1px solid #c4d1e3;
+        background: #ffffff;
+        color: #30445f;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: help;
+      }
+
+      .legend-help:hover {
+        background: #eef4ff;
+      }
+
+      .list {
+        padding: 12px 18px 18px;
+      }
+
+      .prototype-features {
+        padding: 14px 18px 22px;
+        border-top: 1px solid var(--stroke);
+        background: #f7fbff;
+      }
+
+      .prototype-features h2 {
+        margin: 0;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #314761;
+      }
+
+      .prototype-features p {
+        margin: 8px 0 10px;
+        font-size: 12px;
+        color: #56687d;
+      }
+
+      .feature-bucket {
+        margin-top: 10px;
+        border: 1px solid #d5e1f0;
+        border-radius: 10px;
+        background: #ffffff;
+        padding: 10px 12px;
+      }
+
+      .feature-bucket h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        color: #233349;
+      }
+
+      .feature-bucket ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .feature-bucket li {
+        margin: 4px 0;
+        font-size: 12px;
+        color: #33465f;
+        line-height: 1.35;
+      }
+
+      .list-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .list button {
+        border: 1px solid #b8c9df;
+        background: #f3f8ff;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 11px;
+        cursor: pointer;
+      }
+
+      .list button.active {
+        background: #0f3f75;
+        color: #ffffff;
+        border-color: #0f3f75;
+      }
+
+      .edge-item {
+        border-top: 1px dashed #d7e2f2;
+        padding: 9px 0;
+        font-size: 12px;
+      }
+
+      .edge-item:first-child {
+        border-top: 0;
+      }
+
+      .edge-item span {
+        color: var(--muted);
+      }
+
+      @media (max-width: 980px) {
+        body {
+          padding: 12px;
+        }
+
+        .board {
+          min-height: 760px;
+          overflow: auto;
+        }
+
+        .edge-label {
+          max-width: 180px;
+          font-size: 9px;
+        }
+
+        .node {
+          width: 190px;
+        }
+
+        .legend {
+          width: calc(100% - 24px);
+          max-height: 52%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="whiteboard" aria-label="Whiteboard prototype">
+      <section class="head">
+        <h1 class="title">Whiteboard Prototype - Feature Cross Dependencies</h1>
+        <p class="sub">
+          Whiteboard-only sandbox focused on lane-based dependency exploration
+          with in-canvas details and zoom/pan navigation.
+        </p>
+      </section>
+
+      <section class="toolbar" aria-label="Whiteboard toolbar">
+        <div class="row">
+          <span class="label">View Level</span>
+          <span class="chip">Aspect</span>
+          <span class="chip active">Feature</span>
+          <span class="chip">Concept</span>
+          <span class="label" style="margin-left: 8px">Trail</span>
+          <span class="chip">SPEC</span>
+          <span class="chip active">player-management</span>
+        </div>
+        <div class="row">
+          <span class="label">Layout</span>
+          <span class="chip active">Hierarchical</span>
+          <span class="label" style="margin-left: 8px">Top Node</span>
+          <span class="chip active" id="rootChip">player-management</span>
+        </div>
+        <div class="row" aria-label="Canvas controls">
+          <span class="label">Canvas</span>
+          <button class="chip control" id="zoomOutBtn" type="button">-</button>
+          <button class="chip control" id="zoomInBtn" type="button">+</button>
+          <button class="chip control" id="zoomResetBtn" type="button">
+            reset
+          </button>
+          <span class="chip" id="zoomValue">100%</span>
+          <span class="mode-hint">Drag to pan, mouse wheel to zoom.</span>
+        </div>
+        <div class="row" id="filterRow" aria-label="Relation filters"></div>
+      </section>
+
+      <section
+        class="board"
+        id="board"
+        aria-label="Feature dependency whiteboard"
+      >
+        <div
+          class="lane-strip"
+          id="laneStrip"
+          aria-label="Relation lanes"
+        ></div>
+        <div class="board-viewport" id="boardViewport">
+          <div class="board-content" id="boardContent">
+            <svg id="edgeLayer" aria-hidden="true">
+              <defs>
+                <marker
+                  id="arrowHead"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="7"
+                  refY="4"
+                  orient="auto"
+                  markerUnits="strokeWidth"
+                >
+                  <path d="M0,0 L8,4 L0,8 z" fill="#30445f"></path>
+                </marker>
+              </defs>
+            </svg>
+            <div class="label-layer" id="labelLayer"></div>
+
+            <article
+              class="node feature-anchor"
+              data-node-id="player-management"
+            >
+              <h3>Player Management</h3>
+              <p>
+                Feature anchor for current view. Exposes player query/read
+                capabilities.
+              </p>
+            </article>
+
+            <article class="node" data-node-id="auth-access-control">
+              <h3>Auth Access Control</h3>
+              <p>Permission model and route authorization gates.</p>
+            </article>
+
+            <article class="node" data-node-id="player-stats">
+              <h3>Player Stats</h3>
+              <p>
+                Rolling and windowed stats projections used by dependent
+                features.
+              </p>
+            </article>
+
+            <article class="node" data-node-id="player-makeup">
+              <h3>Player Makeup</h3>
+              <p>
+                Debt balance and policy baseline for settlement and overview
+                flows.
+              </p>
+            </article>
+
+            <article class="node" data-node-id="player-progression">
+              <h3>Player Progression</h3>
+              <p>
+                Progression checks delegated from player-management capability
+                flow.
+              </p>
+            </article>
+
+            <article class="node" data-node-id="financial-settlement">
+              <h3>Financial Settlement</h3>
+              <p>
+                Payout/debt settlement orchestration and downstream
+                applications.
+              </p>
+            </article>
+          </div>
+        </div>
+
+        <section class="legend" id="legendPanel" hidden>
+          <div class="legend-head" id="legendHandle">
+            <span id="legendTitle">Lane Details</span>
+            <button class="legend-close" id="legendCloseBtn" type="button">
+              close
+            </button>
+          </div>
+          <div id="legendContent"></div>
+        </section>
+      </section>
+
+      <section class="detail" id="edgeDetail" aria-live="polite">
+        <strong>Active Edge:</strong>
+        <span
+          >Click an arrow label to inspect the relation and description.</span
+        >
+      </section>
+
+      <section class="list" aria-label="Keyboard fallback relation list">
+        <div class="list-head">
+          <span class="label" style="margin: 0">Keyboard List</span>
+          <button class="active" data-mode="compact" type="button">
+            compact
+          </button>
+          <button data-mode="verbose" type="button">verbose</button>
+        </div>
+        <div id="edgeList"></div>
+      </section>
+
+      <section
+        class="prototype-features"
+        aria-label="Prototype feature inventory"
+      >
+        <h2>Prototype Feature Inventory</h2>
+        <p>
+          Draft-ready list to seed SPEC capability and interaction sections.
+        </p>
+
+        <article class="feature-bucket">
+          <h3>Interaction Features</h3>
+          <ul>
+            <li>
+              <strong>F-01:</strong> Feature-level dependency graph with
+              directional relation arrows.
+            </li>
+            <li>
+              <strong>F-02:</strong> Hierarchical auto-layout with dynamic
+              top-node selection.
+            </li>
+            <li>
+              <strong>F-03:</strong> Relation lane chips fixed at top for
+              focused lane exploration.
+            </li>
+            <li>
+              <strong>F-04:</strong> Lane details panel inside board (open,
+              close, drag, resize).
+            </li>
+            <li>
+              <strong>F-05:</strong> Hover list item to highlight corresponding
+              graph arrow.
+            </li>
+            <li>
+              <strong>F-06:</strong> Active-edge details strip with relation
+              rationale.
+            </li>
+            <li>
+              <strong>F-07:</strong> Relation-type filters (enforces-cross,
+              queries, applies, produces-for).
+            </li>
+            <li>
+              <strong>F-08:</strong> Canvas navigation: wheel zoom, zoom
+              controls, and drag-to-pan.
+            </li>
+            <li>
+              <strong>F-09:</strong> Keyboard fallback relation list with
+              compact/verbose modes.
+            </li>
+          </ul>
+        </article>
+
+        <article class="feature-bucket">
+          <h3>Domain Features Currently Mapped</h3>
+          <ul>
+            <li>Player Management</li>
+            <li>Auth Access Control</li>
+            <li>Player Stats</li>
+            <li>Player Makeup</li>
+            <li>Player Progression</li>
+            <li>Financial Settlement</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      const EDGE_COLORS = {
+        "enforces-cross": "#7c3aed",
+        queries: "#0f766e",
+        applies: "#b45309",
+        "produces-for": "#0c4a6e",
+      };
+
+      const FEATURE_LABELS = {
+        "player-management": "Player Management",
+        "auth-access-control": "Auth Access Control",
+        "player-stats": "Player Stats",
+        "player-makeup": "Player Makeup",
+        "player-progression": "Player Progression",
+        "financial-settlement": "Financial Settlement",
+      };
+
+      const LANE_BIAS = {
+        "enforces-cross": -52,
+        queries: -12,
+        applies: 20,
+        "produces-for": 48,
+      };
+
+      const EDGES = [
+        {
+          id: "pm-auth",
+          from: "player-management",
+          to: "auth-access-control",
+          type: "enforces-cross",
+          why: "Permission enforcement for all player-management read/write routes",
+        },
+        {
+          id: "pm-stats",
+          from: "player-management",
+          to: "player-stats",
+          type: "queries",
+          why: "Reads hands and profit for rolling period metrics",
+        },
+        {
+          id: "pm-makeup",
+          from: "player-management",
+          to: "player-makeup",
+          type: "queries",
+          why: "Reads current makeup value exposed in overview DTO",
+        },
+        {
+          id: "pm-progression",
+          from: "player-management",
+          to: "player-progression",
+          type: "queries",
+          why: "Resolves progression checks through delegated progression query",
+        },
+        {
+          id: "fs-player-management",
+          from: "financial-settlement",
+          to: "player-management",
+          type: "queries",
+          why: "Resolve player and deal context",
+        },
+        {
+          id: "fs-player-stats",
+          from: "financial-settlement",
+          to: "player-stats",
+          type: "queries",
+          why: "Aggregate period profit/rakeback",
+        },
+        {
+          id: "fs-player-makeup",
+          from: "financial-settlement",
+          to: "player-makeup",
+          type: "applies",
+          why: "Apply debt policy and update makeup",
+        },
+        {
+          id: "makeup-player-management",
+          from: "player-makeup",
+          to: "player-management",
+          type: "queries",
+          why: "Resolve player and persist makeup on player aggregate",
+        },
+        {
+          id: "makeup-financial-settlement",
+          from: "player-makeup",
+          to: "financial-settlement",
+          type: "produces-for",
+          why: "Provides debt policy and debt state consumed in settlement flows",
+        },
+      ];
+
+      const state = {
+        activeTypes: new Set(Object.keys(EDGE_COLORS)),
+        activeEdgeId: null,
+        listMode: "compact",
+        selectedLaneType: null,
+        hoveredLaneEdgeId: null,
+        scale: 1,
+        minScale: 0.55,
+        maxScale: 2.4,
+        panX: 24,
+        panY: 24,
+        panInitialized: false,
+        legendPinnedPos: null,
+      };
+
+      const boardEl = document.getElementById("board");
+      const boardViewportEl = document.getElementById("boardViewport");
+      const boardContentEl = document.getElementById("boardContent");
+      const svgEl = document.getElementById("edgeLayer");
+      const labelLayerEl = document.getElementById("labelLayer");
+      const laneStripEl = document.getElementById("laneStrip");
+      const detailEl = document.getElementById("edgeDetail");
+      const filterRowEl = document.getElementById("filterRow");
+      const listEl = document.getElementById("edgeList");
+      const rootChipEl = document.getElementById("rootChip");
+      const legendPanelEl = document.getElementById("legendPanel");
+      const legendTitleEl = document.getElementById("legendTitle");
+      const legendContentEl = document.getElementById("legendContent");
+      const legendHandleEl = document.getElementById("legendHandle");
+      const legendCloseBtnEl = document.getElementById("legendCloseBtn");
+      const zoomOutBtnEl = document.getElementById("zoomOutBtn");
+      const zoomInBtnEl = document.getElementById("zoomInBtn");
+      const zoomResetBtnEl = document.getElementById("zoomResetBtn");
+      const zoomValueEl = document.getElementById("zoomValue");
+
+      let renderedEdgeCache = [];
+      let panSession = null;
+      let legendDrag = null;
+
+      function featureLabel(featureId) {
+        return FEATURE_LABELS[featureId] || featureId;
+      }
+
+      function uniquePush(arr, value) {
+        if (!arr.includes(value)) {
+          arr.push(value);
+        }
+      }
+
+      function visibleEdges() {
+        return EDGES.filter((edge) => state.activeTypes.has(edge.type));
+      }
+
+      function buildHierarchyLevels(nodeIds) {
+        const degree = new Map(nodeIds.map((id) => [id, 0]));
+
+        EDGES.forEach((edge) => {
+          if (degree.has(edge.from)) {
+            degree.set(edge.from, degree.get(edge.from) + 1);
+          }
+          if (degree.has(edge.to)) {
+            degree.set(edge.to, degree.get(edge.to) + 1);
+          }
+        });
+
+        const ranked = [...nodeIds].sort((a, b) => {
+          const diff = degree.get(b) - degree.get(a);
+          return diff !== 0 ? diff : a.localeCompare(b);
+        });
+
+        const root = ranked[0] || nodeIds[0];
+        const level1 = [];
+        EDGES.forEach((edge) => {
+          if (edge.from === root && nodeIds.includes(edge.to)) {
+            uniquePush(level1, edge.to);
+          }
+        });
+
+        const nonRoot = nodeIds.filter(
+          (id) => id !== root && !level1.includes(id),
+        );
+        const level2 = [];
+        nonRoot.forEach((id) => {
+          const hasParentInLevel1 = EDGES.some(
+            (edge) => level1.includes(edge.from) && edge.to === id,
+          );
+          if (hasParentInLevel1) {
+            level2.push(id);
+          }
+        });
+
+        const level3 = nonRoot.filter((id) => !level2.includes(id));
+        const levels = [[root], level1, level2, level3].filter(
+          (level) => level.length > 0,
+        );
+
+        return { root, levels };
+      }
+
+      function applyHierarchicalLayout() {
+        const nodeEls = Array.from(boardContentEl.querySelectorAll(".node"));
+        const nodeIds = nodeEls.map((nodeEl) => nodeEl.dataset.nodeId);
+        const { root, levels } = buildHierarchyLevels(nodeIds);
+
+        nodeEls.forEach((nodeEl) => {
+          nodeEl.classList.toggle(
+            "feature-anchor",
+            nodeEl.dataset.nodeId === root,
+          );
+        });
+
+        rootChipEl.textContent = root;
+
+        const viewportWidth = boardViewportEl.clientWidth;
+        const contentWidth = Math.max(1500, viewportWidth + 420);
+        const topPadding = 148;
+        const rowGap = 188;
+        const contentHeight = Math.max(
+          980,
+          topPadding + rowGap * levels.length + 260,
+        );
+
+        boardContentEl.style.width = `${contentWidth}px`;
+        boardContentEl.style.height = `${contentHeight}px`;
+
+        svgEl.setAttribute("viewBox", `0 0 ${contentWidth} ${contentHeight}`);
+        svgEl.setAttribute("width", String(contentWidth));
+        svgEl.setAttribute("height", String(contentHeight));
+
+        levels.forEach((level, levelIndex) => {
+          const y = topPadding + levelIndex * rowGap;
+          const spacing = contentWidth / (level.length + 1);
+
+          level.forEach((nodeId, index) => {
+            const nodeEl = boardContentEl.querySelector(
+              `[data-node-id="${nodeId}"]`,
+            );
+            if (!nodeEl) {
+              return;
+            }
+            const nodeWidth = nodeEl.offsetWidth || 210;
+            const desiredX = spacing * (index + 1) - nodeWidth / 2;
+            const clampedX = Math.max(
+              18,
+              Math.min(contentWidth - nodeWidth - 18, desiredX),
+            );
+            nodeEl.style.left = `${clampedX}px`;
+            nodeEl.style.top = `${y}px`;
+          });
+        });
+      }
+
+      function connectionPoints(fromEl, toEl) {
+        const from = {
+          left: fromEl.offsetLeft,
+          right: fromEl.offsetLeft + fromEl.offsetWidth,
+          top: fromEl.offsetTop,
+          bottom: fromEl.offsetTop + fromEl.offsetHeight,
+          cx: fromEl.offsetLeft + fromEl.offsetWidth / 2,
+          cy: fromEl.offsetTop + fromEl.offsetHeight / 2,
+        };
+
+        const to = {
+          left: toEl.offsetLeft,
+          right: toEl.offsetLeft + toEl.offsetWidth,
+          top: toEl.offsetTop,
+          bottom: toEl.offsetTop + toEl.offsetHeight,
+          cx: toEl.offsetLeft + toEl.offsetWidth / 2,
+          cy: toEl.offsetTop + toEl.offsetHeight / 2,
+        };
+
+        const verticalDelta = to.cy - from.cy;
+        if (Math.abs(verticalDelta) > 56) {
+          const downward = verticalDelta > 0;
+          return {
+            x1: from.cx,
+            y1: downward ? from.bottom : from.top,
+            x2: to.cx,
+            y2: downward ? to.top : to.bottom,
+            orientation: "vertical",
+          };
+        }
+
+        const horizontalDelta = to.cx - from.cx;
+        const rightward = horizontalDelta > 0;
+        return {
+          x1: rightward ? from.right : from.left,
+          y1: from.cy,
+          x2: rightward ? to.left : to.right,
+          y2: to.cy,
+          orientation: "horizontal",
+        };
+      }
+
+      function laneSpreadOffset(slotIndex, laneSize) {
+        if (laneSize <= 1) {
+          return 0;
+        }
+        const center = (laneSize - 1) / 2;
+        return (slotIndex - center) * 18;
+      }
+
+      function createSvgPath(edge, laneSlotIndex, laneSize) {
+        const fromEl = boardContentEl.querySelector(
+          `[data-node-id="${edge.from}"]`,
+        );
+        const toEl = boardContentEl.querySelector(
+          `[data-node-id="${edge.to}"]`,
+        );
+        if (!fromEl || !toEl) {
+          return null;
+        }
+
+        const points = connectionPoints(fromEl, toEl);
+        const laneBias = LANE_BIAS[edge.type] || 0;
+        const laneSpread = laneSpreadOffset(laneSlotIndex, laneSize);
+        const bend = laneBias + laneSpread;
+        const anchorSpread = laneSpread * 0.34;
+
+        let x1 = points.x1;
+        let y1 = points.y1;
+        let x2 = points.x2;
+        let y2 = points.y2;
+
+        if (points.orientation === "vertical") {
+          x1 += anchorSpread;
+          x2 += anchorSpread;
+        } else {
+          y1 += anchorSpread;
+          y2 += anchorSpread;
+        }
+
+        const cx =
+          (x1 + x2) / 2 + (points.orientation === "vertical" ? bend : 0);
+        const cy =
+          (y1 + y2) / 2 + (points.orientation === "horizontal" ? bend : 0);
+
+        const path = document.createElementNS(SVG_NS, "path");
+        path.setAttribute("id", `edge-path-${edge.id}`);
+        path.setAttribute("d", `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", EDGE_COLORS[edge.type]);
+        path.setAttribute("stroke-width", "1.9");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("marker-end", "url(#arrowHead)");
+        path.style.cursor = "pointer";
+        path.addEventListener("click", () => {
+          state.activeEdgeId = edge.id;
+          state.hoveredLaneEdgeId = null;
+          updateEdgeDetail(visibleEdges());
+          updateLaneDetailActiveStyles();
+          applyEdgeStyles();
+        });
+
+        return { path, edge };
+      }
+
+      function relationChip(type) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "chip filter is-on";
+        btn.dataset.type = type;
+        btn.textContent = type;
+        btn.addEventListener("click", () => {
+          if (state.activeTypes.has(type)) {
+            state.activeTypes.delete(type);
+            btn.classList.remove("is-on");
+          } else {
+            state.activeTypes.add(type);
+            btn.classList.add("is-on");
+          }
+          if (state.activeTypes.size === 0) {
+            state.activeEdgeId = null;
+            state.selectedLaneType = null;
+            state.hoveredLaneEdgeId = null;
+          }
+          render();
+        });
+        return btn;
+      }
+
+      function setupFilters() {
+        const label = document.createElement("span");
+        label.className = "label";
+        label.textContent = "Relation Filters";
+        filterRowEl.appendChild(label);
+        Object.keys(EDGE_COLORS).forEach((type) => {
+          filterRowEl.appendChild(relationChip(type));
+        });
+      }
+
+      function renderLaneChips(edges) {
+        laneStripEl.innerHTML = "";
+
+        const types = Object.keys(EDGE_COLORS).filter((type) =>
+          edges.some((edge) => edge.type === type),
+        );
+        if (!types.length) {
+          return;
+        }
+
+        types.forEach((type) => {
+          const count = edges.filter((edge) => edge.type === type).length;
+          const laneChip = document.createElement("button");
+          laneChip.type = "button";
+          laneChip.className = `lane-chip${state.selectedLaneType === type ? " active" : ""}`;
+          laneChip.style.borderColor = EDGE_COLORS[type];
+          laneChip.style.color = EDGE_COLORS[type];
+          laneChip.textContent = `${type} lane (${count})`;
+          laneChip.title = `Show ${count} ${type} relation arrow(s)`;
+          laneChip.addEventListener("click", () => {
+            if (state.selectedLaneType === type) {
+              state.selectedLaneType = null;
+              state.hoveredLaneEdgeId = null;
+            } else {
+              state.selectedLaneType = type;
+              state.hoveredLaneEdgeId = null;
+              const firstInLane = edges.find((edge) => edge.type === type);
+              if (firstInLane) {
+                state.activeEdgeId = firstInLane.id;
+              }
+            }
+            render();
+          });
+          laneStripEl.appendChild(laneChip);
+        });
+      }
+
+      function applyEdgeStyles() {
+        renderedEdgeCache.forEach(({ edge, path }) => {
+          const isActive = edge.id === state.activeEdgeId;
+          const isHovered = edge.id === state.hoveredLaneEdgeId;
+
+          let width = isActive ? 3.2 : 2.0;
+          let opacity = 0.92;
+
+          if (state.selectedLaneType) {
+            const inLane = edge.type === state.selectedLaneType;
+            if (inLane) {
+              width = isHovered ? 5.0 : isActive ? 4.2 : 3.1;
+              opacity = 1;
+            } else {
+              width = 1.0;
+              opacity = 0.13;
+            }
+          }
+
+          path.setAttribute("stroke-width", String(width));
+          path.style.opacity = String(opacity);
+        });
+      }
+
+      function clampLegendPosition(left, top) {
+        const boardWidth = boardEl.clientWidth;
+        const boardHeight = boardEl.clientHeight;
+        const panelWidth = legendPanelEl.offsetWidth;
+        const panelHeight = legendPanelEl.offsetHeight;
+
+        const minX = 8;
+        const minY = 8;
+        const maxX = Math.max(minX, boardWidth - panelWidth - 8);
+        const maxY = Math.max(minY, boardHeight - panelHeight - 8);
+
+        return {
+          left: Math.min(maxX, Math.max(minX, left)),
+          top: Math.min(maxY, Math.max(minY, top)),
+        };
+      }
+
+      function applyLegendPosition() {
+        if (!state.legendPinnedPos) {
+          legendPanelEl.style.right = "12px";
+          legendPanelEl.style.left = "auto";
+          legendPanelEl.style.top = "44px";
+          return;
+        }
+
+        const clamped = clampLegendPosition(
+          state.legendPinnedPos.left,
+          state.legendPinnedPos.top,
+        );
+        state.legendPinnedPos = clamped;
+        legendPanelEl.style.right = "auto";
+        legendPanelEl.style.left = `${clamped.left}px`;
+        legendPanelEl.style.top = `${clamped.top}px`;
+      }
+
+      function updateLaneDetailActiveStyles() {
+        legendContentEl.querySelectorAll(".lane-edge-item").forEach((item) => {
+          item.classList.toggle(
+            "active",
+            item.dataset.edgeId === state.activeEdgeId,
+          );
+        });
+      }
+
+      function renderLaneDetailPanel(edges) {
+        if (!state.selectedLaneType) {
+          legendPanelEl.hidden = true;
+          legendContentEl.innerHTML = "";
+          return;
+        }
+
+        const laneEdges = edges.filter(
+          (edge) => edge.type === state.selectedLaneType,
+        );
+        if (!laneEdges.length) {
+          legendPanelEl.hidden = true;
+          legendContentEl.innerHTML = "";
+          state.selectedLaneType = null;
+          return;
+        }
+
+        legendPanelEl.hidden = false;
+        legendTitleEl.textContent = `${state.selectedLaneType} lane`;
+        legendContentEl.innerHTML = "";
+
+        const summary = document.createElement("div");
+        summary.className = "legend-meta";
+
+        const help = document.createElement("button");
+        help.type = "button";
+        help.className = "legend-help";
+        help.textContent = "?";
+        help.title = "Hover a row to highlight the corresponding arrow.";
+        help.setAttribute("aria-label", "How lane highlighting works");
+
+        summary.appendChild(help);
+        legendContentEl.appendChild(summary);
+
+        laneEdges.forEach((edge) => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = `lane-edge-item${state.activeEdgeId === edge.id ? " active" : ""}`;
+          item.dataset.edgeId = edge.id;
+          item.innerHTML = `<strong>${featureLabel(edge.from)} -> ${featureLabel(edge.to)}</strong><span>${edge.why}</span>`;
+          item.addEventListener("mouseenter", () => {
+            state.hoveredLaneEdgeId = edge.id;
+            applyEdgeStyles();
+          });
+          item.addEventListener("mouseleave", () => {
+            state.hoveredLaneEdgeId = null;
+            applyEdgeStyles();
+          });
+          item.addEventListener("focus", () => {
+            state.hoveredLaneEdgeId = edge.id;
+            applyEdgeStyles();
+          });
+          item.addEventListener("blur", () => {
+            state.hoveredLaneEdgeId = null;
+            applyEdgeStyles();
+          });
+          item.addEventListener("click", () => {
+            state.activeEdgeId = edge.id;
+            state.hoveredLaneEdgeId = null;
+            updateEdgeDetail(edges);
+            updateLaneDetailActiveStyles();
+            applyEdgeStyles();
+          });
+          legendContentEl.appendChild(item);
+        });
+
+        requestAnimationFrame(() => {
+          applyLegendPosition();
+        });
+      }
+
+      function updateEdgeDetail(edges) {
+        if (!edges.length) {
+          detailEl.innerHTML =
+            "<strong>Active Edge:</strong> <span>No relations selected. Enable at least one relation filter.</span>";
+          return;
+        }
+
+        const activeEdge =
+          edges.find((edge) => edge.id === state.activeEdgeId) || edges[0];
+        if (!state.activeEdgeId) {
+          state.activeEdgeId = activeEdge.id;
+        }
+
+        detailEl.innerHTML = `<strong>Active Edge:</strong> <span>${featureLabel(activeEdge.from)} -> ${featureLabel(activeEdge.to)} [${activeEdge.type}] | ${activeEdge.why}</span>`;
+      }
+
+      function clampPanAndApplyTransform() {
+        const vw = boardViewportEl.clientWidth;
+        const vh = boardViewportEl.clientHeight;
+        const cw = boardContentEl.clientWidth * state.scale;
+        const ch = boardContentEl.clientHeight * state.scale;
+        const margin = 80;
+
+        if (cw <= vw) {
+          state.panX = (vw - cw) / 2;
+        } else {
+          const minX = vw - cw - margin;
+          const maxX = margin;
+          state.panX = Math.max(minX, Math.min(maxX, state.panX));
+        }
+
+        if (ch <= vh) {
+          state.panY = (vh - ch) / 2;
+        } else {
+          const minY = vh - ch - margin;
+          const maxY = margin;
+          state.panY = Math.max(minY, Math.min(maxY, state.panY));
+        }
+
+        boardContentEl.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
+        zoomValueEl.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomAt(clientX, clientY, factor) {
+        const rect = boardViewportEl.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        const prevScale = state.scale;
+        const nextScale = Math.max(
+          state.minScale,
+          Math.min(state.maxScale, prevScale * factor),
+        );
+        if (nextScale === prevScale) {
+          return;
+        }
+
+        const worldX = (x - state.panX) / prevScale;
+        const worldY = (y - state.panY) / prevScale;
+
+        state.scale = nextScale;
+        state.panX = x - worldX * nextScale;
+        state.panY = y - worldY * nextScale;
+        clampPanAndApplyTransform();
+      }
+
+      function resetZoom() {
+        state.scale = 1;
+        state.panX = 24;
+        state.panY = 24;
+        state.panInitialized = true;
+        clampPanAndApplyTransform();
+      }
+
+      function shouldStartPan(target) {
+        if (!target) {
+          return true;
+        }
+        const tag = target.tagName ? target.tagName.toLowerCase() : "";
+        if (tag === "path" || tag === "button") {
+          return false;
+        }
+        return !target.closest(".node, .lane-chip, .lane-edge-item, .legend");
+      }
+
+      function setupPanAndZoom() {
+        boardViewportEl.addEventListener(
+          "wheel",
+          (event) => {
+            if (event.target && event.target.closest(".legend")) {
+              return;
+            }
+            event.preventDefault();
+            zoomAt(
+              event.clientX,
+              event.clientY,
+              event.deltaY < 0 ? 1.08 : 0.92,
+            );
+          },
+          { passive: false },
+        );
+
+        boardViewportEl.addEventListener("pointerdown", (event) => {
+          if (!shouldStartPan(event.target)) {
+            return;
+          }
+          panSession = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            panX: state.panX,
+            panY: state.panY,
+          };
+          boardViewportEl.classList.add("is-panning");
+          boardViewportEl.setPointerCapture(event.pointerId);
+        });
+
+        boardViewportEl.addEventListener("pointermove", (event) => {
+          if (!panSession || panSession.pointerId !== event.pointerId) {
+            return;
+          }
+          const dx = event.clientX - panSession.startX;
+          const dy = event.clientY - panSession.startY;
+          state.panX = panSession.panX + dx;
+          state.panY = panSession.panY + dy;
+          clampPanAndApplyTransform();
+        });
+
+        const stopPan = (event) => {
+          if (!panSession || panSession.pointerId !== event.pointerId) {
+            return;
+          }
+          panSession = null;
+          boardViewportEl.classList.remove("is-panning");
+          boardViewportEl.releasePointerCapture(event.pointerId);
+        };
+
+        boardViewportEl.addEventListener("pointerup", stopPan);
+        boardViewportEl.addEventListener("pointercancel", stopPan);
+
+        zoomInBtnEl.addEventListener("click", () => {
+          const rect = boardViewportEl.getBoundingClientRect();
+          zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, 1.12);
+        });
+        zoomOutBtnEl.addEventListener("click", () => {
+          const rect = boardViewportEl.getBoundingClientRect();
+          zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, 0.88);
+        });
+        zoomResetBtnEl.addEventListener("click", resetZoom);
+      }
+
+      function setupLegendPanelInteractions() {
+        legendCloseBtnEl.addEventListener("click", () => {
+          state.selectedLaneType = null;
+          state.hoveredLaneEdgeId = null;
+          render();
+        });
+
+        legendHandleEl.addEventListener("pointerdown", (event) => {
+          if (event.target.closest("#legendCloseBtn") || legendPanelEl.hidden) {
+            return;
+          }
+          event.preventDefault();
+
+          const boardRect = boardEl.getBoundingClientRect();
+          const panelRect = legendPanelEl.getBoundingClientRect();
+          const currentLeft = panelRect.left - boardRect.left;
+          const currentTop = panelRect.top - boardRect.top;
+          state.legendPinnedPos = { left: currentLeft, top: currentTop };
+          applyLegendPosition();
+
+          legendDrag = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            left: currentLeft,
+            top: currentTop,
+          };
+          legendHandleEl.setPointerCapture(event.pointerId);
+        });
+
+        legendHandleEl.addEventListener("pointermove", (event) => {
+          if (!legendDrag || legendDrag.pointerId !== event.pointerId) {
+            return;
+          }
+          const dx = event.clientX - legendDrag.startX;
+          const dy = event.clientY - legendDrag.startY;
+          state.legendPinnedPos = {
+            left: legendDrag.left + dx,
+            top: legendDrag.top + dy,
+          };
+          applyLegendPosition();
+        });
+
+        const stopLegendDrag = (event) => {
+          if (!legendDrag || legendDrag.pointerId !== event.pointerId) {
+            return;
+          }
+          legendDrag = null;
+          legendHandleEl.releasePointerCapture(event.pointerId);
+        };
+
+        legendHandleEl.addEventListener("pointerup", stopLegendDrag);
+        legendHandleEl.addEventListener("pointercancel", stopLegendDrag);
+      }
+
+      function renderBoard() {
+        applyHierarchicalLayout();
+
+        const defs = svgEl.querySelector("defs").outerHTML;
+        svgEl.innerHTML = defs;
+        labelLayerEl.innerHTML = "";
+
+        const edges = visibleEdges();
+
+        if (
+          state.activeEdgeId &&
+          !edges.some((edge) => edge.id === state.activeEdgeId)
+        ) {
+          state.activeEdgeId = null;
+        }
+        if (
+          state.hoveredLaneEdgeId &&
+          !edges.some((edge) => edge.id === state.hoveredLaneEdgeId)
+        ) {
+          state.hoveredLaneEdgeId = null;
+        }
+        if (
+          state.selectedLaneType &&
+          !edges.some((edge) => edge.type === state.selectedLaneType)
+        ) {
+          state.selectedLaneType = null;
+          state.hoveredLaneEdgeId = null;
+        }
+
+        const laneSizes = edges.reduce((acc, edge) => {
+          acc[edge.type] = (acc[edge.type] || 0) + 1;
+          return acc;
+        }, {});
+        const laneSlots = {};
+
+        renderedEdgeCache = [];
+        edges.forEach((edge) => {
+          const laneSlotIndex = laneSlots[edge.type] || 0;
+          laneSlots[edge.type] = laneSlotIndex + 1;
+          const rendered = createSvgPath(
+            edge,
+            laneSlotIndex,
+            laneSizes[edge.type] || 1,
+          );
+          if (!rendered) {
+            return;
+          }
+          svgEl.appendChild(rendered.path);
+          renderedEdgeCache.push(rendered);
+        });
+
+        renderLaneChips(edges);
+        renderLaneDetailPanel(edges);
+
+        if (!state.activeEdgeId && edges.length) {
+          state.activeEdgeId = edges[0].id;
+        }
+
+        updateEdgeDetail(edges);
+        updateLaneDetailActiveStyles();
+        applyEdgeStyles();
+      }
+
+      function renderList() {
+        const edges = visibleEdges();
+        listEl.innerHTML = "";
+        edges.forEach((edge) => {
+          const item = document.createElement("div");
+          item.className = "edge-item";
+          if (state.listMode === "compact") {
+            item.innerHTML = `${featureLabel(edge.from)} -> ${featureLabel(edge.to)} <span>[${edge.type}]</span>`;
+          } else {
+            item.innerHTML = `${featureLabel(edge.from)} -> ${featureLabel(edge.to)} <span>[${edge.type}]</span><br/><span>${edge.why}</span>`;
+          }
+          listEl.appendChild(item);
+        });
+
+        if (!edges.length) {
+          listEl.innerHTML =
+            '<div class="edge-item">No edges visible for current filters.</div>';
+        }
+      }
+
+      function setupListModeButtons() {
+        document.querySelectorAll(".list button[data-mode]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            state.listMode = btn.dataset.mode;
+            document
+              .querySelectorAll(".list button[data-mode]")
+              .forEach((peer) => {
+                peer.classList.toggle(
+                  "active",
+                  peer.dataset.mode === state.listMode,
+                );
+              });
+            renderList();
+          });
+        });
+      }
+
+      function render() {
+        renderBoard();
+        renderList();
+        if (!state.panInitialized) {
+          state.panInitialized = true;
+          resetZoom();
+        } else {
+          clampPanAndApplyTransform();
+        }
+      }
+
+      setupFilters();
+      setupListModeButtons();
+      setupPanAndZoom();
+      setupLegendPanelInteractions();
+      render();
+
+      window.addEventListener("resize", () => {
+        render();
+      });
+    </script>
+  </body>
+</html>
