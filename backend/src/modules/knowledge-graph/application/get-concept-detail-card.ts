@@ -98,6 +98,15 @@ export function makeGetConceptDetailCardQuery(
   };
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.ConceptToDetailCardAdapter
+ *     type: Adapter
+ *   edges:
+ *     - edge: shapes
+ *       to: knowledge-graph-visualization.ConceptDetailCard
+ */
 function collectRelatedStories(
   projection: MirrorProjection,
   conceptId: string,

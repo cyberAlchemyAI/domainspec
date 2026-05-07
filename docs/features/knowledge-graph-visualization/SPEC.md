@@ -140,10 +140,7 @@ The module resolves workspace roots for that source and applies the same whitebo
 
 | From                                                         | Edge         | To                                                       | Evidence                                               | Notes                                   |
 | ------------------------------------------------------------ | ------------ | -------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
-| knowledge-graph-visualization.ResolveProjectionScope         | maps         | knowledge-graph-visualization.DocumentationWorkspace     | operations.md#resolveprojectionscope                   | Resolve source project roots            |
-| knowledge-graph-visualization.ResolveProjectionScope         | produces     | knowledge-graph-visualization.ProjectionScope            | operations.md#resolveprojectionscope                   | Build deterministic scope key           |
 | knowledge-graph-visualization.ProjectSourceRegistry          | exposes      | knowledge-graph-visualization.ResolveProjectionScope     | interfaces.md#internal-projectsourceregistry-interface | Registry-backed scope resolution        |
-| knowledge-graph-visualization.RebuildMirrorProjection        | applies      | knowledge-graph-visualization.ProjectionScope            | operations.md#rebuildmirrorprojection                  | Persist projection per scope            |
 | knowledge-graph-visualization.DocumentToConceptMapping       | maps         | knowledge-graph-visualization.FeatureDocument            | mappings.md#documenttoconceptmapping                   | Parse file metadata into source records |
 | knowledge-graph-visualization.DocumentToConceptMapping       | maps         | knowledge-graph-visualization.ConceptDefinition          | mappings.md#documenttoconceptmapping                   | Parse concept table rows                |
 | knowledge-graph-visualization.DocumentToMirrorCardAdapter    | shapes       | knowledge-graph-visualization.MirrorCardView             | mappings.md#documenttomirrorcardadapter                | One card per mirrored file              |
@@ -184,7 +181,6 @@ The module resolves workspace roots for that source and applies the same whitebo
 | ui.knowledge-graph-visualization.ConceptDetailPanel          | displays     | knowledge-graph-visualization.ConceptDetailCard          | UI-SPEC.md#component-inventory                         | Detail card render                      |
 | ui.knowledge-graph-visualization.FocusStateIndicator         | reflects     | knowledge-graph-visualization.ExplorationState           | UI-SPEC.md#state-to-ui-mapping                         | Exploration state badge                 |
 | knowledge-graph-visualization.MirrorProjection               | contains     | knowledge-graph-visualization.RelationshipEdge           | domain.md#mirrorprojection                             | Edge set ownership                      |
-| knowledge-graph-visualization.MirrorProjection               | contains     | knowledge-graph-visualization.MirrorCardView             | domain.md#mirrorprojection                             | Card set ownership                      |
 | knowledge-graph-visualization.ConceptDefinition              | contains     | knowledge-graph-visualization.DefinitionPointer          | domain.md#conceptdefinition                            | Deep-link target ownership              |
 
 ## Aspects

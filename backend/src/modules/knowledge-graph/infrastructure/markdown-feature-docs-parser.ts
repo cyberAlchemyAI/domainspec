@@ -31,6 +31,17 @@ interface TableRowsResult {
   readonly rows: string[][];
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.DocumentToConceptMapping
+ *     type: Mapping
+ *   edges:
+ *     - edge: maps
+ *       to: knowledge-graph-visualization.FeatureDocument
+ *     - edge: maps
+ *       to: knowledge-graph-visualization.ConceptDefinition
+ */
 export function createMarkdownFeatureDocsParser(): FeatureDocsParserPort {
   return {
     async scanFeatureFiles(

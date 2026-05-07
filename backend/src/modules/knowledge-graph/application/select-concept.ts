@@ -25,6 +25,15 @@ export interface SelectConceptCommand {
   source: SelectionSource;
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.ConceptSelected
+ *     type: Event
+ *   edges:
+ *     - edge: transitions
+ *       to: knowledge-graph-visualization.ExplorationState
+ */
 export interface SelectConceptResult {
   sessionId: string;
   selectedCardId: string;

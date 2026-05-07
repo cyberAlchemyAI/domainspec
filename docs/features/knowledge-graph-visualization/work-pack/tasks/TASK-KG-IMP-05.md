@@ -10,7 +10,7 @@ Run feature verification and publish end-to-end verdict for KG implementation sc
 
 ## Status
 
-not-started
+completed
 
 ## DomainSpec Coverage
 
@@ -47,10 +47,18 @@ not-started
 
 - Command output for verification run.
 - Published report with evidence matrix.
+- `domainspec-verify-feature knowledge-graph-visualization` attempted directly in shell: `command not found`.
+- Verification contract fallback evidence:
+  - `pnpm --filter @domainspec/backend check` - pass
+  - `pnpm --filter @domainspec/backend test` - pass (`tests=22`, `fail=0`)
+  - `pnpm --filter @domainspec/web check` - pass
+  - `pnpm --filter @domainspec/web test:e2e` - pass (`16 passed`)
+- Published verdict report: [`VERIFICATION.md`](../../VERIFICATION.md) (`FLAG`, action matrix `A-KG-VER-001..003`).
 
 ## Gaps and Questions
 
-- None; blocked only by incomplete W1/W2 implementation evidence.
+- Verification verdict is `FLAG` until mandatory W3 audit artifacts are published (`ALIGNMENT-REPORT.md`, `LAYERING-ALIGNMENT-REPORT.md`, `LAYERING-ALIGNMENT-PLAN.md`).
+- TEST-SPEC mandatory ID coverage gate reports `expected=128`, `covered=15`, `uncovered=113`; remediation tracked in `A-KG-VER-003`.
 
 ## Decision Lock
 

@@ -161,7 +161,31 @@ export function registerKnowledgeGraphRoutes(
   const getRelationshipGraph = makeGetRelationshipGraphQuery(repository);
   const getConceptDetailCard = makeGetConceptDetailCardQuery(repository);
   const getDefinitionPointer = makeGetDefinitionPointerQuery(repository);
+
+  /**
+   * domainspec:
+   *   concept:
+   *     id: knowledge-graph-visualization.KnowledgeGraphModule
+   *     type: Interface
+   *   edges:
+   *     - edge: exposes
+   *       to: knowledge-graph-visualization.SelectConcept
+   */
   const selectConcept = makeSelectConceptUseCase({ repository, sessionStore });
+
+  /**
+   * domainspec:
+   *   concept:
+   *     id: knowledge-graph-visualization.MirrorInteractionWorkflow
+   *     type: Workflow
+   *   edges:
+   *     - edge: orchestrates
+   *       to: knowledge-graph-visualization.RebuildMirrorProjection
+   *     - edge: orchestrates
+   *       to: knowledge-graph-visualization.SelectConcept
+   *     - edge: orchestrates
+   *       to: knowledge-graph-visualization.OpenDefinition
+   */
   const openDefinition = makeOpenDefinitionUseCase({
     getDefinitionPointer,
     sessionStore,

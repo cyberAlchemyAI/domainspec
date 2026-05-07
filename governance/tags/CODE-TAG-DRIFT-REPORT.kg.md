@@ -1,7 +1,7 @@
 # CODE-TAG-DRIFT-REPORT
 
 - Mode: strict
-- Input: governance/tags/code-tags.json
+- Input: governance/tags/code-tags.kg.json
 - Features root: docs/features/knowledge-graph-visualization
 
 ## Summary

@@ -1,0 +1,694 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-07T01:11:36.119Z",
+    "mode": "strict",
+    "include": ["backend/src/modules/knowledge-graph", "apps/web/src"],
+    "root": "/home/vrondelli/projects/domainspec-core/implementation/domainspec"
+  },
+  "tags": [
+    {
+      "file": "apps/web/src/App.tsx",
+      "line": 10,
+      "symbol": "App",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.route.canvas",
+        "type": "Page",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "renders",
+          "to": "ui.knowledge-graph-visualization.MirrorCardGrid"
+        },
+        {
+          "edge": "renders",
+          "to": "ui.knowledge-graph-visualization.RelationshipGraphCanvas"
+        },
+        {
+          "edge": "renders",
+          "to": "ui.knowledge-graph-visualization.ConceptDetailPanel"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/components/knowledge-graph/AspectCardRail.tsx",
+      "line": 15,
+      "symbol": "AspectCardRail",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.MirrorCardGrid",
+        "type": "Component",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "consumes",
+          "to": "ui.knowledge-graph-visualization.useMirrorGraph"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/components/knowledge-graph/CardInspectorPanel.tsx",
+      "line": 15,
+      "symbol": "CardInspectorPanel",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.ConceptDetailPanel",
+        "type": "Component",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "displays",
+          "to": "knowledge-graph-visualization.ConceptDetailCard"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/components/knowledge-graph/FocusStateIndicator.tsx",
+      "line": 14,
+      "symbol": "FocusStateIndicator",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.FocusStateIndicator",
+        "type": "State Indicator",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "reflects",
+          "to": "knowledge-graph-visualization.ExplorationState"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/components/knowledge-graph/WhiteboardCanvas.tsx",
+      "line": 34,
+      "symbol": "WhiteboardCanvas",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.RelationshipGraphCanvas",
+        "type": "Component",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "consumes",
+          "to": "ui.knowledge-graph-visualization.useConceptFocus"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useConceptFocus.ts",
+      "line": 191,
+      "symbol": "openFocusedDefinition",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.DefinitionNavigationBinding",
+        "type": "Binding",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "mutates",
+          "to": "knowledge-graph-visualization.OpenDefinition"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useConceptFocus.ts",
+      "line": 44,
+      "symbol": "useConceptFocus",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.useConceptFocus",
+        "type": "Hook",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 427,
+      "symbol": "applySelectConceptOperation",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.SelectConcept",
+        "type": "Operation",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 106,
+      "symbol": "loadProjection",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.GraphDataBinding",
+        "type": "Binding",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "fetches",
+          "to": "knowledge-graph-visualization.GetMirrorCards"
+        },
+        {
+          "edge": "fetches",
+          "to": "knowledge-graph-visualization.GetRelationshipGraph"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 294,
+      "symbol": "selectWhiteboardCard",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.ConceptFocusBinding",
+        "type": "Binding",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "mutates",
+          "to": "knowledge-graph-visualization.SelectConcept"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 87,
+      "symbol": "useMirrorGraph",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.useMirrorGraph",
+        "type": "Hook",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/layouts/KnowledgeGraphPageLayout.tsx",
+      "line": 41,
+      "symbol": "KnowledgeGraphPageLayout",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.KnowledgeGraphPageLayout",
+        "type": "Layout",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "wraps",
+          "to": "ui.knowledge-graph-visualization.route.canvas"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/lib/api.ts",
+      "line": 353,
+      "symbol": "getMirrorCards",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetMirrorCards",
+        "type": "Query",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/lib/api.ts",
+      "line": 382,
+      "symbol": "getRelationshipGraph",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetRelationshipGraph",
+        "type": "Query",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/lib/api.ts",
+      "line": 461,
+      "symbol": "openDefinition",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.OpenDefinition",
+        "type": "Operation",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/get-concept-detail-card.ts",
+      "line": 101,
+      "symbol": "collectRelatedStories",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ConceptToDetailCardAdapter",
+        "type": "Adapter"
+      },
+      "edges": [
+        {
+          "edge": "shapes",
+          "to": "knowledge-graph-visualization.ConceptDetailCard"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/get-concept-detail-card.ts",
+      "line": 24,
+      "symbol": "makeGetConceptDetailCardQuery",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetConceptDetailCard",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.ConceptDefinition"
+        },
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.DocumentationWorkspace"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/get-definition-pointer.ts",
+      "line": 21,
+      "symbol": "makeGetDefinitionPointerQuery",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetDefinitionPointer",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.ConceptDefinition"
+        },
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.DocumentationWorkspace"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/get-latest-mirror-projection.ts",
+      "line": 73,
+      "symbol": "makeGetLatestMirrorProjectionQuery",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetMirrorCards",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.MirrorProjection"
+        },
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.DocumentationWorkspace"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/get-latest-mirror-projection.ts",
+      "line": 108,
+      "symbol": "makeGetRelationshipGraphQuery",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetRelationshipGraph",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.MirrorProjection"
+        },
+        {
+          "edge": "queries",
+          "to": "knowledge-graph-visualization.DocumentationWorkspace"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/open-definition.ts",
+      "line": 38,
+      "symbol": "makeOpenDefinitionUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.OpenDefinition",
+        "type": "Operation"
+      },
+      "edges": [
+        {
+          "edge": "produces",
+          "to": "knowledge-graph-visualization.DefinitionOpened"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/open-definition.ts",
+      "line": 19,
+      "symbol": "OpenDefinitionResult",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.DefinitionOpened",
+        "type": "Event"
+      },
+      "edges": [
+        {
+          "edge": "transitions",
+          "to": "knowledge-graph-visualization.ExplorationState"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/ports.ts",
+      "line": 40,
+      "symbol": "ProjectSourceRegistryPort",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ProjectSourceRegistry",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.ResolveProjectionScope"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/rebuild-mirror-projection.ts",
+      "line": 168,
+      "symbol": "assertRequiredMirrorFiles",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.CardSyncPolicy",
+        "type": "Policy"
+      },
+      "edges": [
+        {
+          "edge": "applies",
+          "to": "knowledge-graph-visualization.RebuildMirrorProjection"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/rebuild-mirror-projection.ts",
+      "line": 52,
+      "symbol": "makeRebuildMirrorProjectionUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.RebuildMirrorProjection",
+        "type": "Operation"
+      },
+      "edges": [
+        {
+          "edge": "produces",
+          "to": "knowledge-graph-visualization.MirrorProjectionBuilt"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/rebuild-mirror-projection.ts",
+      "line": 285,
+      "symbol": "materializeMirrorCards",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.DocumentToMirrorCardAdapter",
+        "type": "Adapter"
+      },
+      "edges": [
+        {
+          "edge": "shapes",
+          "to": "knowledge-graph-visualization.MirrorCardView"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/select-concept.ts",
+      "line": 52,
+      "symbol": "makeSelectConceptUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.SelectConcept",
+        "type": "Operation"
+      },
+      "edges": [
+        {
+          "edge": "produces",
+          "to": "knowledge-graph-visualization.ConceptSelected"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/select-concept.ts",
+      "line": 28,
+      "symbol": "SelectConceptResult",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ConceptSelected",
+        "type": "Event"
+      },
+      "edges": [
+        {
+          "edge": "transitions",
+          "to": "knowledge-graph-visualization.ExplorationState"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/application/session-store.ts",
+      "line": 4,
+      "symbol": "createInMemoryExplorationSessionStore",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ExplorationSession",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 64,
+      "symbol": "ConceptDefinition",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ConceptDefinition",
+        "type": "Entity"
+      },
+      "edges": [
+        {
+          "edge": "contains",
+          "to": "knowledge-graph-visualization.DefinitionPointer"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 178,
+      "symbol": "ExplorationSession",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ExplorationSession",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 40,
+      "symbol": "FeatureDocument",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.FeatureDocument",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 91,
+      "symbol": "MirrorCardView",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.MirrorCardView",
+        "type": "View Model"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 145,
+      "symbol": "MirrorProjection",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.MirrorProjection",
+        "type": "Entity"
+      },
+      "edges": [
+        {
+          "edge": "contains",
+          "to": "knowledge-graph-visualization.RelationshipEdge"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 193,
+      "symbol": "ProjectionScope",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ProjectionScope",
+        "type": "Value Object"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 116,
+      "symbol": "WhiteboardCard",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.WhiteboardCard",
+        "type": "View Model"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/infrastructure/in-memory-project-source-registry.ts",
+      "line": 32,
+      "symbol": "createInMemoryProjectSourceRegistry",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ProjectSourceRegistry",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.ResolveProjectionScope"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/infrastructure/in-memory-project-source-registry.ts",
+      "line": 64,
+      "symbol": "resolveProjectionScope",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.ResolveProjectionScope",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/infrastructure/markdown-feature-docs-parser.ts",
+      "line": 34,
+      "symbol": "createMarkdownFeatureDocsParser",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.DocumentToConceptMapping",
+        "type": "Mapping"
+      },
+      "edges": [
+        {
+          "edge": "maps",
+          "to": "knowledge-graph-visualization.FeatureDocument"
+        },
+        {
+          "edge": "maps",
+          "to": "knowledge-graph-visualization.ConceptDefinition"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/interface/http-routes.ts",
+      "line": 176,
+      "symbol": "openDefinition",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.MirrorInteractionWorkflow",
+        "type": "Workflow"
+      },
+      "edges": [
+        {
+          "edge": "orchestrates",
+          "to": "knowledge-graph-visualization.RebuildMirrorProjection"
+        },
+        {
+          "edge": "orchestrates",
+          "to": "knowledge-graph-visualization.SelectConcept"
+        },
+        {
+          "edge": "orchestrates",
+          "to": "knowledge-graph-visualization.OpenDefinition"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/interface/http-routes.ts",
+      "line": 101,
+      "symbol": "registerKnowledgeGraphRoutes",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.KnowledgeGraphAPI",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.GetMirrorCards"
+        },
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.GetRelationshipGraph"
+        },
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.GetConceptDetailCard"
+        },
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.GetDefinitionPointer"
+        },
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.OpenDefinition"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/knowledge-graph/interface/http-routes.ts",
+      "line": 165,
+      "symbol": "selectConcept",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.KnowledgeGraphModule",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "knowledge-graph-visualization.SelectConcept"
+        }
+      ]
+    }
+  ],
+  "issues": [],
+  "stats": {
+    "scannedFiles": 32,
+    "taggedSymbols": 42,
+    "issues": 0
+  }
+}

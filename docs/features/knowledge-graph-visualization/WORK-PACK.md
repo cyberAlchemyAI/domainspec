@@ -24,17 +24,17 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 | KG-IMP-02 | Implement read/interaction API contracts for cards, graph, and definitions | high       | W1, W2         | ready            | in-progress |
 | KG-IMP-03 | Implement UI mirror cards + graph + detail interactions                    | high       | W1, W2         | ready            | in-progress |
 | KG-IMP-04 | Implement deterministic tests from TEST-SPEC and reach pilot readiness     | medium     | W2, W3         | ready-after-impl | in-progress |
-| KG-IMP-05 | Execute feature verification verdict (`domainspec-verify-feature`)         | high       | W3             | ready-after-impl | not-started |
+| KG-IMP-05 | Execute feature verification verdict (`domainspec-verify-feature`)         | high       | W3             | ready-after-impl | completed   |
 | KG-IMP-06 | Execute alignment audit (`domainspec-audit-alignment`)                     | high       | W3             | ready-after-impl | not-started |
 | KG-IMP-07 | Execute layering audit (`domainspec-audit-layering`)                       | high       | W3             | ready-after-impl | not-started |
 
 ## Mandatory Closure Obligations
 
-| Obligation           | Required Command                                           | Task Mapping | Baseline Report              | Current State |
-| -------------------- | ---------------------------------------------------------- | ------------ | ---------------------------- | ------------- |
-| Feature verification | `domainspec-verify-feature knowledge-graph-visualization`  | KG-IMP-05    | VERIFICATION.md              | pending       |
-| Alignment audit      | `domainspec-audit-alignment knowledge-graph-visualization` | KG-IMP-06    | ALIGNMENT-REPORT.md          | pending       |
-| Layering audit       | `domainspec-audit-layering knowledge-graph-visualization`  | KG-IMP-07    | LAYERING-ALIGNMENT-REPORT.md | pending       |
+| Obligation           | Required Command                                           | Task Mapping | Baseline Report              | Current State     |
+| -------------------- | ---------------------------------------------------------- | ------------ | ---------------------------- | ----------------- |
+| Feature verification | `domainspec-verify-feature knowledge-graph-visualization`  | KG-IMP-05    | VERIFICATION.md              | FLAG (2026-05-06) |
+| Alignment audit      | `domainspec-audit-alignment knowledge-graph-visualization` | KG-IMP-06    | ALIGNMENT-REPORT.md          | pending           |
+| Layering audit       | `domainspec-audit-layering knowledge-graph-visualization`  | KG-IMP-07    | LAYERING-ALIGNMENT-REPORT.md | pending           |
 
 ## Architecture-Guided Task Directives
 
@@ -69,33 +69,33 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 ## Wave Status Board
 
-| Wave | Objective                                          | Entry Gate                               | Exit Gate                                    | Status      | Evidence              |
-| ---- | -------------------------------------------------- | ---------------------------------------- | -------------------------------------------- | ----------- | --------------------- |
-| W0   | Architecture baseline and full stage coverage lock | Work-pack created with planner gate pass | Stage coverage and directives complete       | completed   | work-pack/waves/W0.md |
-| W1   | Backend projection and API contracts               | W0 complete                              | Parser/API contracts implemented and checked | in-progress | work-pack/waves/W1.md |
-| W2   | UI interactions and full contract tests            | W1 complete                              | UI + tests pass for required obligations     | in-progress | work-pack/waves/W2.md |
-| W3   | Readiness and mandatory audits                     | W2 complete                              | verify/alignment/layering reports published  | not-started | work-pack/waves/W3.md |
+| Wave | Objective                                          | Entry Gate                               | Exit Gate                                    | Status      | Evidence                                |
+| ---- | -------------------------------------------------- | ---------------------------------------- | -------------------------------------------- | ----------- | --------------------------------------- |
+| W0   | Architecture baseline and full stage coverage lock | Work-pack created with planner gate pass | Stage coverage and directives complete       | completed   | work-pack/waves/W0.md                   |
+| W1   | Backend projection and API contracts               | W0 complete                              | Parser/API contracts implemented and checked | in-progress | work-pack/waves/W1.md                   |
+| W2   | UI interactions and full contract tests            | W1 complete                              | UI + tests pass for required obligations     | in-progress | work-pack/waves/W2.md                   |
+| W3   | Readiness and mandatory audits                     | W2 complete                              | verify/alignment/layering reports published  | in-progress | work-pack/waves/W3.md + VERIFICATION.md |
 
 ## Pipeline Stage Coverage
 
-| Stage                 | Required | Wave Mapping | Status      | Evidence                                      | Skip Reason                       |
-| --------------------- | -------- | ------------ | ----------- | --------------------------------------------- | --------------------------------- |
-| plan                  | yes      | W0           | completed   | WORK-PACK.md                                  | -                                 |
-| architecture-baseline | yes      | W0           | completed   | WORK-PACK.md directives                       | -                                 |
-| spec                  | yes      | W0, W1       | completed   | SPEC.md                                       | -                                 |
-| stories               | yes      | W0, W1       | completed   | STORIES.md                                    | -                                 |
-| tests                 | yes      | W2           | in-progress | TEST-SPEC.md + TASK-KG-IMP-04 evidence matrix | readiness publication in progress |
-| backend-implement     | yes      | W1, W2       | in-progress | backend test suite pass                       | pending whiteboard pivot deltas   |
-| ui-pipeline           | yes      | W2           | in-progress | web check + test:e2e pass                     | readiness publication in progress |
-| observability-spec    | yes      | W2           | not-started | pending                                       | pending                           |
-| instrument-otel       | yes      | W2           | not-started | pending                                       | pending                           |
-| otel-verify           | yes      | W2, W3       | not-started | pending                                       | pending                           |
-| infra-deploy          | yes      | W2, W3       | not-started | pending                                       | pending                           |
-| registry-sync         | yes      | W2, W3       | not-started | pending                                       | pending                           |
-| verify-readiness      | yes      | W3           | not-started | pending                                       | pending                           |
-| verify-feature        | yes      | W3           | not-started | pending                                       | pending                           |
-| audit-alignment       | yes      | W3           | not-started | pending                                       | pending                           |
-| audit-layering        | yes      | W3           | not-started | pending                                       | pending                           |
+| Stage                 | Required | Wave Mapping | Status      | Evidence                                      | Skip Reason                                 |
+| --------------------- | -------- | ------------ | ----------- | --------------------------------------------- | ------------------------------------------- |
+| plan                  | yes      | W0           | completed   | WORK-PACK.md                                  | -                                           |
+| architecture-baseline | yes      | W0           | completed   | WORK-PACK.md directives                       | -                                           |
+| spec                  | yes      | W0, W1       | completed   | SPEC.md                                       | -                                           |
+| stories               | yes      | W0, W1       | completed   | STORIES.md                                    | -                                           |
+| tests                 | yes      | W2           | in-progress | TEST-SPEC.md + TASK-KG-IMP-04 evidence matrix | readiness publication in progress           |
+| backend-implement     | yes      | W1, W2       | in-progress | backend test suite pass                       | pending whiteboard pivot deltas             |
+| ui-pipeline           | yes      | W2           | in-progress | web check + test:e2e pass                     | readiness publication in progress           |
+| observability-spec    | yes      | W2           | not-started | pending                                       | pending                                     |
+| instrument-otel       | yes      | W2           | not-started | pending                                       | pending                                     |
+| otel-verify           | yes      | W2, W3       | not-started | pending                                       | pending                                     |
+| infra-deploy          | yes      | W2, W3       | not-started | pending                                       | pending                                     |
+| registry-sync         | yes      | W2, W3       | not-started | pending                                       | pending                                     |
+| verify-readiness      | yes      | W3           | not-started | pending                                       | pending                                     |
+| verify-feature        | yes      | W3           | completed   | VERIFICATION.md                               | FLAG remediation open (`A-KG-VER-001..003`) |
+| audit-alignment       | yes      | W3           | not-started | pending                                       | pending                                     |
+| audit-layering        | yes      | W3           | not-started | pending                                       | pending                                     |
 
 ## Decision Lock Summary
 
@@ -121,10 +121,11 @@ Planner-managed execution manifest for rebuilding the Knowledge Graph feature wi
 
 ## Change Log
 
-| Date       | Change                                                                                                              | Author  |
-| ---------- | ------------------------------------------------------------------------------------------------------------------- | ------- |
-| 2026-05-06 | Updated KG-IMP-04 readiness evidence references; backend/web/E2E suites are passing and W2 blockers marked resolved | Copilot |
-| 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence          | Copilot |
-| 2026-05-06 | Added KG-IMP-08 to track terminal-safe docs validation execution and prevent parent-shell termination               | Copilot |
-| 2026-05-03 | Initial current remake work-pack created from user-defined interaction model                                        | Copilot |
-| 2026-05-03 | Added detailed split-mode work-pack files under work-pack/shared, work-pack/tasks, and work-pack/waves              | Copilot |
+| Date       | Change                                                                                                                     | Author  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------- | ------- |
+| 2026-05-06 | Completed KG-IMP-05 verification task; published `VERIFICATION.md` with `FLAG` verdict and owner-dated remediation actions | Copilot |
+| 2026-05-06 | Updated KG-IMP-04 readiness evidence references; backend/web/E2E suites are passing and W2 blockers marked resolved        | Copilot |
+| 2026-05-06 | Synced KG-IMP-01..04 and W1/W2 to in-progress based on passing backend/web checks and failing E2E evidence                 | Copilot |
+| 2026-05-06 | Added KG-IMP-08 to track terminal-safe docs validation execution and prevent parent-shell termination                      | Copilot |
+| 2026-05-03 | Initial current remake work-pack created from user-defined interaction model                                               | Copilot |
+| 2026-05-03 | Added detailed split-mode work-pack files under work-pack/shared, work-pack/tasks, and work-pack/waves                     | Copilot |

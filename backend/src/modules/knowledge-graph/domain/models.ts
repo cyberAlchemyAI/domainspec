@@ -61,6 +61,15 @@ export interface DefinitionPointer {
   aspectKind?: AspectKind;
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.ConceptDefinition
+ *     type: Entity
+ *   edges:
+ *     - edge: contains
+ *       to: knowledge-graph-visualization.DefinitionPointer
+ */
 export interface ConceptDefinition {
   conceptId: string;
   name: string;
@@ -138,6 +147,9 @@ export interface WhiteboardProjection {
  *   concept:
  *     id: knowledge-graph-visualization.MirrorProjection
  *     type: Entity
+ *   edges:
+ *     - edge: contains
+ *       to: knowledge-graph-visualization.RelationshipEdge
  */
 export interface MirrorProjection {
   snapshotId: string;

@@ -49,6 +49,15 @@ export type RebuildMirrorProjectionUseCase = (
   command: RebuildMirrorProjectionCommand,
 ) => Promise<RebuildMirrorProjectionResult>;
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.RebuildMirrorProjection
+ *     type: Operation
+ *   edges:
+ *     - edge: produces
+ *       to: knowledge-graph-visualization.MirrorProjectionBuilt
+ */
 export function makeRebuildMirrorProjectionUseCase(
   dependencies: RebuildMirrorProjectionDependencies,
 ): RebuildMirrorProjectionUseCase {
@@ -156,6 +165,15 @@ export function makeRebuildMirrorProjectionUseCase(
   };
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.CardSyncPolicy
+ *     type: Policy
+ *   edges:
+ *     - edge: applies
+ *       to: knowledge-graph-visualization.RebuildMirrorProjection
+ */
 function assertRequiredMirrorFiles(
   parsedDocuments: ParsedSourceDocument[],
 ): void {
@@ -264,6 +282,15 @@ function materializeFeatureDocuments(
     .sort(compareFeatureDocuments);
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.DocumentToMirrorCardAdapter
+ *     type: Adapter
+ *   edges:
+ *     - edge: shapes
+ *       to: knowledge-graph-visualization.MirrorCardView
+ */
 function materializeMirrorCards(
   projectKey: string,
   featureDocuments: FeatureDocument[],

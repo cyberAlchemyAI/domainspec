@@ -1,0 +1,697 @@
+{
+  "feature": "knowledge-graph-visualization",
+  "task": {
+    "id": "TASK-KG-IMP-05",
+    "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md"
+  },
+  "mode": "standard",
+  "strict": true,
+  "emit": "both",
+  "generatedAt": "2026-05-06",
+  "frameworkConstraints": [
+    {
+      "version": "2.0.8",
+      "source": "CHANGELOG.md",
+      "selectors": ["## [2.0.8]", "Delegation policy rollout"],
+      "applied": "Applied stage profile/stuck-retry/telemetry failure handling constraints for delegated command execution."
+    },
+    {
+      "version": "2.0.4",
+      "source": "CHANGELOG.md",
+      "selectors": [
+        "## [2.0.4]",
+        "domainspec-context-builder strict relevance gate",
+        "Context index schema",
+        "Mode budgets hardened"
+      ],
+      "applied": "Enforced selector-bound inclusion, obligation binding, interestedData extraction, and standard budget caps."
+    }
+  ],
+  "budget": {
+    "profile": "standard",
+    "maxFiles": 14,
+    "maxExcerptLines": 280,
+    "selectedFiles": 9,
+    "selectedSnippetCount": 32,
+    "selectedExcerptLines": 226,
+    "noiseRatio": 0.11
+  },
+  "rankingMethod": "score=(1-signal)*0.45 + cost*0.30 + ambiguity*0.25",
+  "obligationMatrix": [
+    {
+      "obligationId": "O1",
+      "title": "TASK-KG-IMP-05 remains execution authority for coverage, directives, steps, completion criteria, and verification evidence.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#domainspec-coverage",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#implementation-directives",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#execution-steps",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#completion-criteria",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#verification-evidence"
+      ]
+    },
+    {
+      "obligationId": "O2",
+      "title": "Verification scope is bound to current capability obligations, US-1..US-4, and full KG contract matrix.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#domainspec-coverage",
+        "docs/features/knowledge-graph-visualization/STORIES.md#story-coverage-matrix",
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#coverage-summary"
+      ]
+    },
+    {
+      "obligationId": "O3",
+      "title": "W3 verification command and report outputs remain explicit and stage-bound.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#implementation-directives",
+        "docs/features/knowledge-graph-visualization/WORK-PACK.md#mandatory-closure-obligations"
+      ]
+    },
+    {
+      "obligationId": "O4",
+      "title": "FLAG/BLOCK verdict path requires owner-assigned and date-bound remediation actions.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#implementation-directives",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#completion-criteria"
+      ]
+    },
+    {
+      "obligationId": "O5",
+      "title": "Work-pack task and stage statuses must stay synchronized for verify-feature evidence.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/WORK-PACK.md#task-status-board",
+        "docs/features/knowledge-graph-visualization/WORK-PACK.md#pipeline-stage-coverage"
+      ]
+    },
+    {
+      "obligationId": "O6",
+      "title": "Architecture references stay selector-level and tied to verification behavior.",
+      "source": [
+        "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md#layer-model",
+        "architecture/pattern-library/TESTING-ALIGNMENT.md#layer-to-test-mapping"
+      ]
+    },
+    {
+      "obligationId": "O7",
+      "title": "Verification verdict semantics and TEST-SPEC coverage floor are enforced by command contract.",
+      "source": [".github/skills/domainspec-verify-feature/SKILL.md"]
+    },
+    {
+      "obligationId": "O8",
+      "title": "Interested relationship subset is restricted to edge labels in SPEC feature graph.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph"
+      ]
+    },
+    {
+      "obligationId": "O9",
+      "title": "Decision lock remains bound to D-KG-001, D-KG-002, D-KG-003.",
+      "source": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md#decision-lock"
+      ]
+    }
+  ],
+  "selected": [
+    {
+      "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-05.md",
+      "reason": "Primary task contract and directive authority.",
+      "score": {
+        "signal": 0.99,
+        "cost": 0.18,
+        "ambiguity": 0.03,
+        "value": 0.07
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "DomainSpec Coverage",
+          "line": 15
+        },
+        {
+          "type": "heading",
+          "value": "Architecture References",
+          "line": 23
+        },
+        {
+          "type": "heading",
+          "value": "Implementation Directives",
+          "line": 28
+        },
+        {
+          "type": "heading",
+          "value": "Execution Steps",
+          "line": 34
+        },
+        {
+          "type": "heading",
+          "value": "Completion Criteria",
+          "line": 41
+        },
+        {
+          "type": "heading",
+          "value": "Verification Evidence",
+          "line": 46
+        },
+        {
+          "type": "heading",
+          "value": "Decision Lock",
+          "line": 55
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 15,
+          "endLine": 23,
+          "purpose": "Coverage seed and architecture refs"
+        },
+        {
+          "startLine": 28,
+          "endLine": 34,
+          "purpose": "Command and remediation directives"
+        },
+        {
+          "startLine": 41,
+          "endLine": 47,
+          "purpose": "Completion and verification evidence contract"
+        },
+        {
+          "startLine": 55,
+          "endLine": 55,
+          "purpose": "Decision lock binding"
+        }
+      ],
+      "obligationRefs": ["O1", "O2", "O3", "O4", "O9"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
+      "reason": "Planner gate and verify-feature stage authority.",
+      "score": {
+        "signal": 0.97,
+        "cost": 0.22,
+        "ambiguity": 0.06,
+        "value": 0.09
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Planner Control Fields",
+          "line": 7
+        },
+        {
+          "type": "heading",
+          "value": "Task Status Board",
+          "line": 18
+        },
+        {
+          "type": "table-row",
+          "value": "KG-IMP-05",
+          "line": 27
+        },
+        {
+          "type": "heading",
+          "value": "Mandatory Closure Obligations",
+          "line": 31
+        },
+        {
+          "type": "table-row",
+          "value": "domainspec-verify-feature knowledge-graph-visualization",
+          "line": 35
+        },
+        {
+          "type": "heading",
+          "value": "Wave Status Board",
+          "line": 70
+        },
+        {
+          "type": "heading",
+          "value": "Pipeline Stage Coverage",
+          "line": 79
+        },
+        {
+          "type": "table-row",
+          "value": "verify-feature",
+          "line": 96
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 7,
+          "endLine": 12,
+          "purpose": "Planner gate status"
+        },
+        {
+          "startLine": 18,
+          "endLine": 27,
+          "purpose": "Task status including KG-IMP-05"
+        },
+        {
+          "startLine": 31,
+          "endLine": 35,
+          "purpose": "Mandatory verify command mapping"
+        },
+        {
+          "startLine": 70,
+          "endLine": 79,
+          "purpose": "Wave and stage gate context"
+        },
+        {
+          "startLine": 96,
+          "endLine": 96,
+          "purpose": "verify-feature stage row"
+        }
+      ],
+      "obligationRefs": ["O3", "O5"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/SPEC.md",
+      "reason": "Capability authority and relationship-edge subset source.",
+      "score": {
+        "signal": 0.95,
+        "cost": 0.25,
+        "ambiguity": 0.07,
+        "value": 0.12
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Overview",
+          "line": 10
+        },
+        {
+          "type": "heading",
+          "value": "Capabilities",
+          "line": 45
+        },
+        {
+          "type": "heading",
+          "value": "Cross-Project Documentation Scope",
+          "line": 79
+        },
+        {
+          "type": "heading",
+          "value": "Feature Concept Graph",
+          "line": 139
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 10,
+          "endLine": 14,
+          "purpose": "Feature capability framing"
+        },
+        {
+          "startLine": 45,
+          "endLine": 52,
+          "purpose": "Capability authority"
+        },
+        {
+          "startLine": 79,
+          "endLine": 84,
+          "purpose": "Cross-project scope clause"
+        },
+        {
+          "startLine": 139,
+          "endLine": 148,
+          "purpose": "Feature-graph edge subset extraction"
+        }
+      ],
+      "obligationRefs": ["O2", "O8"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/STORIES.md",
+      "reason": "US-1..US-4 story obligations for verdict mapping.",
+      "score": {
+        "signal": 0.93,
+        "cost": 0.21,
+        "ambiguity": 0.06,
+        "value": 0.11
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "US-1: Mirror cards for required docs",
+          "line": 7
+        },
+        {
+          "type": "heading",
+          "value": "US-2: Graph mirrors canonical relationships",
+          "line": 30
+        },
+        {
+          "type": "heading",
+          "value": "US-3: Click concept to open definition",
+          "line": 55
+        },
+        {
+          "type": "heading",
+          "value": "US-4: Related details card for selected concept",
+          "line": 78
+        },
+        {
+          "type": "heading",
+          "value": "Story Coverage Matrix",
+          "line": 127
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 7,
+          "endLine": 15,
+          "purpose": "US-1 acceptance intent"
+        },
+        {
+          "startLine": 30,
+          "endLine": 38,
+          "purpose": "US-2 acceptance intent"
+        },
+        {
+          "startLine": 55,
+          "endLine": 63,
+          "purpose": "US-3 acceptance intent"
+        },
+        {
+          "startLine": 78,
+          "endLine": 86,
+          "purpose": "US-4 acceptance intent"
+        },
+        {
+          "startLine": 127,
+          "endLine": 132,
+          "purpose": "Coverage matrix for US-1..US-4"
+        }
+      ],
+      "obligationRefs": ["O2"]
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/TEST-SPEC.md",
+      "reason": "Full KG contract matrix authority and coverage summary anchors.",
+      "score": {
+        "signal": 0.94,
+        "cost": 0.27,
+        "ambiguity": 0.08,
+        "value": 0.13
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Backend Test Catalogue",
+          "line": 14
+        },
+        {
+          "type": "heading",
+          "value": "Capability Acceptance Obligations",
+          "line": 171
+        },
+        {
+          "type": "heading",
+          "value": "UI E2E Test Catalogue",
+          "line": 180
+        },
+        {
+          "type": "heading",
+          "value": "Coverage Summary",
+          "line": 216
+        },
+        {
+          "type": "heading",
+          "value": "Uncovered Formal Gaps",
+          "line": 228
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 14,
+          "endLine": 20,
+          "purpose": "Backend contract catalogue anchor"
+        },
+        {
+          "startLine": 171,
+          "endLine": 176,
+          "purpose": "Story acceptance obligation table"
+        },
+        {
+          "startLine": 180,
+          "endLine": 187,
+          "purpose": "UI contract catalogue anchor"
+        },
+        {
+          "startLine": 216,
+          "endLine": 220,
+          "purpose": "Coverage totals"
+        },
+        {
+          "startLine": 228,
+          "endLine": 232,
+          "purpose": "Known remaining formal gaps"
+        }
+      ],
+      "obligationRefs": ["O2", "O7"]
+    },
+    {
+      "path": "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md",
+      "reason": "Layer model baseline required by task architecture refs.",
+      "score": {
+        "signal": 0.86,
+        "cost": 0.1,
+        "ambiguity": 0.05,
+        "value": 0.11
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Principles",
+          "line": 5
+        },
+        {
+          "type": "heading",
+          "value": "Layer Model",
+          "line": 13
+        },
+        {
+          "type": "heading",
+          "value": "Layer Snapshot",
+          "line": 27
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 15,
+          "purpose": "Principles and model anchor"
+        },
+        {
+          "startLine": 27,
+          "endLine": 33,
+          "purpose": "Layer ownership constraints"
+        }
+      ],
+      "obligationRefs": ["O6"]
+    },
+    {
+      "path": "architecture/pattern-library/TESTING-ALIGNMENT.md",
+      "reason": "Layer-to-test obligations referenced by task architecture refs.",
+      "score": {
+        "signal": 0.84,
+        "cost": 0.08,
+        "ambiguity": 0.06,
+        "value": 0.11
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "Layer-to-Test Mapping",
+          "line": 5
+        },
+        {
+          "type": "heading",
+          "value": "Canonical Pipeline Reference",
+          "line": 17
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 12,
+          "purpose": "Layer-test mapping obligations"
+        },
+        {
+          "startLine": 17,
+          "endLine": 18,
+          "purpose": "Pipeline trace reference"
+        }
+      ],
+      "obligationRefs": ["O6"]
+    },
+    {
+      "path": ".github/skills/domainspec-verify-feature/SKILL.md",
+      "reason": "Defines PASS/FLAG/BLOCK semantics and mandatory TEST-SPEC coverage gate.",
+      "score": {
+        "signal": 0.88,
+        "cost": 0.14,
+        "ambiguity": 0.08,
+        "value": 0.12
+      },
+      "selectors": [
+        {
+          "type": "tag",
+          "value": "<objective>",
+          "line": 9
+        },
+        {
+          "type": "text-fragment",
+          "value": "Return PASS, FLAG, or BLOCK for a feature based on evidence, not assumptions.",
+          "line": 10
+        },
+        {
+          "type": "tag",
+          "value": "<process>",
+          "line": 30
+        },
+        {
+          "type": "text-fragment",
+          "value": "3a. TEST-SPEC obligation coverage gate (MANDATORY)",
+          "line": 38
+        },
+        {
+          "type": "text-fragment",
+          "value": "Enforce final verdict floor from TEST-SPEC obligation coverage gate before publishing result.",
+          "line": 60
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 9,
+          "endLine": 12,
+          "purpose": "Verdict objective"
+        },
+        {
+          "startLine": 30,
+          "endLine": 43,
+          "purpose": "Coverage gate contract"
+        },
+        {
+          "startLine": 60,
+          "endLine": 61,
+          "purpose": "Verdict-floor enforcement"
+        }
+      ],
+      "obligationRefs": ["O7"]
+    },
+    {
+      "path": "CHANGELOG.md",
+      "reason": "Latest framework constraints for this delegated context-builder run.",
+      "score": {
+        "signal": 0.9,
+        "cost": 0.12,
+        "ambiguity": 0.04,
+        "value": 0.09
+      },
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "[2.0.8]",
+          "line": 26
+        },
+        {
+          "type": "text-fragment",
+          "value": "Delegation policy rollout",
+          "line": 35
+        },
+        {
+          "type": "heading",
+          "value": "[2.0.4]",
+          "line": 63
+        },
+        {
+          "type": "text-fragment",
+          "value": "domainspec-context-builder strict relevance gate",
+          "line": 67
+        },
+        {
+          "type": "text-fragment",
+          "value": "Context index schema",
+          "line": 69
+        },
+        {
+          "type": "text-fragment",
+          "value": "Mode budgets hardened",
+          "line": 70
+        }
+      ],
+      "excerpts": [
+        {
+          "startLine": 26,
+          "endLine": 37,
+          "purpose": "Latest delegation constraints"
+        },
+        {
+          "startLine": 63,
+          "endLine": 70,
+          "purpose": "Context-builder strict schema and budget constraints"
+        }
+      ],
+      "obligationRefs": ["O1"]
+    }
+  ],
+  "excluded": [
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Optional index artifact not present in implementation repo."
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Optional index artifact not present in implementation repo."
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Optional index artifact not present in implementation repo."
+    },
+    {
+      "path": "architecture/ARCHITECTURE-PATTERN-LIBRARY.md",
+      "reason": "Broad catalog; direct obligations are already satisfied by selected architecture references."
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/UI-SPEC.md",
+      "reason": "No uncovered verification obligation required additional UI contract selectors beyond STORIES plus TEST-SPEC."
+    }
+  ],
+  "interestedData": {
+    "storyScope": ["US-1", "US-2", "US-3", "US-4"],
+    "coverageScope": [
+      "current capability obligations",
+      "full KG contract matrix"
+    ],
+    "decisionLock": ["D-KG-001", "D-KG-002", "D-KG-003"],
+    "relationshipEdgeLabels": [
+      "applies",
+      "consumes",
+      "contains",
+      "displays",
+      "exposes",
+      "fetches",
+      "maps",
+      "mutates",
+      "orchestrates",
+      "produces",
+      "queries",
+      "reflects",
+      "renders",
+      "shapes",
+      "transitions",
+      "wraps"
+    ],
+    "source": "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph"
+  },
+  "unresolvedBlockers": [
+    {
+      "id": "B1",
+      "status": "downstream-gate",
+      "title": "W3 verify stage precondition not closed",
+      "evidence": [
+        "docs/features/knowledge-graph-visualization/WORK-PACK.md#wave-status-board",
+        "docs/features/knowledge-graph-visualization/WORK-PACK.md#pipeline-stage-coverage"
+      ],
+      "details": "WORK-PACK still shows pre-verification stages in progress/not-started for W3 verify handoff.",
+      "remediation": "Finalize W2 evidence and status sync (or explicitly waive gate), then run domainspec-verify-feature and publish VERIFICATION.md."
+    }
+  ]
+}

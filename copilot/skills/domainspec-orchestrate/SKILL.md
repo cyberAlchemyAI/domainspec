@@ -58,12 +58,24 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
 6. Execution model requirements:
    - Every routed specialist stage must run through a delegated subagent call, including single-stage routes.
    - Do not execute specialist logic inline in the orchestrator.
-   - Capture each stage result before advancing to the next stage.
+    - Create a `stageRunId` for each delegated stage.
+    - Before invoking each delegated stage, append a telemetry heartbeat row with `outcome: started` and the stage `stageRunId`.
+    - Capture each stage result before advancing to the next stage.
+    - Enforce watchdog windows per delegation profile:
+       - `quick`: 8 minutes max
+       - `standard`: 15 minutes max
+       - `deep`: 25 minutes max
    - Run a subagent liveness verification gate after every delegated stage:
      - Mark stage `healthy` only when the delegated call returns a terminal outcome (`completed`, `blocked`, or `failed`) with stage evidence.
-     - If a delegated stage does not return a terminal outcome or appears stalled, mark it `suspected-stuck`.
-     - On `suspected-stuck`: capture last available stage output/evidence, retry the same delegated stage once, then stop with `blocked-at-<stage>(subagent-stuck)` if the retry is also non-terminal.
+       - Mark stage `suspected-stuck` when any of these occur:
+          - delegated stage does not return a terminal outcome,
+          - watchdog window is exceeded,
+          - repeated non-progress loop is detected (for example 12+ tool calls without new files, new evidence, or terminal output).
+       - On `suspected-stuck`: capture last available stage output/evidence, retry the same delegated stage once with narrowed scope and explicit execution caps.
+          - For `domainspec-context-builder` retries, cap to at most 6 read/search batches and 1 write batch, and prohibit repeated chunk-reads of generated context artifacts.
+       - Stop with `blocked-at-<stage>(subagent-stuck)` if the retry is also non-terminal.
     - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` with: `timestamp`, `skill`, `stage`, `delegatedCommand`, `delegationProfile`, `thinkingBudget`, `outcome`, `suspectedStuck`, `retryCount`, `durationMs` (when available), and `notes`.
+         - Include `stageRunId` in each row so `started` and terminal rows can be correlated.
     - If telemetry append fails, continue execution but return FLAG details with remediation to restore delegation tracking.
    - After any successful delegated `domainspec-spec-feature <feature>` stage, immediately run delegated `domainspec-plan-phase-bridge <feature> --mode native` to refresh or create `WORK-PACK.md` and `work-pack/tasks/*.md` artifacts before continuing.
    - For multi-stage workflows, stop on first BLOCK/failure and return the blocking stage, evidence, and remediation.
@@ -102,6 +114,7 @@ Return:
 - Execution result: completed | blocked-at-<stage>
 - Subagent verification: enabled
 - Stage health: healthy | stuck-at-<stage>
+- Watchdog: stable | triggered-at-<stage>
 - Verification evidence: <stage attempts, last-progress evidence, retry action>
 - Delegation profile: quick | standard | deep
 - Thinking budget: low | medium | high | xhigh

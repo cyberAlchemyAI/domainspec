@@ -16,6 +16,15 @@ export interface OpenDefinitionCommand {
   aspectHint?: AspectKind;
 }
 
+/**
+ * domainspec:
+ *   concept:
+ *     id: knowledge-graph-visualization.DefinitionOpened
+ *     type: Event
+ *   edges:
+ *     - edge: transitions
+ *       to: knowledge-graph-visualization.ExplorationState
+ */
 export interface OpenDefinitionResult {
   pointer: DefinitionPointer;
   target: string;

@@ -108,13 +108,22 @@ Read first:
      - `standard`: prefer `sonnet` with `medium` thinking for docs/planning synthesis stages.
      - `deep`: prefer high-capability model with `high` thinking for high-risk mutation/architecture stages.
      - Default to the lowest-cost viable profile; avoid starting at `xhigh` thinking unless explicitly required.
+   - Create a `stageRunId` per delegated stage.
+   - Before each delegated call, append a telemetry heartbeat row with `outcome: started` and that `stageRunId`.
+   - Enforce watchdog windows per delegation profile:
+     - `quick`: 8 minutes max
+     - `standard`: 15 minutes max
+     - `deep`: 25 minutes max
    - Capture each stage result before continuing.
   - Verify delegated stage liveness after each stage:
     - Stage is `healthy` only when delegated execution returns a terminal outcome (`completed`, `blocked`, `failed`) with evidence.
-    - Stage is `suspected-stuck` when delegated execution is non-terminal/stalled.
-    - On `suspected-stuck`, capture last available output/evidence, retry once with safer bounded execution, then stop with `blocked-at-<stage>(subagent-stuck)` if retry is also non-terminal.
+     - Stage is `suspected-stuck` when delegated execution is non-terminal/stalled, watchdog budget is exceeded, or repeated non-progress loops occur (for example 12+ tool calls with no new evidence).
+     - On `suspected-stuck`, capture last available output/evidence, retry once with safer bounded execution and narrowed prompt scope.
+     - For `domainspec-context-builder` retries, cap to at most 6 read/search batches and 1 write batch, and prohibit repeated chunk-reads of generated context artifacts.
+     - Stop with `blocked-at-<stage>(subagent-stuck)` if retry is also non-terminal.
      - On `suspected-stuck` after a `high|xhigh` attempt, retry with reduced thinking (`medium` or `low`) and narrowed stage scope before final block.
    - Append one telemetry entry per delegated stage to `docs/signals/delegation-tuning.jsonl` with: `timestamp`, `skill`, `stage`, `delegatedCommand`, `delegationProfile`, `thinkingBudget`, `outcome`, `suspectedStuck`, `retryCount`, `durationMs` (when available), and `notes`.
+      - Include `stageRunId` in each row to correlate `started` heartbeat entries with terminal outcomes.
    - If telemetry append fails, continue execution but return FLAG details with remediation to restore delegation tracking.
    - For multi-stage pipelines, run sequentially and stop on first BLOCK/failure; return stage-level evidence and remediation.
 6. After the user selects an option (or provides an exact `domainspec-*` command), execute the selected route immediately in the same turn.
@@ -154,6 +163,7 @@ Return:
 - Result: completed | blocked-at-<stage>
 - Subagent verification: enabled
 - Stage health: healthy | stuck-at-<stage>
+- Watchdog: stable | triggered-at-<stage>
 - Verification evidence: <stage attempts, last-progress evidence, retry action>
 - Delegation profile: quick | standard | deep
 - Thinking budget: low | medium | high | xhigh
