@@ -1,0 +1,22 @@
+node:fs:1502
+  const result = binding.readdir(
+                         ^
+
+Error: ENOTDIR: not a directory, scandir '/home/vrondelli/projects/domainspec-core/implementation/domainspec/apps/web/src/hooks/useMirrorGraph.ts'
+    at readdirSync (node:fs:1502:26)
+    at walk (/home/vrondelli/projects/domainspec-core/implementation/domainspec/governance/tags/tools/extract-code-tags.ts:141:23)
+    at <anonymous> (/home/vrondelli/projects/domainspec-core/implementation/domainspec/governance/tags/tools/extract-code-tags.ts:36:21)
+    at Array.flatMap (<anonymous>)
+    at <anonymous> (/home/vrondelli/projects/domainspec-core/implementation/domainspec/governance/tags/tools/extract-code-tags.ts:36:4)
+    at Object.<anonymous> (/home/vrondelli/projects/domainspec-core/implementation/domainspec/governance/tags/tools/extract-code-tags.ts:164:10)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object.transformer (/home/vrondelli/.cache/pnpm/dlx/cc5fc58d7389ce0db1878f48383c72c31c4f6959d85d13629f5bd3790f4c1fff/19dfe5f7834-c0f20/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12) {
+  errno: -20,
+  code: 'ENOTDIR',
+  syscall: 'scandir',
+  path: '/home/vrondelli/projects/domainspec-core/implementation/domainspec/apps/web/src/hooks/useMirrorGraph.ts'
+}
+
+Node.js v22.12.0

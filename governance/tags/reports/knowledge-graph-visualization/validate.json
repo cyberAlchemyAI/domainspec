@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "mode": "strict",
+  "input": "governance/tags/reports/knowledge-graph-visualization/extract.json",
+  "relationships": "RELATIONSHIPS.md",
+  "taxonomy": "TAXONOMY.md",
+  "featuresRoot": "docs/features/knowledge-graph-visualization",
+  "tags": 42,
+  "issues": 0,
+  "nonWaivedIssues": 0,
+  "blockingIssues": 0,
+  "waivedIssues": 0,
+  "requireEvidence": false,
+  "report": []
+}

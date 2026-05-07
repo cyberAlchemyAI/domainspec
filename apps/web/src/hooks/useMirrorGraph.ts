@@ -147,7 +147,9 @@ export function useMirrorGraph(input: UseMirrorGraphInput = {}) {
         void graphKey;
 
         const cardsPromise = options.includeCards
-          ? getMirrorCards(scope)
+          ? getMirrorCards(scope, {
+              activeAspect: options.navigation.activeAspect,
+            })
           : Promise.resolve(null);
         const graphPromise = getRelationshipGraph(scope, {
           activeAspect: options.navigation.activeAspect,

@@ -56,6 +56,7 @@ interface FeatureQuerystring {
 interface MirrorCardsQuerystring extends FeatureQuerystring {
   includeOptionalAspects?: string;
   aspectKinds?: string | string[];
+  activeAspect?: string;
 }
 
 interface GraphQuerystring extends FeatureQuerystring {
@@ -200,6 +201,8 @@ export function registerKnowledgeGraphRoutes(
     "/api/knowledge-graph/rebuild",
     async (request, reply) => {
       try {
+        assertWriteScope(request.headers["x-scopes"]);
+
         const projectKey = request.body.projectKey ?? defaultProjectKey;
         const featureId =
           request.body.featureId ?? "knowledge-graph-visualization";
@@ -248,6 +251,10 @@ export function registerKnowledgeGraphRoutes(
         const requestedAspectKinds = parseAspectKinds(
           request.query.aspectKinds,
         );
+        const activeAspect = parseAspectKind(
+          request.query.activeAspect,
+          "SPEC",
+        );
 
         projectSourceRegistry.resolveProjectionScope({ projectKey, featureId });
         const projection = getLatestProjection({
@@ -267,7 +274,13 @@ export function registerKnowledgeGraphRoutes(
           generatedAt: projection.generatedAt,
           cards: cards.map((card) => ({
             cardId: `aspect:${card.filePath}`,
-            ...card,
+            filePath: card.filePath,
+            title: card.title,
+            aspectKind: card.aspectKind,
+            conceptCount: card.conceptCount,
+            storyCount: card.relationCount,
+            freshness: card.freshness,
+            isActive: card.aspectKind === activeAspect,
           })),
         });
       } catch (error) {
@@ -523,6 +536,43 @@ export function registerKnowledgeGraphRoutes(
 }
 
 function assertReadScope(rawScopes: unknown): void {
+  assertScope(rawScopes, "domainspec.kg.read", "Read");
+}
+
+function assertWriteScope(rawScopes: unknown): void {
+  assertScope(rawScopes, "domainspec.kg.write", "Write");
+}
+
+function assertScope(
+  rawScopes: unknown,
+  requiredScope: "domainspec.kg.read" | "domainspec.kg.write",
+  label: "Read" | "Write",
+): void {
+  const scopes = parseScopes(rawScopes);
+
+  if (scopes.length === 0) {
+    throw createKnowledgeGraphError(
+      "KG_AUTH_REQUIRED",
+      `${label} scope ${requiredScope} is required`,
+      {
+        requiredScope,
+      },
+    );
+  }
+
+  if (!scopes.includes(requiredScope)) {
+    throw createKnowledgeGraphError(
+      "KG_AUTH_FORBIDDEN",
+      `${label} scope ${requiredScope} is required`,
+      {
+        requiredScope,
+        providedScopes: scopes,
+      },
+    );
+  }
+}
+
+function parseScopes(rawScopes: unknown): string[] {
   const values =
     typeof rawScopes === "string"
       ? [rawScopes]
@@ -532,21 +582,11 @@ function assertReadScope(rawScopes: unknown): void {
           )
         : [];
 
-  const scopes = values
+  return values
     .join(" ")
     .split(/[\s,]+/)
     .map((value) => value.trim())
     .filter((value) => value.length > 0);
-
-  if (!scopes.includes("domainspec.kg.read")) {
-    throw createKnowledgeGraphError(
-      "KG_AUTH_REQUIRED",
-      "Read scope domainspec.kg.read is required",
-      {
-        requiredScope: "domainspec.kg.read",
-      },
-    );
-  }
 }
 
 function parseBoolean(
@@ -824,6 +864,8 @@ function errorStatusCode(code: KnowledgeGraphErrorCode): number {
   switch (code) {
     case "KG_AUTH_REQUIRED":
       return 401;
+    case "KG_AUTH_FORBIDDEN":
+      return 403;
     case "MIRROR_SOURCE_PROJECT_UNKNOWN":
     case "MIRROR_SOURCE_FEATURE_UNAVAILABLE":
       return 404;

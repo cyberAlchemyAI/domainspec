@@ -1,229 +1,172 @@
 {
+  "stage": "context-builder",
   "feature": "knowledge-graph-visualization",
-  "task": {
-    "id": "TASK-KG-IMP-01",
-    "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md"
-  },
+  "taskId": "TASK-KG-IMP-01",
+  "commandContract": "domainspec-context-builder knowledge-graph-visualization --task TASK-KG-IMP-01 --mode standard --strict --emit both",
   "mode": "standard",
   "strict": true,
-  "generatedAt": "2026-05-06",
+  "emit": "both",
+  "generatedOn": "2026-05-07",
   "frameworkConstraints": [
     {
       "version": "2.0.8",
-      "source": "CHANGELOG.md",
-      "applied": "Reviewed latest framework policy; delegation profile and telemetry additions do not change strict selector/obligation retrieval constraints for context-builder artifacts."
+      "applied": [
+        "explicit delegated-stage evidence",
+        "suspected-stuck reporting fields"
+      ]
     },
     {
       "version": "2.0.4",
-      "source": "CHANGELOG.md",
-      "applied": "Enforced strict relevance with selector+obligation binding, interested-data subset policy, required index schema, and mode budgets."
+      "applied": [
+        "selector-first strict relevance gate",
+        "obligationRef binding on all selected files",
+        "interested-data subset requirement",
+        "mode budget enforcement"
+      ]
     }
   ],
-  "plannerGate": {
-    "status": "pass",
-    "source": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
-    "selector": "Planner Control Fields/plannerGateStatus"
-  },
-  "budget": {
+  "budgets": {
+    "profile": "standard",
     "maxFiles": 14,
     "maxExcerptLines": 280,
-    "selectedFiles": 14,
-    "selectedSnippetCount": 25,
-    "selectedExcerptLines": 259,
-    "noiseRatio": 0
+    "maxNoiseRatio": 0.15
   },
-  "rankingMethod": "score=(1-signal)*0.45 + cost*0.30 + ambiguity*0.25",
-  "obligationMatrix": [
+  "usage": {
+    "selectedFiles": 12,
+    "selectedExcerptLines": 236,
+    "noiseRatio": 0.12
+  },
+  "obligations": [
     {
-      "obligationId": "O1",
-      "title": "Planner preflight gate must be PASS before context writes",
-      "source": [
-        "docs/features/knowledge-graph-visualization/WORK-PACK.md#planner-control-fields"
+      "id": "O1",
+      "description": "Parse only scoped feature docs from resolved ProjectionScope.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#execution-steps",
+        "docs/features/knowledge-graph-visualization/operations.md#resolveprojectionscope"
       ]
     },
     {
-      "obligationId": "O2",
-      "title": "Scope isolation and root confinement for (projectKey, featureId)",
-      "source": [
+      "id": "O2",
+      "description": "Enforce strict (projectKey, featureId) scope isolation and root-path confinement.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives",
         "docs/features/knowledge-graph-visualization/operations.md#resolveprojectionscope",
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives"
+        "docs/features/knowledge-graph-visualization/interfaces.md#internal-projectsourceregistry-interface"
       ]
     },
     {
-      "obligationId": "O3",
-      "title": "Required mirror source files are mandatory",
-      "source": [
+      "id": "O3",
+      "description": "Reject missing required mirror files before rebuild continues.",
+      "sources": [
         "docs/features/knowledge-graph-visualization/operations.md#rebuildmirrorprojection",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd"
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md"
       ]
     },
     {
-      "obligationId": "O4",
-      "title": "Relationship index must parse all required SPEC sources",
-      "source": [
+      "id": "O4",
+      "description": "Parse relationship index from Feature Concept Graph, Cross-Feature Dependencies, and Produces For.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives",
         "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph",
         "docs/features/knowledge-graph-visualization/SPEC.md#cross-feature-dependencies",
-        "docs/features/knowledge-graph-visualization/SPEC.md#produces-for",
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives"
+        "docs/features/knowledge-graph-visualization/SPEC.md#produces-for"
       ]
     },
     {
-      "obligationId": "O5",
-      "title": "Edge labels must be canonical",
-      "source": [
-        "docs/features/knowledge-graph-visualization/mappings.md#documenttoconceptmapping",
-        "RELATIONSHIPS.md",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd"
+      "id": "O5",
+      "description": "Validate relationship labels against canonical vocabulary before projection persistence.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives",
+        "docs/features/knowledge-graph-visualization/SPEC.md#references"
       ]
     },
     {
-      "obligationId": "O6",
-      "title": "Edge endpoints must resolve against parsed concept IDs",
-      "source": [
-        "docs/features/knowledge-graph-visualization/mappings.md#documenttoconceptmapping",
-        "docs/features/knowledge-graph-visualization/operations.md#rebuildmirrorprojection",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd"
-      ]
-    },
-    {
-      "obligationId": "O7",
-      "title": "Parsed docs must materialize into domain entities before persistence/exposure",
-      "source": [
-        "docs/features/knowledge-graph-visualization/domain.md",
-        "docs/features/knowledge-graph-visualization/mappings.md",
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#execution-steps"
-      ]
-    },
-    {
-      "obligationId": "O8",
-      "title": "Whiteboard projection artifacts must support aspect/feature/concept with deterministic ordering",
-      "source": [
+      "id": "O6",
+      "description": "Validate relationship endpoints against parsed concept IDs.",
+      "sources": [
         "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives",
         "docs/features/knowledge-graph-visualization/operations.md#rebuildmirrorprojection"
       ]
     },
     {
-      "obligationId": "O9",
-      "title": "Projection persistence must be atomic per snapshot",
-      "source": [
-        "docs/features/knowledge-graph-visualization/operations.md#rebuildmirrorprojection",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-error-state-obligations-operationsmd"
+      "id": "O7",
+      "description": "Materialize parser outputs into domain entities before projection exposure.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#execution-steps",
+        "docs/features/knowledge-graph-visualization/domain.md"
       ]
     },
     {
-      "obligationId": "O10",
-      "title": "Layering boundaries must place parser IO in adapters/infrastructure and canonical checks in application",
-      "source": [
-        "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md#layer-model",
-        "architecture/pattern-library/LAYERING-REFERENCE.md#layer-responsibilities",
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives"
+      "id": "O8",
+      "description": "Produce deterministic whiteboard artifacts for aspect, feature, and concept levels.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#implementation-directives",
+        "docs/features/knowledge-graph-visualization/domain.md#mirrorprojection"
       ]
     },
     {
-      "obligationId": "O11",
-      "title": "Preserve rebuild request mapping and project-source scope contracts",
-      "source": [
-        "docs/features/knowledge-graph-visualization/interfaces.md#post-apiknowledge-graphrebuild",
+      "id": "O9",
+      "description": "Persist one MirrorProjection snapshot atomically per scope key.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#execution-steps",
+        "docs/features/knowledge-graph-visualization/operations.md#rebuildmirrorprojection"
+      ]
+    },
+    {
+      "id": "O10",
+      "description": "Preserve rebuild request mapping and ProjectSourceRegistry interface contract.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/interfaces.md#external-knowledgegraphapi-rest",
         "docs/features/knowledge-graph-visualization/interfaces.md#internal-projectsourceregistry-interface"
       ]
     },
     {
-      "obligationId": "O12",
-      "title": "Keep parser contract verification IDs and unresolved cross-project formal gaps explicit",
-      "source": [
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-rule-obligations-operationsmd",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#operation-error-state-obligations-operationsmd",
-        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#uncovered-formal-gaps"
+      "id": "O11",
+      "description": "Maintain parser verification obligations KG-BE-OP-001..010 and KG-BE-ERR-001..004.",
+      "sources": ["docs/features/knowledge-graph-visualization/TEST-SPEC.md"]
+    },
+    {
+      "id": "O12",
+      "description": "Keep uncovered formal cross-project scope gaps visible for follow-up formalization.",
+      "sources": [
+        "docs/features/knowledge-graph-visualization/TEST-SPEC.md#uncovered-formal-gaps",
+        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#gaps-and-questions"
       ]
     },
     {
-      "obligationId": "O13",
-      "title": "Reuse approved legacy bootstrap and test lifecycle patterns",
-      "source": [
+      "id": "O13",
+      "description": "Enforce architecture layering between adapter and application responsibilities.",
+      "sources": [
+        "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md#layer-model",
+        "architecture/pattern-library/LAYERING-REFERENCE.md#interface--adapters-layer"
+      ]
+    },
+    {
+      "id": "O14",
+      "description": "Reuse approved legacy server bootstrap and inject lifecycle patterns without restoring removed parser modules.",
+      "sources": [
         "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#reusable-legacy-assets",
         "backend/src/server.ts",
         "backend/src/server.test.ts"
-      ]
-    },
-    {
-      "obligationId": "O14",
-      "title": "Enforce legacy carryover limits (no deleted in-memory source restoration)",
-      "source": [
-        "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md#legacy-carryover-limits"
       ]
     }
   ],
   "selected": [
     {
       "path": "docs/features/knowledge-graph-visualization/work-pack/tasks/TASK-KG-IMP-01.md",
-      "reason": "Primary task contract and coverage-ID authority.",
-      "score": {
-        "signal": 0.99,
-        "cost": 0.55,
-        "ambiguity": 0.06,
-        "value": 0.18
-      },
+      "reason": "Primary contract defining scope, directives, and lock decisions.",
       "selectors": [
-        {
-          "type": "heading",
-          "value": "Goal",
-          "line": 3
-        },
-        {
-          "type": "heading",
-          "value": "DomainSpec Coverage",
-          "line": 16
-        },
-        {
-          "type": "heading",
-          "value": "Architecture References",
-          "line": 27
-        },
-        {
-          "type": "heading",
-          "value": "Implementation Directives",
-          "line": 34
-        },
-        {
-          "type": "heading",
-          "value": "legacy Carryover Limits",
-          "line": 57
-        },
-        {
-          "type": "heading",
-          "value": "Execution Steps",
-          "line": 62
-        },
-        {
-          "type": "heading",
-          "value": "Completion Criteria",
-          "line": 72
-        },
-        {
-          "type": "heading",
-          "value": "Decision Lock",
-          "line": 94
-        }
-      ],
-      "excerpts": [
-        {
-          "startLine": 16,
-          "endLine": 27,
-          "purpose": "Coverage links and IDs used to seed obligations"
-        },
-        {
-          "startLine": 34,
-          "endLine": 47,
-          "purpose": "Layering, canonical validation, scope, and ordering directives"
-        },
-        {
-          "startLine": 57,
-          "endLine": 79,
-          "purpose": "Legacy carryover, execution, and completion requirements"
-        }
+        { "type": "heading", "value": "## DomainSpec Coverage" },
+        { "type": "heading", "value": "## Architecture References" },
+        { "type": "heading", "value": "## Implementation Directives" },
+        { "type": "heading", "value": "## Reusable legacy Assets" },
+        { "type": "heading", "value": "## legacy Carryover Limits" },
+        { "type": "heading", "value": "## Execution Steps" },
+        { "type": "heading", "value": "## Completion Criteria" },
+        { "type": "heading", "value": "## Decision Lock" }
       ],
       "obligationRefs": [
+        "O1",
         "O2",
         "O3",
         "O4",
@@ -237,830 +180,272 @@
         "O12",
         "O13",
         "O14"
-      ]
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/WORK-PACK.md",
-      "reason": "Planner gate preflight and architecture-guided directive evidence.",
-      "score": {
-        "signal": 0.74,
-        "cost": 0.22,
-        "ambiguity": 0.11,
-        "value": 0.21
-      },
-      "selectors": [
-        {
-          "type": "heading",
-          "value": "Planner Control Fields",
-          "line": 7
-        },
-        {
-          "type": "table-row",
-          "value": "plannerGateStatus=pass",
-          "line": 11
-        },
-        {
-          "type": "heading",
-          "value": "Architecture-Guided Task Directives",
-          "line": 39
-        },
-        {
-          "type": "table-row",
-          "value": "KG-IMP-01",
-          "line": 44
-        }
       ],
-      "excerpts": [
-        {
-          "startLine": 7,
-          "endLine": 12,
-          "purpose": "Planner gate verification before writes"
-        },
-        {
-          "startLine": 39,
-          "endLine": 45,
-          "purpose": "Architecture-guided layering directive for KG-IMP-01"
-        }
-      ],
-      "obligationRefs": ["O1", "O10"]
+      "ranking": {
+        "signal": 0.99,
+        "cost": 0.2,
+        "ambiguity": 0.05,
+        "score": 0.077
+      }
     },
     {
       "path": "docs/features/knowledge-graph-visualization/domain.md",
-      "reason": "Domain entities and value objects for parser output materialization.",
-      "score": {
-        "signal": 0.9,
-        "cost": 0.4,
-        "ambiguity": 0.1,
-        "value": 0.19
-      },
+      "reason": "Domain entities and enums required for parser output materialization.",
       "selectors": [
-        {
-          "type": "heading",
-          "value": "DocumentationWorkspace",
-          "line": 5
-        },
-        {
-          "type": "heading",
-          "value": "FeatureDocument",
-          "line": 21
-        },
-        {
-          "type": "heading",
-          "value": "ConceptDefinition",
-          "line": 39
-        },
-        {
-          "type": "heading",
-          "value": "MirrorProjection",
-          "line": 57
-        },
-        {
-          "type": "heading",
-          "value": "ProjectionScope",
-          "line": 97
-        },
-        {
-          "type": "heading",
-          "value": "RelationshipEdge",
-          "line": 110
-        },
-        {
-          "type": "heading",
-          "value": "MirrorCardView",
-          "line": 141
-        },
-        {
-          "type": "heading",
-          "value": "AspectKind",
-          "line": 178
-        },
-        {
-          "type": "heading",
-          "value": "FreshnessStatus",
-          "line": 192
-        }
+        { "type": "heading", "value": "### DocumentationWorkspace" },
+        { "type": "heading", "value": "### ProjectionScope" },
+        { "type": "heading", "value": "### FeatureDocument" },
+        { "type": "heading", "value": "### ConceptDefinition" },
+        { "type": "heading", "value": "### MirrorProjection" },
+        { "type": "heading", "value": "### RelationshipEdge" },
+        { "type": "heading", "value": "### MirrorCardView" },
+        { "type": "heading", "value": "### AspectKind" },
+        { "type": "heading", "value": "### FreshnessStatus" },
+        { "type": "heading", "value": "### WhiteboardCard" },
+        { "type": "heading", "value": "### WhiteboardEdge" }
       ],
-      "excerpts": [
-        {
-          "startLine": 5,
-          "endLine": 16,
-          "purpose": "Workspace source model for scope-resolved parsing"
-        },
-        {
-          "startLine": 57,
-          "endLine": 72,
-          "purpose": "Projection aggregate fields for persisted snapshot"
-        },
-        {
-          "startLine": 97,
-          "endLine": 107,
-          "purpose": "ProjectionScope value-object constraints"
-        }
-      ],
-      "obligationRefs": ["O2", "O7", "O8"]
+      "obligationRefs": ["O1", "O7", "O8", "O9"],
+      "ranking": {
+        "signal": 0.92,
+        "cost": 0.22,
+        "ambiguity": 0.1,
+        "score": 0.127
+      }
     },
     {
       "path": "docs/features/knowledge-graph-visualization/operations.md",
-      "reason": "Canonical operation rules, calculations, and deterministic rejection contract.",
-      "score": {
-        "signal": 0.96,
-        "cost": 0.42,
-        "ambiguity": 0.08,
-        "value": 0.16
-      },
+      "reason": "Rule-level source for scope guards, canonical checks, and persistence behavior.",
       "selectors": [
-        {
-          "type": "heading",
-          "value": "ResolveProjectionScope",
-          "line": 3
-        },
-        {
-          "type": "table-rows",
-          "value": "R1-R3",
-          "lineStart": 20,
-          "lineEnd": 22
-        },
-        {
-          "type": "heading",
-          "value": "RebuildMirrorProjection",
-          "line": 39
-        },
-        {
-          "type": "table-rows",
-          "value": "R0-R6",
-          "lineStart": 58,
-          "lineEnd": 64
-        },
-        {
-          "type": "table-rows",
-          "value": "C1-C4",
-          "lineStart": 70,
-          "lineEnd": 73
-        },
-        {
-          "type": "table",
-          "value": "Error States",
-          "lineStart": 91,
-          "lineEnd": 97
-        }
+        { "type": "heading", "value": "## ResolveProjectionScope" },
+        { "type": "table-range", "value": "ResolveProjectionScope R1-R3" },
+        { "type": "heading", "value": "## RebuildMirrorProjection" },
+        { "type": "table-range", "value": "RebuildMirrorProjection R0-R6" },
+        { "type": "table-range", "value": "RebuildMirrorProjection C1-C4" },
+        { "type": "section", "value": "Error States" }
       ],
-      "excerpts": [
-        {
-          "startLine": 16,
-          "endLine": 22,
-          "purpose": "ResolveProjectionScope rules for scope and path validation"
-        },
-        {
-          "startLine": 54,
-          "endLine": 64,
-          "purpose": "RebuildMirrorProjection mandatory rules"
-        },
-        {
-          "startLine": 66,
-          "endLine": 73,
-          "purpose": "Deterministic projection calculations"
-        },
-        {
-          "startLine": 87,
-          "endLine": 97,
-          "purpose": "Deterministic parser/projection error codes"
-        }
-      ],
-      "obligationRefs": ["O2", "O3", "O5", "O6", "O8", "O9"]
+      "obligationRefs": ["O1", "O2", "O3", "O4", "O5", "O6", "O8", "O9", "O13"],
+      "ranking": {
+        "signal": 0.96,
+        "cost": 0.24,
+        "ambiguity": 0.08,
+        "score": 0.11
+      }
     },
     {
       "path": "docs/features/knowledge-graph-visualization/mappings.md",
-      "reason": "Parser and adapter transformations with edge and endpoint validation contracts.",
-      "score": {
-        "signal": 0.91,
-        "cost": 0.31,
-        "ambiguity": 0.1,
-        "value": 0.16
-      },
+      "reason": "Mapping contracts define parser and adapter transformations.",
       "selectors": [
+        { "type": "heading", "value": "## DocumentToConceptMapping" },
         {
-          "type": "heading",
-          "value": "DocumentToConceptMapping",
-          "line": 3
+          "type": "table",
+          "value": "DocumentToConceptMapping validation rows"
         },
-        {
-          "type": "heading",
-          "value": "Validation",
-          "line": 27
-        },
-        {
-          "type": "heading",
-          "value": "DocumentToMirrorCardAdapter",
-          "line": 37
-        },
-        {
-          "type": "heading",
-          "value": "ConceptToDetailCardAdapter",
-          "line": 68
-        }
+        { "type": "heading", "value": "## DocumentToMirrorCardAdapter" },
+        { "type": "heading", "value": "## ConceptToDetailCardAdapter" }
       ],
-      "excerpts": [
-        {
-          "startLine": 9,
-          "endLine": 17,
-          "purpose": "Core field mapping for parsed docs and relationships"
-        },
-        {
-          "startLine": 27,
-          "endLine": 33,
-          "purpose": "Canonical edge and endpoint validation rules"
-        },
-        {
-          "startLine": 43,
-          "endLine": 52,
-          "purpose": "Mirror card adapter mapping contract"
-        }
-      ],
-      "obligationRefs": ["O5", "O6", "O7"]
+      "obligationRefs": ["O7", "O8", "O13"],
+      "ranking": {
+        "signal": 0.9,
+        "cost": 0.18,
+        "ambiguity": 0.1,
+        "score": 0.124
+      }
     },
     {
       "path": "docs/features/knowledge-graph-visualization/SPEC.md",
-      "reason": "Authoritative relationship-index source sections for parser input.",
-      "score": {
-        "signal": 0.89,
-        "cost": 0.37,
-        "ambiguity": 0.12,
-        "value": 0.19
-      },
+      "reason": "Required relationship-index sources and relationship governance pointers.",
       "selectors": [
-        {
-          "type": "heading",
-          "value": "Concepts",
-          "line": 85
-        },
-        {
-          "type": "heading",
-          "value": "Feature Concept Graph",
-          "line": 139
-        },
-        {
-          "type": "heading",
-          "value": "Cross-Feature Dependencies",
-          "line": 207
-        },
-        {
-          "type": "heading",
-          "value": "Produces For",
-          "line": 214
-        }
+        { "type": "heading", "value": "## Feature Concept Graph" },
+        { "type": "heading", "value": "## Cross-Feature Dependencies" },
+        { "type": "heading", "value": "## Produces For" },
+        { "type": "heading", "value": "## References" }
       ],
-      "excerpts": [
-        {
-          "startLine": 139,
-          "endLine": 156,
-          "purpose": "Feature concept graph edges for canonical relationship extraction"
-        },
-        {
-          "startLine": 207,
-          "endLine": 221,
-          "purpose": "Cross-feature dependencies and produces-for relationship index sources"
-        }
-      ],
-      "obligationRefs": ["O4", "O5", "O6", "O8"]
+      "obligationRefs": ["O4", "O5", "O8"],
+      "ranking": {
+        "signal": 0.95,
+        "cost": 0.26,
+        "ambiguity": 0.12,
+        "score": 0.131
+      }
     },
     {
       "path": "docs/features/knowledge-graph-visualization/interfaces.md",
-      "reason": "Rebuild request and project-source scope contracts.",
-      "score": {
-        "signal": 0.86,
-        "cost": 0.24,
-        "ambiguity": 0.1,
-        "value": 0.16
-      },
+      "reason": "Request mapping and internal scope-resolution interface contract.",
       "selectors": [
+        { "type": "heading", "value": "### POST /api/knowledge-graph/rebuild" },
+        { "type": "table", "value": "rebuild request field mapping" },
         {
           "type": "heading",
-          "value": "POST /api/knowledge-graph/rebuild",
-          "line": 5
+          "value": "## Internal: ProjectSourceRegistry Interface"
         },
-        {
-          "type": "table-rows",
-          "value": "projectKey/featureId/sourceFiles/requestedBy mappings",
-          "lineStart": 14,
-          "lineEnd": 17
-        },
-        {
-          "type": "heading",
-          "value": "Internal: ProjectSourceRegistry Interface",
-          "line": 169
-        },
-        {
-          "type": "table-row",
-          "value": "resolveProjectionScope(input)",
-          "line": 175
-        }
+        { "type": "table-row", "value": "resolveProjectionScope(input)" }
       ],
-      "excerpts": [
-        {
-          "startLine": 5,
-          "endLine": 17,
-          "purpose": "Rebuild endpoint field mapping contract"
-        },
-        {
-          "startLine": 169,
-          "endLine": 175,
-          "purpose": "Trusted projection scope-resolution contract"
-        }
-      ],
-      "obligationRefs": ["O2", "O11"]
+      "obligationRefs": ["O2", "O10", "O13"],
+      "ranking": {
+        "signal": 0.89,
+        "cost": 0.19,
+        "ambiguity": 0.1,
+        "score": 0.132
+      }
     },
     {
       "path": "docs/features/knowledge-graph-visualization/TEST-SPEC.md",
-      "reason": "Parser rule/error test obligations and remaining formal cross-project scope gaps.",
-      "score": {
-        "signal": 0.84,
+      "reason": "Deterministic verification IDs and unresolved gap registry.",
+      "selectors": [
+        { "type": "heading", "value": "## Backend Test Catalogue" },
+        { "type": "id-range", "value": "KG-BE-OP-001..KG-BE-OP-010" },
+        { "type": "id-range", "value": "KG-BE-ERR-001..KG-BE-ERR-004" },
+        { "type": "heading", "value": "## Uncovered Formal Gaps" }
+      ],
+      "obligationRefs": ["O3", "O11", "O12"],
+      "ranking": {
+        "signal": 0.91,
         "cost": 0.23,
-        "ambiguity": 0.12,
-        "value": 0.17
-      },
-      "selectors": [
-        {
-          "type": "test-id",
-          "value": "KG-BE-OP-001",
-          "line": 40
-        },
-        {
-          "type": "test-id",
-          "value": "KG-BE-OP-010",
-          "line": 49
-        },
-        {
-          "type": "test-id",
-          "value": "KG-BE-ERR-001",
-          "line": 91
-        },
-        {
-          "type": "test-id",
-          "value": "KG-BE-ERR-004",
-          "line": 94
-        },
-        {
-          "type": "heading",
-          "value": "Uncovered Formal Gaps",
-          "line": 228
-        }
-      ],
-      "excerpts": [
-        {
-          "startLine": 40,
-          "endLine": 49,
-          "purpose": "Rebuild parser rule and persistence obligations"
-        },
-        {
-          "startLine": 91,
-          "endLine": 95,
-          "purpose": "Deterministic parser rejection error obligations"
-        },
-        {
-          "startLine": 228,
-          "endLine": 231,
-          "purpose": "Outstanding cross-project scope formalization gaps"
-        }
-      ],
-      "obligationRefs": ["O3", "O5", "O6", "O9", "O12"]
-    },
-    {
-      "path": "RELATIONSHIPS.md",
-      "reason": "Canonical edge-vocabulary authority restricted to SPEC-derived subset.",
-      "score": {
-        "signal": 0.82,
-        "cost": 0.12,
-        "ambiguity": 0.09,
-        "value": 0.14
-      },
-      "selectors": [
-        {
-          "type": "heading",
-          "value": "applies",
-          "line": 146
-        },
-        {
-          "type": "heading",
-          "value": "consumes",
-          "line": 222
-        },
-        {
-          "type": "heading",
-          "value": "contains",
-          "line": 164
-        },
-        {
-          "type": "heading",
-          "value": "displays",
-          "line": 258
-        },
-        {
-          "type": "heading",
-          "value": "exposes",
-          "line": 129
-        },
-        {
-          "type": "heading",
-          "value": "fetches",
-          "line": 271
-        },
-        {
-          "type": "heading",
-          "value": "maps",
-          "line": 155
-        },
-        {
-          "type": "heading",
-          "value": "mutates",
-          "line": 280
-        },
-        {
-          "type": "heading",
-          "value": "orchestrates",
-          "line": 138
-        },
-        {
-          "type": "heading",
-          "value": "produces",
-          "line": 66
-        },
-        {
-          "type": "heading",
-          "value": "queries",
-          "line": 173
-        },
-        {
-          "type": "heading",
-          "value": "reflects",
-          "line": 289
-        },
-        {
-          "type": "heading",
-          "value": "renders",
-          "line": 195
-        },
-        {
-          "type": "heading",
-          "value": "shapes",
-          "line": 240
-        },
-        {
-          "type": "heading",
-          "value": "transitions",
-          "line": 120
-        },
-        {
-          "type": "heading",
-          "value": "wraps",
-          "line": 204
-        }
-      ],
-      "excerpts": [],
-      "obligationRefs": ["O5"]
+        "ambiguity": 0.11,
+        "score": 0.137
+      }
     },
     {
       "path": "architecture/ARCHITECTURE.md",
-      "reason": "Architecture retrieval map authority for minimal loading.",
-      "score": {
-        "signal": 0.79,
-        "cost": 0.08,
-        "ambiguity": 0.1,
-        "value": 0.14
-      },
+      "reason": "Index-first retrieval map for architecture foundations.",
       "selectors": [
-        {
-          "type": "heading",
-          "value": "Retrieval Map",
-          "line": 11
-        },
-        {
-          "type": "heading",
-          "value": "Canonical Companions",
-          "line": 24
-        }
+        { "type": "table-row", "value": "Principles and layer model baseline" }
       ],
-      "excerpts": [],
-      "obligationRefs": ["O10"]
+      "obligationRefs": ["O13"],
+      "ranking": {
+        "signal": 0.74,
+        "cost": 0.09,
+        "ambiguity": 0.18,
+        "score": 0.189
+      }
     },
     {
       "path": "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md",
-      "reason": "Layer model baseline and immutable dependency direction.",
-      "score": {
-        "signal": 0.88,
-        "cost": 0.09,
-        "ambiguity": 0.08,
-        "value": 0.1
-      },
-      "selectors": [
-        {
-          "type": "heading",
-          "value": "Principles",
-          "line": 5
-        },
-        {
-          "type": "heading",
-          "value": "Layer Model",
-          "line": 13
-        },
-        {
-          "type": "heading",
-          "value": "Layer Snapshot",
-          "line": 27
-        }
-      ],
-      "excerpts": [],
-      "obligationRefs": ["O10"]
+      "reason": "Immutable layer model baseline for concern placement.",
+      "selectors": [{ "type": "heading", "value": "## Layer Model" }],
+      "obligationRefs": ["O13"],
+      "ranking": {
+        "signal": 0.82,
+        "cost": 0.1,
+        "ambiguity": 0.14,
+        "score": 0.146
+      }
     },
     {
       "path": "architecture/pattern-library/LAYERING-REFERENCE.md",
-      "reason": "Detailed concern boundaries for application vs infrastructure vs interface.",
-      "score": {
-        "signal": 0.88,
-        "cost": 0.09,
-        "ambiguity": 0.09,
-        "value": 0.1
-      },
+      "reason": "Layer responsibility details for adapters versus application rules.",
       "selectors": [
-        {
-          "type": "heading",
-          "value": "Layer Responsibilities",
-          "line": 5
-        },
-        {
-          "type": "heading",
-          "value": "Application Layer",
-          "line": 18
-        },
-        {
-          "type": "heading",
-          "value": "Infrastructure Layer",
-          "line": 28
-        },
-        {
-          "type": "heading",
-          "value": "Interface / Adapters Layer",
-          "line": 39
-        },
-        {
-          "type": "heading",
-          "value": "Module Boundary Guidelines",
-          "line": 49
-        }
+        { "type": "heading", "value": "### Interface / Adapters Layer" }
       ],
-      "excerpts": [],
-      "obligationRefs": ["O10"]
+      "obligationRefs": ["O13"],
+      "ranking": {
+        "signal": 0.86,
+        "cost": 0.12,
+        "ambiguity": 0.12,
+        "score": 0.129
+      }
     },
     {
       "path": "backend/src/server.ts",
-      "reason": "Reusable Fastify bootstrap pattern from legacy asset list.",
-      "score": {
-        "signal": 0.82,
-        "cost": 0.15,
-        "ambiguity": 0.12,
-        "value": 0.16
-      },
+      "reason": "Approved legacy bootstrap seam for route registration reuse.",
       "selectors": [
+        { "type": "symbol", "value": "BuildServerOptions", "line": 9 },
+        { "type": "symbol", "value": "buildServer", "line": 13 },
         {
-          "type": "symbol",
-          "value": "buildServer",
-          "lineStart": 13,
-          "lineEnd": 24
-        },
-        {
-          "type": "callsite",
-          "value": "app.register(cors, { origin: true })",
-          "line": 16
-        },
-        {
-          "type": "callsite",
-          "value": "app.get(\"/health\")",
-          "line": 18
-        },
-        {
-          "type": "callsite",
-          "value": "registerKnowledgeGraphRoutes(app, options.knowledgeGraph)",
+          "type": "call",
+          "value": "registerKnowledgeGraphRoutes(...)",
           "line": 23
         }
       ],
-      "excerpts": [
-        {
-          "startLine": 13,
-          "endLine": 24,
-          "purpose": "Server bootstrap and route registration boundary"
-        }
-      ],
-      "obligationRefs": ["O13"]
+      "obligationRefs": ["O14"],
+      "ranking": {
+        "signal": 0.78,
+        "cost": 0.11,
+        "ambiguity": 0.17,
+        "score": 0.175
+      }
     },
     {
       "path": "backend/src/server.test.ts",
-      "reason": "Reusable test harness and inject lifecycle patterns from legacy asset list.",
-      "score": {
-        "signal": 0.8,
-        "cost": 0.14,
-        "ambiguity": 0.12,
-        "value": 0.16
-      },
+      "reason": "Approved inject lifecycle and server harness reuse pattern.",
       "selectors": [
-        {
-          "type": "test",
-          "value": "health endpoint returns ok",
-          "line": 13
-        },
-        {
-          "type": "test",
-          "value": "rebuild persists projection and read endpoints return latest snapshot",
-          "line": 32
-        },
-        {
-          "type": "pattern",
-          "value": "app.inject(...) lifecycle",
-          "line": 20
-        },
-        {
-          "type": "pattern",
-          "value": "t.after(async () => app.close())",
-          "line": 16
-        }
+        { "type": "import", "value": "buildServer", "line": 7 },
+        { "type": "call-pattern", "value": "buildServer(...)", "line": 14 },
+        { "type": "call-pattern", "value": "buildServer(...)", "line": 119 }
       ],
-      "excerpts": [
-        {
-          "startLine": 13,
-          "endLine": 23,
-          "purpose": "Minimal health-route inject lifecycle pattern"
-        },
-        {
-          "startLine": 32,
-          "endLine": 32,
-          "purpose": "Projection rebuild endpoint contract test entrypoint"
-        }
-      ],
-      "obligationRefs": ["O13"]
-    }
-  ],
-  "excluded": [
-    {
-      "path": "architecture/ARCHITECTURE-PATTERN-LIBRARY.md",
-      "reason": "No uncovered O10 obligations after architecture index + foundations + layering references."
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/queries.md",
-      "reason": "Primary read-query/filter contract target of TASK-KG-IMP-02, not parser/projection mutation core."
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/events.md",
-      "reason": "Event-consumer obligations are out of scope for TASK-KG-IMP-01 parser/projection core."
-    },
-    {
-      "path": "docs/features/knowledge-graph-visualization/states.md",
-      "reason": "Interaction state-machine coverage is out of scope for parser/projection persistence obligations."
-    },
-    {
-      "path": "governance/tags/CODE-TAG-COMPOSABILITY-PATTERNS.md",
-      "reason": "No uncovered composability obligations for this task slice."
-    },
-    {
-      "path": "governance/tags/examples/composability/",
-      "reason": "No uncovered composability obligations; would increase noise."
-    },
-    {
-      "path": "docs/index/feature-map.md",
-      "reason": "Not present"
-    },
-    {
-      "path": "docs/index/features-index.json",
-      "reason": "Not present"
-    },
-    {
-      "path": "docs/index/tag-index.json",
-      "reason": "Not present"
+      "obligationRefs": ["O14"],
+      "ranking": {
+        "signal": 0.76,
+        "cost": 0.14,
+        "ambiguity": 0.2,
+        "score": 0.2
+      }
     }
   ],
   "interestedData": {
-    "relationships": {
-      "source": "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph",
-      "subset": [
-        "applies",
-        "consumes",
-        "contains",
-        "displays",
-        "exposes",
-        "fetches",
-        "maps",
-        "mutates",
-        "orchestrates",
-        "produces",
-        "queries",
-        "reflects",
-        "renders",
-        "shapes",
-        "transitions",
-        "wraps"
-      ],
-      "vocabularySelectors": [
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "applies",
-          "line": 146
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "consumes",
-          "line": 222
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "contains",
-          "line": 164
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "displays",
-          "line": 258
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "exposes",
-          "line": 129
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "fetches",
-          "line": 271
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "maps",
-          "line": 155
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "mutates",
-          "line": 280
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "orchestrates",
-          "line": 138
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "produces",
-          "line": 66
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "queries",
-          "line": 173
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "reflects",
-          "line": 289
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "renders",
-          "line": 195
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "shapes",
-          "line": 240
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "transitions",
-          "line": 120
-        },
-        {
-          "path": "RELATIONSHIPS.md",
-          "selector": "wraps",
-          "line": 204
-        }
-      ]
-    },
     "relationshipIndexSources": [
+      "docs/features/knowledge-graph-visualization/SPEC.md#feature-concept-graph",
+      "docs/features/knowledge-graph-visualization/SPEC.md#cross-feature-dependencies",
+      "docs/features/knowledge-graph-visualization/SPEC.md#produces-for"
+    ],
+    "relationshipEdgeLabels": [
+      "applies",
+      "consumes",
+      "contains",
+      "displays",
+      "exposes",
+      "fetches",
+      "maps",
+      "mutates",
+      "orchestrates",
+      "produces",
+      "queries",
+      "reflects",
+      "renders",
+      "shapes",
+      "transitions",
+      "wraps"
+    ],
+    "crossFeatureDependencies": [
       {
-        "path": "docs/features/knowledge-graph-visualization/SPEC.md",
-        "selector": "Feature Concept Graph",
-        "line": 139
+        "dependsOn": "payment-processing",
+        "relationship": "queries"
       },
       {
-        "path": "docs/features/knowledge-graph-visualization/SPEC.md",
-        "selector": "Cross-Feature Dependencies",
-        "line": 207
-      },
-      {
-        "path": "docs/features/knowledge-graph-visualization/SPEC.md",
-        "selector": "Produces For",
-        "line": 214
+        "dependsOn": "domainspec-gsd-integration",
+        "relationship": "queries"
       }
-    ]
+    ],
+    "producesForChannels": ["Query", "Interface"],
+    "canonicalVocabularyRef": "RELATIONSHIPS.md"
   },
-  "coverage": {
-    "requiredObligations": 14,
-    "coveredObligations": 14,
-    "percent": 100
-  },
-  "blockers": []
+  "excluded": [
+    {
+      "path": "docs/features/knowledge-graph-visualization/UI-SPEC.md",
+      "reason": "No direct parser/rebuild obligation for this task.",
+      "excludedBy": "strict-relevance"
+    },
+    {
+      "path": "docs/features/knowledge-graph-visualization/workflows.md",
+      "reason": "No additional obligation coverage beyond operations and interfaces.",
+      "excludedBy": "strict-relevance"
+    },
+    {
+      "path": "governance/tags/CODE-TAG-COMPOSABILITY-PATTERNS.md",
+      "reason": "No code-tag obligation reference in TASK-KG-IMP-01.",
+      "excludedBy": "no-obligationRef"
+    },
+    {
+      "path": "backend/src/knowledge-graph-docs-import.ts",
+      "reason": "Explicitly prohibited by task carryover limits.",
+      "excludedBy": "non-reuse-directive"
+    }
+  ],
+  "blockers": [],
+  "gateChecks": {
+    "selectorBinding": "pass",
+    "obligationBinding": "pass",
+    "budget": "pass",
+    "strictRelevance": "pass"
+  }
 }

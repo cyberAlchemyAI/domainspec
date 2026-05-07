@@ -9,10 +9,11 @@ Returns the aspect cards for the selected feature scope.
 
 ### Input
 
-| Field      | Type   | Required | Description        |
-| ---------- | ------ | -------- | ------------------ |
-| projectKey | string | yes      | Source project key |
-| featureId  | string | yes      | Feature slug       |
+| Field        | Type   | Required | Description                                                      |
+| ------------ | ------ | -------- | ---------------------------------------------------------------- |
+| projectKey   | string | yes      | Source project key                                               |
+| featureId    | string | yes      | Feature slug                                                     |
+| activeAspect | string | no       | Active aspect for `cards[].isActive` derivation (default `SPEC`) |
 
 ### Filters
 

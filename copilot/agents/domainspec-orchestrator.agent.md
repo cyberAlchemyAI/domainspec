@@ -118,6 +118,7 @@ Read first:
   - Verify delegated stage liveness after each stage:
     - Stage is `healthy` only when delegated execution returns a terminal outcome (`completed`, `blocked`, `failed`) with evidence.
      - Stage is `suspected-stuck` when delegated execution is non-terminal/stalled, watchdog budget is exceeded, or repeated non-progress loops occur (for example 12+ tool calls with no new evidence).
+    - Treat `rg`/search timeout stalls as non-progress loops (for example a search runs >20s or the same pattern+path pair times out twice without new evidence).
      - On `suspected-stuck`, capture last available output/evidence, retry once with safer bounded execution and narrowed prompt scope.
      - For `domainspec-context-builder` retries, cap to at most 6 read/search batches and 1 write batch, and prohibit repeated chunk-reads of generated context artifacts.
      - Stop with `blocked-at-<stage>(subagent-stuck)` if retry is also non-terminal.
@@ -133,6 +134,9 @@ Read first:
 <terminal-resilience-policy>
 - Treat terminal execution as non-interactive by default.
 - For long-running or uncertain commands, use bounded tracking (timeout or background terminal id with follow-up checks).
+- For `rg`/search commands, always scope to explicit include paths and use timeout guards (for example `timeout 20s rg ...`).
+- Do not run unscoped repository-root `rg` scans in delegated stages.
+- On two consecutive `rg` timeouts in the same stage, mark `suspected-stuck` and retry once with narrowed scope or non-`rg` retrieval.
 - If terminal execution breaks or stalls:
   1. capture last output,
   2. kill stale terminal/session,

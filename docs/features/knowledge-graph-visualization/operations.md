@@ -114,7 +114,7 @@
 | selectedCardId   | string | yes      | Selected whiteboard card identifier                      |
 | selectedCardType | string | yes      | `feature`, `story`, `concept-group`, `concept`           |
 | selectedAspect   | string | no       | Active aspect card (`SPEC`, `DOMAIN`, `OPERATIONS`, ...) |
-| source           | string | yes      | `rail`, `board`, or `detail`                             |
+| source           | string | yes      | `rail`, `board`, `detail`, `card`, or `graph`            |
 
 ### Rules
 
@@ -123,7 +123,7 @@
 | R0  | Session scope must match request scope              | `session.projectKey = projectKey and session.featureId = featureId`   |
 | R1  | Selected card must exist in current whiteboard view | `exists card(selectedCardId, selectedCardType)`                       |
 | R2  | Concept card must have definition pointer           | `selectedCardType='concept' -> exists definitionPointer`              |
-| R3  | Source must be supported                            | `source in {'rail','board','detail'}`                                 |
+| R3  | Source must be supported                            | `source in {'rail','board','detail','card','graph'}`                  |
 | R4  | Aspect switch must preserve relationship index mode | `selectedAspect change keeps relationSource='SPEC.relationshipIndex'` |
 
 ### State Transition

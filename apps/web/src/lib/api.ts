@@ -16,6 +16,7 @@ export const DEFAULT_FEATURE_ID =
 
 export type ApiErrorCode =
   | "KG_AUTH_REQUIRED"
+  | "KG_AUTH_FORBIDDEN"
   | "MIRROR_SOURCE_PROJECT_UNKNOWN"
   | "MIRROR_SOURCE_FEATURE_UNAVAILABLE"
   | "MIRROR_SOURCE_ROOT_INVALID"
@@ -94,8 +95,9 @@ export interface MirrorCard {
   title: string;
   aspectKind: AspectKind;
   conceptCount: number;
-  relationCount: number;
+  storyCount: number;
   freshness: FreshnessStatus;
+  isActive: boolean;
 }
 
 export interface GraphBoard {
@@ -188,6 +190,7 @@ export interface GetConceptDetailCardOptions {
 export interface GetMirrorCardsOptions {
   includeOptionalAspects?: boolean;
   aspectKinds?: AspectKind[];
+  activeAspect?: AspectKind;
 }
 
 export interface GetRelationshipGraphOptions {
@@ -341,6 +344,9 @@ export async function rebuildProjection(
   const normalizedScope = normalizeScope(scope);
   return request<RebuildProjectionResponse>("/api/knowledge-graph/rebuild", {
     method: "POST",
+    headers: {
+      "x-scopes": "domainspec.kg.read domainspec.kg.write",
+    },
     body: JSON.stringify({
       projectKey: normalizedScope.projectKey,
       featureId: normalizedScope.featureId,
@@ -373,6 +379,7 @@ export async function getMirrorCards(
     options.includeOptionalAspects,
   );
   appendList(query, "aspectKinds", options.aspectKinds);
+  appendString(query, "activeAspect", options.activeAspect);
 
   return request<MirrorCardsResponse>(
     `/api/knowledge-graph/mirror-cards?${query.toString()}`,

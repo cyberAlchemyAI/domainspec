@@ -10,6 +10,10 @@ const READ_SCOPE_HEADERS = {
   "x-scopes": "domainspec.kg.read",
 };
 
+const WRITE_SCOPE_HEADERS = {
+  "x-scopes": "domainspec.kg.read domainspec.kg.write",
+};
+
 test("health endpoint returns ok", async (t) => {
   const app = buildServer();
 
@@ -29,7 +33,50 @@ test("health endpoint returns ok", async (t) => {
   });
 });
 
-test("rebuild persists projection and read endpoints return latest snapshot", async (t) => {
+test("KG-BE-API-014 KG-BE-API-015 rebuild requires write scope and returns deterministic 401/403 diagnostics", async (t) => {
+  const tempDir = mkdtempSync(`${tmpdir()}/kg-auth-rebuild-`);
+  const app = buildServer({
+    knowledgeGraph: {
+      projectRootDir: resolve(process.cwd(), ".."),
+      databaseFilePath: resolve(tempDir, "knowledge-graph.sqlite"),
+    },
+  });
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const unauthorizedResponse = await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    payload: {
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  assert.equal(unauthorizedResponse.statusCode, 401);
+  const unauthorizedBody = unauthorizedResponse.json() as { code: string };
+  assert.equal(unauthorizedBody.code, "KG_AUTH_REQUIRED");
+
+  const forbiddenResponse = await app.inject({
+    method: "POST",
+    url: "/api/knowledge-graph/rebuild",
+    headers: READ_SCOPE_HEADERS,
+    payload: {
+      featureId: "knowledge-graph-visualization",
+      sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
+      requestedBy: "test-suite",
+    },
+  });
+
+  assert.equal(forbiddenResponse.statusCode, 403);
+  const forbiddenBody = forbiddenResponse.json() as { code: string };
+  assert.equal(forbiddenBody.code, "KG_AUTH_FORBIDDEN");
+});
+
+test("KG-BE-API-016 KG-BE-QRY-001 rebuild persists projection and read endpoints return latest snapshot", async (t) => {
   const tempDir = mkdtempSync(`${tmpdir()}/kg-projection-`);
   const app = buildServer({
     knowledgeGraph: {
@@ -45,6 +92,7 @@ test("rebuild persists projection and read endpoints return latest snapshot", as
   const rebuildResponse = await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -66,12 +114,17 @@ test("rebuild persists projection and read endpoints return latest snapshot", as
   assert.equal(cardsResponse.statusCode, 200);
   const cardsBody = cardsResponse.json() as {
     snapshotId: string;
-    cards: Array<{ filePath: string }>;
+    cards: Array<{ filePath: string; storyCount: number; isActive: boolean }>;
   };
   assert.equal(cardsBody.snapshotId, rebuildBody.snapshotId);
   assert.deepEqual(
     cardsBody.cards.map((card) => card.filePath),
     ["SPEC.md", "domain.md", "operations.md"],
+  );
+  assert.ok(cardsBody.cards.every((card) => card.storyCount >= 0));
+  assert.equal(
+    cardsBody.cards.find((card) => card.filePath === "SPEC.md")?.isActive,
+    true,
   );
 
   const graphResponse = await app.inject({
@@ -130,6 +183,7 @@ test("concept detail, definition, and open-definition endpoints satisfy stage-2 
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -217,6 +271,7 @@ test("open-definition returns deterministic mismatch diagnostics", async (t) => 
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -276,6 +331,7 @@ test("rebuild rejects unknown project with deterministic code", async (t) => {
   const response = await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       projectKey: "unknown-project",
       featureId: "knowledge-graph-visualization",
@@ -305,6 +361,7 @@ test("KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 mirror-cards maps feature an
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -347,6 +404,7 @@ test("KG-BE-API-004 KG-BE-IFMAP-004 graph applies edgeKinds filter", async (t) =
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -460,6 +518,7 @@ test("cross-project scope guards isolate snapshots per (projectKey, featureId)",
   const rebuildAltProjectResponse = await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       projectKey: "alt-project",
       featureId: "knowledge-graph-visualization",
@@ -504,6 +563,7 @@ test("graph query maps board-level fields and validates selected group card", as
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -573,6 +633,7 @@ test("concept detail selection enforces whiteboard card validation diagnostics",
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       featureId: "knowledge-graph-visualization",
       sourceFiles: ["SPEC.md", "domain.md", "operations.md"],
@@ -646,6 +707,7 @@ test("concept and definition operations return scope mismatch diagnostics for re
   await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       projectKey: "domainspec-core",
       featureId: "knowledge-graph-visualization",
@@ -716,6 +778,7 @@ test("rebuild rejects invalid feature path escapes before file reads", async (t)
   const response = await app.inject({
     method: "POST",
     url: "/api/knowledge-graph/rebuild",
+    headers: WRITE_SCOPE_HEADERS,
     payload: {
       projectKey: "domainspec-core",
       featureId: "../escape",

@@ -51,7 +51,7 @@
 | KG-BE-OP-012 | SelectConcept R1 fail: rejects unknown concept with `CONCEPT_NOT_FOUND`.                                     | Rule validation (fail) | `operations.md#selectconcept`           |
 | KG-BE-OP-013 | SelectConcept R2 pass: accepts concept with resolvable definition pointer.                                   | Rule validation (pass) | `operations.md#selectconcept`           |
 | KG-BE-OP-014 | SelectConcept R2 fail: rejects missing pointer with `CONCEPT_DEFINITION_UNRESOLVED`.                         | Rule validation (fail) | `operations.md#selectconcept`           |
-| KG-BE-OP-015 | SelectConcept R3 pass: accepts `source` in `{card, graph}`.                                                  | Rule validation (pass) | `operations.md#selectconcept`           |
+| KG-BE-OP-015 | SelectConcept R3 pass: accepts `source` in `{rail, board, detail, card, graph}`.                             | Rule validation (pass) | `operations.md#selectconcept`           |
 | KG-BE-OP-016 | SelectConcept R3 fail: rejects unsupported selection source with `CONCEPT_SELECTION_SOURCE_INVALID`.         | Rule validation (fail) | `operations.md#selectconcept`           |
 | KG-BE-OP-017 | OpenDefinition R1 pass: request concept matches `session.selectedConceptId`.                                 | Rule validation (pass) | `operations.md#opendefinition`          |
 | KG-BE-OP-018 | OpenDefinition R1 fail: rejects mismatch with `DEFINITION_SESSION_MISMATCH`.                                 | Rule validation (fail) | `operations.md#opendefinition`          |
@@ -116,6 +116,9 @@
 | KG-BE-API-011 | `POST /api/knowledge-graph/concepts/:conceptId/open-definition` returns 200 with resolved definition target. | Contract | `interfaces.md#post-apiknowledge-graphconceptsconceptidopen-definition` |
 | KG-BE-API-012 | `POST /api/knowledge-graph/concepts/:conceptId/open-definition` returns 409 on session mismatch.             | Contract | `interfaces.md#post-apiknowledge-graphconceptsconceptidopen-definition` |
 | KG-BE-API-013 | `POST /api/knowledge-graph/concepts/:conceptId/open-definition` returns 404 when anchor is missing.          | Contract | `interfaces.md#post-apiknowledge-graphconceptsconceptidopen-definition` |
+| KG-BE-API-014 | `POST /api/knowledge-graph/rebuild` returns 401 when auth headers are missing.                               | Contract | `interfaces.md#post-apiknowledge-graphrebuild`                          |
+| KG-BE-API-015 | `POST /api/knowledge-graph/rebuild` returns 403 when `domainspec.kg.write` scope is absent.                  | Contract | `interfaces.md#post-apiknowledge-graphrebuild`                          |
+| KG-BE-API-016 | `POST /api/knowledge-graph/rebuild` returns 200 when write scope is present and request is valid.            | Contract | `interfaces.md#post-apiknowledge-graphrebuild`                          |
 
 ### Interface Field-Mapping Obligations (interfaces.md)
 
@@ -125,7 +128,7 @@
 | KG-BE-IFMAP-002 | `includeOptionalAspects` maps to `GetMirrorCards.includeOptionalAspects`. | Mapping | `interfaces.md#get-apiknowledge-graphmirror-cards`                      |
 | KG-BE-IFMAP-003 | `featureId` request field maps to `GetRelationshipGraph.featureId`.       | Mapping | `interfaces.md#get-apiknowledge-graphgraph`                             |
 | KG-BE-IFMAP-004 | `edgeKinds[]` maps to `GetRelationshipGraph.edgeKinds`.                   | Mapping | `interfaces.md#get-apiknowledge-graphgraph`                             |
-| KG-BE-IFMAP-005 | `conceptTypes[]` maps to `GetRelationshipGraph.conceptTypes`.             | Mapping | `interfaces.md#get-apiknowledge-graphgraph`                             |
+| KG-BE-IFMAP-005 | `cardTypes[]` maps to `GetRelationshipGraph.cardTypes`.                   | Mapping | `interfaces.md#get-apiknowledge-graphgraph`                             |
 | KG-BE-IFMAP-006 | `featureId` maps to `GetConceptDetailCard.featureId`.                     | Mapping | `interfaces.md#get-apiknowledge-graphconceptsconceptid`                 |
 | KG-BE-IFMAP-007 | `conceptId` path param maps to `GetConceptDetailCard.conceptId`.          | Mapping | `interfaces.md#get-apiknowledge-graphconceptsconceptid`                 |
 | KG-BE-IFMAP-008 | `featureId` maps to `GetDefinitionPointer.featureId`.                     | Mapping | `interfaces.md#get-apiknowledge-graphconceptsconceptiddefinition`       |
@@ -135,38 +138,38 @@
 
 ### Event Obligations (events.md)
 
-| Test ID       | Obligation                                                                                                                                       | Type           | Source                            |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- | --------------------------------- |
-| KG-BE-EVT-001 | `RebuildMirrorProjection` emits `MirrorProjectionBuilt` with payload fields: `featureId`, `snapshotId`, `cardCount`, `edgeCount`, `generatedAt`. | Event producer | `events.md#mirrorprojectionbuilt` |
-| KG-BE-EVT-002 | `SelectConcept` emits `ConceptSelected` with payload fields: `sessionId`, `conceptId`, `source`, `selectedAt`.                                   | Event producer | `events.md#conceptselected`       |
-| KG-BE-EVT-003 | `OpenDefinition` emits `DefinitionOpened` with payload fields: `sessionId`, `conceptId`, `filePath`, `anchor`, `openedAt`.                       | Event producer | `events.md#definitionopened`      |
-| KG-BE-EVT-004 | Web client projection store consumer refreshes cards + graph on `MirrorProjectionBuilt`.                                                         | Event consumer | `events.md#mirrorprojectionbuilt` |
-| KG-BE-EVT-005 | Observability pipeline consumer emits freshness metrics on `MirrorProjectionBuilt`.                                                              | Event consumer | `events.md#mirrorprojectionbuilt` |
-| KG-BE-EVT-006 | Detail panel adapter consumer projects selected concept on `ConceptSelected`.                                                                    | Event consumer | `events.md#conceptselected`       |
-| KG-BE-EVT-007 | Analytics stream consumer records exploration behavior on `ConceptSelected`.                                                                     | Event consumer | `events.md#conceptselected`       |
-| KG-BE-EVT-008 | Router/navigation consumer opens exact target on `DefinitionOpened`.                                                                             | Event consumer | `events.md#definitionopened`      |
-| KG-BE-EVT-009 | Audit log consumer records navigation trace on `DefinitionOpened`.                                                                               | Event consumer | `events.md#definitionopened`      |
+| Test ID       | Obligation                                                                                                                                       | Type              | Source                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ----------------------------------------- |
+| KG-BE-EVT-001 | `RebuildMirrorProjection` emits `MirrorProjectionBuilt` with payload fields: `featureId`, `snapshotId`, `cardCount`, `edgeCount`, `generatedAt`. | Event producer    | `events.md#mirrorprojectionbuilt`         |
+| KG-BE-EVT-002 | `SelectConcept` emits `ConceptSelected` with payload fields: `sessionId`, `conceptId`, `source`, `selectedAt`.                                   | Event producer    | `events.md#conceptselected`               |
+| KG-BE-EVT-003 | `OpenDefinition` emits `DefinitionOpened` with payload fields: `sessionId`, `conceptId`, `filePath`, `anchor`, `openedAt`.                       | Event producer    | `events.md#definitionopened`              |
+| KG-BE-EVT-004 | Web client projection store consumer refreshes cards + graph on `MirrorProjectionBuilt`.                                                         | Event consumer    | `events.md#mirrorprojectionbuilt`         |
+| KG-BE-EVT-005 | Observability pipeline consumer is deferred via governance waiver `KG-EVT-WVR-001`.                                                              | Deferred consumer | `events.md#governance-waivers-2026-05-07` |
+| KG-BE-EVT-006 | Detail panel adapter consumer projects selected concept on `ConceptSelected`.                                                                    | Event consumer    | `events.md#conceptselected`               |
+| KG-BE-EVT-007 | Analytics stream consumer is deferred via governance waiver `KG-EVT-WVR-002`.                                                                    | Deferred consumer | `events.md#governance-waivers-2026-05-07` |
+| KG-BE-EVT-008 | Router/navigation consumer opens exact target on `DefinitionOpened`.                                                                             | Event consumer    | `events.md#definitionopened`              |
+| KG-BE-EVT-009 | Audit-log consumer is deferred via governance waiver `KG-EVT-WVR-003`.                                                                           | Deferred consumer | `events.md#governance-waivers-2026-05-07` |
 
 ### Query Obligations (queries.md)
 
-| Test ID       | Obligation                                                                                                                       | Type                  | Source                            |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------- | --------------------------------- |
-| KG-BE-QRY-001 | `GetMirrorCards` returns output shape including `filePath`, `title`, `aspectKind`, `conceptCount`, `relationCount`, `freshness`. | Query output          | `queries.md#getmirrorcards`       |
-| KG-BE-QRY-002 | `GetMirrorCards` applies `aspectKinds` filter correctly.                                                                         | Query filtering       | `queries.md#getmirrorcards`       |
-| KG-BE-QRY-003 | `GetMirrorCards` applies `freshness` filter correctly.                                                                           | Query filtering       | `queries.md#getmirrorcards`       |
-| KG-BE-QRY-004 | `GetMirrorCards` enforces auth scope `domainspec.kg.read`.                                                                       | Query authorization   | `queries.md#getmirrorcards`       |
-| KG-BE-QRY-005 | `GetRelationshipGraph` returns output shape including canonical node and edge fields.                                            | Query output          | `queries.md#getrelationshipgraph` |
-| KG-BE-QRY-006 | `GetRelationshipGraph` applies `edgeKinds` filter correctly.                                                                     | Query filtering       | `queries.md#getrelationshipgraph` |
-| KG-BE-QRY-007 | `GetRelationshipGraph` applies `conceptTypes` filter correctly.                                                                  | Query filtering       | `queries.md#getrelationshipgraph` |
-| KG-BE-QRY-008 | `GetRelationshipGraph` enforces auth scope `domainspec.kg.read`.                                                                 | Query authorization   | `queries.md#getrelationshipgraph` |
-| KG-BE-QRY-009 | `GetConceptDetailCard` returns output shape with summary, definition, inbound/outbound relations.                                | Query output          | `queries.md#getconceptdetailcard` |
-| KG-BE-QRY-010 | `GetConceptDetailCard` applies `includeInbound` filter correctly.                                                                | Query filtering       | `queries.md#getconceptdetailcard` |
-| KG-BE-QRY-011 | `GetConceptDetailCard` applies `includeOutbound` filter correctly.                                                               | Query filtering       | `queries.md#getconceptdetailcard` |
-| KG-BE-QRY-012 | `GetConceptDetailCard` returns not-found behavior for unknown concept.                                                           | Query empty/not-found | `queries.md#getconceptdetailcard` |
-| KG-BE-QRY-013 | `GetDefinitionPointer` returns output shape with `filePath`, `anchor`, `lineHint`, `label`.                                      | Query output          | `queries.md#getdefinitionpointer` |
-| KG-BE-QRY-014 | `GetDefinitionPointer` honors `preferExactAnchor=true` semantics.                                                                | Query filtering       | `queries.md#getdefinitionpointer` |
-| KG-BE-QRY-015 | `GetDefinitionPointer` enforces auth scope `domainspec.kg.read`.                                                                 | Query authorization   | `queries.md#getdefinitionpointer` |
-| KG-BE-QRY-016 | `GetDefinitionPointer` returns not-found behavior for missing pointer.                                                           | Query empty/not-found | `queries.md#getdefinitionpointer` |
+| Test ID       | Obligation                                                                                                                                | Type                  | Source                            |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | --------------------------------- |
+| KG-BE-QRY-001 | `GetMirrorCards` returns output shape including `filePath`, `title`, `aspectKind`, `conceptCount`, `storyCount`, `freshness`, `isActive`. | Query output          | `queries.md#getmirrorcards`       |
+| KG-BE-QRY-002 | `GetMirrorCards` applies `aspectKinds` filter correctly.                                                                                  | Query filtering       | `queries.md#getmirrorcards`       |
+| KG-BE-QRY-003 | `GetMirrorCards` applies `includeOptionalAspects` filter correctly.                                                                       | Query filtering       | `queries.md#getmirrorcards`       |
+| KG-BE-QRY-004 | `GetMirrorCards` enforces auth scope `domainspec.kg.read`.                                                                                | Query authorization   | `queries.md#getmirrorcards`       |
+| KG-BE-QRY-005 | `GetRelationshipGraph` returns output shape including canonical node and edge fields.                                                     | Query output          | `queries.md#getrelationshipgraph` |
+| KG-BE-QRY-006 | `GetRelationshipGraph` applies `edgeKinds` filter correctly.                                                                              | Query filtering       | `queries.md#getrelationshipgraph` |
+| KG-BE-QRY-007 | `GetRelationshipGraph` applies `cardTypes` filter correctly.                                                                              | Query filtering       | `queries.md#getrelationshipgraph` |
+| KG-BE-QRY-008 | `GetRelationshipGraph` enforces auth scope `domainspec.kg.read`.                                                                          | Query authorization   | `queries.md#getrelationshipgraph` |
+| KG-BE-QRY-009 | `GetConceptDetailCard` returns output shape with summary, definition, inbound/outbound relations.                                         | Query output          | `queries.md#getconceptdetailcard` |
+| KG-BE-QRY-010 | `GetConceptDetailCard` applies `includeInbound` filter correctly.                                                                         | Query filtering       | `queries.md#getconceptdetailcard` |
+| KG-BE-QRY-011 | `GetConceptDetailCard` applies `includeOutbound` filter correctly.                                                                        | Query filtering       | `queries.md#getconceptdetailcard` |
+| KG-BE-QRY-012 | `GetConceptDetailCard` returns not-found behavior for unknown concept.                                                                    | Query empty/not-found | `queries.md#getconceptdetailcard` |
+| KG-BE-QRY-013 | `GetDefinitionPointer` returns output shape with `filePath`, `anchor`, `lineHint`, `label`.                                               | Query output          | `queries.md#getdefinitionpointer` |
+| KG-BE-QRY-014 | `GetDefinitionPointer` honors `preferExactAnchor=true` semantics.                                                                         | Query filtering       | `queries.md#getdefinitionpointer` |
+| KG-BE-QRY-015 | `GetDefinitionPointer` enforces auth scope `domainspec.kg.read`.                                                                          | Query authorization   | `queries.md#getdefinitionpointer` |
+| KG-BE-QRY-016 | `GetDefinitionPointer` returns not-found behavior for missing pointer.                                                                    | Query empty/not-found | `queries.md#getdefinitionpointer` |
 
 ### Capability Acceptance Obligations (SPEC.md, STORIES.md)
 
@@ -219,11 +222,18 @@
 | ---------------------------------------------------------------- | --------------- |
 | Backend state machine                                            | 15              |
 | Backend operations (rules, calculations, postconditions, errors) | 46              |
-| Backend interfaces, events, queries                              | 49              |
+| Backend interfaces, events, queries                              | 52              |
 | Capability acceptance                                            | 4               |
 | UI E2E (navigation, journey, form, state, accessibility)         | 13 ready        |
 | UI responsive                                                    | 1 ready         |
-| Total                                                            | 128 (128 ready) |
+| Total                                                            | 131 (131 ready) |
+
+## Coverage Reconciliation (2026-05-07)
+
+| Decision                                                                                                        | Status   | Owner    | Date       | Notes                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------- | -------- | -------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Coverage floor profile for pilot gate uses executable tagged subset while full catalogue remains roadmap scope. | accepted | web-core | 2026-05-07 | Current executable evidence is tracked in `ALIGNMENT-REPORT.md`; non-covered IDs remain non-blocking `FLAG` residuals for this iteration. |
+| Event-consumer async sinks (`KG-BE-EVT-005/007/009`) are deferred by governance waivers.                        | accepted | web-core | 2026-05-07 | See `events.md` governance waivers (`KG-EVT-WVR-001..003`).                                                                               |
 
 ## Uncovered Formal Gaps
 

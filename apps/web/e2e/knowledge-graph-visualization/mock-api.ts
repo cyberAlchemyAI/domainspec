@@ -27,7 +27,7 @@ const mockCards = [
     title: "SPEC",
     aspectKind: "SPEC",
     conceptCount: 4,
-    relationCount: 3,
+    storyCount: 3,
     freshness: "up-to-date",
   },
   {
@@ -36,7 +36,7 @@ const mockCards = [
     title: "DOMAIN",
     aspectKind: "DOMAIN",
     conceptCount: 2,
-    relationCount: 1,
+    storyCount: 1,
     freshness: "up-to-date",
   },
   {
@@ -45,7 +45,7 @@ const mockCards = [
     title: "OPERATIONS",
     aspectKind: "OPERATIONS",
     conceptCount: 2,
-    relationCount: 1,
+    storyCount: 1,
     freshness: "up-to-date",
   },
 ] as const;
@@ -176,12 +176,22 @@ export async function installKnowledgeGraphApiMocks(page: Page): Promise<void> {
     }
 
     if (url.pathname.endsWith("/api/knowledge-graph/mirror-cards")) {
+      const activeAspect =
+        (url.searchParams.get("activeAspect")?.toUpperCase() as
+          | "SPEC"
+          | "DOMAIN"
+          | "OPERATIONS"
+          | null) ?? "SPEC";
+
       await respond(route, 200, {
         snapshotId: "mock-snapshot",
         projectKey: "domainspec-core",
         featureId: "knowledge-graph-visualization",
         generatedAt: "2026-05-06T12:00:00.000Z",
-        cards: mockCards,
+        cards: mockCards.map((card) => ({
+          ...card,
+          isActive: card.aspectKind === activeAspect,
+        })),
       });
       return;
     }

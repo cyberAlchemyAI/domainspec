@@ -71,6 +71,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
           - delegated stage does not return a terminal outcome,
           - watchdog window is exceeded,
           - repeated non-progress loop is detected (for example 12+ tool calls without new files, new evidence, or terminal output).
+          - `rg`/search timeout stall is detected (for example a single search runs >20s or the same pattern+path pair times out twice without new evidence).
        - On `suspected-stuck`: capture last available stage output/evidence, retry the same delegated stage once with narrowed scope and explicit execution caps.
           - For `domainspec-context-builder` retries, cap to at most 6 read/search batches and 1 write batch, and prohibit repeated chunk-reads of generated context artifacts.
        - Stop with `blocked-at-<stage>(subagent-stuck)` if the retry is also non-terminal.
@@ -86,6 +87,9 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
 <terminal-resilience>
 - Execute shell actions in non-interactive mode whenever possible.
 - Bound long-running operations with timeout or tracked background execution.
+- For `rg`/search commands, always scope to explicit include paths and use timeout guards (for example `timeout 20s rg ...`).
+- Do not run unscoped repository-root `rg` scans in delegated stages.
+- On two consecutive `rg` timeouts within one stage, mark `suspected-stuck` and retry once with narrowed scope or non-`rg` retrieval.
 - If a terminal run stalls or breaks: capture output, kill stale session, retry once with safer flags, then return BLOCK with remediation when retry fails.
 - Avoid shell patterns that terminate the parent session unexpectedly (for example `exit` inside loops).
 </terminal-resilience>

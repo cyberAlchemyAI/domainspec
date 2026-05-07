@@ -10,14 +10,14 @@ Close the current alignment blockers by executing remediation actions `A-KG-ALG-
 
 ## Status
 
-not-started
+completed
 
 ## DomainSpec Coverage
 
 | Source                                           | Coverage IDs                                                |
 | ------------------------------------------------ | ----------------------------------------------------------- |
 | [ALIGNMENT-REPORT.md](../../ALIGNMENT-REPORT.md) | KG-ALG-004..011, A-KG-ALG-001..008                          |
-| [interfaces.md](../../interfaces.md)             | KG-ALG-004, KG-BE-API-001..013                              |
+| [interfaces.md](../../interfaces.md)             | KG-ALG-004, KG-BE-API-001..016                              |
 | [events.md](../../events.md)                     | KG-ALG-005, KG-BE-EVT-005, KG-BE-EVT-007, KG-BE-EVT-009     |
 | [operations.md](../../operations.md)             | KG-ALG-009, KG-BE-OP-015, KG-BE-OP-016                      |
 | [UI-SPEC.md](../../UI-SPEC.md)                   | KG-ALG-008, KG-UI-STATE-002, KG-UI-STATE-003                |
@@ -60,9 +60,19 @@ not-started
 - Updated report link: [ALIGNMENT-REPORT.md](../../ALIGNMENT-REPORT.md) showing non-`BLOCK` verdict and action status updates.
 - Supporting test evidence for changed contracts (backend tests and targeted KG visualization E2E/state assertions).
 
+Execution evidence (2026-05-07):
+
+- `pnpm --filter @domainspec/backend check` -> pass.
+- `pnpm --filter @domainspec/backend test` -> pass (`23/23`).
+- `pnpm --filter @domainspec/web check` -> pass.
+- `pnpm --filter @domainspec/web build` -> pass.
+- `pnpm --filter @domainspec/web test:e2e -- e2e/knowledge-graph-visualization` -> pass (`16/16`).
+- `domainspec-audit-alignment knowledge-graph-visualization` -> command unavailable; deterministic fallback audit published in [ALIGNMENT-REPORT.md](../../ALIGNMENT-REPORT.md).
+- `domainspec-tag-code knowledge-graph-visualization --mode strict` -> command unavailable (tooling gap recorded in alignment report).
+
 ## Gaps and Questions
 
-- None; execute against existing remediation matrix and record any newly discovered drift from rerun.
+- Residual `FLAG` waivers remain for in-memory adapter binding and full TEST-SPEC catalogue closure (`KG-ALG-WVR-003`, `KG-ALG-WVR-010`), both owner-dated in [ALIGNMENT-REPORT.md](../../ALIGNMENT-REPORT.md).
 
 ## Decision Lock
 

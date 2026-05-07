@@ -1,0 +1,129 @@
+{
+  "ok": true,
+  "mode": "strict",
+  "input": "governance/tags/code-tags.json",
+  "root": "",
+  "checks": 16,
+  "passedChecks": 16,
+  "issues": 13,
+  "blockingIssues": 0,
+  "report": [
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'displays' composability: target concept 'knowledge-graph-visualization.ConceptDetailCard' is not tagged in code",
+      "file": "apps/web/src/components/knowledge-graph/CardInspectorPanel.tsx",
+      "line": 15,
+      "symbol": "CardInspectorPanel",
+      "conceptId": "knowledge-graph-visualization.ConceptDetailCard"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'reflects' composability: target concept 'knowledge-graph-visualization.ExplorationState' is not tagged in code",
+      "file": "apps/web/src/components/knowledge-graph/FocusStateIndicator.tsx",
+      "line": 14,
+      "symbol": "FocusStateIndicator",
+      "conceptId": "knowledge-graph-visualization.ExplorationState"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'wraps' composability: target concept 'ui.knowledge-graph-visualization.route.canvas' is not tagged in code",
+      "file": "apps/web/src/layouts/KnowledgeGraphPageLayout.tsx",
+      "line": 41,
+      "symbol": "KnowledgeGraphPageLayout",
+      "conceptId": "ui.knowledge-graph-visualization.route.canvas"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'queries' composability: target concept 'knowledge-graph-visualization.DocumentationWorkspace' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/get-concept-detail-card.ts",
+      "line": 24,
+      "symbol": "makeGetConceptDetailCardQuery",
+      "conceptId": "knowledge-graph-visualization.DocumentationWorkspace"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'shapes' composability: target concept 'knowledge-graph-visualization.ConceptDetailCard' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/get-concept-detail-card.ts",
+      "line": 101,
+      "symbol": "collectRelatedStories",
+      "conceptId": "knowledge-graph-visualization.ConceptDetailCard"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'queries' composability: target concept 'knowledge-graph-visualization.DocumentationWorkspace' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/get-definition-pointer.ts",
+      "line": 21,
+      "symbol": "makeGetDefinitionPointerQuery",
+      "conceptId": "knowledge-graph-visualization.DocumentationWorkspace"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'queries' composability: target concept 'knowledge-graph-visualization.DocumentationWorkspace' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/get-latest-mirror-projection.ts",
+      "line": 73,
+      "symbol": "makeGetLatestMirrorProjectionQuery",
+      "conceptId": "knowledge-graph-visualization.DocumentationWorkspace"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'queries' composability: target concept 'knowledge-graph-visualization.DocumentationWorkspace' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/get-latest-mirror-projection.ts",
+      "line": 108,
+      "symbol": "makeGetRelationshipGraphQuery",
+      "conceptId": "knowledge-graph-visualization.DocumentationWorkspace"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'transitions' composability: target concept 'knowledge-graph-visualization.ExplorationState' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/open-definition.ts",
+      "line": 19,
+      "symbol": "OpenDefinitionResult",
+      "conceptId": "knowledge-graph-visualization.ExplorationState"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'produces' composability: target concept 'knowledge-graph-visualization.MirrorProjectionBuilt' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/rebuild-mirror-projection.ts",
+      "line": 52,
+      "symbol": "makeRebuildMirrorProjectionUseCase",
+      "conceptId": "knowledge-graph-visualization.MirrorProjectionBuilt"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'transitions' composability: target concept 'knowledge-graph-visualization.ExplorationState' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/application/select-concept.ts",
+      "line": 28,
+      "symbol": "SelectConceptResult",
+      "conceptId": "knowledge-graph-visualization.ExplorationState"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'contains' composability: target concept 'knowledge-graph-visualization.DefinitionPointer' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 64,
+      "symbol": "ConceptDefinition",
+      "conceptId": "knowledge-graph-visualization.DefinitionPointer"
+    },
+    {
+      "code": "CT-COMP-010",
+      "severity": "MEDIUM",
+      "message": "Cannot evaluate 'contains' composability: target concept 'knowledge-graph-visualization.RelationshipEdge' is not tagged in code",
+      "file": "backend/src/modules/knowledge-graph/domain/models.ts",
+      "line": 145,
+      "symbol": "MirrorProjection",
+      "conceptId": "knowledge-graph-visualization.RelationshipEdge"
+    }
+  ]
+}

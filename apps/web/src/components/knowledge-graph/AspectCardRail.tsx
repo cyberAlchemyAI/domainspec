@@ -58,7 +58,7 @@ export function AspectCardRail(props: AspectCardRailProps) {
                 <span className="aspect-card__path">{card.filePath}</span>
                 <span className="aspect-card__meta">
                   <strong>{card.conceptCount}</strong> concepts ·{" "}
-                  <strong>{card.relationCount}</strong> relations
+                  <strong>{card.storyCount}</strong> stories
                 </span>
               </button>
             </li>

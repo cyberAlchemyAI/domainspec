@@ -18,12 +18,13 @@
 
 **Responses:**
 
-| Status | Condition       | Body                         |
-| ------ | --------------- | ---------------------------- |
-| 200    | Success         | Snapshot summary             |
-| 401    | Unauthorized    | Auth error                   |
-| 404    | Unknown scope   | Source project/feature error |
-| 422    | Invalid request | Validation error             |
+| Status | Condition       | Body                          |
+| ------ | --------------- | ----------------------------- |
+| 200    | Success         | Snapshot summary              |
+| 401    | Unauthorized    | Auth error                    |
+| 403    | Forbidden scope | Missing `domainspec.kg.write` |
+| 404    | Unknown scope   | Source project/feature error  |
+| 422    | Invalid request | Validation error              |
 
 ### GET /api/knowledge-graph/mirror-cards
 
@@ -38,6 +39,7 @@
 | featureId              | string   | [GetMirrorCards](queries.md#getmirrorcards).featureId              |
 | includeOptionalAspects | boolean  | [GetMirrorCards](queries.md#getmirrorcards).includeOptionalAspects |
 | aspectKinds[]          | string[] | [GetMirrorCards](queries.md#getmirrorcards).aspectKinds            |
+| activeAspect           | string   | [GetMirrorCards](queries.md#getmirrorcards).activeAspect           |
 
 **Responses:**
 

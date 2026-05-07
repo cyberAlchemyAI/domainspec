@@ -167,8 +167,6 @@ constitution: docs/UI-ARCHITECTURE.md
 | ------------------ | ------------------------------------------------ |
 | `Idle`             | Empty board prompt with source/feature selectors |
 | `ProjectionReady`  | Aspect rail + board loaded                       |
-| `AspectFocused`    | Active aspect highlighted, board filtered        |
-| `FeatureFocused`   | Feature card selected, concept/story board shown |
 | `ConceptFocused`   | Concept card selected, inspector populated       |
 | `DefinitionOpened` | Inspector confirmation and route/hash navigation |
 

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-05-07T03:19:37.661Z",
+    "generatedAt": "2026-05-07T12:01:02.142Z",
     "mode": "strict",
     "include": ["backend/src/modules/knowledge-graph", "apps/web/src"],
     "root": "/home/vrondelli/projects/domainspec-core/implementation/domainspec"
@@ -130,7 +130,7 @@
     },
     {
       "file": "apps/web/src/hooks/useMirrorGraph.ts",
-      "line": 427,
+      "line": 429,
       "symbol": "applySelectConceptOperation",
       "language": "ts",
       "concept": {
@@ -163,7 +163,7 @@
     },
     {
       "file": "apps/web/src/hooks/useMirrorGraph.ts",
-      "line": 294,
+      "line": 296,
       "symbol": "selectWhiteboardCard",
       "language": "ts",
       "concept": {
@@ -209,7 +209,7 @@
     },
     {
       "file": "apps/web/src/lib/api.ts",
-      "line": 353,
+      "line": 359,
       "symbol": "getMirrorCards",
       "language": "ts",
       "concept": {
@@ -221,7 +221,7 @@
     },
     {
       "file": "apps/web/src/lib/api.ts",
-      "line": 382,
+      "line": 389,
       "symbol": "getRelationshipGraph",
       "language": "ts",
       "concept": {
@@ -233,7 +233,7 @@
     },
     {
       "file": "apps/web/src/lib/api.ts",
-      "line": 461,
+      "line": 468,
       "symbol": "openDefinition",
       "language": "ts",
       "concept": {
@@ -614,7 +614,7 @@
     },
     {
       "file": "backend/src/modules/knowledge-graph/interface/http-routes.ts",
-      "line": 176,
+      "line": 177,
       "symbol": "openDefinition",
       "language": "ts",
       "concept": {
@@ -638,7 +638,7 @@
     },
     {
       "file": "backend/src/modules/knowledge-graph/interface/http-routes.ts",
-      "line": 101,
+      "line": 102,
       "symbol": "registerKnowledgeGraphRoutes",
       "language": "ts",
       "concept": {
@@ -670,7 +670,7 @@
     },
     {
       "file": "backend/src/modules/knowledge-graph/interface/http-routes.ts",
-      "line": 165,
+      "line": 166,
       "symbol": "selectConcept",
       "language": "ts",
       "concept": {

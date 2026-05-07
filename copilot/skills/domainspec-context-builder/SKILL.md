@@ -56,6 +56,10 @@ Optional indexing inputs (when present):
    - Prefer docs index artifacts (`feature-map`, `features-index`, `tag-index`) when available.
    - Expand only directly related docs and code paths.
    - Exclude any expanded file that does not close at least one uncovered obligation.
+5a. Search execution safety (Grep/Bash/rg):
+   - Scope every search to explicit include paths derived from task links and unresolved obligations.
+   - Use timeout guards for `rg` searches (for example `timeout 20s rg ...`) and avoid unscoped repository-root scans.
+   - Treat repeated timeout/non-progress on the same pattern+path pair as suspected-stuck; stop expansion and return BLOCK with captured evidence.
 6. Build architecture context from `architecture/ARCHITECTURE.md` retrieval map and include only selector-level references needed by this task.
 6a. Build relationship interested-data subset:
    - Parse `docs/features/{feature}/SPEC.md#feature-concept-graph` and collect unique edge labels.
@@ -83,6 +87,7 @@ Optional indexing inputs (when present):
    - `docs/features/{feature}/work-pack/context/{task-id}-CONTEXT.md`
    - `docs/features/{feature}/work-pack/context/{task-id}-CONTEXT.index.json`
    - Index must include `selected[].selectors`, `selected[].obligationRefs`, and `interestedData` subsets.
+10a. Enforce single write-batch emission for context artifacts; do not perform repeated write passes in one stage run.
 11. If `--dry-run`, return planned context file list/snippets only and do not write artifacts.
 12. Return unresolved gaps as explicit blockers with proposed remediation links.
 </process>
