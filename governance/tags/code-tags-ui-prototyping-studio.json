@@ -1,0 +1,329 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-08T02:02:51.689Z",
+    "mode": "strict",
+    "include": [
+      "backend/src/modules/ui-prototyping-studio",
+      "apps/web/src/components/ui-prototyping-studio",
+      "apps/web/src/hooks",
+      "apps/web/src/layouts",
+      "apps/web/src/lib"
+    ],
+    "root": "/home/vrondelli/projects/domainspec-core/implementation/domainspec"
+  },
+  "tags": [
+    {
+      "file": "apps/web/src/components/ui-prototyping-studio/VariantCanvas.tsx",
+      "line": 16,
+      "symbol": "VariantCanvas",
+      "language": "tsx",
+      "concept": {
+        "id": "ui-prototyping-studio.VariantCanvas",
+        "type": "Component",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/hooks/useConceptFocus.ts",
+      "line": 191,
+      "symbol": "openFocusedDefinition",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.DefinitionNavigationBinding",
+        "type": "Binding",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "mutates",
+          "to": "knowledge-graph-visualization.OpenDefinition"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useConceptFocus.ts",
+      "line": 44,
+      "symbol": "useConceptFocus",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.useConceptFocus",
+        "type": "Hook",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 510,
+      "symbol": "applySelectConceptOperation",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.SelectConcept",
+        "type": "Operation",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 107,
+      "symbol": "loadProjection",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.GraphDataBinding",
+        "type": "Binding",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "fetches",
+          "to": "knowledge-graph-visualization.GetMirrorCards"
+        },
+        {
+          "edge": "fetches",
+          "to": "knowledge-graph-visualization.GetRelationshipGraph"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 350,
+      "symbol": "selectWhiteboardCard",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.ConceptFocusBinding",
+        "type": "Binding",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "mutates",
+          "to": "knowledge-graph-visualization.SelectConcept"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/hooks/useMirrorGraph.ts",
+      "line": 87,
+      "symbol": "useMirrorGraph",
+      "language": "ts",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.useMirrorGraph",
+        "type": "Hook",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/layouts/KnowledgeGraphPageLayout.tsx",
+      "line": 41,
+      "symbol": "KnowledgeGraphPageLayout",
+      "language": "tsx",
+      "concept": {
+        "id": "ui.knowledge-graph-visualization.KnowledgeGraphPageLayout",
+        "type": "Layout",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "wraps",
+          "to": "ui.knowledge-graph-visualization.route.canvas"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/layouts/StudioWorkbenchLayout.tsx",
+      "line": 26,
+      "symbol": "StudioWorkbenchLayout",
+      "language": "tsx",
+      "concept": {
+        "id": "ui-prototyping-studio.StudioWorkbenchPage",
+        "type": "Page",
+        "concern": "sys"
+      },
+      "edges": [
+        {
+          "edge": "renders",
+          "to": "ui-prototyping-studio.VariantCanvas"
+        }
+      ]
+    },
+    {
+      "file": "apps/web/src/lib/api.ts",
+      "line": 378,
+      "symbol": "getMirrorCards",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetMirrorCards",
+        "type": "Query",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/lib/api.ts",
+      "line": 408,
+      "symbol": "getRelationshipGraph",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.GetRelationshipGraph",
+        "type": "Query",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "apps/web/src/lib/api.ts",
+      "line": 487,
+      "symbol": "openDefinition",
+      "language": "ts",
+      "concept": {
+        "id": "knowledge-graph-visualization.OpenDefinition",
+        "type": "Operation",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/generate-variants.ts",
+      "line": 19,
+      "symbol": "makeGenerateStudioVariantsUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.GenerateVariants",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/get-session-snapshot.ts",
+      "line": 9,
+      "symbol": "makeGetStudioSessionSnapshotQuery",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.GetSessionSnapshot",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "ui-prototyping-studio.StudioSession"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/initialize-session.ts",
+      "line": 13,
+      "symbol": "makeInitializeStudioSessionUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.InitializeSession",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/list-session-variants.ts",
+      "line": 9,
+      "symbol": "makeListStudioSessionVariantsQuery",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.ListSessionVariants",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "ui-prototyping-studio.PrototypeVariant"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/select-or-commit-baseline.ts",
+      "line": 16,
+      "symbol": "makeSelectOrCommitBaselineUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.SelectOrCommitBaseline",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/submit-prompt.ts",
+      "line": 11,
+      "symbol": "makeSubmitStudioPromptUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.SubmitPrompt",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/domain/models.ts",
+      "line": 44,
+      "symbol": "PrototypeVariant",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.PrototypeVariant",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/domain/models.ts",
+      "line": 25,
+      "symbol": "StudioSession",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.StudioSession",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/interface/http-routes.ts",
+      "line": 42,
+      "symbol": "registerUiPrototypingStudioRoutes",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.UIPrototypingStudioAPI",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.InitializeSession"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.SubmitPrompt"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.GenerateVariants"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.SelectOrCommitBaseline"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.GetSessionSnapshot"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.ListSessionVariants"
+        }
+      ]
+    }
+  ],
+  "issues": [],
+  "stats": {
+    "scannedFiles": 23,
+    "taggedSymbols": 21,
+    "issues": 0
+  }
+}

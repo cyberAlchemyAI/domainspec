@@ -1,0 +1,177 @@
+=== STAGE: domainspec-tag-code ui-prototyping-studio ===
+=== STAGE_RUN_ID: uips-task01-tag-code-20260508T015452Z ===
+=== START_UTC: 2026-05-08T01:57:06Z ===
+
+=== COMMAND: extract ===
+extract-code-tags: files=23 taggedSymbols=21 issues=0 output=governance/tags/code-tags-ui-prototyping-studio.json
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: validate ===
+validate-code-tags: tags=21 issues=30 nonWaived=30 blocking=30 waived=0
+[code-tag:strict] apps/web/src/hooks/useConceptFocus.ts:44 | severity=HIGH | code=CT-013 | Source concept 'ui.knowledge-graph-visualization.useConceptFocus' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/hooks/useConceptFocus.ts:191 | severity=HIGH | code=CT-005 | Unknown target concept 'knowledge-graph-visualization.OpenDefinition' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] apps/web/src/hooks/useConceptFocus.ts:191 | severity=HIGH | code=CT-013 | Source concept 'ui.knowledge-graph-visualization.DefinitionNavigationBinding' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:87 | severity=HIGH | code=CT-013 | Source concept 'ui.knowledge-graph-visualization.useMirrorGraph' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:107 | severity=HIGH | code=CT-005 | Unknown target concept 'knowledge-graph-visualization.GetMirrorCards' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:107 | severity=HIGH | code=CT-005 | Unknown target concept 'knowledge-graph-visualization.GetRelationshipGraph' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:107 | severity=HIGH | code=CT-013 | Source concept 'ui.knowledge-graph-visualization.GraphDataBinding' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:350 | severity=HIGH | code=CT-005 | Unknown target concept 'knowledge-graph-visualization.SelectConcept' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:350 | severity=HIGH | code=CT-013 | Source concept 'ui.knowledge-graph-visualization.ConceptFocusBinding' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/hooks/useMirrorGraph.ts:510 | severity=HIGH | code=CT-013 | Source concept 'knowledge-graph-visualization.SelectConcept' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/hooks/useUiPrototypingStudio.ts:31 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.StudioSessionHook' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/layouts/KnowledgeGraphPageLayout.tsx:41 | severity=HIGH | code=CT-005 | Unknown target concept 'ui.knowledge-graph-visualization.route.canvas' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] apps/web/src/layouts/KnowledgeGraphPageLayout.tsx:41 | severity=HIGH | code=CT-013 | Source concept 'ui.knowledge-graph-visualization.KnowledgeGraphPageLayout' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/layouts/StudioWorkbenchLayout.tsx:26 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.StudioWorkbenchPage' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/lib/api.ts:378 | severity=HIGH | code=CT-013 | Source concept 'knowledge-graph-visualization.GetMirrorCards' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/lib/api.ts:408 | severity=HIGH | code=CT-013 | Source concept 'knowledge-graph-visualization.GetRelationshipGraph' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/lib/api.ts:487 | severity=HIGH | code=CT-013 | Source concept 'knowledge-graph-visualization.OpenDefinition' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/generate-variants.ts:19 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.GenerateVariants' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/get-session-snapshot.ts:9 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.GetSessionSnapshot' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/initialize-session.ts:13 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.InitializeSession' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/list-session-variants.ts:9 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.ListSessionVariants' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/select-or-commit-baseline.ts:16 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.SelectOrCommitBaseline' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/submit-prompt.ts:11 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.SubmitPrompt' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/domain/models.ts:25 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.StudioSession' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/domain/models.ts:44 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.PrototypeVariant' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.InitializeSession' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.SubmitPrompt' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.GenerateVariants' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.SelectOrCommitBaseline' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.UIPrototypingStudioAPI' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+
+=== RETRY_1 ===
+=== START_UTC: 2026-05-08T01:57:48Z ===
+
+=== COMMAND: extract ===
+extract-code-tags: files=23 taggedSymbols=21 issues=0 output=governance/tags/code-tags-ui-prototyping-studio.json
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: validate ===
+validate-code-tags: tags=21 issues=15 nonWaived=15 blocking=15 waived=0
+[code-tag:strict] apps/web/src/hooks/useUiPrototypingStudio.ts:31 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.StudioSessionHook' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] apps/web/src/layouts/StudioWorkbenchLayout.tsx:26 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.StudioWorkbenchPage' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/generate-variants.ts:19 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.GenerateVariants' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/get-session-snapshot.ts:9 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.GetSessionSnapshot' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/initialize-session.ts:13 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.InitializeSession' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/list-session-variants.ts:9 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.ListSessionVariants' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/select-or-commit-baseline.ts:16 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.SelectOrCommitBaseline' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/submit-prompt.ts:11 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.SubmitPrompt' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/domain/models.ts:25 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.StudioSession' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/domain/models.ts:44 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.PrototypeVariant' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.InitializeSession' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.SubmitPrompt' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.GenerateVariants' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-005 | Unknown target concept 'ui-prototyping-studio.SelectOrCommitBaseline' | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-005)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/interface/http-routes.ts:42 | severity=HIGH | code=CT-013 | Source concept 'ui-prototyping-studio.UIPrototypingStudioAPI' is not defined in docs/features/*/SPEC.md | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-013)
+=== EXIT_CODE: 1 ===
+
+=== COMMAND: composability ===
+check-code-tag-composability: checks=8 passed=8 issues=1 blocking=0
+[code-tag-composability:strict] apps/web/src/layouts/KnowledgeGraphPageLayout.tsx:41 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'wraps' composability: target concept 'ui.knowledge-graph-visualization.route.canvas' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: drift ===
+compare-code-tag-drift: docsTriples=68 codeTriples=9 docsOnly=62 codeOnly=3 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT-ui-prototyping-studio.md
+=== EXIT_CODE: 1 ===
+
+=== RETRY_1_STAGE_EXIT_CODE: 1 ===
+=== END_UTC: 2026-05-08T01:57:56Z ===
+
+=== RETRY_2 ===
+=== START_UTC: 2026-05-08T01:59:19Z ===
+
+=== COMMAND: extract ===
+extract-code-tags: files=23 taggedSymbols=20 issues=0 output=governance/tags/code-tags-ui-prototyping-studio.json
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: validate ===
+validate-code-tags: tags=20 issues=0 nonWaived=0 blocking=0 waived=0
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: composability ===
+check-code-tag-composability: checks=8 passed=8 issues=1 blocking=0
+[code-tag-composability:strict] apps/web/src/layouts/KnowledgeGraphPageLayout.tsx:41 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'wraps' composability: target concept 'ui.knowledge-graph-visualization.route.canvas' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: drift ===
+compare-code-tag-drift: docsTriples=68 codeTriples=9 docsOnly=62 codeOnly=3 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT-ui-prototyping-studio.md
+=== EXIT_CODE: 1 ===
+
+=== RETRY_2_STAGE_EXIT_CODE: 1 ===
+=== END_UTC: 2026-05-08T01:59:27Z ===
+
+=== RETRY_3 ===
+=== START_UTC: 2026-05-08T02:01:54Z ===
+
+=== COMMAND: extract ===
+extract-code-tags: files=23 taggedSymbols=21 issues=0 output=governance/tags/code-tags-ui-prototyping-studio.json
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: validate ===
+validate-code-tags: tags=21 issues=5 nonWaived=5 blocking=5 waived=0
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/generate-variants.ts:19 | severity=CRITICAL | code=CT-006 | Invalid target type 'Entity' for edge 'produces' (expected Event) | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-006)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/initialize-session.ts:13 | severity=CRITICAL | code=CT-004 | Invalid source type 'Operation' for edge 'enforces' (expected Rule) | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-004)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/initialize-session.ts:13 | severity=CRITICAL | code=CT-006 | Invalid target type 'Value Object' for edge 'enforces' (expected Operation) | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-006)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/select-or-commit-baseline.ts:16 | severity=CRITICAL | code=CT-004 | Invalid source type 'Operation' for edge 'transitions' (expected Event) | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-004)
+[code-tag:strict] backend/src/modules/ui-prototyping-studio/application/submit-prompt.ts:11 | severity=CRITICAL | code=CT-004 | Invalid source type 'Operation' for edge 'transitions' (expected Event) | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-004)
+=== EXIT_CODE: 1 ===
+
+=== COMMAND: composability ===
+check-code-tag-composability: checks=10 passed=10 issues=4 blocking=0
+[code-tag-composability:strict] apps/web/src/layouts/KnowledgeGraphPageLayout.tsx:41 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'wraps' composability: target concept 'ui.knowledge-graph-visualization.route.canvas' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+[code-tag-composability:strict] backend/src/modules/ui-prototyping-studio/application/initialize-session.ts:13 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'enforces' composability: target concept 'ui-prototyping-studio.VariantCount' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+[code-tag-composability:strict] backend/src/modules/ui-prototyping-studio/application/select-or-commit-baseline.ts:16 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'transitions' composability: target concept 'ui-prototyping-studio.StudioSessionState' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+[code-tag-composability:strict] backend/src/modules/ui-prototyping-studio/application/submit-prompt.ts:11 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'transitions' composability: target concept 'ui-prototyping-studio.StudioSessionState' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: drift ===
+compare-code-tag-drift: docsTriples=73 codeTriples=18 docsOnly=55 codeOnly=0 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT-ui-prototyping-studio.md
+=== EXIT_CODE: 1 ===
+
+=== RETRY_3_STAGE_EXIT_CODE: 1 ===
+=== END_UTC: 2026-05-08T02:02:04Z ===
+
+=== RETRY_4 ===
+=== START_UTC: 2026-05-08T02:02:49Z ===
+
+=== COMMAND: extract ===
+extract-code-tags: files=23 taggedSymbols=21 issues=0 output=governance/tags/code-tags-ui-prototyping-studio.json
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: validate ===
+validate-code-tags: tags=21 issues=0 nonWaived=0 blocking=0 waived=0
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: composability ===
+check-code-tag-composability: checks=10 passed=10 issues=1 blocking=0
+[code-tag-composability:strict] apps/web/src/layouts/KnowledgeGraphPageLayout.tsx:41 | severity=MEDIUM | code=CT-COMP-010 | Cannot evaluate 'wraps' composability: target concept 'ui.knowledge-graph-visualization.route.canvas' is not tagged in code | remediation=governance/tags/CODE-TAG-REMEDIATION.md (code=CT-COMP-010)
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: drift ===
+compare-code-tag-drift: docsTriples=73 codeTriples=14 docsOnly=59 codeOnly=0 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT-ui-prototyping-studio.md
+=== EXIT_CODE: 1 ===
+
+=== RETRY_4_STAGE_EXIT_CODE: 1 ===
+=== END_UTC: 2026-05-08T02:02:58Z ===
+
+=== RETRY_5_FEATURE_SCOPED ===
+=== START_UTC: 2026-05-08T02:03:19Z ===
+
+=== COMMAND: extract(feature-scoped) ===
+extract-code-tags: files=16 taggedSymbols=10 issues=0 output=governance/tags/code-tags-ui-prototyping-studio-feature.json
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: validate(feature-scoped) ===
+validate-code-tags: tags=10 issues=0 nonWaived=0 blocking=0 waived=0
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: composability(feature-scoped) ===
+check-code-tag-composability: checks=6 passed=6 issues=0 blocking=0
+=== EXIT_CODE: 0 ===
+
+=== COMMAND: drift(feature-scoped) ===
+compare-code-tag-drift: docsTriples=31 codeTriples=8 docsOnly=23 codeOnly=0 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT-ui-prototyping-studio-feature.md
+=== EXIT_CODE: 1 ===
+
+=== RETRY_5_FEATURE_SCOPED_STAGE_EXIT_CODE: 1 ===
+=== END_UTC: 2026-05-08T02:03:27Z ===

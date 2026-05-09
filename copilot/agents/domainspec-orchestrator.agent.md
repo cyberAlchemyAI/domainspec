@@ -118,16 +118,24 @@ Read first:
      - `deep`: prefer high-capability model with `high` thinking for high-risk mutation/architecture stages.
      - Default to the lowest-cost viable profile; avoid starting at `xhigh` thinking unless explicitly required.
    - Create a `stageRunId` per delegated stage.
+     - Before starting a new delegated stage, reconcile stale `started` rows in `docs/signals/delegation-tuning.jsonl`:
+       - identify prior `stageRunId` entries with `outcome: started` and no terminal row (`completed|blocked|failed`) beyond watchdog budget,
+       - append a terminal `failed` row with `suspectedStuck: true` and remediation notes,
+       - never leave stale `started` rows unresolved between routed stages.
    - Before each delegated call, append a telemetry heartbeat row with `outcome: started` and that `stageRunId`.
    - Enforce watchdog windows per delegation profile:
      - `quick`: 8 minutes max
      - `standard`: 15 minutes max
      - `deep`: 25 minutes max
    - Capture each stage result before continuing.
+   - Stage completion invariant:
+     - every `started` heartbeat for a `stageRunId` MUST be followed by exactly one terminal outcome row (`completed|blocked|failed`) before route return,
+     - if execution is interrupted, canceled, or tool-call fails unexpectedly, append terminal `failed` with `suspectedStuck: true` before returning control.
   - Verify delegated stage liveness after each stage:
     - Stage is `healthy` only when delegated execution returns a terminal outcome (`completed`, `blocked`, `failed`) with evidence.
      - Stage is `suspected-stuck` when delegated execution is non-terminal/stalled, watchdog budget is exceeded, or repeated non-progress loops occur (for example 12+ tool calls with no new evidence).
     - Treat terminal `exit 0` without terminal stage completion evidence (or with lingering child processes) as `suspected-stuck`.
+    - Treat host terminal break events as `suspected-stuck` immediately (for example: shell/pty host terminated, terminal process exited unexpectedly, disconnected terminal session).
     - Treat `rg`/search timeout stalls as non-progress loops (for example a search runs >20s or the same pattern+path pair times out twice without new evidence).
      - On `suspected-stuck`, capture last available output/evidence, retry once with safer bounded execution and narrowed prompt scope.
      - For `domainspec-context-builder` retries, cap to at most 6 read/search batches and 1 write batch, and prohibit repeated chunk-reads of generated context artifacts.
@@ -146,14 +154,18 @@ Read first:
 <terminal-resilience-policy>
 - Treat terminal execution as non-interactive by default.
 - For long-running or uncertain commands, use bounded tracking (timeout or background terminal id with follow-up checks).
+- Run delegated commands with deterministic shell safety (`set -euo pipefail`) and non-interactive flags whenever supported by the command.
+- For uncertain command shapes (searches, wide globs, scripts, watch-like commands), run `./tools/terminal_guard.sh nudge -- <command...>` before execution and prefer `./tools/terminal_guard.sh run --timeout <sec> -- <command...>` for guarded execution.
 - For `rg`/search commands, always scope to explicit include paths and use timeout guards (for example `timeout 20s rg ...`).
 - Do not run unscoped repository-root `rg` scans in delegated stages.
 - On two consecutive `rg` timeouts in the same stage, mark `suspected-stuck` and retry once with narrowed scope or non-`rg` retrieval.
+- Before each routed stage and before final response, reconcile telemetry so no stale `started` row remains without terminal status.
 - If terminal execution breaks or stalls:
   1. capture last output,
   2. kill stale terminal/session,
   3. retry once with safer flags,
-  4. stop with BLOCK + remediation when retry also fails.
+  4. append terminal telemetry row for that `stageRunId` (`completed|blocked|failed`),
+  5. stop with BLOCK + remediation when retry also fails.
 - If a command exits `0` but leaves lingering child processes for a stage expected to terminate, treat it as stalled and apply the same recovery sequence.
 - Avoid `exit` inside shell loops used by delegated stages; return status codes instead.
 </terminal-resilience-policy>

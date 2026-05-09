@@ -1,0 +1,716 @@
+{
+  "feature": "ui-prototyping-studio",
+  "taskId": "TASK-UPS-WP-01",
+  "generatedAt": "2026-05-07",
+  "mode": "standard",
+  "strict": true,
+  "emit": "both",
+  "sourceRoot": "/home/vrondelli/projects/domainspec-core/implementation/domainspec",
+  "scope": {
+    "featurePath": "docs/features/ui-prototyping-studio",
+    "taskPath": "docs/features/ui-prototyping-studio/work-pack/tasks/TASK-UPS-WP-01.md",
+    "allowedCrossFeature": [
+      "architecture/ARCHITECTURE.md",
+      "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md",
+      "architecture/pattern-library/TESTING-ALIGNMENT.md",
+      "architecture/pattern-library/LAYERING-REFERENCE.md",
+      "docs/UI-ARCHITECTURE.md",
+      "CHANGELOG.md"
+    ]
+  },
+  "constraints": {
+    "frameworkVersion": "2.0.10",
+    "frameworkConstraints": [
+      "Prefer terminal_guard preflight and guarded execution for risky commands.",
+      "Use bounded command behavior with explicit resilience policy for terminal flows."
+    ],
+    "optionalIndexArtifacts": {
+      "docs/index/feature-map.md": "missing",
+      "docs/index/features-index.json": "missing",
+      "docs/index/tag-index.json": "missing"
+    }
+  },
+  "obligations": [
+    {
+      "id": "OPS.InitializeSession",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "InitializeSession"
+    },
+    {
+      "id": "OPS.SubmitPrompt",
+      "from": "TASK-UPS-WP-01 Capability Contract Subset",
+      "coverageId": "SubmitPrompt"
+    },
+    {
+      "id": "OPS.GenerateVariants",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "GenerateVariants"
+    },
+    {
+      "id": "OPS.SelectOrCommitBaseline",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "SelectOrCommitBaseline"
+    },
+    {
+      "id": "QRY.GetSessionSnapshot",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "GetSessionSnapshot"
+    },
+    {
+      "id": "QRY.ListSessionVariants",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "ListSessionVariants"
+    },
+    {
+      "id": "STATE.StudioSessionState",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "StudioSessionState"
+    },
+    {
+      "id": "STATE.UPS-ST-001..004",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "UPS-ST-001..UPS-ST-004"
+    },
+    {
+      "id": "API.UIPrototypingStudioAPI",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "UIPrototypingStudioAPI"
+    },
+    {
+      "id": "API.UPS-API-001..003",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "UPS-API-001..UPS-API-003"
+    },
+    {
+      "id": "UI.StudioWorkbenchPage",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "StudioWorkbenchPage"
+    },
+    {
+      "id": "UI.SessionControlsPanel",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "SessionControlsPanel"
+    },
+    {
+      "id": "UI.VariantCanvas",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "VariantCanvas"
+    },
+    {
+      "id": "UI.SessionStateIndicator",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "SessionStateIndicator"
+    },
+    {
+      "id": "UI.UPS-UI-001..005",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "UPS-UI-001..UPS-UI-005"
+    },
+    {
+      "id": "TEST.UPS-CON-001..003",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "UPS-CON-001..UPS-CON-003"
+    },
+    {
+      "id": "TEST.UPS-OP-001..004",
+      "from": "TASK-UPS-WP-01 DomainSpec Coverage",
+      "coverageId": "UPS-OP-001..UPS-OP-004"
+    },
+    {
+      "id": "ARCH.ARCHITECTURE",
+      "from": "TASK-UPS-WP-01 Architecture References",
+      "coverageId": "domainspec/ARCHITECTURE.md"
+    },
+    {
+      "id": "ARCH.ARCHITECTURE-FOUNDATIONS",
+      "from": "TASK-UPS-WP-01 Architecture References",
+      "coverageId": "Architecture Foundations"
+    },
+    {
+      "id": "ARCH.TESTING-ALIGNMENT",
+      "from": "TASK-UPS-WP-01 Architecture References",
+      "coverageId": "Testing Alignment"
+    },
+    {
+      "id": "ARCH.LAYERING-REFERENCE",
+      "from": "TASK-UPS-WP-01 Architecture References",
+      "coverageId": "Layering Reference"
+    },
+    {
+      "id": "ARCH.UI-ARCHITECTURE",
+      "from": "TASK-UPS-WP-01 Architecture References",
+      "coverageId": "UI Architecture Constitution"
+    },
+    {
+      "id": "FW.2.0.10",
+      "from": "Context builder step 1",
+      "coverageId": "CHANGELOG 2.0.10"
+    }
+  ],
+  "selected": [
+    {
+      "path": "docs/features/ui-prototyping-studio/work-pack/tasks/TASK-UPS-WP-01.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability Contract Subset",
+          "lineRange": [15, 22]
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineRange": [24, 33]
+        },
+        {
+          "type": "heading",
+          "value": "## Architecture References",
+          "lineRange": [35, 40]
+        }
+      ],
+      "obligationRefs": [
+        "OPS.InitializeSession",
+        "OPS.SubmitPrompt",
+        "OPS.GenerateVariants",
+        "OPS.SelectOrCommitBaseline",
+        "QRY.GetSessionSnapshot",
+        "QRY.ListSessionVariants",
+        "STATE.StudioSessionState",
+        "STATE.UPS-ST-001..004",
+        "API.UIPrototypingStudioAPI",
+        "API.UPS-API-001..003",
+        "UI.StudioWorkbenchPage",
+        "UI.SessionControlsPanel",
+        "UI.VariantCanvas",
+        "UI.SessionStateIndicator",
+        "UI.UPS-UI-001..005",
+        "TEST.UPS-CON-001..003",
+        "TEST.UPS-OP-001..004",
+        "ARCH.ARCHITECTURE",
+        "ARCH.ARCHITECTURE-FOUNDATIONS",
+        "ARCH.TESTING-ALIGNMENT",
+        "ARCH.LAYERING-REFERENCE",
+        "ARCH.UI-ARCHITECTURE"
+      ],
+      "score": {
+        "signal": 1.0,
+        "cost": 0.08,
+        "ambiguity": 0.02,
+        "value": 0.029
+      }
+    },
+    {
+      "path": "CHANGELOG.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## [2.0.10] - 2026-05-07",
+          "lineRange": [26, 36]
+        }
+      ],
+      "obligationRefs": ["FW.2.0.10"],
+      "score": {
+        "signal": 0.78,
+        "cost": 0.05,
+        "ambiguity": 0.08,
+        "value": 0.134
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/operations.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## InitializeSession",
+          "lineRange": [11, 30]
+        },
+        {
+          "type": "heading",
+          "value": "## SubmitPrompt",
+          "lineRange": [55, 79]
+        },
+        {
+          "type": "heading",
+          "value": "## GenerateVariants",
+          "lineRange": [95, 115]
+        },
+        {
+          "type": "heading",
+          "value": "## SelectOrCommitBaseline",
+          "lineRange": [142, 168]
+        }
+      ],
+      "obligationRefs": [
+        "OPS.InitializeSession",
+        "OPS.SubmitPrompt",
+        "OPS.GenerateVariants",
+        "OPS.SelectOrCommitBaseline",
+        "TEST.UPS-OP-001..004"
+      ],
+      "score": {
+        "signal": 0.96,
+        "cost": 0.2,
+        "ambiguity": 0.05,
+        "value": 0.091
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/queries.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## GetSessionSnapshot",
+          "lineRange": [10, 27]
+        },
+        {
+          "type": "heading",
+          "value": "## ListSessionVariants",
+          "lineRange": [52, 78]
+        }
+      ],
+      "obligationRefs": ["QRY.GetSessionSnapshot", "QRY.ListSessionVariants"],
+      "score": {
+        "signal": 0.92,
+        "cost": 0.12,
+        "ambiguity": 0.04,
+        "value": 0.082
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/states.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## StudioSessionState",
+          "lineRange": [9, 24]
+        },
+        {
+          "type": "heading",
+          "value": "### Transition Table",
+          "lineRange": [28, 43]
+        },
+        {
+          "type": "heading",
+          "value": "### Invariants",
+          "lineRange": [44, 49]
+        }
+      ],
+      "obligationRefs": ["STATE.StudioSessionState", "STATE.UPS-ST-001..004"],
+      "score": {
+        "signal": 0.93,
+        "cost": 0.16,
+        "ambiguity": 0.05,
+        "value": 0.092
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/interfaces.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## External: UIPrototypingStudioAPI (REST)",
+          "lineRange": [12, 95]
+        },
+        {
+          "type": "heading",
+          "value": "### POST /api/ui-prototyping-studio/sessions",
+          "lineRange": [14, 33]
+        },
+        {
+          "type": "heading",
+          "value": "### POST /api/ui-prototyping-studio/sessions/:sessionId/variants/generate",
+          "lineRange": [55, 74]
+        },
+        {
+          "type": "heading",
+          "value": "### POST /api/ui-prototyping-studio/sessions/:sessionId/baseline",
+          "lineRange": [75, 95]
+        },
+        {
+          "type": "heading",
+          "value": "## Internal: StudioOrchestrationModule Interface",
+          "lineRange": [212, 231]
+        }
+      ],
+      "obligationRefs": ["API.UIPrototypingStudioAPI", "API.UPS-API-001..003"],
+      "score": {
+        "signal": 0.94,
+        "cost": 0.22,
+        "ambiguity": 0.06,
+        "value": 0.108
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/UI-SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Route Table",
+          "lineRange": [41, 54]
+        },
+        {
+          "type": "heading",
+          "value": "## Page Layouts",
+          "lineRange": [56, 73]
+        },
+        {
+          "type": "heading",
+          "value": "## Interaction Contract",
+          "lineRange": [75, 89]
+        },
+        {
+          "type": "heading",
+          "value": "## Form and Selection Contracts",
+          "lineRange": [146, 178]
+        },
+        {
+          "type": "heading",
+          "value": "## State-to-UI Mapping",
+          "lineRange": [180, 191]
+        }
+      ],
+      "obligationRefs": [
+        "UI.StudioWorkbenchPage",
+        "UI.SessionControlsPanel",
+        "UI.VariantCanvas",
+        "UI.SessionStateIndicator",
+        "UI.UPS-UI-001..005"
+      ],
+      "score": {
+        "signal": 0.95,
+        "cost": 0.22,
+        "ambiguity": 0.06,
+        "value": 0.1035
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/TEST-SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Contract Obligations Matrix",
+          "lineRange": [13, 27]
+        },
+        {
+          "type": "heading",
+          "value": "## State Machine Obligations",
+          "lineRange": [29, 41]
+        },
+        {
+          "type": "heading",
+          "value": "## Operation Rule Obligations",
+          "lineRange": [43, 57]
+        },
+        {
+          "type": "heading",
+          "value": "## Interface Contract Obligations",
+          "lineRange": [58, 71]
+        },
+        {
+          "type": "heading",
+          "value": "## UI Contract Obligations",
+          "lineRange": [73, 85]
+        }
+      ],
+      "obligationRefs": [
+        "TEST.UPS-CON-001..003",
+        "TEST.UPS-OP-001..004",
+        "STATE.UPS-ST-001..004",
+        "API.UPS-API-001..003",
+        "UI.UPS-UI-001..005"
+      ],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.28,
+        "ambiguity": 0.08,
+        "value": 0.149
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Module Map",
+          "lineRange": [37, 47]
+        },
+        {
+          "type": "heading",
+          "value": "## Capabilities",
+          "lineRange": [49, 60]
+        },
+        {
+          "type": "heading",
+          "value": "## Feature Concept Graph",
+          "lineRange": [186, 216]
+        }
+      ],
+      "obligationRefs": [
+        "OPS.InitializeSession",
+        "OPS.SubmitPrompt",
+        "OPS.GenerateVariants",
+        "OPS.SelectOrCommitBaseline",
+        "QRY.GetSessionSnapshot",
+        "QRY.ListSessionVariants",
+        "UI.UPS-UI-001..005"
+      ],
+      "score": {
+        "signal": 0.84,
+        "cost": 0.24,
+        "ambiguity": 0.1,
+        "value": 0.169
+      }
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Retrieval Map",
+          "lineRange": [11, 23]
+        }
+      ],
+      "obligationRefs": ["ARCH.ARCHITECTURE"],
+      "score": {
+        "signal": 0.88,
+        "cost": 0.1,
+        "ambiguity": 0.07,
+        "value": 0.1015
+      }
+    },
+    {
+      "path": "architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Layer Model",
+          "lineRange": [13, 24]
+        },
+        {
+          "type": "heading",
+          "value": "## Layer Snapshot",
+          "lineRange": [27, 34]
+        }
+      ],
+      "obligationRefs": ["ARCH.ARCHITECTURE-FOUNDATIONS"],
+      "score": {
+        "signal": 0.89,
+        "cost": 0.12,
+        "ambiguity": 0.08,
+        "value": 0.1055
+      }
+    },
+    {
+      "path": "architecture/pattern-library/TESTING-ALIGNMENT.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Layer-to-Test Mapping",
+          "lineRange": [5, 10]
+        }
+      ],
+      "obligationRefs": ["ARCH.TESTING-ALIGNMENT"],
+      "score": {
+        "signal": 0.86,
+        "cost": 0.08,
+        "ambiguity": 0.09,
+        "value": 0.1095
+      }
+    },
+    {
+      "path": "architecture/pattern-library/LAYERING-REFERENCE.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Layer Responsibilities",
+          "lineRange": [5, 39]
+        },
+        {
+          "type": "heading",
+          "value": "## Module Boundary Guidelines",
+          "lineRange": [49, 54]
+        }
+      ],
+      "obligationRefs": ["ARCH.LAYERING-REFERENCE"],
+      "score": {
+        "signal": 0.87,
+        "cost": 0.14,
+        "ambiguity": 0.09,
+        "value": 0.123
+      }
+    },
+    {
+      "path": "docs/UI-ARCHITECTURE.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Stack",
+          "lineRange": [18, 29]
+        },
+        {
+          "type": "heading",
+          "value": "## Design Principles",
+          "lineRange": [31, 36]
+        }
+      ],
+      "obligationRefs": ["ARCH.UI-ARCHITECTURE"],
+      "score": {
+        "signal": 0.83,
+        "cost": 0.16,
+        "ambiguity": 0.12,
+        "value": 0.1545
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "path": "docs/features/ui-prototyping-studio/domain.md",
+      "reason": "No uncovered obligation remained after operations/queries/states/interfaces/UI-SPEC/TEST-SPEC coverage.",
+      "score": {
+        "signal": 0.58,
+        "cost": 0.22,
+        "ambiguity": 0.2,
+        "value": 0.305
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/workflows.md",
+      "reason": "Task scope ends at baseline readiness branch and does not include approval/apply workflow obligations.",
+      "score": {
+        "signal": 0.52,
+        "cost": 0.18,
+        "ambiguity": 0.26,
+        "value": 0.335
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/DECISIONS.md",
+      "reason": "Decision lock is already declared in task file and did not add new selector-level obligations.",
+      "score": {
+        "signal": 0.44,
+        "cost": 0.12,
+        "ambiguity": 0.35,
+        "value": 0.3755
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/STORIES.md",
+      "reason": "Narrative overlap with TEST-SPEC obligation tables for this strict implementation context.",
+      "score": {
+        "signal": 0.3,
+        "cost": 0.22,
+        "ambiguity": 0.42,
+        "value": 0.486
+      }
+    },
+    {
+      "path": "docs/features/ui-prototyping-studio/DISCOVERY.md",
+      "reason": "Discovery context is not contract-binding for TASK-UPS-WP-01 coverage IDs.",
+      "score": {
+        "signal": 0.28,
+        "cost": 0.15,
+        "ambiguity": 0.45,
+        "value": 0.4815
+      }
+    },
+    {
+      "path": "architecture/pattern-library/DEPENDENCY-RULES.md",
+      "reason": "Not explicitly referenced by task architecture references and not required to close uncovered obligations.",
+      "score": {
+        "signal": 0.36,
+        "cost": 0.18,
+        "ambiguity": 0.36,
+        "value": 0.432
+      }
+    }
+  ],
+  "interestedData": {
+    "relationshipEdges": [
+      {
+        "from": "ui-prototyping-studio.InitializeSession",
+        "edge": "enforces",
+        "to": "ui-prototyping-studio.VariantCount",
+        "evidence": "operations.md#initializesession",
+        "obligationRefs": ["OPS.InitializeSession"]
+      },
+      {
+        "from": "ui-prototyping-studio.SubmitPrompt",
+        "edge": "transitions",
+        "to": "ui-prototyping-studio.StudioSessionState",
+        "evidence": "operations.md#submitprompt",
+        "obligationRefs": ["OPS.SubmitPrompt", "STATE.UPS-ST-001..004"]
+      },
+      {
+        "from": "ui-prototyping-studio.GenerateVariants",
+        "edge": "produces",
+        "to": "ui-prototyping-studio.PrototypeVariant",
+        "evidence": "operations.md#generatevariants",
+        "obligationRefs": ["OPS.GenerateVariants", "STATE.UPS-ST-001..004"]
+      },
+      {
+        "from": "ui-prototyping-studio.SelectOrCommitBaseline",
+        "edge": "transitions",
+        "to": "ui-prototyping-studio.StudioSessionState",
+        "evidence": "operations.md#selectorcommitbaseline",
+        "obligationRefs": [
+          "OPS.SelectOrCommitBaseline",
+          "STATE.UPS-ST-001..004"
+        ]
+      },
+      {
+        "from": "ui-prototyping-studio.GetSessionSnapshot",
+        "edge": "queries",
+        "to": "ui-prototyping-studio.StudioSession",
+        "evidence": "queries.md#getsessionsnapshot",
+        "obligationRefs": ["QRY.GetSessionSnapshot"]
+      },
+      {
+        "from": "ui-prototyping-studio.ListSessionVariants",
+        "edge": "queries",
+        "to": "ui-prototyping-studio.PrototypeVariant",
+        "evidence": "queries.md#listsessionvariants",
+        "obligationRefs": ["QRY.ListSessionVariants"]
+      },
+      {
+        "from": "ui-prototyping-studio.UIPrototypingStudioAPI",
+        "edge": "exposes",
+        "to": "ui-prototyping-studio.GenerateVariants",
+        "evidence": "interfaces.md#external-uiprototypingstudioapi-rest",
+        "obligationRefs": ["API.UPS-API-002"]
+      },
+      {
+        "from": "ui-prototyping-studio.StudioWorkbenchPage",
+        "edge": "renders",
+        "to": "ui-prototyping-studio.VariantCanvas",
+        "evidence": "UI-SPEC.md#page-layouts",
+        "obligationRefs": ["UI.UPS-UI-002"]
+      },
+      {
+        "from": "ui-prototyping-studio.StudioWorkbenchPage",
+        "edge": "renders",
+        "to": "ui-prototyping-studio.AnnotationPanel",
+        "evidence": "UI-SPEC.md#page-layouts",
+        "obligationRefs": ["UI.UPS-UI-004", "UI.UPS-UI-005"]
+      }
+    ]
+  },
+  "metrics": {
+    "selectedFileCount": 14,
+    "selectedFileBudget": 14,
+    "excerptLineCount": 266,
+    "excerptLineBudget": 280,
+    "noiseRatio": 0.14,
+    "noiseRatioBudget": 0.15,
+    "obligationCoverage": {
+      "required": 33,
+      "covered": 33,
+      "ratio": 1.0
+    }
+  },
+  "gates": {
+    "selectorGate": "pass",
+    "obligationBindingGate": "pass",
+    "budgetGate": "pass",
+    "noiseGate": "pass"
+  },
+  "unresolvedBlockers": []
+}

@@ -2,10 +2,34 @@ import { useMemo } from "react";
 
 import { useConceptFocus } from "./hooks/useConceptFocus";
 import { useMirrorGraph } from "./hooks/useMirrorGraph";
+import { useUiPrototypingStudio } from "./hooks/useUiPrototypingStudio";
 import { KnowledgeGraphPageLayout } from "./layouts/KnowledgeGraphPageLayout";
+import { StudioWorkbenchLayout } from "./layouts/StudioWorkbenchLayout";
 import { DEFAULT_FEATURE_ID, DEFAULT_PROJECT_KEY } from "./lib/api";
 
 const KNOWLEDGE_GRAPH_ROUTE = "/knowledge-graph";
+const UI_PROTOTYPING_STUDIO_ROUTE = "/ui-prototyping-studio";
+
+export function App() {
+  const currentPath = currentPathname();
+
+  if (currentPath === "/" || currentPath === KNOWLEDGE_GRAPH_ROUTE) {
+    return <KnowledgeGraphRoute currentPath={currentPath} />;
+  }
+
+  if (currentPath === UI_PROTOTYPING_STUDIO_ROUTE) {
+    return <UiPrototypingStudioRoute currentPath={currentPath} />;
+  }
+
+  return (
+    <main className="kg-screen-state">
+      <h1>Route not found</h1>
+      <p>This workspace exposes knowledge graph and UI prototyping routes.</p>
+      <a href={KNOWLEDGE_GRAPH_ROUTE}>Open /knowledge-graph</a>
+      <a href={UI_PROTOTYPING_STUDIO_ROUTE}>Open /ui-prototyping-studio</a>
+    </main>
+  );
+}
 
 /**
  * domainspec:
@@ -13,20 +37,9 @@ const KNOWLEDGE_GRAPH_ROUTE = "/knowledge-graph";
  *     id: ui.knowledge-graph-visualization.route.canvas
  *     type: Page
  *     concern: sys
- *   edges:
- *     - edge: renders
- *       to: ui.knowledge-graph-visualization.MirrorCardGrid
- *     - edge: renders
- *       to: ui.knowledge-graph-visualization.RelationshipGraphCanvas
- *     - edge: renders
- *       to: ui.knowledge-graph-visualization.ConceptDetailPanel
  */
-export function App() {
+function KnowledgeGraphRoute(props: { currentPath: string }) {
   const scope = useMemo(resolveRouteScope, []);
-  const currentPath = currentPathname();
-  const isKnowledgeGraphRoute =
-    currentPath === "/" || currentPath === KNOWLEDGE_GRAPH_ROUTE;
-
   const mirrorGraph = useMirrorGraph(scope);
   const conceptFocus = useConceptFocus({
     projectKey: mirrorGraph.projectKey,
@@ -42,19 +55,9 @@ export function App() {
       mirrorGraph.snapshotId !== null,
   });
 
-  if (!isKnowledgeGraphRoute) {
-    return (
-      <main className="kg-screen-state">
-        <h1>Route not found</h1>
-        <p>This workspace currently exposes the knowledge graph page only.</p>
-        <a href={KNOWLEDGE_GRAPH_ROUTE}>Open /knowledge-graph</a>
-      </main>
-    );
-  }
-
   return (
     <KnowledgeGraphPageLayout
-      currentPath={currentPath}
+      currentPath={props.currentPath}
       projectKey={mirrorGraph.projectKey}
       featureId={mirrorGraph.featureId}
       generatedAt={mirrorGraph.generatedAt}
@@ -79,6 +82,66 @@ export function App() {
       }}
       onOpenDefinition={() => {
         void conceptFocus.openFocusedDefinition();
+      }}
+    />
+  );
+}
+
+function UiPrototypingStudioRoute(props: { currentPath: string }) {
+  const studio = useUiPrototypingStudio();
+
+  return (
+    <StudioWorkbenchLayout
+      currentPath={props.currentPath}
+      session={studio.session}
+      variants={studio.variants}
+      comments={studio.comments}
+      draftBatch={studio.draftBatch}
+      revisions={studio.revisions}
+      handoffBundle={studio.handoffBundle}
+      prompt={studio.prompt}
+      variantCount={studio.variantCount}
+      annotationDraft={studio.annotationDraft}
+      busy={studio.busy}
+      loading={studio.loading}
+      errorMessage={studio.errorMessage}
+      draftErrorMessage={studio.draftErrorMessage}
+      annotationUnlocked={studio.annotationUnlocked}
+      committedBaseline={studio.committedBaseline}
+      approvalPending={studio.approvalPending}
+      applyEnabled={studio.applyEnabled}
+      onPromptChange={studio.setPrompt}
+      onVariantCountChange={studio.setVariantCount}
+      onAnnotationDraftChange={studio.setAnnotationDraft}
+      onStartSession={() => {
+        void studio.startSession();
+      }}
+      onSubmitPrompt={() => {
+        void studio.submitPrompt();
+      }}
+      onGenerateVariants={() => {
+        void studio.generateVariants();
+      }}
+      onSelectBaseline={(label) => {
+        void studio.selectBaseline(label);
+      }}
+      onCaptureComment={() => {
+        void studio.captureComment();
+      }}
+      onSynthesizeBatch={() => {
+        void studio.synthesizeBatch();
+      }}
+      onApproveBatch={() => {
+        void studio.approveBatch();
+      }}
+      onApplyBatch={() => {
+        void studio.applyBatch();
+      }}
+      onExportHandoff={() => {
+        void studio.exportHandoff();
+      }}
+      onRefreshHandoffBundle={() => {
+        void studio.refreshHandoffBundle();
       }}
     />
   );

@@ -23,6 +23,28 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.10] - 2026-05-07
+
+### Added
+
+- **Generic terminal guard tool** - added `tools/terminal_guard.sh` with `nudge`, `run`, and `profile` modes to preflight risky command shapes, monitor command output, and suggest execution strategy improvements.
+
+### Changed
+
+- **Script search hardening** - added explicit `timeout 20s` guards for `rg` invocations in `tools/update_project_experiments_index.sh` and `implementation/domainspec/tools/check_markdown_links.sh` with safe fallback behavior.
+- **Terminal resilience policy** - orchestrator and copilot instructions now reference preflight nudge + guarded run flows for risky commands beyond `rg`.
+
+## [2.0.9] - 2026-05-07
+
+### Added
+
+- **Delegation stale-stage reconciler** - added `tools/reconcile_delegation_tuning.sh` to append terminal `failed` rows for stale `started` telemetry entries after watchdog expiry.
+
+### Changed
+
+- **Orchestrator terminal recovery invariants** - `domainspec-orchestrator` policy now requires pre-stage stale-row reconciliation, terminal break classification, and stage completion guarantees so `started` rows are never left without terminal outcomes.
+- **Delegation telemetry operations guide** - updated `docs/signals/DELEGATION-TUNING.md` with auto-reconciliation workflow and stale-stage closure behavior.
+
 ## [2.0.8] - 2026-05-06
 
 ### Added

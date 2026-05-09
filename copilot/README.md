@@ -21,6 +21,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-sync-registry`          | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                                                                                                     |
 | `domainspec-generate-tests`         | Derive backend and/or UI test obligations from docs                                                                                                                                                                                           |
 | `domainspec-context-builder`        | Build minimal deterministic task context packs from task links, architecture references, composability patterns, and indexed snippets                                                                                                         |
+| `domainspec-inventory`              | Inventorize reusable feature/task capabilities, command-agent route mappings, and telemetry contracts for pipeline assembly                                                                                                                   |
 | `domainspec-implement`              | Implement backend code from approved contracts                                                                                                                                                                                                |
 | `domainspec-tag-code`               | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                                                                                                                                                         |
 | `domainspec-ui-pipeline`            | Run the UI lifecycle from UI spec to implementation and audit                                                                                                                                                                                 |
@@ -104,6 +105,7 @@ Common examples:
 - `@domainspec-orchestrator domainspec-orchestrate "spec payment-processing"` (delegates spec writer, then delegated task refresh/create, then story sync)
 - `@domainspec-orchestrator domainspec-orchestrate "generate tests for settlement-recovery"`
 - `@domainspec-orchestrator domainspec-orchestrate "build task context for knowledge-graph-visualization TASK-KG-IMP-01"`
+- `@domainspec-context-builder domainspec-inventory ingest agent-execution-orchestrator --task TASK-AEO-WP-01 --scope all`
 
 ### Orchestrator Delegation Tuning
 
@@ -137,11 +139,12 @@ Advanced direct stage commands (unchanged):
 4. `domainspec-sync-user-stories <feature>`
 5. `domainspec-generate-tests <feature>`
 6. `domainspec-context-builder <feature> --task <TASK-ID|task-path>`
-7. `domainspec-implement <feature>`
-8. `domainspec-tag-code <feature>`
-9. `domainspec-ui-pipeline <feature>`
-10. `domainspec-verify-feature <feature>`
-11. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
+7. `domainspec-inventory <ingest|lookup|validate|backfill> <feature> [--task <TASK-ID|task-path>]`
+8. `domainspec-implement <feature>`
+9. `domainspec-tag-code <feature>`
+10. `domainspec-ui-pipeline <feature>`
+11. `domainspec-verify-feature <feature>`
+12. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
 
 ## Installation
 

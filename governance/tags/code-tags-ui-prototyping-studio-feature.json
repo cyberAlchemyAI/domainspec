@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-08T02:03:21.375Z",
+    "mode": "strict",
+    "include": [
+      "backend/src/modules/ui-prototyping-studio",
+      "apps/web/src/components/ui-prototyping-studio"
+    ],
+    "root": "/home/vrondelli/projects/domainspec-core/implementation/domainspec"
+  },
+  "tags": [
+    {
+      "file": "apps/web/src/components/ui-prototyping-studio/VariantCanvas.tsx",
+      "line": 16,
+      "symbol": "VariantCanvas",
+      "language": "tsx",
+      "concept": {
+        "id": "ui-prototyping-studio.VariantCanvas",
+        "type": "Component",
+        "concern": "sys"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/generate-variants.ts",
+      "line": 19,
+      "symbol": "makeGenerateStudioVariantsUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.GenerateVariants",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/get-session-snapshot.ts",
+      "line": 9,
+      "symbol": "makeGetStudioSessionSnapshotQuery",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.GetSessionSnapshot",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "ui-prototyping-studio.StudioSession"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/initialize-session.ts",
+      "line": 13,
+      "symbol": "makeInitializeStudioSessionUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.InitializeSession",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/list-session-variants.ts",
+      "line": 9,
+      "symbol": "makeListStudioSessionVariantsQuery",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.ListSessionVariants",
+        "type": "Query"
+      },
+      "edges": [
+        {
+          "edge": "queries",
+          "to": "ui-prototyping-studio.PrototypeVariant"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/select-or-commit-baseline.ts",
+      "line": 16,
+      "symbol": "makeSelectOrCommitBaselineUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.SelectOrCommitBaseline",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/application/submit-prompt.ts",
+      "line": 11,
+      "symbol": "makeSubmitStudioPromptUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.SubmitPrompt",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/domain/models.ts",
+      "line": 44,
+      "symbol": "PrototypeVariant",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.PrototypeVariant",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/domain/models.ts",
+      "line": 25,
+      "symbol": "StudioSession",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.StudioSession",
+        "type": "Entity"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/ui-prototyping-studio/interface/http-routes.ts",
+      "line": 42,
+      "symbol": "registerUiPrototypingStudioRoutes",
+      "language": "ts",
+      "concept": {
+        "id": "ui-prototyping-studio.UIPrototypingStudioAPI",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.InitializeSession"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.SubmitPrompt"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.GenerateVariants"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.SelectOrCommitBaseline"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.GetSessionSnapshot"
+        },
+        {
+          "edge": "exposes",
+          "to": "ui-prototyping-studio.ListSessionVariants"
+        }
+      ]
+    }
+  ],
+  "issues": [],
+  "stats": {
+    "scannedFiles": 16,
+    "taggedSymbols": 10,
+    "issues": 0
+  }
+}

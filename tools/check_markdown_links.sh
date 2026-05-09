@@ -36,7 +36,8 @@ missing=0
 extract_links() {
   local file="$1"
   if command -v rg >/dev/null 2>&1; then
-    rg -o "\[[^\]]+\]\([^\)]+\)" "$file" | sed -E 's/^.*\(([^)]+)\).*$/\1/'
+    timeout 20s rg -o "\[[^\]]+\]\([^\)]+\)" "$file" | sed -E 's/^.*\(([^)]+)\).*$/\1/' || \
+      grep -oE "\[[^]]+\]\([^)]+\)" "$file" | sed -E 's/^.*\(([^)]+)\).*$/\1/'
   else
     grep -oE "\[[^]]+\]\([^)]+\)" "$file" | sed -E 's/^.*\(([^)]+)\).*$/\1/'
   fi

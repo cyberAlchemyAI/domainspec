@@ -863,6 +863,228 @@ a:focus-visible {
   color: #3a5a6b;
 }
 
+.ups-grid {
+  display: grid;
+  gap: 0.86rem;
+}
+
+.ups-grid--primary {
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr) minmax(0, 320px);
+}
+
+.ups-grid--secondary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ups-panel {
+  align-content: start;
+}
+
+.ups-error {
+  margin: 0;
+  border: 1px solid #ef9f9f;
+  border-radius: 0.6rem;
+  background: #ffe9e9;
+  color: #7f1b1b;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.86rem;
+}
+
+.ups-note {
+  margin: 0;
+  font-size: 0.83rem;
+  color: var(--muted-foreground);
+}
+
+.ups-form-field {
+  display: grid;
+  gap: 0.32rem;
+  font-size: 0.82rem;
+  color: var(--muted-foreground);
+}
+
+.ups-form-field select,
+.ups-form-field input,
+.ups-form-field textarea {
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  background: #ffffff;
+  padding: 0.5rem 0.6rem;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.87rem;
+}
+
+.ups-button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.ups-button {
+  border: 1px solid var(--primary);
+  border-radius: 0.56rem;
+  background: #ebf9fe;
+  color: #0e5f80;
+  padding: 0.46rem 0.64rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ups-button--secondary {
+  border-color: var(--border);
+  background: #ffffff;
+  color: var(--foreground);
+}
+
+.ups-button:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+.ups-session-id {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #2f5568;
+  overflow-wrap: anywhere;
+}
+
+.ups-state-indicator {
+  display: grid;
+  justify-items: end;
+  gap: 0.22rem;
+}
+
+.ups-state-indicator__label {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ups-state-indicator__meta {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.ups-state-badge {
+  border-radius: 999px;
+  padding: 0.24rem 0.66rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ups-state-badge--SessionInitialized {
+  background: #dde7ed;
+  color: #2f4858;
+}
+
+.ups-state-badge--PromptCaptured {
+  background: #d9ebff;
+  color: #17528a;
+}
+
+.ups-state-badge--VariantsReady {
+  background: #fff2cb;
+  color: #74561a;
+}
+
+.ups-state-badge--BaselineReady {
+  background: #dbf6ec;
+  color: #1f5c49;
+}
+
+.ups-state-badge--CommentsCaptured,
+.ups-state-badge--MutationDrafted {
+  background: #fff2cb;
+  color: #74561a;
+}
+
+.ups-state-badge--MutationApproved,
+.ups-state-badge--RevisionApplied,
+.ups-state-badge--RevisionRecorded,
+.ups-state-badge--SessionCompleted {
+  background: #d8f5f9;
+  color: #175164;
+}
+
+.ups-variant-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.55rem;
+}
+
+.ups-variant-card {
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  background: #ffffff;
+  padding: 0.58rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ups-variant-card.is-baseline {
+  border-color: #5da978;
+  box-shadow: inset 0 0 0 1px #84c09a;
+}
+
+.ups-variant-card h4 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.ups-variant-card p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #385667;
+}
+
+.ups-variant-status {
+  color: #2d5870;
+  font-weight: 600;
+}
+
+.ups-variant-artifact,
+.ups-variant-components {
+  color: var(--muted-foreground);
+}
+
+.ups-comment-stream,
+.ups-task-list,
+.ups-revision-list,
+.ups-handoff-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.ups-comment-stream li,
+.ups-task-list li,
+.ups-revision-list li,
+.ups-handoff-list li {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.44rem;
+  background: #ffffff;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.ups-comment-stream p,
+.ups-task-list p,
+.ups-revision-list p {
+  margin: 0;
+  font-size: 0.77rem;
+  color: #385667;
+}
+
 @media (max-width: 1260px) {
   .kg-shell {
     grid-template-columns: 210px minmax(0, 1fr);
@@ -873,6 +1095,14 @@ a:focus-visible {
   }
 
   .panel--detail {
+    grid-column: 1 / -1;
+  }
+
+  .ups-grid--primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ups-grid--primary > :last-child {
     grid-column: 1 / -1;
   }
 }
@@ -888,6 +1118,11 @@ a:focus-visible {
   }
 
   .kg-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ups-grid--primary,
+  .ups-grid--secondary {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -920,6 +1155,10 @@ a:focus-visible {
   }
 
   .relation-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ups-button-row {
     grid-template-columns: minmax(0, 1fr);
   }
 }

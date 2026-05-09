@@ -39,6 +39,30 @@ export type ApiErrorCode =
   | "CONCEPT_DEFINITION_UNRESOLVED"
   | "CONCEPT_SCOPE_MISMATCH"
   | "CONCEPT_SELECTION_SOURCE_INVALID"
+  | "UPS_AUTH_REQUIRED"
+  | "UPS_AUTH_FORBIDDEN"
+  | "VARIANT_COUNT_OUT_OF_RANGE"
+  | "SESSION_NOT_FOUND"
+  | "PROMPT_REQUIRED"
+  | "PROMPT_NOT_SET"
+  | "VARIANT_GENERATION_COUNT_MISMATCH"
+  | "BASELINE_SELECTION_REQUIRED"
+  | "BASELINE_LABEL_INVALID"
+  | "BASELINE_GATE_UNSATISFIED"
+  | "COMMENT_SCHEMA_INVALID"
+  | "COMMENT_SET_EMPTY"
+  | "SOURCE_REVISION_INVALID"
+  | "DRAFT_BATCH_NOT_FOUND"
+  | "BATCH_NOT_FOUND"
+  | "BATCH_NOT_DRAFT"
+  | "APPROVAL_METADATA_REQUIRED"
+  | "APPROVAL_STALE"
+  | "AUTO_APPLY_FORBIDDEN"
+  | "BATCH_APPROVAL_REQUIRED"
+  | "BATCH_STALE_FOR_HEAD"
+  | "HANDOFF_REVISION_REQUIRED"
+  | "HANDOFF_REFERENCE_INCOMPLETE"
+  | "HANDOFF_BUNDLE_NOT_READY"
   | "UNKNOWN";
 
 export class ApiError extends Error {
@@ -502,6 +526,460 @@ export async function openDefinition(
         conceptId: input.conceptId,
         aspectHint: input.aspectHint,
       }),
+    },
+  );
+}
+
+export type StudioBaselineMode = "selected" | "committed";
+export type StudioGateState = "pending" | "satisfied" | "blocked";
+export type StudioSessionState =
+  | "SessionInitialized"
+  | "PromptCaptured"
+  | "VariantsReady"
+  | "BaselineReady"
+  | "CommentsCaptured"
+  | "MutationDrafted"
+  | "MutationApproved"
+  | "RevisionApplied"
+  | "RevisionRecorded"
+  | "SessionCompleted";
+
+export type StudioCommentSeverity = "blocker" | "high" | "medium" | "low";
+export type StudioMutationBatchStatus =
+  | "draft"
+  | "approved"
+  | "applied"
+  | "rejected";
+
+export interface StudioBaselineProvenance {
+  mode: StudioBaselineMode;
+  label: "A" | "B" | "C";
+}
+
+export interface StudioIntegrationReadiness {
+  uiPhaseBridgeReady: boolean;
+  generateTestsUiReady: boolean;
+  uiImplementReady: boolean;
+}
+
+export interface StudioSessionSnapshot {
+  sessionId: string;
+  prompt: string | null;
+  variantCount: 1 | 2 | 3;
+  variantLabels: Array<"A" | "B" | "C">;
+  baseline: StudioBaselineProvenance | null;
+  revisionHeadId: string | null;
+  selectionGate: StudioGateState;
+  applyGate: StudioGateState;
+  integration: StudioIntegrationReadiness;
+  state: StudioSessionState;
+}
+
+export type StudioVariantStatus = "candidate" | "selected" | "committed";
+
+export interface StudioVariant {
+  sessionId: string;
+  variantLabel: "A" | "B" | "C";
+  htmlArtifactRef: string;
+  componentsUsed: string[];
+  rationale: string;
+  tradeoffs: string;
+  risk: string;
+  status: StudioVariantStatus;
+}
+
+export interface StudioAnnotationTarget {
+  selector: string;
+  elementLabel: string;
+  odId: string | null;
+}
+
+export interface StudioCommentEvent {
+  commentId: string;
+  sessionId: string;
+  revisionId: string;
+  target: StudioAnnotationTarget;
+  severity: StudioCommentSeverity;
+  intent: string;
+  note: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface StudioMutationTask {
+  taskId: string;
+  target: string;
+  intent: string;
+  changeType: string;
+  acceptanceText: string;
+  priority: string;
+}
+
+export interface StudioBatchApproval {
+  required: true;
+  approvedBy: string | null;
+  approvedAt: string | null;
+}
+
+export interface StudioMutationBatch {
+  batchId: string;
+  sessionId: string;
+  sourceRevisionId: string;
+  status: StudioMutationBatchStatus;
+  generatedFromCommentIds: string[];
+  tasks: StudioMutationTask[];
+  approval: StudioBatchApproval;
+  checksum: string;
+}
+
+export interface StudioDiffSummary {
+  added: number;
+  changed: number;
+  removed: number;
+}
+
+export interface StudioRevisionManifestEntry {
+  revisionId: string;
+  parentRevisionId: string;
+  sessionId: string;
+  variantCount: 1 | 2 | 3;
+  baseline: StudioBaselineProvenance;
+  appliedBatchId: string;
+  appliedTaskIds: string[];
+  unresolvedCommentIds: string[];
+  diffSummary: StudioDiffSummary;
+  createdAt: string;
+}
+
+export interface StudioHandoffBundle {
+  sessionId: string;
+  revisionHeadId: string;
+  baseline: StudioBaselineProvenance;
+  variantCount: 1 | 2 | 3;
+  storyRefs: string[];
+  requirementRefs: string[];
+  acceptanceRefs: string[];
+  uiSpecRef: string;
+  testSpecRef: string;
+}
+
+export interface InitializeStudioSessionInput {
+  requestedVariantCount?: number;
+  requestedBy: string;
+}
+
+export interface SubmitStudioPromptInput {
+  prompt: string;
+  submittedBy: string;
+}
+
+export interface GenerateStudioVariantsInput {
+  requestedBy: string;
+}
+
+export interface SelectOrCommitStudioBaselineInput {
+  selectedLabel?: string;
+  requestedBy: string;
+}
+
+export interface CaptureStudioCommentEventInput {
+  revisionId: string;
+  target: {
+    selector: string;
+    elementLabel: string;
+    odId?: string;
+  };
+  severity: StudioCommentSeverity;
+  intent: string;
+  note: string;
+  createdBy: string;
+}
+
+export interface SynthesizeStudioMutationBatchInput {
+  sourceRevisionId: string;
+  requestedBy: string;
+}
+
+export interface ApproveStudioMutationBatchInput {
+  approvedBy: string;
+  approvedAt: string;
+}
+
+export interface ApplyStudioMutationBatchInput {
+  applyRequestedBy: string;
+}
+
+export interface ExportStudioHandoffInput {
+  exportProfile?: string;
+  requestedBy: string;
+}
+
+export interface GetDraftMutationBatchOptions {
+  batchId?: string;
+}
+
+export interface ListRevisionManifestOptions {
+  limit?: number;
+  newestFirst?: boolean;
+}
+
+export interface StudioVariantsMutationResponse {
+  session: StudioSessionSnapshot;
+  variants: StudioVariant[];
+}
+
+export interface StudioMutationBatchMutationResponse {
+  session: StudioSessionSnapshot;
+  batch: StudioMutationBatch;
+}
+
+export interface StudioApplyBatchMutationResponse {
+  session: StudioSessionSnapshot;
+  batch: StudioMutationBatch;
+  revision: StudioRevisionManifestEntry;
+}
+
+export interface StudioExportHandoffResponse {
+  session: StudioSessionSnapshot;
+  bundle: StudioHandoffBundle;
+}
+
+export interface StudioVariantsQueryResponse {
+  variants: StudioVariant[];
+}
+
+export interface StudioRevisionManifestResponse {
+  entries: StudioRevisionManifestEntry[];
+}
+
+const UPS_READ_SCOPES = "domainspec.ui-prototyping.read";
+const UPS_WRITE_SCOPES =
+  "domainspec.ui-prototyping.read domainspec.ui-prototyping.write";
+
+export async function initializeStudioSession(
+  input: InitializeStudioSessionInput,
+): Promise<StudioSessionSnapshot> {
+  return request<StudioSessionSnapshot>("/api/ui-prototyping-studio/sessions", {
+    method: "POST",
+    headers: {
+      "x-scopes": UPS_WRITE_SCOPES,
+    },
+    body: JSON.stringify(input),
+  });
+}
+
+export async function submitStudioPrompt(
+  sessionId: string,
+  input: SubmitStudioPromptInput,
+): Promise<StudioSessionSnapshot> {
+  return request<StudioSessionSnapshot>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/prompt`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function generateStudioVariants(
+  sessionId: string,
+  input: GenerateStudioVariantsInput,
+): Promise<StudioVariantsMutationResponse> {
+  return request<StudioVariantsMutationResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/variants/generate`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function selectOrCommitStudioBaseline(
+  sessionId: string,
+  input: SelectOrCommitStudioBaselineInput,
+): Promise<StudioVariantsMutationResponse> {
+  return request<StudioVariantsMutationResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/baseline`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function getStudioSessionSnapshot(
+  sessionId: string,
+): Promise<StudioSessionSnapshot> {
+  return request<StudioSessionSnapshot>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}`,
+    {
+      headers: {
+        "x-scopes": UPS_READ_SCOPES,
+      },
+    },
+  );
+}
+
+export async function listStudioSessionVariants(
+  sessionId: string,
+): Promise<StudioVariantsQueryResponse> {
+  return request<StudioVariantsQueryResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/variants`,
+    {
+      headers: {
+        "x-scopes": UPS_READ_SCOPES,
+      },
+    },
+  );
+}
+
+export async function captureStudioCommentEvent(
+  sessionId: string,
+  input: CaptureStudioCommentEventInput,
+): Promise<StudioCommentEvent> {
+  return request<StudioCommentEvent>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/comments`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function synthesizeStudioMutationBatch(
+  sessionId: string,
+  input: SynthesizeStudioMutationBatchInput,
+): Promise<StudioMutationBatchMutationResponse> {
+  return request<StudioMutationBatchMutationResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/mutation-batches/synthesize`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function approveStudioMutationBatch(
+  sessionId: string,
+  batchId: string,
+  input: ApproveStudioMutationBatchInput,
+): Promise<StudioMutationBatchMutationResponse> {
+  return request<StudioMutationBatchMutationResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/mutation-batches/${encodeURIComponent(batchId)}/approve`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function applyStudioMutationBatch(
+  sessionId: string,
+  batchId: string,
+  input: ApplyStudioMutationBatchInput,
+): Promise<StudioApplyBatchMutationResponse> {
+  return request<StudioApplyBatchMutationResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/mutation-batches/${encodeURIComponent(batchId)}/apply`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function getDraftStudioMutationBatch(
+  sessionId: string,
+  options: GetDraftMutationBatchOptions = {},
+): Promise<StudioMutationBatch> {
+  const query = new URLSearchParams();
+  if (options.batchId && options.batchId.trim().length > 0) {
+    query.set("batchId", options.batchId.trim());
+  }
+
+  const suffix = query.size > 0 ? `?${query.toString()}` : "";
+  return request<StudioMutationBatch>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/mutation-batches/draft${suffix}`,
+    {
+      headers: {
+        "x-scopes": UPS_READ_SCOPES,
+      },
+    },
+  );
+}
+
+export async function listStudioRevisionManifest(
+  sessionId: string,
+  options: ListRevisionManifestOptions = {},
+): Promise<StudioRevisionManifestResponse> {
+  const query = new URLSearchParams();
+  if (
+    typeof options.limit === "number" &&
+    Number.isInteger(options.limit) &&
+    options.limit > 0
+  ) {
+    query.set("limit", String(options.limit));
+  }
+  if (typeof options.newestFirst === "boolean") {
+    query.set("newestFirst", String(options.newestFirst));
+  }
+
+  const suffix = query.size > 0 ? `?${query.toString()}` : "";
+  return request<StudioRevisionManifestResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/revisions${suffix}`,
+    {
+      headers: {
+        "x-scopes": UPS_READ_SCOPES,
+      },
+    },
+  );
+}
+
+export async function exportStudioDesignHandoff(
+  sessionId: string,
+  input: ExportStudioHandoffInput,
+): Promise<StudioExportHandoffResponse> {
+  return request<StudioExportHandoffResponse>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/handoff/export`,
+    {
+      method: "POST",
+      headers: {
+        "x-scopes": UPS_WRITE_SCOPES,
+      },
+      body: JSON.stringify(input),
+    },
+  );
+}
+
+export async function getStudioHandoffBundle(
+  sessionId: string,
+): Promise<StudioHandoffBundle> {
+  return request<StudioHandoffBundle>(
+    `/api/ui-prototyping-studio/sessions/${encodeURIComponent(sessionId)}/handoff`,
+    {
+      headers: {
+        "x-scopes": UPS_READ_SCOPES,
+      },
     },
   );
 }

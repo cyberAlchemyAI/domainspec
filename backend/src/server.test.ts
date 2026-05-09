@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import test from "node:test";
 
+import { createInMemoryStudioSessionStore } from "./modules/ui-prototyping-studio/application/session-store.js";
+import { createStudioOrchestrationModule } from "./modules/ui-prototyping-studio/application/studio-orchestration-module.js";
+import { createNewspaperContractAdapter } from "./modules/ui-prototyping-studio/infrastructure/newspaper-contract-adapter.js";
 import { buildServer } from "./server.js";
 
 const READ_SCOPE_HEADERS = {
@@ -13,6 +16,92 @@ const READ_SCOPE_HEADERS = {
 const WRITE_SCOPE_HEADERS = {
   "x-scopes": "domainspec.kg.read domainspec.kg.write",
 };
+
+const UPS_READ_SCOPE_HEADERS = {
+  "x-scopes": "domainspec.ui-prototyping.read",
+};
+
+const UPS_WRITE_SCOPE_HEADERS = {
+  "x-scopes": "domainspec.ui-prototyping.read domainspec.ui-prototyping.write",
+};
+
+async function setupUpsDraftBatch(app: ReturnType<typeof buildServer>) {
+  const sessionResponse = await app.inject({
+    method: "POST",
+    url: "/api/ui-prototyping-studio/sessions",
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedVariantCount: 3,
+      requestedBy: "test-suite",
+    },
+  });
+  const session = sessionResponse.json() as { sessionId: string };
+
+  await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${session.sessionId}/prompt`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      prompt: "Prototype deterministic mutation workflow",
+      submittedBy: "test-suite",
+    },
+  });
+
+  await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${session.sessionId}/variants/generate`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedBy: "test-suite",
+    },
+  });
+
+  await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${session.sessionId}/baseline`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      selectedLabel: "B",
+      requestedBy: "test-suite",
+    },
+  });
+
+  await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${session.sessionId}/comments`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      revisionId: "rev-0000",
+      target: {
+        selector: "#hero",
+        elementLabel: "Hero panel",
+      },
+      severity: "high",
+      intent: "Increase readability",
+      note: "Raise contrast for headings.",
+      createdBy: "test-suite",
+    },
+  });
+
+  const synthesizeResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${session.sessionId}/mutation-batches/synthesize`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      sourceRevisionId: "rev-0000",
+      requestedBy: "test-suite",
+    },
+  });
+
+  const synthesizeBody = synthesizeResponse.json() as {
+    batch: { batchId: string };
+  };
+
+  return {
+    sessionId: session.sessionId,
+    batchId: synthesizeBody.batch.batchId,
+  };
+}
 
 test("health endpoint returns ok", async (t) => {
   const app = buildServer();
@@ -31,6 +120,419 @@ test("health endpoint returns ok", async (t) => {
     service: "domainspec-backend",
     status: "ok",
   });
+});
+
+test("UPS-API-001 ui-prototyping-studio POST /sessions maps InitializeSession request fields", async (t) => {
+  const app = buildServer();
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/api/ui-prototyping-studio/sessions",
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedVariantCount: 2,
+      requestedBy: "test-suite",
+    },
+  });
+
+  assert.equal(response.statusCode, 201);
+  const body = response.json() as {
+    variantCount: number;
+    variantLabels: string[];
+    state: string;
+  };
+  assert.equal(body.variantCount, 2);
+  assert.deepEqual(body.variantLabels, ["A", "B"]);
+  assert.equal(body.state, "SessionInitialized");
+});
+
+test("UPS-API-002 ui-prototyping-studio POST /sessions/:sessionId/variants/generate exposes GenerateVariants", async (t) => {
+  const app = buildServer();
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const sessionResponse = await app.inject({
+    method: "POST",
+    url: "/api/ui-prototyping-studio/sessions",
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedVariantCount: 3,
+      requestedBy: "test-suite",
+    },
+  });
+  const sessionBody = sessionResponse.json() as { sessionId: string };
+
+  const promptResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}/prompt`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      prompt: "Generate a deterministic dashboard",
+      submittedBy: "test-suite",
+    },
+  });
+  assert.equal(promptResponse.statusCode, 200);
+
+  const response = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}/variants/generate`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedBy: "test-suite",
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  const body = response.json() as {
+    session: { state: string; selectionGate: string };
+    variants: Array<{ variantLabel: string }>;
+  };
+  assert.equal(body.session.state, "VariantsReady");
+  assert.equal(body.session.selectionGate, "pending");
+  assert.deepEqual(
+    body.variants.map((variant) => variant.variantLabel),
+    ["A", "B", "C"],
+  );
+});
+
+test("UPS-API-003 ui-prototyping-studio POST /sessions/:sessionId/baseline exposes SelectOrCommitBaseline", async (t) => {
+  const app = buildServer();
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const sessionResponse = await app.inject({
+    method: "POST",
+    url: "/api/ui-prototyping-studio/sessions",
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedVariantCount: 3,
+      requestedBy: "test-suite",
+    },
+  });
+  const sessionBody = sessionResponse.json() as { sessionId: string };
+
+  await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}/prompt`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      prompt: "Create a baseline selection flow",
+      submittedBy: "test-suite",
+    },
+  });
+
+  await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}/variants/generate`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedBy: "test-suite",
+    },
+  });
+
+  const missingSelectionResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}/baseline`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedBy: "test-suite",
+    },
+  });
+  assert.equal(missingSelectionResponse.statusCode, 409);
+  assert.equal(
+    (missingSelectionResponse.json() as { code: string }).code,
+    "BASELINE_SELECTION_REQUIRED",
+  );
+
+  const selectedResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}/baseline`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedBy: "test-suite",
+      selectedLabel: "B",
+    },
+  });
+  assert.equal(selectedResponse.statusCode, 200);
+  const selectedBody = selectedResponse.json() as {
+    session: {
+      state: string;
+      selectionGate: string;
+      baseline: { mode: string; label: string };
+    };
+  };
+  assert.equal(selectedBody.session.state, "BaselineReady");
+  assert.equal(selectedBody.session.selectionGate, "satisfied");
+  assert.equal(selectedBody.session.baseline.mode, "selected");
+  assert.equal(selectedBody.session.baseline.label, "B");
+
+  const snapshotResponse = await app.inject({
+    method: "GET",
+    url: `/api/ui-prototyping-studio/sessions/${sessionBody.sessionId}`,
+    headers: UPS_READ_SCOPE_HEADERS,
+  });
+  assert.equal(snapshotResponse.statusCode, 200);
+});
+
+test("UPS-API-004 UPS-API-005 UPS-API-006 ui-prototyping-studio comments, synthesis, and approval endpoints expose WP-02 contracts", async (t) => {
+  const app = buildServer();
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const seeded = await setupUpsDraftBatch(app);
+
+  const commentResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/comments`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      revisionId: "rev-0000",
+      target: {
+        selector: "#cta",
+        elementLabel: "CTA button",
+      },
+      severity: "medium",
+      intent: "Improve hierarchy",
+      note: "Increase button prominence.",
+      createdBy: "test-suite",
+    },
+  });
+  assert.equal(commentResponse.statusCode, 201);
+  assert.equal(
+    (commentResponse.json() as { severity: string }).severity,
+    "medium",
+  );
+
+  const synthesizeResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/mutation-batches/synthesize`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      sourceRevisionId: "rev-0000",
+      requestedBy: "test-suite",
+    },
+  });
+  assert.equal(synthesizeResponse.statusCode, 201);
+  const synthesizeBody = synthesizeResponse.json() as {
+    batch: {
+      batchId: string;
+      status: string;
+      tasks: Array<{ taskId: string }>;
+    };
+  };
+  assert.equal(synthesizeBody.batch.status, "draft");
+  assert.ok(synthesizeBody.batch.tasks.length >= 2);
+
+  const approveResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/mutation-batches/${synthesizeBody.batch.batchId}/approve`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      approvedBy: "qa-reviewer",
+      approvedAt: "2026-05-08T00:00:00.000Z",
+    },
+  });
+  assert.equal(approveResponse.statusCode, 200);
+  const approveBody = approveResponse.json() as {
+    session: { applyGate: string; state: string };
+    batch: { status: string; approval: { approvedBy: string } };
+  };
+  assert.equal(approveBody.batch.status, "approved");
+  assert.equal(approveBody.batch.approval.approvedBy, "qa-reviewer");
+  assert.equal(approveBody.session.applyGate, "satisfied");
+  assert.equal(approveBody.session.state, "MutationApproved");
+});
+
+test("UPS-API-007 UPS-API-008 ui-prototyping-studio apply and handoff endpoints expose WP-03 contracts", async (t) => {
+  const app = buildServer();
+
+  t.after(async () => {
+    await app.close();
+  });
+
+  const seeded = await setupUpsDraftBatch(app);
+
+  const approveResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/mutation-batches/${seeded.batchId}/approve`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      approvedBy: "qa-reviewer",
+      approvedAt: "2026-05-08T00:10:00.000Z",
+    },
+  });
+  assert.equal(approveResponse.statusCode, 200);
+
+  const applyResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/mutation-batches/${seeded.batchId}/apply`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      applyRequestedBy: "test-suite",
+    },
+  });
+  assert.equal(applyResponse.statusCode, 200);
+  const applyBody = applyResponse.json() as {
+    session: { revisionHeadId: string; state: string };
+    revision: { revisionId: string; appliedBatchId: string };
+  };
+  assert.equal(applyBody.revision.appliedBatchId, seeded.batchId);
+  assert.equal(applyBody.session.revisionHeadId, applyBody.revision.revisionId);
+  assert.equal(applyBody.session.state, "RevisionRecorded");
+
+  const exportResponse = await app.inject({
+    method: "POST",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/handoff/export`,
+    headers: UPS_WRITE_SCOPE_HEADERS,
+    payload: {
+      requestedBy: "test-suite",
+      exportProfile: "mvp",
+    },
+  });
+  assert.equal(exportResponse.statusCode, 200);
+
+  const handoffResponse = await app.inject({
+    method: "GET",
+    url: `/api/ui-prototyping-studio/sessions/${seeded.sessionId}/handoff`,
+    headers: UPS_READ_SCOPE_HEADERS,
+  });
+  assert.equal(handoffResponse.statusCode, 200);
+  const handoffBody = handoffResponse.json() as {
+    storyRefs: string[];
+    requirementRefs: string[];
+    acceptanceRefs: string[];
+    uiSpecRef: string;
+    testSpecRef: string;
+  };
+  assert.deepEqual(handoffBody.storyRefs, [
+    "docs/features/ui-prototyping-studio/STORIES.md",
+  ]);
+  assert.equal(
+    handoffBody.uiSpecRef,
+    "docs/features/ui-prototyping-studio/UI-SPEC.md",
+  );
+  assert.equal(
+    handoffBody.testSpecRef,
+    "docs/features/ui-prototyping-studio/TEST-SPEC.md",
+  );
+  assert.equal(handoffBody.requirementRefs.length, 1);
+  assert.equal(handoffBody.acceptanceRefs.length, 1);
+});
+
+test("UPS-API-009 ui-prototyping-studio orchestration module exposes full MVP method surface", () => {
+  const store = createInMemoryStudioSessionStore();
+  const module = createStudioOrchestrationModule(store, {
+    featureDocsRootDir: resolve(
+      process.cwd(),
+      "..",
+      "docs",
+      "features",
+      "ui-prototyping-studio",
+    ),
+  });
+
+  assert.equal(typeof module.initializeSession, "function");
+  assert.equal(typeof module.submitPrompt, "function");
+  assert.equal(typeof module.generateVariants, "function");
+  assert.equal(typeof module.selectOrCommitBaseline, "function");
+  assert.equal(typeof module.captureCommentEvent, "function");
+  assert.equal(typeof module.synthesizeMutationBatch, "function");
+  assert.equal(typeof module.approveMutationBatch, "function");
+  assert.equal(typeof module.applyApprovedBatch, "function");
+  assert.equal(typeof module.exportDesignHandoff, "function");
+  assert.equal(typeof module.getSessionSnapshot, "function");
+  assert.equal(typeof module.listSessionVariants, "function");
+  assert.equal(typeof module.getDraftMutationBatch, "function");
+  assert.equal(typeof module.listRevisionManifest, "function");
+  assert.equal(typeof module.getHandoffBundle, "function");
+});
+
+test("UPS-API-010 ui-prototyping-studio newspaper adapter remains adapter-only and runtime-independent", () => {
+  const adapter = createNewspaperContractAdapter();
+
+  const mappedComment = adapter.mapCommentEvent({
+    commentId: "ups-comment-00001",
+    sessionId: "ups-session-0001",
+    revisionId: "rev-0000",
+    target: {
+      selector: "#hero",
+      elementLabel: "Hero panel",
+      odId: null,
+    },
+    severity: "high",
+    intent: "Improve clarity",
+    note: "Increase contrast.",
+    createdBy: "qa",
+    createdAt: "2026-05-08T00:00:00.000Z",
+  });
+  assert.equal(mappedComment.id, "ups-comment-00001");
+  assert.equal(mappedComment.target, "#hero");
+
+  const mappedBatch = adapter.mapMutationBatch({
+    batchId: "ups-batch-00001",
+    sessionId: "ups-session-0001",
+    sourceRevisionId: "rev-0000",
+    status: "approved",
+    generatedFromCommentIds: ["ups-comment-00001"],
+    tasks: [
+      {
+        taskId: "task-0001",
+        target: "#hero",
+        intent: "Improve clarity",
+        changeType: "change",
+        acceptanceText: "Apply clarity update.",
+        priority: "p1",
+      },
+    ],
+    approval: {
+      required: true,
+      approvedBy: "qa",
+      approvedAt: "2026-05-08T00:00:00.000Z",
+    },
+    checksum: "checksum-001",
+  });
+  assert.equal(mappedBatch.taskCount, 1);
+  assert.equal(mappedBatch.tasks[0]?.id, "task-0001");
+
+  const mappedRevision = adapter.mapRevisionManifestEntry({
+    revisionId: "rev-0001",
+    parentRevisionId: "rev-0000",
+    sessionId: "ups-session-0001",
+    variantCount: 3,
+    baseline: {
+      mode: "selected",
+      label: "B",
+    },
+    appliedBatchId: "ups-batch-00001",
+    appliedTaskIds: ["task-0001"],
+    unresolvedCommentIds: [],
+    diffSummary: {
+      added: 0,
+      changed: 1,
+      removed: 0,
+    },
+    createdAt: "2026-05-08T00:00:10.000Z",
+  });
+  assert.equal(mappedRevision.appliedBatchId, "ups-batch-00001");
+
+  const adapterSource = readFileSync(
+    new URL(
+      "./modules/ui-prototyping-studio/infrastructure/newspaper-contract-adapter.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.equal(adapterSource.includes("newspaper/runtime"), false);
 });
 
 test("KG-BE-API-014 KG-BE-API-015 rebuild requires write scope and returns deterministic 401/403 diagnostics", async (t) => {

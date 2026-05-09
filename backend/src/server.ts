@@ -5,9 +5,14 @@ import {
   registerKnowledgeGraphRoutes,
   type RegisterKnowledgeGraphRoutesOptions,
 } from "./modules/knowledge-graph/index.js";
+import {
+  registerUiPrototypingStudioRoutes,
+  type RegisterUiPrototypingStudioRoutesOptions,
+} from "./modules/ui-prototyping-studio/index.js";
 
 interface BuildServerOptions {
   knowledgeGraph?: RegisterKnowledgeGraphRoutesOptions;
+  uiPrototypingStudio?: RegisterUiPrototypingStudioRoutesOptions;
 }
 
 export function buildServer(options: BuildServerOptions = {}) {
@@ -21,6 +26,7 @@ export function buildServer(options: BuildServerOptions = {}) {
   }));
 
   registerKnowledgeGraphRoutes(app, options.knowledgeGraph);
+  registerUiPrototypingStudioRoutes(app, options.uiPrototypingStudio);
 
   return app;
 }

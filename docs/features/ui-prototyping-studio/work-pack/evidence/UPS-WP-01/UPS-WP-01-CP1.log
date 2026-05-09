@@ -1,0 +1,310 @@
+=== CHECKPOINT: UPS-WP-01-CP1 ===
+=== START_UTC: 2026-05-08T01:40:10Z ===
+
+=== COMMAND: pnpm --filter @domainspec/backend check
+
+> @domainspec/backend@0.1.0 check /home/vrondelli/projects/domainspec-core/implementation/domainspec/backend
+> tsc -p tsconfig.json --noEmit
+
+=== EXIT_CODE: 0
+
+=== COMMAND: pnpm --filter @domainspec/web check
+
+> @domainspec/web@0.1.0 check /home/vrondelli/projects/domainspec-core/implementation/domainspec/apps/web
+> tsc --noEmit
+
+=== EXIT_CODE: 0
+
+=== COMMAND: pnpm --filter @domainspec/backend test -- --test-name-pattern "UPS-CON-001|UPS-CON-002|UPS-CON-003|UPS-OP-001|UPS-OP-002|UPS-OP-003|UPS-OP-004|UPS-ST-001|UPS-ST-002|UPS-ST-003|UPS-ST-004|UPS-API-001|UPS-API-002|UPS-API-003|ui-prototyping-studio"
+
+> @domainspec/backend@0.1.0 test /home/vrondelli/projects/domainspec-core/implementation/domainspec/backend
+> tsx --test src/**/*.test.ts "--test-name-pattern" "UPS-CON-001|UPS-CON-002|UPS-CON-003|UPS-OP-001|UPS-OP-002|UPS-OP-003|UPS-OP-004|UPS-ST-001|UPS-ST-002|UPS-ST-003|UPS-ST-004|UPS-API-001|UPS-API-002|UPS-API-003|ui-prototyping-studio"
+
+TAP version 13
+# Subtest: rebuild rejects missing required mirror file
+ok 1 - rebuild rejects missing required mirror file
+  ---
+  duration_ms: 7.191724
+  ...
+# Subtest: rebuild rejects non-canonical edge labels
+ok 2 - rebuild rejects non-canonical edge labels
+  ---
+  duration_ms: 1.452223
+  ...
+# Subtest: rebuild rejects unknown edge endpoints
+ok 3 - rebuild rejects unknown edge endpoints
+  ---
+  duration_ms: 1.086348
+  ...
+# Subtest: rebuild rejects unknown project before parser scan
+ok 4 - rebuild rejects unknown project before parser scan
+  ---
+  duration_ms: 1.176015
+  ...
+# Subtest: rebuild rejects unavailable feature before parser scan
+ok 5 - rebuild rejects unavailable feature before parser scan
+  ---
+  duration_ms: 1.088564
+  ...
+# Subtest: rebuild rejects invalid source root/path before parser scan
+ok 6 - rebuild rejects invalid source root/path before parser scan
+  ---
+  duration_ms: 1.699101
+  ...
+# Subtest: rebuild materializes and persists one projection snapshot
+ok 7 - rebuild materializes and persists one projection snapshot
+  ---
+  duration_ms: 42.659121
+  ...
+# Subtest: parseSpec reads relationship index from feature graph, cross-feature dependencies, and produces-for
+ok 8 - parseSpec reads relationship index from feature graph, cross-feature dependencies, and produces-for
+  ---
+  duration_ms: 40.998615
+  ...
+# Subtest: scanFeatureFiles rejects path escapes before file reads
+ok 9 - scanFeatureFiles rejects path escapes before file reads
+  ---
+  duration_ms: 12.237037
+  ...
+# Subtest: UPS-CON-001 UPS-OP-001 ui-prototyping-studio InitializeSession defaults variantCount to 3 and enforces 1..3
+ok 10 - UPS-CON-001 UPS-OP-001 ui-prototyping-studio InitializeSession defaults variantCount to 3 and enforces 1..3
+  ---
+  duration_ms: 6.721996
+  ...
+# Subtest: UPS-ST-001 ui-prototyping-studio SubmitPrompt transitions SessionInitialized to PromptCaptured
+ok 11 - UPS-ST-001 ui-prototyping-studio SubmitPrompt transitions SessionInitialized to PromptCaptured
+  ---
+  duration_ms: 1.198012
+  ...
+# Subtest: UPS-CON-002 UPS-OP-002 UPS-ST-002 ui-prototyping-studio GenerateVariants emits exact variant count and metadata contract
+ok 12 - UPS-CON-002 UPS-OP-002 UPS-ST-002 ui-prototyping-studio GenerateVariants emits exact variant count and metadata contract
+  ---
+  duration_ms: 1.945257
+  ...
+# Subtest: UPS-CON-003 UPS-OP-003 UPS-ST-003 ui-prototyping-studio multi-variant branch requires explicit baseline selection
+ok 13 - UPS-CON-003 UPS-OP-003 UPS-ST-003 ui-prototyping-studio multi-variant branch requires explicit baseline selection
+  ---
+  duration_ms: 2.125021
+  ...
+# Subtest: UPS-OP-004 UPS-ST-004 ui-prototyping-studio single-variant branch uses committed baseline
+ok 14 - UPS-OP-004 UPS-ST-004 ui-prototyping-studio single-variant branch uses committed baseline
+  ---
+  duration_ms: 0.724838
+  ...
+# {"level":30,"time":1778204432163,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"GET","url":"/health","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: health endpoint returns ok
+ok 15 - health endpoint returns ok
+  ---
+  duration_ms: 407.990643
+  ...
+# {"level":30,"time":1778204432202,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-001 ui-prototyping-studio POST /sessions maps InitializeSession request fields
+ok 16 - UPS-API-001 ui-prototyping-studio POST /sessions maps InitializeSession request fields
+  ---
+  duration_ms: 29.979323
+  ...
+# {"level":30,"time":1778204432232,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432175,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":9.979086995124817,"msg":"request completed"}
+# {"level":30,"time":1778204432210,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":8.658670991659164,"msg":"request completed"}
+# {"level":30,"time":1778204432242,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":9.626178979873657,"msg":"request completed"}
+# {"level":30,"time":1778204432244,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0001/prompt","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432247,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.138953000307083,"msg":"request completed"}
+# {"level":30,"time":1778204432248,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0001/variants/generate","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-002 ui-prototyping-studio POST /sessions/:sessionId/variants/generate exposes GenerateVariants
+ok 17 - UPS-API-002 ui-prototyping-studio POST /sessions/:sessionId/variants/generate exposes GenerateVariants
+  ---
+  duration_ms: 42.073756
+  ...
+# {"level":30,"time":1778204432279,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432252,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":4.0340059995651245,"msg":"request completed"}
+# {"level":30,"time":1778204432283,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":3.0479380190372467,"msg":"request completed"}
+# {"level":30,"time":1778204432285,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0001/prompt","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432288,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.3537389934062958,"msg":"request completed"}
+# {"level":30,"time":1778204432289,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0001/variants/generate","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432292,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":2.2257019877433777,"msg":"request completed"}
+# {"level":30,"time":1778204432294,"pid":1562661,"hostname":"vlad","reqId":"req-4","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0001/baseline","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432298,"pid":1562661,"hostname":"vlad","reqId":"req-4","res":{"statusCode":409},"responseTime":4.067016005516052,"msg":"request completed"}
+# {"level":30,"time":1778204432300,"pid":1562661,"hostname":"vlad","reqId":"req-5","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0001/baseline","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-003 ui-prototyping-studio POST /sessions/:sessionId/baseline exposes SelectOrCommitBaseline
+ok 18 - UPS-API-003 ui-prototyping-studio POST /sessions/:sessionId/baseline exposes SelectOrCommitBaseline
+  ---
+  duration_ms: 55.02497
+  ...
+# {"level":30,"time":1778204432363,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432306,"pid":1562661,"hostname":"vlad","reqId":"req-5","res":{"statusCode":200},"responseTime":5.5421139895915985,"msg":"request completed"}
+# {"level":30,"time":1778204432307,"pid":1562661,"hostname":"vlad","reqId":"req-6","req":{"method":"GET","url":"/api/ui-prototyping-studio/sessions/ups-session-0001","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432308,"pid":1562661,"hostname":"vlad","reqId":"req-6","res":{"statusCode":200},"responseTime":0.7505149841308594,"msg":"request completed"}
+# {"level":30,"time":1778204432368,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":401},"responseTime":4.444461017847061,"msg":"request completed"}
+# {"level":30,"time":1778204432369,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: KG-BE-API-014 KG-BE-API-015 rebuild requires write scope and returns deterministic 401/403 diagnostics
+ok 19 - KG-BE-API-014 KG-BE-API-015 rebuild requires write scope and returns deterministic 401/403 diagnostics
+  ---
+  duration_ms: 76.077779
+  ...
+# {"level":30,"time":1778204432433,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432372,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":403},"responseTime":2.8353009819984436,"msg":"request completed"}
+# {"level":30,"time":1778204432493,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":59.51349100470543,"msg":"request completed"}
+# Subtest: KG-BE-API-016 KG-BE-QRY-001 rebuild persists projection and read endpoints return latest snapshot
+ok 20 - KG-BE-API-016 KG-BE-QRY-001 rebuild persists projection and read endpoints return latest snapshot
+  ---
+  duration_ms: 139.542086
+  ...
+# {"level":30,"time":1778204432578,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432494,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432504,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":9.905509978532791,"msg":"request completed"}
+# {"level":30,"time":1778204432505,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432511,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":5.792820006608963,"msg":"request completed"}
+# {"level":30,"time":1778204432592,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":13.44132798910141,"msg":"request completed"}
+# {"level":30,"time":1778204432593,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432599,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":5.5035200119018555,"msg":"request completed"}
+# {"level":30,"time":1778204432600,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432601,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":401},"responseTime":1.0277479887008667,"msg":"request completed"}
+# {"level":30,"time":1778204432602,"pid":1562661,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-stage2&source=graph","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432612,"pid":1562661,"hostname":"vlad","reqId":"req-4","res":{"statusCode":200},"responseTime":10.697481006383896,"msg":"request completed"}
+# {"level":30,"time":1778204432614,"pid":1562661,"hostname":"vlad","reqId":"req-5","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers/definition?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432619,"pid":1562661,"hostname":"vlad","reqId":"req-5","res":{"statusCode":200},"responseTime":5.006229996681213,"msg":"request completed"}
+# {"level":30,"time":1778204432620,"pid":1562661,"hostname":"vlad","reqId":"req-6","req":{"method":"POST","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers/open-definition?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: concept detail, definition, and open-definition endpoints satisfy stage-2 contract
+ok 21 - concept detail, definition, and open-definition endpoints satisfy stage-2 contract
+  ---
+  duration_ms: 125.699663
+  ...
+# {"level":30,"time":1778204432696,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432637,"pid":1562661,"hostname":"vlad","reqId":"req-6","res":{"statusCode":200},"responseTime":16.623441010713577,"msg":"request completed"}
+# {"level":30,"time":1778204432708,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":11.686358988285065,"msg":"request completed"}
+# {"level":30,"time":1778204432710,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432712,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.7947149872779846,"msg":"request completed"}
+# {"level":30,"time":1778204432713,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-mismatch&source=graph","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432719,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":6.2513009905815125,"msg":"request completed"}
+# {"level":30,"time":1778204432720,"pid":1562661,"hostname":"vlad","reqId":"req-4","req":{"method":"POST","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.domainspec-maintainers/open-definition?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: open-definition returns deterministic mismatch diagnostics
+ok 22 - open-definition returns deterministic mismatch diagnostics
+  ---
+  duration_ms: 85.865424
+  ...
+# {"level":30,"time":1778204432785,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432721,"pid":1562661,"hostname":"vlad","reqId":"req-4","res":{"statusCode":409},"responseTime":1.3547349870204926,"msg":"request completed"}
+# {"level":30,"time":1778204432788,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":404},"responseTime":2.4842760264873505,"msg":"request completed"}
+# Subtest: rebuild rejects unknown project with deterministic code
+ok 23 - rebuild rejects unknown project with deterministic code
+  ---
+  duration_ms: 63.68563
+  ...
+# {"level":30,"time":1778204432843,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432852,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":9.022924989461899,"msg":"request completed"}
+# Subtest: KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 mirror-cards maps feature and aspect filters deterministically
+ok 24 - KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 mirror-cards maps feature and aspect filters deterministically
+  ---
+  duration_ms: 69.727173
+  ...
+# {"level":30,"time":1778204432915,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432853,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?featureId=knowledge-graph-visualization&includeOptionalAspects=false&aspectKinds=SPEC,OPERATIONS","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432856,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.151782989501953,"msg":"request completed"}
+# {"level":30,"time":1778204432927,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":11.88050502538681,"msg":"request completed"}
+# Subtest: KG-BE-API-004 KG-BE-IFMAP-004 graph applies edgeKinds filter
+ok 25 - KG-BE-API-004 KG-BE-IFMAP-004 graph applies edgeKinds filter
+  ---
+  duration_ms: 79.698117
+  ...
+# {"level":30,"time":1778204432999,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?projectKey=disabled-project&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: cross-project scope guards reject disabled project keys and unavailable features
+ok 26 - cross-project scope guards reject disabled project keys and unavailable features
+  ---
+  duration_ms: 64.504295
+  ...
+# {"level":30,"time":1778204433066,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432928,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=aspect&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432931,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.2254379987716675,"msg":"request completed"}
+# {"level":30,"time":1778204432932,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=aspect&activeAspect=SPEC&edgeKinds=queries","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204432936,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":4.122326999902725,"msg":"request completed"}
+# {"level":30,"time":1778204433000,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":404},"responseTime":1.0194589793682098,"msg":"request completed"}
+# {"level":30,"time":1778204433001,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?projectKey=domainspec-core&featureId=missing-feature&viewLevel=aspect&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433003,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":404},"responseTime":1.2620890140533447,"msg":"request completed"}
+# {"level":30,"time":1778204433076,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":10.241938978433609,"msg":"request completed"}
+# Subtest: cross-project scope guards isolate snapshots per (projectKey, featureId)
+ok 27 - cross-project scope guards isolate snapshots per (projectKey, featureId)
+  ---
+  duration_ms: 80.825414
+  ...
+# {"level":30,"time":1778204433143,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433078,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?projectKey=alt-project&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433081,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.831835001707077,"msg":"request completed"}
+# {"level":30,"time":1778204433081,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?projectKey=domainspec-core&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433083,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":404},"responseTime":1.7325409948825836,"msg":"request completed"}
+# {"level":30,"time":1778204433156,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":12.723051011562347,"msg":"request completed"}
+# Subtest: graph query maps board-level fields and validates selected group card
+ok 28 - graph query maps board-level fields and validates selected group card
+  ---
+  duration_ms: 86.834581
+  ...
+# {"level":30,"time":1778204433221,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433156,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433160,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.4900659918785095,"msg":"request completed"}
+# {"level":30,"time":1778204433161,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC&selectedGroupKey=SPEC.md&cardTypes=concept","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433165,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":3.672690987586975,"msg":"request completed"}
+# {"level":30,"time":1778204433166,"pid":1562661,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC&selectedGroupKey=missing-group","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433168,"pid":1562661,"hostname":"vlad","reqId":"req-4","res":{"statusCode":404},"responseTime":2.852669984102249,"msg":"request completed"}
+# {"level":30,"time":1778204433230,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":9.191208004951477,"msg":"request completed"}
+# Subtest: concept detail selection enforces whiteboard card validation diagnostics
+ok 29 - concept detail selection enforces whiteboard card validation diagnostics
+  ---
+  duration_ms: 71.447412
+  ...
+# {"level":30,"time":1778204433307,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433231,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433234,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.231423020362854,"msg":"request completed"}
+# {"level":30,"time":1778204433235,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-card-validation&source=board&viewLevel=concept&activeAspect=SPEC&selectedCardType=concept&selectedCardId=concept%3Amissing.concept","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433238,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":404},"responseTime":2.7431820034980774,"msg":"request completed"}
+# {"level":30,"time":1778204433239,"pid":1562661,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-card-validation&source=board&viewLevel=concept&activeAspect=SPEC&selectedCardType=concept&selectedCardId=concept%3Aconsumer.knowledge-graph-visualization.domainspec-maintainers","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433242,"pid":1562661,"hostname":"vlad","reqId":"req-4","res":{"statusCode":422},"responseTime":3.0251210033893585,"msg":"request completed"}
+# {"level":30,"time":1778204433318,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":11.436962991952896,"msg":"request completed"}
+# {"level":30,"time":1778204433319,"pid":1562661,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?projectKey=domainspec-core&featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433323,"pid":1562661,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.4267700016498566,"msg":"request completed"}
+# {"level":30,"time":1778204433324,"pid":1562661,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?projectKey=domainspec-core&featureId=knowledge-graph-visualization&sessionId=session-scope-mismatch&source=board&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433331,"pid":1562661,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":6.584987014532089,"msg":"request completed"}
+# {"level":30,"time":1778204433331,"pid":1562661,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?projectKey=alt-project&featureId=knowledge-graph-visualization&sessionId=session-scope-mismatch&source=board&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433332,"pid":1562661,"hostname":"vlad","reqId":"req-4","res":{"statusCode":409},"responseTime":0.9352299869060516,"msg":"request completed"}
+# {"level":30,"time":1778204433333,"pid":1562661,"hostname":"vlad","reqId":"req-5","req":{"method":"POST","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers/open-definition?projectKey=alt-project&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: concept and definition operations return scope mismatch diagnostics for reused session IDs
+ok 30 - concept and definition operations return scope mismatch diagnostics for reused session IDs
+  ---
+  duration_ms: 95.070204
+  ...
+# {"level":30,"time":1778204433400,"pid":1562661,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778204433335,"pid":1562661,"hostname":"vlad","reqId":"req-5","res":{"statusCode":409},"responseTime":1.9017020165920258,"msg":"request completed"}
+# {"level":30,"time":1778204433403,"pid":1562661,"hostname":"vlad","reqId":"req-1","res":{"statusCode":422},"responseTime":2.777530997991562,"msg":"request completed"}
+# Subtest: rebuild rejects invalid feature path escapes before file reads
+ok 31 - rebuild rejects invalid feature path escapes before file reads
+  ---
+  duration_ms: 64.72667
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3376.678977
+=== EXIT_CODE: 0
+
+=== COMMAND: pnpm --filter @domainspec/web test:e2e -- --grep "UPS-UI-001|UPS-UI-002|UPS-UI-003|UPS-UI-004|UPS-UI-005|ui-prototyping-studio"
+
+> @domainspec/web@0.1.0 test:e2e /home/vrondelli/projects/domainspec-core/implementation/domainspec/apps/web
+> playwright test "--" "--grep" "UPS-UI-001|UPS-UI-002|UPS-UI-003|UPS-UI-004|UPS-UI-005|ui-prototyping-studio"
+
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:10:3 › ui-prototyping-studio WP-01 › UPS-UI-001 ui-prototyping-studio route exposes authenticated workbench shell (910ms)
+  ✓  2 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:24:3 › ui-prototyping-studio WP-01 › UPS-UI-002 ui-prototyping-studio renders required workbench panels (908ms)
+  ✓  3 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:46:3 › ui-prototyping-studio WP-01 › UPS-UI-003 ui-prototyping-studio form contracts enforce variantCount bounds selector (727ms)
+  ✓  4 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:55:3 › ui-prototyping-studio WP-01 › UPS-UI-004 ui-prototyping-studio multi-variant flow locks annotation until explicit baseline selection (1.1s)
+  ✓  5 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:84:3 › ui-prototyping-studio WP-01 › UPS-UI-005 ui-prototyping-studio single-variant flow shows committed baseline path (1.0s)
+
+  5 passed (7.4s)
+=== EXIT_CODE: 0
+
+=== CHECKPOINT_EXIT_CODE: 0
+=== END_UTC: 2026-05-08T01:40:45Z ===

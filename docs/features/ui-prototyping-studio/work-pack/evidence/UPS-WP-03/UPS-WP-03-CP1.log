@@ -1,0 +1,381 @@
+$ pnpm --filter @domainspec/backend check
+
+> @domainspec/backend@0.1.0 check /home/vrondelli/projects/domainspec-core/implementation/domainspec/backend
+> tsc -p tsconfig.json --noEmit
+
+[terminal_guard] exit=0 durationMs=10159 lines=4 bytes=143
+
+$ pnpm --filter @domainspec/web check
+
+> @domainspec/web@0.1.0 check /home/vrondelli/projects/domainspec-core/implementation/domainspec/apps/web
+> tsc --noEmit
+
+[terminal_guard] exit=0 durationMs=6887 lines=4 bytes=123
+
+$ pnpm --filter @domainspec/backend test -- --test-name-pattern "UPS-CON-006|UPS-CON-007|UPS-CON-008|UPS-CON-009|UPS-CON-010|UPS-OP-008|UPS-OP-009|UPS-OP-010|UPS-ST-006|UPS-ST-008|UPS-ST-009|UPS-API-007|UPS-API-008|UPS-API-010|ui-prototyping-studio"
+
+> @domainspec/backend@0.1.0 test /home/vrondelli/projects/domainspec-core/implementation/domainspec/backend
+> tsx --test src/**/*.test.ts "--test-name-pattern" "UPS-CON-006|UPS-CON-007|UPS-CON-008|UPS-CON-009|UPS-CON-010|UPS-OP-008|UPS-OP-009|UPS-OP-010|UPS-ST-006|UPS-ST-008|UPS-ST-009|UPS-API-007|UPS-API-008|UPS-API-010|ui-prototyping-studio"
+
+TAP version 13
+# Subtest: rebuild rejects missing required mirror file
+ok 1 - rebuild rejects missing required mirror file
+  ---
+  duration_ms: 5.44585
+  ...
+# Subtest: rebuild rejects non-canonical edge labels
+ok 2 - rebuild rejects non-canonical edge labels
+  ---
+  duration_ms: 2.779286
+  ...
+# Subtest: rebuild rejects unknown edge endpoints
+ok 3 - rebuild rejects unknown edge endpoints
+  ---
+  duration_ms: 1.53247
+  ...
+# Subtest: rebuild rejects unknown project before parser scan
+ok 4 - rebuild rejects unknown project before parser scan
+  ---
+  duration_ms: 1.979613
+  ...
+# Subtest: rebuild rejects unavailable feature before parser scan
+ok 5 - rebuild rejects unavailable feature before parser scan
+  ---
+  duration_ms: 1.053578
+  ...
+# Subtest: rebuild rejects invalid source root/path before parser scan
+ok 6 - rebuild rejects invalid source root/path before parser scan
+  ---
+  duration_ms: 0.769936
+  ...
+# Subtest: rebuild materializes and persists one projection snapshot
+ok 7 - rebuild materializes and persists one projection snapshot
+  ---
+  duration_ms: 30.441941
+  ...
+# Subtest: parseSpec reads relationship index from feature graph, cross-feature dependencies, and produces-for
+ok 8 - parseSpec reads relationship index from feature graph, cross-feature dependencies, and produces-for
+  ---
+  duration_ms: 34.400038
+  ...
+# Subtest: scanFeatureFiles rejects path escapes before file reads
+ok 9 - scanFeatureFiles rejects path escapes before file reads
+  ---
+  duration_ms: 8.719811
+  ...
+# Subtest: UPS-CON-001 UPS-OP-001 ui-prototyping-studio InitializeSession defaults variantCount to 3 and enforces 1..3
+ok 10 - UPS-CON-001 UPS-OP-001 ui-prototyping-studio InitializeSession defaults variantCount to 3 and enforces 1..3
+  ---
+  duration_ms: 11.490132
+  ...
+# Subtest: UPS-ST-001 ui-prototyping-studio SubmitPrompt transitions SessionInitialized to PromptCaptured
+ok 11 - UPS-ST-001 ui-prototyping-studio SubmitPrompt transitions SessionInitialized to PromptCaptured
+  ---
+  duration_ms: 0.792201
+  ...
+# Subtest: UPS-CON-002 UPS-OP-002 UPS-ST-002 ui-prototyping-studio GenerateVariants emits exact variant count and metadata contract
+ok 12 - UPS-CON-002 UPS-OP-002 UPS-ST-002 ui-prototyping-studio GenerateVariants emits exact variant count and metadata contract
+  ---
+  duration_ms: 1.578894
+  ...
+# Subtest: UPS-CON-003 UPS-OP-003 UPS-ST-003 ui-prototyping-studio multi-variant branch requires explicit baseline selection
+ok 13 - UPS-CON-003 UPS-OP-003 UPS-ST-003 ui-prototyping-studio multi-variant branch requires explicit baseline selection
+  ---
+  duration_ms: 2.329343
+  ...
+# Subtest: UPS-OP-004 UPS-ST-004 ui-prototyping-studio single-variant branch uses committed baseline
+ok 14 - UPS-OP-004 UPS-ST-004 ui-prototyping-studio single-variant branch uses committed baseline
+  ---
+  duration_ms: 0.856851
+  ...
+# Subtest: UPS-CON-004 UPS-OP-005 UPS-ST-005 ui-prototyping-studio CaptureCommentEvent enforces gate/schema and transitions to CommentsCaptured
+ok 15 - UPS-CON-004 UPS-OP-005 UPS-ST-005 ui-prototyping-studio CaptureCommentEvent enforces gate/schema and transitions to CommentsCaptured
+  ---
+  duration_ms: 2.666733
+  ...
+# Subtest: UPS-CON-005 UPS-OP-006 UPS-QRY-003 UPS-ST-006 ui-prototyping-studio synthesis remains deterministic and approval opens apply gate
+ok 16 - UPS-CON-005 UPS-OP-006 UPS-QRY-003 UPS-ST-006 ui-prototyping-studio synthesis remains deterministic and approval opens apply gate
+  ---
+  duration_ms: 6.067445
+  ...
+# Subtest: UPS-CON-006 UPS-CON-007 UPS-OP-008 UPS-QRY-004 UPS-ST-008 ui-prototyping-studio apply requires manual actor and appends one revision
+ok 17 - UPS-CON-006 UPS-CON-007 UPS-OP-008 UPS-QRY-004 UPS-ST-008 ui-prototyping-studio apply requires manual actor and appends one revision
+  ---
+  duration_ms: 2.643579
+  ...
+# Subtest: UPS-CON-008 UPS-CON-009 UPS-CON-010 UPS-OP-009 UPS-OP-010 UPS-QRY-005 UPS-ST-009 ui-prototyping-studio handoff export and retrieval require revision evidence
+ok 18 - UPS-CON-008 UPS-CON-009 UPS-CON-010 UPS-OP-009 UPS-OP-010 UPS-QRY-005 UPS-ST-009 ui-prototyping-studio handoff export and retrieval require revision evidence
+  ---
+  duration_ms: 3.404004
+  ...
+# {"level":30,"time":1778208995615,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"GET","url":"/health","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: health endpoint returns ok
+ok 19 - health endpoint returns ok
+  ---
+  duration_ms: 387.980231
+  ...
+# {"level":30,"time":1778208995655,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-001 ui-prototyping-studio POST /sessions maps InitializeSession request fields
+ok 20 - UPS-API-001 ui-prototyping-studio POST /sessions maps InitializeSession request fields
+  ---
+  duration_ms: 38.144487
+  ...
+# {"level":30,"time":1778208995694,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995625,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":8.260294020175934,"msg":"request completed"}
+# {"level":30,"time":1778208995670,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":14.54669800400734,"msg":"request completed"}
+# {"level":30,"time":1778208995710,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":14.965379983186722,"msg":"request completed"}
+# {"level":30,"time":1778208995712,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0017/prompt","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995716,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.568204015493393,"msg":"request completed"}
+# {"level":30,"time":1778208995716,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0017/variants/generate","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-002 ui-prototyping-studio POST /sessions/:sessionId/variants/generate exposes GenerateVariants
+ok 21 - UPS-API-002 ui-prototyping-studio POST /sessions/:sessionId/variants/generate exposes GenerateVariants
+  ---
+  duration_ms: 52.626167
+  ...
+# {"level":30,"time":1778208995748,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995722,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":5.620844006538391,"msg":"request completed"}
+# {"level":30,"time":1778208995754,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":5.542730003595352,"msg":"request completed"}
+# {"level":30,"time":1778208995755,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0018/prompt","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995760,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.984950006008148,"msg":"request completed"}
+# {"level":30,"time":1778208995761,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0018/variants/generate","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995766,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":5.201131999492645,"msg":"request completed"}
+# {"level":30,"time":1778208995769,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0018/baseline","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995772,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":409},"responseTime":3.5832659900188446,"msg":"request completed"}
+# {"level":30,"time":1778208995774,"pid":1598520,"hostname":"vlad","reqId":"req-5","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0018/baseline","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-003 ui-prototyping-studio POST /sessions/:sessionId/baseline exposes SelectOrCommitBaseline
+ok 22 - UPS-API-003 ui-prototyping-studio POST /sessions/:sessionId/baseline exposes SelectOrCommitBaseline
+  ---
+  duration_ms: 58.954836
+  ...
+# {"level":30,"time":1778208995806,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995780,"pid":1598520,"hostname":"vlad","reqId":"req-5","res":{"statusCode":200},"responseTime":5.88714799284935,"msg":"request completed"}
+# {"level":30,"time":1778208995781,"pid":1598520,"hostname":"vlad","reqId":"req-6","req":{"method":"GET","url":"/api/ui-prototyping-studio/sessions/ups-session-0018","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995782,"pid":1598520,"hostname":"vlad","reqId":"req-6","res":{"statusCode":200},"responseTime":0.7300859987735748,"msg":"request completed"}
+# {"level":30,"time":1778208995812,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":5.748120993375778,"msg":"request completed"}
+# {"level":30,"time":1778208995813,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/prompt","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995816,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.9291149973869324,"msg":"request completed"}
+# {"level":30,"time":1778208995817,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/variants/generate","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995821,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":4.092613011598587,"msg":"request completed"}
+# {"level":30,"time":1778208995821,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/baseline","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995827,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":200},"responseTime":5.6926299929618835,"msg":"request completed"}
+# {"level":30,"time":1778208995828,"pid":1598520,"hostname":"vlad","reqId":"req-5","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/comments","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995843,"pid":1598520,"hostname":"vlad","reqId":"req-5","res":{"statusCode":201},"responseTime":15.478295981884003,"msg":"request completed"}
+# {"level":30,"time":1778208995844,"pid":1598520,"hostname":"vlad","reqId":"req-6","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/mutation-batches/synthesize","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995852,"pid":1598520,"hostname":"vlad","reqId":"req-6","res":{"statusCode":201},"responseTime":7.493443995714188,"msg":"request completed"}
+# {"level":30,"time":1778208995852,"pid":1598520,"hostname":"vlad","reqId":"req-7","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/comments","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995858,"pid":1598520,"hostname":"vlad","reqId":"req-7","res":{"statusCode":201},"responseTime":5.4960030019283295,"msg":"request completed"}
+# {"level":30,"time":1778208995859,"pid":1598520,"hostname":"vlad","reqId":"req-8","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/mutation-batches/synthesize","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995865,"pid":1598520,"hostname":"vlad","reqId":"req-8","res":{"statusCode":201},"responseTime":5.434446007013321,"msg":"request completed"}
+# {"level":30,"time":1778208995866,"pid":1598520,"hostname":"vlad","reqId":"req-9","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0019/mutation-batches/ups-batch-00011/approve","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-004 UPS-API-005 UPS-API-006 ui-prototyping-studio comments, synthesis, and approval endpoints expose WP-02 contracts
+ok 23 - UPS-API-004 UPS-API-005 UPS-API-006 ui-prototyping-studio comments, synthesis, and approval endpoints expose WP-02 contracts
+  ---
+  duration_ms: 88.340823
+  ...
+# {"level":30,"time":1778208995894,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995870,"pid":1598520,"hostname":"vlad","reqId":"req-9","res":{"statusCode":200},"responseTime":3.9150969982147217,"msg":"request completed"}
+# {"level":30,"time":1778208995900,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":201},"responseTime":5.009392023086548,"msg":"request completed"}
+# {"level":30,"time":1778208995901,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/prompt","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995904,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.983473986387253,"msg":"request completed"}
+# {"level":30,"time":1778208995904,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/variants/generate","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995909,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":4.9294949769973755,"msg":"request completed"}
+# {"level":30,"time":1778208995911,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/baseline","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995915,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":200},"responseTime":4.664294004440308,"msg":"request completed"}
+# {"level":30,"time":1778208995916,"pid":1598520,"hostname":"vlad","reqId":"req-5","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/comments","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995925,"pid":1598520,"hostname":"vlad","reqId":"req-5","res":{"statusCode":201},"responseTime":8.984439998865128,"msg":"request completed"}
+# {"level":30,"time":1778208995926,"pid":1598520,"hostname":"vlad","reqId":"req-6","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/mutation-batches/synthesize","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995931,"pid":1598520,"hostname":"vlad","reqId":"req-6","res":{"statusCode":201},"responseTime":4.847458988428116,"msg":"request completed"}
+# {"level":30,"time":1778208995932,"pid":1598520,"hostname":"vlad","reqId":"req-7","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/mutation-batches/ups-batch-00012/approve","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995935,"pid":1598520,"hostname":"vlad","reqId":"req-7","res":{"statusCode":200},"responseTime":3.5171279907226562,"msg":"request completed"}
+# {"level":30,"time":1778208995936,"pid":1598520,"hostname":"vlad","reqId":"req-8","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/mutation-batches/ups-batch-00012/apply","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995944,"pid":1598520,"hostname":"vlad","reqId":"req-8","res":{"statusCode":200},"responseTime":8.73811000585556,"msg":"request completed"}
+# {"level":30,"time":1778208995945,"pid":1598520,"hostname":"vlad","reqId":"req-9","req":{"method":"POST","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/handoff/export","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: UPS-API-007 UPS-API-008 ui-prototyping-studio apply and handoff endpoints expose WP-03 contracts
+ok 24 - UPS-API-007 UPS-API-008 ui-prototyping-studio apply and handoff endpoints expose WP-03 contracts
+  ---
+  duration_ms: 81.400397
+  ...
+# Subtest: UPS-API-009 ui-prototyping-studio orchestration module exposes full MVP method surface
+ok 25 - UPS-API-009 ui-prototyping-studio orchestration module exposes full MVP method surface
+  ---
+  duration_ms: 0.902999
+  ...
+# Subtest: UPS-API-010 ui-prototyping-studio newspaper adapter remains adapter-only and runtime-independent
+ok 26 - UPS-API-010 ui-prototyping-studio newspaper adapter remains adapter-only and runtime-independent
+  ---
+  duration_ms: 2.593643
+  ...
+# {"level":30,"time":1778208996010,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995950,"pid":1598520,"hostname":"vlad","reqId":"req-9","res":{"statusCode":200},"responseTime":5.238753974437714,"msg":"request completed"}
+# {"level":30,"time":1778208995951,"pid":1598520,"hostname":"vlad","reqId":"req-a","req":{"method":"GET","url":"/api/ui-prototyping-studio/sessions/ups-session-0020/handoff","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208995952,"pid":1598520,"hostname":"vlad","reqId":"req-a","res":{"statusCode":200},"responseTime":0.7894909977912903,"msg":"request completed"}
+# {"level":30,"time":1778208996013,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":401},"responseTime":2.391547977924347,"msg":"request completed"}
+# {"level":30,"time":1778208996013,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: KG-BE-API-014 KG-BE-API-015 rebuild requires write scope and returns deterministic 401/403 diagnostics
+ok 27 - KG-BE-API-014 KG-BE-API-015 rebuild requires write scope and returns deterministic 401/403 diagnostics
+  ---
+  duration_ms: 69.108871
+  ...
+# {"level":30,"time":1778208996076,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996014,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":403},"responseTime":1.0420460104942322,"msg":"request completed"}
+# {"level":30,"time":1778208996135,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":58.241101026535034,"msg":"request completed"}
+# Subtest: KG-BE-API-016 KG-BE-QRY-001 rebuild persists projection and read endpoints return latest snapshot
+ok 28 - KG-BE-API-016 KG-BE-QRY-001 rebuild persists projection and read endpoints return latest snapshot
+  ---
+  duration_ms: 147.737371
+  ...
+# {"level":30,"time":1778208996239,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996137,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996149,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":12.065007984638214,"msg":"request completed"}
+# {"level":30,"time":1778208996150,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996159,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":8.567049980163574,"msg":"request completed"}
+# {"level":30,"time":1778208996257,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":17.657819986343384,"msg":"request completed"}
+# {"level":30,"time":1778208996258,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996264,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":5.965182989835739,"msg":"request completed"}
+# {"level":30,"time":1778208996266,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996267,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":401},"responseTime":1.5095719993114471,"msg":"request completed"}
+# {"level":30,"time":1778208996270,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-stage2&source=graph","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996292,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":200},"responseTime":22.008334010839462,"msg":"request completed"}
+# {"level":30,"time":1778208996293,"pid":1598520,"hostname":"vlad","reqId":"req-5","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers/definition?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996296,"pid":1598520,"hostname":"vlad","reqId":"req-5","res":{"statusCode":200},"responseTime":3.168087989091873,"msg":"request completed"}
+# {"level":30,"time":1778208996297,"pid":1598520,"hostname":"vlad","reqId":"req-6","req":{"method":"POST","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers/open-definition?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: concept detail, definition, and open-definition endpoints satisfy stage-2 contract
+ok 29 - concept detail, definition, and open-definition endpoints satisfy stage-2 contract
+  ---
+  duration_ms: 144.995461
+  ...
+# {"level":30,"time":1778208996368,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996305,"pid":1598520,"hostname":"vlad","reqId":"req-6","res":{"statusCode":200},"responseTime":7.893226981163025,"msg":"request completed"}
+# {"level":30,"time":1778208996377,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":8.366715997457504,"msg":"request completed"}
+# {"level":30,"time":1778208996378,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996381,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.1680770218372345,"msg":"request completed"}
+# {"level":30,"time":1778208996382,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-mismatch&source=graph","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996387,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":5.51426500082016,"msg":"request completed"}
+# {"level":30,"time":1778208996388,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"POST","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.domainspec-maintainers/open-definition?featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: open-definition returns deterministic mismatch diagnostics
+ok 30 - open-definition returns deterministic mismatch diagnostics
+  ---
+  duration_ms: 82.831762
+  ...
+# {"level":30,"time":1778208996452,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996389,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":409},"responseTime":1.393106997013092,"msg":"request completed"}
+# {"level":30,"time":1778208996454,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":404},"responseTime":2.012001007795334,"msg":"request completed"}
+# Subtest: rebuild rejects unknown project with deterministic code
+ok 31 - rebuild rejects unknown project with deterministic code
+  ---
+  duration_ms: 62.534297
+  ...
+# {"level":30,"time":1778208996508,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996519,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":11.152989000082016,"msg":"request completed"}
+# Subtest: KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 mirror-cards maps feature and aspect filters deterministically
+ok 32 - KG-BE-API-001 KG-BE-IFMAP-001 KG-BE-IFMAP-002 mirror-cards maps feature and aspect filters deterministically
+  ---
+  duration_ms: 70.606212
+  ...
+# {"level":30,"time":1778208996577,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996520,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?featureId=knowledge-graph-visualization&includeOptionalAspects=false&aspectKinds=SPEC,OPERATIONS","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996523,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.669730007648468,"msg":"request completed"}
+# {"level":30,"time":1778208996589,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":11.18666198849678,"msg":"request completed"}
+# Subtest: KG-BE-API-004 KG-BE-IFMAP-004 graph applies edgeKinds filter
+ok 33 - KG-BE-API-004 KG-BE-IFMAP-004 graph applies edgeKinds filter
+  ---
+  duration_ms: 77.694201
+  ...
+# {"level":30,"time":1778208996656,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?projectKey=disabled-project&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: cross-project scope guards reject disabled project keys and unavailable features
+ok 34 - cross-project scope guards reject disabled project keys and unavailable features
+  ---
+  duration_ms: 55.550144
+  ...
+# {"level":30,"time":1778208996719,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996590,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=aspect&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996593,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.1134520173072815,"msg":"request completed"}
+# {"level":30,"time":1778208996594,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=aspect&activeAspect=SPEC&edgeKinds=queries","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996598,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":4.417407006025314,"msg":"request completed"}
+# {"level":30,"time":1778208996656,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":404},"responseTime":0.5284799933433533,"msg":"request completed"}
+# {"level":30,"time":1778208996657,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?projectKey=domainspec-core&featureId=missing-feature&viewLevel=aspect&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996658,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":404},"responseTime":0.6011320054531097,"msg":"request completed"}
+# {"level":30,"time":1778208996736,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":16.38032701611519,"msg":"request completed"}
+# Subtest: cross-project scope guards isolate snapshots per (projectKey, featureId)
+ok 35 - cross-project scope guards isolate snapshots per (projectKey, featureId)
+  ---
+  duration_ms: 88.785319
+  ...
+# {"level":30,"time":1778208996801,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996737,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?projectKey=alt-project&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996740,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.9958139955997467,"msg":"request completed"}
+# {"level":30,"time":1778208996740,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/mirror-cards?projectKey=domainspec-core&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996743,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":404},"responseTime":2.2493560016155243,"msg":"request completed"}
+# {"level":30,"time":1778208996812,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":10.410613000392914,"msg":"request completed"}
+# Subtest: graph query maps board-level fields and validates selected group card
+ok 36 - graph query maps board-level fields and validates selected group card
+  ---
+  duration_ms: 78.680898
+  ...
+# {"level":30,"time":1778208996880,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996813,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996816,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.0273750126361847,"msg":"request completed"}
+# {"level":30,"time":1778208996816,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC&selectedGroupKey=SPEC.md&cardTypes=concept","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996820,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":3.626211017370224,"msg":"request completed"}
+# {"level":30,"time":1778208996821,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC&selectedGroupKey=missing-group","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996824,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":404},"responseTime":2.766541004180908,"msg":"request completed"}
+# {"level":30,"time":1778208996888,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":7.4895890057086945,"msg":"request completed"}
+# Subtest: concept detail selection enforces whiteboard card validation diagnostics
+ok 37 - concept detail selection enforces whiteboard card validation diagnostics
+  ---
+  duration_ms: 76.203619
+  ...
+# {"level":30,"time":1778208996953,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996889,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996892,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":3.437279999256134,"msg":"request completed"}
+# {"level":30,"time":1778208996893,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-card-validation&source=board&viewLevel=concept&activeAspect=SPEC&selectedCardType=concept&selectedCardId=concept%3Amissing.concept","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996896,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":404},"responseTime":2.680622011423111,"msg":"request completed"}
+# {"level":30,"time":1778208996897,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?featureId=knowledge-graph-visualization&sessionId=session-card-validation&source=board&viewLevel=concept&activeAspect=SPEC&selectedCardType=concept&selectedCardId=concept%3Aconsumer.knowledge-graph-visualization.domainspec-maintainers","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996900,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":422},"responseTime":3.142509013414383,"msg":"request completed"}
+# {"level":30,"time":1778208996961,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":200},"responseTime":8.259752005338669,"msg":"request completed"}
+# {"level":30,"time":1778208996962,"pid":1598520,"hostname":"vlad","reqId":"req-2","req":{"method":"GET","url":"/api/knowledge-graph/graph?projectKey=domainspec-core&featureId=knowledge-graph-visualization&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996964,"pid":1598520,"hostname":"vlad","reqId":"req-2","res":{"statusCode":200},"responseTime":2.4099209904670715,"msg":"request completed"}
+# {"level":30,"time":1778208996965,"pid":1598520,"hostname":"vlad","reqId":"req-3","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?projectKey=domainspec-core&featureId=knowledge-graph-visualization&sessionId=session-scope-mismatch&source=board&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996968,"pid":1598520,"hostname":"vlad","reqId":"req-3","res":{"statusCode":200},"responseTime":3.613505005836487,"msg":"request completed"}
+# {"level":30,"time":1778208996969,"pid":1598520,"hostname":"vlad","reqId":"req-4","req":{"method":"GET","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers?projectKey=alt-project&featureId=knowledge-graph-visualization&sessionId=session-scope-mismatch&source=board&viewLevel=concept&activeAspect=SPEC","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996970,"pid":1598520,"hostname":"vlad","reqId":"req-4","res":{"statusCode":409},"responseTime":0.6302289962768555,"msg":"request completed"}
+# {"level":30,"time":1778208996970,"pid":1598520,"hostname":"vlad","reqId":"req-5","req":{"method":"POST","url":"/api/knowledge-graph/concepts/consumer.knowledge-graph-visualization.documentation-reviewers/open-definition?projectKey=alt-project&featureId=knowledge-graph-visualization","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# Subtest: concept and definition operations return scope mismatch diagnostics for reused session IDs
+ok 38 - concept and definition operations return scope mismatch diagnostics for reused session IDs
+  ---
+  duration_ms: 82.799196
+  ...
+# {"level":30,"time":1778208997034,"pid":1598520,"hostname":"vlad","reqId":"req-1","req":{"method":"POST","url":"/api/knowledge-graph/rebuild","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+# {"level":30,"time":1778208996982,"pid":1598520,"hostname":"vlad","reqId":"req-5","res":{"statusCode":409},"responseTime":12.077585011720657,"msg":"request completed"}
+# {"level":30,"time":1778208997038,"pid":1598520,"hostname":"vlad","reqId":"req-1","res":{"statusCode":422},"responseTime":3.268101990222931,"msg":"request completed"}
+# Subtest: rebuild rejects invalid feature path escapes before file reads
+ok 39 - rebuild rejects invalid feature path escapes before file reads
+  ---
+  duration_ms: 54.345029
+  ...
+1..39
+# tests 39
+# suites 0
+# pass 39
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3664.241393
+[terminal_guard] exit=0 durationMs=6512 lines=349 bytes=40561
+
+$ pnpm --filter @domainspec/web exec playwright test --grep "UPS-UI-007|UPS-UI-008|ui-prototyping-studio"
+
+Running 8 tests using 2 workers
+
+  ✓  1 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:10:3 › ui-prototyping-studio WP-01 › UPS-UI-001 ui-prototyping-studio route exposes authenticated workbench shell (1.5s)
+  ✓  2 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp02wp03.spec.ts:10:3 › ui-prototyping-studio WP-02/WP-03 › UPS-UI-006 ui-prototyping-studio manual approval is required before apply controls become active (2.9s)
+  ✓  3 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:24:3 › ui-prototyping-studio WP-01 › UPS-UI-002 ui-prototyping-studio renders required workbench panels (1.4s)
+  ✓  5 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:46:3 › ui-prototyping-studio WP-01 › UPS-UI-003 ui-prototyping-studio form contracts enforce variantCount bounds selector (1.0s)
+  ✓  4 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp02wp03.spec.ts:29:3 › ui-prototyping-studio WP-02/WP-03 › UPS-UI-007 ui-prototyping-studio state indicator reflects domain state transitions (2.0s)
+  ✓  6 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:55:3 › ui-prototyping-studio WP-01 › UPS-UI-004 ui-prototyping-studio multi-variant flow locks annotation until explicit baseline selection (1.5s)
+  ✓  8 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp01.spec.ts:84:3 › ui-prototyping-studio WP-01 › UPS-UI-005 ui-prototyping-studio single-variant flow shows committed baseline path (1.3s)
+  ✓  7 [chromium] › e2e/ui-prototyping-studio/ui-prototyping-studio.wp02wp03.spec.ts:63:3 › ui-prototyping-studio WP-02/WP-03 › UPS-UI-008 ui-prototyping-studio security constraints keep escaped text rendering and enforce server-side gate checks (2.0s)
+
+  8 passed (10.0s)
+[terminal_guard] exit=0 durationMs=15149 lines=13 bytes=1861

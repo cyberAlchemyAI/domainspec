@@ -8,6 +8,12 @@ const navItems = [
     path: "/knowledge-graph",
     description: "Mirror cards, relation graph, and concept detail panel.",
   },
+  {
+    label: "UI Prototyping Studio",
+    path: "/ui-prototyping-studio",
+    description:
+      "Session start, variant generation, and baseline gate workbench.",
+  },
 ];
 
 export function AppSidebar(props: AppSidebarProps) {

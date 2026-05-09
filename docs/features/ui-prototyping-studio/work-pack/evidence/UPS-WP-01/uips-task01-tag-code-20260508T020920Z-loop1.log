@@ -1,0 +1,36 @@
+=== STAGE_RUN_ID: uips-task01-tag-code-20260508T020920Z-loop1 ===
+=== DELEGATED_COMMAND: domainspec-tag-code ui-prototyping-studio ===
+=== ATTEMPT: 1 ===
+=== START_UTC: 2026-05-08T02:10:26Z ===
+=== COMMAND: pnpm dlx tsx governance/tags/tools/extract-code-tags.ts --include backend/src/modules/ui-prototyping-studio,apps/web/src/components/ui-prototyping-studio --output governance/tags/code-tags.json --mode strict ===
+extract-code-tags: files=16 taggedSymbols=10 issues=0 output=governance/tags/code-tags.json
+=== EXIT_CODE: 0 ===
+=== COMMAND: pnpm dlx tsx governance/tags/tools/validate-code-tags.ts --input governance/tags/code-tags.json --waivers governance/tags/code-tag-waivers.yaml --features-root docs/features/ui-prototyping-studio --mode strict ===
+validate-code-tags: tags=10 issues=0 nonWaived=0 blocking=0 waived=0
+=== EXIT_CODE: 0 ===
+=== COMMAND: pnpm dlx tsx governance/tags/tools/compare-code-tag-drift.ts --input governance/tags/code-tags.json --features-root docs/features/ui-prototyping-studio --report governance/tags/CODE-TAG-DRIFT-REPORT.md --mode strict ===
+compare-code-tag-drift: docsTriples=8 codeTriples=8 docsOnly=0 codeOnly=0 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT.md
+=== EXIT_CODE: 0 ===
+=== END_UTC: 2026-05-08T02:10:32Z ===
+=== TERMINAL_OUTCOME: completed ===
+=== SUSPECTED_STUCK: false ===
+=== RETRY_COUNT: 0 ===
+=== METRICS: tags=10 issues=0 blocking=0 docsOnly=0 codeOnly=0 ===
+=== STAGE_RUN_ID: uips-task01-tag-code-20260508T020920Z-loop1 ===
+=== DELEGATED_COMMAND: domainspec-tag-code ui-prototyping-studio ===
+=== ATTEMPT: 1 ===
+=== START_UTC: 2026-05-08T02:11:00Z ===
+=== COMMAND: pnpm dlx tsx governance/tags/tools/extract-code-tags.ts --include backend/src/modules/ui-prototyping-studio,apps/web/src/components/ui-prototyping-studio --output governance/tags/code-tags.json --mode strict ===
+extract-code-tags: files=16 taggedSymbols=10 issues=0 output=governance/tags/code-tags.json
+=== EXIT_CODE: 0 ===
+=== COMMAND: pnpm dlx tsx governance/tags/tools/validate-code-tags.ts --input governance/tags/code-tags.json --waivers governance/tags/code-tag-waivers.yaml --features-root docs/features/ui-prototyping-studio --mode strict ===
+validate-code-tags: tags=10 issues=0 nonWaived=0 blocking=0 waived=0
+=== EXIT_CODE: 0 ===
+=== COMMAND: pnpm dlx tsx governance/tags/tools/compare-code-tag-drift.ts --input governance/tags/code-tags.json --features-root docs/features/ui-prototyping-studio --report governance/tags/CODE-TAG-DRIFT-REPORT.md --mode strict ===
+compare-code-tag-drift: docsTriples=8 codeTriples=8 docsOnly=0 codeOnly=0 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT.md
+=== EXIT_CODE: 0 ===
+=== END_UTC: 2026-05-08T02:11:07Z ===
+=== TERMINAL_OUTCOME: completed ===
+=== SUSPECTED_STUCK: false ===
+=== RETRY_COUNT: 0 ===
+=== METRICS: tags=10 issues=0 blocking=0 docsOnly=0 codeOnly=0 ===
