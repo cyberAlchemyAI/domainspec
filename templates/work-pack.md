@@ -19,22 +19,28 @@ This file is the stable entrypoint for planning state. It can stay single-file f
 
 ## Task Status Board
 
-| Task ID              | Goal                                                               | Complexity          | Assigned Waves | Gate Status      | Status                                |
-| -------------------- | ------------------------------------------------------------------ | ------------------- | -------------- | ---------------- | ------------------------------------- |
-| TASK-A               | {goal}                                                             | low / medium / high | W1, W2         | ready / blocked  | not-started / in-progress / completed |
-| TASK-VERIFY          | Execute feature verification verdict (`domainspec-verify-feature`) | medium / high       | W3+            | ready-after-impl | not-started / in-progress / completed |
-| TASK-AUDIT-ALIGNMENT | Execute alignment audit (`domainspec-audit-alignment`)             | medium / high       | W3+            | ready-after-impl | not-started / in-progress / completed |
-| TASK-AUDIT-LAYERING  | Execute layering audit (`domainspec-audit-layering`)               | medium / high       | W3+            | ready-after-impl | not-started / in-progress / completed |
+| Task ID               | Goal                                                               | Complexity                        | Assigned Waves | Gate Status          | Status                                |
+| --------------------- | ------------------------------------------------------------------ | --------------------------------- | -------------- | -------------------- | ------------------------------------- |
+| TASK-A                | {goal}                                                             | low / medium / high               | W1, W2         | ready / blocked      | not-started / in-progress / completed |
+| TASK-VERIFY           | Execute feature verification verdict (`domainspec-verify-feature`) | medium / high                     | W3+            | ready-after-impl     | not-started / in-progress / completed |
+| TASK-AUDIT-ALIGNMENT  | Execute alignment audit (`domainspec-audit-alignment`)             | medium / high (mutation slices)   | W3+            | ready-after-mutation | not-started / in-progress / completed |
+| TASK-AUDIT-LAYERING   | Execute layering audit (`domainspec-audit-layering`)               | medium / high (mutation slices)   | W3+            | ready-after-mutation | not-started / in-progress / completed |
+| TASK-SIGNAL-ALIGNMENT | Emit alignment signal obligation (`alignment-gap`)                 | medium / high (non-mutation only) | W3+            | ready-after-docs     | not-started / in-progress / completed |
+| TASK-SIGNAL-LAYERING  | Emit layering signal obligation (`governance-gap`)                 | medium / high (non-mutation only) | W3+            | ready-after-docs     | not-started / in-progress / completed |
 
-## Mandatory Closure Obligations (Required for medium/high)
+## Closure Strategy Obligations (Required for medium/high)
 
-Seed the following tasks when the work-pack is first created, even if execution is planned for a later wave:
+Apply the following closure strategy when the work-pack is first created, even if execution is planned for a later wave:
 
-- One verification task that runs `domainspec-verify-feature {feature}` and publishes `VERIFICATION.md`.
-- One alignment audit task that runs `domainspec-audit-alignment {feature}` and publishes `ALIGNMENT-REPORT.md`.
-- One layering audit task that runs `domainspec-audit-layering {feature}` and publishes `LAYERING-ALIGNMENT-REPORT.md`.
+- Always seed one verification task that runs `domainspec-verify-feature {feature}` and publishes `VERIFICATION.md`.
+- If at least one mutation-capable stage is planned and not skipped (`backend-implement`, `ui-pipeline`, `instrument-otel`, `infra-deploy`), seed:
+  - one alignment audit task that runs `domainspec-audit-alignment {feature}` and publishes `ALIGNMENT-REPORT.md`.
+  - one layering audit task that runs `domainspec-audit-layering {feature}` and publishes `LAYERING-ALIGNMENT-REPORT.md`.
+- If all mutation-capable stages are skipped (docs-only/non-mutation slice), do not seed alignment/layering audit tasks. Instead seed:
+  - one alignment signal task that emits `alignment-gap`.
+  - one layering signal task that emits `governance-gap` with explicit layering-boundary evidence.
 
-If any closure task returns FLAG/BLOCK, add follow-up remediation tasks without deleting the original closure tasks.
+If any closure task returns FLAG/BLOCK, add follow-up remediation tasks without deleting the original seeded closure obligations.
 
 ## Architecture-Guided Task Directives (Required for medium/high)
 
@@ -100,6 +106,7 @@ Keep all canonical pipeline stages listed below in every medium/high work-pack, 
 | audit-layering        | yes      | W3+          | not-started / in-progress / completed / skipped | {links}  | {optional}  |
 
 When `ui-pipeline` status is not `skipped`, evidence must include `UI-SPEC.md` and at least one UI architecture reference.
+When all mutation-capable stages are `skipped`, mark `audit-alignment` and `audit-layering` as `skipped` with explicit reasons and enforce signal obligations instead.
 
 ## Decision Lock Summary
 
@@ -120,7 +127,7 @@ When `ui-pipeline` status is not `skipped`, evidence must include `UI-SPEC.md` a
 - Shared files are for cross-task blockers and dependencies only.
 - Wave `W0` is mandatory for medium/high plans and must be completed before mutation-capable stages.
 - Pipeline stage coverage table must list all canonical stages and provide a status for each row.
-- Medium/high work-pack creation must seed verification and both audit tasks before implementation starts.
+- Medium/high work-pack creation must always seed verification and then apply mutation-aware closure strategy for audits or signal obligations.
 - Medium/high work-pack creation must include architecture-guided directive rows with coverage IDs and architecture links for each mutation-capable task.
 - If planner gate is `block`, do not run mutation-capable stages.
 

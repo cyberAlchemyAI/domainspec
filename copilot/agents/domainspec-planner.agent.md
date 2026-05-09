@@ -148,12 +148,17 @@ Navigational artifacts for context discovery:
     `plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`, `verify-feature`, `audit-alignment`, `audit-layering`.
   - Every row must have wave mapping and status (`not-started|in-progress|completed|skipped`).
   - If a stage is skipped, record an explicit skip reason.
-8a. **Mandatory closure task seeding (MANDATORY for medium/high)**:
-  - Seed three task entries during initial work-pack creation (status can be `not-started`):
+8a. **Closure seeding strategy (MANDATORY for medium/high)**:
+  - Always seed one verification task during initial work-pack creation (status can be `not-started`):
     - verification task (`domainspec-verify-feature`)
+  - If at least one mutation-capable stage is planned and not skipped (`backend-implement`, `ui-pipeline`, `instrument-otel`, `infra-deploy`), also seed:
     - alignment audit task (`domainspec-audit-alignment`)
     - layering audit task (`domainspec-audit-layering`)
-  - Keep these closure tasks even when separate remediation tasks are added after FLAG/BLOCK findings.
+  - If all mutation-capable stages are skipped (docs-only/non-mutation slice), do not seed alignment/layering audit tasks.
+  - For docs-only/non-mutation slices, require `WORK-PACK.md` to include `Governance Signal Obligations` entries for:
+    - `alignment-gap`: signal when contract drift is detected.
+    - `governance-gap`: signal with layering-boundary evidence.
+  - Keep seeded closure tasks when remediation tasks are added after FLAG/BLOCK findings.
 8b. **Architecture-guided directive matrix (MANDATORY for medium/high)**:
   - Add or refresh `Architecture-Guided Task Directives` in `WORK-PACK.md`.
   - For each mutation-capable task, include:
@@ -204,7 +209,9 @@ Output rule:
 
 - Always return a DomainSpec-readable plan even when delegated.
 - Always emit a first `W0` architecture wave and a full pipeline stage coverage matrix.
-- Always include seeded verification/alignment/layering closure tasks for medium/high work-packs.
+- Always include a seeded verification closure task for medium/high work-packs.
+- Include seeded alignment/layering closure tasks only when mutation-capable stages are planned and not skipped.
+- For docs-only/non-mutation work-packs, include alignment/layering governance signal obligations instead of audit-task seeding.
 - Include explicit mapping from GSD tasks to DomainSpec concept IDs.
 - Include architecture-guided directives with exact coverage IDs and architecture links for each mutation-capable task.
   </delegation-contract>

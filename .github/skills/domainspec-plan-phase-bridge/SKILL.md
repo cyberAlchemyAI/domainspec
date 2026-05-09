@@ -33,15 +33,27 @@ Inputs:
    - Ensure `work-pack/waves/W0.md` exists.
    - Capture architecture constraints from `domainspec/ARCHITECTURE.md` plus `docs/UI-ARCHITECTURE.md` and `docs/INFRA-ARCHITECTURE.md` when present.
    - Require explicit W0 exit gate covering dependency-direction and boundary checks.
-6. Enforce `Pipeline Stage Coverage` matrix in `WORK-PACK.md` with all canonical stages (`plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`) plus wave mapping and status per row.
-7. In `native`, produce DomainSpec plan directly.
-8. In `gsd-phase`, run GSD plan-phase orchestration and collect PLAN artifacts.
-9. Map each delegated task back to DomainSpec concept IDs and acceptance obligations, including both semantic and layering findings.
-10. Return normalized plan with assumptions and risk notes, including W0 and stage-coverage references.
+6. Enforce `Pipeline Stage Coverage` matrix in `WORK-PACK.md` with all canonical stages (`plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`, `verify-feature`, `audit-alignment`, `audit-layering`) plus wave mapping and status per row.
+7. Enforce closure seeding strategy in medium/high work-packs:
+    - Always seed one verification task (`domainspec-verify-feature`).
+    - If at least one mutation-capable stage is planned and not skipped (`backend-implement`, `ui-pipeline`, `instrument-otel`, `infra-deploy`), also seed:
+       - one alignment audit task (`domainspec-audit-alignment`)
+       - one layering audit task (`domainspec-audit-layering`)
+    - If all mutation-capable stages are skipped (docs-only/non-mutation slice), do not seed alignment/layering audit tasks.
+    - For docs-only/non-mutation slices, require `WORK-PACK.md` to include `Governance Signal Obligations` covering:
+       - `alignment-gap`: quality signal when contract drift is detected.
+       - `governance-gap`: signal with explicit layering-boundary evidence.
+8. In `native`, produce DomainSpec plan directly.
+9. In `gsd-phase`, run GSD plan-phase orchestration and collect PLAN artifacts.
+10. Map each delegated task back to DomainSpec concept IDs and acceptance obligations, including both semantic and layering findings.
+11. Return normalized plan with assumptions and risk notes, including W0 and stage-coverage references.
 </process>
 
 <authority-rule>
 - DomainSpec docs are semantic source of truth.
 - GSD outputs are orchestration evidence and must not override DomainSpec rules.
 - W0 architecture baseline and full stage coverage are mandatory planning outputs.
+- Seeded verification closure task is mandatory for medium/high scope.
+- Alignment/layering closure tasks are mandatory only when mutation-capable stages are planned and not skipped.
+- For docs-only/non-mutation slices, alignment/layering governance signal obligations are mandatory.
 </authority-rule>

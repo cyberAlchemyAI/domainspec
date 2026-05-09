@@ -36,10 +36,15 @@ Inputs:
 4. Ensure `docs/features/{feature}/WORK-PACK.md` exists and is the planning manifest entrypoint.
 5. Enforce mandatory first wave `W0` for architecture and governance baseline.
 6. Enforce `Pipeline Stage Coverage` matrix in `WORK-PACK.md` with all canonical stages (`plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`, `verify-feature`, `audit-alignment`, `audit-layering`) plus wave mapping and status per row.
-7. Enforce mandatory closure task seeding in medium/high work-packs:
-   - one verification task (`domainspec-verify-feature`)
-   - one alignment audit task (`domainspec-audit-alignment`)
-   - one layering audit task (`domainspec-audit-layering`)
+7. Enforce closure seeding strategy in medium/high work-packs:
+    - Always seed one verification task (`domainspec-verify-feature`).
+    - If at least one mutation-capable stage is planned and not skipped (`backend-implement`, `ui-pipeline`, `instrument-otel`, `infra-deploy`), also seed:
+       - one alignment audit task (`domainspec-audit-alignment`)
+       - one layering audit task (`domainspec-audit-layering`)
+    - If all mutation-capable stages are skipped (docs-only/non-mutation slice), do not seed alignment/layering audit tasks.
+    - For docs-only/non-mutation slices, require `WORK-PACK.md` to include `Governance Signal Obligations` covering:
+       - `alignment-gap`: quality signal when contract drift is detected.
+       - `governance-gap`: signal with explicit layering-boundary evidence.
 8. Enforce `Architecture-Guided Task Directives` in `WORK-PACK.md` for medium/high scope:
    - one row per mutation-capable task
    - exact DomainSpec coverage IDs (concept/rule/calculation/workflow/query/endpoint IDs)
@@ -61,7 +66,10 @@ Inputs:
 <authority-rule>
 - DomainSpec docs are semantic source of truth.
 - GSD outputs are orchestration evidence and must not override DomainSpec rules.
-- W0 architecture baseline, full stage coverage, and seeded verification/alignment/layering closure tasks are mandatory planning outputs for medium/high scope.
+- W0 architecture baseline and full stage coverage are mandatory planning outputs for medium/high scope.
+- Seeded verification closure task is mandatory for medium/high scope.
+- Alignment/layering closure tasks are mandatory only when mutation-capable stages are planned and not skipped.
+- For docs-only/non-mutation slices, alignment/layering governance signal obligations are mandatory.
 - Architecture-guided task directives with exact coverage IDs and architecture links are mandatory planning outputs for medium/high scope.
 - Full concept-token ownership coverage in work-pack task `DomainSpec Coverage` rows is mandatory once task files exist.
 </authority-rule>

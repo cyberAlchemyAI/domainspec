@@ -99,7 +99,10 @@ Created/updated by this skill (cumulative):
    - If work-pack grows (for example >3 tasks, >3 waves, or >250 lines), split into modular files under `docs/features/{feature}/work-pack/` and keep `WORK-PACK.md` as manifest.
    - For medium/high complexity, require a first architecture wave: `work-pack/waves/W0.md`.
    - For medium/high complexity, require `WORK-PACK.md` to include `Pipeline Stage Coverage` with all canonical stages (including skipped stages with explicit reason).
-   - For medium/high complexity, seed mandatory closure tasks at creation time: feature verification, alignment audit, and layering audit.
+   - For medium/high complexity, seed closure obligations with a mutation-aware policy:
+     - Always seed feature verification.
+     - If mutation-capable stages are planned and not skipped (`backend-implement`, `ui-pipeline`, `instrument-otel`, `infra-deploy`), seed alignment and layering audits.
+     - If all mutation-capable stages are skipped (docs-only/non-mutation slice), do not seed alignment/layering audit tasks; require governance signal obligations for alignment/layering visibility.
    - For medium/high complexity, require `WORK-PACK.md` to include `Architecture-Guided Task Directives` mapping exact DomainSpec coverage IDs (for example `R1`, `R2`) to architecture-linked implementation instructions.
 6. Set planner gate fields in `WORK-PACK.md` for medium/high execution:
    - `plannerGateStatus: pass|block`
@@ -115,7 +118,12 @@ Created/updated by this skill (cumulative):
 - Require `work-pack/waves/W0.md` and a `W0` row in the manifest wave board.
 - Require `W0` to be `completed` before any mutation-capable stage (Steps 2-7d).
 - Require `WORK-PACK.md` `Pipeline Stage Coverage` matrix containing all canonical stages: `plan`, `architecture-baseline`, `spec`, `stories`, `tests`, `backend-implement`, `ui-pipeline`, `observability-spec`, `instrument-otel`, `otel-verify`, `infra-deploy`, `registry-sync`, `verify-readiness`, `verify-feature`, `audit-alignment`, `audit-layering`.
-- Require work-pack task seeding for closure obligations (medium/high): one task each for `domainspec-verify-feature`, `domainspec-audit-alignment`, and `domainspec-audit-layering`.
+- Require closure obligations for medium/high work-packs:
+  - Always one task for `domainspec-verify-feature`.
+  - Require one task each for `domainspec-audit-alignment` and `domainspec-audit-layering` only when at least one mutation-capable stage is planned and not skipped.
+  - When all mutation-capable stages are skipped, require `Governance Signal Obligations` entries for:
+    - `alignment-gap`
+    - `governance-gap` (with layering-boundary evidence)
 - Require `Architecture-Guided Task Directives` matrix for medium/high work-packs:
   - one row per mutation-capable task
   - exact coverage IDs from docs (concept/rule/calculation/workflow/query/endpoint IDs)
