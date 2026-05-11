@@ -1,12 +1,12 @@
 # Events: Knowledge Graph Visualization
 
-## Governance Waivers (2026-05-07)
+## Capability Backlinks
 
-| Waiver ID      | Scope                                   | Status   | Owner    | Review Date | Rationale                                                                                     |
-| -------------- | --------------------------------------- | -------- | -------- | ----------- | --------------------------------------------------------------------------------------------- |
-| KG-EVT-WVR-001 | `MirrorProjectionBuilt` async consumers | accepted | web-core | 2026-06-15  | Observability pipeline event sink is deferred until shared event-bus substrate is introduced. |
-| KG-EVT-WVR-002 | `ConceptSelected` analytics consumer    | accepted | web-core | 2026-06-15  | Analytics stream consumer is deferred; current flow remains synchronous request/response.     |
-| KG-EVT-WVR-003 | `DefinitionOpened` audit-log consumer   | accepted | web-core | 2026-06-15  | Audit-log sink is deferred until centralized audit transport is available.                    |
+- [Aspect Whiteboard Navigation](SPEC.md#aspect-whiteboard-navigation)
+- [SPEC-Level Feature Atlas](SPEC.md#spec-level-feature-atlas)
+- [Graph Layout & Edge Semantics Algorithm](SPEC.md#graph-layout--edge-semantics-algorithm)
+- [Feature Drilldown By Aspect](SPEC.md#feature-drilldown-by-aspect)
+- [Cross-Project Documentation Scope](SPEC.md#cross-project-documentation-scope)
 
 ## MirrorProjectionBuilt
 
@@ -15,20 +15,23 @@
 
 ### Payload
 
-| Field       | Type              | Description                     |
-| ----------- | ----------------- | ------------------------------- |
-| featureId   | string            | Feature slug                    |
-| snapshotId  | string            | Projection snapshot ID          |
-| cardCount   | integer           | Number of mirrored cards        |
-| edgeCount   | integer           | Number of graph edges           |
-| generatedAt | string (ISO-8601) | Projection generation timestamp |
+| Field              | Type              | Description                                                   |
+| ------------------ | ----------------- | ------------------------------------------------------------- |
+| projectKey         | string            | Source project key                                            |
+| featureId          | string            | Feature slug                                                  |
+| snapshotId         | string            | Projection snapshot ID                                        |
+| hierarchySignature | string            | Deterministic `feature -> file -> concept` snapshot signature |
+| cardCount          | integer           | Number of mirrored file-level cards                           |
+| edgeCount          | integer           | Number of graph edges                                         |
+| crossFeatureEdges  | integer           | Number of cross-feature edges with navigation metadata        |
+| generatedAt        | string (ISO-8601) | Projection generation timestamp                               |
 
 ### Consumed by
 
-| Consumer                    | Action                                                                 |
-| --------------------------- | ---------------------------------------------------------------------- |
-| HTTP rebuild caller         | Receives snapshot summary and triggers follow-up reads.                |
-| Deferred (`KG-EVT-WVR-001`) | Observability freshness metrics emission is waived for this iteration. |
+| Consumer            | Action                                                                     |
+| ------------------- | -------------------------------------------------------------------------- |
+| HTTP rebuild caller | Receives snapshot summary and triggers follow-up reads.                    |
+| Graph read path     | Uses `hierarchySignature` to guarantee deterministic projection responses. |
 
 ---
 
@@ -39,19 +42,22 @@
 
 ### Payload
 
-| Field      | Type              | Description                                                      |
-| ---------- | ----------------- | ---------------------------------------------------------------- |
-| sessionId  | string            | Active session                                                   |
-| conceptId  | string            | Focused concept                                                  |
-| source     | string            | Selection source (`rail`, `board`, `detail`, `card`, or `graph`) |
-| selectedAt | string (ISO-8601) | Selection timestamp                                              |
+| Field              | Type              | Description                                                      |
+| ------------------ | ----------------- | ---------------------------------------------------------------- |
+| sessionId          | string            | Active session                                                   |
+| projectKey         | string            | Active source project                                            |
+| featureId          | string            | Active feature                                                   |
+| conceptId          | string            | Focused concept                                                  |
+| source             | string            | Selection source (`rail`, `board`, `detail`, `card`, or `graph`) |
+| highlightedEdgeKey | string            | Edge key when selection follows cross-feature edge interaction   |
+| selectedAt         | string (ISO-8601) | Selection timestamp                                              |
 
 ### Consumed by
 
-| Consumer                    | Action                                                          |
-| --------------------------- | --------------------------------------------------------------- |
-| Concept detail route path   | Uses selection context to resolve deterministic detail payload. |
-| Deferred (`KG-EVT-WVR-002`) | Analytics exploration sink is waived for this iteration.        |
+| Consumer                  | Action                                                          |
+| ------------------------- | --------------------------------------------------------------- |
+| Concept detail route path | Uses selection context to resolve deterministic detail payload. |
+| Graph highlight renderer  | Reapplies `highlightedEdgeKey` after scope/navigation handoff.  |
 
 ---
 
@@ -62,17 +68,19 @@
 
 ### Payload
 
-| Field     | Type              | Description              |
-| --------- | ----------------- | ------------------------ |
-| sessionId | string            | Active session           |
-| conceptId | string            | Focused concept          |
-| filePath  | string            | Target definition file   |
-| anchor    | string            | Target definition anchor |
-| openedAt  | string (ISO-8601) | Navigation timestamp     |
+| Field          | Type              | Description                                             |
+| -------------- | ----------------- | ------------------------------------------------------- |
+| sessionId      | string            | Active session                                          |
+| conceptId      | string            | Focused concept                                         |
+| filePath       | string            | Target definition file                                  |
+| anchor         | string            | Target definition anchor                                |
+| aspectKind     | string            | Aspect activated for definition visualization           |
+| enrichmentMode | string            | `explicit` or deterministic `fallback` mode for details |
+| openedAt       | string (ISO-8601) | Navigation timestamp                                    |
 
 ### Consumed by
 
-| Consumer                    | Action                                                            |
-| --------------------------- | ----------------------------------------------------------------- |
-| Open-definition HTTP caller | Receives deterministic target (`filePath#anchor`) for navigation. |
-| Deferred (`KG-EVT-WVR-003`) | Audit-log sink is waived for this iteration.                      |
+| Consumer                    | Action                                                             |
+| --------------------------- | ------------------------------------------------------------------ |
+| Open-definition HTTP caller | Receives deterministic target (`filePath#anchor`) for navigation.  |
+| Detail panel state sync     | Preserves enrichment semantics while user returns from definition. |

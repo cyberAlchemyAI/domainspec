@@ -1,1 +1,0 @@
-compare-code-tag-drift: docsTriples=42 codeTriples=43 docsOnly=0 codeOnly=0 directionMismatch=0 typeMismatch=0 report=governance/tags/CODE-TAG-DRIFT-REPORT.md

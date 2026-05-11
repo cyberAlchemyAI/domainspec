@@ -31,6 +31,7 @@
       body {
         margin: 0;
         min-height: 100vh;
+        height: 100vh;
         font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
         background: radial-gradient(
           circle at 10% 0%,
@@ -38,17 +39,22 @@
           var(--bg) 55%
         );
         color: var(--ink);
-        padding: 24px;
+        padding: 10px;
+        overflow: hidden;
       }
 
       .whiteboard {
-        max-width: 1240px;
+        max-width: none;
+        width: 100%;
+        height: 100%;
         margin: 0 auto;
         border: 1px solid var(--stroke);
         border-radius: 16px;
         background: var(--panel);
         box-shadow: var(--shadow);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
 
       .head {
@@ -158,10 +164,21 @@
         border-color: var(--produces-for);
       }
 
+      .chip.filter.file-kind[data-kind="spec-definition"].is-on {
+        background: #0f3f75;
+        border-color: #0f3f75;
+      }
+
+      .chip.filter.file-kind[data-kind="operational"].is-on {
+        background: #0f766e;
+        border-color: #0f766e;
+      }
+
       .board {
         position: relative;
-        min-height: 620px;
-        border-bottom: 1px solid var(--stroke);
+        min-height: 0;
+        flex: 1 1 auto;
+        border-bottom: 0;
         overflow: hidden;
         background: repeating-linear-gradient(
           0deg,
@@ -170,6 +187,26 @@
           #eff4fc 31px,
           #eff4fc 32px
         );
+      }
+
+      .board.is-concept-mode .node {
+        width: 230px;
+        cursor: default;
+      }
+
+      .board.is-concept-mode .node.is-file-card {
+        width: 300px;
+      }
+
+      .board.is-concept-mode .node:hover,
+      .board.is-concept-mode .node:focus-visible {
+        transform: translateY(-3px) scale(1.02);
+        z-index: 3;
+      }
+
+      .board.is-concept-mode .node.feature-anchor {
+        border: 1px solid #b9cbe2;
+        background: #ffffff;
       }
 
       .lane-strip {
@@ -312,6 +349,22 @@
         background: var(--node);
         box-shadow: 0 6px 12px rgba(16, 28, 48, 0.08);
         padding: 10px;
+        cursor: pointer;
+        z-index: 1;
+        transform-origin: center top;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          transform 160ms ease;
+      }
+
+      .node:hover,
+      .node:focus-visible {
+        border-color: #1d4f8a;
+        box-shadow: 0 10px 20px rgba(17, 33, 56, 0.14);
+        transform: translateY(-4px) scale(1.03);
+        z-index: 3;
+        outline: none;
       }
 
       .node h3 {
@@ -328,9 +381,291 @@
         line-height: 1.35;
       }
 
+      .node-open-indicator {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 8px;
+        border: 1px solid #bfd3ef;
+        border-radius: 999px;
+        padding: 2px 7px;
+        font-size: 10px;
+        font-weight: 700;
+        color: #1d4f8a;
+        background: #f2f7ff;
+      }
+
+      .node-file-path {
+        margin-top: 8px;
+        font-size: 10px;
+        line-height: 1.25;
+        color: #4b5e77;
+        word-break: break-word;
+        border: 1px dashed #c5d4e8;
+        border-radius: 8px;
+        padding: 5px 7px;
+        background: #f8fbff;
+      }
+
+      .node-file-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+
+      .node-file-list li {
+        margin: 5px 0;
+        font-size: 11px;
+        color: #364b63;
+        line-height: 1.28;
+      }
+
+      .node-file-list a {
+        color: #0f3f75;
+        text-decoration: underline;
+        text-decoration-thickness: 1.4px;
+        text-underline-offset: 2px;
+      }
+
+      .node-file-list a:hover,
+      .node-file-list a:focus-visible {
+        color: #0c2f57;
+        outline: none;
+      }
+
       .node.feature-anchor {
         border: 2px solid #0f3f75;
         background: #f3f8ff;
+      }
+
+      .node-detail-panel {
+        position: absolute;
+        inset: 0;
+        z-index: 24;
+        border: 0;
+        border-radius: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          #fbfdff,
+          #fbfdff 31px,
+          #eff4fc 31px,
+          #eff4fc 32px
+        );
+        box-shadow: none;
+        padding: 10px 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .node-detail-panel[hidden] {
+        display: none;
+      }
+
+      .node-detail-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        padding: 6px 0 2px;
+      }
+
+      .node-detail-back {
+        justify-self: start;
+        border: 1px solid #bfd3ef;
+        border-radius: 999px;
+        background: #f3f8ff;
+        color: #0f3f75;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 12px;
+        cursor: pointer;
+      }
+
+      .node-detail-back:hover,
+      .node-detail-back:focus-visible {
+        background: #0f3f75;
+        border-color: #0f3f75;
+        color: #ffffff;
+        outline: none;
+      }
+
+      .node-detail-title {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.2;
+        color: #16253a;
+      }
+
+      .node-detail-sub {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: #4f6074;
+        line-height: 1.4;
+      }
+
+      .node-detail-mode-label {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #bfd3ef;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #1d4f8a;
+        background: #f2f7ff;
+        margin-top: 8px;
+      }
+
+      .node-detail-grid {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .node-detail-block {
+        border: 1px solid #d7e2f2;
+        border-radius: 12px;
+        background: #ffffff;
+        padding: 10px;
+      }
+
+      .node-detail-grid > .node-detail-block:not(.node-detail-block-wide) {
+        display: none;
+      }
+
+      .node-detail-block h3 {
+        margin: 0;
+        font-size: 13px;
+        color: #22354d;
+      }
+
+      .node-detail-block ul {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+
+      .node-detail-block li {
+        margin: 5px 0;
+        font-size: 12px;
+        color: #3a4d64;
+        line-height: 1.35;
+      }
+
+      .node-detail-block-wide {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-color: transparent;
+        background: transparent;
+        padding: 0;
+      }
+
+      .node-detail-docs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .node-detail-doc-chip {
+        border: 1px solid #bfd3ef;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #1d4f8a;
+        background: #f2f7ff;
+      }
+
+      .concept-graph {
+        position: relative;
+        margin-top: 8px;
+        border: 1px solid #d6e1f2;
+        border-radius: 12px;
+        min-height: 100%;
+        flex: 1;
+        overflow: auto;
+        background: repeating-linear-gradient(
+          0deg,
+          #fbfdff,
+          #fbfdff 23px,
+          #eef4fc 23px,
+          #eef4fc 24px
+        );
+      }
+
+      .concept-node-layer {
+        position: relative;
+      }
+
+      .concept-edge-layer {
+        position: absolute;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+      }
+
+      .concept-card {
+        position: absolute;
+        width: 220px;
+        min-height: 122px;
+        border: 1px solid #bfd3ef;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 6px 12px rgba(16, 28, 48, 0.08);
+        padding: 10px;
+        z-index: 1;
+        transform-origin: center top;
+        transition:
+          border-color 170ms ease,
+          box-shadow 170ms ease,
+          transform 170ms ease;
+      }
+
+      .concept-card:hover,
+      .concept-card:focus-within {
+        border-color: #1d4f8a;
+        box-shadow: 0 16px 28px rgba(17, 33, 56, 0.18);
+        transform: translateY(-4px) scale(1.045);
+        z-index: 4;
+      }
+
+      .concept-card h4 {
+        margin: 0;
+        font-size: 12px;
+        color: #1d3048;
+      }
+
+      .concept-card p {
+        margin: 6px 0 0;
+        font-size: 11px;
+        line-height: 1.32;
+        color: #4f6074;
+        max-height: 3.8em;
+        overflow: hidden;
+      }
+
+      .concept-card:hover p,
+      .concept-card:focus-within p {
+        max-height: 10.2em;
+      }
+
+      .concept-card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 8px;
+      }
+
+      .concept-card-chip {
+        border: 1px solid #d3deef;
+        border-radius: 999px;
+        padding: 1px 6px;
+        font-size: 10px;
+        font-weight: 700;
+        color: #36506f;
+        background: #f8fbff;
       }
 
       .detail {
@@ -443,6 +778,12 @@
         padding: 12px 18px 18px;
       }
 
+      .detail,
+      .list,
+      .prototype-features {
+        display: none;
+      }
+
       .prototype-features {
         padding: 14px 18px 22px;
         border-top: 1px solid var(--stroke);
@@ -527,12 +868,18 @@
 
       @media (max-width: 980px) {
         body {
-          padding: 12px;
+          padding: 0;
         }
 
         .board {
-          min-height: 760px;
-          overflow: auto;
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        .whiteboard {
+          border-radius: 0;
+          border-left: 0;
+          border-right: 0;
         }
 
         .edge-label {
@@ -547,6 +894,19 @@
         .legend {
           width: calc(100% - 24px);
           max-height: 52%;
+        }
+
+        .node-detail-panel {
+          inset: 0;
+          padding: 10px;
+        }
+
+        .node-detail-title {
+          font-size: 16px;
+        }
+
+        .concept-card {
+          width: 206px;
         }
       }
     </style>
@@ -568,7 +928,9 @@
           <span class="chip active">Feature</span>
           <span class="chip">Concept</span>
           <span class="label" style="margin-left: 8px">Trail</span>
-          <span class="chip">SPEC</span>
+          <button class="chip control" id="openSpecMapBtn" type="button">
+            SPEC
+          </button>
           <span class="chip active">player-management</span>
         </div>
         <div class="row">
@@ -576,6 +938,15 @@
           <span class="chip active">Hierarchical</span>
           <span class="label" style="margin-left: 8px">Top Node</span>
           <span class="chip active" id="rootChip">player-management</span>
+          <button
+            class="chip control"
+            id="backToFeatureGraphBtn"
+            type="button"
+            hidden
+          >
+            &larr; Back to feature graph
+          </button>
+          <span class="chip" id="graphModeChip" hidden></span>
         </div>
         <div class="row" aria-label="Canvas controls">
           <span class="label">Canvas</span>
@@ -588,6 +959,12 @@
           <span class="mode-hint">Drag to pan, mouse wheel to zoom.</span>
         </div>
         <div class="row" id="filterRow" aria-label="Relation filters"></div>
+        <div
+          class="row"
+          id="fileKindRow"
+          aria-label="File card filters"
+          hidden
+        ></div>
       </section>
 
       <section
@@ -678,6 +1055,53 @@
           </div>
           <div id="legendContent"></div>
         </section>
+
+        <section class="node-detail-panel" id="nodeDetailPanel" hidden>
+          <div class="node-detail-head">
+            <button
+              class="node-detail-back"
+              id="nodeDetailBackBtn"
+              type="button"
+            >
+              &#8592; Back to graph
+            </button>
+            <div>
+              <h2 class="node-detail-title" id="nodeDetailTitle">
+                Feature details
+              </h2>
+              <p class="node-detail-sub" id="nodeDetailSummary">
+                Click a card to inspect feature internals.
+              </p>
+              <span class="node-detail-mode-label">Same whiteboard mode</span>
+            </div>
+          </div>
+          <div class="node-detail-grid">
+            <article class="node-detail-block node-detail-block-wide">
+              <h3>Spec concept graph (cards mapped from spec docs)</h3>
+              <div class="node-detail-docs" id="nodeDetailDocs"></div>
+              <div class="concept-graph" id="nodeConceptGraph">
+                <svg
+                  class="concept-edge-layer"
+                  id="nodeConceptEdgeLayer"
+                  aria-hidden="true"
+                ></svg>
+                <div class="concept-node-layer" id="nodeConceptNodeLayer"></div>
+              </div>
+            </article>
+            <article class="node-detail-block">
+              <h3>What is inside this feature</h3>
+              <ul id="nodeDetailInsideList"></ul>
+            </article>
+            <article class="node-detail-block">
+              <h3 id="nodeDetailOutgoingTitle">Outgoing dependencies</h3>
+              <ul id="nodeDetailOutgoingList"></ul>
+            </article>
+            <article class="node-detail-block">
+              <h3 id="nodeDetailIncomingTitle">Incoming dependencies</h3>
+              <ul id="nodeDetailIncomingList"></ul>
+            </article>
+          </div>
+        </section>
       </section>
 
       <section class="detail" id="edgeDetail" aria-live="polite">
@@ -746,6 +1170,11 @@
               <strong>F-09:</strong> Keyboard fallback relation list with
               compact/verbose modes.
             </li>
+            <li>
+              <strong>F-10:</strong> Clickable feature cards (or SPEC button)
+              open same-board file cards (Domain/Workflow/Interfaces/etc.) with
+              concept links per file.
+            </li>
           </ul>
         </article>
 
@@ -780,6 +1209,504 @@
         "player-makeup": "Player Makeup",
         "player-progression": "Player Progression",
         "financial-settlement": "Financial Settlement",
+      };
+
+      const NODE_CONTENT = {
+        "player-management": [
+          "Player profile and overview read models for operator screens",
+          "Composition layer that joins stats, makeup, and progression context",
+          "Permission-gated access before exposing player-sensitive information",
+        ],
+        "auth-access-control": [
+          "Route authorization traits used by reviewer/admin flows",
+          "Token and actor checks for protected actions",
+          "Audit-friendly enforcement entrypoint for access decisions",
+        ],
+        "player-stats": [
+          "Rolling and windowed performance metrics projections",
+          "Profit and hands aggregation helpers",
+          "Read models consumed by management and settlement features",
+        ],
+        "player-makeup": [
+          "Debt state baseline for player obligations",
+          "Policy application rules used during financial flows",
+          "Persistence rules for makeup value updates on aggregates",
+        ],
+        "player-progression": [
+          "Progression checks delegated by player-management use-cases",
+          "Eligibility and stage-evaluation query logic",
+          "Projection hooks that expose progression outcomes",
+        ],
+        "financial-settlement": [
+          "Settlement orchestration for payout and debt resolution",
+          "Cross-feature reads for player context and period metrics",
+          "Downstream flow triggers after settlement decisions",
+        ],
+      };
+
+      const CONCEPT_STAGE_LABELS = ["Input", "Rules", "Composition", "Signals"];
+
+      const SOURCE_FILE_GROUPS = {
+        "SPEC.md": { key: "domain", label: "Domain", fileName: "SPEC.md" },
+        "CAPABILITIES.md": {
+          key: "workflow",
+          label: "Workflow",
+          fileName: "CAPABILITIES.md",
+        },
+        "STORIES.md": {
+          key: "interfaces",
+          label: "Interfaces",
+          fileName: "STORIES.md",
+        },
+        "OBSERVABILITY.md": {
+          key: "observability",
+          label: "Observability",
+          fileName: "OBSERVABILITY.md",
+        },
+      };
+
+      const FEATURE_FULL_INDEX_SOURCES = {
+        "player-management": "data/player-management-full-index.json",
+      };
+
+      const FILE_KIND_OPTIONS = ["spec-definition", "operational"];
+
+      const FILE_KIND_LABELS = {
+        "spec-definition": "Spec Definition",
+        operational: "Operational",
+      };
+
+      const SPEC_DEFINITION_FILE_PATTERNS = [
+        /^spec\.md$/,
+        /^domain\.md$/,
+        /^capabilities(\.en)?\.md$/,
+        /^workflows\.md$/,
+        /^operations?\.md$/,
+        /^interfaces\.md$/,
+        /^queries\.md$/,
+        /^states\.md$/,
+        /^events\.md$/,
+        /^mappings\.md$/,
+        /^relationships\.md$/,
+        /^stories\.md$/,
+        /^observability\.md$/,
+        /^taxonomy\.md$/,
+        /^registry\.md$/,
+        /^glossary\.md$/,
+        /^ui-spec\.md$/,
+        /^test-spec\.md$/,
+        /^definitions?\.md$/,
+      ];
+
+      const OPERATIONAL_FILE_PATTERNS = [
+        /^operations?-report\.md$/,
+        /^observability-report\.md$/,
+        /^alignment-report\.md$/,
+        /^layering-alignment-report\.md$/,
+        /^pipeline-report\.md$/,
+        /^pilot-decisions\.md$/,
+        /^changelog\.md$/,
+        /^tasks(\.en)?\.md$/,
+        /^ui-review\.md$/,
+        /^verification(-report)?\.md$/,
+        /^runbook\.md$/,
+      ];
+
+      const SPEC_CONCEPT_GRAPHS = {
+        "player-management": {
+          docs: [
+            "SPEC.md",
+            "CAPABILITIES.md",
+            "STORIES.md",
+            "OBSERVABILITY.md",
+          ],
+          concepts: [
+            {
+              id: "pm-request",
+              title: "PlayerOverviewRequest",
+              source: "SPEC.md",
+              lane: 0,
+              summary:
+                "Entry command/query that starts a player overview read flow.",
+            },
+            {
+              id: "pm-access",
+              title: "PermissionGate",
+              source: "CAPABILITIES.md",
+              lane: 0,
+              summary:
+                "Trait-based access gate before exposing player-sensitive data.",
+            },
+            {
+              id: "pm-stats-query",
+              title: "StatsQueryBridge",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary:
+                "Requests rolling hands/profit metrics from player-stats.",
+            },
+            {
+              id: "pm-makeup-query",
+              title: "MakeupQueryBridge",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary:
+                "Loads debt baseline and policy context from player-makeup.",
+            },
+            {
+              id: "pm-progression-query",
+              title: "ProgressionQueryBridge",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary:
+                "Delegates progression checks and returns progression signals.",
+            },
+            {
+              id: "pm-dto",
+              title: "PlayerOverviewDTO",
+              source: "STORIES.md",
+              lane: 2,
+              summary:
+                "Composed response model used by operator and admin screens.",
+            },
+            {
+              id: "pm-metric",
+              title: "OverviewLatencyMetric",
+              source: "OBSERVABILITY.md",
+              lane: 3,
+              summary:
+                "Measures end-to-end latency for player overview delivery.",
+            },
+          ],
+          relations: [
+            { from: "pm-request", to: "pm-access", label: "guards" },
+            { from: "pm-access", to: "pm-stats-query", label: "enables" },
+            { from: "pm-access", to: "pm-makeup-query", label: "enables" },
+            { from: "pm-access", to: "pm-progression-query", label: "enables" },
+            { from: "pm-stats-query", to: "pm-dto", label: "feeds" },
+            { from: "pm-makeup-query", to: "pm-dto", label: "feeds" },
+            { from: "pm-progression-query", to: "pm-dto", label: "feeds" },
+            { from: "pm-dto", to: "pm-metric", label: "observed by" },
+          ],
+        },
+        "auth-access-control": {
+          docs: [
+            "SPEC.md",
+            "CAPABILITIES.md",
+            "STORIES.md",
+            "OBSERVABILITY.md",
+          ],
+          concepts: [
+            {
+              id: "ac-token",
+              title: "TokenVerification",
+              source: "SPEC.md",
+              lane: 0,
+              summary: "Verifies actor identity and session integrity.",
+            },
+            {
+              id: "ac-trait",
+              title: "TraitResolution",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary:
+                "Resolves permission traits required by protected routes.",
+            },
+            {
+              id: "ac-policy",
+              title: "RoutePolicyDecision",
+              source: "SPEC.md",
+              lane: 1,
+              summary: "Evaluates allow/deny decision for route and action.",
+            },
+            {
+              id: "ac-audit",
+              title: "AuthorizationAuditLog",
+              source: "STORIES.md",
+              lane: 2,
+              summary:
+                "Writes traceable decision evidence for operational audits.",
+            },
+            {
+              id: "ac-deny-event",
+              title: "AccessDeniedEvent",
+              source: "SPEC.md",
+              lane: 2,
+              summary:
+                "Publishes denied access events for downstream handling.",
+            },
+            {
+              id: "ac-metric",
+              title: "DenyRateMetric",
+              source: "OBSERVABILITY.md",
+              lane: 3,
+              summary: "Tracks deny-rate drift and anomaly windows.",
+            },
+          ],
+          relations: [
+            { from: "ac-token", to: "ac-trait", label: "permits" },
+            { from: "ac-trait", to: "ac-policy", label: "drives" },
+            { from: "ac-policy", to: "ac-audit", label: "records" },
+            {
+              from: "ac-policy",
+              to: "ac-deny-event",
+              label: "emits when denied",
+            },
+            { from: "ac-deny-event", to: "ac-metric", label: "counted by" },
+          ],
+        },
+        "player-stats": {
+          docs: [
+            "SPEC.md",
+            "CAPABILITIES.md",
+            "STORIES.md",
+            "OBSERVABILITY.md",
+          ],
+          concepts: [
+            {
+              id: "ps-request",
+              title: "PeriodStatsRequest",
+              source: "SPEC.md",
+              lane: 0,
+              summary:
+                "Defines date range and player scope for stats retrieval.",
+            },
+            {
+              id: "ps-hands",
+              title: "HandsAggregation",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Aggregates hands count and participation values.",
+            },
+            {
+              id: "ps-profit",
+              title: "ProfitAggregation",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Aggregates profit and rakeback values by period.",
+            },
+            {
+              id: "ps-projection",
+              title: "StatsProjection",
+              source: "STORIES.md",
+              lane: 2,
+              summary: "Projects normalized stats values to read model DTOs.",
+            },
+            {
+              id: "ps-read-model",
+              title: "StatsReadModel",
+              source: "SPEC.md",
+              lane: 2,
+              summary: "Queryable view consumed by management and settlement.",
+            },
+            {
+              id: "ps-metric",
+              title: "StatsFreshnessMetric",
+              source: "OBSERVABILITY.md",
+              lane: 3,
+              summary: "Monitors projection freshness and lag.",
+            },
+          ],
+          relations: [
+            { from: "ps-request", to: "ps-hands", label: "starts" },
+            { from: "ps-request", to: "ps-profit", label: "starts" },
+            { from: "ps-hands", to: "ps-projection", label: "feeds" },
+            { from: "ps-profit", to: "ps-projection", label: "feeds" },
+            { from: "ps-projection", to: "ps-read-model", label: "builds" },
+            { from: "ps-read-model", to: "ps-metric", label: "monitored by" },
+          ],
+        },
+        "player-makeup": {
+          docs: [
+            "SPEC.md",
+            "CAPABILITIES.md",
+            "STORIES.md",
+            "OBSERVABILITY.md",
+          ],
+          concepts: [
+            {
+              id: "mk-state-read",
+              title: "MakeupStateRead",
+              source: "SPEC.md",
+              lane: 0,
+              summary: "Reads current debt state and retention metadata.",
+            },
+            {
+              id: "mk-policy",
+              title: "DebtPolicyCheck",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary:
+                "Validates settlement actions against debt policy rules.",
+            },
+            {
+              id: "mk-calc",
+              title: "DebtDeltaCalculation",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Computes debt delta from period outcomes.",
+            },
+            {
+              id: "mk-write",
+              title: "MakeupStateWrite",
+              source: "SPEC.md",
+              lane: 2,
+              summary: "Persists updated debt value on player aggregate.",
+            },
+            {
+              id: "mk-event",
+              title: "MakeupAdjustedEvent",
+              source: "STORIES.md",
+              lane: 2,
+              summary: "Broadcasts updated debt baseline to dependent flows.",
+            },
+            {
+              id: "mk-metric",
+              title: "DebtDriftAlertMetric",
+              source: "OBSERVABILITY.md",
+              lane: 3,
+              summary: "Alerts when debt transitions violate expected bounds.",
+            },
+          ],
+          relations: [
+            { from: "mk-state-read", to: "mk-policy", label: "checked by" },
+            { from: "mk-policy", to: "mk-calc", label: "enables" },
+            { from: "mk-calc", to: "mk-write", label: "applies" },
+            { from: "mk-write", to: "mk-event", label: "publishes" },
+            { from: "mk-event", to: "mk-metric", label: "tracked by" },
+          ],
+        },
+        "player-progression": {
+          docs: [
+            "SPEC.md",
+            "CAPABILITIES.md",
+            "STORIES.md",
+            "OBSERVABILITY.md",
+          ],
+          concepts: [
+            {
+              id: "pg-request",
+              title: "ProgressionRequest",
+              source: "SPEC.md",
+              lane: 0,
+              summary:
+                "Entry query requesting progression status for a player.",
+            },
+            {
+              id: "pg-stage-rules",
+              title: "StageRuleEvaluation",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Evaluates progression stage rules and thresholds.",
+            },
+            {
+              id: "pg-eligibility",
+              title: "EligibilityDecision",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Determines if player can advance to next stage.",
+            },
+            {
+              id: "pg-projection",
+              title: "ProgressionProjection",
+              source: "STORIES.md",
+              lane: 2,
+              summary:
+                "Projects progression outcome and user-facing rationale.",
+            },
+            {
+              id: "pg-explanation",
+              title: "ProgressionNarrative",
+              source: "SPEC.md",
+              lane: 2,
+              summary: "Human-readable explanation for progression outcome.",
+            },
+            {
+              id: "pg-metric",
+              title: "ProgressionCoverageMetric",
+              source: "OBSERVABILITY.md",
+              lane: 3,
+              summary: "Tracks coverage of progression checks across cohorts.",
+            },
+          ],
+          relations: [
+            { from: "pg-request", to: "pg-stage-rules", label: "starts" },
+            { from: "pg-stage-rules", to: "pg-eligibility", label: "drives" },
+            { from: "pg-eligibility", to: "pg-projection", label: "feeds" },
+            { from: "pg-projection", to: "pg-explanation", label: "explains" },
+            { from: "pg-explanation", to: "pg-metric", label: "measured by" },
+          ],
+        },
+        "financial-settlement": {
+          docs: [
+            "SPEC.md",
+            "CAPABILITIES.md",
+            "STORIES.md",
+            "OBSERVABILITY.md",
+          ],
+          concepts: [
+            {
+              id: "fs-command",
+              title: "SettlementCommand",
+              source: "SPEC.md",
+              lane: 0,
+              summary: "Entry command for payout/debt settlement operation.",
+            },
+            {
+              id: "fs-context",
+              title: "PlayerContextQuery",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Loads player and deal context required for settlement.",
+            },
+            {
+              id: "fs-profit",
+              title: "ProfitSourceQuery",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Reads aggregated period profit/rakeback values.",
+            },
+            {
+              id: "fs-policy",
+              title: "DebtPolicyApplication",
+              source: "CAPABILITIES.md",
+              lane: 1,
+              summary: "Applies debt policy limits before final decision.",
+            },
+            {
+              id: "fs-decision",
+              title: "SettlementDecision",
+              source: "SPEC.md",
+              lane: 2,
+              summary:
+                "Final settlement decision with approved payout/debt value.",
+            },
+            {
+              id: "fs-event",
+              title: "SettlementAppliedEvent",
+              source: "STORIES.md",
+              lane: 2,
+              summary: "Notifies downstream flows after settlement completes.",
+            },
+            {
+              id: "fs-metric",
+              title: "SettlementLatencyMetric",
+              source: "OBSERVABILITY.md",
+              lane: 3,
+              summary: "Tracks median and p95 settlement completion time.",
+            },
+          ],
+          relations: [
+            { from: "fs-command", to: "fs-context", label: "needs" },
+            { from: "fs-command", to: "fs-profit", label: "needs" },
+            { from: "fs-command", to: "fs-policy", label: "needs" },
+            { from: "fs-context", to: "fs-decision", label: "feeds" },
+            { from: "fs-profit", to: "fs-decision", label: "feeds" },
+            { from: "fs-policy", to: "fs-decision", label: "constrains" },
+            { from: "fs-decision", to: "fs-event", label: "emits" },
+            { from: "fs-event", to: "fs-metric", label: "tracked by" },
+          ],
+        },
       };
 
       const LANE_BIAS = {
@@ -856,14 +1783,20 @@
       ];
 
       const state = {
+        graphMode: "feature",
+        currentFeatureRootId: "player-management",
+        externalFeatureIndexes: {},
         activeTypes: new Set(Object.keys(EDGE_COLORS)),
+        activeFileKinds: new Set(FILE_KIND_OPTIONS),
         activeEdgeId: null,
+        activeNodeId: null,
+        activeConceptGraph: null,
         listMode: "compact",
         selectedLaneType: null,
         hoveredLaneEdgeId: null,
         scale: 1,
-        minScale: 0.55,
-        maxScale: 2.4,
+        minScale: 0.14,
+        maxScale: 4,
         panX: 24,
         panY: 24,
         panInitialized: false,
@@ -878,8 +1811,14 @@
       const laneStripEl = document.getElementById("laneStrip");
       const detailEl = document.getElementById("edgeDetail");
       const filterRowEl = document.getElementById("filterRow");
+      const fileKindRowEl = document.getElementById("fileKindRow");
       const listEl = document.getElementById("edgeList");
+      const openSpecMapBtnEl = document.getElementById("openSpecMapBtn");
       const rootChipEl = document.getElementById("rootChip");
+      const backToFeatureGraphBtnEl = document.getElementById(
+        "backToFeatureGraphBtn",
+      );
+      const graphModeChipEl = document.getElementById("graphModeChip");
       const legendPanelEl = document.getElementById("legendPanel");
       const legendTitleEl = document.getElementById("legendTitle");
       const legendContentEl = document.getElementById("legendContent");
@@ -889,10 +1828,50 @@
       const zoomInBtnEl = document.getElementById("zoomInBtn");
       const zoomResetBtnEl = document.getElementById("zoomResetBtn");
       const zoomValueEl = document.getElementById("zoomValue");
+      const nodeDetailPanelEl = document.getElementById("nodeDetailPanel");
+      const nodeDetailBackBtnEl = document.getElementById("nodeDetailBackBtn");
+      const nodeDetailTitleEl = document.getElementById("nodeDetailTitle");
+      const nodeDetailSummaryEl = document.getElementById("nodeDetailSummary");
+      const nodeDetailInsideListEl = document.getElementById(
+        "nodeDetailInsideList",
+      );
+      const nodeDetailOutgoingListEl = document.getElementById(
+        "nodeDetailOutgoingList",
+      );
+      const nodeDetailIncomingListEl = document.getElementById(
+        "nodeDetailIncomingList",
+      );
+      const nodeDetailOutgoingTitleEl = document.getElementById(
+        "nodeDetailOutgoingTitle",
+      );
+      const nodeDetailIncomingTitleEl = document.getElementById(
+        "nodeDetailIncomingTitle",
+      );
+      const nodeDetailDocsEl = document.getElementById("nodeDetailDocs");
+      const nodeConceptGraphEl = document.getElementById("nodeConceptGraph");
+      const nodeConceptEdgeLayerEl = document.getElementById(
+        "nodeConceptEdgeLayer",
+      );
+      const nodeConceptNodeLayerEl = document.getElementById(
+        "nodeConceptNodeLayer",
+      );
 
       let renderedEdgeCache = [];
       let panSession = null;
       let legendDrag = null;
+      let lastNodeTriggerEl = null;
+
+      const FEATURE_GRAPH_NODES = Array.from(
+        boardContentEl.querySelectorAll(".node"),
+      ).map((nodeEl) => ({
+        id: nodeEl.dataset.nodeId,
+        title: nodeEl.querySelector("h3")
+          ? nodeEl.querySelector("h3").textContent.trim()
+          : featureLabel(nodeEl.dataset.nodeId),
+        summary: nodeEl.querySelector("p")
+          ? nodeEl.querySelector("p").textContent.trim()
+          : "",
+      }));
 
       function featureLabel(featureId) {
         return FEATURE_LABELS[featureId] || featureId;
@@ -904,14 +1883,789 @@
         }
       }
 
-      function visibleEdges() {
+      function getNodeSummary(nodeId) {
+        const match = FEATURE_GRAPH_NODES.find((node) => node.id === nodeId);
+        return match ? match.summary : "";
+      }
+
+      function slugifyFragment(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      function buildFeatureConceptLink(featureId, filePath, conceptTitle) {
+        return `docs/features/${featureId}/${filePath}#${slugifyFragment(conceptTitle)}`;
+      }
+
+      function classifyFileKind(filePath) {
+        const rawPath = String(filePath || "")
+          .trim()
+          .toLowerCase();
+        const fileToken = rawPath.split("/").pop() || rawPath;
+
+        if (
+          rawPath.includes("/capabilities/") ||
+          rawPath.startsWith("capabilities/")
+        ) {
+          return "spec-definition";
+        }
+
+        if (
+          SPEC_DEFINITION_FILE_PATTERNS.some((pattern) =>
+            pattern.test(fileToken),
+          )
+        ) {
+          return "spec-definition";
+        }
+
+        if (
+          OPERATIONAL_FILE_PATTERNS.some((pattern) => pattern.test(fileToken))
+        ) {
+          return "operational";
+        }
+
+        if (
+          fileToken.includes("report") ||
+          fileToken.includes("decision") ||
+          fileToken.includes("changelog") ||
+          fileToken.includes("task")
+        ) {
+          return "operational";
+        }
+
+        return "spec-definition";
+      }
+
+      async function ensureExternalFeatureIndex(featureId) {
+        const sourcePath = FEATURE_FULL_INDEX_SOURCES[featureId];
+        if (!sourcePath) {
+          return null;
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            state.externalFeatureIndexes,
+            featureId,
+          )
+        ) {
+          return state.externalFeatureIndexes[featureId];
+        }
+
+        try {
+          const response = await fetch(sourcePath, { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const payload = await response.json();
+          const entries = Array.isArray(payload.entries) ? payload.entries : [];
+          state.externalFeatureIndexes[featureId] = {
+            feature: payload.feature || featureId,
+            entries,
+          };
+        } catch (error) {
+          console.warn(`Unable to import full index for ${featureId}.`, error);
+          state.externalFeatureIndexes[featureId] = null;
+        }
+
+        return state.externalFeatureIndexes[featureId];
+      }
+
+      function buildExternalConceptGraphRuntime(nodeId, externalIndex) {
+        const entries = Array.isArray(externalIndex?.entries)
+          ? externalIndex.entries
+          : [];
+        if (!entries.length) {
+          return null;
+        }
+
+        const nodes = entries.map((entry, entryIndex) => {
+          const filePath = String(entry.file || `file-${entryIndex + 1}`);
+          const fileKey = slugifyFragment(filePath || `file-${entryIndex + 1}`);
+          const concepts = Array.isArray(entry.concepts) ? entry.concepts : [];
+
+          return {
+            id: `${nodeId}-file-${fileKey}`,
+            title: entry.label || filePath,
+            summary: `${filePath} | ${concepts.length} mapped headings`,
+            source: `docs/features/${nodeId}/${filePath}`,
+            stage: filePath,
+            nodeType: "file-group",
+            fileKind: classifyFileKind(filePath),
+            conceptLinks: concepts.map((conceptTitle, conceptIndex) => ({
+              id: `${nodeId}-${fileKey}-heading-${conceptIndex + 1}`,
+              title: conceptTitle,
+              href: buildFeatureConceptLink(nodeId, filePath, conceptTitle),
+            })),
+          };
+        });
+
+        const fileToNodeId = new Map(
+          entries.map((entry, index) => [
+            String(entry.file || "").toLowerCase(),
+            nodes[index].id,
+          ]),
+        );
+        const fileExists = (filePath) =>
+          fileToNodeId.has(String(filePath || "").toLowerCase());
+        const edgeAccumulator = new Map();
+
+        function pushEdge(fromFile, toFile, why) {
+          const fromId = fileToNodeId.get(String(fromFile || "").toLowerCase());
+          const toId = fileToNodeId.get(String(toFile || "").toLowerCase());
+          if (!fromId || !toId || fromId === toId) {
+            return;
+          }
+
+          const edgeKey = `${fromId}->${toId}`;
+          if (!edgeAccumulator.has(edgeKey)) {
+            edgeAccumulator.set(edgeKey, { from: fromId, to: toId, why });
+          }
+        }
+
+        const backboneFlow = [
+          "spec.md",
+          "domain.md",
+          "workflows.md",
+          "interfaces.md",
+          "operations.md",
+          "queries.md",
+          "states.md",
+          "events.md",
+          "mappings.md",
+          "observability.md",
+        ];
+        backboneFlow.slice(0, -1).forEach((fromFile, index) => {
+          pushEdge(fromFile, backboneFlow[index + 1], "core flow");
+        });
+
+        entries
+          .filter((entry) =>
+            String(entry.file || "")
+              .toLowerCase()
+              .startsWith("capabilities/"),
+          )
+          .forEach((entry) => {
+            pushEdge("spec.md", entry.file, "capability drill-in");
+          });
+
+        const auditFiles = [
+          "alignment-report.md",
+          "layering-alignment-report.md",
+          "observability-report.md",
+          "pipeline-report.md",
+          "pilot-decisions.md",
+          "tasks.en.md",
+          "ui-spec.md",
+          "ui-review.md",
+          "test-spec.md",
+          "stories.md",
+        ];
+        auditFiles.forEach((auditFile) => {
+          if (fileExists(auditFile)) {
+            pushEdge("spec.md", auditFile, "support artifact");
+          }
+        });
+
+        if (!edgeAccumulator.size) {
+          nodes.slice(0, -1).forEach((node, index) => {
+            edgeAccumulator.set(`${node.id}->${nodes[index + 1].id}`, {
+              from: node.id,
+              to: nodes[index + 1].id,
+              why: "indexed sequence",
+            });
+          });
+        }
+
+        const edges = Array.from(edgeAccumulator.values()).map(
+          (edge, index) => ({
+            id: `${nodeId}-file-edge-${index + 1}`,
+            from: edge.from,
+            to: edge.to,
+            type: "file-link",
+            why: edge.why,
+          }),
+        );
+
+        return {
+          featureId: nodeId,
+          docs: entries.map((entry) => entry.file).filter(Boolean),
+          nodes,
+          edges,
+        };
+      }
+
+      function buildConceptGraphRuntime(nodeId) {
+        const importedGraph = buildExternalConceptGraphRuntime(
+          nodeId,
+          state.externalFeatureIndexes[nodeId],
+        );
+        if (importedGraph) {
+          return importedGraph;
+        }
+
+        const specGraph = getSpecConceptGraph(nodeId);
+        const groupsByNodeId = new Map();
+        const conceptToGroupNode = new Map();
+
+        (specGraph.concepts || []).forEach((concept) => {
+          const groupConfig = SOURCE_FILE_GROUPS[concept.source] || {
+            key: slugifyFragment(concept.source || "spec"),
+            label: (concept.source || "Spec").replace(/\.md$/i, ""),
+            fileName: concept.source || "SPEC.md",
+          };
+          const groupNodeId = `${nodeId}-file-${groupConfig.key}`;
+
+          if (!groupsByNodeId.has(groupNodeId)) {
+            const filePath = `docs/features/${nodeId}/${groupConfig.fileName}`;
+            groupsByNodeId.set(groupNodeId, {
+              id: groupNodeId,
+              title: groupConfig.label,
+              summary: `${groupConfig.fileName} | ${groupConfig.label} concepts`,
+              source: filePath,
+              stage: groupConfig.fileName,
+              nodeType: "file-group",
+              fileKind: classifyFileKind(groupConfig.fileName),
+              conceptLinks: [],
+            });
+          }
+
+          const groupNode = groupsByNodeId.get(groupNodeId);
+          groupNode.conceptLinks.push({
+            id: concept.id,
+            title: concept.title,
+            href: buildFeatureConceptLink(
+              nodeId,
+              groupConfig.fileName,
+              concept.title,
+            ),
+          });
+          conceptToGroupNode.set(concept.id, groupNodeId);
+        });
+
+        groupsByNodeId.forEach((group) => {
+          group.conceptLinks.sort((a, b) => a.title.localeCompare(b.title));
+        });
+
+        const fileEdgeAccumulator = new Map();
+        (specGraph.relations || []).forEach((relation) => {
+          const fromGroup = conceptToGroupNode.get(relation.from);
+          const toGroup = conceptToGroupNode.get(relation.to);
+          if (!fromGroup || !toGroup || fromGroup === toGroup) {
+            return;
+          }
+
+          const key = `${fromGroup}->${toGroup}`;
+          if (!fileEdgeAccumulator.has(key)) {
+            fileEdgeAccumulator.set(key, {
+              from: fromGroup,
+              to: toGroup,
+              count: 0,
+              labels: new Set(),
+            });
+          }
+
+          const edgeEntry = fileEdgeAccumulator.get(key);
+          edgeEntry.count += 1;
+          if (relation.label) {
+            edgeEntry.labels.add(relation.label);
+          }
+        });
+
+        let edges = Array.from(fileEdgeAccumulator.values()).map(
+          (entry, index) => {
+            const labels = Array.from(entry.labels);
+            const whyBase = labels.length
+              ? labels.join(", ")
+              : "cross-file link";
+            const why =
+              entry.count > 1 ? `${whyBase} (${entry.count})` : whyBase;
+
+            return {
+              id: `${nodeId}-file-edge-${index + 1}`,
+              from: entry.from,
+              to: entry.to,
+              type: "file-link",
+              why,
+            };
+          },
+        );
+
+        if (!edges.length) {
+          const fileNodeIds = Array.from(groupsByNodeId.keys());
+          edges = fileNodeIds.slice(0, -1).map((fromNodeId, index) => ({
+            id: `${nodeId}-file-edge-fallback-${index + 1}`,
+            from: fromNodeId,
+            to: fileNodeIds[index + 1],
+            type: "file-link",
+            why: "linked in spec map",
+          }));
+        }
+
+        return {
+          featureId: nodeId,
+          docs: [...new Set((specGraph.docs || []).filter(Boolean))],
+          nodes: Array.from(groupsByNodeId.values()),
+          edges,
+        };
+      }
+
+      function currentGraphNodes() {
+        if (state.graphMode === "concept" && state.activeConceptGraph) {
+          return state.activeConceptGraph.nodes.filter((node) => {
+            const resolvedKind =
+              node.fileKind || classifyFileKind(node.stage || node.source);
+            return state.activeFileKinds.has(resolvedKind);
+          });
+        }
+        return FEATURE_GRAPH_NODES;
+      }
+
+      function resolveNodeLabel(nodeId) {
+        const match = currentGraphNodes().find((node) => node.id === nodeId);
+        return match ? match.title : featureLabel(nodeId);
+      }
+
+      function currentGraphEdges() {
+        if (state.graphMode === "concept" && state.activeConceptGraph) {
+          const visibleNodeIds = new Set(
+            currentGraphNodes().map((node) => node.id),
+          );
+          return state.activeConceptGraph.edges.filter(
+            (edge) =>
+              visibleNodeIds.has(edge.from) && visibleNodeIds.has(edge.to),
+          );
+        }
         return EDGES.filter((edge) => state.activeTypes.has(edge.type));
       }
 
-      function buildHierarchyLevels(nodeIds) {
+      function updateGraphModeUI() {
+        const conceptMode = state.graphMode === "concept";
+        boardEl.classList.toggle("is-concept-mode", conceptMode);
+
+        backToFeatureGraphBtnEl.hidden = !conceptMode;
+        graphModeChipEl.hidden = !conceptMode;
+        graphModeChipEl.textContent = conceptMode
+          ? `Spec files map: ${featureLabel(state.activeNodeId)}`
+          : "";
+
+        filterRowEl.hidden = conceptMode;
+        fileKindRowEl.hidden = !conceptMode;
+        fileKindRowEl
+          .querySelectorAll(".chip.filter.file-kind")
+          .forEach((chip) => {
+            chip.classList.toggle(
+              "is-on",
+              state.activeFileKinds.has(chip.dataset.kind),
+            );
+          });
+        laneStripEl.hidden = conceptMode;
+        if (conceptMode) {
+          legendPanelEl.hidden = true;
+          state.selectedLaneType = null;
+          state.hoveredLaneEdgeId = null;
+        }
+      }
+
+      function renderBoardNodes(nodes) {
+        boardContentEl
+          .querySelectorAll(".node")
+          .forEach((node) => node.remove());
+
+        if (!nodes.length && state.graphMode === "concept") {
+          const emptyNode = document.createElement("article");
+          emptyNode.className = "node is-file-card";
+          emptyNode.dataset.nodeId = "file-kind-filter-empty";
+          emptyNode.innerHTML =
+            "<h3>No file cards match current filter</h3><p>Toggle Spec Definition and Operational chips to change visible cards.</p>";
+          boardContentEl.appendChild(emptyNode);
+          return;
+        }
+
+        nodes.forEach((nodeData) => {
+          const nodeEl = document.createElement("article");
+          nodeEl.className = "node";
+          nodeEl.dataset.nodeId = nodeData.id;
+          nodeEl.innerHTML = `<h3>${nodeData.title}</h3><p>${nodeData.summary || ""}</p>`;
+
+          if (state.graphMode === "feature") {
+            nodeEl.setAttribute("tabindex", "0");
+            nodeEl.setAttribute("role", "button");
+            nodeEl.setAttribute(
+              "aria-label",
+              `Open ${nodeData.title} concepts in the same whiteboard`,
+            );
+
+            const indicator = document.createElement("span");
+            indicator.className = "node-open-indicator";
+            indicator.textContent = "Open details ->";
+            nodeEl.appendChild(indicator);
+
+            nodeEl.addEventListener("click", () => {
+              openNodeDetail(nodeData.id, nodeEl);
+            });
+
+            nodeEl.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openNodeDetail(nodeData.id, nodeEl);
+              }
+            });
+          } else {
+            nodeEl.classList.add("is-file-card");
+
+            if (nodeData.source) {
+              const filePathEl = document.createElement("p");
+              filePathEl.className = "node-file-path";
+              filePathEl.textContent = nodeData.source;
+              nodeEl.appendChild(filePathEl);
+            }
+
+            const listEl = document.createElement("ul");
+            listEl.className = "node-file-list";
+            const conceptLinks = nodeData.conceptLinks || [];
+
+            if (!conceptLinks.length) {
+              const emptyItem = document.createElement("li");
+              emptyItem.textContent = "No concepts mapped from this file.";
+              listEl.appendChild(emptyItem);
+            } else {
+              conceptLinks.forEach((conceptLink) => {
+                const listItem = document.createElement("li");
+                const anchor = document.createElement("a");
+                anchor.href = conceptLink.href;
+                anchor.textContent = conceptLink.title;
+                anchor.title = conceptLink.href;
+                anchor.addEventListener("click", (event) => {
+                  event.preventDefault();
+                  detailEl.innerHTML = `<strong>Concept Link:</strong> <span>${conceptLink.title} -> ${conceptLink.href}</span>`;
+                });
+                listItem.appendChild(anchor);
+                listEl.appendChild(listItem);
+              });
+            }
+
+            nodeEl.appendChild(listEl);
+          }
+
+          boardContentEl.appendChild(nodeEl);
+        });
+      }
+
+      function renderListItems(listEl, items, emptyMessage) {
+        listEl.innerHTML = "";
+        if (!items.length) {
+          const emptyItem = document.createElement("li");
+          emptyItem.textContent = emptyMessage;
+          listEl.appendChild(emptyItem);
+          return;
+        }
+
+        items.forEach((itemText) => {
+          const itemEl = document.createElement("li");
+          itemEl.textContent = itemText;
+          listEl.appendChild(itemEl);
+        });
+      }
+
+      function renderRelationItems(listEl, edges, direction) {
+        const formatted = edges.map((edge) => {
+          const counterpart = direction === "outgoing" ? edge.to : edge.from;
+          return `${featureLabel(counterpart)} [${edge.type}] - ${edge.why}`;
+        });
+
+        renderListItems(
+          listEl,
+          formatted,
+          direction === "outgoing"
+            ? "No outgoing dependencies from this feature in the current map."
+            : "No incoming dependencies into this feature in the current map.",
+        );
+      }
+
+      function buildFallbackSpecConceptGraph(nodeId) {
+        const concepts = (NODE_CONTENT[nodeId] || []).map((entry, index) => ({
+          id: `${nodeId}-fallback-${index + 1}`,
+          title: `Concept ${index + 1}`,
+          source: "SPEC.md",
+          lane: index <= 0 ? 0 : index === 1 ? 1 : 2,
+          summary: entry,
+        }));
+
+        const relations = concepts.slice(0, -1).map((concept, index) => ({
+          from: concept.id,
+          to: concepts[index + 1].id,
+          label: "relates",
+        }));
+
+        return {
+          docs: ["SPEC.md"],
+          concepts,
+          relations,
+        };
+      }
+
+      function getSpecConceptGraph(nodeId) {
+        return (
+          SPEC_CONCEPT_GRAPHS[nodeId] || buildFallbackSpecConceptGraph(nodeId)
+        );
+      }
+
+      function renderDocChips(docList) {
+        nodeDetailDocsEl.innerHTML = "";
+        const docs = [...new Set((docList || []).filter(Boolean))];
+
+        docs.forEach((docName) => {
+          const chip = document.createElement("span");
+          chip.className = "node-detail-doc-chip";
+          chip.textContent = docName;
+          nodeDetailDocsEl.appendChild(chip);
+        });
+
+        if (!docs.length) {
+          const chip = document.createElement("span");
+          chip.className = "node-detail-doc-chip";
+          chip.textContent = "No spec docs mapped";
+          nodeDetailDocsEl.appendChild(chip);
+        }
+      }
+
+      function buildConceptLayout(concepts) {
+        const compactLayout = window.innerWidth <= 980;
+        const cardWidth = compactLayout ? 206 : 220;
+        const cardHeight = compactLayout ? 126 : 132;
+        const laneGap = cardWidth + (compactLayout ? 66 : 88);
+        const rowGap = compactLayout ? 34 : 42;
+        const padding = compactLayout ? 22 : 28;
+        const lanes = [
+          ...new Set(concepts.map((concept) => concept.lane || 0)),
+        ].sort((a, b) => a - b);
+        const laneBuckets = new Map(
+          lanes.map((lane) => [
+            lane,
+            concepts.filter((concept) => (concept.lane || 0) === lane),
+          ]),
+        );
+
+        const maxRows = Math.max(
+          1,
+          ...[...laneBuckets.values()].map((bucket) => bucket.length),
+        );
+        const width = padding * 2 + (lanes.length - 1) * laneGap + cardWidth;
+        const height =
+          padding * 2 +
+          maxRows * cardHeight +
+          Math.max(0, maxRows - 1) * rowGap;
+        const positions = new Map();
+
+        lanes.forEach((lane, laneIndex) => {
+          const laneConcepts = laneBuckets.get(lane) || [];
+          const laneX = padding + laneIndex * laneGap;
+          const laneContentHeight =
+            laneConcepts.length * cardHeight +
+            Math.max(0, laneConcepts.length - 1) * rowGap;
+          const laneTop =
+            padding +
+            Math.max(0, (height - padding * 2 - laneContentHeight) / 2);
+
+          laneConcepts.forEach((concept, rowIndex) => {
+            positions.set(concept.id, {
+              x: laneX,
+              y: laneTop + rowIndex * (cardHeight + rowGap),
+            });
+          });
+        });
+
+        return { positions, width, height, cardWidth, cardHeight };
+      }
+
+      function renderConceptGraph(graphModel) {
+        const concepts = graphModel.concepts || [];
+        const relations = graphModel.relations || [];
+        const docs =
+          graphModel.docs || concepts.map((concept) => concept.source);
+
+        renderDocChips(docs);
+
+        nodeConceptNodeLayerEl.innerHTML = "";
+        nodeConceptEdgeLayerEl.innerHTML = "";
+
+        if (!concepts.length) {
+          const empty = document.createElement("article");
+          empty.className = "concept-card";
+          empty.style.left = "16px";
+          empty.style.top = "16px";
+          empty.innerHTML =
+            "<h4>No concept mapping available</h4><p>Add spec concept mappings for this feature to render graph cards.</p>";
+          nodeConceptNodeLayerEl.appendChild(empty);
+          return;
+        }
+
+        const layout = buildConceptLayout(concepts);
+
+        nodeConceptNodeLayerEl.style.width = `${layout.width}px`;
+        nodeConceptNodeLayerEl.style.height = `${layout.height}px`;
+        nodeConceptEdgeLayerEl.setAttribute("width", String(layout.width));
+        nodeConceptEdgeLayerEl.setAttribute("height", String(layout.height));
+        nodeConceptEdgeLayerEl.setAttribute(
+          "viewBox",
+          `0 0 ${layout.width} ${layout.height}`,
+        );
+        nodeConceptGraphEl.style.minHeight = `${Math.max(240, layout.height + 24)}px`;
+
+        nodeConceptEdgeLayerEl.innerHTML = `
+          <defs>
+            <marker
+              id="conceptArrowHead"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M0,0 L8,4 L0,8 z" fill="#486280"></path>
+            </marker>
+          </defs>
+        `;
+
+        concepts.forEach((concept) => {
+          const pos = layout.positions.get(concept.id);
+          if (!pos) {
+            return;
+          }
+
+          const stage =
+            CONCEPT_STAGE_LABELS[concept.lane || 0] ||
+            `Layer ${(concept.lane || 0) + 1}`;
+          const card = document.createElement("article");
+          card.className = "concept-card";
+          card.style.left = `${pos.x}px`;
+          card.style.top = `${pos.y}px`;
+          card.innerHTML = `
+            <h4>${concept.title}</h4>
+            <p>${concept.summary}</p>
+            <div class="concept-card-meta">
+              <span class="concept-card-chip">${concept.source}</span>
+              <span class="concept-card-chip">${stage}</span>
+            </div>
+          `;
+          nodeConceptNodeLayerEl.appendChild(card);
+        });
+
+        relations.forEach((relation) => {
+          const fromPos = layout.positions.get(relation.from);
+          const toPos = layout.positions.get(relation.to);
+          if (!fromPos || !toPos) {
+            return;
+          }
+
+          const startX = fromPos.x + layout.cardWidth;
+          const startY = fromPos.y + layout.cardHeight / 2;
+          const endX = toPos.x;
+          const endY = toPos.y + layout.cardHeight / 2;
+          const bend = Math.max(36, (endX - startX) * 0.45);
+
+          const path = document.createElementNS(SVG_NS, "path");
+          path.setAttribute(
+            "d",
+            `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`,
+          );
+          path.setAttribute("fill", "none");
+          path.setAttribute("stroke", "#6a7f99");
+          path.setAttribute("stroke-width", "1.8");
+          path.setAttribute("marker-end", "url(#conceptArrowHead)");
+          path.setAttribute("opacity", "0.9");
+          nodeConceptEdgeLayerEl.appendChild(path);
+
+          if (relation.label) {
+            const label = document.createElementNS(SVG_NS, "text");
+            label.setAttribute("x", String((startX + endX) / 2));
+            label.setAttribute("y", String((startY + endY) / 2 - 6));
+            label.setAttribute("text-anchor", "middle");
+            label.setAttribute("fill", "#4d637c");
+            label.setAttribute("font-size", "10");
+            label.setAttribute("font-weight", "700");
+            label.textContent = relation.label;
+            nodeConceptEdgeLayerEl.appendChild(label);
+          }
+        });
+      }
+
+      async function openNodeDetail(nodeId, triggerEl) {
+        state.activeNodeId = nodeId;
+        lastNodeTriggerEl = triggerEl || null;
+
+        await ensureExternalFeatureIndex(nodeId);
+
+        state.activeConceptGraph = buildConceptGraphRuntime(nodeId);
+        state.graphMode = "concept";
+        state.activeEdgeId = null;
+        state.selectedLaneType = null;
+        state.hoveredLaneEdgeId = null;
+        render();
+        backToFeatureGraphBtnEl.focus();
+      }
+
+      function closeNodeDetail() {
+        state.graphMode = "feature";
+        state.activeConceptGraph = null;
+        state.activeNodeId = null;
+        state.activeEdgeId = null;
+        state.selectedLaneType = null;
+        state.hoveredLaneEdgeId = null;
+        render();
+        if (lastNodeTriggerEl) {
+          lastNodeTriggerEl.focus();
+        }
+      }
+
+      function setupNodeCards() {
+        // Node handlers are bound in renderBoardNodes() based on graph mode.
+      }
+
+      function setupNodeDetailPanel() {
+        backToFeatureGraphBtnEl.addEventListener("click", closeNodeDetail);
+        nodeDetailBackBtnEl.addEventListener("click", closeNodeDetail);
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && state.graphMode === "concept") {
+            closeNodeDetail();
+          }
+        });
+      }
+
+      function setupSpecMapShortcut() {
+        openSpecMapBtnEl.addEventListener("click", () => {
+          const targetId =
+            state.graphMode === "feature"
+              ? state.currentFeatureRootId || FEATURE_GRAPH_NODES[0].id
+              : state.activeNodeId;
+
+          if (!targetId) {
+            return;
+          }
+
+          const triggerNode =
+            state.graphMode === "feature"
+              ? boardContentEl.querySelector(`[data-node-id="${targetId}"]`)
+              : null;
+
+          openNodeDetail(targetId, triggerNode || null);
+        });
+      }
+
+      function visibleEdges() {
+        return currentGraphEdges();
+      }
+
+      function buildHierarchyLevels(nodeIds, edges) {
         const degree = new Map(nodeIds.map((id) => [id, 0]));
 
-        EDGES.forEach((edge) => {
+        edges.forEach((edge) => {
           if (degree.has(edge.from)) {
             degree.set(edge.from, degree.get(edge.from) + 1);
           }
@@ -927,7 +2681,7 @@
 
         const root = ranked[0] || nodeIds[0];
         const level1 = [];
-        EDGES.forEach((edge) => {
+        edges.forEach((edge) => {
           if (edge.from === root && nodeIds.includes(edge.to)) {
             uniquePush(level1, edge.to);
           }
@@ -938,7 +2692,7 @@
         );
         const level2 = [];
         nonRoot.forEach((id) => {
-          const hasParentInLevel1 = EDGES.some(
+          const hasParentInLevel1 = edges.some(
             (edge) => level1.includes(edge.from) && edge.to === id,
           );
           if (hasParentInLevel1) {
@@ -954,10 +2708,10 @@
         return { root, levels };
       }
 
-      function applyHierarchicalLayout() {
+      function applyHierarchicalLayout(edges) {
         const nodeEls = Array.from(boardContentEl.querySelectorAll(".node"));
         const nodeIds = nodeEls.map((nodeEl) => nodeEl.dataset.nodeId);
-        const { root, levels } = buildHierarchyLevels(nodeIds);
+        const { root, levels } = buildHierarchyLevels(nodeIds, edges);
 
         nodeEls.forEach((nodeEl) => {
           nodeEl.classList.toggle(
@@ -966,15 +2720,64 @@
           );
         });
 
-        rootChipEl.textContent = root;
+        if (state.graphMode === "concept") {
+          rootChipEl.textContent = `${featureLabel(state.activeNodeId)} concepts`;
+        } else {
+          rootChipEl.textContent = root;
+          state.currentFeatureRootId = root;
+        }
 
         const viewportWidth = boardViewportEl.clientWidth;
-        const contentWidth = Math.max(1500, viewportWidth + 420);
-        const topPadding = 148;
-        const rowGap = 188;
+        const horizontalGap = state.graphMode === "concept" ? 58 : 84;
+        const levelGap = state.graphMode === "concept" ? 74 : 96;
+        const sidePadding = state.graphMode === "concept" ? 26 : 32;
+        const fallbackNodeWidth = state.graphMode === "concept" ? 230 : 210;
+        const fallbackNodeHeight = state.graphMode === "concept" ? 148 : 122;
+        const levelMetrics = levels.map((level) => {
+          const widths = level.map((nodeId) => {
+            const nodeEl = boardContentEl.querySelector(
+              `[data-node-id="${nodeId}"]`,
+            );
+            return nodeEl
+              ? nodeEl.offsetWidth || fallbackNodeWidth
+              : fallbackNodeWidth;
+          });
+          const heights = level.map((nodeId) => {
+            const nodeEl = boardContentEl.querySelector(
+              `[data-node-id="${nodeId}"]`,
+            );
+            return nodeEl
+              ? nodeEl.offsetHeight || fallbackNodeHeight
+              : fallbackNodeHeight;
+          });
+          const cardsWidth = widths.reduce((sum, width) => sum + width, 0);
+          const totalWidth =
+            cardsWidth + Math.max(0, level.length - 1) * horizontalGap;
+          const tallest = heights.length
+            ? Math.max(...heights)
+            : fallbackNodeHeight;
+          return { level, widths, totalWidth, tallest };
+        });
+        const widestLevel = Math.max(
+          0,
+          ...levelMetrics.map((metric) => metric.totalWidth),
+        );
+        const contentWidth = Math.max(
+          1500,
+          viewportWidth + 520,
+          widestLevel + sidePadding * 2,
+        );
+        const topPadding = state.graphMode === "concept" ? 92 : 148;
+        const totalLevelHeight = levelMetrics.reduce(
+          (sum, metric) => sum + metric.tallest,
+          0,
+        );
         const contentHeight = Math.max(
           980,
-          topPadding + rowGap * levels.length + 260,
+          topPadding +
+            totalLevelHeight +
+            Math.max(0, levelMetrics.length - 1) * levelGap +
+            260,
         );
 
         boardContentEl.style.width = `${contentWidth}px`;
@@ -984,26 +2787,28 @@
         svgEl.setAttribute("width", String(contentWidth));
         svgEl.setAttribute("height", String(contentHeight));
 
-        levels.forEach((level, levelIndex) => {
-          const y = topPadding + levelIndex * rowGap;
-          const spacing = contentWidth / (level.length + 1);
+        let cursorY = topPadding;
+        levelMetrics.forEach((metric) => {
+          const y = cursorY;
+          let cursorX = Math.max(
+            sidePadding,
+            (contentWidth - metric.totalWidth) / 2,
+          );
 
-          level.forEach((nodeId, index) => {
+          metric.level.forEach((nodeId, index) => {
             const nodeEl = boardContentEl.querySelector(
               `[data-node-id="${nodeId}"]`,
             );
             if (!nodeEl) {
               return;
             }
-            const nodeWidth = nodeEl.offsetWidth || 210;
-            const desiredX = spacing * (index + 1) - nodeWidth / 2;
-            const clampedX = Math.max(
-              18,
-              Math.min(contentWidth - nodeWidth - 18, desiredX),
-            );
-            nodeEl.style.left = `${clampedX}px`;
+            const nodeWidth = metric.widths[index] || fallbackNodeWidth;
+            nodeEl.style.left = `${cursorX}px`;
             nodeEl.style.top = `${y}px`;
+            cursorX += nodeWidth + horizontalGap;
           });
+
+          cursorY += metric.tallest + levelGap;
         });
       }
 
@@ -1096,7 +2901,7 @@
         path.setAttribute("id", `edge-path-${edge.id}`);
         path.setAttribute("d", `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
         path.setAttribute("fill", "none");
-        path.setAttribute("stroke", EDGE_COLORS[edge.type]);
+        path.setAttribute("stroke", EDGE_COLORS[edge.type] || "#486280");
         path.setAttribute("stroke-width", "1.9");
         path.setAttribute("stroke-linecap", "round");
         path.setAttribute("marker-end", "url(#arrowHead)");
@@ -1146,8 +2951,43 @@
         });
       }
 
+      function setupFileKindFilters() {
+        const label = document.createElement("span");
+        label.className = "label";
+        label.textContent = "File Cards";
+        fileKindRowEl.appendChild(label);
+
+        FILE_KIND_OPTIONS.forEach((kind) => {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "chip filter file-kind is-on";
+          chip.dataset.kind = kind;
+          chip.textContent = FILE_KIND_LABELS[kind] || kind;
+          chip.addEventListener("click", () => {
+            const isOn = state.activeFileKinds.has(kind);
+            if (isOn && state.activeFileKinds.size === 1) {
+              return;
+            }
+
+            if (isOn) {
+              state.activeFileKinds.delete(kind);
+            } else {
+              state.activeFileKinds.add(kind);
+            }
+
+            chip.classList.toggle("is-on", state.activeFileKinds.has(kind));
+            render();
+          });
+          fileKindRowEl.appendChild(chip);
+        });
+      }
+
       function renderLaneChips(edges) {
         laneStripEl.innerHTML = "";
+
+        if (state.graphMode !== "feature") {
+          return;
+        }
 
         const types = Object.keys(EDGE_COLORS).filter((type) =>
           edges.some((edge) => edge.type === type),
@@ -1191,7 +3031,7 @@
           let width = isActive ? 3.2 : 2.0;
           let opacity = 0.92;
 
-          if (state.selectedLaneType) {
+          if (state.graphMode === "feature" && state.selectedLaneType) {
             const inLane = edge.type === state.selectedLaneType;
             if (inLane) {
               width = isHovered ? 5.0 : isActive ? 4.2 : 3.1;
@@ -1252,6 +3092,12 @@
       }
 
       function renderLaneDetailPanel(edges) {
+        if (state.graphMode !== "feature") {
+          legendPanelEl.hidden = true;
+          legendContentEl.innerHTML = "";
+          return;
+        }
+
         if (!state.selectedLaneType) {
           legendPanelEl.hidden = true;
           legendContentEl.innerHTML = "";
@@ -1335,7 +3181,11 @@
           state.activeEdgeId = activeEdge.id;
         }
 
-        detailEl.innerHTML = `<strong>Active Edge:</strong> <span>${featureLabel(activeEdge.from)} -> ${featureLabel(activeEdge.to)} [${activeEdge.type}] | ${activeEdge.why}</span>`;
+        if (state.graphMode === "concept") {
+          detailEl.innerHTML = `<strong>Active Relation:</strong> <span>${resolveNodeLabel(activeEdge.from)} -> ${resolveNodeLabel(activeEdge.to)} | ${activeEdge.why}</span>`;
+        } else {
+          detailEl.innerHTML = `<strong>Active Edge:</strong> <span>${featureLabel(activeEdge.from)} -> ${featureLabel(activeEdge.to)} [${activeEdge.type}] | ${activeEdge.why}</span>`;
+        }
       }
 
       function clampPanAndApplyTransform() {
@@ -1343,7 +3193,7 @@
         const vh = boardViewportEl.clientHeight;
         const cw = boardContentEl.clientWidth * state.scale;
         const ch = boardContentEl.clientHeight * state.scale;
-        const margin = 80;
+        const margin = 120;
 
         if (cw <= vw) {
           state.panX = (vw - cw) / 2;
@@ -1363,6 +3213,36 @@
 
         boardContentEl.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.scale})`;
         zoomValueEl.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function fitViewportZoom() {
+        const vw = boardViewportEl.clientWidth;
+        const vh = boardViewportEl.clientHeight;
+        const contentWidth = boardContentEl.clientWidth;
+        const contentHeight = boardContentEl.clientHeight;
+
+        if (!vw || !vh || !contentWidth || !contentHeight) {
+          state.scale = 1;
+          state.panX = 24;
+          state.panY = 24;
+          clampPanAndApplyTransform();
+          return;
+        }
+
+        const fitPadding = 52;
+        const scaleX = (vw - fitPadding) / contentWidth;
+        const scaleY = (vh - fitPadding) / contentHeight;
+        const targetScale = Math.max(
+          state.minScale,
+          Math.min(state.maxScale, Math.min(scaleX, scaleY)),
+        );
+
+        state.scale = targetScale;
+        const scaledWidth = contentWidth * state.scale;
+        const scaledHeight = contentHeight * state.scale;
+        state.panX = (vw - scaledWidth) / 2;
+        state.panY = (vh - scaledHeight) / 2;
+        clampPanAndApplyTransform();
       }
 
       function zoomAt(clientX, clientY, factor) {
@@ -1389,11 +3269,8 @@
       }
 
       function resetZoom() {
-        state.scale = 1;
-        state.panX = 24;
-        state.panY = 24;
+        fitViewportZoom();
         state.panInitialized = true;
-        clampPanAndApplyTransform();
       }
 
       function shouldStartPan(target) {
@@ -1404,14 +3281,20 @@
         if (tag === "path" || tag === "button") {
           return false;
         }
-        return !target.closest(".node, .lane-chip, .lane-edge-item, .legend");
+        return !target.closest(
+          ".node, .lane-chip, .lane-edge-item, .legend, .node-detail-panel",
+        );
       }
 
       function setupPanAndZoom() {
         boardViewportEl.addEventListener(
           "wheel",
           (event) => {
-            if (event.target && event.target.closest(".legend")) {
+            if (
+              event.target &&
+              (event.target.closest(".legend") ||
+                event.target.closest(".node-detail-panel"))
+            ) {
               return;
             }
             event.preventDefault();
@@ -1529,13 +3412,15 @@
       }
 
       function renderBoard() {
-        applyHierarchicalLayout();
+        updateGraphModeUI();
+        renderBoardNodes(currentGraphNodes());
+
+        const edges = visibleEdges();
+        applyHierarchicalLayout(edges);
 
         const defs = svgEl.querySelector("defs").outerHTML;
         svgEl.innerHTML = defs;
         labelLayerEl.innerHTML = "";
-
-        const edges = visibleEdges();
 
         if (
           state.activeEdgeId &&
@@ -1598,9 +3483,9 @@
           const item = document.createElement("div");
           item.className = "edge-item";
           if (state.listMode === "compact") {
-            item.innerHTML = `${featureLabel(edge.from)} -> ${featureLabel(edge.to)} <span>[${edge.type}]</span>`;
+            item.innerHTML = `${resolveNodeLabel(edge.from)} -> ${resolveNodeLabel(edge.to)} <span>[${edge.type}]</span>`;
           } else {
-            item.innerHTML = `${featureLabel(edge.from)} -> ${featureLabel(edge.to)} <span>[${edge.type}]</span><br/><span>${edge.why}</span>`;
+            item.innerHTML = `${resolveNodeLabel(edge.from)} -> ${resolveNodeLabel(edge.to)} <span>[${edge.type}]</span><br/><span>${edge.why}</span>`;
           }
           listEl.appendChild(item);
         });
@@ -1640,9 +3525,13 @@
       }
 
       setupFilters();
+      setupFileKindFilters();
+      setupNodeCards();
       setupListModeButtons();
       setupPanAndZoom();
       setupLegendPanelInteractions();
+      setupNodeDetailPanel();
+      setupSpecMapShortcut();
       render();
 
       window.addEventListener("resize", () => {

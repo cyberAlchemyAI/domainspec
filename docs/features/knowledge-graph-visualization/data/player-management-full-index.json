@@ -1,0 +1,463 @@
+{
+  "feature": "player-management",
+  "entries": [
+    {
+      "file": "ALIGNMENT-REPORT.md",
+      "label": "Alignment Report",
+      "concepts": [
+        "Alignment Report: player-management",
+        "Executive Summary",
+        "Findings",
+        "Concept Coverage Snapshot",
+        "Verdict"
+      ]
+    },
+    {
+      "file": "CHANGELOG.md",
+      "label": "Changelog",
+      "concepts": [
+        "player-management — Changelog",
+        "2026-04-30",
+        "Added",
+        "Changed",
+        "2026-04-24",
+        "Changed",
+        "2026-04-17",
+        "Added",
+        "Changed"
+      ]
+    },
+    {
+      "file": "LAYERING-ALIGNMENT-REPORT.md",
+      "label": "Layering Alignment",
+      "concepts": [
+        "Layering Alignment Report: player-management",
+        "Executive Summary",
+        "Findings",
+        "Layer Verdict"
+      ]
+    },
+    {
+      "file": "OBSERVABILITY-REPORT.md",
+      "label": "Observability Report",
+      "concepts": [
+        "Player Management Observability Alignment Report",
+        "Summary",
+        "Coverage by Rule",
+        "Instrument Detail",
+        "Undeclared Metrics",
+        "Change Requests",
+        "Next Actions"
+      ]
+    },
+    {
+      "file": "PILOT-DECISIONS.md",
+      "label": "Pilot Decisions",
+      "concepts": ["Pilot Decision Gate", "Verification Profile"]
+    },
+    {
+      "file": "PIPELINE-REPORT.md",
+      "label": "Pipeline Report",
+      "concepts": [
+        "player-management - Pipeline Report",
+        "Economy of Action",
+        "Pipeline Counters",
+        "Context Discovery",
+        "Overhead Assessment",
+        "Step Verdicts",
+        "Reflection",
+        "What went well",
+        "What required rework",
+        "Governance gaps discovered",
+        "Skill improvement proposals",
+        "Patterns for memory",
+        "Artifacts Produced",
+        "Docs",
+        "Backend",
+        "Frontend",
+        "Tests",
+        "Infrastructure"
+      ]
+    },
+    {
+      "file": "SPEC.md",
+      "label": "SPEC",
+      "concepts": [
+        "Player Management",
+        "What This Module Owns",
+        "Module Map",
+        "Capabilities",
+        "Capability Anchors",
+        "Create Player",
+        "List All Players",
+        "Players Overview",
+        "Check Player Progression",
+        "Create Coach",
+        "Assign Coach",
+        "Unassign Coach",
+        "List Coach Players",
+        "List All Coaches",
+        "Resolve Player Visibility",
+        "Domain Concepts",
+        "Concept Registry",
+        "Concepts",
+        "Feature Concept Graph",
+        "Aspect Docs",
+        "Cross-Feature Dependencies",
+        "Produces For",
+        "Stories",
+        "User Stories",
+        "Story Coverage Matrix",
+        "Pilot Decisions",
+        "References"
+      ]
+    },
+    {
+      "file": "STORIES.md",
+      "label": "Stories",
+      "concepts": [
+        "Player Management — User Stories",
+        "US-01 Admin Operations Journey: Register A New Player",
+        "US-02 Public Journey: View Player List And Portfolio Overview",
+        "US-03 Cross-Feature Integration: Player Data Consumed By Settlement, Makeup, And Progression",
+        "US-04 Error And Edge Case Journey: Reject Invalid Player Registration And Unauthorized Access",
+        "US-05 Admin Operations Journey: Register A New Coach",
+        "US-06 Admin Operations Journey: Assign And Unassign Coach To Player",
+        "US-07 Public Journey: Coach Views Assigned Players",
+        "US-08 Cross-Feature Integration: Player Visibility Through Coach Assignment",
+        "US-09 Error And Edge Case Journey: Coach Operations Failure Modes",
+        "Story Coverage Matrix"
+      ]
+    },
+    {
+      "file": "TEST-SPEC.md",
+      "label": "Tests",
+      "concepts": [
+        "Player Management TEST-SPEC",
+        "Derivation Basis",
+        "Test Catalogue",
+        "Coach Domain Tests",
+        "Coach Operation Tests — CreateCoach",
+        "Coach Operation Tests — AssignCoach",
+        "Coach Operation Tests — UnassignCoach",
+        "Coach API Contract Tests",
+        "Coach Query Tests",
+        "Visibility Resolver Tests",
+        "Coach Mapping Tests",
+        "Suggested Test File Scaffolding",
+        "Traceability Matrix (49/49 player + 72/64 coach = 121 total)",
+        "Player Traceability (49/49)",
+        "Coach Traceability (72/64 — implemented)",
+        "Uncovered Or Under-Specified Areas",
+        "Coverage Summary",
+        "Player Obligations (implemented)",
+        "Coach Obligations (implemented)",
+        "Total: 121 obligations (49 player + 72 coach — all implemented)",
+        "Story To Test Mapping",
+        "Pilot Must-Pass Subset (Wave 1)",
+        "Pilot Execution Checklist",
+        "Pilot Go No-Go Blockers Register",
+        "Pilot Evidence Package",
+        "Pilot Decisions Provenance"
+      ]
+    },
+    {
+      "file": "UI-REVIEW.md",
+      "label": "UI Review",
+      "concepts": [
+        "UI Review — player-management",
+        "Pillar Scores",
+        "Issues",
+        "Recommendations"
+      ]
+    },
+    {
+      "file": "UI-SPEC.md",
+      "label": "UI Spec",
+      "concepts": [
+        "UI Specification: Player Management",
+        "Route Table",
+        "Page Layouts",
+        "/players (All Players)",
+        "/players/new (Create Player)",
+        "/players/overview (Players Overview)",
+        "/coaches (All Coaches)",
+        "/coaches/[coachId]/players (Coach Players)",
+        "Component Inventory",
+        "Data Flow",
+        "/players",
+        "/players/new",
+        "/players/overview",
+        "/coaches",
+        "/coaches/new",
+        "/coaches/[coachId]/players",
+        "Form Contracts",
+        "CreatePlayerForm",
+        "CreateCoachForm",
+        "AssignPlayerDialog",
+        "State-to-UI Mapping",
+        "Accessibility Requirements"
+      ]
+    },
+    {
+      "file": "capabilities/coach-assignment.md",
+      "label": "Capability: coach-assignment",
+      "concepts": [
+        "Coach Assignment",
+        "Aspect Map",
+        "Flow",
+        "Rules",
+        "AssignCoach",
+        "UnassignCoach",
+        "GetCoachPlayers",
+        "Error States",
+        "Domain Concepts Used"
+      ]
+    },
+    {
+      "file": "capabilities/coach-lifecycle.md",
+      "label": "Capability: coach-lifecycle",
+      "concepts": [
+        "Coach Lifecycle",
+        "Aspect Map",
+        "Flow",
+        "Rules",
+        "Error States",
+        "Domain Concepts Used"
+      ]
+    },
+    {
+      "file": "capabilities/create-player.md",
+      "label": "Capability: create-player",
+      "concepts": [
+        "Create Player",
+        "Aspect Map",
+        "Flow",
+        "Rules",
+        "Calculations",
+        "Error States",
+        "Domain Concepts Used"
+      ]
+    },
+    {
+      "file": "capabilities/players-overview.md",
+      "label": "Capability: players-overview",
+      "concepts": [
+        "Players Overview",
+        "Aspect Map",
+        "Flow",
+        "Calculations",
+        "Domain Concepts Used"
+      ]
+    },
+    {
+      "file": "capabilities/resolve-player-visibility.md",
+      "label": "Capability: resolve-player-visibility",
+      "concepts": [
+        "Resolve Player Visibility",
+        "Aspect Map",
+        "Resolution Logic",
+        "Priority Rules",
+        "Consumers",
+        "Domain Concepts Used"
+      ]
+    },
+    {
+      "file": "decisions.en.md",
+      "label": "Decisions",
+      "concepts": ["Confirmed Decisions", "Open Decisions", "Deferred Scope"]
+    },
+    {
+      "file": "domain.md",
+      "label": "Domain",
+      "concepts": [
+        "Domain: Player Management",
+        "Entities",
+        "Player",
+        "Enums",
+        "PlayerStatus",
+        "Entities (Coach Model)",
+        "Coach",
+        "CoachAssignment",
+        "Enums (Coach Model)",
+        "CoachStatus"
+      ]
+    },
+    {
+      "file": "events.md",
+      "label": "Events",
+      "concepts": [
+        "Events: Player Management",
+        "PlayerCreated",
+        "Payload",
+        "CoachCreated",
+        "Payload",
+        "CoachAssigned",
+        "Payload",
+        "CoachUnassigned",
+        "Payload"
+      ]
+    },
+    {
+      "file": "interfaces.md",
+      "label": "Interfaces",
+      "concepts": [
+        "Interfaces: Player Management",
+        "External: PlayerAPI (REST)",
+        "POST /players",
+        "GET /players",
+        "GET /players/overview",
+        "GET /players/:id/progression",
+        "Internal: PlayerRepository Interface",
+        "External: CoachAPI (REST)",
+        "POST /coaches",
+        "GET /coaches",
+        "POST /coaches/:coachId/players/:playerId",
+        "DELETE /coaches/:coachId/players/:playerId",
+        "GET /coaches/:coachId/players",
+        "Internal: CoachRepository Interface",
+        "Internal: CoachAssignmentRepository Interface"
+      ]
+    },
+    {
+      "file": "mappings.md",
+      "label": "Mappings",
+      "concepts": [
+        "Mappings: Player Management",
+        "CreatePlayerRequestToEntity",
+        "Field Mapping",
+        "Validation",
+        "PlayerToOverviewDto",
+        "Field Mapping",
+        "CreateCoachRequestToEntity",
+        "Field Mapping",
+        "Validation",
+        "AssignCoachRequestToInput",
+        "Field Mapping",
+        "UnassignCoachRequestToInput",
+        "Field Mapping"
+      ]
+    },
+    {
+      "file": "observability.md",
+      "label": "Observability",
+      "concepts": [
+        "Player Management — Observability Spec",
+        "Domain Fidelity Metrics",
+        "Operation Metrics (O4–O7)",
+        "Counts each call to CreatePlayer, grouped by success or error outcome",
+        "Measures execution time of CreatePlayer in seconds",
+        "Counts each call to CreateCoach, grouped by success or error outcome",
+        "Measures execution time of CreateCoach in seconds",
+        "Counts each call to AssignCoach, grouped by success or error outcome",
+        "Measures execution time of AssignCoach in seconds",
+        "Counts each call to UnassignCoach, grouped by success or error outcome",
+        "Measures execution time of UnassignCoach in seconds",
+        "Operational Health Metrics",
+        "Endpoint SLOs (O8)",
+        "Measures HTTP request latency per endpoint using OTel semantic conventions",
+        "Query Performance (O11)",
+        "Business Effectiveness Metrics",
+        "Capability KPIs (O13)",
+        "Metric Summary"
+      ]
+    },
+    {
+      "file": "operations.md",
+      "label": "Operations",
+      "concepts": [
+        "Operations: Player Management",
+        "CreatePlayer",
+        "Input",
+        "Rules",
+        "Calculations",
+        "State Transition",
+        "Postconditions",
+        "Error States",
+        "CreateCoach",
+        "Input",
+        "Rules",
+        "State Transition",
+        "Postconditions",
+        "Error States",
+        "AssignCoach",
+        "Input",
+        "Rules",
+        "State Transition",
+        "Postconditions",
+        "Error States",
+        "UnassignCoach",
+        "Input",
+        "Rules",
+        "State Transition",
+        "Postconditions",
+        "Error States"
+      ]
+    },
+    {
+      "file": "queries.md",
+      "label": "Queries",
+      "concepts": [
+        "Queries: Player Management",
+        "Domain Policy Ownership",
+        "GetAllPlayers",
+        "Input",
+        "Output",
+        "Reads From",
+        "GetPlayersOverview",
+        "Input",
+        "Filters",
+        "Output",
+        "Reads From",
+        "GetAllCoaches",
+        "Input",
+        "Output",
+        "Reads From",
+        "GetCoachPlayers",
+        "Input",
+        "Rules",
+        "Output",
+        "Reads From",
+        "ResolvePlayerVisibility",
+        "Input",
+        "Resolution Rules",
+        "Output",
+        "Reads From"
+      ]
+    },
+    {
+      "file": "states.md",
+      "label": "States",
+      "concepts": [
+        "States: Player Management",
+        "PlayerLifecycle",
+        "Transition Table",
+        "CoachLifecycle",
+        "CoachAssignmentLifecycle",
+        "Invariants"
+      ]
+    },
+    {
+      "file": "tasks.en.md",
+      "label": "Tasks",
+      "concepts": [
+        "Ordered Tasks",
+        "Ownership Labels",
+        "Verification Checklist",
+        "Done Criteria"
+      ]
+    },
+    {
+      "file": "workflows.md",
+      "label": "Workflows",
+      "concepts": [
+        "Workflows: Player Management",
+        "PlayerRegistrationWorkflow",
+        "Steps",
+        "CoachAssignmentWorkflow",
+        "Steps",
+        "Invariants"
+      ]
+    }
+  ]
+}

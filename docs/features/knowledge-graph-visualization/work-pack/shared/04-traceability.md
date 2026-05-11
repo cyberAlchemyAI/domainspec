@@ -1,41 +1,42 @@
-# Cross-Task Traceability Matrix
+# Traceability
 
-## Task to Story and Test Coverage
+## Task-to-Capability Mapping
 
-| Task ID   | Primary Stories        | Primary Test IDs                                                                                                                                            | Primary Coverage IDs                              | Source Contracts                                                                                                    |
-| --------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| KG-IMP-01 | US-1, US-2             | KG-OP-001, KG-OP-002, KG-OP-005, KG-API-001, KG-API-002, KG-API-005                                                                                         | R1, R2, R3, R4, R5                                | [operations.md](../../operations.md), [mappings.md](../../mappings.md), [SPEC.md](../../SPEC.md)                    |
-| KG-IMP-02 | US-2, US-3, US-4       | KG-API-003, KG-API-004, KG-API-005, KG-OP-003, KG-OP-004                                                                                                    | API contract IDs, error-state IDs                 | [queries.md](../../queries.md), [interfaces.md](../../interfaces.md), [operations.md](../../operations.md)          |
-| KG-IMP-03 | US-1, US-3, US-4       | KG-UIE2E-001, KG-UIE2E-002, KG-UIE2E-003, KG-UIE2E-004                                                                                                      | UI concept IDs in SPEC/UI-SPEC                    | [UI-SPEC.md](../../UI-SPEC.md), [states.md](../../states.md)                                                        |
-| KG-IMP-04 | US-1, US-2, US-3, US-4 | KG-BE-ST-001..015, KG-BE-OP-001..020, KG-BE-ERR-001..010, KG-BE-API-001..013, KG-BE-IFMAP-001..011, KG-UI-NAV-001, KG-UI-JRN-001..004, KG-UI-STATE-001..004 | Full TEST-SPEC matrix + readiness evidence matrix | [TEST-SPEC.md](../../TEST-SPEC.md), [STORIES.md](../../STORIES.md), [TASK-KG-IMP-04.md](../tasks/TASK-KG-IMP-04.md) |
-| KG-IMP-05 | All stories            | Verify report references test matrix                                                                                                                        | verify-feature command output                     | `docs/features/knowledge-graph-visualization/VERIFICATION.md` (generated in W3)                                     |
-| KG-IMP-06 | All stories            | Alignment audit evidence                                                                                                                                    | alignment finding IDs                             | `docs/features/knowledge-graph-visualization/ALIGNMENT-REPORT.md` (generated in W3)                                 |
-| KG-IMP-07 | All stories            | Layering audit evidence                                                                                                                                     | layering finding IDs                              | `docs/features/knowledge-graph-visualization/LAYERING-ALIGNMENT-REPORT.md` (generated in W3)                        |
+| Task ID                                                                | Capability Focus                                   | Capability Anchors                                                                                                                                     | Concept/Contract IDs                                               |
+| ---------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| [TASK-KG-ALG-01](../tasks/TASK-KG-ALG-01.md)                           | Deterministic algorithm contract freeze            | [../../SPEC.md](../../SPEC.md#graph-layout--edge-semantics-algorithm)                                                                                  | FR-001..FR-004, AC-001..AC-006, INV-001..INV-003, RelationshipEdge |
+| [TASK-KG-ALG-02](../tasks/TASK-KG-ALG-02.md)                           | Source registry abstraction + full-index ingestion | [../../operations.md](../../operations.md#resolveprojectionscope), [../../interfaces.md](../../interfaces.md#internal-projectsourceregistry-interface) | ResolveProjectionScope.R1..R3, RebuildMirrorProjection.R0..R6      |
+| [TASK-KG-ALG-03](../tasks/TASK-KG-ALG-03.md)                           | Concept-card enrichment (rules/descriptions)       | [../../queries.md](../../queries.md#getconceptdetailcard), [../../mappings.md](../../mappings.md#concepttodetailcardadapter)                           | ConceptDefinition, ConceptDetailCard, KG-BE-QRY-009..012           |
+| [TASK-KG-ALG-04](../tasks/TASK-KG-ALG-04.md)                           | Prototype-to-contract UI behavior mapping          | [../../WHITEBOARD-PROTOTYPE.html](../../WHITEBOARD-PROTOTYPE.html), [../../UI-SPEC.md](../../UI-SPEC.md#interaction-contract)                          | KG-UI-NAV-001..002, KG-UI-JRN-001..004, KG-UI-STATE-001..004       |
+| [TASK-KG-ALG-05](../tasks/TASK-KG-ALG-05.md)                           | Verification and audit closure planning            | [../../TEST-SPEC.md](../../TEST-SPEC.md), [../../STORIES.md](../../STORIES.md)                                                                         | KG-BE-_ and KG-UI-_ closure envelopes                              |
+| [TASK-KG-ALG-VERIFY](../tasks/TASK-KG-ALG-VERIFY.md)                   | Feature verification                               | [../../SPEC.md](../../SPEC.md), [../../TEST-SPEC.md](../../TEST-SPEC.md)                                                                               | verify-feature obligations                                         |
+| [TASK-KG-ALG-AUDIT-ALIGNMENT](../tasks/TASK-KG-ALG-AUDIT-ALIGNMENT.md) | Alignment closure                                  | [../../SPEC.md](../../SPEC.md), [../../operations.md](../../operations.md)                                                                             | alignment audit obligations                                        |
+| [TASK-KG-ALG-AUDIT-LAYERING](../tasks/TASK-KG-ALG-AUDIT-LAYERING.md)   | Layering closure                                   | [../../domain.md](../../domain.md), [../../interfaces.md](../../interfaces.md)                                                                         | layering audit obligations                                         |
 
-## TASK-KG-IMP-04 Evidence Snapshot (2026-05-06)
+## Feature -> File -> Concept Contract Freeze Seeds
 
-- Backend checks: `pnpm --filter @domainspec/backend check` and `pnpm --filter @domainspec/backend test` passed.
-- Web checks: `pnpm --filter @domainspec/web check` and `pnpm --filter @domainspec/web test:e2e` passed (`16 passed`).
-- Scope-guard and IFMAP coverage was refreshed in `backend/src/server.test.ts`.
-- Aspect -> feature -> concept -> open-definition coverage was refreshed in `apps/web/e2e/knowledge-graph-visualization/knowledge-graph-visualization.journey.spec.ts`.
+| Level   | Canonical Source                                                                                                                                                                                                                                                                         | Freeze Objective                                                                    |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Feature | [../../SPEC.md](../../SPEC.md)                                                                                                                                                                                                                                                           | Fix capability, FR/AC/INV, and relationship-index authority for algorithm planning. |
+| File    | [../../domain.md](../../domain.md), [../../operations.md](../../operations.md), [../../queries.md](../../queries.md), [../../interfaces.md](../../interfaces.md), [../../mappings.md](../../mappings.md), [../../UI-SPEC.md](../../UI-SPEC.md), [../../TEST-SPEC.md](../../TEST-SPEC.md) | Freeze concept and behavior extraction boundaries per aspect file.                  |
+| Concept | [../../domain.md](../../domain.md#conceptdefinition), [../../domain.md](../../domain.md#relationshipedge), [../../queries.md](../../queries.md#getconceptdetailcard)                                                                                                                     | Freeze concept-card identity, relation semantics, and enrichment field contract.    |
 
-## Pipeline Stage to Evidence Mapping
+## Closure Remediation Track (Ordered)
 
-| Stage                 | Planned Wave | Primary Evidence Target                                                                  |
-| --------------------- | ------------ | ---------------------------------------------------------------------------------------- |
-| plan                  | W0           | [WORK-PACK.md](../../WORK-PACK.md), wave files                                           |
-| architecture-baseline | W0           | directives in [WORK-PACK.md](../../WORK-PACK.md)                                         |
-| spec                  | W0-W1        | [SPEC.md](../../SPEC.md)                                                                 |
-| stories               | W0-W1        | [STORIES.md](../../STORIES.md)                                                           |
-| tests                 | W2           | test files + [TEST-SPEC.md](../../TEST-SPEC.md)                                          |
-| backend-implement     | W1-W2        | backend source + API checks                                                              |
-| ui-pipeline           | W2           | UI source + E2E output                                                                   |
-| observability-spec    | W2           | `docs/features/knowledge-graph-visualization/observability.md` (optional scope artifact) |
-| instrument-otel       | W2           | backend observability instrumentation                                                    |
-| otel-verify           | W2-W3        | OBSERVABILITY-REPORT.md                                                                  |
-| infra-deploy          | W2-W3        | infra configs                                                                            |
-| registry-sync         | W2-W3        | registry generation output                                                               |
-| verify-readiness      | W3           | Readiness gate verdict output (command response)                                         |
-| verify-feature        | W3           | `docs/features/knowledge-graph-visualization/VERIFICATION.md`                            |
-| audit-alignment       | W3           | `docs/features/knowledge-graph-visualization/ALIGNMENT-REPORT.md`                        |
-| audit-layering        | W3           | `docs/features/knowledge-graph-visualization/LAYERING-ALIGNMENT-REPORT.md`               |
+1. Execute [TASK-KG-ALG-VERIFY](../tasks/TASK-KG-ALG-VERIFY.md) and capture baseline verification verdict.
+2. Execute [TASK-KG-ALG-AUDIT-ALIGNMENT](../tasks/TASK-KG-ALG-AUDIT-ALIGNMENT.md); normalize findings by severity and impacted contracts.
+3. Execute [TASK-KG-ALG-AUDIT-LAYERING](../tasks/TASK-KG-ALG-AUDIT-LAYERING.md); normalize findings by layer boundary and dependency direction.
+4. Merge alignment + layering findings into one dependency-ordered remediation queue (highest severity first, then dependency unlock order).
+5. Re-run verification after remediation set closure.
+
+## Markdown Link Validation Obligations
+
+Run per-file checks as tasks progress:
+
+1. `bash tools/check_markdown_links.sh docs/features/knowledge-graph-visualization/WORK-PACK.md`
+2. `bash tools/check_markdown_links.sh docs/features/knowledge-graph-visualization/work-pack/shared/01-context.md`
+3. `bash tools/check_markdown_links.sh docs/features/knowledge-graph-visualization/work-pack/shared/02-cross-task-gaps-and-questions.md`
+4. `bash tools/check_markdown_links.sh docs/features/knowledge-graph-visualization/work-pack/shared/03-cross-task-decisions.md`
+5. `bash tools/check_markdown_links.sh docs/features/knowledge-graph-visualization/work-pack/shared/04-traceability.md`
+
+Task-level link checks are listed in each task artifact.

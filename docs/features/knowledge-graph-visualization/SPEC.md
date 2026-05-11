@@ -2,7 +2,7 @@
 feature: knowledge-graph-visualization
 version: current
 status: draft
-updatedAt: 2026-05-06
+updatedAt: 2026-05-10
 ---
 
 # Knowledge Graph Visualization
@@ -17,6 +17,8 @@ The screen is structured around two synchronized surfaces:
 - a large whiteboard canvas that renders card nodes and relation edges for the selected aspect context.
 
 Projection scope is cross-project: the same module can render docs from the local DomainSpec workspace or a registered external project workspace (for example `validation/poker-team`).
+
+This SPEC includes an explicit contract for deterministic graph layout, edge semantics labels, cross-feature edge navigation/highlighting, and deterministic relation-color mapping.
 
 Deterministic baseline interaction:
 
@@ -38,18 +40,21 @@ Deterministic baseline interaction:
   - feature level (concept cards + story cards),
   - aspect level (grouped concept cards + concept detail focus).
 - Relationship index extraction from SPEC tables and graph sections as canonical edge source.
+- Deterministic layout and edge semantics contract for relation labels, color policy, and cross-feature handoff highlighting.
 - Markdown ingestion/parsing and projection persistence into database-backed read models.
 - Deterministic card selection and deep-link resolution to concept definitions.
 - Read API contracts for aspect cards, whiteboard cards/edges, card details, and definition targets.
+- Traceability from stories and aspect evidence to functional requirements, acceptance criteria, and invariants.
 
 ## Capabilities
 
-| Capability                                                              | What                                                                   | Key Aspects                                                                                            | Detail                                                                       |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| [Aspect Whiteboard Navigation](#aspect-whiteboard-navigation)           | Navigate documentation by aspect cards and whiteboard card graph       | [Domain](domain.md), [Queries](queries.md), [Interfaces](interfaces.md), [UI Spec](UI-SPEC.md)         | Aspect card rail, whiteboard board, card focus, deep-link open               |
-| [SPEC-Level Feature Atlas](#spec-level-feature-atlas)                   | At SPEC level, show all feature cards and cross-feature relation edges | [Operations](operations.md), [Queries](queries.md), [Mappings](mappings.md), [Workflows](workflows.md) | Feature cards + cross edges driven from SPEC relationship index              |
-| [Feature Drilldown By Aspect](#feature-drilldown-by-aspect)             | Click feature card to reveal concept and story cards grouped by aspect | [Operations](operations.md), [Queries](queries.md), [States](states.md), [UI Spec](UI-SPEC.md)         | Concept groups by aspect, story cards, domain focus for concept descriptions |
-| [Cross-Project Documentation Scope](#cross-project-documentation-scope) | Reuse same whiteboard flow across registered project repositories      | [Domain](domain.md), [Operations](operations.md), [Interfaces](interfaces.md), [Stories](STORIES.md)   | `projectKey` scope resolution, external docs roots, poker-team example       |
+| Capability                                                                         | What                                                                           | Key Aspects                                                                                                                   | Detail                                                                       |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [Aspect Whiteboard Navigation](#aspect-whiteboard-navigation)                      | Navigate documentation by aspect cards and whiteboard card graph               | [Domain](domain.md), [Queries](queries.md), [Interfaces](interfaces.md), [UI Spec](UI-SPEC.md)                                | Aspect card rail, whiteboard board, card focus, deep-link open               |
+| [SPEC-Level Feature Atlas](#spec-level-feature-atlas)                              | At SPEC level, show all feature cards and cross-feature relation edges         | [Operations](operations.md), [Queries](queries.md), [Mappings](mappings.md), [Workflows](workflows.md)                        | Feature cards + cross edges driven from SPEC relationship index              |
+| [Graph Layout & Edge Semantics Algorithm](#graph-layout--edge-semantics-algorithm) | Deterministically compute hierarchy, labels, cross-feature handoff, and colors | [Operations](operations.md), [Queries](queries.md), [Mappings](mappings.md), [Workflows](workflows.md), [UI Spec](UI-SPEC.md) | Governed by FR-001..FR-004, AC-001..AC-006, INV-001..INV-003                 |
+| [Feature Drilldown By Aspect](#feature-drilldown-by-aspect)                        | Click feature card to reveal concept and story cards grouped by aspect         | [Operations](operations.md), [Queries](queries.md), [States](states.md), [UI Spec](UI-SPEC.md)                                | Concept groups by aspect, story cards, domain focus for concept descriptions |
+| [Cross-Project Documentation Scope](#cross-project-documentation-scope)            | Reuse same whiteboard flow across registered project repositories              | [Domain](domain.md), [Operations](operations.md), [Interfaces](interfaces.md), [Stories](STORIES.md)                          | `projectKey` scope resolution, external docs roots, poker-team example       |
 
 ### Aspect Whiteboard Navigation
 
@@ -67,6 +72,59 @@ When the active aspect is SPEC, the whiteboard renders feature cards and cross-f
 
 Edges come from the feature relationship index authored in SPEC (feature concept graph and dependency/produces tables), not from ad-hoc UI-only inference.
 
+### Graph Layout & Edge Semantics Algorithm
+
+This capability is governed by [Functional Requirements (Graph Layout & Edge Semantics Algorithm)](#functional-requirements-graph-layout--edge-semantics-algorithm), [Acceptance Criteria (Graph Layout & Edge Semantics Algorithm)](#acceptance-criteria-graph-layout--edge-semantics-algorithm), and [Governance and Invariants (Graph Layout & Edge Semantics Algorithm)](#governance-and-invariants-graph-layout--edge-semantics-algorithm).
+
+**Research inventory evidence (internal only):**
+
+| Internal Evidence                                    | Contract Implication                                                                                                    |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [Sugiyama Framework](research/sugiyama_framework.md) | Layering and edge-crossing minimization are handled as deterministic heuristic phases for directed hierarchy rendering. |
+| [Dagre](research/dagre_readme.md)                    | Directed graph layout can be configured for stable client-side hierarchy projection using explicit ordering inputs.     |
+| [ELK](research/elk_readme.md)                        | Alternative layered layout engine supports deterministic routing strategies when algorithm options are fixed.           |
+| [d3-hierarchy](research/d3_hierarchy_readme.md)      | Hierarchy-oriented projection patterns inform depth-aware node grouping for board readability.                          |
+| [Edge Routing](research/edge_routing.md)             | Orthogonal/maze routing constraints support obstacle-avoiding edge paths and stable relation readability.               |
+
+The whiteboard projection includes a deterministic rendering algorithm whose objective is a clear, complete graph view with all required relation context already visible on arrows.
+
+Algorithm contract:
+
+1. Build the active node set from projection scope and selected view level (`aspect`, `feature`, `concept`).
+2. Build the active edge set from canonical relationship index rows (including cross-feature dependencies and produces-for links).
+3. Compute hierarchical levels using the **Sugiyama Framework**, assigning vertices to layers using a network simplex algorithm (similar to `dagre` or `elkjs`) and minimizing edge crossings with heuristic edge routing.
+4. Route edges combining the pathing logic evaluated in the research (orthogonal or spline-based routing) avoiding node intersections.
+5. Annotate each arrow with relation semantics (`type`, `from`, `to`, `why`) so edge meaning is visible without opening secondary panels.
+6. Detect cross-feature edges and mark them as navigable transitions to the target module.
+7. On cross-feature edge click, navigate to the target module/feature and highlight the originating connection in the target projection context.
+8. Assign deterministic edge colors by relation type so relationship meaning is visually recognizable at a glance.
+
+Edge semantics label contract:
+
+| Label Field | Source of Truth                                                                                |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| `type`      | [RelationshipEdge](domain.md#relationshipedge).`edge`                                          |
+| `from`      | [RelationshipEdge](domain.md#relationshipedge).`fromConceptId` resolved to rendered card title |
+| `to`        | [RelationshipEdge](domain.md#relationshipedge).`toConceptId` resolved to rendered card title   |
+| `why`       | [RelationshipEdge](domain.md#relationshipedge).`evidence` and relationship-index notes         |
+
+Deterministic edge color policy:
+
+| Relation Type    | Color Token                              | Meaning                                      |
+| ---------------- | ---------------------------------------- | -------------------------------------------- |
+| `enforces-cross` | `#7c3aed`                                | Guardrails and authorization-style coupling  |
+| `queries`        | `#0f766e`                                | Read/query dependency                        |
+| `applies`        | `#b45309`                                | Rule/policy application                      |
+| `produces-for`   | `#0c4a6e`                                | Output contract consumed by another feature  |
+| unknown          | deterministic fallback derived from type | Unregistered relation type with stable color |
+
+Readability objective:
+
+- Keep edge labels attached to arrows so users can identify relation intent directly on the chart.
+- Preserve hierarchy and spacing so cards and labels remain scan-friendly.
+- Include cross-feature edges in the same graph so module boundaries and handoffs are explicit.
+- Make color-to-relation mapping stable across sessions and project scopes.
+
 ### Feature Drilldown By Aspect
 
 Clicking a feature card transitions whiteboard depth to feature level:
@@ -81,6 +139,43 @@ Clicking a feature card transitions whiteboard depth to feature level:
 The user can choose a registered documentation source (for example `domainspec-core` or `poker-team`) and a feature inside that source.
 
 The module resolves workspace roots for that source and applies the same whiteboard rules: aspect cards, relationship index edges, grouped concepts, and deterministic deep-links.
+
+## Functional Requirements (Graph Layout & Edge Semantics Algorithm)
+
+| ID     | Requirement                                                                                                                                                                                                                  |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-001 | Layout generation MUST be deterministic: for identical projection input (`projectKey`, `featureId`, `activeAspect`, `viewLevel`, canonical node/edge set), node coordinates and routed edge paths MUST be identical.         |
+| FR-002 | Every rendered edge MUST expose semantic labels (`type`, `from`, `to`, `why`) derived from canonical [RelationshipEdge](domain.md#relationshipedge) records and relationship-index evidence.                                 |
+| FR-003 | Cross-feature edges MUST be marked navigable, and selecting one MUST open the target projection scope and highlight the originating relation in the target graph context.                                                    |
+| FR-004 | Edge color assignment MUST be deterministic by relation type using the policy in [Graph Layout & Edge Semantics Algorithm](#graph-layout--edge-semantics-algorithm), including a stable fallback for unknown relation types. |
+
+## Acceptance Criteria (Graph Layout & Edge Semantics Algorithm)
+
+| ID     | Testable Check                                                                                                                                          |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC-001 | Recomputing the same projection snapshot three times yields identical node positions and edge paths.                                                    |
+| AC-002 | Reordering input file read order without changing canonical relationship content does not change graph layout output.                                   |
+| AC-003 | Every edge in graph output includes populated `type`, `from`, `to`, and `why` labels traceable to relationship-index evidence.                          |
+| AC-004 | Clicking a cross-feature edge moves to the target feature scope and highlights the incoming edge that originated the navigation.                        |
+| AC-005 | Known relation labels (`enforces-cross`, `queries`, `applies`, `produces-for`) always resolve to the same color tokens in repeated sessions and scopes. |
+| AC-006 | Unknown relation labels resolve to a deterministic fallback color that remains stable across repeated renders.                                          |
+
+## Governance and Invariants (Graph Layout & Edge Semantics Algorithm)
+
+| ID      | Invariant                                                                                                                                                          |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| INV-001 | Deterministic layout invariant: identical canonical graph input MUST produce identical coordinates and routing output.                                             |
+| INV-002 | Relation-color invariant: relation type to color token mapping is a total deterministic function (including unknown-type fallback).                                |
+| INV-003 | Cross-feature navigation invariant: a navigated cross-feature edge MUST preserve origin relation identity and surface it as the initial highlight in target scope. |
+
+## Traceability Matrix (Stories + Aspect Evidence -> FR -> AC -> INV)
+
+| Capability Slice                            | FR Coverage | AC Coverage    | INV Coverage | Story Evidence                                                                                                          | Aspect Evidence                                                                                                                                                                                                                                      |
+| ------------------------------------------- | ----------- | -------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deterministic hierarchy and routing         | FR-001      | AC-001, AC-002 | INV-001      | [US-2 Graph mirrors canonical relationships](STORIES.md#us-2-graph-mirrors-canonical-relationships)                     | [RebuildMirrorProjection](operations.md#rebuildmirrorprojection), [GetRelationshipGraph](queries.md#getrelationshipgraph), [MirrorInteractionWorkflow](workflows.md#mirrorinteractionworkflow), [Sugiyama Framework](research/sugiyama_framework.md) |
+| Edge semantics labeling                     | FR-002      | AC-003         | INV-001      | [US-2 Graph mirrors canonical relationships](STORIES.md#us-2-graph-mirrors-canonical-relationships)                     | [GetRelationshipGraph](queries.md#getrelationshipgraph), [DocumentToConceptMapping](mappings.md#documenttoconceptmapping), [RelationshipEdge](domain.md#relationshipedge), [Edge Routing](research/edge_routing.md)                                  |
+| Cross-feature edge navigation and highlight | FR-003      | AC-004         | INV-003      | [US-5 Project-scoped projection using poker-team docs](STORIES.md#us-5-project-scoped-projection-using-poker-team-docs) | [MirrorInteractionWorkflow](workflows.md#mirrorinteractionworkflow), [SelectConcept](operations.md#selectconcept), [Route Table](UI-SPEC.md#route-table), [Interaction Contract](UI-SPEC.md#interaction-contract)                                    |
+| Deterministic relation-color mapping        | FR-004      | AC-005, AC-006 | INV-002      | [US-2 Graph mirrors canonical relationships](STORIES.md#us-2-graph-mirrors-canonical-relationships)                     | [Graph Layout & Edge Semantics Algorithm](#graph-layout--edge-semantics-algorithm), [GetRelationshipGraph](queries.md#getrelationshipgraph), [Dagre](research/dagre_readme.md), [ELK](research/elk_readme.md)                                        |
 
 ## Concepts
 
@@ -196,9 +291,7 @@ The module resolves workspace roots for that source and applies the same whitebo
 - [Stories](STORIES.md) - User journeys and acceptance checks
 - [UI Spec](UI-SPEC.md) - Page, components, bindings, and accessibility contract
 - [Test Spec](TEST-SPEC.md) - Deterministic verification obligations
-- [Tasks](TASKS.md) - Ordered execution backlog
 - [Decisions](DECISIONS.md) - Locked and open design choices
-- [Work Pack](WORK-PACK.md) - Planner execution baseline
 
 ## Cross-Feature Dependencies
 
@@ -218,9 +311,18 @@ The module resolves workspace roots for that source and applies the same whitebo
 | Frontend implementers   | Interface | Stable contracts for card, graph, and deep-link interactions  |
 | Governance reviewers    | Query     | Relationship traceability from selected concept to definition |
 
+## Stories
+
+See [STORIES.md](STORIES.md) for capability-scoped user journeys and acceptance-check context.
+
 ## References
 
 - [Relationship vocabulary](../../../RELATIONSHIPS.md)
 - [Taxonomy reference](../../../TAXONOMY.md)
 - [Feature concept graph template](../../templates/FEATURE-CONCEPT-GRAPH.md)
 - [Poker-team docs registry example](../../../../../validation/poker-team/docs/registry.md)
+- [Sugiyama framework inventory note](research/sugiyama_framework.md)
+- [Dagre inventory note](research/dagre_readme.md)
+- [ELK inventory note](research/elk_readme.md)
+- [d3-hierarchy inventory note](research/d3_hierarchy_readme.md)
+- [Edge routing inventory note](research/edge_routing.md)

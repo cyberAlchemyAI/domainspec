@@ -1,5 +1,17 @@
 # Interfaces: Knowledge Graph Visualization
 
+## Capability Backlinks
+
+- [Aspect Whiteboard Navigation](SPEC.md#aspect-whiteboard-navigation)
+- [SPEC-Level Feature Atlas](SPEC.md#spec-level-feature-atlas)
+- [Graph Layout & Edge Semantics Algorithm](SPEC.md#graph-layout--edge-semantics-algorithm)
+- [Feature Drilldown By Aspect](SPEC.md#feature-drilldown-by-aspect)
+- [Cross-Project Documentation Scope](SPEC.md#cross-project-documentation-scope)
+
+## Prototype Interaction Anchor
+
+Interaction contract references remain anchored to [WHITEBOARD-PROTOTYPE.html](WHITEBOARD-PROTOTYPE.html) for planning and review alignment.
+
 ## External: KnowledgeGraphAPI (REST)
 
 ### POST /api/knowledge-graph/rebuild
@@ -18,13 +30,13 @@
 
 **Responses:**
 
-| Status | Condition       | Body                          |
-| ------ | --------------- | ----------------------------- |
-| 200    | Success         | Snapshot summary              |
-| 401    | Unauthorized    | Auth error                    |
-| 403    | Forbidden scope | Missing `domainspec.kg.write` |
-| 404    | Unknown scope   | Source project/feature error  |
-| 422    | Invalid request | Validation error              |
+| Status | Condition       | Body                                                  |
+| ------ | --------------- | ----------------------------------------------------- |
+| 200    | Success         | Snapshot summary (`snapshotId`, `hierarchySignature`) |
+| 401    | Unauthorized    | Auth error                                            |
+| 403    | Forbidden scope | Missing `domainspec.kg.write`                         |
+| 404    | Unknown scope   | Source project/feature error                          |
+| 422    | Invalid request | Validation error                                      |
 
 ### GET /api/knowledge-graph/mirror-cards
 
@@ -43,12 +55,12 @@
 
 **Responses:**
 
-| Status | Condition      | Body                          |
-| ------ | -------------- | ----------------------------- |
-| 200    | Success        | `cards[]` aspect card payload |
-| 401    | Unauthorized   | Auth error                    |
-| 404    | Unknown scope  | Source project/feature error  |
-| 422    | Invalid filter | Validation error              |
+| Status | Condition      | Body                                                |
+| ------ | -------------- | --------------------------------------------------- |
+| 200    | Success        | `hierarchySignature`, `cards[]` file-level payloads |
+| 401    | Unauthorized   | Auth error                                          |
+| 404    | Unknown scope  | Source project/feature error                        |
+| 422    | Invalid filter | Validation error                                    |
 
 ### GET /api/knowledge-graph/graph
 
@@ -57,26 +69,27 @@
 
 **Request:**
 
-| Field             | Type     | Maps To                                                                   |
-| ----------------- | -------- | ------------------------------------------------------------------------- |
-| projectKey        | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).projectKey        |
-| featureId         | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).featureId         |
-| activeAspect      | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).activeAspect      |
-| viewLevel         | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).viewLevel         |
-| selectedFeatureId | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).selectedFeatureId |
-| selectedGroupKey  | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).selectedGroupKey  |
-| includeStories    | boolean  | [GetRelationshipGraph](queries.md#getrelationshipgraph).includeStories    |
-| cardTypes[]       | string[] | [GetRelationshipGraph](queries.md#getrelationshipgraph).cardTypes         |
-| edgeKinds[]       | string[] | [GetRelationshipGraph](queries.md#getrelationshipgraph).edgeKinds         |
+| Field              | Type     | Maps To                                                                    |
+| ------------------ | -------- | -------------------------------------------------------------------------- |
+| projectKey         | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).projectKey         |
+| featureId          | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).featureId          |
+| activeAspect       | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).activeAspect       |
+| viewLevel          | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).viewLevel          |
+| selectedFeatureId  | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).selectedFeatureId  |
+| selectedGroupKey   | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).selectedGroupKey   |
+| highlightedEdgeKey | string   | [GetRelationshipGraph](queries.md#getrelationshipgraph).highlightedEdgeKey |
+| includeStories     | boolean  | [GetRelationshipGraph](queries.md#getrelationshipgraph).includeStories     |
+| cardTypes[]        | string[] | [GetRelationshipGraph](queries.md#getrelationshipgraph).cardTypes          |
+| edgeKinds[]        | string[] | [GetRelationshipGraph](queries.md#getrelationshipgraph).edgeKinds          |
 
 **Responses:**
 
-| Status | Condition      | Body                          |
-| ------ | -------------- | ----------------------------- |
-| 200    | Success        | `board`, `nodes[]`, `edges[]` |
-| 401    | Unauthorized   | Auth error                    |
-| 404    | Unknown scope  | Source project/feature error  |
-| 422    | Invalid filter | Validation error              |
+| Status | Condition      | Body                                                               |
+| ------ | -------------- | ------------------------------------------------------------------ |
+| 200    | Success        | `board`, `nodes[]`, `edges[]` with semantic labels and color token |
+| 401    | Unauthorized   | Auth error                                                         |
+| 404    | Unknown scope  | Source project/feature error                                       |
+| 422    | Invalid filter | Validation error                                                   |
 
 ### GET /api/knowledge-graph/concepts/:conceptId
 
@@ -97,11 +110,11 @@
 
 **Responses:**
 
-| Status | Condition       | Body                         |
-| ------ | --------------- | ---------------------------- |
-| 200    | Success         | Concept detail card payload  |
-| 404    | Unknown scope   | Source project/feature error |
-| 404    | Concept missing | Not found error              |
+| Status | Condition       | Body                                                                            |
+| ------ | --------------- | ------------------------------------------------------------------------------- |
+| 200    | Success         | Detail payload with `summary`, optional `description`/`rules`, `enrichmentMode` |
+| 404    | Unknown scope   | Source project/feature error                                                    |
+| 404    | Concept missing | Not found error                                                                 |
 
 ### GET /api/knowledge-graph/concepts/:conceptId/definition
 
@@ -143,12 +156,12 @@
 
 **Responses:**
 
-| Status | Condition        | Body                         |
-| ------ | ---------------- | ---------------------------- |
-| 200    | Success          | Resolved definition target   |
-| 404    | Unknown scope    | Source project/feature error |
-| 409    | Session mismatch | Operation error              |
-| 404    | Anchor missing   | Operation error              |
+| Status | Condition        | Body                                              |
+| ------ | ---------------- | ------------------------------------------------- |
+| 200    | Success          | Resolved definition target and next active aspect |
+| 404    | Unknown scope    | Source project/feature error                      |
+| 409    | Session mismatch | Operation error                                   |
+| 404    | Anchor missing   | Operation error                                   |
 
 ---
 
@@ -156,15 +169,15 @@
 
 **Consumers:** web app adapters, documentation maintenance tooling
 
-| Method                         | Maps To                                                          | Description                                            |
-| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------ |
-| rebuildMirrorProjection(input) | [RebuildMirrorProjection](operations.md#rebuildmirrorprojection) | Recompute aspect cards and whiteboard graph projection |
-| selectConcept(input)           | [SelectConcept](operations.md#selectconcept)                     | Persist selected whiteboard card/context               |
-| openDefinition(input)          | [OpenDefinition](operations.md#opendefinition)                   | Resolve/open definition pointer                        |
-| getMirrorCards(input)          | [GetMirrorCards](queries.md#getmirrorcards)                      | Read aspect card rail payload                          |
-| getRelationshipGraph(input)    | [GetRelationshipGraph](queries.md#getrelationshipgraph)          | Read whiteboard cards and edges                        |
-| getConceptDetailCard(input)    | [GetConceptDetailCard](queries.md#getconceptdetailcard)          | Read card detail payload                               |
-| getDefinitionPointer(input)    | [GetDefinitionPointer](queries.md#getdefinitionpointer)          | Read deep-link target                                  |
+| Method                         | Maps To                                                          | Description                                                     |
+| ------------------------------ | ---------------------------------------------------------------- | --------------------------------------------------------------- |
+| rebuildMirrorProjection(input) | [RebuildMirrorProjection](operations.md#rebuildmirrorprojection) | Recompute deterministic hierarchy projection and semantic edges |
+| selectConcept(input)           | [SelectConcept](operations.md#selectconcept)                     | Persist selected card and cross-feature highlight context       |
+| openDefinition(input)          | [OpenDefinition](operations.md#opendefinition)                   | Resolve/open definition pointer                                 |
+| getMirrorCards(input)          | [GetMirrorCards](queries.md#getmirrorcards)                      | Read aspect rail and file-level hierarchy payload               |
+| getRelationshipGraph(input)    | [GetRelationshipGraph](queries.md#getrelationshipgraph)          | Read hierarchy graph and semantic edge payloads                 |
+| getConceptDetailCard(input)    | [GetConceptDetailCard](queries.md#getconceptdetailcard)          | Read detail payload with explicit/fallback enrichment markers   |
+| getDefinitionPointer(input)    | [GetDefinitionPointer](queries.md#getdefinitionpointer)          | Read deep-link target                                           |
 
 ---
 

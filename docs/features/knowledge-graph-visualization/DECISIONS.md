@@ -25,6 +25,12 @@
 - D-KG-010 (adapter waiver for pilot): Accepted temporary risk of in-memory project-source/session adapters in route composition for pilot profile, with review target 2026-06-15.
 - D-KG-011 (coverage-floor waiver for pilot): Accepted `FLAG`-level partial TEST-SPEC coverage for pilot readiness, with full catalogue closure deferred to subsequent execution wave.
 
+## Decision Gate Results (2026-05-10)
+
+- D-KG-012 (source strategy lock): Poker-team is baseline evidence only; implementation must remain non-exclusive across registered sources.
+- D-KG-013 (hierarchy contract lock): Deterministic graph hierarchy is fixed as `feature -> file -> concept`, with concept card enrichment for rules/descriptions when available.
+- D-KG-014 (prototype planning anchor): `WHITEBOARD-PROTOTYPE.html` is the planning anchor for interaction mapping, while retained aspect docs remain normative behavior contracts.
+
 ## Deferred Scope
 
 - Multi-feature graph federation in a single canvas view.
