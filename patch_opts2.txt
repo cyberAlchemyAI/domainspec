@@ -1,0 +1,3 @@
+/### Graph Layout & Edge Semantics Algorithm/a\
+\
+**Research Reference**:\nThis algorithm relies directly on locally inventorized layout algorithms gathered during the research phase. The self-contained research documents evaluate the required methods for ranking and layering. See [Sugiyama Framework](research/sugiyama_framework.md), [Dagre](research/dagre_readme.md), [ELK](research/elk_readme.md), [d3-hierarchy](research/d3_hierarchy_readme.md), and [Edge Routing](research/edge_routing.md).

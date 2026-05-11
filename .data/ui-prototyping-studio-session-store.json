@@ -1,0 +1,1322 @@
+{
+  "counters": {
+    "session": 15,
+    "comment": 9,
+    "batch": 9,
+    "revision": 3
+  },
+  "sessions": {
+    "ups-session-0001": {
+      "sessionId": "ups-session-0001",
+      "prompt": null,
+      "variantCount": 2,
+      "variantLabels": ["A", "B"],
+      "baseline": null,
+      "revisionHeadId": null,
+      "selectionGate": "pending",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "SessionInitialized"
+    },
+    "ups-session-0002": {
+      "sessionId": "ups-session-0002",
+      "prompt": "Generate a deterministic dashboard",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": null,
+      "revisionHeadId": null,
+      "selectionGate": "pending",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "VariantsReady"
+    },
+    "ups-session-0003": {
+      "sessionId": "ups-session-0003",
+      "prompt": "Create a baseline selection flow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0000",
+      "selectionGate": "satisfied",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "BaselineReady"
+    },
+    "ups-session-0004": {
+      "sessionId": "ups-session-0004",
+      "prompt": "Prototype deterministic mutation workflow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0000",
+      "selectionGate": "satisfied",
+      "applyGate": "satisfied",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "MutationApproved"
+    },
+    "ups-session-0005": {
+      "sessionId": "ups-session-0005",
+      "prompt": "Prototype deterministic mutation workflow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0001",
+      "selectionGate": "satisfied",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": true,
+        "generateTestsUiReady": true,
+        "uiImplementReady": true
+      },
+      "state": "RevisionRecorded"
+    },
+    "ups-session-0006": {
+      "sessionId": "ups-session-0006",
+      "prompt": null,
+      "variantCount": 2,
+      "variantLabels": ["A", "B"],
+      "baseline": null,
+      "revisionHeadId": null,
+      "selectionGate": "pending",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "SessionInitialized"
+    },
+    "ups-session-0007": {
+      "sessionId": "ups-session-0007",
+      "prompt": "Generate a deterministic dashboard",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": null,
+      "revisionHeadId": null,
+      "selectionGate": "pending",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "VariantsReady"
+    },
+    "ups-session-0008": {
+      "sessionId": "ups-session-0008",
+      "prompt": "Create a baseline selection flow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0000",
+      "selectionGate": "satisfied",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "BaselineReady"
+    },
+    "ups-session-0009": {
+      "sessionId": "ups-session-0009",
+      "prompt": "Prototype deterministic mutation workflow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0000",
+      "selectionGate": "satisfied",
+      "applyGate": "satisfied",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "MutationApproved"
+    },
+    "ups-session-0010": {
+      "sessionId": "ups-session-0010",
+      "prompt": "Prototype deterministic mutation workflow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0002",
+      "selectionGate": "satisfied",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": true,
+        "generateTestsUiReady": true,
+        "uiImplementReady": true
+      },
+      "state": "RevisionRecorded"
+    },
+    "ups-session-0011": {
+      "sessionId": "ups-session-0011",
+      "prompt": null,
+      "variantCount": 2,
+      "variantLabels": ["A", "B"],
+      "baseline": null,
+      "revisionHeadId": null,
+      "selectionGate": "pending",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "SessionInitialized"
+    },
+    "ups-session-0012": {
+      "sessionId": "ups-session-0012",
+      "prompt": "Generate a deterministic dashboard",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": null,
+      "revisionHeadId": null,
+      "selectionGate": "pending",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "VariantsReady"
+    },
+    "ups-session-0013": {
+      "sessionId": "ups-session-0013",
+      "prompt": "Create a baseline selection flow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0000",
+      "selectionGate": "satisfied",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "BaselineReady"
+    },
+    "ups-session-0014": {
+      "sessionId": "ups-session-0014",
+      "prompt": "Prototype deterministic mutation workflow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0000",
+      "selectionGate": "satisfied",
+      "applyGate": "satisfied",
+      "integration": {
+        "uiPhaseBridgeReady": false,
+        "generateTestsUiReady": false,
+        "uiImplementReady": false
+      },
+      "state": "MutationApproved"
+    },
+    "ups-session-0015": {
+      "sessionId": "ups-session-0015",
+      "prompt": "Prototype deterministic mutation workflow",
+      "variantCount": 3,
+      "variantLabels": ["A", "B", "C"],
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "revisionHeadId": "rev-0003",
+      "selectionGate": "satisfied",
+      "applyGate": "pending",
+      "integration": {
+        "uiPhaseBridgeReady": true,
+        "generateTestsUiReady": true,
+        "uiImplementReady": true
+      },
+      "state": "RevisionRecorded"
+    }
+  },
+  "variantsBySession": {
+    "ups-session-0002": [
+      {
+        "sessionId": "ups-session-0002",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0002/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0002",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0002/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0002",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0002/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0003": [
+      {
+        "sessionId": "ups-session-0003",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0003/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0003",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0003/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0003",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0003/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0004": [
+      {
+        "sessionId": "ups-session-0004",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0004/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0004",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0004/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0004",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0004/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0005": [
+      {
+        "sessionId": "ups-session-0005",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0005/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0005",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0005/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0005",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0005/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0007": [
+      {
+        "sessionId": "ups-session-0007",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0007/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0007",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0007/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0007",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0007/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0008": [
+      {
+        "sessionId": "ups-session-0008",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0008/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0008",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0008/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0008",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0008/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0009": [
+      {
+        "sessionId": "ups-session-0009",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0009/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0009",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0009/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0009",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0009/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0010": [
+      {
+        "sessionId": "ups-session-0010",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0010/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0010",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0010/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0010",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0010/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0012": [
+      {
+        "sessionId": "ups-session-0012",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0012/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0012",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0012/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0012",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0012/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0013": [
+      {
+        "sessionId": "ups-session-0013",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0013/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0013",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0013/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0013",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0013/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0014": [
+      {
+        "sessionId": "ups-session-0014",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0014/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0014",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0014/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0014",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0014/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ],
+    "ups-session-0015": [
+      {
+        "sessionId": "ups-session-0015",
+        "variantLabel": "A",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0015/a.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant A emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant A balances exploration breadth with deterministic controls.",
+        "risk": "Variant A may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      },
+      {
+        "sessionId": "ups-session-0015",
+        "variantLabel": "B",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0015/b.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionStateIndicator"
+        ],
+        "rationale": "Variant B emphasizes density for prompt intent.",
+        "tradeoffs": "Variant B balances exploration breadth with deterministic controls.",
+        "risk": "Variant B may require follow-up tuning after baseline selection.",
+        "status": "selected"
+      },
+      {
+        "sessionId": "ups-session-0015",
+        "variantLabel": "C",
+        "htmlArtifactRef": "/artifacts/ui-prototyping-studio/ups-session-0015/c.html",
+        "componentsUsed": [
+          "StudioHeader",
+          "VariantCanvas",
+          "SessionControlsPanel"
+        ],
+        "rationale": "Variant C emphasizes clarity for prompt intent.",
+        "tradeoffs": "Variant C balances exploration breadth with deterministic controls.",
+        "risk": "Variant C may require follow-up tuning after baseline selection.",
+        "status": "candidate"
+      }
+    ]
+  },
+  "commentsBySession": {
+    "ups-session-0004": [
+      {
+        "commentId": "ups-comment-00001",
+        "sessionId": "ups-session-0004",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#hero",
+          "elementLabel": "Hero panel",
+          "odId": null
+        },
+        "severity": "high",
+        "intent": "Increase readability",
+        "note": "Raise contrast for headings.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T18:36:49.401Z"
+      },
+      {
+        "commentId": "ups-comment-00002",
+        "sessionId": "ups-session-0004",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#cta",
+          "elementLabel": "CTA button",
+          "odId": null
+        },
+        "severity": "medium",
+        "intent": "Improve hierarchy",
+        "note": "Increase button prominence.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T18:36:49.409Z"
+      }
+    ],
+    "ups-session-0005": [
+      {
+        "commentId": "ups-comment-00003",
+        "sessionId": "ups-session-0005",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#hero",
+          "elementLabel": "Hero panel",
+          "odId": null
+        },
+        "severity": "high",
+        "intent": "Increase readability",
+        "note": "Raise contrast for headings.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T18:36:49.447Z"
+      }
+    ],
+    "ups-session-0009": [
+      {
+        "commentId": "ups-comment-00004",
+        "sessionId": "ups-session-0009",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#hero",
+          "elementLabel": "Hero panel",
+          "odId": null
+        },
+        "severity": "high",
+        "intent": "Increase readability",
+        "note": "Raise contrast for headings.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T18:45:38.599Z"
+      },
+      {
+        "commentId": "ups-comment-00005",
+        "sessionId": "ups-session-0009",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#cta",
+          "elementLabel": "CTA button",
+          "odId": null
+        },
+        "severity": "medium",
+        "intent": "Improve hierarchy",
+        "note": "Increase button prominence.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T18:45:38.607Z"
+      }
+    ],
+    "ups-session-0010": [
+      {
+        "commentId": "ups-comment-00006",
+        "sessionId": "ups-session-0010",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#hero",
+          "elementLabel": "Hero panel",
+          "odId": null
+        },
+        "severity": "high",
+        "intent": "Increase readability",
+        "note": "Raise contrast for headings.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T18:45:38.665Z"
+      }
+    ],
+    "ups-session-0014": [
+      {
+        "commentId": "ups-comment-00007",
+        "sessionId": "ups-session-0014",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#hero",
+          "elementLabel": "Hero panel",
+          "odId": null
+        },
+        "severity": "high",
+        "intent": "Increase readability",
+        "note": "Raise contrast for headings.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T19:23:16.480Z"
+      },
+      {
+        "commentId": "ups-comment-00008",
+        "sessionId": "ups-session-0014",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#cta",
+          "elementLabel": "CTA button",
+          "odId": null
+        },
+        "severity": "medium",
+        "intent": "Improve hierarchy",
+        "note": "Increase button prominence.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T19:23:16.486Z"
+      }
+    ],
+    "ups-session-0015": [
+      {
+        "commentId": "ups-comment-00009",
+        "sessionId": "ups-session-0015",
+        "revisionId": "rev-0000",
+        "target": {
+          "selector": "#hero",
+          "elementLabel": "Hero panel",
+          "odId": null
+        },
+        "severity": "high",
+        "intent": "Increase readability",
+        "note": "Raise contrast for headings.",
+        "createdBy": "test-suite",
+        "createdAt": "2026-05-11T19:23:16.548Z"
+      }
+    ]
+  },
+  "batchesBySession": {
+    "ups-session-0004": [
+      {
+        "batchId": "ups-batch-00001",
+        "sessionId": "ups-session-0004",
+        "sourceRevisionId": "rev-0000",
+        "status": "draft",
+        "generatedFromCommentIds": ["ups-comment-00001"],
+        "tasks": [
+          {
+            "taskId": "task-60719282ce",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": null,
+          "approvedAt": null
+        },
+        "checksum": "7a2394e292568bdfe22636e68b4104bb1bf48afdaada9bf8a17435cc416f9ac1"
+      },
+      {
+        "batchId": "ups-batch-00002",
+        "sessionId": "ups-session-0004",
+        "sourceRevisionId": "rev-0000",
+        "status": "approved",
+        "generatedFromCommentIds": ["ups-comment-00001", "ups-comment-00002"],
+        "tasks": [
+          {
+            "taskId": "task-60719282ce",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          },
+          {
+            "taskId": "task-cc1a11cc45",
+            "target": "#cta",
+            "intent": "Improve hierarchy",
+            "changeType": "change",
+            "acceptanceText": "Apply Improve hierarchy at #cta: Increase button prominence.",
+            "priority": "p2"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": "qa-reviewer",
+          "approvedAt": "2026-05-08T00:00:00.000Z"
+        },
+        "checksum": "cb94273224a24dcca8ace3bf984979da69a186b7ddad3f1010141249e51b9a07"
+      }
+    ],
+    "ups-session-0005": [
+      {
+        "batchId": "ups-batch-00003",
+        "sessionId": "ups-session-0005",
+        "sourceRevisionId": "rev-0000",
+        "status": "applied",
+        "generatedFromCommentIds": ["ups-comment-00003"],
+        "tasks": [
+          {
+            "taskId": "task-f20219b444",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": "qa-reviewer",
+          "approvedAt": "2026-05-08T00:10:00.000Z"
+        },
+        "checksum": "21e3fa46f42582b42530140587b74a5f81b0e00baefd3f7d34625eaf618041fe"
+      }
+    ],
+    "ups-session-0009": [
+      {
+        "batchId": "ups-batch-00004",
+        "sessionId": "ups-session-0009",
+        "sourceRevisionId": "rev-0000",
+        "status": "draft",
+        "generatedFromCommentIds": ["ups-comment-00004"],
+        "tasks": [
+          {
+            "taskId": "task-3c3bc6300c",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": null,
+          "approvedAt": null
+        },
+        "checksum": "2c73453765b4b28d49cbd8e2e19b0b31cd707e0014b0e3d50b9cc45dcb3f9c33"
+      },
+      {
+        "batchId": "ups-batch-00005",
+        "sessionId": "ups-session-0009",
+        "sourceRevisionId": "rev-0000",
+        "status": "approved",
+        "generatedFromCommentIds": ["ups-comment-00004", "ups-comment-00005"],
+        "tasks": [
+          {
+            "taskId": "task-3c3bc6300c",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          },
+          {
+            "taskId": "task-a4c932a7a8",
+            "target": "#cta",
+            "intent": "Improve hierarchy",
+            "changeType": "change",
+            "acceptanceText": "Apply Improve hierarchy at #cta: Increase button prominence.",
+            "priority": "p2"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": "qa-reviewer",
+          "approvedAt": "2026-05-08T00:00:00.000Z"
+        },
+        "checksum": "3147a4c50e8d8fb2ec8bbbe8e965657bd7fad4251546ee2bca2fd71175daee48"
+      }
+    ],
+    "ups-session-0010": [
+      {
+        "batchId": "ups-batch-00006",
+        "sessionId": "ups-session-0010",
+        "sourceRevisionId": "rev-0000",
+        "status": "applied",
+        "generatedFromCommentIds": ["ups-comment-00006"],
+        "tasks": [
+          {
+            "taskId": "task-47e6cec8df",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": "qa-reviewer",
+          "approvedAt": "2026-05-08T00:10:00.000Z"
+        },
+        "checksum": "fd47195549888f305da43d19a610d60474554f345ee5ed20e508d351fdbe17a8"
+      }
+    ],
+    "ups-session-0014": [
+      {
+        "batchId": "ups-batch-00007",
+        "sessionId": "ups-session-0014",
+        "sourceRevisionId": "rev-0000",
+        "status": "draft",
+        "generatedFromCommentIds": ["ups-comment-00007"],
+        "tasks": [
+          {
+            "taskId": "task-995f7260b6",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": null,
+          "approvedAt": null
+        },
+        "checksum": "d818232e85f8cf2e97cc82db890361435a8f4b9726105345e99d299d5b182217"
+      },
+      {
+        "batchId": "ups-batch-00008",
+        "sessionId": "ups-session-0014",
+        "sourceRevisionId": "rev-0000",
+        "status": "approved",
+        "generatedFromCommentIds": ["ups-comment-00007", "ups-comment-00008"],
+        "tasks": [
+          {
+            "taskId": "task-995f7260b6",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          },
+          {
+            "taskId": "task-c2284a65f5",
+            "target": "#cta",
+            "intent": "Improve hierarchy",
+            "changeType": "change",
+            "acceptanceText": "Apply Improve hierarchy at #cta: Increase button prominence.",
+            "priority": "p2"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": "qa-reviewer",
+          "approvedAt": "2026-05-08T00:00:00.000Z"
+        },
+        "checksum": "3af737a49602c86684a0ff6231e8e5549fb11decb75f085fd9dbb5bb569aa4fd"
+      }
+    ],
+    "ups-session-0015": [
+      {
+        "batchId": "ups-batch-00009",
+        "sessionId": "ups-session-0015",
+        "sourceRevisionId": "rev-0000",
+        "status": "applied",
+        "generatedFromCommentIds": ["ups-comment-00009"],
+        "tasks": [
+          {
+            "taskId": "task-15e540d982",
+            "target": "#hero",
+            "intent": "Increase readability",
+            "changeType": "change",
+            "acceptanceText": "Apply Increase readability at #hero: Raise contrast for headings.",
+            "priority": "p1"
+          }
+        ],
+        "approval": {
+          "required": true,
+          "approvedBy": "qa-reviewer",
+          "approvedAt": "2026-05-08T00:10:00.000Z"
+        },
+        "checksum": "e149f1a5f23d8d3ecf8585febaf10938530eb28dd560f9299d6bc491d27f7129"
+      }
+    ]
+  },
+  "revisionsBySession": {
+    "ups-session-0005": [
+      {
+        "revisionId": "rev-0001",
+        "parentRevisionId": "rev-0000",
+        "sessionId": "ups-session-0005",
+        "variantCount": 3,
+        "baseline": {
+          "mode": "selected",
+          "label": "B"
+        },
+        "appliedBatchId": "ups-batch-00003",
+        "appliedTaskIds": ["task-f20219b444"],
+        "unresolvedCommentIds": [],
+        "diffSummary": {
+          "added": 0,
+          "changed": 1,
+          "removed": 0
+        },
+        "createdAt": "2026-05-11T18:36:49.456Z"
+      }
+    ],
+    "ups-session-0010": [
+      {
+        "revisionId": "rev-0002",
+        "parentRevisionId": "rev-0000",
+        "sessionId": "ups-session-0010",
+        "variantCount": 3,
+        "baseline": {
+          "mode": "selected",
+          "label": "B"
+        },
+        "appliedBatchId": "ups-batch-00006",
+        "appliedTaskIds": ["task-47e6cec8df"],
+        "unresolvedCommentIds": [],
+        "diffSummary": {
+          "added": 0,
+          "changed": 1,
+          "removed": 0
+        },
+        "createdAt": "2026-05-11T18:45:38.678Z"
+      }
+    ],
+    "ups-session-0015": [
+      {
+        "revisionId": "rev-0003",
+        "parentRevisionId": "rev-0000",
+        "sessionId": "ups-session-0015",
+        "variantCount": 3,
+        "baseline": {
+          "mode": "selected",
+          "label": "B"
+        },
+        "appliedBatchId": "ups-batch-00009",
+        "appliedTaskIds": ["task-15e540d982"],
+        "unresolvedCommentIds": [],
+        "diffSummary": {
+          "added": 0,
+          "changed": 1,
+          "removed": 0
+        },
+        "createdAt": "2026-05-11T19:23:16.558Z"
+      }
+    ]
+  },
+  "handoffBySession": {
+    "ups-session-0005": {
+      "sessionId": "ups-session-0005",
+      "revisionHeadId": "rev-0001",
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "variantCount": 3,
+      "storyRefs": ["docs/features/ui-prototyping-studio/STORIES.md"],
+      "requirementRefs": [
+        "docs/features/ui-prototyping-studio/SPEC.md#functional-requirements-mvp"
+      ],
+      "acceptanceRefs": [
+        "docs/features/ui-prototyping-studio/SPEC.md#acceptance-criteria-mvp"
+      ],
+      "uiSpecRef": "docs/features/ui-prototyping-studio/UI-SPEC.md",
+      "testSpecRef": "docs/features/ui-prototyping-studio/TEST-SPEC.md"
+    },
+    "ups-session-0010": {
+      "sessionId": "ups-session-0010",
+      "revisionHeadId": "rev-0002",
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "variantCount": 3,
+      "storyRefs": ["docs/features/ui-prototyping-studio/STORIES.md"],
+      "requirementRefs": [
+        "docs/features/ui-prototyping-studio/SPEC.md#functional-requirements-mvp"
+      ],
+      "acceptanceRefs": [
+        "docs/features/ui-prototyping-studio/SPEC.md#acceptance-criteria-mvp"
+      ],
+      "uiSpecRef": "docs/features/ui-prototyping-studio/UI-SPEC.md",
+      "testSpecRef": "docs/features/ui-prototyping-studio/TEST-SPEC.md"
+    },
+    "ups-session-0015": {
+      "sessionId": "ups-session-0015",
+      "revisionHeadId": "rev-0003",
+      "baseline": {
+        "mode": "selected",
+        "label": "B"
+      },
+      "variantCount": 3,
+      "storyRefs": ["docs/features/ui-prototyping-studio/STORIES.md"],
+      "requirementRefs": [
+        "docs/features/ui-prototyping-studio/SPEC.md#functional-requirements-mvp"
+      ],
+      "acceptanceRefs": [
+        "docs/features/ui-prototyping-studio/SPEC.md#acceptance-criteria-mvp"
+      ],
+      "uiSpecRef": "docs/features/ui-prototyping-studio/UI-SPEC.md",
+      "testSpecRef": "docs/features/ui-prototyping-studio/TEST-SPEC.md"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+s/3. Compute hierarchical levels with deterministic tie-breakers so the same input produces the same board shape./3. Compute hierarchical levels using the **Sugiyama Framework**, assigning vertices to layers using a network simplex algorithm (similar to `dagre` or `elkjs`) and minimizing edge crossings with heuristic edge routing.\n4. Route edges combining the pathing logic evaluated in the research (orthogonal or spline-based routing) avoiding node intersections./
+s/4. Route edges and annotate each arrow/5. Annotate each arrow/
+s/5. Detect cross-feature edges/6. Detect cross-feature edges/
+s/6. On cross-feature edge click/7. On cross-feature edge click/
+s/7. Assign deterministic edge colors/8. Assign deterministic edge colors/
