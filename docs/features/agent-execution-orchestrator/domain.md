@@ -33,8 +33,10 @@ Declares one composable route artifact that can be embedded in prompt contexts a
 | Field             | Type                              | Required | Description                                                           |
 | ----------------- | --------------------------------- | -------- | --------------------------------------------------------------------- |
 | templateId        | string                            | yes      | Stable identifier for [PipelineRouteTemplate](#pipelineroutetemplate) |
-| stageContracts    | [StageContract](#stagecontract)[] | yes      | Ordered stage contracts from discovery through verify                 |
-| mandatoryCoverage | [StageType](#stagetype)[]         | yes      | Stage set that must always be present                                 |
+| stageContracts    | [StageContract](#stagecontract)[] | yes      | Ordered stage contracts for this route template                       |
+| selectedStages    | [StageType](#stagetype)[]         | yes      | Ordered stage set selected for this route (can be subset)             |
+| selectionPolicy   | string                            | yes      | Route selection mode (`full-lifecycle` or `stage-subset`)             |
+| mandatoryCoverage | [StageType](#stagetype)[]         | yes      | Stage set that must always be present for the selected policy         |
 | optionalCoverage  | [StageType](#stagetype)[]         | no       | Stage set allowed when profile requests optional stages               |
 | profile           | string                            | yes      | Route profile name (`pilot`, `release-candidate`, `production`)       |
 
@@ -46,21 +48,24 @@ Declares one composable route artifact that can be embedded in prompt contexts a
 
 Identity-bearing run object spanning one route execution from queue to terminal outcome.
 
-| Field             | Type                                    | Required | Description                                                                   |
-| ----------------- | --------------------------------------- | -------- | ----------------------------------------------------------------------------- |
-| runId             | string                                  | yes      | Stable identifier for [ExecutionRun](#executionrun)                           |
-| pipelineId        | string                                  | yes      | Owning [ExecutionPipeline](#executionpipeline).pipelineId                     |
-| templateId        | string                                  | yes      | Active [PipelineRouteTemplate](#pipelineroutetemplate).templateId             |
-| currentState      | [RunState](#runstate)                   | yes      | Current state under [RunStateMachine](rules.md#runstatemachine)               |
-| terminalOutcome   | [TerminalOutcome](#terminaloutcome)     | no       | Final outcome once terminal state is reached                                  |
-| activeStage       | [StageType](#stagetype)                 | yes      | Current stage being executed                                                  |
-| stageRunId        | string                                  | yes      | Telemetry correlation key for [TelemetryEnvelope](#telemetryenvelope)         |
-| retryCount        | integer                                 | yes      | Current retry counter constrained by [RetryPolicy](rules.md#retrypolicy)      |
-| suspectedStuck    | boolean                                 | yes      | Watchdog flag governed by [WatchdogTimeoutRule](rules.md#watchdogtimeoutrule) |
-| sandboxLease      | [SandboxLease](#sandboxlease)           | yes      | Active sandbox lease for this run                                             |
-| worktreeLease     | [WorktreeLease](#worktreelease)         | yes      | Active worktree lease for this run                                            |
-| sessionSnapshot   | [SessionSnapshot](#sessionsnapshot)     | no       | Resume payload when run is interrupted                                        |
-| telemetryEnvelope | [TelemetryEnvelope](#telemetryenvelope) | yes      | Evidence envelope for governance and audits                                   |
+| Field              | Type                                      | Required | Description                                                                                                  |
+| ------------------ | ----------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| runId              | string                                    | yes      | Stable identifier for [ExecutionRun](#executionrun)                                                          |
+| parentRunId        | string                                    | no       | Parent run identifier when this run is spawned as isolated child stage run                                   |
+| pipelineId         | string                                    | yes      | Owning [ExecutionPipeline](#executionpipeline).pipelineId                                                    |
+| templateId         | string                                    | yes      | Active [PipelineRouteTemplate](#pipelineroutetemplate).templateId                                            |
+| executionProfile   | string                                    | yes      | Delegation profile (`quick`, `standard`, `deep`) used by [WatchdogTimeoutRule](rules.md#watchdogtimeoutrule) |
+| currentState       | [RunState](#runstate)                     | yes      | Current state under [RunStateMachine](rules.md#runstatemachine)                                              |
+| terminalOutcome    | [TerminalOutcome](#terminaloutcome)       | no       | Final outcome once terminal state is reached                                                                 |
+| activeStage        | [StageType](#stagetype)                   | no       | Current stage being executed (unset when terminal)                                                           |
+| activeStageRunId   | string                                    | no       | Active stage execution key while run is in non-terminal state                                                |
+| stageRuns          | [StageExecution](#stageexecution)[]       | yes      | Ordered stage execution records under this run                                                               |
+| retryCount         | integer                                   | yes      | Current retry counter constrained by [RetryPolicy](rules.md#retrypolicy)                                     |
+| suspectedStuck     | boolean                                   | yes      | Watchdog flag governed by [WatchdogTimeoutRule](rules.md#watchdogtimeoutrule)                                |
+| sandboxLease       | [SandboxLease](#sandboxlease)             | yes      | Active sandbox lease for this run                                                                            |
+| worktreeLease      | [WorktreeLease](#worktreelease)           | yes      | Active worktree lease for this run                                                                           |
+| sessionSnapshot    | [SessionSnapshot](#sessionsnapshot)       | no       | Resume payload when run is interrupted                                                                       |
+| telemetryEnvelopes | [TelemetryEnvelope](#telemetryenvelope)[] | yes      | Stage-level evidence envelopes keyed by `stageRunId`                                                         |
 
 **Lifecycle:** See [RunStateMachine](rules.md#runstatemachine)
 **Operations:** [ExecutePipelineRoute](operations.md#executepipelineroute), [ResumeExecutionRun](operations.md#resumeexecutionrun), [CancelSupersededRun](operations.md#cancelsupersededrun)
@@ -72,12 +77,31 @@ Identity-bearing run object spanning one route execution from queue to terminal 
 | Field             | Type                                            | Constraint                                                                                      |
 | ----------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | stage             | [StageType](#stagetype)                         | Must be unique within [PipelineRouteTemplate](#pipelineroutetemplate).stageContracts            |
+| isolationMode     | [StageIsolationMode](#stageisolationmode)       | Default `shared-run`; `isolated-child-run` allowed for risky stages                             |
 | operationRef      | string                                          | Must map to one operation in [operations.md](operations.md)                                     |
 | requiredArtifacts | string[]                                        | Must include stage evidence required by [TelemetryPairRequired](rules.md#telemetrypairrequired) |
 | terminalOutcomes  | [TerminalOutcome](#terminaloutcome)[]           | Must include `completed`, `blocked`, `failed`                                                   |
 | emitsSignals      | [GovernanceSignalType](#governancesignaltype)[] | Must be non-empty for lifecycle boundary stages                                                 |
 
 **Equality:** Two [StageContract](#stagecontract) values are equal when `stage`, `operationRef`, `requiredArtifacts`, and `terminalOutcomes` are identical.
+
+---
+
+### StageExecution
+
+| Field           | Type                                      | Constraint                                                                                                                                  |
+| --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| stageRunId      | string                                    | Non-empty, unique within parent [ExecutionRun](#executionrun), and equal to ordered prompt artifact `stageRunId` for the same stage attempt |
+| stage           | [StageType](#stagetype)                   | Must exist in selected route stage set                                                                                                      |
+| order           | integer                                   | Must match ordered index from [PipelineRouteTemplate](#pipelineroutetemplate).selectedStages                                                |
+| isolationMode   | [StageIsolationMode](#stageisolationmode) | Must match [StageContract](#stagecontract).isolationMode                                                                                    |
+| childRunId      | string                                    | Required when `isolationMode=isolated-child-run`; referenced child run must set `parentRunId` to parent run `runId`                         |
+| state           | [RunState](#runstate)                     | Must follow stage-level lifecycle semantics                                                                                                 |
+| terminalOutcome | [TerminalOutcome](#terminaloutcome)       | Required when `state` is terminal                                                                                                           |
+| startedAt       | string (ISO-8601)                         | Required                                                                                                                                    |
+| terminalAt      | string (ISO-8601)                         | Required when stage is terminal                                                                                                             |
+
+**Equality:** Two [StageExecution](#stageexecution) values are equal when `stageRunId`, `stage`, and `order` match.
 
 ---
 
@@ -111,15 +135,16 @@ Identity-bearing run object spanning one route execution from queue to terminal 
 
 ### SessionSnapshot
 
-| Field             | Type                    | Constraint                                     |
-| ----------------- | ----------------------- | ---------------------------------------------- |
-| runId             | string                  | Must match [ExecutionRun](#executionrun).runId |
-| stage             | [StageType](#stagetype) | Required                                       |
-| cwd               | string                  | Required resume directory                      |
-| terminalSessionId | string                  | Required when terminal session is active       |
-| pendingPrompt     | string                  | Optional next prompt value                     |
-| capturedAt        | string (ISO-8601)       | Required                                       |
-| snapshotVersion   | string                  | Required for schema compatibility checks       |
+| Field             | Type                    | Constraint                                                     |
+| ----------------- | ----------------------- | -------------------------------------------------------------- |
+| runId             | string                  | Must match [ExecutionRun](#executionrun).runId                 |
+| stage             | [StageType](#stagetype) | Required                                                       |
+| stageRunId        | string                  | Must match active [StageExecution](#stageexecution).stageRunId |
+| cwd               | string                  | Required resume directory                                      |
+| terminalSessionId | string                  | Required when terminal session is active                       |
+| pendingPrompt     | string                  | Optional next prompt value                                     |
+| capturedAt        | string (ISO-8601)       | Required                                                       |
+| snapshotVersion   | string                  | Required for schema compatibility checks                       |
 
 **Equality:** Two [SessionSnapshot](#sessionsnapshot) values are equal when `runId`, `stage`, and `capturedAt` match.
 
@@ -127,17 +152,17 @@ Identity-bearing run object spanning one route execution from queue to terminal 
 
 ### TelemetryEnvelope
 
-| Field                     | Type     | Constraint                                                              |
-| ------------------------- | -------- | ----------------------------------------------------------------------- |
-| stageRunId                | string   | Must match [ExecutionRun](#executionrun).stageRunId                     |
-| startedTelemetryRef       | string   | Required pointer to `started` row in delegation tuning ledger           |
-| terminalTelemetryRef      | string   | Required pointer to terminal row in delegation tuning ledger            |
-| durationMs                | integer  | Non-negative                                                            |
-| suspectedStuck            | boolean  | Mirrors telemetry field in delegation ledger                            |
-| retryCount                | integer  | Non-negative and bounded by [RetryPolicy](rules.md#retrypolicy)         |
-| terminalGuardEvidenceRefs | string[] | Required for guarded or nudged command paths                            |
-| transcriptExcerptRef      | string   | Required by [ArtifactEvidenceMinimum](rules.md#artifactevidenceminimum) |
-| decisionSnapshotRef       | string   | Required by [ArtifactEvidenceMinimum](rules.md#artifactevidenceminimum) |
+| Field                     | Type     | Constraint                                                                   |
+| ------------------------- | -------- | ---------------------------------------------------------------------------- |
+| stageRunId                | string   | Must match one [StageExecution](#stageexecution).stageRunId under parent run |
+| startedTelemetryRef       | string   | Required pointer to `started` row in delegation tuning ledger                |
+| terminalTelemetryRef      | string   | Required pointer to terminal row in delegation tuning ledger                 |
+| durationMs                | integer  | Non-negative                                                                 |
+| suspectedStuck            | boolean  | Mirrors telemetry field in delegation ledger                                 |
+| retryCount                | integer  | Non-negative and bounded by [RetryPolicy](rules.md#retrypolicy)              |
+| terminalGuardEvidenceRefs | string[] | Required for guarded or nudged command paths                                 |
+| transcriptExcerptRef      | string   | Required by [ArtifactEvidenceMinimum](rules.md#artifactevidenceminimum)      |
+| decisionSnapshotRef       | string   | Required by [ArtifactEvidenceMinimum](rules.md#artifactevidenceminimum)      |
 
 **Equality:** Two [TelemetryEnvelope](#telemetryenvelope) values are equal when `stageRunId`, `startedTelemetryRef`, and `terminalTelemetryRef` match.
 
@@ -157,6 +182,13 @@ Identity-bearing run object spanning one route execution from queue to terminal 
 | observability         | Observability and telemetry contract stage |
 | audits                | Alignment/layering audit stage             |
 | verify                | Readiness/feature verification stage       |
+
+### StageIsolationMode
+
+| Value              | Description                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| shared-run         | Stage executes inside parent [ExecutionRun](#executionrun)                                    |
+| isolated-child-run | Stage executes in dedicated child [ExecutionRun](#executionrun) and reports outcome to parent |
 
 ### RunState
 

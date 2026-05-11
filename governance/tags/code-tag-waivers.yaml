@@ -1,1 +1,29 @@
-waivers: []
+waivers:
+  - id: AEO-CT-004-RUN-STATE-MACHINE-ENFORCES
+    code: CT-004
+    file: backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts
+    conceptId: agent-execution-orchestrator.RunStateMachine
+    owner: domainspec-core
+    reason: "AEO concept graph defines RunStateMachine --enforces--> ExecutePipelineRoute; source type is state machine rather than generic rule"
+    expiresAt: 2026-12-31T00:00:00Z
+  - id: AEO-CT-006-RUN-ARTIFACT-MAPPING-TO-TELEMETRY-ENVELOPE
+    code: CT-006
+    file: backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts
+    conceptId: agent-execution-orchestrator.TelemetryEnvelope
+    owner: domainspec-core
+    reason: "AEO observability mapping targets TelemetryEnvelope value object per feature spec"
+    expiresAt: 2026-12-31T00:00:00Z
+  - id: AEO-CT-004-ASSEMBLE-PIPELINE-ROUTE-ENFORCES-STAGE-CONTRACT
+    code: CT-004
+    file: backend/src/modules/agent-execution-orchestrator/application/build-prompt-artifacts.ts
+    conceptId: agent-execution-orchestrator.AssemblePipelineRoute
+    owner: domainspec-core
+    reason: "AEO feature graph models operation-level stage contract enforcement for route assembly"
+    expiresAt: 2026-12-31T00:00:00Z
+  - id: AEO-CT-006-ASSEMBLE-PIPELINE-ROUTE-ENFORCES-STAGE-CONTRACT
+    code: CT-006
+    file: backend/src/modules/agent-execution-orchestrator/application/build-prompt-artifacts.ts
+    conceptId: agent-execution-orchestrator.StageContract
+    owner: domainspec-core
+    reason: "AEO stage contract is modeled as value object and intentionally targeted by assemble enforcement edge"
+    expiresAt: 2026-12-31T00:00:00Z

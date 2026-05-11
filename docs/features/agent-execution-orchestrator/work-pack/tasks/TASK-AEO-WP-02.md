@@ -25,13 +25,13 @@ completed
 
 ## DomainSpec Coverage
 
-| Source                                                                                               | Coverage IDs                                                                                                 |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [PROJECT-OVERVIEW.md](../../../../interviews/agent-execution-orchestrator/PROJECT-OVERVIEW.md)       | Start delegated run workflow, retry and recovery loop, session capture and resume                            |
-| [INITIAL-DEFINITIONS.md](../../../../interviews/agent-execution-orchestrator/INITIAL-DEFINITIONS.md) | ExecuteRun, ResumeRun, RunStateMachine, RunTerminated, BranchStrategyPolicy, RetryPolicy, CancellationPolicy |
-| [PROJECT-DECISIONS.md](../../../../interviews/agent-execution-orchestrator/PROJECT-DECISIONS.md)     | PD-004, PD-005, D-AEO-001, D-AEO-002, D-AEO-004                                                              |
-| [plan-first-execution-contract.md](../../../../research/plan-first-execution-contract.md)            | Rule 1 complexity gate, W0-first planning baseline                                                           |
-| [work-pack template](../../../../../domainspec/templates/work-pack.md)                               | Canonical stage coverage and closure-task constraints                                                        |
+| Source                                                                                               | Coverage IDs                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| [PROJECT-OVERVIEW.md](../../../../interviews/agent-execution-orchestrator/PROJECT-OVERVIEW.md)       | Start delegated run workflow, retry and recovery loop, session capture and resume                                                       |
+| [INITIAL-DEFINITIONS.md](../../../../interviews/agent-execution-orchestrator/INITIAL-DEFINITIONS.md) | AssemblePipelineRoute, ExecutePipelineRoute, ResumeExecutionRun, RunStateMachine, BranchStrategyPolicy, RetryPolicy, CancellationPolicy |
+| [PROJECT-DECISIONS.md](../../../../interviews/agent-execution-orchestrator/PROJECT-DECISIONS.md)     | PD-004, PD-005, D-AEO-001, D-AEO-002, D-AEO-004                                                                                         |
+| [plan-first-execution-contract.md](../../../../research/plan-first-execution-contract.md)            | Rule 1 complexity gate, W0-first planning baseline                                                                                      |
+| [work-pack template](../../../../../domainspec/templates/work-pack.md)                               | Canonical stage coverage and closure-task constraints                                                                                   |
 
 ## Architecture References
 

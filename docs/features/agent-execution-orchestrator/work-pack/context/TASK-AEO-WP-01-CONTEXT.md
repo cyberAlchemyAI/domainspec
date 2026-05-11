@@ -4,7 +4,7 @@
 
 - Task: TASK-AEO-WP-01
 - Feature: agent-execution-orchestrator
-- Generated at: 2026-05-08T05:02:46Z
+- Generated at: 2026-05-11T18:25:41Z
 - Mode: standard
 - Strict relevance: enabled
 - Emit: markdown + index-json
@@ -146,25 +146,25 @@
 >
 > "domainspec-signal-observer ... Observer-ready governance signal rows"
 
-### S08 - Explicit lifecycle stage anchors
+### S08 - Execution workflow and stage-subset anchors
 
 - Source: ../../workflows.md
-- Selectors: ## FeatureLifecyclePipelineWorkflow, mermaid step anchors, ### Step Table
+- Selectors: ## FeatureLifecyclePipelineWorkflow, mermaid step anchors, ### Controlled Single Selected-Stage Scenario (C1-04)
 - ObligationRefs: OBL-AEO-09
-- Why included: explicit route anchors required by the task directive.
+- Why included: execution-shape checkpoints and stage-subset anchor evidence for deterministic route mapping.
 - Excerpt:
 
-> "Step 3: Execute discovery stage"
+> "Step 3: Build ordered prompt artifact set"
 >
-> "Step 4: Execute spec stage"
+> "Step 4: Allocate parent run leases"
 >
-> "Step 6: Execute tests stage"
+> "Step 6a: Execute stage in parent run"
 >
-> "Step 7: Execute implementation stage"
+> "Step 7: Append stage telemetry and evidence"
 >
-> "Step 9: Execute audits stage"
+> "Step 8: Finalize parent run and emit governance signals"
 >
-> "Step 10: Execute verify stage"
+> "selectedStages | [implementation]"
 
 ### S09 - Delegation telemetry contract
 
@@ -258,6 +258,7 @@ Only edge labels required by WP-01 command/agent and lifecycle mapping are retai
 | -------------------------------- | ------------ | ------------------------ | ------------------------------- |
 | FeatureLifecyclePipelineWorkflow | orchestrates | ExecutePipelineRoute     | SPEC `## Feature Concept Graph` |
 | FeatureLifecyclePipelineWorkflow | orchestrates | EmitGovernanceSignals    | SPEC `## Feature Concept Graph` |
+| PipelineRouteTemplate            | contains     | StageContract            | SPEC `## Feature Concept Graph` |
 | AssemblePipelineRoute            | enforces     | StageContract            | SPEC `## Feature Concept Graph` |
 | RunStateMachine                  | enforces     | ExecutePipelineRoute     | SPEC `## Feature Concept Graph` |
 | BranchStrategyPolicy             | applies      | ExecutePipelineRoute     | SPEC `## Feature Concept Graph` |
@@ -266,16 +267,16 @@ Only edge labels required by WP-01 command/agent and lifecycle mapping are retai
 | RunArtifactMapping               | maps         | TelemetryEnvelope        | SPEC `## Feature Concept Graph` |
 | EmitGovernanceSignals            | produces     | GovernanceSignalEmission | SPEC `## Feature Concept Graph` |
 
-### Lifecycle Stage Subset (from workflow)
+### Lifecycle Route Anchor Subset (from SPEC + operations)
 
-| Stage          | Selector                                             |
-| -------------- | ---------------------------------------------------- |
-| discovery      | workflows `FeatureLifecyclePipelineWorkflow` step 3  |
-| spec           | workflows `FeatureLifecyclePipelineWorkflow` step 4  |
-| tests          | workflows `FeatureLifecyclePipelineWorkflow` step 6  |
-| implementation | workflows `FeatureLifecyclePipelineWorkflow` step 7  |
-| audits         | workflows `FeatureLifecyclePipelineWorkflow` step 9  |
-| verify         | workflows `FeatureLifecyclePipelineWorkflow` step 10 |
+| Stage          | Selector                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| discovery      | SPEC `## Capabilities` explicit route-template detail                                      |
+| spec           | SPEC `## Capabilities` explicit route-template detail                                      |
+| tests          | SPEC `## Capabilities` explicit route-template detail                                      |
+| implementation | operations `## AssemblePipelineRoute` skill-chain profile (`Context-first implementation`) |
+| audits         | operations `## AssemblePipelineRoute` skill-chain profile (`Context-first implementation`) |
+| verify         | operations `## AssemblePipelineRoute` skill-chain profile (`Context-first implementation`) |
 
 ## Excluded Candidates (Strict)
 
@@ -283,7 +284,7 @@ Only edge labels required by WP-01 command/agent and lifecycle mapping are retai
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | docs/features/agent-execution-orchestrator/rules.md      | Detailed policy clauses are already represented by selected INITIAL-DEFINITIONS + SPEC tokens for this inventory-focused task.  |
 | docs/features/agent-execution-orchestrator/interfaces.md | Interface details exceed WP-01 minimum once SandboxProviderInterface and telemetry touchpoints are covered by selected sources. |
-| copilot/skills/domainspec-pipeline/SKILL.md              | Route-command coverage already satisfied by domainspec-orchestrate plus explicit workflow stage anchors.                        |
+| copilot/skills/domainspec-pipeline/SKILL.md              | Route-command coverage already satisfied by domainspec-orchestrate plus explicit route anchors in SPEC and operations.          |
 | copilot/skills/domainspec-signal-observer/SKILL.md       | Signal-observer touchpoint obligation is satisfied through SPEC produces-for mapping and telemetry contracts.                   |
 | docs/features/agent-execution-orchestrator/WORK-PACK.md  | Planning manifest is derivative for WP-01 context; task contract + bridge constraints already selected as authoritative seed.   |
 

@@ -27,11 +27,11 @@
 
 ## AEO-WP-03 Adoption Checklist
 
-- [ ] Add session handoff artifact contract to feature observability mapping.
-- [ ] Define lineage continuity rule for resumed or compacted stage runs.
-- [ ] Keep orphan-stage metric scoped to mutation-capable delegated commands only (`domainspec-implement`, `domainspec-tag-code`).
-- [ ] Define retrieval evidence references for cross-session recall when prior runs are consulted.
-- [ ] Add verification evidence entries that prove telemetry pairing and lineage reconciliation.
+- [x] Add session handoff artifact contract to feature observability mapping.
+- [x] Define lineage continuity rule for resumed or compacted stage runs.
+- [x] Keep orphan-stage metric scoped to mutation-capable delegated commands only (`domainspec-implement`, `domainspec-tag-code`).
+- [x] Define retrieval evidence references for cross-session recall when prior runs are consulted.
+- [x] Add verification evidence entries that prove telemetry pairing and lineage reconciliation.
 
 ## Boundaries and Non-Goals
 

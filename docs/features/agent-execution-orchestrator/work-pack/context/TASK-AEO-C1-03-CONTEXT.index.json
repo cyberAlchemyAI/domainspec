@@ -1,0 +1,636 @@
+{
+  "taskId": "TASK-AEO-C1-03",
+  "feature": "agent-execution-orchestrator",
+  "sourceTask": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-03.md",
+  "stageRunId": "bf4947df-65f7-4cae-bab5-39e92965db3f",
+  "generatedAt": "2026-05-11T00:20:56Z",
+  "mode": "standard",
+  "strict": true,
+  "emit": ["markdown", "index-json"],
+  "execution": {
+    "outcome": "completed",
+    "suspectedStuck": false,
+    "retryCount": 0
+  },
+  "frameworkConstraints": {
+    "source": "domainspec/CHANGELOG.md",
+    "applied": ["2.0.10", "2.0.9", "2.0.8", "2.0.7", "2.0.4"]
+  },
+  "scoreFormula": "(1 - signal) * 0.45 + cost * 0.30 + ambiguity * 0.25",
+  "budgets": {
+    "profile": "standard",
+    "limits": {
+      "files": 14,
+      "excerptLines": 280,
+      "noiseRatioMax": 0.15
+    },
+    "actual": {
+      "files": 10,
+      "excerptLines": 170,
+      "noiseRatio": 0.12
+    },
+    "pass": true
+  },
+  "obligations": [
+    {
+      "id": "OBL-C1-03-01",
+      "description": "Define runner input contract: parent run context, ordered stage prompt artifacts, and execution profile."
+    },
+    {
+      "id": "OBL-C1-03-02",
+      "description": "Define runner output contract: stage-level terminal outcomes and parent-run terminal outcome mapping."
+    },
+    {
+      "id": "OBL-C1-03-03",
+      "description": "Define timeout and stuck-detection semantics aligned to watchdog profile budgets."
+    },
+    {
+      "id": "OBL-C1-03-04",
+      "description": "Define isolation semantics for shared-run vs isolated-child-run, including parent/child linkage and reconciliation."
+    },
+    {
+      "id": "OBL-C1-03-05",
+      "description": "Cover operation contract for ExecutePipelineRoute."
+    },
+    {
+      "id": "OBL-C1-03-06",
+      "description": "Cover StageExecution value object constraints for stage-level run records."
+    },
+    {
+      "id": "OBL-C1-03-07",
+      "description": "Cover StageIsolationMode enum semantics."
+    },
+    {
+      "id": "OBL-C1-03-08",
+      "description": "Cover TerminalOutcomeRequired invariant for started-to-terminal pairing."
+    },
+    {
+      "id": "OBL-C1-03-09",
+      "description": "Cover WatchdogTimeoutRule thresholds and formal predicate."
+    },
+    {
+      "id": "OBL-C1-03-10",
+      "description": "Cover StageRunTopology parent/child topology rule."
+    },
+    {
+      "id": "OBL-C1-03-11",
+      "description": "Cover SandboxProviderInterface provider-agnostic runner boundary."
+    },
+    {
+      "id": "OBL-C1-03-12",
+      "description": "Carry forward C1-02 unresolved stageRunIdsByStage identity risk into runner identity semantics."
+    },
+    {
+      "id": "OBL-C1-03-13",
+      "description": "Preserve lesson-log update obligation in capability sequence context."
+    },
+    {
+      "id": "OBL-C1-03-14",
+      "description": "Enforce strict context-builder schema (selected[].selectors, selected[].obligationRefs, interestedData) and standard-mode budgets."
+    }
+  ],
+  "selected": [
+    {
+      "id": "S01",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-03.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-03 - Runner Execution Contract",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Prerequisites",
+          "lineStart": 15
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 20
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 28
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 40
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "## Verification Evidence",
+          "lineStart": 54
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-03-01",
+        "OBL-C1-03-02",
+        "OBL-C1-03-03",
+        "OBL-C1-03-04",
+        "OBL-C1-03-05",
+        "OBL-C1-03-06",
+        "OBL-C1-03-07",
+        "OBL-C1-03-08",
+        "OBL-C1-03-09",
+        "OBL-C1-03-10",
+        "OBL-C1-03-11",
+        "OBL-C1-03-12",
+        "OBL-C1-03-13"
+      ],
+      "score": {
+        "signal": 0.99,
+        "cost": 0.07,
+        "ambiguity": 0.03,
+        "value": 0.033
+      },
+      "excerptLineCount": 24,
+      "inclusionRationale": "Primary task contract and explicit coverage-id seed links."
+    },
+    {
+      "id": "S02",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-02.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 35
+        },
+        {
+          "type": "heading",
+          "value": "## Decision Preflight Snapshot",
+          "lineStart": 55
+        },
+        {
+          "type": "heading",
+          "value": "### Unresolved Risks",
+          "lineStart": 67
+        },
+        {
+          "type": "table-row",
+          "value": "Upstream callers could supply different stageRunIdsByStage seeds... Revisit in TASK-AEO-C1-03",
+          "lineStart": 71
+        }
+      ],
+      "obligationRefs": ["OBL-C1-03-01", "OBL-C1-03-04", "OBL-C1-03-12"],
+      "score": {
+        "signal": 0.93,
+        "cost": 0.11,
+        "ambiguity": 0.07,
+        "value": 0.082
+      },
+      "excerptLineCount": 12,
+      "inclusionRationale": "Immediate prerequisite for deterministic stage identity carry-forward into runner topology."
+    },
+    {
+      "id": "S03",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-01.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 29
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 37
+        }
+      ],
+      "obligationRefs": ["OBL-C1-03-01", "OBL-C1-03-12"],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.1,
+        "ambiguity": 0.08,
+        "value": 0.095
+      },
+      "excerptLineCount": 9,
+      "inclusionRationale": "Baseline prompt contract compatibility requirement for runner inputs."
+    },
+    {
+      "id": "S04",
+      "path": "docs/features/agent-execution-orchestrator/operations.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## ExecutePipelineRoute",
+          "lineStart": 185
+        },
+        {
+          "type": "heading",
+          "value": "### Input",
+          "lineStart": 191
+        },
+        {
+          "type": "heading",
+          "value": "### Rules",
+          "lineStart": 203
+        },
+        {
+          "type": "heading",
+          "value": "### Calculations",
+          "lineStart": 215
+        },
+        {
+          "type": "heading",
+          "value": "### State Transition",
+          "lineStart": 222
+        },
+        {
+          "type": "heading",
+          "value": "### Postconditions",
+          "lineStart": 226
+        },
+        {
+          "type": "heading",
+          "value": "### Error States",
+          "lineStart": 233
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-03-01",
+        "OBL-C1-03-02",
+        "OBL-C1-03-03",
+        "OBL-C1-03-04",
+        "OBL-C1-03-05"
+      ],
+      "score": {
+        "signal": 0.98,
+        "cost": 0.22,
+        "ambiguity": 0.06,
+        "value": 0.09
+      },
+      "excerptLineCount": 30,
+      "inclusionRationale": "Canonical runner operation contract for inputs, outputs, stuck detection, topology, and error outcomes."
+    },
+    {
+      "id": "S05",
+      "path": "docs/features/agent-execution-orchestrator/domain.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "### ExecutionRun",
+          "lineStart": 47
+        },
+        {
+          "type": "heading",
+          "value": "### StageExecution",
+          "lineStart": 89
+        },
+        {
+          "type": "heading",
+          "value": "### StageIsolationMode",
+          "lineStart": 185
+        },
+        {
+          "type": "heading",
+          "value": "### TerminalOutcome",
+          "lineStart": 205
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-03-02",
+        "OBL-C1-03-04",
+        "OBL-C1-03-06",
+        "OBL-C1-03-07"
+      ],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.18,
+        "ambiguity": 0.07,
+        "value": 0.085
+      },
+      "excerptLineCount": 27,
+      "inclusionRationale": "Authoritative parent-run and stage-run data model constraints for runner contract."
+    },
+    {
+      "id": "S06",
+      "path": "docs/features/agent-execution-orchestrator/rules.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## WatchdogTimeoutRule",
+          "lineStart": 108
+        },
+        {
+          "type": "heading",
+          "value": "## StageRunTopology",
+          "lineStart": 187
+        },
+        {
+          "type": "heading",
+          "value": "## TerminalOutcomeRequired",
+          "lineStart": 198
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-03-03",
+        "OBL-C1-03-08",
+        "OBL-C1-03-09",
+        "OBL-C1-03-10"
+      ],
+      "score": {
+        "signal": 0.96,
+        "cost": 0.14,
+        "ambiguity": 0.06,
+        "value": 0.075
+      },
+      "excerptLineCount": 17,
+      "inclusionRationale": "Formal watchdog/topology/terminal invariants needed for deterministic runner semantics."
+    },
+    {
+      "id": "S07",
+      "path": "docs/features/agent-execution-orchestrator/interfaces.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Internal: SandboxProviderInterface",
+          "lineStart": 76
+        },
+        {
+          "type": "heading",
+          "value": "### Methods",
+          "lineStart": 85
+        },
+        {
+          "type": "heading",
+          "value": "### Contract Notes",
+          "lineStart": 94
+        }
+      ],
+      "obligationRefs": ["OBL-C1-03-01", "OBL-C1-03-05", "OBL-C1-03-11"],
+      "score": {
+        "signal": 0.92,
+        "cost": 0.13,
+        "ambiguity": 0.07,
+        "value": 0.0925
+      },
+      "excerptLineCount": 13,
+      "inclusionRationale": "Provider-agnostic interface boundary directly mapped to ExecutePipelineRoute."
+    },
+    {
+      "id": "S08",
+      "path": "docs/features/agent-execution-orchestrator/SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Concept Registry",
+          "lineStart": 123
+        },
+        {
+          "type": "table-row",
+          "value": "StageExecution concept row",
+          "lineStart": 131
+        },
+        {
+          "type": "table-row",
+          "value": "StageIsolationMode concept row",
+          "lineStart": 137
+        },
+        {
+          "type": "table-row",
+          "value": "ExecutePipelineRoute concept row",
+          "lineStart": 144
+        },
+        {
+          "type": "table-row",
+          "value": "WatchdogTimeoutRule concept row",
+          "lineStart": 152
+        },
+        {
+          "type": "table-row",
+          "value": "SandboxProviderInterface concept row",
+          "lineStart": 155
+        },
+        {
+          "type": "heading",
+          "value": "## Feature Concept Graph",
+          "lineStart": 164
+        },
+        {
+          "type": "table-row",
+          "value": "RunStateMachine | enforces | ExecutePipelineRoute",
+          "lineStart": 172
+        },
+        {
+          "type": "table-row",
+          "value": "SandboxProviderInterface | exposes | ExecutePipelineRoute",
+          "lineStart": 176
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-03-05",
+        "OBL-C1-03-06",
+        "OBL-C1-03-07",
+        "OBL-C1-03-09",
+        "OBL-C1-03-11",
+        "OBL-C1-03-14"
+      ],
+      "score": {
+        "signal": 0.89,
+        "cost": 0.14,
+        "ambiguity": 0.1,
+        "value": 0.1165
+      },
+      "excerptLineCount": 16,
+      "inclusionRationale": "Concept-id and relationship-edge authority used for interestedData subset extraction."
+    },
+    {
+      "id": "S09",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/context/capability-sequence-lessons.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability 1 Entries",
+          "lineStart": 18
+        },
+        {
+          "type": "table-row",
+          "value": "CAP-AEO-C1 | TASK-AEO-C1-02 | pattern",
+          "lineStart": 24
+        },
+        {
+          "type": "heading",
+          "value": "## Promotion Rule",
+          "lineStart": 26
+        }
+      ],
+      "obligationRefs": ["OBL-C1-03-13"],
+      "score": {
+        "signal": 0.81,
+        "cost": 0.08,
+        "ambiguity": 0.1,
+        "value": 0.1345
+      },
+      "excerptLineCount": 8,
+      "inclusionRationale": "Task completion requires lesson continuity in this artifact."
+    },
+    {
+      "id": "S10",
+      "path": "domainspec/CHANGELOG.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## [2.0.10]",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.9]",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.8]",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.7]",
+          "lineStart": 61
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.4]",
+          "lineStart": 85
+        }
+      ],
+      "obligationRefs": ["OBL-C1-03-03", "OBL-C1-03-14"],
+      "score": {
+        "signal": 0.86,
+        "cost": 0.09,
+        "ambiguity": 0.08,
+        "value": 0.11
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Latest framework constraints that govern strict-mode context building and stuck/terminal handling."
+    }
+  ],
+  "architectureRefsResolved": {
+    "required": false,
+    "reason": "TASK-AEO-C1-03 coverage and directives do not declare architecture retrieval-map references.",
+    "selected": []
+  },
+  "interestedData": {
+    "relationshipEdgeSubset": [
+      {
+        "from": "agent-execution-orchestrator.FeatureLifecyclePipelineWorkflow",
+        "edge": "orchestrates",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 168
+      },
+      {
+        "from": "agent-execution-orchestrator.RunStateMachine",
+        "edge": "enforces",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 172
+      },
+      {
+        "from": "agent-execution-orchestrator.SandboxProviderInterface",
+        "edge": "exposes",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 176
+      }
+    ],
+    "runnerContractFieldSubset": {
+      "runnerInput": [
+        "runId",
+        "parentRunId",
+        "pipelineId",
+        "templateId",
+        "provider",
+        "branchStrategy",
+        "stageInputs",
+        "profileBudget"
+      ],
+      "runnerOutput": [
+        "ExecutionRun.currentState",
+        "ExecutionRun.terminalOutcome",
+        "StageExecution[]",
+        "StageExecution.terminalOutcome"
+      ],
+      "guarding": [
+        "suspectedStuck",
+        "retryCount",
+        "watchdog quick=8m",
+        "watchdog standard=15m",
+        "watchdog deep=25m"
+      ],
+      "isolationTopology": [
+        "StageExecution.isolationMode",
+        "StageExecution.childRunId required when isolated-child-run",
+        "child ExecutionRun.parentRunId"
+      ],
+      "terminalInvariants": [
+        "started(stageRunId) -> terminal(stageRunId)",
+        "terminal outcome in {completed,blocked,failed,canceled}"
+      ]
+    }
+  },
+  "coverageSummary": {
+    "OBL-C1-03-01": ["S01", "S02", "S03", "S04", "S07"],
+    "OBL-C1-03-02": ["S01", "S04", "S05"],
+    "OBL-C1-03-03": ["S01", "S04", "S06", "S10"],
+    "OBL-C1-03-04": ["S01", "S02", "S04", "S05"],
+    "OBL-C1-03-05": ["S01", "S04", "S07", "S08"],
+    "OBL-C1-03-06": ["S01", "S05", "S08"],
+    "OBL-C1-03-07": ["S01", "S05", "S08"],
+    "OBL-C1-03-08": ["S01", "S06"],
+    "OBL-C1-03-09": ["S01", "S06", "S08"],
+    "OBL-C1-03-10": ["S01", "S06"],
+    "OBL-C1-03-11": ["S01", "S07", "S08"],
+    "OBL-C1-03-12": ["S01", "S02", "S03"],
+    "OBL-C1-03-13": ["S01", "S09"],
+    "OBL-C1-03-14": ["S08", "S10"]
+  },
+  "excluded": [
+    {
+      "path": "docs/features/agent-execution-orchestrator/WORK-PACK.md",
+      "reason": "Planning manifest is derivative for C1-03; explicit task and aspect docs fully cover obligations."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/workflows.md",
+      "reason": "No direct C1-03 coverage ID binds workflow sections beyond operation/rule contracts already selected."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/observability.md",
+      "reason": "Runner execution contract obligations do not require observability mapping sections in this slice."
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "No explicit architecture retrieval-map obligation for C1-03; strict gate excludes non-bound sources."
+    },
+    {
+      "path": "architecture/pattern-library/",
+      "reason": "No bound C1-03 obligation requires pattern-library expansion."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Index expansion was unnecessary because explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Index expansion was unnecessary because explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Index expansion was unnecessary because explicit task links fully covered obligations."
+    }
+  ],
+  "blockers": []
+}

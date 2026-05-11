@@ -1,0 +1,592 @@
+{
+  "taskId": "TASK-AEO-C1-02",
+  "feature": "agent-execution-orchestrator",
+  "sourceTask": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-02.md",
+  "generatedAt": "2026-05-11T17:10:53Z",
+  "mode": "standard",
+  "strict": true,
+  "emit": ["markdown", "index-json"],
+  "execution": {
+    "outcome": "completed",
+    "suspectedStuck": false,
+    "retryCount": 0
+  },
+  "frameworkConstraints": {
+    "source": "domainspec/CHANGELOG.md",
+    "applied": ["2.0.10", "2.0.9", "2.0.8", "2.0.4"]
+  },
+  "scoreFormula": "(1 - signal) * 0.45 + cost * 0.30 + ambiguity * 0.25",
+  "budgets": {
+    "profile": "standard",
+    "limits": {
+      "files": 14,
+      "excerptLines": 280,
+      "noiseRatioMax": 0.15
+    },
+    "actual": {
+      "files": 11,
+      "excerptLines": 163,
+      "noiseRatio": 0.11
+    },
+    "pass": true
+  },
+  "obligations": [
+    {
+      "id": "OBL-C1-02-01",
+      "description": "Define prompt-builder input contract: stage contracts, selectionPolicy, ordered selectedStages, context refs, and decision snapshot pointer."
+    },
+    {
+      "id": "OBL-C1-02-02",
+      "description": "Define prompt-builder output contract: ordered prompt artifact set compliant with C1-01 schema and keyed by stageRunId."
+    },
+    {
+      "id": "OBL-C1-02-03",
+      "description": "Preserve determinism: identical selected stage set and identical inputs must yield identical normalized prompt artifacts."
+    },
+    {
+      "id": "OBL-C1-02-04",
+      "description": "Enforce stage-subset semantics: non-empty, distinct, ordered selected set constrained by declared stage contracts."
+    },
+    {
+      "id": "OBL-C1-02-05",
+      "description": "Define failure boundaries for missing stage inputs and invalid stage subset selection."
+    },
+    {
+      "id": "OBL-C1-02-06",
+      "description": "Bind explicit prompt-build step and ordering expectations to route assembly/runtime workflow semantics."
+    },
+    {
+      "id": "OBL-C1-02-07",
+      "description": "Run and record decision preflight snapshot before implementation work begins."
+    },
+    {
+      "id": "OBL-C1-02-08",
+      "description": "Preserve capability-sequence lesson capture obligations for this task."
+    },
+    {
+      "id": "OBL-C1-02-09",
+      "description": "Keep verification evidence scoped to deterministic builder terms (selectedStages, selectionPolicy, build, prompt, deterministic)."
+    },
+    {
+      "id": "OBL-C1-02-10",
+      "description": "Apply strict context-builder contract (selected[].selectors, selected[].obligationRefs, interestedData)."
+    }
+  ],
+  "selected": [
+    {
+      "id": "S01",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-02.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 35
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 45
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 73
+        },
+        {
+          "type": "heading",
+          "value": "## Verification Evidence",
+          "lineStart": 80
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-02-01",
+        "OBL-C1-02-02",
+        "OBL-C1-02-03",
+        "OBL-C1-02-04",
+        "OBL-C1-02-05",
+        "OBL-C1-02-06",
+        "OBL-C1-02-07",
+        "OBL-C1-02-08",
+        "OBL-C1-02-09"
+      ],
+      "score": {
+        "signal": 0.99,
+        "cost": 0.08,
+        "ambiguity": 0.03,
+        "value": 0.036
+      },
+      "excerptLineCount": 22,
+      "inclusionRationale": "Primary task contract and explicit seed links for C1-02 obligations."
+    },
+    {
+      "id": "S02",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-01.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 21
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 29
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 44
+        },
+        {
+          "type": "heading",
+          "value": "## Decision Lock",
+          "lineStart": 57
+        }
+      ],
+      "obligationRefs": ["OBL-C1-02-02", "OBL-C1-02-03"],
+      "score": {
+        "signal": 0.95,
+        "cost": 0.11,
+        "ambiguity": 0.05,
+        "value": 0.068
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Prerequisite schema/determinism contract that C1-02 output must preserve."
+    },
+    {
+      "id": "S03",
+      "path": "docs/features/agent-execution-orchestrator/operations.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## AssemblePipelineRoute",
+          "lineStart": 10
+        },
+        {
+          "type": "heading",
+          "value": "### Input",
+          "lineStart": 31
+        },
+        {
+          "type": "heading",
+          "value": "### Prompt Artifact Examples (C1 Baseline)",
+          "lineStart": 78
+        },
+        {
+          "type": "heading",
+          "value": "### Prompt Artifact Normalization (Deterministic Ordering)",
+          "lineStart": 141
+        },
+        {
+          "type": "heading",
+          "value": "### Rules",
+          "lineStart": 148
+        },
+        {
+          "type": "heading",
+          "value": "### Error States",
+          "lineStart": 170
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-02-01",
+        "OBL-C1-02-02",
+        "OBL-C1-02-04",
+        "OBL-C1-02-05",
+        "OBL-C1-02-06"
+      ],
+      "score": {
+        "signal": 0.98,
+        "cost": 0.24,
+        "ambiguity": 0.07,
+        "value": 0.0985
+      },
+      "excerptLineCount": 28,
+      "inclusionRationale": "Canonical builder input/output fields, stage-subset rules, normalization rules, and error states."
+    },
+    {
+      "id": "S04",
+      "path": "docs/features/agent-execution-orchestrator/domain.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "### PipelineRouteTemplate",
+          "lineStart": 29
+        },
+        {
+          "type": "heading",
+          "value": "### StageContract",
+          "lineStart": 75
+        }
+      ],
+      "obligationRefs": ["OBL-C1-02-01", "OBL-C1-02-04", "OBL-C1-02-06"],
+      "score": {
+        "signal": 0.95,
+        "cost": 0.17,
+        "ambiguity": 0.08,
+        "value": 0.0935
+      },
+      "excerptLineCount": 18,
+      "inclusionRationale": "Authoritative domain-level field semantics for route-template and stage-contract composition."
+    },
+    {
+      "id": "S05",
+      "path": "docs/features/agent-execution-orchestrator/rules.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## StageSelectionContract",
+          "lineStart": 147
+        },
+        {
+          "type": "heading",
+          "value": "## PromptArtifactSchemaRequired",
+          "lineStart": 266
+        },
+        {
+          "type": "heading",
+          "value": "## PromptArtifactDeterminism",
+          "lineStart": 285
+        },
+        {
+          "type": "heading",
+          "value": "### Normalization Requirements",
+          "lineStart": 294
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-02-02",
+        "OBL-C1-02-03",
+        "OBL-C1-02-04",
+        "OBL-C1-02-05"
+      ],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.16,
+        "ambiguity": 0.06,
+        "value": 0.0765
+      },
+      "excerptLineCount": 22,
+      "inclusionRationale": "Formal deterministic and schema constraints for prompt artifacts and stage-subset selection."
+    },
+    {
+      "id": "S06",
+      "path": "docs/features/agent-execution-orchestrator/interfaces.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Internal: RouteArtifactInterface",
+          "lineStart": 9
+        },
+        {
+          "type": "heading",
+          "value": "### Prompt Artifact Schema (C1 Baseline)",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "### Prompt Artifact Validation Cases (C1 Baseline)",
+          "lineStart": 62
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-02-01",
+        "OBL-C1-02-02",
+        "OBL-C1-02-05",
+        "OBL-C1-02-06"
+      ],
+      "score": {
+        "signal": 0.94,
+        "cost": 0.18,
+        "ambiguity": 0.09,
+        "value": 0.1035
+      },
+      "excerptLineCount": 20,
+      "inclusionRationale": "Interface-level prompt schema and PASS/FAIL validation cases that constrain builder output."
+    },
+    {
+      "id": "S07",
+      "path": "docs/features/agent-execution-orchestrator/workflows.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## FeatureLifecyclePipelineWorkflow",
+          "lineStart": 10
+        },
+        {
+          "type": "table-row",
+          "value": "Resolve selected stage set and order",
+          "lineStart": 41
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-1 route execution order follows StageContract sequence",
+          "lineStart": 104
+        }
+      ],
+      "obligationRefs": ["OBL-C1-02-04", "OBL-C1-02-06"],
+      "score": {
+        "signal": 0.88,
+        "cost": 0.19,
+        "ambiguity": 0.12,
+        "value": 0.141
+      },
+      "excerptLineCount": 10,
+      "inclusionRationale": "Workflow-level anchor for deterministic selected-stage order semantics."
+    },
+    {
+      "id": "S08",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/context/grill-with-docs-interviewer-inventory.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "### Decision Preflight Inputs",
+          "lineStart": 41
+        },
+        {
+          "type": "heading",
+          "value": "### Decision Preflight Questions (Minimum Set)",
+          "lineStart": 49
+        },
+        {
+          "type": "heading",
+          "value": "### Exit Conditions Before Task Execution",
+          "lineStart": 57
+        },
+        {
+          "type": "heading",
+          "value": "### Output Artifact Contract",
+          "lineStart": 64
+        },
+        {
+          "type": "heading",
+          "value": "## Initial Adoption Scope",
+          "lineStart": 73
+        }
+      ],
+      "obligationRefs": ["OBL-C1-02-07"],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.12,
+        "ambiguity": 0.07,
+        "value": 0.0985
+      },
+      "excerptLineCount": 12,
+      "inclusionRationale": "Decision preflight gate and required snapshot artifact behavior for C1 execution tasks."
+    },
+    {
+      "id": "S09",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/context/capability-sequence-lessons.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability 1 Entries",
+          "lineStart": 18
+        },
+        {
+          "type": "table-row",
+          "value": "CAP-AEO-C1 | TASK-AEO-C1-02",
+          "lineStart": 23
+        }
+      ],
+      "obligationRefs": ["OBL-C1-02-08"],
+      "score": {
+        "signal": 0.82,
+        "cost": 0.08,
+        "ambiguity": 0.1,
+        "value": 0.13
+      },
+      "excerptLineCount": 8,
+      "inclusionRationale": "Task closure requirement for lesson continuity and reuse-rule propagation."
+    },
+    {
+      "id": "S10",
+      "path": "docs/features/agent-execution-orchestrator/SPEC.md",
+      "selectors": [
+        {
+          "type": "table-row",
+          "value": "PipelineRouteTemplate domain concept row",
+          "lineStart": 116
+        },
+        {
+          "type": "heading",
+          "value": "## Feature Concept Graph",
+          "lineStart": 164
+        },
+        {
+          "type": "table-row",
+          "value": "AssemblePipelineRoute | enforces | StageContract",
+          "lineStart": 170
+        },
+        {
+          "type": "table-row",
+          "value": "PipelineRouteTemplate | contains | StageContract",
+          "lineStart": 171
+        },
+        {
+          "type": "table-row",
+          "value": "RouteArtifactInterface | exposes | AssemblePipelineRoute",
+          "lineStart": 175
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-02-01",
+        "OBL-C1-02-04",
+        "OBL-C1-02-06",
+        "OBL-C1-02-10"
+      ],
+      "score": {
+        "signal": 0.89,
+        "cost": 0.14,
+        "ambiguity": 0.1,
+        "value": 0.1165
+      },
+      "excerptLineCount": 13,
+      "inclusionRationale": "Feature-level relationship-edge authority used to build interestedData subset."
+    },
+    {
+      "id": "S11",
+      "path": "domainspec/CHANGELOG.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## [2.0.10]",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.9]",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.8]",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.4]",
+          "lineStart": 85
+        }
+      ],
+      "obligationRefs": ["OBL-C1-02-10"],
+      "score": {
+        "signal": 0.86,
+        "cost": 0.09,
+        "ambiguity": 0.08,
+        "value": 0.11
+      },
+      "excerptLineCount": 16,
+      "inclusionRationale": "Latest framework constraints governing strict context-builder output requirements."
+    }
+  ],
+  "architectureRefsResolved": {
+    "required": false,
+    "reason": "TASK-AEO-C1-02 coverage and directives do not declare architecture retrieval-map references.",
+    "selected": []
+  },
+  "interestedData": {
+    "relationshipEdgeSubset": [
+      {
+        "from": "agent-execution-orchestrator.AssemblePipelineRoute",
+        "edge": "enforces",
+        "to": "agent-execution-orchestrator.StageContract",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 170
+      },
+      {
+        "from": "agent-execution-orchestrator.PipelineRouteTemplate",
+        "edge": "contains",
+        "to": "agent-execution-orchestrator.StageContract",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 171
+      },
+      {
+        "from": "agent-execution-orchestrator.RouteArtifactInterface",
+        "edge": "exposes",
+        "to": "agent-execution-orchestrator.AssemblePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 175
+      }
+    ],
+    "promptBuilderFieldSubset": {
+      "builderInput": [
+        "stageContracts",
+        "selectedStages",
+        "selectionPolicy",
+        "stageInputRefs",
+        "decisionSnapshotRef"
+      ],
+      "builderOutput": ["orderedPromptArtifactSet", "stageRunId"],
+      "determinism": [
+        "lexicalKeyOrder",
+        "sortLex(stageInputRefs)",
+        "sortLex(requiredArtifactRefs)",
+        "createdAt ISO8601-UTC"
+      ],
+      "failureBoundaries": [
+        "ROUTE_STAGE_SELECTION_INVALID",
+        "PROMPT_STAGE_RUN_ID_REQUIRED",
+        "PROMPT_STAGE_INPUT_REFS_REQUIRED"
+      ]
+    }
+  },
+  "coverageSummary": {
+    "OBL-C1-02-01": ["S01", "S03", "S04", "S06", "S10"],
+    "OBL-C1-02-02": ["S01", "S02", "S03", "S05", "S06"],
+    "OBL-C1-02-03": ["S01", "S02", "S05"],
+    "OBL-C1-02-04": ["S01", "S03", "S04", "S05", "S07", "S10"],
+    "OBL-C1-02-05": ["S01", "S03", "S05", "S06"],
+    "OBL-C1-02-06": ["S01", "S03", "S04", "S06", "S07", "S10"],
+    "OBL-C1-02-07": ["S01", "S08"],
+    "OBL-C1-02-08": ["S01", "S09"],
+    "OBL-C1-02-09": ["S01"],
+    "OBL-C1-02-10": ["S10", "S11"]
+  },
+  "excluded": [
+    {
+      "path": "docs/features/agent-execution-orchestrator/WORK-PACK.md",
+      "reason": "Derivative planning manifest for this task; obligations are already covered by task/prerequisite/aspect docs."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/observability.md",
+      "reason": "No direct C1-02 obligation references observability mappings for prompt-builder semantics."
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "No explicit architecture retrieval-map obligation for C1-02; inclusion would violate strict relevance gate."
+    },
+    {
+      "path": "architecture/pattern-library/",
+      "reason": "No bound C1-02 obligation requires pattern-library expansion."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Index expansion not needed because explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Index expansion not needed because explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Index expansion not needed because explicit task links fully covered obligations."
+    }
+  ],
+  "blockers": []
+}

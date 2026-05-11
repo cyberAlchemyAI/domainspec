@@ -1,0 +1,814 @@
+{
+  "taskId": "TASK-AEO-C1-04",
+  "feature": "agent-execution-orchestrator",
+  "sourceTask": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-04.md",
+  "stageRunId": "70f664c8-589b-4078-abe0-38837e142734",
+  "generatedAt": "2026-05-11T00:50:38Z",
+  "mode": "standard",
+  "strict": true,
+  "emit": ["markdown", "index-json"],
+  "execution": {
+    "outcome": "completed",
+    "suspectedStuck": false,
+    "retryCount": 0
+  },
+  "frameworkConstraints": {
+    "source": "CHANGELOG.md",
+    "applied": ["2.0.10", "2.0.9", "2.0.8", "2.0.7", "2.0.4"]
+  },
+  "scoreFormula": "(1 - signal) * 0.45 + cost * 0.30 + ambiguity * 0.25",
+  "budgets": {
+    "profile": "standard",
+    "limits": {
+      "files": 14,
+      "excerptLines": 280,
+      "noiseRatioMax": 0.15
+    },
+    "actual": {
+      "files": 10,
+      "excerptLines": 196,
+      "noiseRatio": 0.11
+    },
+    "pass": true
+  },
+  "obligations": [
+    {
+      "id": "OBL-C1-04-01",
+      "description": "Define one controlled single selected-stage scenario using selectionPolicy=stage-subset."
+    },
+    {
+      "id": "OBL-C1-04-02",
+      "description": "Map stage terminal outcomes and parent-run state progression explicitly."
+    },
+    {
+      "id": "OBL-C1-04-03",
+      "description": "Capture single-stage execution error boundaries for blocked/failed classifications."
+    },
+    {
+      "id": "OBL-C1-04-04",
+      "description": "Add one test-spec obligation for the single selected-stage path."
+    },
+    {
+      "id": "OBL-C1-04-05",
+      "description": "Provide evidence references for prompt artifact, stage execution record, and run output classification."
+    },
+    {
+      "id": "OBL-C1-04-06",
+      "description": "Cover workflow authority for FeatureLifecyclePipelineWorkflow."
+    },
+    {
+      "id": "OBL-C1-04-07",
+      "description": "Cover operation authority for ExecutePipelineRoute and stage-subset route selection constraints."
+    },
+    {
+      "id": "OBL-C1-04-08",
+      "description": "Cover domain authority for StageExecution and parent ExecutionRun linkage."
+    },
+    {
+      "id": "OBL-C1-04-09",
+      "description": "Cover RunStateMachine transition semantics for single-stage terminalization."
+    },
+    {
+      "id": "OBL-C1-04-10",
+      "description": "Carry forward runner identity/reconciliation constraints from prerequisite C1-03."
+    },
+    {
+      "id": "OBL-C1-04-11",
+      "description": "Preserve lesson-log update obligation in capability sequence context."
+    },
+    {
+      "id": "OBL-C1-04-12",
+      "description": "Preserve determinism requirement: same controlled input keeps terminal outcome class."
+    },
+    {
+      "id": "OBL-C1-04-13",
+      "description": "Enforce strict schema gates (selected[].selectors, selected[].obligationRefs, interestedData) and standard-mode budgets."
+    },
+    {
+      "id": "OBL-C1-04-14",
+      "description": "Apply current changelog constraints (2.0.10, 2.0.9, 2.0.8, 2.0.7, 2.0.4)."
+    }
+  ],
+  "selected": [
+    {
+      "id": "S01",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-04.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-04 - Single Selected-Stage Execution in Parent Run",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Prerequisite",
+          "lineStart": 15
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 19
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 36
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 43
+        },
+        {
+          "type": "heading",
+          "value": "## Verification Evidence",
+          "lineStart": 49
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-01",
+        "OBL-C1-04-02",
+        "OBL-C1-04-03",
+        "OBL-C1-04-04",
+        "OBL-C1-04-05",
+        "OBL-C1-04-06",
+        "OBL-C1-04-07",
+        "OBL-C1-04-08",
+        "OBL-C1-04-09",
+        "OBL-C1-04-10",
+        "OBL-C1-04-11",
+        "OBL-C1-04-12"
+      ],
+      "score": {
+        "signal": 0.99,
+        "cost": 0.07,
+        "ambiguity": 0.03,
+        "value": 0.033
+      },
+      "excerptLineCount": 22,
+      "inclusionRationale": "Primary task contract and explicit seed links for C1-04 obligations."
+    },
+    {
+      "id": "S02",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-03.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-03 - Runner Execution Contract",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 36
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 56
+        },
+        {
+          "type": "heading",
+          "value": "## Verification Evidence",
+          "lineStart": 62
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-02",
+        "OBL-C1-04-03",
+        "OBL-C1-04-10",
+        "OBL-C1-04-12"
+      ],
+      "score": {
+        "signal": 0.92,
+        "cost": 0.1,
+        "ambiguity": 0.08,
+        "value": 0.099
+      },
+      "excerptLineCount": 10,
+      "inclusionRationale": "Immediate prerequisite carrying runner identity and terminal mapping constraints into C1-04."
+    },
+    {
+      "id": "S03",
+      "path": "docs/features/agent-execution-orchestrator/workflows.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## FeatureLifecyclePipelineWorkflow",
+          "lineStart": 10
+        },
+        {
+          "type": "heading",
+          "value": "### Steps",
+          "lineStart": 18
+        },
+        {
+          "type": "table-row",
+          "value": "Step 5 Start stage execution record",
+          "lineStart": 44
+        },
+        {
+          "type": "table-row",
+          "value": "Step 6 Execute stage in chosen run scope",
+          "lineStart": 45
+        },
+        {
+          "type": "table-row",
+          "value": "Step 7 Append stage telemetry and evidence",
+          "lineStart": 46
+        },
+        {
+          "type": "heading",
+          "value": "### Invariants",
+          "lineStart": 49
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-1",
+          "lineStart": 53
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-2",
+          "lineStart": 54
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-3",
+          "lineStart": 55
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-6",
+          "lineStart": 58
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-01",
+        "OBL-C1-04-02",
+        "OBL-C1-04-05",
+        "OBL-C1-04-06",
+        "OBL-C1-04-12"
+      ],
+      "score": {
+        "signal": 0.96,
+        "cost": 0.16,
+        "ambiguity": 0.07,
+        "value": 0.0825
+      },
+      "excerptLineCount": 28,
+      "inclusionRationale": "Workflow ordering and invariants that define single-stage orchestration and terminal evidence completion."
+    },
+    {
+      "id": "S04",
+      "path": "docs/features/agent-execution-orchestrator/operations.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## AssemblePipelineRoute",
+          "lineStart": 10
+        },
+        {
+          "type": "heading",
+          "value": "### Input",
+          "lineStart": 31
+        },
+        {
+          "type": "table-row",
+          "value": "selectedStages ordered selected stage set",
+          "lineStart": 39
+        },
+        {
+          "type": "table-row",
+          "value": "selectedStages build input constraint",
+          "lineStart": 52
+        },
+        {
+          "type": "table-row",
+          "value": "R5 Stage-subset selection ordered and non-empty",
+          "lineStart": 155
+        },
+        {
+          "type": "table-row",
+          "value": "R6 Stage-subset selection maps to stage contracts",
+          "lineStart": 156
+        },
+        {
+          "type": "heading",
+          "value": "## ExecutePipelineRoute",
+          "lineStart": 185
+        },
+        {
+          "type": "heading",
+          "value": "### Input",
+          "lineStart": 191
+        },
+        {
+          "type": "heading",
+          "value": "### Rules",
+          "lineStart": 215
+        },
+        {
+          "type": "table-row",
+          "value": "R3 Run must terminate with explicit outcome",
+          "lineStart": 221
+        },
+        {
+          "type": "table-row",
+          "value": "R6 Parent run tracks one StageExecution per selected stage",
+          "lineStart": 224
+        },
+        {
+          "type": "table-row",
+          "value": "R8 Stage execution identity bound to ordered prompt artifacts",
+          "lineStart": 226
+        },
+        {
+          "type": "heading",
+          "value": "### Calculations",
+          "lineStart": 230
+        },
+        {
+          "type": "heading",
+          "value": "### State Transition",
+          "lineStart": 238
+        },
+        {
+          "type": "heading",
+          "value": "### Postconditions",
+          "lineStart": 242
+        },
+        {
+          "type": "heading",
+          "value": "### Error States",
+          "lineStart": 251
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-01",
+        "OBL-C1-04-02",
+        "OBL-C1-04-03",
+        "OBL-C1-04-05",
+        "OBL-C1-04-07",
+        "OBL-C1-04-12"
+      ],
+      "score": {
+        "signal": 0.98,
+        "cost": 0.24,
+        "ambiguity": 0.07,
+        "value": 0.0965
+      },
+      "excerptLineCount": 40,
+      "inclusionRationale": "Canonical source for stage-subset legality, stage identity, terminal mapping, and deterministic error outcomes."
+    },
+    {
+      "id": "S05",
+      "path": "docs/features/agent-execution-orchestrator/domain.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "### ExecutionRun",
+          "lineStart": 47
+        },
+        {
+          "type": "table-row",
+          "value": "currentState under RunStateMachine",
+          "lineStart": 58
+        },
+        {
+          "type": "table-row",
+          "value": "stageRuns ordered StageExecution records",
+          "lineStart": 62
+        },
+        {
+          "type": "heading",
+          "value": "### StageExecution",
+          "lineStart": 90
+        },
+        {
+          "type": "table-row",
+          "value": "stageRunId unique and prompt-order bound",
+          "lineStart": 94
+        },
+        {
+          "type": "table-row",
+          "value": "terminalOutcome required when terminal",
+          "lineStart": 100
+        },
+        {
+          "type": "heading",
+          "value": "### RunState",
+          "lineStart": 193
+        },
+        {
+          "type": "heading",
+          "value": "### TerminalOutcome",
+          "lineStart": 206
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-02",
+        "OBL-C1-04-05",
+        "OBL-C1-04-08",
+        "OBL-C1-04-10"
+      ],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.18,
+        "ambiguity": 0.07,
+        "value": 0.085
+      },
+      "excerptLineCount": 27,
+      "inclusionRationale": "Parent and stage run data model constraints needed to classify single-stage and parent terminal outcomes."
+    },
+    {
+      "id": "S06",
+      "path": "docs/features/agent-execution-orchestrator/rules.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## RunStateMachine",
+          "lineStart": 9
+        },
+        {
+          "type": "table-row",
+          "value": "running stage-completed transition",
+          "lineStart": 23
+        },
+        {
+          "type": "table-row",
+          "value": "running stage-blocked transition",
+          "lineStart": 25
+        },
+        {
+          "type": "table-row",
+          "value": "running stage-failed transition",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## StageSelectionContract",
+          "lineStart": 147
+        },
+        {
+          "type": "line",
+          "value": "selectionPolicy=stage-subset formal predicate",
+          "lineStart": 154
+        },
+        {
+          "type": "table-row",
+          "value": "SSC-1 non-empty distinct stage subset",
+          "lineStart": 160
+        },
+        {
+          "type": "table-row",
+          "value": "SSC-2 preserves template stage order",
+          "lineStart": 161
+        },
+        {
+          "type": "heading",
+          "value": "## TerminalOutcomeRequired",
+          "lineStart": 215
+        },
+        {
+          "type": "line",
+          "value": "started(sr.stageRunId) implies terminal(sr.stageRunId)",
+          "lineStart": 222
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-01",
+        "OBL-C1-04-02",
+        "OBL-C1-04-03",
+        "OBL-C1-04-09",
+        "OBL-C1-04-12"
+      ],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.16,
+        "ambiguity": 0.08,
+        "value": 0.0885
+      },
+      "excerptLineCount": 25,
+      "inclusionRationale": "State machine and stage-selection guards needed for deterministic single-stage terminalization and legality."
+    },
+    {
+      "id": "S07",
+      "path": "docs/features/agent-execution-orchestrator/TEST-SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Concept and Rule Traceability Index",
+          "lineStart": 35
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-TR-002 ExecutePipelineRoute traceability",
+          "lineStart": 38
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-TR-008 RunStateMachine traceability",
+          "lineStart": 44
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-TR-011 FeatureLifecyclePipelineWorkflow traceability",
+          "lineStart": 47
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-BE-OP-010 provider rule",
+          "lineStart": 100
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-BE-OP-012 explicit terminal outcome",
+          "lineStart": 102
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-BE-OP-017 state transition",
+          "lineStart": 107
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-BE-OP-021 provider unavailable error",
+          "lineStart": 111
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-BE-OP-022 missing terminal outcome error",
+          "lineStart": 112
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-03",
+        "OBL-C1-04-04",
+        "OBL-C1-04-06",
+        "OBL-C1-04-07",
+        "OBL-C1-04-09"
+      ],
+      "score": {
+        "signal": 0.91,
+        "cost": 0.14,
+        "ambiguity": 0.09,
+        "value": 0.109
+      },
+      "excerptLineCount": 20,
+      "inclusionRationale": "Target location for adding/validating single-stage execution test obligations and error-state assertions."
+    },
+    {
+      "id": "S08",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/context/capability-sequence-lessons.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability 1 Entries",
+          "lineStart": 18
+        },
+        {
+          "type": "table-row",
+          "value": "CAP-AEO-C1 | TASK-AEO-C1-03 | pattern",
+          "lineStart": 25
+        },
+        {
+          "type": "heading",
+          "value": "## Promotion Rule",
+          "lineStart": 27
+        }
+      ],
+      "obligationRefs": ["OBL-C1-04-11"],
+      "score": {
+        "signal": 0.82,
+        "cost": 0.08,
+        "ambiguity": 0.1,
+        "value": 0.13
+      },
+      "excerptLineCount": 8,
+      "inclusionRationale": "Task completion requires a lesson entry and reuse rule continuity."
+    },
+    {
+      "id": "S09",
+      "path": "docs/features/agent-execution-orchestrator/SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Concept Registry",
+          "lineStart": 123
+        },
+        {
+          "type": "table-row",
+          "value": "StageExecution concept row",
+          "lineStart": 131
+        },
+        {
+          "type": "table-row",
+          "value": "ExecutePipelineRoute concept row",
+          "lineStart": 144
+        },
+        {
+          "type": "table-row",
+          "value": "RunStateMachine concept row",
+          "lineStart": 148
+        },
+        {
+          "type": "table-row",
+          "value": "FeatureLifecyclePipelineWorkflow concept row",
+          "lineStart": 159
+        },
+        {
+          "type": "heading",
+          "value": "## Feature Concept Graph",
+          "lineStart": 164
+        },
+        {
+          "type": "table-row",
+          "value": "FeatureLifecyclePipelineWorkflow | orchestrates | ExecutePipelineRoute",
+          "lineStart": 168
+        },
+        {
+          "type": "table-row",
+          "value": "RunStateMachine | enforces | ExecutePipelineRoute",
+          "lineStart": 172
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-04-06",
+        "OBL-C1-04-07",
+        "OBL-C1-04-08",
+        "OBL-C1-04-09",
+        "OBL-C1-04-13"
+      ],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.13,
+        "ambiguity": 0.1,
+        "value": 0.1145
+      },
+      "excerptLineCount": 16,
+      "inclusionRationale": "Concept-id and relationship-edge authority used to derive interestedData subsets."
+    },
+    {
+      "id": "S10",
+      "path": "CHANGELOG.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## [2.0.10]",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.9]",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.8]",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.7]",
+          "lineStart": 61
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.4]",
+          "lineStart": 85
+        }
+      ],
+      "obligationRefs": ["OBL-C1-04-13", "OBL-C1-04-14"],
+      "score": {
+        "signal": 0.86,
+        "cost": 0.09,
+        "ambiguity": 0.08,
+        "value": 0.11
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Latest framework constraints governing strict relevance and terminal telemetry expectations."
+    }
+  ],
+  "architectureRefsResolved": {
+    "required": false,
+    "reason": "TASK-AEO-C1-04 coverage and directives do not declare architecture retrieval-map references.",
+    "selected": []
+  },
+  "interestedData": {
+    "relationshipEdgeSubset": [
+      {
+        "from": "agent-execution-orchestrator.FeatureLifecyclePipelineWorkflow",
+        "edge": "orchestrates",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 168
+      },
+      {
+        "from": "agent-execution-orchestrator.RunStateMachine",
+        "edge": "enforces",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 172
+      }
+    ],
+    "singleStageExecutionSubset": {
+      "routeSelection": [
+        "selectionPolicy=stage-subset",
+        "selectedStages non-empty/distinct/order-preserving",
+        "controlled scenario uses length(selectedStages)=1"
+      ],
+      "promptEvidence": [
+        "ordered prompt artifact includes stageRunId",
+        "prompt artifact set hash is deterministic for unchanged inputs"
+      ],
+      "executionRecords": [
+        "parent ExecutionRun.stageRuns has one StageExecution for selected stage",
+        "terminalOutcomeByStageRunId maps all started stageRunIds"
+      ],
+      "parentProgression": [
+        "queued -> running -> {completed|blocked|failed|canceled}",
+        "parentTerminalOutcome precedence from stage outcomes"
+      ],
+      "errorBoundaries": [
+        "PROVIDER_UNAVAILABLE",
+        "TERMINAL_OUTCOME_MISSING",
+        "RETRY_BUDGET_EXHAUSTED -> blocked remediation"
+      ]
+    }
+  },
+  "coverageSummary": {
+    "OBL-C1-04-01": ["S01", "S03", "S04", "S06"],
+    "OBL-C1-04-02": ["S01", "S02", "S03", "S04", "S05", "S06"],
+    "OBL-C1-04-03": ["S01", "S02", "S04", "S06", "S07"],
+    "OBL-C1-04-04": ["S01", "S07"],
+    "OBL-C1-04-05": ["S01", "S03", "S04", "S05"],
+    "OBL-C1-04-06": ["S01", "S03", "S07", "S09"],
+    "OBL-C1-04-07": ["S01", "S04", "S07", "S09"],
+    "OBL-C1-04-08": ["S01", "S05", "S09"],
+    "OBL-C1-04-09": ["S01", "S06", "S07", "S09"],
+    "OBL-C1-04-10": ["S01", "S02", "S05"],
+    "OBL-C1-04-11": ["S01", "S08"],
+    "OBL-C1-04-12": ["S01", "S02", "S03", "S04", "S06"],
+    "OBL-C1-04-13": ["S09", "S10"],
+    "OBL-C1-04-14": ["S10"]
+  },
+  "excluded": [
+    {
+      "path": "docs/features/agent-execution-orchestrator/WORK-PACK.md",
+      "reason": "Planning manifest is derivative for C1-04; explicit task and aspect docs fully cover obligations."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md",
+      "reason": "Capability overview is derivative and does not add direct C1-04 contract clauses beyond selected sources."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/work-pack/waves/W4.md",
+      "reason": "Wave tracker carries progress state only; no unique obligation-bearing contract for C1-04."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/observability.md",
+      "reason": "C1-04 scope is single-stage execution contract + test obligation; observability mapping is not a direct obligation in this slice."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/interfaces.md",
+      "reason": "No explicit C1-04 coverage ID or directive binds interface-level expansion in this stage."
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "No explicit architecture retrieval-map obligation for C1-04; strict gate excludes non-bound sources."
+    },
+    {
+      "path": "architecture/pattern-library/",
+      "reason": "No bound C1-04 obligation requires pattern-library expansion."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Index expansion was unnecessary because explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Index expansion was unnecessary because explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Index expansion was unnecessary because explicit task links fully covered obligations."
+    }
+  ],
+  "blockers": []
+}

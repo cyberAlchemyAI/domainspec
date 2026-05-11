@@ -135,3 +135,4 @@ Source contract: `domainspec-signal-observer` skill
 - [ ] Governance signal rows are emitted at terminal lifecycle boundaries.
 - [ ] Resumed/compacted stages include lineage continuity evidence (`previousStageRunId` + reason) in decision snapshots.
 - [ ] Resumed/compacted stages include handoff summary evidence in transcript excerpts.
+- [ ] Prior-run recall includes retrieval evidence references when earlier runs are consulted before mutation or verification decisions.

@@ -13,18 +13,19 @@
 
 ### Transition Table
 
-| From          | Event            | To            | Guard                                                                                                             | Effect                                                                                       |
-| ------------- | ---------------- | ------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| queued        | run-started      | running       | Valid [PipelineRouteTemplate](domain.md#pipelineroutetemplate) exists                                             | Allocate [SandboxLease](domain.md#sandboxlease) and [WorktreeLease](domain.md#worktreelease) |
-| running       | retry-requested  | waiting-retry | [RetryPolicy](#retrypolicy) budget not exhausted                                                                  | Increment [ExecutionRun](domain.md#executionrun).retryCount                                  |
-| waiting-retry | retry-started    | running       | Retry scope narrowed                                                                                              | Continue same stage with narrowed inputs                                                     |
-| running       | resume-requested | resuming      | [SessionSnapshot](domain.md#sessionsnapshot) complete                                                             | Restore runtime context                                                                      |
-| resuming      | resume-succeeded | running       | Snapshot validation passes                                                                                        | Continue stage execution                                                                     |
-| running       | stage-completed  | completed     | [TerminalOutcomeRequired](#terminaloutcomerequired) and [TelemetryPairRequired](#telemetrypairrequired) satisfied | Release leases and finalize [TelemetryEnvelope](domain.md#telemetryenvelope)                 |
-| running       | stage-blocked    | blocked       | Remediation available                                                                                             | Emit recovery signal                                                                         |
-| running       | stage-failed     | failed        | Non-recoverable failure                                                                                           | Emit failure signal                                                                          |
-| running       | superseded       | canceled      | [CancellationPolicy](#cancellationpolicy) chooses latest-run-wins                                                 | Cancel active run and emit cancellation signal                                               |
-| waiting-retry | retry-exhausted  | blocked       | Retry budget exhausted                                                                                            | Emit bounded retry remediation                                                               |
+| From          | Event            | To            | Guard                                                                                                    | Effect                                                                                       |
+| ------------- | ---------------- | ------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| queued        | run-started      | running       | Valid [PipelineRouteTemplate](domain.md#pipelineroutetemplate) exists                                    | Allocate [SandboxLease](domain.md#sandboxlease) and [WorktreeLease](domain.md#worktreelease) |
+| running       | retry-requested  | waiting-retry | [RetryPolicy](#retrypolicy) budget not exhausted                                                         | Increment [ExecutionRun](domain.md#executionrun).retryCount                                  |
+| waiting-retry | retry-started    | running       | Retry scope narrowed                                                                                     | Continue same stage with narrowed inputs                                                     |
+| running       | resume-requested | resuming      | [SessionSnapshot](domain.md#sessionsnapshot) complete                                                    | Restore runtime context                                                                      |
+| resuming      | resume-succeeded | running       | Snapshot validation passes                                                                               | Continue stage execution                                                                     |
+| running       | stage-completed  | running       | Remaining stage executions exist and telemetry pair for completed stage is present                       | Advance to next [StageExecution](domain.md#stageexecution) in route order                    |
+| running       | run-completed    | completed     | All selected stage executions are terminal and [TelemetryPairRequired](#telemetrypairrequired) satisfied | Release leases and finalize stage envelopes                                                  |
+| running       | stage-blocked    | blocked       | Remediation available                                                                                    | Emit recovery signal                                                                         |
+| running       | stage-failed     | failed        | Non-recoverable failure                                                                                  | Emit failure signal                                                                          |
+| running       | superseded       | canceled      | [CancellationPolicy](#cancellationpolicy) chooses latest-run-wins                                        | Cancel active run and emit cancellation signal                                               |
+| waiting-retry | retry-exhausted  | blocked       | Retry budget exhausted                                                                                   | Emit bounded retry remediation                                                               |
 
 ### Invariants
 
@@ -33,6 +34,7 @@
 | I-SM-1 | Terminal states are explicit and finite        | `RunState in {completed,blocked,failed,canceled}`                                           |
 | I-SM-2 | Lease cleanup is mandatory for terminal states | `RunState terminal -> sandboxLease.releasedAt != null and worktreeLease.leasePath released` |
 | I-SM-3 | Resume path is deterministic                   | `RunState=resuming -> snapshot.complete=true`                                               |
+| I-SM-4 | Stage execution order is deterministic         | `ExecutionRun.stageRuns.order follows PipelineRouteTemplate.selectedStages`                 |
 
 ---
 
@@ -120,6 +122,15 @@
 
 `elapsedMs > profileBudgetMs -> suspectedStuck=true`
 
+`suspectedStuck=true and retryCount < maxRetries -> nextState=waiting-retry`
+
+`suspectedStuck=true and retryCount = maxRetries -> terminalOutcome=blocked`
+
+### Boundary Notes
+
+- Watchdog budgets are selected from `executionProfile` provided to [ExecutePipelineRoute](operations.md#executepipelineroute).
+- Any watchdog-driven terminal transition must still satisfy [TerminalOutcomeRequired](#terminaloutcomerequired) for the same `stageRunId`.
+
 ---
 
 ## PlannerGateBeforeFeatureMutation
@@ -133,6 +144,99 @@
 
 ---
 
+## StageSelectionContract
+
+**Type:** Rule
+**Applies To:** [AssemblePipelineRoute](operations.md#assemblepipelineroute)
+
+### Rule
+
+`selectionPolicy=stage-subset -> length(selectedStages)>=1 and distinct(selectedStages) and selectedStages subsetOf stageContracts.stage and preservesOrder(selectedStages, stageContracts.stage)`
+
+### Constraints
+
+| ID    | Constraint                                                | Formal                                                                                   |
+| ----- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| SSC-1 | Stage-subset selection must be non-empty and distinct     | `selectionPolicy=stage-subset -> length(selectedStages)>=1 and distinct(selectedStages)` |
+| SSC-2 | Stage-subset selection must preserve template stage order | `selectionPolicy=stage-subset -> preservesOrder(selectedStages, stageContracts.stage)`   |
+| SSC-3 | Full-lifecycle selection expands to full template order   | `selectionPolicy=full-lifecycle -> selectedStages = stageContracts.stage`                |
+
+---
+
+## PromptBuildStepContract
+
+**Type:** Rule
+**Applies To:** [AssemblePipelineRoute](operations.md#assemblepipelineroute) prompt builder step
+
+### Rule
+
+`selectionResolved -> buildPromptArtifacts(selectedStages, stageContracts, stageInputRefsByStage, requiredArtifactRefsByStage, stageRunIdsByStage, handoffArtifactRefsByStagePair, decisionSnapshotRef, createdAtByStage)`
+
+### Constraints
+
+| ID     | Constraint                                                                   | Formal                                                                                                                                                                                |
+| ------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P-PB-1 | Prompt build requires selected-stage inputs for every selected stage         | `forall s in selectedStages, length(stageInputRefsByStage[s])>=1`                                                                                                                     |
+| P-PB-2 | Prompt build requires required-artifact refs for every selected stage        | `forall s in selectedStages, length(requiredArtifactRefsByStage[s])>=1`                                                                                                               |
+| P-PB-3 | Prompt build requires one stageRunId per selected stage                      | `forall s in selectedStages, stageRunIdsByStage[s] != null`                                                                                                                           |
+| P-PB-4 | Prompt artifact output order must equal selected stage order                 | `promptArtifacts.order = selectedStages`                                                                                                                                              |
+| P-PB-5 | Prompt artifact set cardinality must equal selected stage count              | `length(promptArtifacts)=length(selectedStages)`                                                                                                                                      |
+| P-PB-6 | Prompt build requires handoff refs for every consecutive selected-stage pair | `forall i in [0..length(selectedStages)-2], length(handoffArtifactRefsByStagePair[selectedStages[i] + "->" + selectedStages[i+1]])>=1`                                                |
+| P-PB-7 | Consecutive handoff refs must satisfy next-stage required artifact refs      | `forall i in [0..length(selectedStages)-2], requiredArtifactRefsByStage[selectedStages[i+1]] subsetOf handoffArtifactRefsByStagePair[selectedStages[i] + "->" + selectedStages[i+1]]` |
+
+### Failure Boundaries
+
+| Condition                                                                          | Result                          |
+| ---------------------------------------------------------------------------------- | ------------------------------- |
+| Missing prompt build input bundle                                                  | `PROMPT_BUILD_INPUTS_REQUIRED`  |
+| Selected stage has empty/missing `stageInputRefsByStage`                           | `PROMPT_STAGE_INPUT_MISSING`    |
+| Selected stage has missing `stageRunIdsByStage`                                    | `PROMPT_STAGE_RUN_ID_MISSING`   |
+| Consecutive selected-stage pair has empty/missing `handoffArtifactRefsByStagePair` | `PROMPT_STAGE_HANDOFF_MISSING`  |
+| Consecutive handoff refs do not satisfy next-stage required artifact refs          | `PROMPT_STAGE_HANDOFF_MISMATCH` |
+| Output order/count mismatch against selected stage set                             | `PROMPT_ARTIFACT_SET_INVALID`   |
+
+---
+
+## StageRunTopology
+
+**Type:** Rule
+**Applies To:** [ExecutionRun](domain.md#executionrun), [StageExecution](domain.md#stageexecution)
+
+### Rule
+
+`parentRun contains ordered stageRuns; stageRun.isolationMode=isolated-child-run -> exists childRun with parentRunId=parentRun.runId`
+
+### Constraints
+
+| ID     | Constraint                                                              | Formal                                                                                                                                                              |
+| ------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T-RT-1 | Parent run tracks one ordered stage record per selected stage           | `forall s in selectedStages, exists unique sr in parentRun.stageRuns where sr.stage=s`                                                                              |
+| T-RT-2 | Stage identity is preserved from ordered prompt artifacts               | `sr.order=i -> sr.stageRunId = stagePromptArtifacts[i].stageRunId`                                                                                                  |
+| T-RT-3 | Isolated child runs reconcile terminal outcomes to parent stage records | `sr.isolationMode=isolated-child-run and childRun.terminalOutcome=t -> sr.terminalOutcome=t`                                                                        |
+| T-RT-4 | Consecutive stage records preserve handoff continuity                   | `forall i in [0..n-2], stageRuns[i].order + 1 = stageRuns[i+1].order and handoffArtifactRefsByStagePair[stageRuns[i].stage + "->" + stageRuns[i+1].stage] != empty` |
+
+---
+
+## StageHandoffMismatchClassification
+
+**Type:** Rule
+**Applies To:** [ExecutePipelineRoute](operations.md#executepipelineroute) consecutive stage transitions
+
+### Rule
+
+`requiredArtifactRefsByStage[nextStage] notSubsetOf handoffArtifactRefsByStagePair[currentStage->nextStage] -> stageTerminalOutcome=blocked and parentTerminalOutcome=blocked and reason=STAGE_HANDOFF_INPUT_UNRESOLVED`
+
+`handoff topology mismatch (order or stageRunId continuity) -> stageTerminalOutcome=failed and parentTerminalOutcome=failed and reason=STAGE_HANDOFF_TOPOLOGY_MISMATCH`
+
+### Remediation Hooks
+
+| Condition                         | Required remediation                                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `STAGE_HANDOFF_INPUT_UNRESOLVED`  | Regenerate previous-stage artifacts, rebuild prompt artifacts, and retry within [RetryPolicy](#retrypolicy) bounds |
+| `STAGE_HANDOFF_TOPOLOGY_MISMATCH` | Stop run, repair ordered stage topology at route assembly, and restart run                                         |
+
+---
+
 ## TerminalOutcomeRequired
 
 **Type:** Invariant
@@ -140,7 +244,11 @@
 
 ### Rule
 
-`started(stageRunId) -> exists terminal(stageRunId) where outcome in {completed,blocked,failed,canceled}`
+`forall sr in ExecutionRun.stageRuns, started(sr.stageRunId) -> exists terminal(sr.stageRunId) where outcome in {completed,blocked,failed,canceled}`
+
+`ExecutionRun.currentState in {completed,blocked,failed,canceled} -> ExecutionRun.terminalOutcome in {completed,blocked,failed,canceled}`
+
+`ExecutionRun.terminalOutcome = reduce(ExecutionRun.stageRuns.terminalOutcome, precedence failed > blocked > canceled > completed)`
 
 ---
 
@@ -151,7 +259,54 @@
 
 ### Rule
 
-`TelemetryEnvelope.startedTelemetryRef != null and TelemetryEnvelope.terminalTelemetryRef != null`
+`forall envelope in ExecutionRun.telemetryEnvelopes, envelope.startedTelemetryRef != null and envelope.terminalTelemetryRef != null`
+
+---
+
+## PromptArtifactSchemaRequired
+
+**Type:** Rule
+**Applies To:** Prompt artifact payload used by runner entry
+
+### Rule
+
+`required(promptVersion, pipelineId, templateId, stageRunId, stage, stageInputRefs, requiredArtifactRefs, decisionSnapshotRef, createdAt)`
+
+### Constraints
+
+| ID     | Constraint                         | Formal                                      |
+| ------ | ---------------------------------- | ------------------------------------------- |
+| P-PA-1 | Stage linkage is mandatory         | `stageRunId != null and stage in StageType` |
+| P-PA-2 | Stage inputs cannot be empty       | `length(stageInputRefs) >= 1`               |
+| P-PA-3 | Required artifacts cannot be empty | `length(requiredArtifactRefs) >= 1`         |
+
+---
+
+## PromptArtifactDeterminism
+
+**Type:** Rule
+**Applies To:** Prompt artifact serialization and validation
+
+### Rule
+
+`same(stageContract, stageInputRefs, requiredArtifactRefs, stageRunId, decisionSnapshotRef, createdAt) -> same(normalizedPromptArtifact)`
+
+### Normalization Requirements
+
+| ID     | Requirement                        | Formal                                                               |
+| ------ | ---------------------------------- | -------------------------------------------------------------------- |
+| P-PD-1 | Canonical key order                | `serializeKeys(promptArtifact) = lexicalOrder(keys(promptArtifact))` |
+| P-PD-2 | Canonical input reference order    | `stageInputRefs = sortLex(stageInputRefs)`                           |
+| P-PD-3 | Canonical required artifact order  | `requiredArtifactRefs = sortLex(requiredArtifactRefs)`               |
+| P-PD-4 | Canonical timestamp representation | `createdAt in ISO8601-UTC`                                           |
+
+### Multi-Stage Reproducibility Check
+
+| ID     | Requirement                                                                                           | Formal                                                                                                                                                                                                |
+| ------ | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P-PD-5 | Repeated prompt build with same selected stage subset produces identical normalized artifact-set hash | `same(selectionPolicy, selectedStages, stageContracts, stageInputRefsByStage, requiredArtifactRefsByStage, stageRunIdsByStage, decisionSnapshotRef, createdAtByStage) -> same(promptArtifactSetHash)` |
+| P-PD-6 | Build iteration order for hash computation must follow selected stage order                           | `hashInputOrder = selectedStages`                                                                                                                                                                     |
+| P-PD-7 | Hash mismatch for same inputs is deterministic failure                                                | `sameInputs and hashMismatch -> PROMPT_ARTIFACT_NON_DETERMINISTIC`                                                                                                                                    |
 
 ---
 

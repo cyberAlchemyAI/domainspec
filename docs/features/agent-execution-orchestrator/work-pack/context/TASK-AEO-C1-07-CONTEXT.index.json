@@ -1,0 +1,931 @@
+{
+  "taskId": "TASK-AEO-C1-07",
+  "feature": "agent-execution-orchestrator",
+  "sourceTask": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-07.md",
+  "commandContract": "domainspec-context-builder agent-execution-orchestrator --task TASK-AEO-C1-07 --mode standard --strict --emit both",
+  "stageRunId": "1cb963ff-6fa0-4d95-a5de-d4bd7af607e9",
+  "generatedAt": "2026-05-10T00:00:00Z",
+  "mode": "standard",
+  "strict": true,
+  "emit": ["markdown", "index-json"],
+  "execution": {
+    "outcome": "completed",
+    "suspectedStuck": false,
+    "retryCount": 0
+  },
+  "frameworkConstraints": {
+    "source": "domainspec/CHANGELOG.md",
+    "applied": ["2.0.10", "2.0.9", "2.0.8", "2.0.7", "2.0.4"]
+  },
+  "scoreFormula": "(1 - signal) * 0.45 + cost * 0.30 + ambiguity * 0.25",
+  "budgets": {
+    "profile": "standard",
+    "limits": {
+      "files": 14,
+      "excerptLines": 280,
+      "noiseRatioMax": 0.15
+    },
+    "actual": {
+      "files": 14,
+      "excerptLines": 276,
+      "noiseRatio": 0.14
+    },
+    "pass": true
+  },
+  "obligations": [
+    {
+      "id": "OBL-C1-07-01",
+      "description": "Execute the Capability 1 gate scenario defined in CAP-AEO-C1 with one selected stage-subset flow."
+    },
+    {
+      "id": "OBL-C1-07-02",
+      "description": "Produce one concise capability verdict (pass, flag, or block)."
+    },
+    {
+      "id": "OBL-C1-07-03",
+      "description": "Include route selection evidence (selectionPolicy, selectedStages)."
+    },
+    {
+      "id": "OBL-C1-07-04",
+      "description": "Include ordered stage execution evidence (stageRunId, order, stage execution records)."
+    },
+    {
+      "id": "OBL-C1-07-05",
+      "description": "Include parent run and stage execution references in the gate evidence bundle."
+    },
+    {
+      "id": "OBL-C1-07-06",
+      "description": "Include full standard envelope references for stage and parent outcomes (telemetry pair plus decision and transcript refs)."
+    },
+    {
+      "id": "OBL-C1-07-07",
+      "description": "Bind DomainSpec coverage IDs TelemetryEnvelope and RunArtifactMapping."
+    },
+    {
+      "id": "OBL-C1-07-08",
+      "description": "Bind DomainSpec coverage ID StageExecution."
+    },
+    {
+      "id": "OBL-C1-07-09",
+      "description": "Bind DomainSpec coverage ID StageSelectionContract."
+    },
+    {
+      "id": "OBL-C1-07-10",
+      "description": "Bind TEST-SPEC coverage summary rows relevant to gate run evidence and lifecycle contracts."
+    },
+    {
+      "id": "OBL-C1-07-11",
+      "description": "Bind STORIES story coverage matrix rows for lifecycle plus evidence and signal capabilities."
+    },
+    {
+      "id": "OBL-C1-07-12",
+      "description": "Preserve prerequisite continuity from TASK-AEO-C1-06 recovery and topology semantics."
+    },
+    {
+      "id": "OBL-C1-07-13",
+      "description": "Append at least three non-duplicate lesson entries to capability-sequence-lessons."
+    },
+    {
+      "id": "OBL-C1-07-14",
+      "description": "Draft reusable Capability 2+ task template constraints from lesson outputs."
+    },
+    {
+      "id": "OBL-C1-07-15",
+      "description": "Keep definitions-phase scope explicit as docs-only/non-mutation."
+    },
+    {
+      "id": "OBL-C1-07-16",
+      "description": "Enforce strict schema gates: selected[].selectors, selected[].obligationRefs, and interestedData."
+    },
+    {
+      "id": "OBL-C1-07-17",
+      "description": "Enforce standard-mode context budget and noise ratio <= 0.15."
+    },
+    {
+      "id": "OBL-C1-07-18",
+      "description": "Apply latest changelog constraints (2.0.10, 2.0.9, 2.0.8, 2.0.7, 2.0.4)."
+    }
+  ],
+  "selected": [
+    {
+      "id": "S01",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-07.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-07 - Capability Gate Run and Lessons Export",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Wave Assignment",
+          "lineStart": 7
+        },
+        {
+          "type": "heading",
+          "value": "## Prerequisite",
+          "lineStart": 15
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 19
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 45
+        },
+        {
+          "type": "heading",
+          "value": "## Verification Evidence",
+          "lineStart": 52
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-07-01",
+        "OBL-C1-07-02",
+        "OBL-C1-07-03",
+        "OBL-C1-07-04",
+        "OBL-C1-07-05",
+        "OBL-C1-07-06",
+        "OBL-C1-07-12",
+        "OBL-C1-07-13",
+        "OBL-C1-07-14",
+        "OBL-C1-07-15"
+      ],
+      "score": {
+        "signal": 0.99,
+        "cost": 0.07,
+        "ambiguity": 0.03,
+        "value": 0.033
+      },
+      "excerptLineCount": 22,
+      "inclusionRationale": "Primary C1-07 obligation source and explicit coverage/directive seed set."
+    },
+    {
+      "id": "S02",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# CAP-AEO-C1 - Pipeline Execution Capability Pilot",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Gate Demo (Definition of Done)",
+          "lineStart": 19
+        },
+        {
+          "type": "line",
+          "value": "selectedStages -> stage prompt builder -> parent run stage executions -> per-stage terminal outcomes -> telemetry pairs -> evidence envelopes",
+          "lineStart": 23
+        },
+        {
+          "type": "line",
+          "value": "route selection evidence (selectionPolicy, selectedStages)",
+          "lineStart": 27
+        },
+        {
+          "type": "line",
+          "value": "stage execution record references",
+          "lineStart": 29
+        },
+        {
+          "type": "heading",
+          "value": "## Feed-Forward Contract For Remaining Capabilities",
+          "lineStart": 59
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-07-01",
+        "OBL-C1-07-03",
+        "OBL-C1-07-04",
+        "OBL-C1-07-05",
+        "OBL-C1-07-14"
+      ],
+      "score": {
+        "signal": 0.96,
+        "cost": 0.1,
+        "ambiguity": 0.05,
+        "value": 0.061
+      },
+      "excerptLineCount": 18,
+      "inclusionRationale": "Canonical capability-gate bundle definition and Capability 2+ feed-forward contract source."
+    },
+    {
+      "id": "S03",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-06.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-06 - Failure Handling, Retry, and Supersession",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 36
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 47
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 55
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-12"],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.09,
+        "ambiguity": 0.06,
+        "value": 0.087
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Prerequisite continuity source for recovery and reconciliation semantics entering the gate run."
+    },
+    {
+      "id": "S04",
+      "path": "docs/features/agent-execution-orchestrator/observability.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## RunArtifactMapping",
+          "lineStart": 8
+        },
+        {
+          "type": "table-row",
+          "value": "delegation-tuning.jsonl started row -> TelemetryEnvelope.startedTelemetryRef",
+          "lineStart": 19
+        },
+        {
+          "type": "table-row",
+          "value": "delegation-tuning.jsonl terminal row -> TelemetryEnvelope.terminalTelemetryRef",
+          "lineStart": 20
+        },
+        {
+          "type": "table-row",
+          "value": "transcript excerpt reference -> TelemetryEnvelope.transcriptExcerptRef",
+          "lineStart": 25
+        },
+        {
+          "type": "table-row",
+          "value": "decision snapshot reference -> TelemetryEnvelope.decisionSnapshotRef",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## Standard Evidence Envelope Checklist",
+          "lineStart": 127
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-06", "OBL-C1-07-07"],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.14,
+        "ambiguity": 0.06,
+        "value": 0.071
+      },
+      "excerptLineCount": 30,
+      "inclusionRationale": "Coverage-id authority for RunArtifactMapping and standard envelope completeness requirements."
+    },
+    {
+      "id": "S05",
+      "path": "docs/features/agent-execution-orchestrator/domain.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "### ExecutionRun",
+          "lineStart": 47
+        },
+        {
+          "type": "table-row",
+          "value": "stageRuns",
+          "lineStart": 62
+        },
+        {
+          "type": "table-row",
+          "value": "telemetryEnvelopes",
+          "lineStart": 68
+        },
+        {
+          "type": "heading",
+          "value": "### StageExecution",
+          "lineStart": 90
+        },
+        {
+          "type": "table-row",
+          "value": "stageRunId",
+          "lineStart": 94
+        },
+        {
+          "type": "table-row",
+          "value": "order",
+          "lineStart": 96
+        },
+        {
+          "type": "heading",
+          "value": "### TelemetryEnvelope",
+          "lineStart": 153
+        },
+        {
+          "type": "table-row",
+          "value": "TelemetryEnvelope.stageRunId",
+          "lineStart": 157
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-04", "OBL-C1-07-05", "OBL-C1-07-08"],
+      "score": {
+        "signal": 0.95,
+        "cost": 0.13,
+        "ambiguity": 0.07,
+        "value": 0.079
+      },
+      "excerptLineCount": 20,
+      "inclusionRationale": "Formal stage execution identity/order model and stage-to-envelope correlation contract."
+    },
+    {
+      "id": "S06",
+      "path": "docs/features/agent-execution-orchestrator/rules.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## RunStateMachine",
+          "lineStart": 9
+        },
+        {
+          "type": "table-row",
+          "value": "I-SM-4 stage execution order is deterministic",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## StageSelectionContract",
+          "lineStart": 147
+        },
+        {
+          "type": "line",
+          "value": "selectionPolicy=stage-subset -> length(selectedStages)>=1 and distinct(selectedStages) and selectedStages subsetOf stageContracts.stage and preservesOrder(selectedStages, stageContracts.stage)",
+          "lineStart": 154
+        },
+        {
+          "type": "table-row",
+          "value": "SSC-1",
+          "lineStart": 160
+        },
+        {
+          "type": "table-row",
+          "value": "SSC-2",
+          "lineStart": 161
+        },
+        {
+          "type": "heading",
+          "value": "## TerminalOutcomeRequired",
+          "lineStart": 240
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-03", "OBL-C1-07-04", "OBL-C1-07-09"],
+      "score": {
+        "signal": 0.96,
+        "cost": 0.15,
+        "ambiguity": 0.06,
+        "value": 0.078
+      },
+      "excerptLineCount": 24,
+      "inclusionRationale": "Rule authority for selected-stage constraints, deterministic order, and terminalization invariants."
+    },
+    {
+      "id": "S07",
+      "path": "docs/features/agent-execution-orchestrator/operations.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## ExecutePipelineRoute",
+          "lineStart": 186
+        },
+        {
+          "type": "table-row",
+          "value": "stageExecutions",
+          "lineStart": 210
+        },
+        {
+          "type": "table-row",
+          "value": "terminalOutcomeByStageRunId",
+          "lineStart": 211
+        },
+        {
+          "type": "table-row",
+          "value": "parentRunState",
+          "lineStart": 212
+        },
+        {
+          "type": "table-row",
+          "value": "parentTerminalOutcome",
+          "lineStart": 213
+        },
+        {
+          "type": "table-row",
+          "value": "R8 stageExecution identity bound to ordered prompt artifacts",
+          "lineStart": 227
+        },
+        {
+          "type": "table-row",
+          "value": "C3 parent terminal outcome mapping",
+          "lineStart": 238
+        },
+        {
+          "type": "heading",
+          "value": "### Stage-Subset Chaining and Handoff Scenario (C1-05)",
+          "lineStart": 279
+        },
+        {
+          "type": "table-row",
+          "value": "Ordered stage execution records evidence reference",
+          "lineStart": 313
+        },
+        {
+          "type": "table-row",
+          "value": "Parent/run classification mapping evidence reference",
+          "lineStart": 315
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-07-04",
+        "OBL-C1-07-05",
+        "OBL-C1-07-06",
+        "OBL-C1-07-12"
+      ],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.22,
+        "ambiguity": 0.08,
+        "value": 0.1
+      },
+      "excerptLineCount": 38,
+      "inclusionRationale": "Operation-level gate evidence shape and deterministic parent/stage outcome mapping contract."
+    },
+    {
+      "id": "S08",
+      "path": "docs/features/agent-execution-orchestrator/workflows.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## FeatureLifecyclePipelineWorkflow",
+          "lineStart": 10
+        },
+        {
+          "type": "table-row",
+          "value": "Step 2 resolve selected stage set and order",
+          "lineStart": 41
+        },
+        {
+          "type": "table-row",
+          "value": "Step 3 build ordered prompt artifact set",
+          "lineStart": 42
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-1",
+          "lineStart": 104
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-2",
+          "lineStart": 105
+        },
+        {
+          "type": "table-row",
+          "value": "I-WF-3",
+          "lineStart": 106
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-04", "OBL-C1-07-06"],
+      "score": {
+        "signal": 0.92,
+        "cost": 0.13,
+        "ambiguity": 0.08,
+        "value": 0.095
+      },
+      "excerptLineCount": 20,
+      "inclusionRationale": "Workflow-level ordering and telemetry pair invariants used by gate-run evidence checks."
+    },
+    {
+      "id": "S09",
+      "path": "docs/features/agent-execution-orchestrator/TEST-SPEC.md",
+      "selectors": [
+        {
+          "type": "table-row",
+          "value": "AEO-TR-002",
+          "lineStart": 38
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-TR-006",
+          "lineStart": 42
+        },
+        {
+          "type": "table-row",
+          "value": "AEO-TR-012",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "### Operation Obligations",
+          "lineStart": 88
+        },
+        {
+          "type": "heading",
+          "value": "### Observability and Evidence Obligations",
+          "lineStart": 205
+        },
+        {
+          "type": "heading",
+          "value": "## Coverage Summary",
+          "lineStart": 232
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-10"],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.14,
+        "ambiguity": 0.09,
+        "value": 0.11
+      },
+      "excerptLineCount": 20,
+      "inclusionRationale": "Coverage summary and trace rows anchor gate-run lifecycle and evidence obligations for verification linkage."
+    },
+    {
+      "id": "S10",
+      "path": "docs/features/agent-execution-orchestrator/STORIES.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Sandcastle-Aligned Run Lifecycle",
+          "lineStart": 45
+        },
+        {
+          "type": "heading",
+          "value": "### US-002 Execute Route With Isolated Sandbox and Worktree",
+          "lineStart": 47
+        },
+        {
+          "type": "heading",
+          "value": "### US-003 Resume Interrupted Run Deterministically",
+          "lineStart": 79
+        },
+        {
+          "type": "heading",
+          "value": "## Governance Telemetry and Signal Emission",
+          "lineStart": 171
+        },
+        {
+          "type": "heading",
+          "value": "### US-006 Emit Standard Evidence Envelope Per Stage",
+          "lineStart": 173
+        },
+        {
+          "type": "heading",
+          "value": "### US-007 Emit Observer-Compatible Governance Signals",
+          "lineStart": 203
+        },
+        {
+          "type": "heading",
+          "value": "## Story Coverage Matrix",
+          "lineStart": 233
+        },
+        {
+          "type": "table-row",
+          "value": "Sandcastle-Aligned Run Lifecycle | US-002, US-003",
+          "lineStart": 238
+        },
+        {
+          "type": "table-row",
+          "value": "Governance Telemetry and Signal Emission | US-006, US-007",
+          "lineStart": 240
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-11"],
+      "score": {
+        "signal": 0.88,
+        "cost": 0.12,
+        "ambiguity": 0.1,
+        "value": 0.115
+      },
+      "excerptLineCount": 18,
+      "inclusionRationale": "Story matrix binds lifecycle and envelope capabilities to user-facing coverage obligations."
+    },
+    {
+      "id": "S11",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/context/capability-sequence-lessons.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability 1 Entries",
+          "lineStart": 18
+        },
+        {
+          "type": "table-row",
+          "value": "CAP-AEO-C1 | TASK-AEO-C1-05",
+          "lineStart": 27
+        },
+        {
+          "type": "table-row",
+          "value": "CAP-AEO-C1 | TASK-AEO-C1-06",
+          "lineStart": 28
+        },
+        {
+          "type": "heading",
+          "value": "## Promotion Rule",
+          "lineStart": 30
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-13", "OBL-C1-07-14"],
+      "score": {
+        "signal": 0.93,
+        "cost": 0.09,
+        "ambiguity": 0.07,
+        "value": 0.076
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Required lesson sink and promotion gate for Capability 2+ template constraints."
+    },
+    {
+      "id": "S12",
+      "path": "docs/features/agent-execution-orchestrator/WORK-PACK.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Governance Signal Obligations (Docs-Only/Non-Mutation)",
+          "lineStart": 174
+        },
+        {
+          "type": "line",
+          "value": "This stage is planning only; no implementation code mutations are included.",
+          "lineStart": 264
+        },
+        {
+          "type": "line",
+          "value": "This slice is docs-only/non-mutation: alignment/layering audits and tag-code remain deferred until mutation stages begin.",
+          "lineStart": 265
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-15"],
+      "score": {
+        "signal": 0.89,
+        "cost": 0.08,
+        "ambiguity": 0.07,
+        "value": 0.091
+      },
+      "excerptLineCount": 8,
+      "inclusionRationale": "Explicit docs-only/non-mutation scope authority for definitions-phase context."
+    },
+    {
+      "id": "S13",
+      "path": "docs/features/agent-execution-orchestrator/SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Concept Registry",
+          "lineStart": 123
+        },
+        {
+          "type": "table-row",
+          "value": "StageExecution concept row",
+          "lineStart": 131
+        },
+        {
+          "type": "table-row",
+          "value": "TelemetryEnvelope concept row",
+          "lineStart": 135
+        },
+        {
+          "type": "table-row",
+          "value": "ExecutePipelineRoute concept row",
+          "lineStart": 144
+        },
+        {
+          "type": "table-row",
+          "value": "FeatureLifecyclePipelineWorkflow concept row",
+          "lineStart": 159
+        },
+        {
+          "type": "table-row",
+          "value": "RunArtifactMapping concept row",
+          "lineStart": 161
+        },
+        {
+          "type": "heading",
+          "value": "## Feature Concept Graph",
+          "lineStart": 164
+        },
+        {
+          "type": "table-row",
+          "value": "FeatureLifecyclePipelineWorkflow | orchestrates | ExecutePipelineRoute",
+          "lineStart": 168
+        },
+        {
+          "type": "table-row",
+          "value": "FeatureLifecyclePipelineWorkflow | orchestrates | EmitGovernanceSignals",
+          "lineStart": 169
+        },
+        {
+          "type": "table-row",
+          "value": "RunStateMachine | enforces | ExecutePipelineRoute",
+          "lineStart": 172
+        },
+        {
+          "type": "table-row",
+          "value": "RunArtifactMapping | maps | TelemetryEnvelope",
+          "lineStart": 178
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-07-07",
+        "OBL-C1-07-08",
+        "OBL-C1-07-09",
+        "OBL-C1-07-16"
+      ],
+      "score": {
+        "signal": 0.91,
+        "cost": 0.13,
+        "ambiguity": 0.09,
+        "value": 0.102
+      },
+      "excerptLineCount": 24,
+      "inclusionRationale": "Concept IDs and graph edges used for deterministic interested-data subset extraction."
+    },
+    {
+      "id": "S14",
+      "path": "domainspec/CHANGELOG.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## [2.0.10]",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.9]",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.8]",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.7]",
+          "lineStart": 61
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.4]",
+          "lineStart": 85
+        }
+      ],
+      "obligationRefs": ["OBL-C1-07-16", "OBL-C1-07-17", "OBL-C1-07-18"],
+      "score": {
+        "signal": 0.88,
+        "cost": 0.09,
+        "ambiguity": 0.08,
+        "value": 0.101
+      },
+      "excerptLineCount": 6,
+      "inclusionRationale": "Framework constraints source for strict gates, budget/noise controls, and telemetry terminalization requirements."
+    }
+  ],
+  "architectureRefsResolved": {
+    "required": false,
+    "reason": "TASK-AEO-C1-07 coverage table and directives do not declare architecture retrieval-map obligations.",
+    "selected": [],
+    "indexArtifacts": {
+      "attempted": [
+        "docs/index/feature-map.md",
+        "docs/index/features-index.json",
+        "docs/index/tag-index.json"
+      ],
+      "resolved": []
+    }
+  },
+  "interestedData": {
+    "relationshipEdgeSubset": [
+      {
+        "from": "agent-execution-orchestrator.FeatureLifecyclePipelineWorkflow",
+        "edge": "orchestrates",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "SPEC.md#feature-concept-graph line 168"
+      },
+      {
+        "from": "agent-execution-orchestrator.FeatureLifecyclePipelineWorkflow",
+        "edge": "orchestrates",
+        "to": "agent-execution-orchestrator.EmitGovernanceSignals",
+        "evidence": "SPEC.md#feature-concept-graph line 169"
+      },
+      {
+        "from": "agent-execution-orchestrator.RunStateMachine",
+        "edge": "enforces",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "SPEC.md#feature-concept-graph line 172"
+      },
+      {
+        "from": "agent-execution-orchestrator.RunArtifactMapping",
+        "edge": "maps",
+        "to": "agent-execution-orchestrator.TelemetryEnvelope",
+        "evidence": "SPEC.md#feature-concept-graph line 178"
+      }
+    ],
+    "gateEvidenceSubset": {
+      "routeSelection": ["selectionPolicy", "selectedStages"],
+      "stageOrdering": [
+        "stageExecutions[*].stageRunId",
+        "stageExecutions[*].order"
+      ],
+      "parentMapping": [
+        "terminalOutcomeByStageRunId",
+        "parentRunState",
+        "parentTerminalOutcome"
+      ],
+      "standardEnvelope": [
+        "startedTelemetryRef",
+        "terminalTelemetryRef",
+        "transcriptExcerptRef",
+        "decisionSnapshotRef"
+      ],
+      "verdict": ["pass", "flag", "block"]
+    },
+    "lessonsFeedForwardSubset": {
+      "minimumNonDuplicateLessons": 3,
+      "requiredFields": [
+        "Capability",
+        "Task",
+        "Type",
+        "Lesson",
+        "Evidence",
+        "Reuse Rule"
+      ],
+      "promotionRule": "Before Capability 2 task creation, at least three non-duplicate C1 lessons with executable evidence must exist."
+    }
+  },
+  "excluded": [
+    {
+      "path": "docs/features/agent-execution-orchestrator/interfaces.md",
+      "reason": "No direct C1-07 coverage ID or directive requires interface-level expansion in this definitions-phase gate task."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/work-pack/waves/W4.md",
+      "reason": "Wave tracker contributes schedule/progress metadata but no unique gate-contract clauses beyond task/capability sources."
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "No C1-07 obligation requires architecture-level retrieval expansion."
+    },
+    {
+      "path": "architecture/pattern-library/",
+      "reason": "No C1-07 obligation requires pattern-library expansion."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Optional index artifact absent and not required because explicit task-linked sources fully covered obligations."
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Optional index artifact absent and not required because explicit task-linked sources fully covered obligations."
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Optional index artifact absent and not required because explicit task-linked sources fully covered obligations."
+    }
+  ],
+  "blockers": []
+}

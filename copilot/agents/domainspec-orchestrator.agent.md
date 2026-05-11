@@ -155,7 +155,10 @@ Read first:
 - Treat terminal execution as non-interactive by default.
 - For long-running or uncertain commands, use bounded tracking (timeout or background terminal id with follow-up checks).
 - Run delegated commands with deterministic shell safety (`set -euo pipefail`) and non-interactive flags whenever supported by the command.
-- For uncertain command shapes (searches, wide globs, scripts, watch-like commands), run `./tools/terminal_guard.sh nudge -- <command...>` before execution and prefer `./tools/terminal_guard.sh run --timeout <sec> -- <command...>` for guarded execution.
+- Route terminal commands through guard by default:
+  - one-shot command: `./tools/guard <command...>` (auto nudge + guarded run + retry)
+  - interactive session: `./tools/guard` or `./tools/guard-shell` (all commands guarded in-session)
+  - if using raw guard directly: `./tools/terminal_guard.sh auto --timeout <sec> --retry-timeout <sec> -- <command...>`
 - For `rg`/search commands, always scope to explicit include paths and use timeout guards (for example `timeout 20s rg ...`).
 - Do not run unscoped repository-root `rg` scans in delegated stages.
 - On two consecutive `rg` timeouts in the same stage, mark `suspected-stuck` and retry once with narrowed scope or non-`rg` retrieval.

@@ -2,7 +2,7 @@
   "taskId": "TASK-AEO-WP-01",
   "feature": "agent-execution-orchestrator",
   "sourceTask": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-WP-01.md",
-  "generatedAt": "2026-05-08T05:02:46Z",
+  "generatedAt": "2026-05-11T18:25:41Z",
   "mode": "standard",
   "strict": true,
   "emit": ["markdown", "index-json"],
@@ -88,27 +88,27 @@
         {
           "type": "heading",
           "value": "## Capability Contract Subset",
-          "lineStart": 15
+          "lineStart": 18
         },
         {
           "type": "heading",
           "value": "## DomainSpec Coverage",
-          "lineStart": 23
+          "lineStart": 26
         },
         {
           "type": "heading",
           "value": "## Architecture References",
-          "lineStart": 33
+          "lineStart": 36
         },
         {
           "type": "heading",
           "value": "## Implementation Directives",
-          "lineStart": 41
+          "lineStart": 44
         },
         {
           "type": "heading",
           "value": "## Decision Lock",
-          "lineStart": 64
+          "lineStart": 78
         }
       ],
       "obligationRefs": [
@@ -143,17 +143,17 @@
         {
           "type": "heading",
           "value": "## Candidate Bounded Contexts",
-          "lineStart": 46
+          "lineStart": 47
         },
         {
           "type": "heading",
           "value": "## Constraints",
-          "lineStart": 65
+          "lineStart": 66
         },
         {
           "type": "heading",
           "value": "## Success Signals",
-          "lineStart": 74
+          "lineStart": 75
         }
       ],
       "obligationRefs": ["OBL-AEO-03", "OBL-AEO-04"],
@@ -308,12 +308,12 @@
         {
           "type": "heading",
           "value": "## Feature Concept Graph",
-          "lineStart": 144
+          "lineStart": 164
         },
         {
           "type": "heading",
           "value": "## Produces For",
-          "lineStart": 179
+          "lineStart": 199
         }
       ],
       "obligationRefs": [
@@ -343,33 +343,33 @@
         },
         {
           "type": "line-match",
-          "value": "Step 3: Execute discovery stage",
+          "value": "Step 3: Build ordered prompt artifact set",
           "lineStart": 23
         },
         {
           "type": "line-match",
-          "value": "Step 4: Execute spec stage",
+          "value": "Step 4: Allocate parent run leases",
           "lineStart": 24
         },
         {
           "type": "line-match",
-          "value": "Step 6: Execute tests stage",
-          "lineStart": 26
-        },
-        {
-          "type": "line-match",
-          "value": "Step 7: Execute implementation stage",
+          "value": "Step 6a: Execute stage in parent run",
           "lineStart": 27
         },
         {
           "type": "line-match",
-          "value": "Step 9: Execute audits stage",
+          "value": "Step 7: Append stage telemetry and evidence",
           "lineStart": 29
         },
         {
           "type": "line-match",
-          "value": "Step 10: Execute verify stage",
-          "lineStart": 30
+          "value": "Step 8: Finalize parent run and emit governance signals",
+          "lineStart": 33
+        },
+        {
+          "type": "line-match",
+          "value": "selectedStages | `[implementation]`",
+          "lineStart": 58
         }
       ],
       "obligationRefs": ["OBL-AEO-09"],
@@ -380,7 +380,7 @@
         "value": 0.097
       },
       "excerptLineCount": 16,
-      "inclusionRationale": "Explicit lifecycle route anchors requested by task directive."
+      "inclusionRationale": "Execution-shape checkpoints and stage-subset anchors for deterministic route mapping."
     },
     {
       "id": "S09",
@@ -414,7 +414,7 @@
     },
     {
       "id": "S10",
-      "path": "../docs/signals/TERMINAL-GUARD.md",
+      "path": "../../docs/signals/TERMINAL-GUARD.md",
       "selectors": [
         {
           "type": "heading",
@@ -424,12 +424,12 @@
         {
           "type": "heading",
           "value": "## Commands",
-          "lineStart": 9
+          "lineStart": 10
         },
         {
           "type": "heading",
           "value": "## Nudge examples",
-          "lineStart": 38
+          "lineStart": 70
         }
       ],
       "obligationRefs": ["OBL-AEO-03"],
@@ -548,6 +548,7 @@
       "source": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
       "edgeLabels": [
         "orchestrates",
+        "contains",
         "enforces",
         "applies",
         "exposes",
@@ -564,6 +565,11 @@
           "from": "FeatureLifecyclePipelineWorkflow",
           "edge": "orchestrates",
           "to": "EmitGovernanceSignals"
+        },
+        {
+          "from": "PipelineRouteTemplate",
+          "edge": "contains",
+          "to": "StageContract"
         },
         {
           "from": "AssemblePipelineRoute",
@@ -603,31 +609,31 @@
       ]
     },
     "lifecycleStageSubset": {
-      "source": "docs/features/agent-execution-orchestrator/workflows.md#featurelifecyclepipelineworkflow",
+      "source": "docs/features/agent-execution-orchestrator/SPEC.md#capabilities + docs/features/agent-execution-orchestrator/operations.md#assemblepipelineroute",
       "stages": [
         {
           "stage": "discovery",
-          "selector": "Step 3"
+          "selector": "Capabilities table row: Explicit Pipeline Route Composition"
         },
         {
           "stage": "spec",
-          "selector": "Step 4"
+          "selector": "Capabilities table row: Explicit Pipeline Route Composition"
         },
         {
           "stage": "tests",
-          "selector": "Step 6"
+          "selector": "Capabilities table row: Explicit Pipeline Route Composition"
         },
         {
           "stage": "implementation",
-          "selector": "Step 7"
+          "selector": "Skill-Chain Profiles row: Context-first implementation"
         },
         {
           "stage": "audits",
-          "selector": "Step 9"
+          "selector": "Skill-Chain Profiles row: Context-first implementation"
         },
         {
           "stage": "verify",
-          "selector": "Step 10"
+          "selector": "Skill-Chain Profiles row: Context-first implementation"
         }
       ]
     }
@@ -655,7 +661,7 @@
     },
     {
       "path": "copilot/skills/domainspec-pipeline/SKILL.md",
-      "reason": "Route-command coverage already satisfied via domainspec-orchestrate and explicit lifecycle stage anchors.",
+      "reason": "Route-command coverage already satisfied via domainspec-orchestrate and explicit route anchors in SPEC and operations.",
       "score": {
         "signal": 0.76,
         "cost": 0.3,

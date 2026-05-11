@@ -14,11 +14,11 @@ deferred-until-mutation
 
 ## DomainSpec Coverage
 
-| Source                                                                                               | Coverage IDs                                                             |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [WORK-PACK.md](../../WORK-PACK.md)                                                                   | AEO-WP-TAG closure obligation, stage coverage closure                    |
-| [INITIAL-DEFINITIONS.md](../../../../interviews/agent-execution-orchestrator/INITIAL-DEFINITIONS.md) | ExecutionRun, RunStateMachine, ExecuteRun, ResumeRun, RunArtifactMapping |
-| [PROJECT-DECISIONS.md](../../../../interviews/agent-execution-orchestrator/PROJECT-DECISIONS.md)     | PD-005, D-AEO-002                                                        |
+| Source                                                                                               | Coverage IDs                                                                                |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [WORK-PACK.md](../../WORK-PACK.md)                                                                   | AEO-WP-TAG closure obligation, stage coverage closure                                       |
+| [INITIAL-DEFINITIONS.md](../../../../interviews/agent-execution-orchestrator/INITIAL-DEFINITIONS.md) | ExecutionRun, RunStateMachine, ExecutePipelineRoute, ResumeExecutionRun, RunArtifactMapping |
+| [PROJECT-DECISIONS.md](../../../../interviews/agent-execution-orchestrator/PROJECT-DECISIONS.md)     | PD-005, D-AEO-002                                                                           |
 
 ## Architecture References
 

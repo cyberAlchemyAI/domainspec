@@ -1,0 +1,263 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-11T19:21:19.720Z",
+    "mode": "strict",
+    "include": ["backend/src/modules/agent-execution-orchestrator"],
+    "root": "/home/vrondelli/projects/domainspec-core/implementation/domainspec"
+  },
+  "tags": [
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 98,
+      "symbol": "applyBranchStrategyPolicy",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.BranchStrategyPolicy",
+        "type": "Policy"
+      },
+      "edges": [
+        {
+          "edge": "applies",
+          "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+          "evidence": "Branch strategy selects and applies execute route behavior"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 112,
+      "symbol": "applyCancellationPolicy",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.CancellationPolicy",
+        "type": "Policy"
+      },
+      "edges": [
+        {
+          "edge": "applies",
+          "to": "agent-execution-orchestrator.CancelSupersededRun",
+          "evidence": "Latest-run-wins policy routes superseded runs into cancellation"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 126,
+      "symbol": "cancelSupersededRun",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.CancelSupersededRun",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 12,
+      "symbol": "createAgentExecutionOrchestratorModule",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.RouteArtifactInterface",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "agent-execution-orchestrator.AssemblePipelineRoute",
+          "evidence": "Module boundary exposes route assembly artifact builder"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 136,
+      "symbol": "createDelegationTelemetryLedgerInterface",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.DelegationTelemetryLedgerInterface",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "agent-execution-orchestrator.EmitGovernanceSignals",
+          "evidence": "Telemetry ledger boundary exposes governance signal emission"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 180,
+      "symbol": "emitGovernanceSignals",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.EmitGovernanceSignals",
+        "type": "Operation"
+      },
+      "edges": [
+        {
+          "edge": "produces",
+          "to": "agent-execution-orchestrator.GovernanceSignalEmission",
+          "evidence": "Telemetry envelope emission produces governance observer signals"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 82,
+      "symbol": "evaluateRunStateMachine",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.RunStateMachine",
+        "type": "State Machine"
+      },
+      "edges": [
+        {
+          "edge": "enforces",
+          "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+          "evidence": "Parent terminal outcome is derived from ordered stage execution results"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 35,
+      "symbol": "exposeSandboxProviderInterface",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.SandboxProviderInterface",
+        "type": "Interface"
+      },
+      "edges": [
+        {
+          "edge": "exposes",
+          "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+          "evidence": "Provider boundary exposes the execute route use case"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 154,
+      "symbol": "mapRunArtifactToTelemetryEnvelope",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.RunArtifactMapping",
+        "type": "Mapping"
+      },
+      "edges": [
+        {
+          "edge": "maps",
+          "to": "agent-execution-orchestrator.TelemetryEnvelope",
+          "evidence": "Route execution output is mapped into telemetry envelope fields"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts",
+      "line": 49,
+      "symbol": "runFeatureLifecyclePipelineWorkflow",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.FeatureLifecyclePipelineWorkflow",
+        "type": "Workflow"
+      },
+      "edges": [
+        {
+          "edge": "orchestrates",
+          "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+          "evidence": "Lifecycle workflow invokes route execution for selected stages"
+        },
+        {
+          "edge": "orchestrates",
+          "to": "agent-execution-orchestrator.EmitGovernanceSignals",
+          "evidence": "Lifecycle workflow emits governance signals after route execution"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/build-prompt-artifacts.ts",
+      "line": 14,
+      "symbol": "buildPromptArtifacts",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.AssemblePipelineRoute",
+        "type": "Operation"
+      },
+      "edges": [
+        {
+          "edge": "enforces",
+          "to": "agent-execution-orchestrator.StageContract",
+          "evidence": "Route assembly validates declared stage contracts before building artifacts"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/application/execute-pipeline-route.ts",
+      "line": 11,
+      "symbol": "makeExecutePipelineRouteUseCase",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "type": "Operation"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/domain/models.ts",
+      "line": 68,
+      "symbol": "BuildPromptArtifactsInput",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.PipelineRouteTemplate",
+        "type": "Entity"
+      },
+      "edges": [
+        {
+          "edge": "contains",
+          "to": "agent-execution-orchestrator.StageContract",
+          "evidence": "Route template carries ordered stage contract entries"
+        }
+      ]
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/domain/models.ts",
+      "line": 142,
+      "symbol": "GovernanceSignalEmission",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.GovernanceSignalEmission",
+        "type": "Event"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/domain/models.ts",
+      "line": 39,
+      "symbol": "StageContract",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.StageContract",
+        "type": "Value Object"
+      },
+      "edges": []
+    },
+    {
+      "file": "backend/src/modules/agent-execution-orchestrator/domain/models.ts",
+      "line": 129,
+      "symbol": "TelemetryEnvelope",
+      "language": "ts",
+      "concept": {
+        "id": "agent-execution-orchestrator.TelemetryEnvelope",
+        "type": "Value Object"
+      },
+      "edges": []
+    }
+  ],
+  "issues": [],
+  "stats": {
+    "scannedFiles": 8,
+    "taggedSymbols": 16,
+    "issues": 0
+  }
+}

@@ -1,0 +1,843 @@
+{
+  "taskId": "TASK-AEO-C1-06",
+  "feature": "agent-execution-orchestrator",
+  "sourceTask": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-06.md",
+  "commandContract": "domainspec-context-builder agent-execution-orchestrator --task TASK-AEO-C1-06 --mode standard --strict --emit both",
+  "stageRunId": "507c72c5-695f-4867-b907-0f261e3c5e3b",
+  "generatedAt": "2026-05-10T00:00:00Z",
+  "mode": "standard",
+  "strict": true,
+  "emit": ["markdown", "index-json"],
+  "execution": {
+    "outcome": "completed",
+    "suspectedStuck": false,
+    "retryCount": 0
+  },
+  "frameworkConstraints": {
+    "source": "domainspec/CHANGELOG.md",
+    "applied": ["2.0.10", "2.0.9", "2.0.8", "2.0.7", "2.0.4"]
+  },
+  "scoreFormula": "(1 - signal) * 0.45 + cost * 0.30 + ambiguity * 0.25",
+  "budgets": {
+    "profile": "standard",
+    "limits": {
+      "files": 14,
+      "excerptLines": 280,
+      "noiseRatioMax": 0.15
+    },
+    "actual": {
+      "files": 10,
+      "excerptLines": 218,
+      "noiseRatio": 0.12
+    },
+    "pass": true
+  },
+  "obligations": [
+    {
+      "id": "OBL-C1-06-01",
+      "description": "Define one forced-failure scenario with bounded retry behavior."
+    },
+    {
+      "id": "OBL-C1-06-02",
+      "description": "Define one supersession scenario proving latest-run-wins cancellation semantics."
+    },
+    {
+      "id": "OBL-C1-06-03",
+      "description": "Define terminal-outcome guarantees for recovery branches."
+    },
+    {
+      "id": "OBL-C1-06-04",
+      "description": "Define one isolated-stage failure scenario where child-run terminal outcome reconciles into parent stage record."
+    },
+    {
+      "id": "OBL-C1-06-05",
+      "description": "Bind RetryPolicy parameters and exhaustion behavior."
+    },
+    {
+      "id": "OBL-C1-06-06",
+      "description": "Bind CancellationPolicy decision rules and cancellation terminal telemetry requirement."
+    },
+    {
+      "id": "OBL-C1-06-07",
+      "description": "Bind LatestRunWinsRecoveryWorkflow steps and invariants."
+    },
+    {
+      "id": "OBL-C1-06-08",
+      "description": "Bind StageRunTopology child-run reconciliation constraints."
+    },
+    {
+      "id": "OBL-C1-06-09",
+      "description": "Bind StageIsolationMode and StageExecution childRunId linkage constraints."
+    },
+    {
+      "id": "OBL-C1-06-10",
+      "description": "Bind TerminalOutcomeRequired stage-level and parent-level terminalization semantics."
+    },
+    {
+      "id": "OBL-C1-06-11",
+      "description": "Bind ExecutePipelineRoute output mappings for stage and parent terminal outcomes."
+    },
+    {
+      "id": "OBL-C1-06-12",
+      "description": "Bind ResumeExecutionRun and CancelSupersededRun error boundaries for recovery/supersession branches."
+    },
+    {
+      "id": "OBL-C1-06-13",
+      "description": "Carry forward deterministic handoff/mismatch continuity from C1-05 prerequisite before adding recovery complexity."
+    },
+    {
+      "id": "OBL-C1-06-14",
+      "description": "Preserve lesson entry obligation and promotion continuity."
+    },
+    {
+      "id": "OBL-C1-06-15",
+      "description": "Enforce definitions-phase scope: docs-only/non-mutation and no code-mutation assumptions."
+    },
+    {
+      "id": "OBL-C1-06-16",
+      "description": "Enforce strict schema gates (selected[].selectors, selected[].obligationRefs, interestedData) and standard-mode budgets."
+    },
+    {
+      "id": "OBL-C1-06-17",
+      "description": "Apply current changelog constraints (2.0.10, 2.0.9, 2.0.8, 2.0.7, 2.0.4)."
+    }
+  ],
+  "selected": [
+    {
+      "id": "S01",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-06.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-06 - Failure Handling, Retry, and Supersession",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Prerequisite",
+          "lineStart": 15
+        },
+        {
+          "type": "heading",
+          "value": "## Capability Slice",
+          "lineStart": 19
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 28
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 39
+        },
+        {
+          "type": "heading",
+          "value": "## Completion Criteria",
+          "lineStart": 47
+        },
+        {
+          "type": "heading",
+          "value": "## Verification Evidence",
+          "lineStart": 53
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-06-01",
+        "OBL-C1-06-02",
+        "OBL-C1-06-03",
+        "OBL-C1-06-04",
+        "OBL-C1-06-05",
+        "OBL-C1-06-06",
+        "OBL-C1-06-07",
+        "OBL-C1-06-08",
+        "OBL-C1-06-09",
+        "OBL-C1-06-10",
+        "OBL-C1-06-11",
+        "OBL-C1-06-12",
+        "OBL-C1-06-13",
+        "OBL-C1-06-14",
+        "OBL-C1-06-15"
+      ],
+      "score": {
+        "signal": 0.99,
+        "cost": 0.07,
+        "ambiguity": 0.03,
+        "value": 0.033
+      },
+      "excerptLineCount": 22,
+      "inclusionRationale": "Primary task contract and explicit C1-06 obligation seed set."
+    },
+    {
+      "id": "S02",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-C1-05.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "# TASK-AEO-C1-05 - Stage Chaining and Handoff",
+          "lineStart": 1
+        },
+        {
+          "type": "heading",
+          "value": "## Goal",
+          "lineStart": 3
+        },
+        {
+          "type": "heading",
+          "value": "## Status",
+          "lineStart": 11
+        },
+        {
+          "type": "heading",
+          "value": "## DomainSpec Coverage",
+          "lineStart": 35
+        },
+        {
+          "type": "heading",
+          "value": "## Implementation Directives",
+          "lineStart": 45
+        },
+        {
+          "type": "heading",
+          "value": "## Evidence References",
+          "lineStart": 58
+        }
+      ],
+      "obligationRefs": ["OBL-C1-06-13"],
+      "score": {
+        "signal": 0.91,
+        "cost": 0.1,
+        "ambiguity": 0.07,
+        "value": 0.088
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Prerequisite continuity source for deterministic handoff/mismatch behavior before recovery expansion."
+    },
+    {
+      "id": "S03",
+      "path": "docs/features/agent-execution-orchestrator/rules.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## RunStateMachine",
+          "lineStart": 9
+        },
+        {
+          "type": "table-row",
+          "value": "running | superseded | canceled",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "## RetryPolicy",
+          "lineStart": 63
+        },
+        {
+          "type": "table-row",
+          "value": "P-R-3",
+          "lineStart": 82
+        },
+        {
+          "type": "heading",
+          "value": "## CancellationPolicy",
+          "lineStart": 86
+        },
+        {
+          "type": "table-row",
+          "value": "P-C-1",
+          "lineStart": 103
+        },
+        {
+          "type": "heading",
+          "value": "## StageRunTopology",
+          "lineStart": 200
+        },
+        {
+          "type": "table-row",
+          "value": "T-RT-3",
+          "lineStart": 215
+        },
+        {
+          "type": "heading",
+          "value": "## TerminalOutcomeRequired",
+          "lineStart": 240
+        },
+        {
+          "type": "line",
+          "value": "started(sr.stageRunId) implies terminal(sr.stageRunId)",
+          "lineStart": 247
+        },
+        {
+          "type": "line",
+          "value": "ExecutionRun.terminalOutcome reduce precedence",
+          "lineStart": 251
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-06-01",
+        "OBL-C1-06-02",
+        "OBL-C1-06-03",
+        "OBL-C1-06-05",
+        "OBL-C1-06-06",
+        "OBL-C1-06-08",
+        "OBL-C1-06-10",
+        "OBL-C1-06-13"
+      ],
+      "score": {
+        "signal": 0.98,
+        "cost": 0.19,
+        "ambiguity": 0.06,
+        "value": 0.081
+      },
+      "excerptLineCount": 34,
+      "inclusionRationale": "Canonical rule/policy source for bounded retry, latest-run-wins supersession, topology reconciliation, and terminal guarantees."
+    },
+    {
+      "id": "S04",
+      "path": "docs/features/agent-execution-orchestrator/workflows.md",
+      "selectors": [
+        {
+          "type": "table-row",
+          "value": "I-WF-5",
+          "lineStart": 108
+        },
+        {
+          "type": "heading",
+          "value": "## LatestRunWinsRecoveryWorkflow",
+          "lineStart": 114
+        },
+        {
+          "type": "line",
+          "value": "Triggers: suspected stuck, retry branch, superseded run, interrupted resume",
+          "lineStart": 117
+        },
+        {
+          "type": "line",
+          "value": "Compensation Strategy: deterministic cancellation + bounded retry",
+          "lineStart": 119
+        },
+        {
+          "type": "table-row",
+          "value": "Step 2 Cancel superseded run",
+          "lineStart": 146
+        },
+        {
+          "type": "table-row",
+          "value": "Step 3 Retry with narrowed scope",
+          "lineStart": 147
+        },
+        {
+          "type": "table-row",
+          "value": "Step 4 Resume interrupted run",
+          "lineStart": 148
+        },
+        {
+          "type": "table-row",
+          "value": "I-RW-1",
+          "lineStart": 155
+        },
+        {
+          "type": "table-row",
+          "value": "I-RW-2",
+          "lineStart": 156
+        },
+        {
+          "type": "table-row",
+          "value": "I-RW-3",
+          "lineStart": 157
+        },
+        {
+          "type": "table-row",
+          "value": "I-RW-4",
+          "lineStart": 158
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-06-01",
+        "OBL-C1-06-02",
+        "OBL-C1-06-03",
+        "OBL-C1-06-04",
+        "OBL-C1-06-07",
+        "OBL-C1-06-12"
+      ],
+      "score": {
+        "signal": 0.97,
+        "cost": 0.17,
+        "ambiguity": 0.07,
+        "value": 0.082
+      },
+      "excerptLineCount": 26,
+      "inclusionRationale": "Defines recovery branch sequence and invariants for supersession, retry narrowing, resume, and terminal telemetry completeness."
+    },
+    {
+      "id": "S05",
+      "path": "docs/features/agent-execution-orchestrator/domain.md",
+      "selectors": [
+        {
+          "type": "table-row",
+          "value": "StageContract.isolationMode",
+          "lineStart": 80
+        },
+        {
+          "type": "heading",
+          "value": "### StageExecution",
+          "lineStart": 90
+        },
+        {
+          "type": "table-row",
+          "value": "childRunId",
+          "lineStart": 98
+        },
+        {
+          "type": "heading",
+          "value": "### StageIsolationMode",
+          "lineStart": 186
+        },
+        {
+          "type": "table-row",
+          "value": "isolated-child-run",
+          "lineStart": 191
+        }
+      ],
+      "obligationRefs": ["OBL-C1-06-04", "OBL-C1-06-08", "OBL-C1-06-09"],
+      "score": {
+        "signal": 0.95,
+        "cost": 0.15,
+        "ambiguity": 0.07,
+        "value": 0.085
+      },
+      "excerptLineCount": 16,
+      "inclusionRationale": "Domain-level source for isolated child-run linkage and reconciliation preconditions."
+    },
+    {
+      "id": "S06",
+      "path": "docs/features/agent-execution-orchestrator/operations.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## ExecutePipelineRoute",
+          "lineStart": 186
+        },
+        {
+          "type": "table-row",
+          "value": "terminalOutcomeByStageRunId",
+          "lineStart": 211
+        },
+        {
+          "type": "table-row",
+          "value": "parentTerminalOutcome",
+          "lineStart": 213
+        },
+        {
+          "type": "table-row",
+          "value": "childRunIdsByStageRunId",
+          "lineStart": 214
+        },
+        {
+          "type": "heading",
+          "value": "### Rules",
+          "lineStart": 216
+        },
+        {
+          "type": "table-row",
+          "value": "R3",
+          "lineStart": 222
+        },
+        {
+          "type": "table-row",
+          "value": "R4",
+          "lineStart": 223
+        },
+        {
+          "type": "table-row",
+          "value": "R5",
+          "lineStart": 224
+        },
+        {
+          "type": "table-row",
+          "value": "R9",
+          "lineStart": 228
+        },
+        {
+          "type": "table-row",
+          "value": "R10",
+          "lineStart": 229
+        },
+        {
+          "type": "table-row",
+          "value": "C3 parent terminal outcome mapping",
+          "lineStart": 238
+        },
+        {
+          "type": "heading",
+          "value": "### Stage-Subset Chaining and Handoff Scenario (C1-05)",
+          "lineStart": 279
+        },
+        {
+          "type": "table-row",
+          "value": "RETRY_BUDGET_EXHAUSTED",
+          "lineStart": 336
+        },
+        {
+          "type": "table-row",
+          "value": "CHILD_RUN_RECONCILIATION_FAILED",
+          "lineStart": 338
+        },
+        {
+          "type": "heading",
+          "value": "## ResumeExecutionRun",
+          "lineStart": 344
+        },
+        {
+          "type": "table-row",
+          "value": "SNAPSHOT_INCOMPLETE",
+          "lineStart": 379
+        },
+        {
+          "type": "heading",
+          "value": "## CancelSupersededRun",
+          "lineStart": 384
+        },
+        {
+          "type": "table-row",
+          "value": "R2 superseded run terminal canceled",
+          "lineStart": 403
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-06-01",
+        "OBL-C1-06-02",
+        "OBL-C1-06-03",
+        "OBL-C1-06-04",
+        "OBL-C1-06-05",
+        "OBL-C1-06-06",
+        "OBL-C1-06-10",
+        "OBL-C1-06-11",
+        "OBL-C1-06-12",
+        "OBL-C1-06-13"
+      ],
+      "score": {
+        "signal": 0.98,
+        "cost": 0.23,
+        "ambiguity": 0.08,
+        "value": 0.098
+      },
+      "excerptLineCount": 52,
+      "inclusionRationale": "Operation-level authority for stage/parent terminal mapping, retry exhaustion behavior, child-run reconciliation, resume boundaries, and supersession cancellation."
+    },
+    {
+      "id": "S07",
+      "path": "docs/features/agent-execution-orchestrator/SPEC.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "### Policy-Governed Branch and Cancellation Control",
+          "lineStart": 89
+        },
+        {
+          "type": "table-row",
+          "value": "RetryPolicy policy row",
+          "lineStart": 96
+        },
+        {
+          "type": "table-row",
+          "value": "CancellationPolicy policy row",
+          "lineStart": 97
+        },
+        {
+          "type": "table-row",
+          "value": "CancelSupersededRun operation row",
+          "lineStart": 98
+        },
+        {
+          "type": "heading",
+          "value": "## Concept Registry",
+          "lineStart": 123
+        },
+        {
+          "type": "table-row",
+          "value": "StageIsolationMode concept row",
+          "lineStart": 137
+        },
+        {
+          "type": "table-row",
+          "value": "RetryPolicy concept row",
+          "lineStart": 150
+        },
+        {
+          "type": "table-row",
+          "value": "CancellationPolicy concept row",
+          "lineStart": 151
+        },
+        {
+          "type": "table-row",
+          "value": "LatestRunWinsRecoveryWorkflow concept row",
+          "lineStart": 160
+        },
+        {
+          "type": "heading",
+          "value": "## Feature Concept Graph",
+          "lineStart": 164
+        },
+        {
+          "type": "table-row",
+          "value": "FeatureLifecyclePipelineWorkflow | orchestrates | ExecutePipelineRoute",
+          "lineStart": 168
+        },
+        {
+          "type": "table-row",
+          "value": "RunStateMachine | enforces | ExecutePipelineRoute",
+          "lineStart": 172
+        },
+        {
+          "type": "table-row",
+          "value": "CancellationPolicy | applies | CancelSupersededRun",
+          "lineStart": 174
+        }
+      ],
+      "obligationRefs": [
+        "OBL-C1-06-02",
+        "OBL-C1-06-05",
+        "OBL-C1-06-06",
+        "OBL-C1-06-07",
+        "OBL-C1-06-09",
+        "OBL-C1-06-16"
+      ],
+      "score": {
+        "signal": 0.9,
+        "cost": 0.13,
+        "ambiguity": 0.11,
+        "value": 0.112
+      },
+      "excerptLineCount": 24,
+      "inclusionRationale": "Concept-id and relationship-edge authority used to derive strict interestedData subsets for C1-06."
+    },
+    {
+      "id": "S08",
+      "path": "docs/features/agent-execution-orchestrator/work-pack/context/capability-sequence-lessons.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Capability 1 Entries",
+          "lineStart": 18
+        },
+        {
+          "type": "table-row",
+          "value": "CAP-AEO-C1 | TASK-AEO-C1-05 | pattern",
+          "lineStart": 27
+        },
+        {
+          "type": "heading",
+          "value": "## Promotion Rule",
+          "lineStart": 29
+        }
+      ],
+      "obligationRefs": ["OBL-C1-06-13", "OBL-C1-06-14"],
+      "score": {
+        "signal": 0.83,
+        "cost": 0.08,
+        "ambiguity": 0.1,
+        "value": 0.126
+      },
+      "excerptLineCount": 8,
+      "inclusionRationale": "Required lesson sink and promotion continuity for capability sequencing."
+    },
+    {
+      "id": "S09",
+      "path": "docs/features/agent-execution-orchestrator/WORK-PACK.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## Governance Signal Obligations (Docs-Only/Non-Mutation)",
+          "lineStart": 174
+        },
+        {
+          "type": "heading",
+          "value": "## Notes",
+          "lineStart": 262
+        },
+        {
+          "type": "line",
+          "value": "planning only; no implementation code mutations",
+          "lineStart": 264
+        },
+        {
+          "type": "line",
+          "value": "docs-only/non-mutation slice",
+          "lineStart": 265
+        }
+      ],
+      "obligationRefs": ["OBL-C1-06-15"],
+      "score": {
+        "signal": 0.86,
+        "cost": 0.09,
+        "ambiguity": 0.08,
+        "value": 0.11
+      },
+      "excerptLineCount": 8,
+      "inclusionRationale": "Explicit non-mutation scope guard for definitions-phase execution."
+    },
+    {
+      "id": "S10",
+      "path": "domainspec/CHANGELOG.md",
+      "selectors": [
+        {
+          "type": "heading",
+          "value": "## [2.0.10]",
+          "lineStart": 26
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.9]",
+          "lineStart": 37
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.8]",
+          "lineStart": 48
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.7]",
+          "lineStart": 61
+        },
+        {
+          "type": "heading",
+          "value": "## [2.0.4]",
+          "lineStart": 85
+        }
+      ],
+      "obligationRefs": ["OBL-C1-06-16", "OBL-C1-06-17"],
+      "score": {
+        "signal": 0.88,
+        "cost": 0.09,
+        "ambiguity": 0.08,
+        "value": 0.101
+      },
+      "excerptLineCount": 14,
+      "inclusionRationale": "Framework constraints source for strict relevance/budget gates and terminalization policy."
+    }
+  ],
+  "architectureRefsResolved": {
+    "required": false,
+    "reason": "TASK-AEO-C1-06 coverage and directives do not declare architecture retrieval-map references.",
+    "selected": []
+  },
+  "interestedData": {
+    "relationshipEdgeSubset": [
+      {
+        "from": "agent-execution-orchestrator.FeatureLifecyclePipelineWorkflow",
+        "edge": "orchestrates",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 168
+      },
+      {
+        "from": "agent-execution-orchestrator.RunStateMachine",
+        "edge": "enforces",
+        "to": "agent-execution-orchestrator.ExecutePipelineRoute",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 172
+      },
+      {
+        "from": "agent-execution-orchestrator.CancellationPolicy",
+        "edge": "applies",
+        "to": "agent-execution-orchestrator.CancelSupersededRun",
+        "evidence": "docs/features/agent-execution-orchestrator/SPEC.md#feature-concept-graph",
+        "line": 174
+      }
+    ],
+    "recoverySupersessionIsolationSubset": {
+      "retry": [
+        "retryCount <= maxRetries",
+        "retryCount > 0 implies narrowedScope=true",
+        "retry exhaustion yields terminal blocked"
+      ],
+      "supersession": [
+        "latest-run-wins: newerRunExists implies olderRun.state=canceled",
+        "superseded run must emit terminal canceled telemetry"
+      ],
+      "recovery": [
+        "detect trigger -> cancel superseded or retry narrowed scope",
+        "resume requires complete snapshot",
+        "recovery path still emits telemetry pair"
+      ],
+      "isolationReconciliation": [
+        "isolationMode=isolated-child-run requires childRunId and parentRunId linkage",
+        "child terminal outcome reconciles to parent StageExecution terminalOutcome"
+      ],
+      "terminalization": [
+        "started(stageRunId) implies terminal(stageRunId)",
+        "parentTerminalOutcome reduces stage outcomes by precedence failed > blocked > canceled > completed"
+      ]
+    }
+  },
+  "coverageSummary": {
+    "OBL-C1-06-01": ["S01", "S03", "S04", "S06"],
+    "OBL-C1-06-02": ["S01", "S03", "S04", "S06", "S07"],
+    "OBL-C1-06-03": ["S01", "S03", "S04", "S06"],
+    "OBL-C1-06-04": ["S01", "S04", "S05", "S06"],
+    "OBL-C1-06-05": ["S01", "S03", "S06", "S07"],
+    "OBL-C1-06-06": ["S01", "S03", "S06", "S07"],
+    "OBL-C1-06-07": ["S01", "S04", "S07"],
+    "OBL-C1-06-08": ["S01", "S03", "S05"],
+    "OBL-C1-06-09": ["S01", "S05", "S07"],
+    "OBL-C1-06-10": ["S01", "S03", "S06"],
+    "OBL-C1-06-11": ["S01", "S06"],
+    "OBL-C1-06-12": ["S04", "S06"],
+    "OBL-C1-06-13": ["S02", "S03", "S06", "S08"],
+    "OBL-C1-06-14": ["S01", "S08"],
+    "OBL-C1-06-15": ["S01", "S09"],
+    "OBL-C1-06-16": ["S07", "S10"],
+    "OBL-C1-06-17": ["S10"]
+  },
+  "excluded": [
+    {
+      "path": "docs/features/agent-execution-orchestrator/interfaces.md",
+      "reason": "No direct C1-06 coverage ID or implementation directive requires interface-level expansion."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/observability.md",
+      "reason": "C1-06 is recovery/cancellation/isolation contract scope; observability mappings are downstream obligations."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/TEST-SPEC.md",
+      "reason": "C1-06 directives require scenario contract definition first; no explicit C1-06 test coverage ID is listed."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/work-pack/waves/W4.md",
+      "reason": "Wave tracker is schedule metadata; it does not add unique C1-06 contract semantics."
+    },
+    {
+      "path": "docs/features/agent-execution-orchestrator/work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md",
+      "reason": "Capability overview is derivative for C1-06; task and aspect docs already satisfy obligation coverage."
+    },
+    {
+      "path": "architecture/ARCHITECTURE.md",
+      "reason": "No explicit architecture retrieval-map obligation for C1-06; strict gate excludes non-bound sources."
+    },
+    {
+      "path": "architecture/pattern-library/",
+      "reason": "No bound C1-06 obligation requires pattern-library expansion."
+    },
+    {
+      "path": "docs/index/feature-map.md",
+      "reason": "Optional index artifact not required; explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/features-index.json",
+      "reason": "Optional index artifact not required; explicit task links fully covered obligations."
+    },
+    {
+      "path": "docs/index/tag-index.json",
+      "reason": "Optional index artifact not required; explicit task links fully covered obligations."
+    }
+  ],
+  "blockers": []
+}
