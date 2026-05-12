@@ -6,3 +6,4 @@ dist/
 .env
 .env.*
 governance/tags/code-tags.json
+apps/personal-assistant/
