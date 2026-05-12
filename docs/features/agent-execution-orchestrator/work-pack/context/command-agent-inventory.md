@@ -1,11 +1,10 @@
-# Command and Agent Inventory - TASK-AEO-WP-01
+# Command and Agent Inventory - Legacy WP-01 Baseline
 
 ## Scope and Authority
 
-- Task: `TASK-AEO-WP-01`
+- Legacy source: WP-01 planning inventory baseline (retired 2026-05-11)
 - Feature: `agent-execution-orchestrator`
-- Source context pack: [TASK-AEO-WP-01-CONTEXT.md](./TASK-AEO-WP-01-CONTEXT.md)
-- Source context index: [TASK-AEO-WP-01-CONTEXT.index.json](./TASK-AEO-WP-01-CONTEXT.index.json)
+- Source context pack/index: retired alongside legacy WP task-file cleanup
 - Framework constraints applied: `2.0.10`, `2.0.9`, `2.0.8`, `2.0.4` from [domainspec/CHANGELOG.md](../../../../../domainspec/CHANGELOG.md)
 
 ## Decision-Lock Preservation
@@ -170,7 +169,7 @@ docs/features/agent-execution-orchestrator/WORK-PACK.md:101:| D-AEO-004 Supersed
 Commands:
 
 ```bash
-bash tools/check_markdown_links.sh docs/features/agent-execution-orchestrator/work-pack/tasks/TASK-AEO-WP-01.md
+bash tools/check_markdown_links.sh docs/features/agent-execution-orchestrator/work-pack/context/route-artifact-prompt-pack.md
 bash tools/check_markdown_links.sh docs/features/agent-execution-orchestrator/work-pack/context/command-agent-inventory.md
 bash tools/check_markdown_links.sh docs/features/agent-execution-orchestrator/WORK-PACK.md
 ```

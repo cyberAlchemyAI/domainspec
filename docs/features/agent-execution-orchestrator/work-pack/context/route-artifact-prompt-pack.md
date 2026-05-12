@@ -1,8 +1,8 @@
-# Route Artifact Prompt Pack - TASK-AEO-WP-02
+# Route Artifact Prompt Pack - Legacy WP-02 Baseline
 
 ## Scope and Decision Lock
 
-- Task: `TASK-AEO-WP-02`
+- Legacy source: WP-02 route-artifact baseline (retired task file on 2026-05-11)
 - Feature: `agent-execution-orchestrator`
 - Primary objective: provide one concrete, prompt-ready route artifact for operator embedding in `CLAUDE.md` and copilot instruction contexts.
 
@@ -177,7 +177,6 @@ failureEnvelope:
 ## Source Links
 
 - [WORK-PACK.md](../../WORK-PACK.md)
-- [TASK-AEO-WP-02.md](../tasks/TASK-AEO-WP-02.md)
 - [SPEC.md](../../SPEC.md)
 - [operations.md](../../operations.md)
 - [workflows.md](../../workflows.md)
