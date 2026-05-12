@@ -20,7 +20,7 @@ The dispatch decision itself is governed by R1 (four triggers: synthesis / conte
 Output a chat proposal containing:
 
 - **Mode** (R19): one of `single` | `task-fan-out` | `robot-talks` | `sequential` | `mixed`.
-- **Per-agent table** (R14, R18): for each child agent — id, model, one-line difficulty justification, token budget (or "unbounded"), declared output shape.
+- **Per-agent table** (R14, R18): for each child agent — id, model, one-liVne difficulty justification, token budget (or "unbounded"), declared output shape.
 - **Sequencing**: linear chain, parallel set, or DAG description.
 - **Recursion budget** (R13): defaults are depth 2 / breadth 5 / total cap 10. Override only with justification.
 - **Suggested working folder** (R15): propose `docs/features/<feature>/research/<topic>/` where `<feature>` is the active feature in the conversation and `<topic>` is the dispatch slug. The artifacts live alongside the feature's specs. **If no feature is active, halt the proposal and ask the user which feature this dispatch belongs to.** Never default to `.planning/` (deprecated) or `vault/` (reserved for codified discipline). If the work doesn't fit any existing feature, the user must name a new feature or decline the dispatch.
