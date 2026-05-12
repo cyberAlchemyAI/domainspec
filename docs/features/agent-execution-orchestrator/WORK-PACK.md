@@ -11,8 +11,8 @@ Planner-managed native execution manifest for Agent Execution Orchestrator plann
 | plannerGateStatus | pass                                                             | PASS after W0 baseline, stage matrix, directive matrix, and seeded task files                    |
 | complexity        | high                                                             | Cross-cutting docs, tests, backend orchestration design, telemetry contracts, and closure audits |
 | architectureWave  | W0                                                               | Mandatory first wave for architecture and governance baseline                                    |
-| activePlanRef     | docs/features/agent-execution-orchestrator/work-pack/waves/W0.md | Active baseline artifact                                                                         |
-| lastPlannedAt     | 2026-05-11T16:54:01Z                                             | ISO timestamp                                                                                    |
+| activePlanRef     | docs/features/agent-execution-orchestrator/work-pack/waves/W5.md | Active capability-seeding artifact                                                               |
+| lastPlannedAt     | 2026-05-11T20:08:34Z                                             | ISO timestamp                                                                                    |
 | readinessProfile  | pilot                                                            | Initial verification target profile                                                              |
 
 ## Planner Gate Evidence
@@ -21,7 +21,7 @@ Status: PASS
 
 - Manifest entrypoint established at this file.
 - `work-pack/waves/W0.md` created with dependency-direction and governance exit gates.
-- `work-pack/tasks/` seeded with mandatory planning and closure tasks.
+- `work-pack/tasks/` seeded with capability-sequence tasks (`TASK-AEO-C1-*`, `TASK-AEO-C2-*`).
 - `Pipeline Stage Coverage` includes all canonical stages with wave mapping and status.
 - `Architecture-Guided Task Directives` includes coverage IDs, architecture references, and verification evidence targets.
 
@@ -111,26 +111,30 @@ Feature implementation presence: partial brownfield behavior exists across orche
 
 ## Task Status Board (Current Slice)
 
-| Task ID                 | Goal                                                                                | Complexity | Assigned Waves | Gate Status | Status      |
-| ----------------------- | ----------------------------------------------------------------------------------- | ---------- | -------------- | ----------- | ----------- |
-| AEO-WP-01               | Capability mapping and inventory of current commands + agents                       | high       | W1             | completed   | completed   |
-| AEO-WP-02               | Composable pipeline assembly model and explicit route schema                        | high       | W1, W2         | completed   | completed   |
-| AEO-WP-03               | Observability and governance-signal instrumentation + telemetry mapping             | high       | W2             | completed   | completed   |
-| AEO-WP-SIGNAL-ALIGNMENT | Emit `alignment-gap` signal obligations for docs-only/non-mutation slices           | medium     | W2, W3         | ready       | not-started |
-| AEO-WP-SIGNAL-LAYERING  | Emit `governance-gap` layering signal obligations for docs-only/non-mutation slices | medium     | W2, W3         | ready       | not-started |
-| AEO-WP-VERIFY           | Execute feature verification verdict (`domainspec-verify-feature`)                  | high       | W3             | ready       | not-started |
-| AEO-C1-01               | Prompt contract baseline for pipeline execution capability                          | medium     | W4             | completed   | completed   |
-| AEO-C1-02               | Deterministic prompt builder for selected stage sets                                | medium     | W4             | completed   | completed   |
-| AEO-C1-03               | Parent-run plus stage-execution runner contract                                     | high       | W4             | completed   | completed   |
-| AEO-C1-04               | Single selected-stage execution in parent run                                       | high       | W4             | completed   | completed   |
-| AEO-C1-05               | Ordered stage-subset chaining and handoff contract                                  | high       | W4             | completed   | completed   |
-| AEO-C1-06               | Failure/retry/supersession with isolated-stage reconciliation                       | high       | W4             | completed   | completed   |
-| AEO-C1-07               | Capability gate verdict and lessons export for Capability 2+ planning               | high       | W4             | completed   | completed   |
+| Task ID   | Goal                                                                     | Complexity | Assigned Waves | Gate Status | Status      |
+| --------- | ------------------------------------------------------------------------ | ---------- | -------------- | ----------- | ----------- |
+| AEO-C1-01 | Prompt contract baseline for pipeline execution capability               | medium     | W4             | completed   | completed   |
+| AEO-C1-02 | Deterministic prompt builder for selected stage sets                     | medium     | W4             | completed   | completed   |
+| AEO-C1-03 | Parent-run plus stage-execution runner contract                          | high       | W4             | completed   | completed   |
+| AEO-C1-04 | Single selected-stage execution in parent run                            | high       | W4             | completed   | completed   |
+| AEO-C1-05 | Ordered stage-subset chaining and handoff contract                       | high       | W4             | completed   | completed   |
+| AEO-C1-06 | Failure/retry/supersession with isolated-stage reconciliation            | high       | W4             | completed   | completed   |
+| AEO-C1-07 | Capability gate verdict and lessons export for Capability 2+ planning    | high       | W4             | completed   | completed   |
+| AEO-C2-01 | Canonical selected-stage scenario and evidence template lock             | medium     | W5             | ready       | not-started |
+| AEO-C2-02 | Ordered telemetry pair mapping across stage and parent terminal outcomes | high       | W5             | ready       | not-started |
+| AEO-C2-03 | Resume continuity and compaction evidence mapping                        | high       | W5             | ready       | not-started |
+| AEO-C2-04 | Governance signal emission linkage over canonical stage evidence         | high       | W5             | ready       | not-started |
+| AEO-C2-05 | Capability gate verdict and lessons export for Capability 3+ planning    | high       | W5             | ready       | not-started |
+
+Legacy note: pre-capability WP planning tasks were retired after C1/C2 capability tracks became the canonical execution unit.
 
 ## Capability Pilot Definition (Value-Driven)
 
 - Capability pilot: [CAP-AEO-C1-PIPELINE-EXECUTION.md](work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md)
+- Capability pilot: [CAP-AEO-C2-GOVERNANCE-TELEMETRY.md](work-pack/capabilities/CAP-AEO-C2-GOVERNANCE-TELEMETRY.md)
 - Lessons log: [capability-sequence-lessons.md](work-pack/context/capability-sequence-lessons.md)
+
+Promotion rule check for C2 seeding: satisfied from non-duplicate Capability 1 lessons with executable evidence in [capability-sequence-lessons.md](work-pack/context/capability-sequence-lessons.md#capability-1-entries).
 
 This pilot sequence promotes work-pack execution from stage-bundle tasks to capability enablement units:
 
@@ -150,54 +154,55 @@ This pilot sequence promotes work-pack execution from stage-bundle tasks to capa
 | 6     | [TASK-AEO-C1-06.md](work-pack/tasks/TASK-AEO-C1-06.md) | Retry/recovery/supersession + stage isolation | Resilient parent/child execution semantics  |
 | 7     | [TASK-AEO-C1-07.md](work-pack/tasks/TASK-AEO-C1-07.md) | Capability gate run + lessons export          | Template input for Capability 2+            |
 
+### Capability 2 Sequential Enablement Board
+
+| Order | Task                                                   | Working Unit                                   | Unlocks                                                |
+| ----- | ------------------------------------------------------ | ---------------------------------------------- | ------------------------------------------------------ |
+| 1     | [TASK-AEO-C2-01.md](work-pack/tasks/TASK-AEO-C2-01.md) | Canonical scenario + C2 evidence template lock | Deterministic C2 template baseline                     |
+| 2     | [TASK-AEO-C2-02.md](work-pack/tasks/TASK-AEO-C2-02.md) | Ordered telemetry pair mapping                 | Stage-level + parent-level terminal telemetry contract |
+| 3     | [TASK-AEO-C2-03.md](work-pack/tasks/TASK-AEO-C2-03.md) | Resume continuity and compaction evidence      | Deterministic resumed-stage lineage                    |
+| 4     | [TASK-AEO-C2-04.md](work-pack/tasks/TASK-AEO-C2-04.md) | Governance signal linkage contract             | Observer-compatible governance signal evidence         |
+| 5     | [TASK-AEO-C2-05.md](work-pack/tasks/TASK-AEO-C2-05.md) | Capability 2 gate run + lessons export         | Template input for Capability 3+                       |
+
 ## Deferred Mutation Closure Queue
 
-| Task ID                | Goal                                                                    | Complexity | Assigned Waves | Gate Status             | Status                  |
-| ---------------------- | ----------------------------------------------------------------------- | ---------- | -------------- | ----------------------- | ----------------------- |
-| AEO-WP-TAG             | Apply DomainSpec code tags and validate extract/validate/drift outcomes | medium     | W3             | deferred-until-mutation | deferred-until-mutation |
-| AEO-WP-AUDIT-ALIGNMENT | Execute alignment audit (`domainspec-audit-alignment`)                  | high       | W3             | deferred-until-mutation | deferred-until-mutation |
-| AEO-WP-AUDIT-LAYERING  | Execute layering audit (`domainspec-audit-layering`)                    | high       | W3             | deferred-until-mutation | deferred-until-mutation |
+| Closure Item ID         | Goal                                                                    | Complexity | Assigned Waves | Gate Status             | Status                  |
+| ----------------------- | ----------------------------------------------------------------------- | ---------- | -------------- | ----------------------- | ----------------------- |
+| CLOSURE-TAG-CODE        | Apply DomainSpec code tags and validate extract/validate/drift outcomes | medium     | W3             | deferred-until-mutation | deferred-until-mutation |
+| CLOSURE-AUDIT-ALIGNMENT | Execute alignment audit (`domainspec-audit-alignment`)                  | high       | W3             | deferred-until-mutation | deferred-until-mutation |
+| CLOSURE-AUDIT-LAYERING  | Execute layering audit (`domainspec-audit-layering`)                    | high       | W3             | deferred-until-mutation | deferred-until-mutation |
 
 ## Closure Strategy Obligations
 
-| Obligation                             | Required Command                                          | Task Mapping            | Baseline Report                             | Current State           |
-| -------------------------------------- | --------------------------------------------------------- | ----------------------- | ------------------------------------------- | ----------------------- |
-| Feature verification                   | `domainspec-verify-feature agent-execution-orchestrator`  | AEO-WP-VERIFY           | VERIFICATION.md                             | seeded                  |
-| Alignment signal (non-mutation slices) | emit `alignment-gap`                                      | AEO-WP-SIGNAL-ALIGNMENT | `pipeline-signals.jsonl` alignment entries  | seeded                  |
-| Layering signal (non-mutation slices)  | emit `governance-gap` with layering-boundary evidence     | AEO-WP-SIGNAL-LAYERING  | `pipeline-signals.jsonl` governance entries | seeded                  |
-| Tag code (mutation slices)             | `domainspec-tag-code agent-execution-orchestrator`        | AEO-WP-TAG              | Tag extraction/validation reports           | deferred-until-mutation |
-| Alignment audit (mutation slices)      | `domainspec-audit-alignment agent-execution-orchestrator` | AEO-WP-AUDIT-ALIGNMENT  | ALIGNMENT-REPORT.md                         | deferred-until-mutation |
-| Layering audit (mutation slices)       | `domainspec-audit-layering agent-execution-orchestrator`  | AEO-WP-AUDIT-LAYERING   | LAYERING-ALIGNMENT-REPORT.md                | deferred-until-mutation |
+| Obligation                             | Required Command                                          | Baseline Report                             | Current State           |
+| -------------------------------------- | --------------------------------------------------------- | ------------------------------------------- | ----------------------- |
+| Feature verification                   | `domainspec-verify-feature agent-execution-orchestrator`  | VERIFICATION.md                             | seeded                  |
+| Alignment signal (non-mutation slices) | emit `alignment-gap`                                      | `pipeline-signals.jsonl` alignment entries  | seeded                  |
+| Layering signal (non-mutation slices)  | emit `governance-gap` with layering-boundary evidence     | `pipeline-signals.jsonl` governance entries | seeded                  |
+| Tag code (mutation slices)             | `domainspec-tag-code agent-execution-orchestrator`        | Tag extraction/validation reports           | deferred-until-mutation |
+| Alignment audit (mutation slices)      | `domainspec-audit-alignment agent-execution-orchestrator` | ALIGNMENT-REPORT.md                         | deferred-until-mutation |
+| Layering audit (mutation slices)       | `domainspec-audit-layering agent-execution-orchestrator`  | LAYERING-ALIGNMENT-REPORT.md                | deferred-until-mutation |
+
+Consistency check: Closure strategy obligations remain unchanged for this docs-only planning seed; C2 tasks inherit the same deferred-until-mutation closure policy.
 
 ## Governance Signal Obligations (Docs-Only/Non-Mutation)
 
-| Obligation ID  | Signal Type      | Task Mapping            | Trigger                                                                               | Evidence Target                                                | Status |
-| -------------- | ---------------- | ----------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------ |
-| alignment-gap  | `alignment-gap`  | AEO-WP-SIGNAL-ALIGNMENT | Contract drift or spec/code completeness risk discovered before mutation stages start | [pipeline-signals.jsonl](../../signals/pipeline-signals.jsonl) | seeded |
-| governance-gap | `governance-gap` | AEO-WP-SIGNAL-LAYERING  | Layering-boundary risk identified while audit stages are deferred                     | [pipeline-signals.jsonl](../../signals/pipeline-signals.jsonl) | seeded |
+| Obligation ID  | Signal Type      | Trigger                                                                               | Evidence Target                                                | Status |
+| -------------- | ---------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------ |
+| alignment-gap  | `alignment-gap`  | Contract drift or spec/code completeness risk discovered before mutation stages start | [pipeline-signals.jsonl](../../signals/pipeline-signals.jsonl) | seeded |
+| governance-gap | `governance-gap` | Layering-boundary risk identified while audit stages are deferred                     | [pipeline-signals.jsonl](../../signals/pipeline-signals.jsonl) | seeded |
 
 ## Architecture-Guided Task Directives
 
-| Task ID    | DomainSpec Sources                                                                                | Coverage IDs                                                                                                                                       | Architecture References                                                                                                                                                                                                                                   | Implementation Directive                                                                                                                                                                                                                 | Verification Evidence                                                                                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| AEO-WP-01  | PROJECT-OVERVIEW.md; INITIAL-DEFINITIONS.md; PROJECT-DECISIONS.md; domainspec-orchestrate skill   | ExecutionRun, RunStateMachine, SandboxProviderInterface, BranchStrategyPolicy, PlannerGateBeforeFeatureMutation, TerminalOutcomeRequired           | [domainspec/ARCHITECTURE.md](../../../domainspec/ARCHITECTURE.md); [ARCHITECTURE-FOUNDATIONS.md](../../../architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md); [LAYERING-REFERENCE.md](../../../architecture/pattern-library/LAYERING-REFERENCE.md) | Build inventory of current commands/agents, map each to lifecycle stage and concept IDs, and record deterministic ownership boundaries before spec authoring.                                                                            | [command-agent-inventory.md](work-pack/context/command-agent-inventory.md) + TASK-AEO-WP-01 link checks                                                    |
-| AEO-WP-02  | INITIAL-DEFINITIONS.md; PROJECT-DECISIONS.md; plan-first-execution-contract.md                    | AssemblePipelineRoute, ExecutePipelineRoute, ResumeExecutionRun, RunStateMachine, RetryPolicy, CancellationPolicy, D-AEO-001, D-AEO-002, D-AEO-004 | [domainspec/ARCHITECTURE.md](../../../domainspec/ARCHITECTURE.md); [DEPENDENCY-RULES.md](../../../architecture/pattern-library/DEPENDENCY-RULES.md); [RELATIONSHIPS.md](../../../domainspec/RELATIONSHIPS.md)                                             | Assemble explicit composable pipeline routes (discovery -> spec -> stories -> tests -> implementation -> observability -> audits -> verify) and encode Sandcastle-style lifecycle contracts and merge strategy defaults in feature docs. | [route-artifact-prompt-pack.md](work-pack/context/route-artifact-prompt-pack.md) + TASK-AEO-WP-02 verification commands                                    |
-| AEO-WP-03  | INITIAL-DEFINITIONS.md; DELEGATION-TUNING.md; TERMINAL-GUARD.md; domainspec-signal-observer skill | RunArtifactMapping, suspected_stuck_rate, terminal_outcome_coverage, retry_resolution_rate, cross_run_contamination_incidents, D-AEO-003           | [domainspec/ARCHITECTURE.md](../../../domainspec/ARCHITECTURE.md); [TEST-PIPELINE.md](../../../TEST-PIPELINE.md); [OBSERVABILITY.md](../../../OBSERVABILITY.md)                                                                                           | Define observability mappings from stage lifecycle to governance telemetry contracts (delegation tuning + terminal guard + signal observer) with a standard evidence envelope and Hermes benchmarked session-lineage inventory.          | [TASK-AEO-WP-03.md](work-pack/tasks/TASK-AEO-WP-03.md); [hermes-session-compaction-inventory.md](work-pack/context/hermes-session-compaction-inventory.md) |
-| AEO-WP-TAG | SPEC.md; operations.md; workflows.md; interfaces.md                                               | ExecutionRun, RunStateMachine, ExecutePipelineRoute, ResumeExecutionRun, RunArtifactMapping                                                        | [TAXONOMY.md](../../../domainspec/TAXONOMY.md); [RELATIONSHIPS.md](../../../domainspec/RELATIONSHIPS.md)                                                                                                                                                  | Apply code/source tags after implementation and publish extract/validate/drift outcomes without dropping prior evidence rows.                                                                                                            | `domainspec-tag-code` output bundle                                                                                                                        |
+| Plan Track | DomainSpec Sources                                                                            | Coverage IDs                                                                                                       | Architecture References                                                                                                                                                                                                       | Implementation Directive                                                                                                                                   | Verification Evidence                                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| AEO-C1     | SPEC.md; operations.md; workflows.md; plan-first-execution-contract.md                        | AssemblePipelineRoute, ExecutePipelineRoute, ResumeExecutionRun, RunStateMachine, RetryPolicy, CancellationPolicy  | [domainspec/ARCHITECTURE.md](../../../domainspec/ARCHITECTURE.md); [ARCHITECTURE-FOUNDATIONS.md](../../../architecture/pattern-library/ARCHITECTURE-FOUNDATIONS.md); [RELATIONSHIPS.md](../../../domainspec/RELATIONSHIPS.md) | Continue Capability 1 execution through deterministic selected-stage contracts and preserve parent/stage lifecycle boundaries in all C1 task artifacts.    | [CAP-AEO-C1-PIPELINE-EXECUTION.md](work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md); work-pack/waves/W4.md     |
+| AEO-C2     | SPEC.md; observability.md; DELEGATION-TUNING.md; TERMINAL-GUARD.md; pipeline-signals contract | RunArtifactMapping, terminal_outcome_coverage, retry_resolution_rate, cross_run_contamination_incidents, D-AEO-003 | [domainspec/ARCHITECTURE.md](../../../domainspec/ARCHITECTURE.md); [TEST-PIPELINE.md](../../../TEST-PIPELINE.md); [OBSERVABILITY.md](../../../OBSERVABILITY.md)                                                               | Execute Capability 2 telemetry/governance mapping sequence while keeping docs-only/non-mutation closure policy active until mutation-capable stages start. | [CAP-AEO-C2-GOVERNANCE-TELEMETRY.md](work-pack/capabilities/CAP-AEO-C2-GOVERNANCE-TELEMETRY.md); work-pack/waves/W5.md |
 
 ## Required Links
 
 ### Split mode (active)
 
-- work-pack/tasks/TASK-AEO-WP-01.md
-- work-pack/tasks/TASK-AEO-WP-02.md
-- work-pack/tasks/TASK-AEO-WP-03.md
-- work-pack/tasks/TASK-AEO-WP-SIGNAL-ALIGNMENT.md
-- work-pack/tasks/TASK-AEO-WP-SIGNAL-LAYERING.md
-- work-pack/tasks/TASK-AEO-WP-TAG-CODE.md
-- work-pack/tasks/TASK-AEO-WP-VERIFY.md
-- work-pack/tasks/TASK-AEO-WP-AUDIT-ALIGNMENT.md
-- work-pack/tasks/TASK-AEO-WP-AUDIT-LAYERING.md
 - work-pack/tasks/TASK-AEO-C1-01.md
 - work-pack/tasks/TASK-AEO-C1-02.md
 - work-pack/tasks/TASK-AEO-C1-03.md
@@ -205,42 +210,52 @@ This pilot sequence promotes work-pack execution from stage-bundle tasks to capa
 - work-pack/tasks/TASK-AEO-C1-05.md
 - work-pack/tasks/TASK-AEO-C1-06.md
 - work-pack/tasks/TASK-AEO-C1-07.md
+- work-pack/tasks/TASK-AEO-C2-01.md
+- work-pack/tasks/TASK-AEO-C2-02.md
+- work-pack/tasks/TASK-AEO-C2-03.md
+- work-pack/tasks/TASK-AEO-C2-04.md
+- work-pack/tasks/TASK-AEO-C2-05.md
 - work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md
+- work-pack/capabilities/CAP-AEO-C2-GOVERNANCE-TELEMETRY.md
 - work-pack/context/capability-sequence-lessons.md
 - work-pack/context/grill-with-docs-interviewer-inventory.md
 - work-pack/waves/W0.md
 - work-pack/waves/W4.md
+- work-pack/waves/W5.md
 
 ## Wave Status Board
 
-| Wave | Objective                                                                       | Entry Gate        | Exit Gate                                                                                                       | Status      | Evidence                                                                                    |
-| ---- | ------------------------------------------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------- |
-| W0   | Lock architecture/governance baseline, decisions, and stage matrix              | WORK-PACK created | W0 checks complete and directives populated                                                                     | completed   | work-pack/waves/W0.md                                                                       |
-| W1   | Inventory current orchestration capability and seed explicit route contracts    | W0 completed      | AEO-WP-01 completed, AEO-WP-02 completed                                                                        | completed   | work-pack/context/route-artifact-prompt-pack.md                                             |
-| W2   | Finalize route schema and observability/governance mappings                     | W1 completed      | AEO-WP-02 and AEO-WP-03 completed                                                                               | completed   | work-pack/tasks/TASK-AEO-WP-03.md; work-pack/context/hermes-session-compaction-inventory.md |
-| W3   | Execute closure strategy outputs (signals now; audits/tag when mutation starts) | W2 completed      | verification + alignment/layering signal evidence published; mutation audits/tag remain deferred-until-mutation | not-started | work-pack/tasks/TASK-AEO-WP-VERIFY.md                                                       |
-| W4   | Capability 1 value-driven sequential execution pilot                            | W2 completed      | AEO-C1-01 through AEO-C1-07 complete with capability gate verdict and lessons export                            | completed   | work-pack/waves/W4.md                                                                       |
+| Wave | Objective                                                                       | Entry Gate        | Exit Gate                                                                                                       | Status      | Evidence                                                                                                  |
+| ---- | ------------------------------------------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| W0   | Lock architecture/governance baseline, decisions, and stage matrix              | WORK-PACK created | W0 checks complete and directives populated                                                                     | completed   | work-pack/waves/W0.md                                                                                     |
+| W1   | Inventory current orchestration capability and seed explicit route contracts    | W0 completed      | AEO-WP-01 completed, AEO-WP-02 completed                                                                        | completed   | work-pack/context/route-artifact-prompt-pack.md                                                           |
+| W2   | Finalize route schema and observability/governance mappings                     | W1 completed      | Route + telemetry governance artifacts published                                                                | completed   | work-pack/context/route-artifact-prompt-pack.md; work-pack/context/hermes-session-compaction-inventory.md |
+| W3   | Execute closure strategy outputs (signals now; audits/tag when mutation starts) | W2 completed      | verification + alignment/layering signal evidence published; mutation audits/tag remain deferred-until-mutation | not-started | WORK-PACK.md (Closure Strategy Obligations + Governance Signal Obligations)                               |
+| W4   | Capability 1 value-driven sequential execution pilot                            | W2 completed      | AEO-C1-01 through AEO-C1-07 complete with capability gate verdict and lessons export                            | completed   | work-pack/waves/W4.md                                                                                     |
+| W5   | Capability 2 value-driven sequential execution pilot                            | W4 completed      | AEO-C2-01 through AEO-C2-05 complete with capability gate verdict and lessons export                            | not-started | work-pack/waves/W5.md                                                                                     |
 
 ## Pipeline Stage Coverage
 
-| Stage                 | Required | Wave Mapping | Status      | Evidence                                                                                    | Skip Reason                                                                                                           |
-| --------------------- | -------- | ------------ | ----------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| plan                  | yes      | W0           | completed   | WORK-PACK.md                                                                                | -                                                                                                                     |
-| architecture-baseline | yes      | W0           | completed   | work-pack/waves/W0.md                                                                       | -                                                                                                                     |
-| spec                  | yes      | W1+          | completed   | SPEC.md; work-pack/context/route-artifact-prompt-pack.md                                    | -                                                                                                                     |
-| stories               | yes      | W1+          | completed   | STORIES.md; work-pack/context/route-artifact-prompt-pack.md                                 | -                                                                                                                     |
-| tests                 | yes      | W1+          | completed   | TEST-SPEC.md; work-pack/context/route-artifact-prompt-pack.md                               | -                                                                                                                     |
-| backend-implement     | yes      | W2+          | not-started | work-pack/tasks/TASK-AEO-WP-02.md                                                           | -                                                                                                                     |
-| ui-pipeline           | yes      | W2+          | skipped     | work-pack/waves/W0.md                                                                       | No HTTP interface/UI obligations in current feature baseline                                                          |
-| observability-spec    | yes      | W2+          | completed   | work-pack/tasks/TASK-AEO-WP-03.md; work-pack/context/hermes-session-compaction-inventory.md | -                                                                                                                     |
-| instrument-otel       | yes      | W2+          | not-started | work-pack/tasks/TASK-AEO-WP-03.md                                                           | -                                                                                                                     |
-| otel-verify           | yes      | W2+          | not-started | work-pack/tasks/TASK-AEO-WP-03.md                                                           | -                                                                                                                     |
-| infra-deploy          | yes      | W2+          | skipped     | work-pack/waves/W0.md                                                                       | No infra architecture delta in this planning slice                                                                    |
-| registry-sync         | yes      | W2+          | not-started | work-pack/tasks/TASK-AEO-WP-03.md                                                           | -                                                                                                                     |
-| verify-readiness      | yes      | W3+          | not-started | work-pack/tasks/TASK-AEO-WP-VERIFY.md                                                       | -                                                                                                                     |
-| verify-feature        | yes      | W3+          | not-started | work-pack/tasks/TASK-AEO-WP-VERIFY.md                                                       | -                                                                                                                     |
-| audit-alignment       | yes      | W3+          | skipped     | work-pack/tasks/TASK-AEO-WP-SIGNAL-ALIGNMENT.md                                             | Deferred until first mutation-capable stage starts; covered by `alignment-gap` obligation in current docs-only slice  |
-| audit-layering        | yes      | W3+          | skipped     | work-pack/tasks/TASK-AEO-WP-SIGNAL-LAYERING.md                                              | Deferred until first mutation-capable stage starts; covered by `governance-gap` obligation in current docs-only slice |
+| Stage                 | Required | Wave Mapping | Status      | Evidence                                                                                     | Skip Reason                                                                                                           |
+| --------------------- | -------- | ------------ | ----------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| plan                  | yes      | W0           | completed   | WORK-PACK.md                                                                                 | -                                                                                                                     |
+| architecture-baseline | yes      | W0           | completed   | work-pack/waves/W0.md                                                                        | -                                                                                                                     |
+| spec                  | yes      | W1+          | completed   | SPEC.md; work-pack/context/route-artifact-prompt-pack.md                                     | -                                                                                                                     |
+| stories               | yes      | W1+          | completed   | STORIES.md; work-pack/context/route-artifact-prompt-pack.md                                  | -                                                                                                                     |
+| tests                 | yes      | W1+          | completed   | TEST-SPEC.md; work-pack/context/route-artifact-prompt-pack.md                                | -                                                                                                                     |
+| backend-implement     | yes      | W2+          | not-started | work-pack/waves/W5.md                                                                        | -                                                                                                                     |
+| ui-pipeline           | yes      | W2+          | skipped     | work-pack/waves/W0.md                                                                        | No HTTP interface/UI obligations in current feature baseline                                                          |
+| observability-spec    | yes      | W2+          | completed   | work-pack/context/hermes-session-compaction-inventory.md; ../../signals/DELEGATION-TUNING.md | -                                                                                                                     |
+| instrument-otel       | yes      | W2+          | not-started | work-pack/waves/W5.md                                                                        | -                                                                                                                     |
+| otel-verify           | yes      | W2+          | not-started | work-pack/waves/W5.md                                                                        | -                                                                                                                     |
+| infra-deploy          | yes      | W2+          | skipped     | work-pack/waves/W0.md                                                                        | No infra architecture delta in this planning slice                                                                    |
+| registry-sync         | yes      | W2+          | not-started | work-pack/waves/W5.md                                                                        | -                                                                                                                     |
+| verify-readiness      | yes      | W3+          | not-started | WORK-PACK.md (Closure Strategy Obligations)                                                  | -                                                                                                                     |
+| verify-feature        | yes      | W3+          | not-started | WORK-PACK.md (Closure Strategy Obligations)                                                  | -                                                                                                                     |
+| audit-alignment       | yes      | W3+          | skipped     | WORK-PACK.md (Governance Signal Obligations)                                                 | Deferred until first mutation-capable stage starts; covered by `alignment-gap` obligation in current docs-only slice  |
+| audit-layering        | yes      | W3+          | skipped     | WORK-PACK.md (Governance Signal Obligations)                                                 | Deferred until first mutation-capable stage starts; covered by `governance-gap` obligation in current docs-only slice |
+
+Consistency check: C2/W5 seeding preserves all existing C1/W4 and closure-stage statuses; no stage regressions were applied in this planning slice.
 
 ## Decision Lock Summary
 
@@ -255,20 +270,22 @@ This pilot sequence promotes work-pack execution from stage-bundle tasks to capa
 
 | Blocker ID | Scope      | Description                                                      | Owner         | Next Action                                                                                                          | Target Date |
 | ---------- | ---------- | ---------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------- | ----------- |
-| none       | cross-task | No blocker-level unresolved decisions remain for planning stage. | feature owner | Advance to W3 closure outputs (`AEO-WP-VERIFY`, `AEO-WP-SIGNAL-ALIGNMENT`, `AEO-WP-SIGNAL-LAYERING`) when scheduled. | 2026-05-12  |
+| none       | cross-task | No blocker-level unresolved decisions remain for planning stage. | feature owner | Advance to W5 Capability 2 sequence (`AEO-C2-01`..`AEO-C2-05`) and schedule W3 closure outputs when mutation starts. | 2026-05-13  |
 
 ## Notes
 
 - This stage is planning only; no implementation code mutations are included.
 - This slice is docs-only/non-mutation: alignment/layering audits and tag-code remain deferred until mutation stages begin.
 - Do not mark deferred mutation tasks as completed in this slice; reactivate them when the first mutation-capable stage starts.
-- Feature aspect docs are authoritative for C1 planning; interview artifacts are retained as provenance and decision context.
+- Feature aspect docs are authoritative for C1/C2 planning; interview artifacts are retained as provenance and decision context.
 - Revalidate markdown links and drift checks before entering spec mutation stage.
 
 ## Change Log
 
 | Date       | Change                                                                                                                                                                                      | Author  |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| 2026-05-11 | Retired legacy WP planning task files and re-based closure/signal tracking to manifest-level obligations while preserving C1/W4 and C2/W5 status continuity.                                | Copilot |
+| 2026-05-11 | Seeded Capability 2 planning artifacts: added W5 wave, CAP-AEO-C2 capability definition, TASK-AEO-C2-01..05 sequence, and synchronized task/links/boards while preserving C1/W4 status.     | Copilot |
 | 2026-05-11 | Refreshed C1 planning manifest to current feature artifacts: enabled pre-filter shortcut, updated UI detection facts, corrected lifecycle coverage IDs, and synchronized planning metadata. | Copilot |
 | 2026-05-10 | Completed AEO-C1-07 capability gate run with verdict `pass`, exported C2+ template constraints, and marked W4 completed in wave/work-pack boards.                                           | Copilot |
 | 2026-05-10 | Completed AEO-C1-02: added prompt build-step contract, stage-subset ordering/failure boundaries, deterministic reproducibility check, decision snapshot, and lesson entry.                  | Copilot |
