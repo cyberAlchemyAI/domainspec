@@ -47,6 +47,8 @@ Read command definitions under `.claude/skills/domainspec-*/SKILL.md`, package d
    - infrastructure architecture/sync -> `domainspec-infra-architecture` or `domainspec-infra-deploy <feature>`
    - audits/readiness -> `domainspec-audit-alignment`, `domainspec-audit-layering`, `domainspec-verify-feature <feature>`, or `domainspec-readiness-gate <feature> [--profile ...]`
    - command guidance -> `domainspec-help`
+   - spec grilling, decision pressure, gap closing, or Robot-Talks synthesis on a feature -> `domainspec-interview-kits <feature-or-scope> [--mode grill-with-docs|robot-talks-grill-synthesis|audit-gap|readiness-gate|auto]`
+   - greenfield domain discovery, brownfield scope audit, project baseline creation -> `domainspec-interview-scope`
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
    - If a work-pack task ID is provided without resolvable feature context, ask for feature name before selecting the implementation workflow pipeline.
    - If the request is a bugfix/mutation and no `TASK-*` exists yet, require feature confirmation and create/update `WORK-PACK.md` plus one task artifact before implementation.

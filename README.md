@@ -161,6 +161,7 @@ Each pipeline stage can also be run independently:
 | Stage         | Command                                                                           | Agent             |
 | ------------- | --------------------------------------------------------------------------------- | ----------------- | --------------- |
 | Spec          | `@domainspec-spec-writer domainspec-spec-feature <feature>`                       | spec-writer       |
+| Architecture  | `@domainspec-spec-writer domainspec-feature-architecture <feature>`               | spec-writer       |
 | Stories       | `@domainspec-story-sync domainspec-sync-user-stories <feature>`                   | story-sync        |
 | Tests         | `@domainspec-test-designer domainspec-generate-tests <feature>`                   | test-designer     |
 | Context       | `@domainspec-context-builder domainspec-context-builder <feature> --task <TASK-ID | task-path>`       | context-builder |
@@ -674,6 +675,7 @@ Direct specialist commands remain callable as advanced/internal invocations.
 | `domainspec-brownfield-translation` | Setup | Translate an implemented project into as-is DomainSpec artifacts with governance and ontology gap reports |
 | `domainspec-decision-gate`          | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation           |
 | `domainspec-spec-feature`           | 3     | Author or update a feature specification (SPEC + aspects)                                                 |
+| `domainspec-feature-architecture`   | 3     | Author or update the feature architecture companion (`architecture.md`)                                   |
 | `domainspec-sync-user-stories`      | 3     | Generate/refresh STORIES.md from aspect docs                                                              |
 | `domainspec-sync-registry`          | 7     | Sync registry and glossary from all SPEC.md concept tables                                                |
 | `domainspec-generate-tests`         | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                                   |

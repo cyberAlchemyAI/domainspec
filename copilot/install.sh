@@ -206,6 +206,13 @@ for skill_dir in "$SKILLS_SRC"/*; do
   skill_name="$(basename "$skill_dir")"
   mkdir -p "$SKILLS_DST/$skill_name"
   cp -f "$skill_dir"/SKILL.md "$SKILLS_DST/$skill_name"/
+  # Copy any sub-directories (e.g. MODES/, TEMPLATES/ for skills with registries)
+  for subdir in "$skill_dir"/*/; do
+    [[ -d "$subdir" ]] || continue
+    sub_name="$(basename "$subdir")"
+    mkdir -p "$SKILLS_DST/$skill_name/$sub_name"
+    cp -f "$subdir"* "$SKILLS_DST/$skill_name/$sub_name/" 2>/dev/null || true
+  done
 done
 
 echo "Installed DomainSpec Copilot pack into .github/agents and .github/skills"

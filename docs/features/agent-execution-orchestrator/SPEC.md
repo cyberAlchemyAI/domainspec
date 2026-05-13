@@ -2,7 +2,7 @@
 feature: agent-execution-orchestrator
 version: current
 status: draft
-updatedAt: 2026-05-08
+updatedAt: 2026-05-12
 pillar: governance
 domain: orchestration
 audience: operators-maintainers
@@ -11,6 +11,10 @@ dependencies:
   - ../../signals/DELEGATION-TUNING.md
   - ../../../../../docs/signals/TERMINAL-GUARD.md
 includes:
+  - capabilities/explicit-pipeline-route-composition.md
+  - capabilities/sandcastle-aligned-run-lifecycle.md
+  - capabilities/policy-governed-branch-cancellation-control.md
+  - capabilities/governance-telemetry-and-signal-emission.md
   - domain.md
   - operations.md
   - workflows.md
@@ -40,73 +44,47 @@ graph TD
 
 ## Capabilities
 
-| Capability                                                                                          | What                                                                                                            | Key Aspects                                                                                | Detail                                                                                                                                                                                                                     |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Explicit Pipeline Route Composition](#explicit-pipeline-route-composition)                         | Defines explicit route templates for discovery, spec, stories, tests, implementation, audits, and verify stages | [domain.md](domain.md), [operations.md](operations.md), [interfaces.md](interfaces.md)     | Skill-driven route assembly: operators choose a pipeline goal or stage subset, compose the matching `domainspec-*` skill chain, and publish one deterministic route artifact with stage contracts and evidence obligations |
-| [Sandcastle-Aligned Run Lifecycle](#sandcastle-aligned-run-lifecycle)                               | Executes routes with provider-agnostic contracts and Sandcastle baseline semantics                              | [operations.md](operations.md), [workflows.md](workflows.md), [rules.md](rules.md)         | Sandbox/worktree lease lifecycle, resume model, terminal outcomes                                                                                                                                                          |
-| [Policy-Governed Branch and Cancellation Control](#policy-governed-branch-and-cancellation-control) | Applies locked branch, retry, and cancellation policies                                                         | [rules.md](rules.md), [workflows.md](workflows.md), [operations.md](operations.md)         | `merge-to-head` default, bounded retry, `latest-run-wins` cancellation                                                                                                                                                     |
-| [Governance Telemetry and Signal Emission](#governance-telemetry-and-signal-emission)               | Emits deterministic telemetry envelopes and governance signals for each stage run                               | [observability.md](observability.md), [interfaces.md](interfaces.md), [rules.md](rules.md) | Delegation tuning parity, terminal guard evidence, signal-observer mapping                                                                                                                                                 |
+| Capability                                                                                                     | What                                                                                                            | Key Aspects                                                                                | Detail                                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Explicit Pipeline Route Composition](capabilities/explicit-pipeline-route-composition.md)                     | Defines explicit route templates for discovery, spec, stories, tests, implementation, audits, and verify stages | [domain.md](domain.md), [operations.md](operations.md), [interfaces.md](interfaces.md)     | Skill-driven route assembly: operators choose a pipeline goal or stage subset, compose the matching DomainSpec skill chain, and publish one deterministic route artifact with stage contracts and evidence obligations |
+| [Sandcastle-Aligned Run Lifecycle](capabilities/sandcastle-aligned-run-lifecycle.md)                           | Executes routes with provider-agnostic contracts and Sandcastle baseline semantics                              | [operations.md](operations.md), [workflows.md](workflows.md), [rules.md](rules.md)         | Sandbox/worktree lease lifecycle, resume model, stage identity continuity, and deterministic terminal outcomes                                                                                                         |
+| [Policy-Governed Branch and Cancellation Control](capabilities/policy-governed-branch-cancellation-control.md) | Applies locked branch, retry, and cancellation policies                                                         | [rules.md](rules.md), [workflows.md](workflows.md), [operations.md](operations.md)         | `merge-to-head` default, bounded retry with narrowing, and `latest-run-wins` supersession control                                                                                                                      |
+| [Governance Telemetry and Signal Emission](capabilities/governance-telemetry-and-signal-emission.md)           | Emits deterministic telemetry envelopes and governance signals for each stage run                               | [observability.md](observability.md), [interfaces.md](interfaces.md), [rules.md](rules.md) | Delegation tuning parity, terminal guard evidence linkage, and observer-ready governance signal emission                                                                                                               |
 
 ### Explicit Pipeline Route Composition
 
-Defines the explicit route artifact that operators can assemble and inject into execution contexts, including system prompt assets.
+Defines and publishes deterministic route artifacts before runtime execution.
 
-Operators build different execution pipelines by selecting a target outcome first, then composing the matching DomainSpec skill chain into one route template. The route remains deterministic because each stage declares required artifacts, terminal evidence, and handoff contracts.
-
-Stage composition is not limited to full-lifecycle flows. Operators can select ordered stage subsets (for example `plan -> spec -> tests`) when route policy allows `stage-subset` selection.
-
-#### Skill-Driven Pipeline Recipes
-
-| Pipeline Intent                             | Skill Chain (ordered)                                                                                                                                                                                                       | Typical Use                                                                | Route Outcome                                                           |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| Project kickoff and baseline governance     | `domainspec-start`                                                                                                                                                                                                          | Start a new or brownfield-scoped initiative with readiness gating          | Baseline-ready route with scope, decisions, and gate state              |
-| Docs bootstrap only                         | `domainspec-init`                                                                                                                                                                                                           | Initialize DomainSpec structure before feature work                        | Documentation scaffold route                                            |
-| Context pack for predictable implementation | `domainspec-context-builder <feature> [--task <TASK-ID                                                                                                                                                                      | task-path>] --mode standard --strict --emit both`                          | Build minimal deterministic context before mutation stages              | Context-enriched route inputs and dependency map |
-| Implementation workflow for task execution  | `domainspec-context-builder -> domainspec-implement -> domainspec-tag-code -> domainspec-audit-alignment -> domainspec-audit-layering -> domainspec-verify-feature`                                                         | Execute mutation-capable work-pack tasks with closure audits               | Mutation-complete route with tag + alignment/layering + verify evidence |
-| Bugfix or behavior-regression workflow      | `domainspec-plan-phase-bridge <feature> --mode native -> domainspec-context-builder -> domainspec-implement -> domainspec-tag-code -> domainspec-audit-alignment -> domainspec-audit-layering -> domainspec-verify-feature` | Enforce task bootstrap and controlled closure before/after bugfix mutation | Repair route with task bootstrap and deterministic closure trail        |
-| End-to-end feature delivery                 | `domainspec-pipeline <feature>`                                                                                                                                                                                             | Deliver a full feature through planning to verification                    | Full lifecycle route assembled as one governed pipeline                 |
-
-When selecting a recipe, operators can keep docs-only slices mutation-safe by deferring mutation-only closure stages (`domainspec-tag-code`, `domainspec-audit-alignment`, `domainspec-audit-layering`) and emitting governance signals instead, then reactivate closure stages when mutation begins.
-
-| Aspect    | Concept                                                                 | Summary                                                                    |
-| --------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Domain    | [ExecutionPipeline](domain.md#executionpipeline)                        | Named capability route with ordered stage contracts                        |
-| Domain    | [PipelineRouteTemplate](domain.md#pipelineroutetemplate)                | Deterministic sequence of [StageContract](domain.md#stagecontract) entries |
-| Operation | [AssemblePipelineRoute](operations.md#assemblepipelineroute)            | Validates route composition and stage contract completeness                |
-| Interface | [RouteArtifactInterface](interfaces.md#internal-routeartifactinterface) | Publishes route templates for orchestrator and prompt contexts             |
+- Full capability detail: [explicit-pipeline-route-composition.md](capabilities/explicit-pipeline-route-composition.md)
+- Core concepts: [ExecutionPipeline](domain.md#executionpipeline), [PipelineRouteTemplate](domain.md#pipelineroutetemplate), [StageContract](domain.md#stagecontract)
+- Core operation: [AssemblePipelineRoute](operations.md#assemblepipelineroute)
 
 ### Sandcastle-Aligned Run Lifecycle
 
-Executes one route instance with explicit run-state transitions and isolated sandbox/worktree leases.
+Executes a composed route under Sandcastle baseline semantics with deterministic run-state transitions.
 
-| Aspect    | Concept                                                    | Summary                                                                                                             |
-| --------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Entity    | [ExecutionRun](domain.md#executionrun)                     | Parent run object linked to route and ordered [StageExecution](domain.md#stageexecution) records                    |
-| Rule      | [RunStateMachine](rules.md#runstatemachine)                | Formal transition guards from queued to terminal states                                                             |
-| Operation | [ExecutePipelineRoute](operations.md#executepipelineroute) | Allocates [SandboxLease](domain.md#sandboxlease) and [WorktreeLease](domain.md#worktreelease), then executes stages |
-| Operation | [ResumeExecutionRun](operations.md#resumeexecutionrun)     | Restores from [SessionSnapshot](domain.md#sessionsnapshot) with deterministic checks                                |
+- Full capability detail: [sandcastle-aligned-run-lifecycle.md](capabilities/sandcastle-aligned-run-lifecycle.md)
+- Core concepts: [ExecutionRun](domain.md#executionrun), [StageExecution](domain.md#stageexecution), [SessionSnapshot](domain.md#sessionsnapshot)
+- Core rule: [RunStateMachine](rules.md#runstatemachine)
+- Core operations: [ExecutePipelineRoute](operations.md#executepipelineroute), [ResumeExecutionRun](operations.md#resumeexecutionrun)
 
 ### Policy-Governed Branch and Cancellation Control
 
-Encodes locked decisions from work-pack and interview gates as formal policy contracts.
+Encodes branch strategy defaults, bounded retry, and supersession cancellation as enforced policy contracts.
 
-| Aspect    | Concept                                                  | Summary                                               |
-| --------- | -------------------------------------------------------- | ----------------------------------------------------- |
-| Policy    | [BranchStrategyPolicy](rules.md#branchstrategypolicy)    | Default `merge-to-head` with explicit alternate hooks |
-| Policy    | [RetryPolicy](rules.md#retrypolicy)                      | Bounded retry with narrowed scope before final block  |
-| Policy    | [CancellationPolicy](rules.md#cancellationpolicy)        | `latest-run-wins` supersession semantics              |
-| Operation | [CancelSupersededRun](operations.md#cancelsupersededrun) | Deterministic cancellation path for superseded runs   |
+- Full capability detail: [policy-governed-branch-cancellation-control.md](capabilities/policy-governed-branch-cancellation-control.md)
+- Core policies: [BranchStrategyPolicy](rules.md#branchstrategypolicy), [RetryPolicy](rules.md#retrypolicy), [CancellationPolicy](rules.md#cancellationpolicy)
+- Core operation: [CancelSupersededRun](operations.md#cancelsupersededrun)
 
 ### Governance Telemetry and Signal Emission
 
-Maps stage execution to append-only telemetry and governance observer signals with a standard evidence envelope.
+Maps stage outcomes into deterministic telemetry envelopes and observer-compatible governance signals.
 
-| Aspect    | Concept                                                      | Summary                                                                                                                                                                                        |
-| --------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Domain    | [TelemetryEnvelope](domain.md#telemetryenvelope)             | Canonical run/stage evidence payload                                                                                                                                                           |
-| Mapping   | [RunArtifactMapping](observability.md#runartifactmapping)    | Maps run lifecycle outputs to telemetry envelope fields                                                                                                                                        |
-| Operation | [EmitGovernanceSignals](operations.md#emitgovernancesignals) | Emits workflow-gap, contract-gap, evidence-gap, and decision signals, including orphan-stage-run rate monitoring scoped to delegated `domainspec-implement` and `domainspec-tag-code` commands |
-| Rule      | [TelemetryPairRequired](rules.md#telemetrypairrequired)      | Requires one `started` and one terminal row per `stageRunId`                                                                                                                                   |
+- Full capability detail: [governance-telemetry-and-signal-emission.md](capabilities/governance-telemetry-and-signal-emission.md)
+- Core concepts: [TelemetryEnvelope](domain.md#telemetryenvelope), [ExecutionRun](domain.md#executionrun)
+- Core mapping: [RunArtifactMapping](observability.md#runartifactmapping)
+- Core operation: [EmitGovernanceSignals](operations.md#emitgovernancesignals)
+- Core rule: [TelemetryPairRequired](rules.md#telemetrypairrequired)
 
 ## Domain Concepts
 
@@ -212,10 +190,15 @@ See [STORIES.md](STORIES.md) for capability-scoped user journeys and coverage ma
 ## References
 
 - [WORK-PACK.md](WORK-PACK.md)
+- [explicit-pipeline-route-composition.md](capabilities/explicit-pipeline-route-composition.md)
+- [sandcastle-aligned-run-lifecycle.md](capabilities/sandcastle-aligned-run-lifecycle.md)
+- [policy-governed-branch-cancellation-control.md](capabilities/policy-governed-branch-cancellation-control.md)
+- [governance-telemetry-and-signal-emission.md](capabilities/governance-telemetry-and-signal-emission.md)
 - [W0.md](work-pack/waves/W0.md)
-- [TASK-AEO-WP-01.md](work-pack/tasks/TASK-AEO-WP-01.md)
-- [TASK-AEO-WP-02.md](work-pack/tasks/TASK-AEO-WP-02.md)
-- [TASK-AEO-WP-03.md](work-pack/tasks/TASK-AEO-WP-03.md)
+- [W4.md](work-pack/waves/W4.md)
+- [W5.md](work-pack/waves/W5.md)
+- [CAP-AEO-C1-PIPELINE-EXECUTION.md](work-pack/capabilities/CAP-AEO-C1-PIPELINE-EXECUTION.md)
+- [CAP-AEO-C2-GOVERNANCE-TELEMETRY.md](work-pack/capabilities/CAP-AEO-C2-GOVERNANCE-TELEMETRY.md)
 - [PROJECT-OVERVIEW.md](../../interviews/agent-execution-orchestrator/PROJECT-OVERVIEW.md)
 - [INITIAL-DEFINITIONS.md](../../interviews/agent-execution-orchestrator/INITIAL-DEFINITIONS.md)
 - [PROJECT-DECISIONS.md](../../interviews/agent-execution-orchestrator/PROJECT-DECISIONS.md)

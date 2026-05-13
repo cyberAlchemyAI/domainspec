@@ -41,6 +41,7 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
        1. `domainspec-spec-feature <feature>`
        2. `domainspec-plan-phase-bridge <feature> --mode native`
        3. `domainspec-sync-user-stories <feature>`
+      - feature architecture authoring/evolution -> `domainspec-feature-architecture <feature>`
    - story sync -> `domainspec-sync-user-stories <feature>`
    - test derivation -> `domainspec-generate-tests <feature>`
    - post-implementation code tagging -> `domainspec-tag-code <feature>`
@@ -50,6 +51,8 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
    - infrastructure architecture/sync -> `domainspec-infra-architecture` or `domainspec-infra-deploy <feature>`
    - audits/readiness -> `domainspec-audit-alignment`, `domainspec-audit-layering`, `domainspec-verify-feature <feature>`, or `domainspec-readiness-gate <feature> [--profile ...]`
    - command guidance -> `domainspec-help`
+   - spec grilling, decision pressure, gap closing, or Robot-Talks synthesis on a feature -> `domainspec-interview-kits <feature-or-scope> [--mode grill-with-docs|robot-talks-grill-synthesis|audit-gap|readiness-gate|auto]`
+   - greenfield domain discovery, brownfield scope audit, project baseline creation -> `domainspec-interview-scope`
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
    - If a work-pack task ID is provided without resolvable feature context, ask for feature name before selecting the implementation workflow pipeline.
    - If the request is a bugfix/mutation and no `TASK-*` exists yet, require feature confirmation and create/update `WORK-PACK.md` plus one task artifact before implementation.

@@ -23,6 +23,27 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.12] - 2026-05-13
+
+### Added
+
+- **`domainspec-feature-architecture` skill** - new standalone command for creating or evolving a feature-level `architecture.md` companion document directly from DomainSpec feature contracts.
+- **`architecture.md` feature template** - new default feature-architecture template for consumer-readable architecture summaries, flow diagrams, artifact tables, and guardrails.
+
+### Changed
+
+- **`domainspec-spec-feature` default artifacts** - spec writing now treats `architecture.md` as a default companion artifact and expects `SPEC.md` to link to it when present.
+- **Spec-writer guidance** - spec-writer agent prompts and command routing docs now surface feature architecture authoring as a first-class part of the spec-authoring workflow.
+
+## [2.0.11] - 2026-05-12
+
+### Added
+
+- **`domainspec-interview-kits` skill** - pluggable one-question-at-a-time interview system with a mode registry, `grill-with-docs` mode for spec pressure-testing, `robot-talks-grill-synthesis` mode for multi-perspective tension discovery, `readiness-gate` mode, and `audit-gap` mode. Modes are defined as individual files under `MODES/` and registered in `MODE-REGISTRY.md`.
+- **`domainspec-interviewer-kits` Claude agent** - standalone Claude agent for the interview-kits system; can be invoked directly as an agent command.
+- **Interviewer agent updated** - `domainspec-interviewer` agent now detects interview-kits intent (step 5) and delegates to `domainspec-interview-kits` before falling through to interactive discovery mode.
+- **Orchestrator routing extended** - `domainspec-orchestrate` now routes spec grilling, decision pressure, gap closing, and Robot-Talks synthesis to `domainspec-interview-kits`; greenfield/brownfield scope discovery continues to route to `domainspec-interview-scope`.
+
 ## [2.0.10] - 2026-05-07
 
 ### Added

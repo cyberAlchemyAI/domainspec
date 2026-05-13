@@ -27,9 +27,11 @@ Target location:
    - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Create or update SPEC.md and concept table.
-3. Generate relevant aspect files from templates.
-4. Add formal rules, formulas, transitions, and invariants where applicable.
-5. When introducing or changing gate-critical terms, sync canonical definitions first via `.github/skills/domainspec-definitions-governance/SKILL.md`.
-6. Validate cross-links, referenced field-name links, and concept ID naming.
-7. Summarize what is ready and what remains undefined.
+3. Generate `architecture.md` as a default companion artifact from `domainspec/templates/architecture.md`, unless an equivalent feature architecture document already exists and is being updated in place.
+4. Generate relevant aspect files from templates.
+5. Ensure `SPEC.md` links to `architecture.md` when the architecture artifact exists.
+6. Add formal rules, formulas, transitions, and invariants where applicable.
+7. When introducing or changing gate-critical terms, sync canonical definitions first via `.github/skills/domainspec-definitions-governance/SKILL.md`.
+8. Validate cross-links, referenced field-name links, concept ID naming, and architecture-to-aspect references.
+9. Summarize what is ready and what remains undefined.
 </process>

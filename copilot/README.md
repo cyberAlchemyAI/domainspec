@@ -17,6 +17,7 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-decision-gate`          | Resolve blocker-level multi-option decisions and persist a decisions artifact before downstream mutation                                                                                                                                      |
 | `domainspec-pipeline`               | Run the full lifecycle with planner/work-pack gates for medium/high tasks before mutation (plan -> spec -> stories -> tests -> implementation -> verify)                                                                                      |
 | `domainspec-spec-feature`           | Author or evolve feature specs and aspect documents                                                                                                                                                                                           |
+| `domainspec-feature-architecture`   | Create or evolve `architecture.md` as the feature-level architecture companion to `SPEC.md`                                                                                                                                                   |
 | `domainspec-sync-user-stories`      | Sync `STORIES.md` from capability and aspect docs                                                                                                                                                                                             |
 | `domainspec-sync-registry`          | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                                                                                                     |
 | `domainspec-generate-tests`         | Derive backend and/or UI test obligations from docs                                                                                                                                                                                           |
@@ -136,15 +137,16 @@ Advanced direct stage commands (unchanged):
 1. `domainspec-start [greenfield|brownfield|auto] [scope]`
 2. `domainspec-init`
 3. `domainspec-spec-feature <feature>`
-4. `domainspec-sync-user-stories <feature>`
-5. `domainspec-generate-tests <feature>`
-6. `domainspec-context-builder <feature> --task <TASK-ID|task-path>`
-7. `domainspec-inventory <ingest|lookup|validate|backfill> <feature> [--task <TASK-ID|task-path>]`
-8. `domainspec-implement <feature>`
-9. `domainspec-tag-code <feature>`
-10. `domainspec-ui-pipeline <feature>`
-11. `domainspec-verify-feature <feature>`
-12. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
+4. `domainspec-feature-architecture <feature>`
+5. `domainspec-sync-user-stories <feature>`
+6. `domainspec-generate-tests <feature>`
+7. `domainspec-context-builder <feature> --task <TASK-ID|task-path>`
+8. `domainspec-inventory <ingest|lookup|validate|backfill> <feature> [--task <TASK-ID|task-path>]`
+9. `domainspec-implement <feature>`
+10. `domainspec-tag-code <feature>`
+11. `domainspec-ui-pipeline <feature>`
+12. `domainspec-verify-feature <feature>`
+13. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
 
 ## Installation
 

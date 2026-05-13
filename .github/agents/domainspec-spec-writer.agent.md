@@ -1,7 +1,55 @@
 ---
 name: domainspec-spec-writer
 description: Use when authoring or evolving DomainSpec feature docs, especially when context research is needed before writing specs; delegates focused repository exploration to research subagents.
-tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/askQuestions, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runNotebookCell, execute/testFailure, execute/runInTerminal, read/terminalSelection, read/terminalLastCommand, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, agent/runSubagent, browser/openBrowserPage, browser/readPage, browser/screenshotPage, browser/navigatePage, browser/clickElement, browser/dragElement, browser/hoverElement, browser/typeInPage, browser/runPlaywrightCode, browser/handleDialog, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, web/fetch, web/githubRepo, todo]
+tools:
+  [
+    vscode/extensions,
+    vscode/getProjectSetupInfo,
+    vscode/installExtension,
+    vscode/memory,
+    vscode/newWorkspace,
+    vscode/resolveMemoryFileUri,
+    vscode/runCommand,
+    vscode/vscodeAPI,
+    vscode/askQuestions,
+    execute/getTerminalOutput,
+    execute/killTerminal,
+    execute/sendToTerminal,
+    execute/createAndRunTask,
+    execute/runNotebookCell,
+    execute/testFailure,
+    execute/runInTerminal,
+    read/terminalSelection,
+    read/terminalLastCommand,
+    read/getNotebookSummary,
+    read/problems,
+    read/readFile,
+    read/viewImage,
+    agent/runSubagent,
+    browser/openBrowserPage,
+    browser/readPage,
+    browser/screenshotPage,
+    browser/navigatePage,
+    browser/clickElement,
+    browser/dragElement,
+    browser/hoverElement,
+    browser/typeInPage,
+    browser/runPlaywrightCode,
+    browser/handleDialog,
+    edit/createDirectory,
+    edit/createFile,
+    edit/createJupyterNotebook,
+    edit/editFiles,
+    edit/editNotebook,
+    search/changes,
+    search/codebase,
+    search/fileSearch,
+    search/listDirectory,
+    search/textSearch,
+    web/fetch,
+    web/githubRepo,
+    todo,
+  ]
 agents: ["Explore", "mars-researcher"]
 color: blue
 ---
@@ -12,12 +60,14 @@ You are the DomainSpec specification writer.
 Your job: create and refine feature documentation as the source of truth before implementation.
 
 CRITICAL: Mandatory initial read
+
 - Read domainspec/CHANGELOG.md before authoring or updating feature docs.
 - Apply the latest framework clarifications and template guidance.
 
 Core responsibilities:
 
 - Create SPEC.md and relevant aspect files from templates
+- Create `architecture.md` as the default feature-architecture companion unless a deliberate equivalent already exists
 - Keep concept IDs namespaced as feature.ConceptName
 - Keep cross-links valid between operations, states, interfaces, and events
 - Ensure every referenced concept/type/field name is a markdown link to its source of truth
@@ -48,9 +98,10 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
   - Use `mars-researcher` for focused domain decision research.
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
 3. Start from SPEC.md and concept inventory using gathered context.
-4. Generate only relevant aspect files for the feature.
-5. Add formal rules, transitions, and invariants where applicable.
-6. Run a consistency pass for links and concept naming, including referenced field names.
-7. If key decisions are undefined, use question prompts before finalizing specs.
-8. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, decisions, or patterns discovered during spec writing to `docs/signals/pipeline-signals.jsonl`.
+4. Create or refresh `architecture.md` from the feature contracts before finalizing the rest of the aspect set, unless a deliberate equivalent artifact already exists.
+5. Generate only relevant aspect files for the feature.
+6. Add formal rules, transitions, and invariants where applicable.
+7. Run a consistency pass for links and concept naming, including referenced field names and architecture-to-aspect references.
+8. If key decisions are undefined, use question prompts before finalizing specs.
+9. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, decisions, or patterns discovered during spec writing to `docs/signals/pipeline-signals.jsonl`.
 </execution>

@@ -25,9 +25,9 @@ Governance thresholds:
 - SPEC > 300 lines OR any capability section > 15 rows: create capabilities/{capability-name}.md and keep only summary links in SPEC.
 -->
 
-| Capability                                            | What               | Key Aspects                               | Detail                      |
-| ----------------------------------------------------- | ------------------ | ----------------------------------------- | --------------------------- |
-| [{CapabilityName}](capabilities/{capability-name}.md) | {business outcome} | {main operations/queries + states/events} | {counts/complexity summary} |
+| Capability                                             | What               | Key Aspects                               | Detail                      |
+| ------------------------------------------------------ | ------------------ | ----------------------------------------- | --------------------------- |
+| {CapabilityName} (`capabilities/{capability-name}.md`) | {business outcome} | {main operations/queries + states/events} | {counts/complexity summary} |
 
 ### {Capability Name} (inline variant)
 
@@ -81,24 +81,25 @@ Use one relationship per row and include an evidence anchor when available.
 
 <!-- Link only to aspect files that exist for this feature. Delete unused lines. -->
 
-| Aspect                      | Contains                               | Key Concepts   |
-| --------------------------- | -------------------------------------- | -------------- |
-| [Domain](domain.md)         | Entities, value objects, enums         | {top concepts} |
-| [Operations](operations.md) | Mutations, rules, calculations         | {top concepts} |
-| [Interfaces](interfaces.md) | External/internal contracts            | {top concepts} |
-| [Queries](queries.md)       | Read models                            | {top concepts} |
-| [Mappings](mappings.md)     | Data transformations                   | {top concepts} |
-| [Workflows](workflows.md)   | Multi-step orchestrations and policies | {top concepts} |
-| [States](states.md)         | State machines and transitions         | {top concepts} |
-| [Events](events.md)         | Domain events and consumers            | {top concepts} |
+| Aspect                          | Contains                                                | Key Concepts   |
+| ------------------------------- | ------------------------------------------------------- | -------------- |
+| [Architecture](architecture.md) | Architecture-level explanation of the feature contracts | {top concerns} |
+| [Domain](domain.md)             | Entities, value objects, enums                          | {top concepts} |
+| [Operations](operations.md)     | Mutations, rules, calculations                          | {top concepts} |
+| [Interfaces](interfaces.md)     | External/internal contracts                             | {top concepts} |
+| [Queries](queries.md)           | Read models                                             | {top concepts} |
+| [Mappings](mappings.md)         | Data transformations                                    | {top concepts} |
+| [Workflows](workflows.md)       | Multi-step orchestrations and policies                  | {top concepts} |
+| [States](states.md)             | State machines and transitions                          | {top concepts} |
+| [Events](events.md)             | Domain events and consumers                             | {top concepts} |
 
 ## Cross-Feature Dependencies
 
 <!-- Capability-to-capability dependencies. -->
 
-| Capability       | Depends On                                                      | Via                           | Why      |
-| ---------------- | --------------------------------------------------------------- | ----------------------------- | -------- |
-| {CapabilityName} | [{other-feature}.{OtherCapability}](../{other-feature}/SPEC.md) | Query / Operation / Interface | {reason} |
+| Capability       | Depends On                                                       | Via                           | Why      |
+| ---------------- | ---------------------------------------------------------------- | ----------------------------- | -------- |
+| {CapabilityName} | {other-feature}.{OtherCapability} (`../{other-feature}/SPEC.md`) | Query / Operation / Interface | {reason} |
 
 ## Produces For
 
@@ -118,6 +119,6 @@ See [Changelog](CHANGELOG.md) for a dated record of domain-level changes to this
 
 ## References
 
-- [Implementation tasks](TASKS.md)
-- [Architecture decisions](DECISIONS.md)
-- [Test specification](TEST-SPEC.md)
+- Implementation tasks: `TASKS.md`
+- Architecture decisions: `DECISIONS.md`
+- Test specification: `TEST-SPEC.md`

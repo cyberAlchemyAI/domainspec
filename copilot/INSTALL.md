@@ -57,6 +57,8 @@ DOMAINSPEC_SKIP_PLAYWRIGHT=1 bash domainspec/copilot/install.sh --tools-profile 
 
 - `domainspec-*` agents into `.github/agents/`
 - `domainspec-*` skills into `.github/skills/`
+- Skills with sub-directory registries (MODES/, TEMPLATES/) are fully copied:
+  - `.github/skills/domainspec-interview-kits/` — includes `MODE-REGISTRY.md`, `MODES/`, and `TEMPLATES/`
 - Bridge skills shipped in this pack:
   - `.github/skills/domainspec-ui-phase-bridge/SKILL.md`
   - `.github/skills/domainspec-ui-audit-bridge/SKILL.md`
@@ -85,6 +87,8 @@ test -d .github/skills/domainspec-plan-phase-bridge
 test -d .github/skills/domainspec-execute-phase-bridge
 test -d .github/skills/domainspec-ui-phase-bridge
 test -d .github/skills/domainspec-ui-audit-bridge
+test -d .github/skills/domainspec-interview-kits
+test -f .github/skills/domainspec-interview-kits/MODE-REGISTRY.md
 ```
 
 If GSD was not skipped:

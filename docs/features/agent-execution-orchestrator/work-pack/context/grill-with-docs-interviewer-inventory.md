@@ -1,76 +1,81 @@
-# Grill-With-Docs Interviewer Inventory (Decision Preflight)
+# Grill-With-Docs Interviewer Inventory (Mode Instance)
 
 ## Purpose
 
-Inventory and adapt the `grill-with-docs` interviewing pattern so task execution starts only after key decisions are explicit.
+Feature-local instance of the reusable interviewer mode system.
 
-Source skill repository path:
+This file does not contain a fixed leaked question bank. It defines how questions are formed and answered in-session, one at a time, with immediate spec updates.
 
-- https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs
+## Source Skills
 
-Raw source files reviewed:
+- [.github/skills/domainspec-interview-kits/SKILL.md](../../../../../../../.github/skills/domainspec-interview-kits/SKILL.md)
+- [.github/skills/domainspec-interview-kits/MODE-REGISTRY.md](../../../../../../../.github/skills/domainspec-interview-kits/MODE-REGISTRY.md)
+- [.github/skills/domainspec-interview-kits/MODES/grill-with-docs.md](../../../../../../../.github/skills/domainspec-interview-kits/MODES/grill-with-docs.md)
+- [.github/skills/domainspec-interview-kits/MODES/robot-talks-grill-synthesis.md](../../../../../../../.github/skills/domainspec-interview-kits/MODES/robot-talks-grill-synthesis.md)
+- [robot-talks-complete-guide.md](../../../../../../../robot-talks-complete-guide.md)
 
-- https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/grill-with-docs/SKILL.md
-- https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/grill-with-docs/CONTEXT-FORMAT.md
-- https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/grill-with-docs/ADR-FORMAT.md
+## Active Session Configuration
 
-## What It Adds
+- mode: `grill-with-docs`
+- robot-talks synthesis: `on`
+- cadence: one-question-at-a-time
+- patch behavior: immediate spec/doc patch after each answer
 
-- Relentless one-question-at-a-time interviewing before implementation.
-- Immediate challenge of ambiguous terms against canonical glossary.
-- Scenario-based pressure tests for boundary and edge-case clarity.
-- Decision capture as the conversation progresses, not after execution.
-
-## Extracted Core Pattern
-
-1. Ask one question at a time and wait for response.
-2. Provide a recommended answer with each question.
-3. If code can answer the question, inspect code before asking.
-4. Challenge terminology conflicts against existing definitions.
-5. Stress-test with concrete scenarios and contradictions.
-6. Persist resolved language decisions immediately.
-7. Offer ADR only when all three are true:
-   - hard to reverse,
-   - surprising without context,
-   - result of a real trade-off.
-
-## DomainSpec Adaptation For This Feature
-
-Use this as a decision preflight before each C1 task execution.
-
-### Decision Preflight Inputs
+## Feature Evidence Inputs
 
 - [SPEC.md](../../SPEC.md)
 - [domain.md](../../domain.md)
 - [operations.md](../../operations.md)
+- [workflows.md](../../workflows.md)
 - [rules.md](../../rules.md)
-- active task file under `work-pack/tasks/`
+- [interfaces.md](../../interfaces.md)
+- [observability.md](../../observability.md)
+- [TEST-SPEC.md](../../TEST-SPEC.md)
+- [WORK-PACK.md](../../WORK-PACK.md)
 
-### Decision Preflight Questions (Minimum Set)
+## Question Formation Contract
 
-1. Which route selection mode applies: `full-lifecycle` or `stage-subset`?
-2. Which ordered stages are in scope for this task, and why this order?
-3. Does any selected stage require `isolated-child-run`?
-4. Which evidence fields are mandatory at this step versus deferred?
-5. Which terminology in this task is still ambiguous and must be resolved now?
+Each emitted question must include:
 
-### Exit Conditions Before Task Execution
+1. question
+2. why-now
+3. evidence-links
+4. recommended-answer
+5. unresolved-risk
+6. patch-target
 
-- No unresolved blocker decision remains for task scope.
-- Terminology conflicts are resolved and documented.
-- Stage order and isolation decisions are explicit.
-- Evidence obligations for the task are explicit.
+## Robot-Talks Synergy Contract
 
-### Output Artifact Contract
+Before emitting each question, run a lightweight tension pass:
 
-For each task, append a short "Decision Preflight Snapshot" section with:
+1. contract-rigor perspective
+2. operational-risk perspective
+3. implementation-friction perspective
 
-- selected answers,
-- alternatives rejected,
-- unresolved risks (if any),
-- links to supporting spec sections.
+Then emit the single highest-value question from the top unresolved tension.
 
-## Initial Adoption Scope
+## Decision Snapshot Template
 
-- Start at [TASK-AEO-C1-02.md](../tasks/TASK-AEO-C1-02.md).
-- Apply the same preflight pattern to C1-03 through C1-07.
+```markdown
+### Decision Snapshot: <id>
+
+- Question: <text>
+- Selected answer: <option>
+- Rejected alternatives: <list>
+- Evidence links: <list>
+- Patch targets: <list>
+- Residual risk: <text>
+- Owner: <role>
+- Timestamp: <iso-utc>
+```
+
+## Exit Criteria
+
+- PASS: no unresolved blocker ambiguity remains.
+- FLAG: only non-blocker ambiguity remains.
+- BLOCK: any blocker ambiguity remains unresolved.
+
+## Scope
+
+- Apply to C1/C2 feature-contract maintenance and future capability waves.
+- Start from the highest-impact unresolved contradiction in current feature docs.
