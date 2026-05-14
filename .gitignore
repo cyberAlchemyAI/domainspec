@@ -1,3 +1,6 @@
+internal_tools/agents-telemetry/data/
+internal_tools/agents-telemetry/.enabled
+internal_tools/agents-telemetry/config.json
 .DS_Store
 .claude/settings.local.json
 node_modules/

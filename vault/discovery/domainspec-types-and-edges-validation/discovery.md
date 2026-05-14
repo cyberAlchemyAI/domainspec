@@ -7,8 +7,8 @@ nature: explanatory, reference
 status: draft
 veracidade: medium
 convicção: high
-version: 0.4.0
-last_updated: 2026-05-11
+version: 0.5.0
+last_updated: 2026-05-14
 ---
 
 # DomainSpec Types & Edges — Validation of `TAXONOMY.md` and `RELATIONSHIPS.md`
@@ -135,8 +135,8 @@ Two principles applied: (a) prefer adopting categories that have **internal pres
 
 - **Aggregate** and **Aggregate Root** — `ExecutionRun` is structurally an Aggregate Root forced into `Entity` (C3 #1).
 - **Repository** — repository contracts already exist in the code but have no meta-concept (C3 #7).
-- **Read Model / Projection** — `MirrorProjection` and the `GetMirrorCards` / `GetRelationshipGraph` queries serve event-maintained projections, not transient reads (C3 #4).
-- **Outbox** — already named in the user's framing; canon-confirmed essential meta-concept (C2 essential tier).
+- **Read Model / Projection** — `MirrorProjection` and the `GetMirrorCards` / `GetRelationshipGraph` queries serve event-maintained projections, not transient reads (C3 #4). *E11 corroboration: T07 — Materialized Read Model.*
+- **Outbox** — already named in the user's framing; canon-confirmed essential meta-concept (C2 essential tier). *E11 corroboration: T04 — Outbox.*
 - **Domain Event vs Integration Event split** — current `Event` meta-concept collapses both; C3 cases #5 and #6 surface real ambiguity.
 
 **Adopt as strong** (essential in C2, lower C3 pressure — sequence behind essentials):
@@ -144,7 +144,7 @@ Two principles applied: (a) prefer adopting categories that have **internal pres
 - **Bounded Context** — sits behind Aggregate work; needed once cross-context edges are typed.
 - **Domain Service** — currently absorbed by Operation; needed once Operation is decomposed.
 - **Command** — paired with Query (currently asymmetric).
-- **Port**, **Adapter (driving/driven)** — hexagonal pair; lands together with hexagonal terminology or not at all.
+- **Port**, **Adapter (driving/driven)** — hexagonal pair; lands together with hexagonal terminology or not at all. *E11 corroboration: T24 — Hexagonal Ports/Adapters.*
 
 **Reject** (out of scope, anti-pattern, or already subsumed):
 
@@ -155,6 +155,8 @@ Two principles applied: (a) prefer adopting categories that have **internal pres
 - **Background Worker** — operational primitive; covered by Operation + Cross-cutting/Operational category.
 
 **Rationale.** Cosmetic verdicts (rename, defer, adopt one category) miss the structural cause T1 surfaces: `Operation` is doing three jobs (domain action, application orchestration, cross-cutting concern host) and `Query` is doing two (transient read, materialized projection). Until Aggregate Root + Read Model land, Operation will continue absorbing whatever doesn't fit. (Use Case was originally listed here as a third lever, but Operation already plays that role — see rejection note above; the residual "is Operation doing too many jobs?" question now sits at OQ-8.)
+
+Post-dispatch note: the adopt-essential list converges with `domainspec-core`'s E11-technique-specialization catalog (D4=go, G1–G4 pass). Outbox, Read Model/Projection, and Saga specialization variants (T01–T03) are already validated there under DS-M13. This strengthens the D-2 decisions but introduces a governance reconciliation question — see CT-1 and OQ-9.
 
 **Status.** Adopted. Order: Aggregate Root + Read Model first (C3 non-deferrable); Repository, Outbox, Event-split follow; strong tier sequences after essential lands.
 
@@ -228,6 +230,26 @@ Two principles applied: (a) prefer adopting categories that have **internal pres
 **Rationale.** `Feature` and `Consumer` are created at runtime by `markdown-feature-docs-parser.ts` but never declared in `TAXONOMY.md` — a violation of "RELATIONSHIPS.md is the contract." The split is unavoidable: `Feature` is structurally scope-shaped, `Consumer` is structurally type-shaped, so a single uniform treatment would mis-classify one of them.
 
 **Status.** `Feature` resolved (scope qualifier). `Consumer` deferred to OQ-4.
+
+---
+
+## Contradictions & Tensions
+
+### CT-1. C2 did not survey the sibling `domainspec-core` research repository
+
+C2's external-frame survey was scoped to canonical literature (Evans/Vernon/Fowler/Cockburn/Hohpe&Woolf). It made no reads from `domainspec-core/` — the sibling research repository at `/Users/victorboscaro/domainspec-core/`. Post-dispatch review found that `domainspec-core` holds **E11-technique-specialization**: a completed full-tier experiment (D4=go, G1–G4 pass, 35-row human adjudication cycle, 24 technique specializations validated) under DS-M13.
+
+Implications:
+
+1. **C2's "essential" tier is not independent of internal evidence.** Every adopt-essential meta-concept in D-2 that has a technique-level analogue appears in E11's catalog: Outbox (T04), Read Model/Projection (T07), Saga specialization variants (T01–T03), Port+Adapter (T24 — adopt-strong). The E11 evidence strengthens D-2's decisions; however, the Independence grade of the dispatch must be revised downward from **0.90(j) to ~0.75(j)**. C2 and C3 were framed as independent lenses, but they converge on concepts that a third internal source (E11) already validated via a different method. The convergence is a quality signal, not a problem — but it reduces the claim that C2 provided truly external corroboration.
+
+2. **E11's 7-step promotion path was not followed.** E11 specifies a formal governance sequence for promoting technique/specialization entries into `TAXONOMY.md` (Steps 1–7 in `E11/README.md`). This discovery reached convergent conclusions via a separate evidence path (C2 + C3 dispatch) without going through that process. The recommendations are convergent; the governance trace is different. OQ-9 records the reconciliation question.
+
+### CT-2. Pattern-rejection rationale is incomplete
+
+D-1 rejected Pattern-as-meta-concept with the argument: *"Pattern has no structural template shape."* This is correct for navigational-only groupings like SAGA-as-design-pattern or Repository-as-design-pattern. However, E11 demonstrates that the **Technique/Specialization axis** — which covers the same territory at a different level of specificity — *does* have decision-protocol shape: DS-M13 defines a formal validity formula (PrecisionF1 ≥ 0.75 ∧ ApplicabilityRate ≥ 0.80 ∧ AmbiguityRate ≤ 0.15 ∧ TradeoffCompleteness ≥ 0.85).
+
+This does not overturn the Pattern rejection for `TAXONOMY.md`. The catalog governs **code artifact types**; DS-M13 governs **technique-selection decisions** — a different axis. The rejection stands on its own merit, but the original rationale was too broad. Corrected framing: Pattern has no shape as a DomainSpec **code artifact type**; the same entities have decision-protocol shape as DomainSpec **technique specializations** — a separate axis defined in `domainspec-core`'s DS-M13 method. These are different things and should not be conflated.
 
 ---
 
@@ -312,6 +334,18 @@ D-4 prescribes removing the `query` → `queries` and `interface` → `exposes` 
 
 D-2 rejected **Use Case** because Operation already plays the application-interactor role per `TAXONOMY.md`'s Architecture Mapping Appendix (Operation → Application layer, "use-case factory"). That resolves the Use Case question but exposes a residual ambiguity: where does *stateful, cross-aggregate domain logic* live? Today the options are Calculation (pure derivation), Rule (pure predicate), or — by default — another Operation. But if Operation is application-layer, then cross-aggregate domain logic inside an Operation is in the wrong layer. The candidate Domain Service in the adopt-strong list addresses this gap, but only if Operation truly stops at orchestration. **Recommendation:** surface this only when the first cross-aggregate domain-logic case appears in a feature spec (e.g., a transfer between two Aggregate Roots, a settlement that spans multiple Aggregates). Premature splitting is more dangerous than the current ambiguity; the live corpus does not yet have a clean test case. If Domain Service lands first via adopt-strong sequencing, this question may resolve naturally — Domain Service absorbs the misplaced cross-aggregate logic and Operation tightens to pure orchestration.
 
+### OQ-9. Governance reconciliation — vault discovery path vs E11 promotion path
+
+D-2's adopt decisions were reached via the vault discovery path (C2 + C3 dispatch → findings → this discovery). E11-technique-specialization (`domainspec-core/research/projects/domainspec/experiments/E11-technique-specialization/`) reached convergent conclusions via a separate 7-step DS-M13 governance path that is complete (D4=go, G1–G4 pass) but whose ontology-level promotion step was never executed — Step 7 remains open and `domainspec-core/implementation/domainspec/` is empty.
+
+Two sub-questions:
+
+1. **Should D-2 adopt decisions that have E11 backing (Outbox/T04, Read Model/T07, Port+Adapter/T24, Saga variants/T01–T03) be sequenced through E11's Step 7 before they land in `TAXONOMY.md`?** If yes, vault discovery acts as the design rationale but E11 is the evidence gate. If no, vault discovery and E11 are parallel governance paths — convergence is a quality signal, not a sequencing constraint.
+
+2. **Are the two `TAXONOMY.md` files the same artifact or diverging copies?** `/Users/victorboscaro/domainspec/TAXONOMY.md` has 25 meta-concepts; `/Users/victorboscaro/domainspec-core/implementation/domainspec/` is empty. If `domainspec` is imported as a submodule into consumer repos and `domainspec-core` is the research counterpart, the `domainspec-core/implementation/domainspec/` TAXONOMY.md appears to be the specification copy that E11 Step 7 was meant to populate — currently unwritten. D-2 adopt decisions should target that file once Step 7 runs.
+
+**Recommendation:** treat vault discovery as design rationale (not a governance gate). E11's Step 7 is the gate for `TAXONOMY.md` changes for concepts with E11 backing. The two paths converge at Step 7; this discovery is the design rationale artifact that Step 7's "compatibility impact" note should cite.
+
 ---
 
 ## Connections
@@ -341,4 +375,4 @@ This discovery derives from the `domainspec-types-and-edges-validation` subagent
 
 - **Findings** (synthesis): `vault/discovery/domainspec-types-and-edges-validation/research/domainspec-findings.md`
 - **Research** (raw per-child): `vault/discovery/domainspec-types-and-edges-validation/research/domainspec-research.md`
-- **Dispatch shape:** DAG, two waves, 6 children (C1 catalog-inventory, C2 external-frame-survey, C3 internal-pressure-audit, C4 categories-and-pattern-meta-inquiry, C5 edge-catalog-proposal, C6 ui-symmetry-check) + 2 writer agents. ~194k tokens total. Coverage 0.85, Independence 0.9, Fidelity 0.95, Cost discipline 0.92 (all but cost are judgments per R22).
+- **Dispatch shape:** DAG, two waves, 6 children (C1 catalog-inventory, C2 external-frame-survey, C3 internal-pressure-audit, C4 categories-and-pattern-meta-inquiry, C5 edge-catalog-proposal, C6 ui-symmetry-check) + 2 writer agents. ~194k tokens total. Coverage 0.85, Independence ~0.75 (revised from 0.90 — C2 missed domainspec-core/E11; see CT-1), Fidelity 0.95, Cost discipline 0.92 (all but cost are judgments per R22).

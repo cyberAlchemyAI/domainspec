@@ -1,106 +1,58 @@
 ---
-tags: [telemetry, agents, hooks, observability, claude-code, copilot, internal-tools]
+tags: [telemetry, agents, skills, hooks, observability, claude-code, copilot, internal-tools, cross-repo]
 node_type: readme
 is_session: false
 layer: architecture
 nature: reference
-status: draft
-version: 0.1.0
+status: exploratory
+version: 0.2.0
 last_updated: 2026-05-12
 ---
 
-# `internal_tools/agents-telemetry/` — Subagent Dispatch Telemetry
+# `internal_tools/agents-telemetry/` — Subagent & Skill Telemetry
 
 ## Objective
 
-Capture a structured event every time an **agent we explicitly authored** is dispatched, regardless of which IDE/host invoked it. Answers: "which of our subagents actually get used, by whom, with what prompts, how often, and how long do they run?"
-
-In scope:
-- Claude Code subagents under [.claude/agents/](../../.claude/agents/) (43 agents: `domainspec-*`, `gsd-*`, `mars-researcher`)
-- GitHub Copilot custom agents under [.github/agents/](../../.github/agents/) (36 agents — same set, mirrored with VS Code tool grants)
-
-Out of scope (and intentionally so):
-- Built-in agent types Claude Code ships with (`general-purpose`, `Explore`, `Plan`, `statusline-setup`, `claude-code-guide`)
-- Opaque "agent mode" behavior inside Copilot Chat that does not route through our `.github/agents/*.agent.md` definitions
-- OpenAI / other vendor SDKs
+Capture a structured event every time an agent or skill authored as part of **domainspec** is dispatched or invoked. Phase 1 instruments the domainspec repo itself; Phase 2 (future) extends to consumer repos. Answers: "which of our agents and skills actually get used, with what prompts, how often, and how long do they run?"
 
 ## Why this exists
 
-We have ~40 hand-authored agents. We currently have **no idea** which ones are actually invoked, which sit unused, which are dispatched with prompts that drift from their stated role, and which fail silently. Telemetry turns the agent catalog from a set of intentions into a measurable surface.
+domainspec ships ~44 hand-authored agents and ~113 skills. We currently have **no idea** which actually get invoked, which sit unused, which run silently to failure. Telemetry turns the catalog from a set of intentions into a measurable surface — on the user's own machine, opt-in, no data leaves until explicitly shipped.
 
-## Two mechanisms — and they are not equivalent
+## Scope phasing
 
-The two hosts expose different dispatch surfaces. We deliberately use a different mechanism per host rather than pretending to one unified pipeline.
+**Phase 1 (current):** instrument domainspec from within domainspec. Hooks in this repo's `.claude/settings.json`; data in `internal_tools/agents-telemetry/data/events.db` (gitignored); opt-in via a marker file. Local-first, repo-scoped.
+
+**Phase 2 (future):** extend to consumer repos that import domainspec (`house_project`, `business-philosopher`, …). Requires global data path, global hook config, a Claude-side install script, and the `project` field as a load-bearing join key. Forward-compatibility is preserved in the Phase 1 envelope so the migration is a reconfigure, not a redesign.
+
+Design specifics live in [docs/architecture.md](docs/architecture.md).
+
+## Two hosts, two mechanisms (different reliability)
+
+The two hosts that consume domainspec agents expose different dispatch surfaces:
 
 ### Mechanism A — Claude Code: harness hook (deterministic)
 
-**Surface:** Claude Code's `PreToolUse` / `PostToolUse` hooks fire on every tool call. Subagent dispatches go through the `Task` tool with `subagent_type` in the input payload.
-
-**How it will work:**
-- A `PreToolUse` hook on the `Task` tool reads the JSON payload, checks whether `subagent_type` is in our explicit catalog, and appends a JSONL event.
-- A matching `PostToolUse` hook records completion (success/error, duration, optional output size).
-- Hook scripts live in [scripts/](scripts/) (to be added); the wiring lives in `.claude/settings.json`.
-
-**Properties:** lossless, no agent cooperation required, zero token cost, fires even if the agent prompt is malformed. This is the load-bearing mechanism.
+`PreToolUse` and `PostToolUse` on the `Task` and `Skill` tools capture every dispatch and skill invocation. Lossless, no agent cooperation required, zero token cost. **This is the active feature** — see [features/claude-event-capture/](features/claude-event-capture/).
 
 ### Mechanism B — Copilot custom agents: prompt-side self-report (lossy)
 
-**Surface:** The Copilot extension does not expose a `PreToolUse`-equivalent hook for dispatching custom agents — even custom agents we authored in `.github/agents/`. The agent definition is configuration the extension reads; the *act of dispatch* is internal to the closed extension.
+The Copilot extension does not expose a `PreToolUse`-equivalent hook for dispatching custom agents we authored in `.github/agents/`. The dispatch is internal to the closed extension. The fallback is an MCP tool the agent must call ("agent agreed it was dispatched"), which is lossy and depends on the LLM obeying the instruction. **Deferred** — held in reserve as a future `features/copilot-event-capture/`. Revisit once Claude-side capture produces real data.
 
-**Workaround:**
-- Stand up a tiny MCP server exposing one tool: `telemetry/agent_started(agent_name, prompt_summary)`.
-- Add it to every `.github/agents/*.agent.md` `tools:` list.
-- Prepend a one-liner to each agent's `<role>`: "Before any other action, call `telemetry/agent_started`."
+### Analysis discipline
 
-**Properties:** lossy (depends on the LLM obeying the instruction), costs one tool call per dispatch, bloats every agent file by one line. Records "the agent agreed it was dispatched," not "the agent was dispatched." Treat the resulting numbers as a lower bound, never a true count.
-
-### What this implies for analysis
-
-Do **not** sum events across `source: claude-code` and `source: copilot` and present the total as "agent dispatches." They have different reliability. Always break out by `source` in any dashboard or report.
-
-## Event schema (proposed)
-
-One JSONL line per event. Same envelope across both sources, with `mechanism` and `source` distinguishing reliability.
-
-```json
-{
-  "ts": "2026-05-12T14:03:11Z",
-  "source": "claude-code",
-  "mechanism": "hook",
-  "event": "dispatch.start",
-  "agent_name": "domainspec-spec-writer",
-  "parent_session_id": "abc123",
-  "prompt_chars": 1842,
-  "prompt_sha256": "…",
-  "extra": {}
-}
-```
-
-Companion `dispatch.end` events carry `duration_ms`, `status`, optional `output_chars`. `prompt_sha256` lets us correlate without storing prompt text by default.
-
-## Where data lands
-
-To be decided when implementation starts. Default plan: `internal_tools/agents-telemetry/data/events.jsonl` (gitignored). Alternative: pipe to a local SQLite for queryability.
-
-## Build order (recommendation)
-
-1. Mechanism A only — Claude hook + JSONL appender + a script to print "top N agents this week."
-2. Stop. Look at real data for two weeks before building more.
-3. Decide whether Mechanism B is worth its cost based on whether Claude data left questions unanswered.
-4. If yes, build the MCP server and instrument `.github/agents/*` in one sweep.
-
-The temptation to build both at once should be resisted — most of the value comes from Mechanism A, and Mechanism B's design will be sharper once we know what questions matter.
+When both mechanisms exist, do **not** sum events across `source: claude-code` and `source: copilot` and present the total as "agent dispatches." Different reliability. Always break out by `source` and `mechanism`.
 
 ## 📁 Navigation
 
-- **`README.md`** — this file (design doc).
-- **`scripts/`** *(to be added)* — hook scripts for Mechanism A.
-- **`mcp/`** *(to be added, deferred)* — telemetry MCP server for Mechanism B.
-- **`data/`** *(to be added, gitignored)* — JSONL event log.
+- **[docs/architecture.md](docs/architecture.md)** — design proposal: cross-repo framing, components, data flow, opt-in mechanism, install path, callsigns, open questions.
+- **[features/claude-event-capture/](features/claude-event-capture/)** — the active feature (Mechanism A).
+  - **[features/claude-event-capture/research/research-strategy.md](features/claude-event-capture/research/research-strategy.md)** — fan-out plan to stress-test the architecture and produce `SCHEMA.md`.
 
 ## Related
 
-- [.claude/README.md](../../.claude/README.md) — harness configuration overview; explains the existing `PreToolUse` hook pattern this builds on.
-- [.claude/agents/](../../.claude/agents/) — Claude Code subagent catalog (Mechanism A target set).
-- [.github/agents/](../../.github/agents/) — Copilot custom agent catalog (Mechanism B target set).
-- [.claude/skills/custom/frontmatter.md](../../.claude/skills/custom/frontmatter.md) — frontmatter schema this README follows.
+- [../../.claude/README.md](../../.claude/README.md) — harness configuration overview; explains the existing `PreToolUse` hook pattern this builds on.
+- [../../.claude/agents/](../../.claude/agents/) — Claude Code subagent catalog (active Mechanism A target set).
+- [../../.github/agents/](../../.github/agents/) — Copilot custom agent catalog (deferred Mechanism B target set).
+- [../../.claude/skills/](../../.claude/skills/) — Claude skills catalog (active Mechanism A target set, Claude-only).
+- [../../.claude/skills/custom/frontmatter.md](../../.claude/skills/custom/frontmatter.md) — frontmatter schema this README follows.
