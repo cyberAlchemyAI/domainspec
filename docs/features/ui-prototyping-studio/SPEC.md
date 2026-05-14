@@ -230,6 +230,7 @@ These concept edges remain authoritative roadmap intent, but are deferred from s
 
 | Aspect                             | Contains                                           | Key Concepts                                                  |
 | ---------------------------------- | -------------------------------------------------- | ------------------------------------------------------------- |
+| [Glossary](glossary.md)            | Distilled definitions for feature concepts         | StudioSession, MutationBatch, GovernanceGatePolicy            |
 | [Domain](domain.md)                | Entities, value objects, enums                     | StudioSession, MutationBatch, RevisionManifestEntry           |
 | [Operations](operations.md)        | Mutations, rules, calculations                     | GenerateVariants, SynthesizeMutationBatch, ApplyApprovedBatch |
 | [Queries](queries.md)              | Read models and handoff outputs                    | GetSessionSnapshot, GetHandoffBundle                          |
@@ -388,6 +389,7 @@ See [STORIES.md](STORIES.md) for capability-scoped user journeys and coverage li
 ## References
 
 - [DISCOVERY.md](DISCOVERY.md)
+- [glossary.md](glossary.md)
 - [inventory/README.md](inventory/README.md)
 - [UI-SPEC.md](UI-SPEC.md)
 - [TEST-SPEC.md](TEST-SPEC.md)
