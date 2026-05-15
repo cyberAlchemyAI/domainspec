@@ -23,6 +23,37 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.0.15] - 2026-05-14
+
+### Added
+
+- **`domainspec-feature-glossary` skill** - new standalone command for creating or evolving per-feature `glossary.md` companions that distill definitions for every declared feature concept.
+- **`glossary.md` feature template** - new feature template for source-linked concept definitions, cross-feature terms, and glossary maintenance rules.
+
+### Changed
+
+- **`domainspec-spec-feature` default artifacts** - spec writing now treats `glossary.md` as a default companion artifact and expects `SPEC.md` to link to it when present.
+- **Spec-writer guidance** - spec-writer agent prompts and command routing docs now surface feature glossary authoring as part of the spec-authoring workflow.
+
+## [2.0.14] - 2026-05-14
+
+### Changed
+
+- **Implementation layering heuristic** - added decision-unlock and value/cost boundary guidance so each implementation layer ends at the smallest slice that changes what the team can responsibly decide next.
+- **`implementation-layering.md` template** - expanded with layer decision framing, minimum working unit, deferred scope, promotion decision, and value/cost notes for POC-first layer sizing.
+
+## [2.0.13] - 2026-05-13
+
+### Added
+
+- **`domainspec-implementation-layering` skill** - new standalone command for creating or evolving a capability-aware implementation layering model from a Layer 0 minimum working unit POC through progressively hardened layers.
+- **`implementation-layering.md` template** - new feature template for documenting POC-first rollout layers, layer deltas, exit criteria, and implementation wave backbone.
+
+### Changed
+
+- **Orchestrator and help routing** - command routing and guidance now include implementation layering intent (`implementation layering <feature>`) with direct command fallback.
+- **Command reference docs** - framework README and copilot command listings now include implementation-layering as a first-class specialist stage.
+
 ## [2.0.12] - 2026-05-13
 
 ### Added

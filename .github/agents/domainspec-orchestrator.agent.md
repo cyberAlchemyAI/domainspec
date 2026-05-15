@@ -97,6 +97,7 @@ Read first:
      7. `domainspec-verify-feature <feature>`
    - task context pack preparation for implementation predictability -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - full feature delivery -> `domainspec-pipeline <feature>`
+  - feature glossary authoring/evolution -> `domainspec-feature-glossary <feature>`
    - command guidance -> `domainspec-help`
    - explicit stage intent -> the matching specialist command
 4. If feature name, scope, or target stage is ambiguous, ask a selectable question using `vscode/askQuestions` with options the user can choose:

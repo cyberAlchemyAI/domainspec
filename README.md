@@ -158,20 +158,22 @@ Use flags to control scope:
 
 Each pipeline stage can also be run independently:
 
-| Stage         | Command                                                                           | Agent             |
-| ------------- | --------------------------------------------------------------------------------- | ----------------- | --------------- |
-| Spec          | `@domainspec-spec-writer domainspec-spec-feature <feature>`                       | spec-writer       |
-| Architecture  | `@domainspec-spec-writer domainspec-feature-architecture <feature>`               | spec-writer       |
-| Stories       | `@domainspec-story-sync domainspec-sync-user-stories <feature>`                   | story-sync        |
-| Tests         | `@domainspec-test-designer domainspec-generate-tests <feature>`                   | test-designer     |
-| Context       | `@domainspec-context-builder domainspec-context-builder <feature> --task <TASK-ID | task-path>`       | context-builder |
-| Backend       | `@domainspec-implementer domainspec-implement <feature>`                          | implementer       |
-| Code tags     | `@domainspec-code-tagger domainspec-tag-code <feature>`                           | code-tagger       |
-| UI            | `@domainspec-ui-architect domainspec-ui-pipeline <feature>`                       | ui-architect      |
-| Observability | `@domainspec-planner domainspec-instrument-otel <feature>`                        | otel-instrumenter |
-| OTel Verify   | `@domainspec-planner domainspec-otel-verify <feature>`                            | otel-verifier     |
-| Infra         | `@domainspec-infra-architect domainspec-infra-deploy <feature>`                   | infra-architect   |
-| Verify        | `@domainspec-verifier domainspec-verify-feature <feature>`                        | verifier          |
+| Stage                   | Command                                                                           | Agent             |
+| ----------------------- | --------------------------------------------------------------------------------- | ----------------- | --------------- |
+| Spec                    | `@domainspec-spec-writer domainspec-spec-feature <feature>`                       | spec-writer       |
+| Architecture            | `@domainspec-spec-writer domainspec-feature-architecture <feature>`               | spec-writer       |
+| Glossary                | `@domainspec-spec-writer domainspec-feature-glossary <feature>`                   | spec-writer       |
+| Implementation Layering | `@domainspec-spec-writer domainspec-implementation-layering <feature>`            | spec-writer       |
+| Stories                 | `@domainspec-story-sync domainspec-sync-user-stories <feature>`                   | story-sync        |
+| Tests                   | `@domainspec-test-designer domainspec-generate-tests <feature>`                   | test-designer     |
+| Context                 | `@domainspec-context-builder domainspec-context-builder <feature> --task <TASK-ID | task-path>`       | context-builder |
+| Backend                 | `@domainspec-implementer domainspec-implement <feature>`                          | implementer       |
+| Code tags               | `@domainspec-code-tagger domainspec-tag-code <feature>`                           | code-tagger       |
+| UI                      | `@domainspec-ui-architect domainspec-ui-pipeline <feature>`                       | ui-architect      |
+| Observability           | `@domainspec-planner domainspec-instrument-otel <feature>`                        | otel-instrumenter |
+| OTel Verify             | `@domainspec-planner domainspec-otel-verify <feature>`                            | otel-verifier     |
+| Infra                   | `@domainspec-infra-architect domainspec-infra-deploy <feature>`                   | infra-architect   |
+| Verify                  | `@domainspec-verifier domainspec-verify-feature <feature>`                        | verifier          |
 
 ## Interview-First Discovery
 
@@ -666,36 +668,38 @@ The installer copies agents, skills, and instructions into `.github/`. Optionall
 Default user-facing entrypoint: `domainspec-orchestrate`.
 Direct specialist commands remain callable as advanced/internal invocations.
 
-| Command                             | Stage | Purpose                                                                                                   |
-| ----------------------------------- | ----- | --------------------------------------------------------------------------------------------------------- |
-| `domainspec-orchestrate`            | Entry | Unified user-facing entrypoint: route natural-language DomainSpec intent to the right specialist command  |
-| `domainspec-start`                  | Setup | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, optional init          |
-| `domainspec-pipeline`               | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify                |
-| `domainspec-init`                   | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton              |
-| `domainspec-brownfield-translation` | Setup | Translate an implemented project into as-is DomainSpec artifacts with governance and ontology gap reports |
-| `domainspec-decision-gate`          | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation           |
-| `domainspec-spec-feature`           | 3     | Author or update a feature specification (SPEC + aspects)                                                 |
-| `domainspec-feature-architecture`   | 3     | Author or update the feature architecture companion (`architecture.md`)                                   |
-| `domainspec-sync-user-stories`      | 3     | Generate/refresh STORIES.md from aspect docs                                                              |
-| `domainspec-sync-registry`          | 7     | Sync registry and glossary from all SPEC.md concept tables                                                |
-| `domainspec-generate-tests`         | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                                   |
-| `domainspec-context-builder`        | 4–5   | Build minimal deterministic task context packs before implementation                                      |
-| `domainspec-implement`              | 5     | Implement backend code from documented contracts                                                          |
-| `domainspec-tag-code`               | 5     | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                     |
-| `domainspec-ui-pipeline`            | 6     | Full UI lifecycle — spec → tests → implement → audit                                                      |
-| `domainspec-ui-architecture`        | 6     | Create or evolve project-wide UI-ARCHITECTURE.md                                                          |
-| `domainspec-ui-implement`           | 6     | Implement frontend pages from UI-SPEC + UI-ARCHITECTURE                                                   |
-| `domainspec-instrument-otel`        | 8     | Instrument backend with OTel metrics from observability specs                                             |
-| `domainspec-otel-verify`            | 8     | Verify OTel coverage → OBSERVABILITY-REPORT.md                                                            |
-| `domainspec-infra-architecture`     | 9     | Create INFRA-ARCHITECTURE.md + scaffold IaC                                                               |
-| `domainspec-infra-deploy`           | 9     | Sync prometheus.yml, alerts, and compose from current state                                               |
-| `domainspec-audit-alignment`        | 5–7   | Alignment report comparing docs vs code                                                                   |
-| `domainspec-audit-layering`         | 5–7   | Detect domain-logic drift into application layers                                                         |
-| `domainspec-verify-feature`         | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                                          |
-| `domainspec-readiness-gate`         | 10    | Profile-driven readiness gate (`pilot`, `release-candidate`, `production`)                                |
-| `domainspec-pilot-readiness`        | 10    | Prepare a feature for pilot testing                                                                       |
-| `domainspec-interview-scope`        | Setup | Capture project context before first feature planning                                                     |
-| `domainspec-help`                   | —     | Show command reference and recommend next step (orchestrator-first guidance)                              |
+| Command                              | Stage | Purpose                                                                                                   |
+| ------------------------------------ | ----- | --------------------------------------------------------------------------------------------------------- |
+| `domainspec-orchestrate`             | Entry | Unified user-facing entrypoint: route natural-language DomainSpec intent to the right specialist command  |
+| `domainspec-start`                   | Setup | Unified entrypoint: discovery, brownfield scope gates, project decisions baseline, optional init          |
+| `domainspec-pipeline`                | 1–10  | **End-to-end** — plan → spec → stories → tests → implement → UI → observe → infra → verify                |
+| `domainspec-init`                    | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton              |
+| `domainspec-brownfield-translation`  | Setup | Translate an implemented project into as-is DomainSpec artifacts with governance and ontology gap reports |
+| `domainspec-decision-gate`           | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation           |
+| `domainspec-spec-feature`            | 3     | Author or update a feature specification (SPEC + aspects)                                                 |
+| `domainspec-feature-architecture`    | 3     | Author or update the feature architecture companion (`architecture.md`)                                   |
+| `domainspec-feature-glossary`        | 3     | Author or update the per-feature glossary companion (`glossary.md`)                                       |
+| `domainspec-implementation-layering` | 3–5   | Author or update a POC-first implementation layering model (`implementation-layering.md`)                 |
+| `domainspec-sync-user-stories`       | 3     | Generate/refresh STORIES.md from aspect docs                                                              |
+| `domainspec-sync-registry`           | 7     | Sync registry and glossary from all SPEC.md concept tables                                                |
+| `domainspec-generate-tests`          | 4     | Derive TEST-SPEC.md from aspect docs (`--ui` for E2E, `--all` for both)                                   |
+| `domainspec-context-builder`         | 4–5   | Build minimal deterministic task context packs before implementation                                      |
+| `domainspec-implement`               | 5     | Implement backend code from documented contracts                                                          |
+| `domainspec-tag-code`                | 5     | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                     |
+| `domainspec-ui-pipeline`             | 6     | Full UI lifecycle — spec → tests → implement → audit                                                      |
+| `domainspec-ui-architecture`         | 6     | Create or evolve project-wide UI-ARCHITECTURE.md                                                          |
+| `domainspec-ui-implement`            | 6     | Implement frontend pages from UI-SPEC + UI-ARCHITECTURE                                                   |
+| `domainspec-instrument-otel`         | 8     | Instrument backend with OTel metrics from observability specs                                             |
+| `domainspec-otel-verify`             | 8     | Verify OTel coverage → OBSERVABILITY-REPORT.md                                                            |
+| `domainspec-infra-architecture`      | 9     | Create INFRA-ARCHITECTURE.md + scaffold IaC                                                               |
+| `domainspec-infra-deploy`            | 9     | Sync prometheus.yml, alerts, and compose from current state                                               |
+| `domainspec-audit-alignment`         | 5–7   | Alignment report comparing docs vs code                                                                   |
+| `domainspec-audit-layering`          | 5–7   | Detect domain-logic drift into application layers                                                         |
+| `domainspec-verify-feature`          | 10    | PASS / FLAG / BLOCK verdict on feature readiness                                                          |
+| `domainspec-readiness-gate`          | 10    | Profile-driven readiness gate (`pilot`, `release-candidate`, `production`)                                |
+| `domainspec-pilot-readiness`         | 10    | Prepare a feature for pilot testing                                                                       |
+| `domainspec-interview-scope`         | Setup | Capture project context before first feature planning                                                     |
+| `domainspec-help`                    | —     | Show command reference and recommend next step (orchestrator-first guidance)                              |
 
 ### Advanced Commands
 

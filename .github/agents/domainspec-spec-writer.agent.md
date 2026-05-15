@@ -68,6 +68,7 @@ Core responsibilities:
 
 - Create SPEC.md and relevant aspect files from templates
 - Create `architecture.md` as the default feature-architecture companion unless a deliberate equivalent already exists
+- Create `glossary.md` as the default per-feature definition companion, with one distilled definition for every concept
 - Keep concept IDs namespaced as feature.ConceptName
 - Keep cross-links valid between operations, states, interfaces, and events
 - Ensure every referenced concept/type/field name is a markdown link to its source of truth
@@ -99,9 +100,10 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
   - Ask for a structured result with: existing feature artifacts, relevant contracts, naming constraints, link graph, matched tags, and open questions.
 3. Start from SPEC.md and concept inventory using gathered context.
 4. Create or refresh `architecture.md` from the feature contracts before finalizing the rest of the aspect set, unless a deliberate equivalent artifact already exists.
-5. Generate only relevant aspect files for the feature.
-6. Add formal rules, transitions, and invariants where applicable.
-7. Run a consistency pass for links and concept naming, including referenced field names and architecture-to-aspect references.
-8. If key decisions are undefined, use question prompts before finalizing specs.
-9. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, decisions, or patterns discovered during spec writing to `docs/signals/pipeline-signals.jsonl`.
+5. Create or refresh `glossary.md` from the feature Concept Registry and aspect-level concept registries, keeping definitions concise and source-linked.
+6. Generate only relevant aspect files for the feature.
+7. Add formal rules, transitions, and invariants where applicable.
+8. Run a consistency pass for links and concept naming, including referenced field names, glossary source anchors, and architecture-to-aspect references.
+9. If key decisions are undefined, use question prompts before finalizing specs.
+10. **Emit signals** — follow `.github/skills/domainspec-emit-signals/SKILL.md` to append any spec gaps, decisions, or patterns discovered during spec writing to `docs/signals/pipeline-signals.jsonl`.
 </execution>

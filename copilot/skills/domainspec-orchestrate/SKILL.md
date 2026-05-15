@@ -37,11 +37,13 @@ Read command definitions under `.github/skills/domainspec-*/SKILL.md`, package d
        7. `domainspec-verify-feature <feature>`
    - task context pack preparation for implementation predictability (without implementation request) -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - end-to-end feature delivery -> `domainspec-pipeline <feature>`
-    - feature spec authoring/evolution -> spec-to-task-sync pipeline:
-       1. `domainspec-spec-feature <feature>`
-       2. `domainspec-plan-phase-bridge <feature> --mode native`
-       3. `domainspec-sync-user-stories <feature>`
-      - feature architecture authoring/evolution -> `domainspec-feature-architecture <feature>`
+   - feature spec authoring/evolution -> spec-to-task-sync pipeline:
+      1. `domainspec-spec-feature <feature>`
+      2. `domainspec-plan-phase-bridge <feature> --mode native`
+      3. `domainspec-sync-user-stories <feature>`
+   - feature architecture authoring/evolution -> `domainspec-feature-architecture <feature>`
+   - feature glossary authoring/evolution -> `domainspec-feature-glossary <feature>`
+   - implementation layering model design/evolution -> `domainspec-implementation-layering <feature>`
    - story sync -> `domainspec-sync-user-stories <feature>`
    - test derivation -> `domainspec-generate-tests <feature>`
    - post-implementation code tagging -> `domainspec-tag-code <feature>`

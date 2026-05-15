@@ -84,6 +84,7 @@ Use one relationship per row and include an evidence anchor when available.
 | Aspect                          | Contains                                                | Key Concepts   |
 | ------------------------------- | ------------------------------------------------------- | -------------- |
 | [Architecture](architecture.md) | Architecture-level explanation of the feature contracts | {top concerns} |
+| [Glossary](glossary.md)         | Distilled definitions for feature concepts              | {top concepts} |
 | [Domain](domain.md)             | Entities, value objects, enums                          | {top concepts} |
 | [Operations](operations.md)     | Mutations, rules, calculations                          | {top concepts} |
 | [Interfaces](interfaces.md)     | External/internal contracts                             | {top concepts} |

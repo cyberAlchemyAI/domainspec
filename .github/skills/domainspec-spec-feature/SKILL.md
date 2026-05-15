@@ -28,10 +28,11 @@ Target location:
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Create or update SPEC.md and concept table.
 3. Generate `architecture.md` as a default companion artifact from `domainspec/templates/architecture.md`, unless an equivalent feature architecture document already exists and is being updated in place.
-4. Generate relevant aspect files from templates.
-5. Ensure `SPEC.md` links to `architecture.md` when the architecture artifact exists.
-6. Add formal rules, formulas, transitions, and invariants where applicable.
-7. When introducing or changing gate-critical terms, sync canonical definitions first via `.github/skills/domainspec-definitions-governance/SKILL.md`.
-8. Validate cross-links, referenced field-name links, concept ID naming, and architecture-to-aspect references.
-9. Summarize what is ready and what remains undefined.
+4. Generate `glossary.md` as a default companion artifact from `domainspec/templates/glossary.md`, distilling one definition for every feature concept.
+5. Generate relevant aspect files from templates.
+6. Ensure `SPEC.md` links to `architecture.md` and `glossary.md` when those artifacts exist.
+7. Add formal rules, formulas, transitions, and invariants where applicable.
+8. When introducing or changing gate-critical terms, sync canonical definitions first via `.github/skills/domainspec-definitions-governance/SKILL.md`.
+9. Validate cross-links, referenced field-name links, concept ID naming, glossary source anchors, and architecture-to-aspect references.
+10. Summarize what is ready and what remains undefined.
 </process>

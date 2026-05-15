@@ -82,6 +82,7 @@ test -f .github/agents/domainspec-orchestrator.agent.md
 test -f .github/agents/domainspec-code-tagger.agent.md
 test -d .github/skills/domainspec-orchestrate
 test -d .github/skills/domainspec-pipeline
+test -d .github/skills/domainspec-feature-glossary
 test -d .github/skills/domainspec-tag-code
 test -d .github/skills/domainspec-plan-phase-bridge
 test -d .github/skills/domainspec-execute-phase-bridge

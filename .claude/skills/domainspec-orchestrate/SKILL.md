@@ -38,6 +38,7 @@ Read command definitions under `.claude/skills/domainspec-*/SKILL.md`, package d
    - task context pack preparation for implementation predictability (without implementation request) -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - end-to-end feature delivery -> `domainspec-pipeline <feature>`
    - feature spec authoring -> `domainspec-spec-feature <feature>`
+   - feature glossary authoring/evolution -> `domainspec-feature-glossary <feature>`
    - story sync -> `domainspec-sync-user-stories <feature>`
    - test derivation -> `domainspec-generate-tests <feature>`
    - post-implementation code tagging -> `domainspec-tag-code <feature>`
