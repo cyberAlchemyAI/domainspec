@@ -5,19 +5,36 @@ is_session: false
 layer: architecture
 nature: reference
 status: exploratory
-version: 0.2.0
-last_updated: 2026-05-12
+version: 0.3.0
+last_updated: 2026-05-16
 ---
 
 # `internal_tools/agents-telemetry/` — Subagent & Skill Telemetry
 
-## Objective
+## What is this?
 
-Capture a structured event every time an agent or skill authored as part of **domainspec** is dispatched or invoked. Phase 1 instruments the domainspec repo itself; Phase 2 (future) extends to consumer repos. Answers: "which of our agents and skills actually get used, with what prompts, how often, and how long do they run?"
+A local-first telemetry feature that captures one structured event per domainspec agent dispatch and skill invocation, writing to SQLite so usage of the agent/skill catalog can be measured rather than guessed.
 
-## Why this exists
+## Business Context
 
-domainspec ships ~44 hand-authored agents and ~113 skills. We currently have **no idea** which actually get invoked, which sit unused, which run silently to failure. Telemetry turns the catalog from a set of intentions into a measurable surface — on the user's own machine, opt-in, no data leaves until explicitly shipped.
+domainspec ships ~44 hand-authored agents and ~113 skills. Catalog growth has outpaced our knowledge of what actually gets used in real sessions. This feature instruments the harness (Claude Code hooks on `Agent` and `Skill`) so every dispatch produces a row in a local database — no data leaves the user's machine until explicitly shipped.
+
+## Why it matters
+
+Without telemetry, the catalog is a set of intentions. With it, we can answer: which agents/skills get used, with what prompts, how often, and how long do they run? That visibility unblocks pruning, prioritization, and the eventual closed-loop tuning cycle.
+
+## 📁 Navigation
+
+- **[docs/architecture.md](docs/architecture.md)** — design proposal: cross-repo framing, components, data flow, opt-in mechanism, install path, callsigns, open questions.
+- **[features/claude-event-capture/](features/claude-event-capture/)** — the active Phase 1 feature (Mechanism A).
+- **[scripts/log.sh](scripts/log.sh)** — hook entry point. Reads PreToolUse/PostToolUse JSON from stdin, filters to domainspec catalog, inserts into SQLite.
+- **[scripts/schema.sql](scripts/schema.sql)** — SQLite schema for `events.db`: WAL mode, agent_id correlation column, full token + cache breakdown, `shipped_at` for Phase 2.
+- **[canon.json](canon.json)** — thinker list used to generate per-dispatch callsigns.
+- **`data/`** *(gitignored)* — runtime location of `events.db`.
+
+## Status
+
+Phase 1 — scaffolded. SQLite logger written and smoke-tested (20 concurrent writes → 20 rows, no drops). Hooks are **not yet wired** in `.claude/settings.json`; until that's done, the script is dead code. Fan-out research that drives `SCHEMA.md` has not run yet.
 
 ## Scope phasing
 
