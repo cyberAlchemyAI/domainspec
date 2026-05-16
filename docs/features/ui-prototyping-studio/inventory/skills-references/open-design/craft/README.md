@@ -1,27 +1,43 @@
-# Craft references
+---
+tags: [craft, ui-prototyping-studio, open-design, references]
+node_type: readme
+is_session: false
+layer: application
+nature: reference
+status: active
+version: 0.2.0
+last_updated: 2026-05-16
+---
 
-Brand-agnostic craft knowledge. Each file is a small, dense rulebook on one
-dimension of professional UI craft (typography, color, motion, …). Skills
-opt into the references they need; the daemon injects only the requested
-ones into the system prompt above the active skill body.
+# Craft References
 
-## Why a third axis next to `skills/` and `design-systems/`
+## What is this?
 
-| Axis              | Scope                                                    | Example                                                 |
-| ----------------- | -------------------------------------------------------- | ------------------------------------------------------- |
-| `skills/`         | Artifact shape                                           | `saas-landing`, `dashboard`, `pricing-page`             |
-| `design-systems/` | Brand visual language (the 9-section `DESIGN.md`)        | `linear-app`, `apple`, `notion`                         |
-| `craft/`          | **Universal** craft knowledge — true regardless of brand | letter-spacing rules, accent-overuse caps, anti-AI-slop |
+Brand-agnostic craft knowledge — small, dense rulebooks on individual dimensions of professional UI craft (typography, color, motion, accessibility, RTL, form validation, laws of UX, anti-AI-slop). Skills opt into the references they need; the daemon injects only the requested sections into the system prompt above the active skill body.
 
-`DESIGN.md` tells the agent which colors and fonts a brand uses. `craft/`
-tells the agent the universal rules a competent designer applies on top —
-e.g. ALL CAPS always needs ≥0.06em tracking, regardless of the brand.
+## Business Context
 
-## How a skill opts in
+In Open Design, every UI artifact sits at the intersection of three axes: artifact shape (`skills/`), brand visual language (`design-systems/`), and universal craft rules (`craft/`). `DESIGN.md` tells the agent which colors and fonts a brand uses; `craft/` tells the agent the universal rules a competent designer applies on top — e.g. ALL CAPS always needs ≥0.06em tracking, regardless of the brand.
 
-Add an `od.craft.requires` array to the skill's front-matter. Only the
-listed sections are injected, so a skill that needs only typography pays
-no token cost for color/motion content.
+## Why it matters
+
+Without a per-section opt-in, every skill pays the token cost of every craft rulebook. By keeping each dimension in its own file and letting skills declare `od.craft.requires: [typography, color, …]`, prompts stay narrow, the daemon stays forward-compatible (unknown slugs are silently ignored), and rules can be promoted into the linter (`apps/daemon/src/lint-artifact.ts`) as enforcement matures.
+
+## 📁 Navigation
+
+- **[typography.md](typography.md)**: Typography rules (tracking, scale, hierarchy).
+- **[color.md](color.md)**: Color usage, contrast, accent discipline.
+- **[anti-ai-slop.md](anti-ai-slop.md)**: P0 anti-patterns auto-checked by the daemon linter.
+- **[state-coverage.md](state-coverage.md)**: Required state coverage for stateful UI (empty/loading/error/success).
+- **[animation-discipline.md](animation-discipline.md)**: Motion rules — durations, easings, transition discipline.
+- **[accessibility-baseline.md](accessibility-baseline.md)**: Baseline a11y for interactive UI (focus, labels, keyboard).
+- **[rtl-and-bidi.md](rtl-and-bidi.md)**: Right-to-left and bidirectional text/layout rules.
+- **[form-validation.md](form-validation.md)**: Form validation patterns and microcopy.
+- **[laws-of-ux.md](laws-of-ux.md)**: Named cognitive limits (Hick's, Fitts's, Tesler's, Goal-Gradient, Peak-End, etc.) and the composition decisions they govern.
+
+## How a Skill Opts In
+
+Add an `od.craft.requires` array to the skill's front-matter. Only listed sections are injected.
 
 ```yaml
 od:
@@ -29,57 +45,33 @@ od:
     requires: [typography, color, anti-ai-slop]
 ```
 
-Allowed values match the file names in this directory minus the `.md`
-extension. Unknown values are silently ignored (forward-compatible).
+Allowed values match file names in this directory minus the `.md` extension. Unknown values are silently ignored (forward-compatible) — a skill can list a planned slug today and start benefiting the moment a matching `craft/<slug>.md` is vendored. The cost of a missed reference is a missing paragraph in the prompt, not a broken skill.
 
-### Why silent fallback instead of fail-fast?
+> Note: an earlier draft used `motion` as a placeholder. The shipped equivalent is `animation-discipline`.
 
-A skeptical reader will ask: "If a skill requests a planned-but-not-yet-vendored
-section and the corresponding file doesn't exist yet, shouldn't we warn
-the user?" We chose forward-compatibility over fail-fast: a skill
-authored today can list a planned slug and start benefiting the moment
-the matching `craft/<slug>.md` is vendored in a follow-up PR, with no
-skill edit needed. The cost of a missed reference is a missing
-paragraph in the system prompt, not a broken skill — so the loud
-failure mode is not worth the friction.
+## Enforcement Levels
 
-Note for skill authors arriving from older guidance: an earlier draft
-used `motion` as the future-slug placeholder. The shipped equivalent
-today is `animation-discipline`. Use that one if your skill emits
-motion.
-
-### Enforcement levels
-
-Craft files mix auto-checked rules and guidance.
-
-- **Auto-checked.** Rules wired into `apps/daemon/src/lint-artifact.ts` — currently the P0 list in `anti-ai-slop.md` (Tailwind-indigo accent, two-stop hero gradients, emoji-as-icons, etc.). The linter reports these as findings back to the UI (for P0/P1 badges) and to the agent (as a system reminder for self-correction). Artifact persistence is not currently hard-blocked on P0 hits.
-- **Guidance.** The rest. The agent reads the rules, reviewers apply them, the linter doesn't check them.
+- **Auto-checked.** Rules wired into `apps/daemon/src/lint-artifact.ts` — currently the P0 list in `anti-ai-slop.md` (Tailwind-indigo accent, two-stop hero gradients, emoji-as-icons, etc.). The linter reports findings back to the UI (P0/P1 badges) and to the agent (system reminder for self-correction). Artifact persistence is not hard-blocked on P0 hits.
+- **Guidance.** Everything else. The agent reads the rules, reviewers apply them, the linter doesn't check them.
 
 A purely behavioral craft file (state-coverage, animation-discipline) is guidance unless a specific rule is later promoted into `lint-artifact.ts`.
 
-## Files
+## When to Require Each File
 
-| File                        | Section name             | When to require                                                                                                                                                                                                                                                                                                                                             |
-| --------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `typography.md`             | `typography`             | Any skill that emits typed content (~all skills)                                                                                                                                                                                                                                                                                                            |
-| `color.md`                  | `color`                  | Any skill that emits styled output (~all skills)                                                                                                                                                                                                                                                                                                            |
-| `anti-ai-slop.md`           | `anti-ai-slop`           | Marketing pages, landing pages, decks                                                                                                                                                                                                                                                                                                                       |
-| `state-coverage.md`         | `state-coverage`         | Any skill with stateful UI (dashboards, mobile apps, forms, list/table views)                                                                                                                                                                                                                                                                               |
-| `animation-discipline.md`   | `animation-discipline`   | Any skill that ships motion: mobile apps, multi-screen flows, gamified UI, transitions, microinteractions                                                                                                                                                                                                                                                   |
-| `accessibility-baseline.md` | `accessibility-baseline` | Any skill that ships interactive UI: dashboards, forms, mobile flows, anything with focus/labels/keyboard paths                                                                                                                                                                                                                                             |
-| `rtl-and-bidi.md`           | `rtl-and-bidi`           | Any skill that ships localized text or layout: blogs, docs, financial tables, mobile apps, anything that may render Arabic / Hebrew / Persian                                                                                                                                                                                                               |
-| `form-validation.md`        | `form-validation`        | Any skill whose primary artifact contains an interactive form: lead capture, sign-in, signup, settings, multi-step intake                                                                                                                                                                                                                                   |
-| `laws-of-ux.md`             | `laws-of-ux`             | Any skill whose composition decisions hit named cognitive limits: pricing pages (Hick's, Choice Overload, Von Restorff), dashboards (Pareto, Selective Attention, Working Memory), onboarding (Goal-Gradient, Zeigarnik, Peak-End), modals (Fitts's, Tesler's). Sibling axis to the rendering-rule files above — covers what to compose, not how to render. |
+| File | When to require |
+| --- | --- |
+| `typography.md` | Any skill that emits typed content (~all skills) |
+| `color.md` | Any skill that emits styled output (~all skills) |
+| `anti-ai-slop.md` | Marketing pages, landing pages, decks |
+| `state-coverage.md` | Any skill with stateful UI (dashboards, mobile, forms, lists) |
+| `animation-discipline.md` | Any skill that ships motion |
+| `accessibility-baseline.md` | Any skill that ships interactive UI |
+| `rtl-and-bidi.md` | Any skill that ships localized text or layout |
+| `form-validation.md` | Any skill whose primary artifact contains an interactive form |
+| `laws-of-ux.md` | Any skill whose composition decisions hit named cognitive limits |
 
-**Partial-stateful skills.** A skill that's mostly static but contains an embedded form, data table, or query surface should opt in. State-coverage rules apply to the stateful component, not the whole page.
-
-More sections (`icons`, `craft-details`) will be added in follow-up
-PRs as we wire the linter side.
+**Partial-stateful skills.** A mostly-static skill that contains an embedded form, data table, or query surface should opt in. State-coverage rules apply to the stateful component, not the whole page.
 
 ## Attribution
 
-Craft content is adapted from the MIT-licensed
-[refero_skill](https://github.com/referodesign/refero_skill) project
-(© Refero Design), with edits to fit Open Design's house style and link
-back to OD's design tokens (`var(--accent)` etc.) instead of generic
-Tailwind hex values.
+Craft content is adapted from the MIT-licensed [refero_skill](https://github.com/referodesign/refero_skill) project (© Refero Design), with edits to fit Open Design's house style and to link back to OD's design tokens (`var(--accent)` etc.) instead of generic Tailwind hex values.

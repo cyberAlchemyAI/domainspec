@@ -1,10 +1,32 @@
-# Clinic Console — live artifact template
+---
+tags: [live-artifact, template, clinic, healthcare, html_template_v1]
+node_type: readme
+is_session: false
+layer: application
+nature: reference
+status: active
+version: 0.2.0
+last_updated: 2026-05-16
+---
 
-A `html_template_v1` template for a friendly clinic / hospital / telemedicine
-operations console. Soft-mint healthcare aesthetic: cool off-white canvas,
-single mint accent, generous 18px card radii, signature diagonal-stripe
-pattern fills inside KPI tiles and bar-chart bars, illustrated CSS-gradient
-avatars, and one dark surface (the calendar activity popover).
+# Clinic Console — Live Artifact Template
+
+## What is this?
+
+An `html_template_v1` template for a friendly clinic / hospital / telemedicine operations console, shipped with a canonical `data.json` sample and a strict data contract between markup and bindings. Soft-mint healthcare aesthetic: cool off-white canvas, single mint accent, 18px radii, diagonal-stripe pattern fills, illustrated gradient avatars, and one dark surface (the calendar activity popover).
+
+## Business Context
+
+The Open Design `live-artifact` skill needs ready-to-go domain templates so that agents responding to a healthcare-ops brief ("clinic dashboard", "doctors schedule", "appointment console", "telemedicine ops") can copy a known-good template instead of authoring DOM from scratch. This template encodes the visual style guarantees, icon set, and data shape so brand/data customization happens through `data.json` and a small CSS token surface — never through ad-hoc DOM changes.
+
+## Why it matters
+
+Templates that bundle DOM, CSS tokens, and a frozen `{{data.*}}` binding contract make agent output predictable and reviewable: refresh re-runs the registered source, maps results back into `data.json`, and re-renders the preview without changing layout. The locked-down icon references and constrained avatar/pill enums prevent the `html_template_v1` security validator from rejecting future data revisions and keep the artifact visually consistent across refreshes.
+
+## 📁 Navigation
+
+- **[template.html](template.html)**: `html_template_v1` source — DOM, CSS tokens, `{{data.*}}` bindings, inline icon `<symbol>` defs. Agents do not render this directly; the daemon does.
+- **[data.json](data.json)**: Canonical default sample (St. Lukes Wellness demo). Renders out of the box and serves as the schema reference.
 
 ## Files
 

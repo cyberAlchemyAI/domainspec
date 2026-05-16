@@ -1,12 +1,33 @@
+---
+tags: [governance, code-tags, examples, edges]
+node_type: readme
+is_session: false
+layer: architecture
+nature: reference
+status: active
+version: 0.2.0
+last_updated: 2026-05-16
+---
+
 # Code Tag Example Pack
 
-This pack provides compact examples for all canonical relationship edges.
+## What is this?
 
-## File Map
+Compact, scope-sliced examples for the canonical DomainSpec relationship edges expressed as code tags. Each file in this pack covers a different surface (backend, UI, cross-layer) so agents can load the smallest relevant slice.
 
-- Backend edges (15): [backend.md](backend.md)
-- Intra-UI edges (8): [ui.md](ui.md)
-- Cross-layer edges (6): [cross-layer.md](cross-layer.md)
+## Business Context
+
+When an agent or developer adds tags to a new symbol, they need a concrete example of the right shape — not the full edge catalog. This pack splits the catalog by surface so each task pulls only the slice it needs, keeping prompts narrow and decisions clear.
+
+## Why it matters
+
+Loading the entire relationship corpus on every tagging task burns context and dilutes signal. Slicing by surface (backend / UI / cross-layer) keeps token cost proportional to scope and makes the "look up the right edge" step deterministic.
+
+## 📁 Navigation
+
+- **[backend.md](backend.md)**: Backend edges (15) — domain, use-case, persistence, calculation, policy, workflow relationships.
+- **[ui.md](ui.md)**: Intra-UI edges (8) — page, component, hook, binding relationships within the UI layer.
+- **[cross-layer.md](cross-layer.md)**: Cross-layer edges (6) — bindings, interfaces, and integrations that cross UI/backend boundaries.
 
 ## Context Optimization for Agents
 
