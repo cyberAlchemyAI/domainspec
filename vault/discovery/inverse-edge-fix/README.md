@@ -5,15 +5,27 @@ is_session: false
 layer: architecture
 nature: reference
 status: active
-version: 0.1.0
-last_updated: 2026-05-03
+version: 0.1.1
+last_updated: 2026-05-16
 ---
 
 # inverse-edge-fix
 
-This discovery scopes the actionable plan for repairing the ~90 vault-internal missing-inverse edges (Category 4) surfaced by the `edges-hygiene-2026-05-03` dispatch, plus the bootstrap of three high-traffic vault sinks (`ontology-conventions.md`, `confidence-levels.md`, `ontology-architecture-draft.md`) that currently carry no `## Connections` block at all. It explicitly defers cross-repo absolute paths, repo-escaping relative paths, dangling targets, off-catalog edge-name reconciliation, the `Scope` column proposal, and README prose-vs-table standardization to `vault/discovery/_backlog.md`, and it defers CI/curator wiring to `vault/discovery/curator-pipeline-integration/`. The user's "skills/agents are not vault graph nodes" ruling is the load-bearing decision that scopes the work to vault-internal targets only.
+## What is this?
 
-See: [inverse-edge-fix.md](./inverse-edge-fix.md).
+Discovery folder scoping the actionable plan for repairing the ~90 vault-internal missing-inverse edges (Category 4) surfaced by the `edges-hygiene-2026-05-03` dispatch, plus bootstrap of three high-traffic vault sinks (`ontology-conventions.md`, `confidence-levels.md`, `ontology-architecture-draft.md`) currently carrying no `## Connections` block.
+
+## Business Context
+
+Sits inside the vault's edge-hygiene work. Downstream of the 2026-05-03 cross-boundary-rule session that ruled "skills/agents are not vault graph nodes" — the load-bearing decision that scopes this discovery to vault-internal targets only. Cross-repo absolute paths, repo-escaping relative paths, dangling targets, off-catalog edge-name reconciliation, the `Scope` column proposal, and README prose-vs-table standardization are explicitly deferred to `vault/discovery/_backlog.md`. CI / curator wiring is deferred to `vault/discovery/curator-pipeline-integration/`.
+
+## Why it matters
+
+Without repair, the vault's bidirectionality invariant is wishful and the graph cannot be trusted as a queryable structure. The discovery exists to convert the inventory from the edges-hygiene dispatch into a concrete, scope-bounded repair plan that one pass can close.
+
+## 📁 Navigation
+
+- [inverse-edge-fix.md](inverse-edge-fix.md) — Full discovery: inventory of Category 4 misses, three-sink bootstrap, repair sequencing, explicit deferrals.
 
 ## Connections
 
