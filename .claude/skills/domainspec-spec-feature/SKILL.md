@@ -38,11 +38,11 @@ Target location:
       - Wait for user response. Do NOT proceed until user resolves.
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Create or update SPEC.md and concept table.
-3. Generate `architecture.md` as a default companion artifact from `domainspec/templates/architecture.md`, unless an equivalent feature architecture document already exists and is being updated in place.
+3. Generate or update `architecture.md` as a required default companion artifact from `domainspec/templates/architecture.md`, unless an equivalent feature architecture document already exists and is being updated in place. Populate Architecture Intent, Source Contracts, the six required architecture views, dependency/interface rules, decision log, risks, design transport notes, and Gate Result from current DomainSpec contracts.
 4. Generate `glossary.md` as a default companion artifact from `domainspec/templates/glossary.md`, distilling one definition for every feature concept.
 5. Generate relevant aspect files from templates.
 6. Ensure `SPEC.md` links to `architecture.md` and `glossary.md` when those artifacts exist.
 7. Add formal rules, formulas, transitions, and invariants where applicable.
-8. Validate cross-links, referenced field-name links, concept ID naming, glossary source anchors, and architecture-to-aspect references.
+8. Validate the feature architecture contract: source contracts present or discovery mode explicitly approved, all six views present, dependency/interface rules recorded, decision log populated or explicitly empty with reason, Gate Result includes status and reason, and architecture-to-aspect references resolve.
 9. Summarize what is ready and what remains undefined.
 </process>

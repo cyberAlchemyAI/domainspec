@@ -7,7 +7,7 @@ allowed-tools: Read, Write, Glob, Grep
 ---
 
 <objective>
-Produce a consumer-readable architecture document for one feature that explains the feature contracts, component responsibilities, flows, and guardrails without drifting into implementation-detail speculation.
+Produce a consumer-readable six-view architecture document for one feature that explains source contracts, component responsibilities, flows, decisions, dependencies, and guardrails without drifting into implementation-detail speculation.
 </objective>
 
 <context>
@@ -28,11 +28,12 @@ Target location:
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
 2. Read domainspec/templates/architecture.md.
 3. Read `docs/features/{feature}/SPEC.md` plus the aspect files and capability docs it links.
-4. Create or update `docs/features/{feature}/architecture.md` as the architecture companion to the current feature contracts.
+4. Create or update `docs/features/{feature}/architecture.md` as the six-view architecture companion to the current feature contracts.
 5. Keep the document consumer-readable and docs-first:
    - explain architecture implied by the feature contracts,
+   - populate Architecture Intent, Source Contracts, Context View, High-Level Structure View, Low-Level Components View, Workflow Process View, Decision Flow View, Dependency Interface View, Dependency And Interface Rules, Decision Log, Risks, Design Transport Notes, and Gate Result,
    - link to authoritative aspect docs for source-of-truth details,
    - avoid claiming implementation completeness beyond what the specs define.
-6. Validate cross-links, architecture-to-aspect references, and any mermaid examples or artifact tables.
+6. Validate source contract rows, all six architecture views, dependency/interface rules, decision log status, gate result, cross-links, architecture-to-aspect references, and any mermaid examples or artifact tables.
 7. Summarize what is now architecturally defined and what still needs explicit feature decisions.
 </process>

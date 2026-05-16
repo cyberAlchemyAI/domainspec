@@ -42,6 +42,7 @@ Prerequisites:
 Created/updated by this skill (cumulative):
 
 - docs/features/{feature}/SPEC.md
+- docs/features/{feature}/architecture.md
 - docs/features/{feature}/domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, etc.
 - docs/features/{feature}/STORIES.md
 - docs/features/{feature}/TEST-SPEC.md
@@ -94,9 +95,9 @@ Do NOT proceed to Step 1 or any subsequent step until the user resolves (either 
 
 6. Delegate to `domainspec-spec-feature {feature}`:
    - Researches context (uses `mars-researcher` when needed).
-   - Produces SPEC.md with concept table and all relevant aspect files.
+   - Produces SPEC.md with concept table, architecture.md, and all relevant aspect files.
    - For existing features with `--update`: evolves existing docs rather than recreating.
-7. Validate: SPEC.md exists, concept table is non-empty, at least one aspect file exists.
+7. Validate: SPEC.md exists, concept table is non-empty, `architecture.md` exists and is linked from SPEC.md, and at least one aspect file exists.
 
 ## Step 3 — Stories
 

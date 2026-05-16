@@ -23,6 +23,17 @@ All notable changes to the DomainSpec framework are documented in this file.
 
 ---
 
+## [2.1.0] - 2026-05-16
+
+### Changed
+
+- **`architecture.md` feature template** - expanded the feature architecture companion into a six-view contract with source contracts, dependency/interface rules, decision log, risks, design transport notes, and gate result.
+- **`domainspec-spec-feature` architecture output** - spec writing now validates feature `architecture.md` as part of the spec artifact set before downstream story, test, or implementation stages.
+
+### Added
+
+- **Spec-writer architecture guidance** - added explicit DomainSpec-only guidance for deriving feature architecture from SPEC, aspect docs, decisions, and project constraints.
+
 ## [2.0.15] - 2026-05-14
 
 ### Added

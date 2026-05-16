@@ -320,6 +320,7 @@ With a taxonomy and relationships in hand, you document each feature as a **vert
 ```
 docs/features/{feature-name}/
 ├── SPEC.md          # Feature index — overview, concept table, aspect links
+├── architecture.md  # Six-view feature architecture from source contracts
 ├── domain.md        # Entities, value objects, enums
 ├── operations.md    # Operations with rules, calculations, state transitions
 ├── states.md        # State machines (mermaid diagram + transition tables)
@@ -639,7 +640,7 @@ Short names within a feature's own files. Full namespace in registry entries and
 
 1. **Run orchestrator** — execute `domainspec-orchestrate` to classify intent and route baseline setup (`domainspec-start`) with scope gates
 2. **Confirm governance baseline** — keep `docs/shared/governance-baseline.md` present before feature work
-3. **Write SPEC.md** — name the feature, list all concepts with types, define dependencies
+3. **Write SPEC.md and architecture.md** — name the feature, list all concepts with types, define dependencies, and capture the six-view feature architecture
 4. **Write STORIES.md** — user stories in classic + BDD format, traceable to concepts
 5. **Add aspect files** — only the ones this feature needs (domain, operations, states, interfaces, events, queries, workflows, mappings)
 6. **Sync registry** — add concepts to `docs/registry.md`, add terms to `docs/glossary.md`
@@ -676,8 +677,8 @@ Direct specialist commands remain callable as advanced/internal invocations.
 | `domainspec-init`                    | Setup | Create `docs/` structure, bootstrap governance baseline, and scaffold first feature skeleton              |
 | `domainspec-brownfield-translation`  | Setup | Translate an implemented project into as-is DomainSpec artifacts with governance and ontology gap reports |
 | `domainspec-decision-gate`           | 1b    | Resolve and persist blocker-level multi-option decisions before spec or implementation mutation           |
-| `domainspec-spec-feature`            | 3     | Author or update a feature specification (SPEC + aspects)                                                 |
-| `domainspec-feature-architecture`    | 3     | Author or update the feature architecture companion (`architecture.md`)                                   |
+| `domainspec-spec-feature`            | 3     | Author or update a feature specification (SPEC + architecture + aspects)                                  |
+| `domainspec-feature-architecture`    | 3     | Author or update the six-view feature architecture companion (`architecture.md`)                          |
 | `domainspec-feature-glossary`        | 3     | Author or update the per-feature glossary companion (`glossary.md`)                                       |
 | `domainspec-implementation-layering` | 3–5   | Author or update a POC-first implementation layering model (`implementation-layering.md`)                 |
 | `domainspec-sync-user-stories`       | 3     | Generate/refresh STORIES.md from aspect docs                                                              |
@@ -699,6 +700,7 @@ Direct specialist commands remain callable as advanced/internal invocations.
 | `domainspec-readiness-gate`          | 10    | Profile-driven readiness gate (`pilot`, `release-candidate`, `production`)                                |
 | `domainspec-pilot-readiness`         | 10    | Prepare a feature for pilot testing                                                                       |
 | `domainspec-interview-scope`         | Setup | Capture project context before first feature planning                                                     |
+| `domainspec-interview-kits`          | Setup | Run structured one-question-at-a-time interviews for readiness, audit, and synthesis modes                |
 | `domainspec-help`                    | —     | Show command reference and recommend next step (orchestrator-first guidance)                              |
 
 ### Advanced Commands
@@ -749,40 +751,43 @@ Agents use a weighted heuristic to choose the most efficient context discovery p
 
 All templates live in [templates/](templates/):
 
-| Template                                                       | Purpose                                               |
-| -------------------------------------------------------------- | ----------------------------------------------------- |
-| [SPEC.md](templates/SPEC.md)                                   | Feature index — overview, concept table, aspect links |
-| [STORIES.md](templates/STORIES.md)                             | User stories in classic + BDD format                  |
-| [CHANGELOG.md](templates/CHANGELOG.md)                         | Per-feature changelog updates and release notes       |
-| [domain.md](templates/domain.md)                               | Entities, value objects, enums                        |
-| [operations.md](templates/operations.md)                       | Operations with rules, calculations, transitions      |
-| [states.md](templates/states.md)                               | State machines — mermaid + transition tables          |
-| [interfaces.md](templates/interfaces.md)                       | API contracts — endpoints, request/response           |
-| [events.md](templates/events.md)                               | Domain events — payload, producer, consumers          |
-| [queries.md](templates/queries.md)                             | Read models — input, output, auth rules               |
-| [workflows.md](templates/workflows.md)                         | Multi-step orchestrations                             |
-| [mappings.md](templates/mappings.md)                           | Data transformations at boundaries                    |
-| [shared-value-object.md](templates/shared-value-object.md)     | Cross-feature value objects                           |
-| [governance-baseline.md](templates/governance-baseline.md)     | Cross-feature governance defaults                     |
-| [ui-architecture.md](templates/ui-architecture.md)             | Frontend architecture constitution                    |
-| [ui-spec.md](templates/ui-spec.md)                             | Per-feature UI design contract                        |
-| [infra-architecture.md](templates/infra-architecture.md)       | Infrastructure constitution with presets              |
-| [slos.md](templates/slos.md)                                   | Per-feature SLO targets                               |
-| [observability.md](templates/observability.md)                 | Per-feature OTel metric obligations                   |
-| [OBSERVABILITY-REPORT.md](templates/OBSERVABILITY-REPORT.md)   | OTel audit output report template                     |
-| [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)             | End-to-end pipeline execution report                  |
-| [work-pack.md](templates/work-pack.md)                         | Plan-first execution manifest and wave/task status    |
-| [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)                 | Signal contract documentation schema                  |
-| [domainspec-research.md](templates/domainspec-research.md)     | Structured research findings and evidence synthesis   |
-| [domainspec-findings.md](templates/domainspec-findings.md)     | Canonical findings register for governance decisions  |
-| [agent-runner.md](templates/agent-runner.md)                   | Self-hosted agent runner architecture                 |
-| [use-case.md](templates/use-case.md)                           | Use-case decomposition and boundaries                 |
-| [project-overview.md](templates/project-overview.md)           | Initial project context summary                       |
-| [initial-definitions.md](templates/initial-definitions.md)     | Initial bounded context and concept definitions       |
-| [project-decisions.md](templates/project-decisions.md)         | Project-level blocker decisions and scope baselines   |
-| [hypotheses.md](templates/hypotheses.md)                       | Research hypotheses and validation framing            |
-| [experiment-candidates.md](templates/experiment-candidates.md) | Candidate experiment backlog and triage               |
-| [setup.sh](templates/setup.sh)                                 | Setup helper scaffold                                 |
+| Template                                                           | Purpose                                               |
+| ------------------------------------------------------------------ | ----------------------------------------------------- |
+| [SPEC.md](templates/SPEC.md)                                       | Feature index — overview, concept table, aspect links |
+| [architecture.md](templates/architecture.md)                       | Six-view feature architecture contract                |
+| [STORIES.md](templates/STORIES.md)                                 | User stories in classic + BDD format                  |
+| [CHANGELOG.md](templates/CHANGELOG.md)                             | Per-feature changelog updates and release notes       |
+| [glossary.md](templates/glossary.md)                               | Per-feature concept glossary                          |
+| [implementation-layering.md](templates/implementation-layering.md) | POC-first implementation layering model               |
+| [domain.md](templates/domain.md)                                   | Entities, value objects, enums                        |
+| [operations.md](templates/operations.md)                           | Operations with rules, calculations, transitions      |
+| [states.md](templates/states.md)                                   | State machines — mermaid + transition tables          |
+| [interfaces.md](templates/interfaces.md)                           | API contracts — endpoints, request/response           |
+| [events.md](templates/events.md)                                   | Domain events — payload, producer, consumers          |
+| [queries.md](templates/queries.md)                                 | Read models — input, output, auth rules               |
+| [workflows.md](templates/workflows.md)                             | Multi-step orchestrations                             |
+| [mappings.md](templates/mappings.md)                               | Data transformations at boundaries                    |
+| [shared-value-object.md](templates/shared-value-object.md)         | Cross-feature value objects                           |
+| [governance-baseline.md](templates/governance-baseline.md)         | Cross-feature governance defaults                     |
+| [ui-architecture.md](templates/ui-architecture.md)                 | Frontend architecture constitution                    |
+| [ui-spec.md](templates/ui-spec.md)                                 | Per-feature UI design contract                        |
+| [infra-architecture.md](templates/infra-architecture.md)           | Infrastructure constitution with presets              |
+| [slos.md](templates/slos.md)                                       | Per-feature SLO targets                               |
+| [observability.md](templates/observability.md)                     | Per-feature OTel metric obligations                   |
+| [OBSERVABILITY-REPORT.md](templates/OBSERVABILITY-REPORT.md)       | OTel audit output report template                     |
+| [PIPELINE-REPORT.md](templates/PIPELINE-REPORT.md)                 | End-to-end pipeline execution report                  |
+| [work-pack.md](templates/work-pack.md)                             | Plan-first execution manifest and wave/task status    |
+| [SIGNAL-SCHEMA.md](templates/SIGNAL-SCHEMA.md)                     | Signal contract documentation schema                  |
+| [domainspec-research.md](templates/domainspec-research.md)         | Structured research findings and evidence synthesis   |
+| [domainspec-findings.md](templates/domainspec-findings.md)         | Canonical findings register for governance decisions  |
+| [agent-runner.md](templates/agent-runner.md)                       | Self-hosted agent runner architecture                 |
+| [use-case.md](templates/use-case.md)                               | Use-case decomposition and boundaries                 |
+| [project-overview.md](templates/project-overview.md)               | Initial project context summary                       |
+| [initial-definitions.md](templates/initial-definitions.md)         | Initial bounded context and concept definitions       |
+| [project-decisions.md](templates/project-decisions.md)             | Project-level blocker decisions and scope baselines   |
+| [hypotheses.md](templates/hypotheses.md)                           | Research hypotheses and validation framing            |
+| [experiment-candidates.md](templates/experiment-candidates.md)     | Candidate experiment backlog and triage               |
+| [setup.sh](templates/setup.sh)                                     | Setup helper scaffold                                 |
 
 ---
 
@@ -807,7 +812,7 @@ All templates live in [templates/](templates/):
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)                 | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)                   | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)                 | 16 metric derivation rules across 3 layers + Financial Integrity             |
-| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.0.8)                      |
+| [CHANGELOG.md](CHANGELOG.md)                         | Versioned record of framework updates (current: v2.1.0)                      |
 | [templates/](templates/SPEC.md)                      | All aspect templates including ui-spec.md, ready to copy                     |
 | [examples/](examples/)                               | 5 reference feature implementations                                          |
 | [copilot/README.md](copilot/README.md)               | Copilot agent pack overview                                                  |

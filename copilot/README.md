@@ -13,18 +13,18 @@ This package provides reusable agents and commands for DomainSpec-driven develop
 | `domainspec-help`                    | Show command reference and recommend the next step                                                                                                                                                                                            |
 | `domainspec-init`                    | Bootstrap docs structure and governance baseline                                                                                                                                                                                              |
 | `domainspec-interview-scope`         | Run greenfield or brownfield discovery interviews before specification starts                                                                                                                                                                 |
+| `domainspec-interview-kits`          | Run structured one-question-at-a-time interviews for readiness, audit, and synthesis modes                                                                                                                                                    |
 | `domainspec-brownfield-translation`  | Translate an implemented project into as-is DomainSpec feature specs plus governance and ontology gap artifacts                                                                                                                               |
 | `domainspec-decision-gate`           | Resolve blocker-level multi-option decisions and persist a decisions artifact before downstream mutation                                                                                                                                      |
 | `domainspec-pipeline`                | Run the full lifecycle with planner/work-pack gates for medium/high tasks before mutation (plan -> spec -> stories -> tests -> implementation -> verify)                                                                                      |
-| `domainspec-spec-feature`            | Author or evolve feature specs and aspect documents                                                                                                                                                                                           |
-| `domainspec-feature-architecture`    | Create or evolve `architecture.md` as the feature-level architecture companion to `SPEC.md`                                                                                                                                                   |
+| `domainspec-spec-feature`            | Author or evolve feature specs, six-view `architecture.md`, and aspect documents                                                                                                                                                              |
+| `domainspec-feature-architecture`    | Create or evolve six-view `architecture.md` as the feature-level architecture companion to `SPEC.md`                                                                                                                                          |
 | `domainspec-feature-glossary`        | Create or evolve `glossary.md` as the per-feature definition companion to `SPEC.md`                                                                                                                                                           |
 | `domainspec-implementation-layering` | Create or evolve a POC-first implementation layering model in `implementation-layering.md`                                                                                                                                                    |
 | `domainspec-sync-user-stories`       | Sync `STORIES.md` from capability and aspect docs                                                                                                                                                                                             |
 | `domainspec-sync-registry`           | Sync `docs/registry.md` and `docs/glossary.md` from specs                                                                                                                                                                                     |
 | `domainspec-generate-tests`          | Derive backend and/or UI test obligations from docs                                                                                                                                                                                           |
 | `domainspec-context-builder`         | Build minimal deterministic task context packs from task links, architecture references, composability patterns, and indexed snippets                                                                                                         |
-| `domainspec-inventory`               | Inventorize reusable feature/task capabilities, command-agent route mappings, and telemetry contracts for pipeline assembly                                                                                                                   |
 | `domainspec-implement`               | Implement backend code from approved contracts                                                                                                                                                                                                |
 | `domainspec-tag-code`                | Apply DomainSpec code tags after implementation and run extract/validate/drift checks                                                                                                                                                         |
 | `domainspec-ui-pipeline`             | Run the UI lifecycle from UI spec to implementation and audit                                                                                                                                                                                 |
@@ -108,7 +108,6 @@ Common examples:
 - `@domainspec-orchestrator domainspec-orchestrate "spec payment-processing"` (delegates spec writer, then delegated task refresh/create, then story sync)
 - `@domainspec-orchestrator domainspec-orchestrate "generate tests for settlement-recovery"`
 - `@domainspec-orchestrator domainspec-orchestrate "build task context for knowledge-graph-visualization TASK-KG-IMP-01"`
-- `@domainspec-context-builder domainspec-inventory ingest agent-execution-orchestrator --task TASK-AEO-WP-01 --scope all`
 
 ### Orchestrator Delegation Tuning
 
@@ -145,12 +144,11 @@ Advanced direct stage commands (unchanged):
 7. `domainspec-sync-user-stories <feature>`
 8. `domainspec-generate-tests <feature>`
 9. `domainspec-context-builder <feature> --task <TASK-ID|task-path>`
-10. `domainspec-inventory <ingest|lookup|validate|backfill> <feature> [--task <TASK-ID|task-path>]`
-11. `domainspec-implement <feature>`
-12. `domainspec-tag-code <feature>`
-13. `domainspec-ui-pipeline <feature>`
-14. `domainspec-verify-feature <feature>`
-15. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
+10. `domainspec-implement <feature>`
+11. `domainspec-tag-code <feature>`
+12. `domainspec-ui-pipeline <feature>`
+13. `domainspec-verify-feature <feature>`
+14. `domainspec-readiness-gate <feature> --profile pilot|release-candidate|production`
 
 ## Installation
 

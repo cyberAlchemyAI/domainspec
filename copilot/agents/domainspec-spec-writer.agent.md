@@ -68,6 +68,7 @@ CRITICAL: Mandatory initial read
 Core responsibilities:
 
 - Create SPEC.md and relevant aspect files from templates
+- Create or refresh `architecture.md` as the default six-view feature architecture companion, with source contracts, dependency/interface rules, decisions, risks, design transport notes, and gate result
 - Create `glossary.md` as the default per-feature definition companion, with one distilled definition for every concept
 - Structure SPEC.md as a capability-driven index (capabilities first, aspects second)
 - Keep storytelling in STORIES.md and keep SPEC.md with a `## Stories` link section
@@ -111,15 +112,16 @@ Also use domainspec/CHANGELOG.md as the canonical source for latest framework up
   - SPEC < 120 lines: keep capability details inline.
   - SPEC 120-200 lines: keep summary in SPEC and move stories to STORIES.md.
   - SPEC > 300 lines or heavy capability sections: split details into capabilities/{capability-name}.md.
-6. Create or refresh `glossary.md` from the feature Concept Registry and aspect-level concept registries, keeping definitions concise and source-linked.
-7. Generate only relevant aspect files and include backlink headers to capability anchors in SPEC.
-8. Add formal rules, transitions, and invariants where applicable.
-9. Run a consistency pass for links and concept naming, including referenced field names, capability backlinks, story coverage links, and glossary source anchors.
-10. If `docs/features/{feature}/WORK-PACK.md` and `work-pack/tasks/*.md` exist, run strict token coverage cycle:
+6. Create or refresh `architecture.md` from the feature contracts before finalizing the rest of the aspect set, unless a deliberate equivalent artifact already exists. Populate Architecture Intent, Source Contracts, the six required architecture views, dependency/interface rules, decision log, risks, design transport notes, and Gate Result.
+7. Create or refresh `glossary.md` from the feature Concept Registry and aspect-level concept registries, keeping definitions concise and source-linked.
+8. Generate only relevant aspect files and include backlink headers to capability anchors in SPEC.
+9. Add formal rules, transitions, and invariants where applicable.
+10. Run a consistency pass for links and concept naming, including referenced field names, capability backlinks, story coverage links, glossary source anchors, architecture-to-aspect references, and the six-view architecture contract.
+11. If `docs/features/{feature}/WORK-PACK.md` and `work-pack/tasks/*.md` exist, run strict token coverage cycle:
   - `pnpm dlx tsx tools/validate-work-pack-coverage.ts --mode strict --feature {feature} --require-all-concepts`
   - Auto-fill deterministic token ownership into task coverage IDs when a single task source match exists.
   - Ask the user to assign ownership when token-to-task mapping is ambiguous.
   - Re-run until PASS or BLOCK on unresolved ownership.
-11. When SPEC, STORIES, or aspect docs are changed, run `domainspec-story-sync` as a subagent to reconcile story coverage and matrix consistency.
-12. If key decisions are undefined, use question prompts before finalizing specs.
+12. When SPEC, STORIES, or aspect docs are changed, run `domainspec-story-sync` as a subagent to reconcile story coverage and matrix consistency.
+13. If key decisions are undefined, use question prompts before finalizing specs.
 </execution>
