@@ -82,7 +82,7 @@ Ao buscar docs do vault por significado (princípio, axioma, convenção, premis
 - Use when: debugging environment-specific issues, understanding service topology, evaluating infra changes, or asking how local maps to prod.
 
 ### 13. Investigating a Broad or Multi-Option Question
-- 🛠 USE skill: `/domainspec-subagents-strategy` — when the question requires synthesis from 3+ sources, comparing 2+ alternatives, or has parallelizable independent sub-questions. Recommend (don't auto-invoke); user confirms the fan-out before dispatch.
+- 🛠 USE skill: `/domainspec-subagents-strategy` — when the question requires synthesis from 3+ sources, comparing 2+ alternatives, or has parallelizable independent sub-questions. Recommend (don't auto-invoke); user confirms the fan-out before dispatch. v0.2.0+: the skill is parameterized — user may supply `goal`, `layers`, `n`, `models`, `validator`, `telemetry`, `dispatch_kind`, `loop_cap`, `bootstrap_override` or let the skill apply heuristic defaults (`single-lookup` / `flat-fanout` / `triangulation` / `adversarial-audit` / `parent-synthesis` / `meta-dispatch`).
 - ⚠️ If `domainspec-subagents-research.md` + `domainspec-subagents-findings.md` already exist for the topic, the fan-out is done — prompt the user for discovery promotion (skill step 7):
   - knowledge scope → `vault/discovery/<topic>-definitions/<slug>.md`
   - application scope → `docs/features/<feature>/discovery/<slug>.md` (ask which feature folder)

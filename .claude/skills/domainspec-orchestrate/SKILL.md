@@ -50,6 +50,7 @@ Read command definitions under `.claude/skills/domainspec-*/SKILL.md`, package d
    - command guidance -> `domainspec-help`
    - spec grilling, decision pressure, gap closing, or Robot-Talks synthesis on a feature -> `domainspec-interview-kits <feature-or-scope> [--mode grill-with-docs|robot-talks-grill-synthesis|audit-gap|readiness-gate|auto]`
    - greenfield domain discovery, brownfield scope audit, project baseline creation -> `domainspec-interview-scope`
+   - investigation from multiple angles, fan-out to parallel agents, nested dispatch, robot-talks consensus, or any broad question needing synthesis from 3+ independent sources -> recommend `/domainspec-subagents-strategy`; do NOT auto-invoke — present the recommendation and wait for user confirmation. User MAY supply parameters (`goal`, `layers`, `n`, `models`, `validator`, `telemetry`, `dispatch_kind`, `loop_cap`, `bootstrap_override`) or accept the skill's heuristic-row defaults.
 4. If intent is ambiguous, ask focused clarification questions before selecting the route.
    - If a work-pack task ID is provided without resolvable feature context, ask for feature name before selecting the implementation workflow pipeline.
    - If the request is a bugfix/mutation and no `TASK-*` exists yet, require feature confirmation and create/update `WORK-PACK.md` plus one task artifact before implementation.

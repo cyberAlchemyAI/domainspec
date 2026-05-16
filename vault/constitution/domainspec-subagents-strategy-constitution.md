@@ -5,14 +5,17 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: active
-version: 0.1.4
-last_updated: 2026-05-02
+version: 0.2.0
+last_updated: 2026-05-16
+schema_version: 1
+governs_pattern: .claude/skills/domainspec-subagents-strategy/**
+governs_check: [strategy_spec_schema_valid]
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
 
 # Subagents-Strategy Constitution
 
-> **Charter:** Declarative rules governing when, how, and with which model we dispatch subagents. Codifies [domainspec-subagents-strategy-premises.md@v0.4.0](../premise/domainspec-subagents-strategy-premises.md). The skill `.claude/skills/domainspec-subagents-strategy/` (forthcoming) implements these rules; this document does not execute.
+> **Charter:** Declarative rules governing when, how, and with which model we dispatch subagents. Codifies [domainspec-subagents-strategy-premises.md@v0.4.0](../premise/domainspec-subagents-strategy-premises.md). The skill `.claude/skills/domainspec-subagents-strategy/` implements these rules; this document does not execute.
 
 ---
 
@@ -27,14 +30,16 @@ derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 7. [Artifact Rules](#7-artifact-rules)
 8. [Mode Rules](#8-mode-rules)
 9. [Grading Rules](#9-grading-rules)
-10. [Governance](#10-governance)
-11. [Connections](#11-connections)
+10. [Spec, Validator, Registry, Telemetry (R25–R28)](#10-spec-validator-registry-telemetry)
+11. [Governance](#11-governance)
+12. [Known Open Questions](#12-known-open-questions)
+13. [Connections](#13-connections)
 
 ---
 
 ## 1. Premise Reference
 
-Each rule below cites one or more of the following premises. Full statements with falsification tests and evidence live in [domainspec-subagents-strategy-premises.md](../premise/domainspec-subagents-strategy-premises.md). One-line reference here:
+Each rule cites one or more premises. Full statements live in [domainspec-subagents-strategy-premises.md](../premise/domainspec-subagents-strategy-premises.md).
 
 - **P-SS-1** — Dispatch a subagent only when synthesis / context-protection / isolation / parallelism applies.
 - **P-SS-2** — Strategist proposes a model per child by task difficulty; user validates in chat. Token budgets are per-strategy and model-orthogonal.
@@ -44,7 +49,7 @@ Each rule below cites one or more of the following premises. Full statements wit
 - **P-SS-6** — Briefing prompt determines output quality; required fields specified.
 - **P-SS-7** — A subagent's report describes intent; verify the actual artifact.
 - **P-SS-8** — Recursion needs an explicit budget; defaults are depth 2 / breadth 5 / total 10.
-- **P-SS-9** — Fan-out or recursion produces a two-file artifact set; chat-only proposal; six-step lifecycle.
+- **P-SS-9** — Fan-out or recursion produces a two-file artifact set; chat-only proposal; six-step lifecycle (now seven post-research-writer split).
 - **P-SS-10** — Every dispatch is graded at close on coverage / independence / fidelity / cost; only cost is mechanical.
 
 ---
@@ -81,45 +86,47 @@ Single-agent dispatches MUST NOT produce these files; the parent's briefing and 
 
 ### R3 — Seven-step lifecycle is fixed
 
-For dispatches that trigger R2, the following seven steps execute in order:
+For dispatches that trigger R2, the following steps execute in order:
 
-1. **Strategist proposes** the strategy in chat (mode, agents, model per child with difficulty justification, budgets, sequencing, recursion budget, **suggested working folder(s) per R15**).
+1. **Strategist proposes** the strategy in chat (mode, agents, model per child with difficulty justification, budgets, sequencing, recursion budget, `loop_cap`, `dispatch_kind`, suggested working folder(s) per R15). The chat proposal IS the human-readable narration of the R25 YAML spec; both surfaces describe the same parameter set in the same turn. The R26 validator runs against the in-chat spec before user confirmation — no file involved (R26 may be skipped per its trivial-dispatch carve-out).
 2. **User confirms** the proposal (or revises / abandons; nothing persists on rejection).
+   - **2.5 (post-confirm) Spec persistence** — the strategist writes exactly one canonical artifact: the R25 spec file at the content-addressed path. Then emits the R28 telemetry record.
 3. **Strategist dispatches** all children in a single message (R8) and collects returns.
-4. **Strategist returns** the collected child outputs (verbatim per child) plus the original Context + Goal — **does not write any file itself**.
+4. **Strategist returns** the collected child outputs (verbatim per child) plus the original Context + Goal — **does not write any further file beyond the post-confirm spec from Step 2.5**.
 5. **Research-writer** dispatches; receives the collected returns + Context + Goal in its briefing; writes `domainspec-subagents-research.md` using the template (R5, R15, R23).
 6. **Findings-writer** dispatches; reads `domainspec-subagents-research.md`; writes `domainspec-subagents-findings.md` (R16, R17, R18, R23).
 7. **User gates discovery promotion**; if confirmed, the strategist classifies the discovery's scope (`knowledge` → `vault/discovery/<topic>-definitions/<slug>.md` or `application` → `docs/features/<feature>/discovery/<slug>.md`) and proposes the target path; the user confirms; **discovery-writer** dispatches and writes the discovery node at the confirmed path. If declined, the dispatch ends with the two artifact files.
 
 Skipping or reordering steps is a constitution violation.
 
-**Rationale for the four-writer separation** (strategist orchestrates only; research-writer / findings-writer / discovery-writer each own exactly one artifact): symmetric single-responsibility, no agent both orchestrates and persists. The strategist holds dispatch state and could plausibly contaminate persistence with its own framing; isolating persistence into dedicated agents that receive only their input keeps each artifact traceable to a clean transformation.
-
 *Source:* P-SS-9.
 
-### R4 — Strategy proposal MUST NOT persist as a file
+### R4 — Strategy proposal MUST NOT persist as a file before user confirmation
 
-The strategist's proposal lives only in the chat conversation. No `domainspec-subagents-strategy.md` or equivalent proposal file is ever written to disk. The proposal-confirmation gate is enforced by the conversation, not by a phantom file.
+The strategist's proposal lives only in the chat conversation through Step 2. No file — including the R25 spec — is written to disk before the user has explicitly confirmed in Step 2. The proposal-confirmation gate is enforced by the conversation, not by a phantom file.
+
+R25 (post-confirm spec persistence at Step 2.5) is a deliberate, narrow extension consistent with R4: persistence happens only AFTER the gate.
 
 *Source:* P-SS-9, A-8 of domainspec-subagents-strategy.md discovery.
 
-### R5 — Only dedicated writer agents persist files
+### R5 — File persistence is owned by named writer surfaces
 
-Child agents return findings; the strategist returns collected returns + Context + Goal; **neither writes any file**. File persistence is the exclusive responsibility of the dedicated writer agents:
+Child agents return findings; the strategist returns collected returns + Context + Goal. File persistence is the responsibility of named, scoped writer surfaces:
 
-- `domainspec-subagents-research-writer` writes `domainspec-subagents-research.md` from the strategist's collected returns.
-- `domainspec-subagents-findings-writer` writes `domainspec-subagents-findings.md` from research.md.
-- `domainspec-subagents-discovery-writer` (optional, user-gated) writes the discovery node from findings.md to either a vault path (knowledge scope) or a feature-folder path (application scope) per R15.
+- **Strategist (parent session)** — writes exactly one file per dispatch: the R25 spec at the canonical content-addressed path, only post-confirm, only at Step 2.5. No other files.
+- `domainspec-subagents-research-writer` — writes `domainspec-subagents-research.md` from the strategist's collected returns.
+- `domainspec-subagents-findings-writer` — writes `domainspec-subagents-findings.md` from research.md.
+- `domainspec-subagents-discovery-writer` — writes the discovery node from findings.md (user-gated, optional).
 
-Allowing children or the strategist to write directly causes silent parallel-write race conditions and conflates orchestration with persistence.
+Allowing children to write directly, or allowing the strategist to write outside the spec carve-out, causes silent parallel-write race conditions and conflates orchestration with persistence.
 
 *Source:* P-SS-9.
 
 ### R6 — Two user-confirmation gates are mandatory
 
-(a) Before child dispatch (lifecycle step 2): user explicitly confirms the strategist's proposal.
+(a) Before child dispatch (lifecycle step 2): user explicitly confirms the strategist's proposal. On Abandon, no file exists anywhere — R6a's reversibility is fully preserved because R25 spec write does not occur until 2.5.
 
-(b) Before discovery promotion (lifecycle step 6): user explicitly confirms whether findings get promoted to a vault discovery node.
+(b) Before discovery promotion (lifecycle step 7): user explicitly confirms whether findings get promoted to a vault discovery node.
 
 Neither gate may be skipped or implied; both require explicit user response in chat.
 
@@ -143,7 +150,7 @@ When dispatching N parallel agents, all dispatch tool calls MUST be made in a si
 
 ### R9 — Lock contract before fan-out
 
-Before launching parallel agents, the shared contract — data schema, scope boundaries, taxonomy, decomposition — MUST be defined and recorded in the strategist's chat proposal (lifecycle step 1).
+Before launching parallel agents, the shared contract — data schema, scope boundaries, taxonomy, decomposition — MUST be defined and recorded in the strategist's chat proposal (lifecycle step 1) and in the R25 spec.
 
 *Source:* P-SS-5.
 
@@ -161,7 +168,7 @@ Every subagent dispatch MUST include in its briefing prompt:
 - **Expected output shape** — structure / length / format the parent expects.
 - **Length cap** — token or word limit.
 
-Terse command-style prompts ("find the bug", "review this") violate R10.
+Terse command-style prompts violate R10.
 
 *Source:* P-SS-6.
 
@@ -177,29 +184,29 @@ For any subagent that wrote code, edited files, or claimed a verification passed
 
 ### R12 — Token budgets are per-strategy and model-orthogonal
 
-The strategist sets per-subagent token budgets at dispatch time, justified by the task's expected output shape. Budgets constrain output length, not model choice. Strategies for unbounded exploratory work MAY declare no budget; budgets and model selection are independent decisions.
+The strategist sets per-subagent token budgets at dispatch time, justified by the task's expected output shape. Budgets constrain output length, not model choice.
 
 *Source:* P-SS-2.
 
 ### R13 — Recursion budget defaults
 
-For recursive dispatch (children may themselves dispatch), defaults are:
+For recursive dispatch:
 
-- **Depth: 2** (parent → child → grandchild)
+- **Depth: 2**
 - **Breadth: 5** children per level
 - **Total cap: 10** agents per dispatch tree
 
-The strategist tracks live agent count and MUST refuse the next dispatch when the cap would be exceeded, escalating to the user with the question: *"Budget hit at N agents — continue with raised budget, stop, or revise scope?"*
+The strategist tracks live agent count and MUST refuse the next dispatch when the cap would be exceeded, escalating to the user.
 
-The chat proposal (lifecycle step 1) MAY override defaults with explicit justification, recorded in the Dispatch record (R18).
+The chat proposal MAY override defaults with explicit justification, recorded in the spec (R25) and the Dispatch record (R18).
 
 *Source:* P-SS-8.
 
 ### R14 — Strategist proposes model per child with difficulty justification
 
-The strategist's chat proposal MUST name a concrete model per child agent and include a one-line difficulty justification per child. The user validates each model selection in lifecycle step 2.
+The strategist's chat proposal MUST name a concrete model per child agent and include a one-line difficulty justification per child. The user validates each model selection in lifecycle step 2. There is no fixed difficulty taxonomy and no fixed tier→model rule.
 
-There is no fixed difficulty taxonomy and no fixed tier→model rule. The strategist describes each task in its own words.
+**Exception for synthesize layers:** agents whose `model: "parent"` (per R25) are exempt from the difficulty-justification requirement — the role itself justifies the choice.
 
 *Source:* P-SS-2.
 
@@ -209,24 +216,19 @@ There is no fixed difficulty taxonomy and no fixed tier→model rule. The strate
 
 ### R15 — File locations: working folder for artifacts; scope-routed discovery promotion
 
-**Working folder for dispatch artifacts.** Every dispatch's `domainspec-subagents-research.md` and `domainspec-subagents-findings.md` MUST be persisted under `docs/features/<feature>/research/<topic>/`, where `<feature>` is the active feature the dispatch supports and `<topic>` is the dispatch slug. The folder lives alongside the feature's specs so that research evidence and the specs that derive from it are co-located.
+**Working folder for dispatch artifacts.** Every dispatch's `domainspec-subagents-research.md` and `domainspec-subagents-findings.md` MUST be persisted under `docs/features/<feature>/research/<topic>/`.
 
 **Forbidden working folders:**
-- `.planning/**` — historical convention, deprecated. Legacy artifacts stay in place but no new dispatch writes there.
-- `vault/**` — vault is reserved for codified discipline (premises, axioms, constitutions, discoveries). Raw dispatch evidence is not codified discipline.
+- `.planning/**` — historical convention, deprecated.
+- `vault/**` — vault is reserved for codified discipline. (Exceptions: the R25 spec under `vault/snapshots/dispatches/` or `vault/snapshots/meta-dispatches/<slug>/` for `dispatch_kind: meta`; and the R28 telemetry sink under `internal_tools/vault_telemetry/events/`.)
 
-**No active feature?** Halt at Step 1 of the lifecycle and ask the user which feature this dispatch belongs to. Never default to `.planning/` or `vault/`. If the work genuinely doesn't fit any existing feature, the user must either name a new feature or decline the dispatch.
+**No active feature?** Halt at Step 1 and ask the user which feature this dispatch belongs to. For framework-design work that has no feature folder, use `dispatch_kind: meta` and the meta-dispatches path.
 
-**Migration note.** Legacy `.planning/<topic>/research/` artifacts are grandfathered; new dispatches use the feature-folder rule above.
+**Discovery promotion** routes to one of two patterns:
+- **Knowledge scope** → `vault/discovery/<topic>-definitions/<slug>.md`.
+- **Application scope** → `docs/features/<feature>/discovery/<slug>.md`.
 
-**Discovery promotion is the only mechanism by which dispatch outputs reach a stable home** — and only the discovery node itself, not the original research/findings artifacts (R3 step 7). The promotion target is one of two patterns, classified by the discovery's scope:
-
-- **Knowledge scope** → `vault/discovery/<topic>-definitions/<slug>.md`. The vault remains reserved for codified discipline; a discovery whose load-bearing claims govern the vault's own ontology, schema, edges, agent/skill protocols, premises, or constitutions belongs here.
-- **Application scope** → `docs/features/<feature>/discovery/<slug>.md`. A discovery whose claims live or die with one feature (feature design, refactor scoping, internal tradeoffs) belongs with that feature, not in the vault. Promoting it to the vault would dilute the "vault is for codified discipline" stance.
-
-The classification is the strategist's call at lifecycle step 7, surfaced in the user-gate prompt with the proposed path family; the user confirms (or revises) before `domainspec-subagents-discovery-writer` is dispatched. There is no `regime` or equivalent frontmatter field — existing labels (`layer`, `scope`, `tags`) carry the conceptual discrimination, and the path encodes the operational choice. The `discovery` row of [ontology-conventions.md](../ontology-conventions.md) Appendix B already permits dual-location discoveries; this rule formalizes the routing without altering the schema.
-
-*Source:* P-SS-9, D-1 / D-11 of domainspec-subagents-strategy.md discovery; ontology-conventions.md Appendix B `discovery` row.
+*Source:* P-SS-9, D-1 / D-11.
 
 ### R16 — Findings file structure
 
@@ -236,13 +238,11 @@ The classification is the strategist's call at lifecycle step 7, surfaced in the
 2. **Findings** — scannable summary plus implications.
 3. **Analysis** — tensions, contradictions, cross-cutting reasoning.
 
-Each section header MUST appear; the order is fixed.
-
-*Source:* P-SS-9, D-11 of domainspec-subagents-strategy.md discovery.
+*Source:* P-SS-9, D-11.
 
 ### R17 — Citation requirement
 
-Every load-bearing claim in the **Findings** and **Analysis** sections MUST cite a passage in `domainspec-subagents-research.md` (file path + per-child header anchor). Synthesis without traceable citation is uncitable opinion and violates R17.
+Every load-bearing claim in **Findings** and **Analysis** MUST cite a passage in `domainspec-subagents-research.md` (file path + per-child header anchor).
 
 *Source:* P-SS-9, D-8 fidelity component.
 
@@ -251,55 +251,43 @@ Every load-bearing claim in the **Findings** and **Analysis** sections MUST cite
 The Dispatch record section of `domainspec-subagents-findings.md` MUST contain:
 
 - **Mode** — one of the R19 enum.
+- **Dispatch kind** — `standard | meta` (per R25).
+- **Spec path** — the canonical path written at Step 2.5.
+- **Spec hash** — sha256 of the persisted spec.
 - **Per-agent table** with: agent id, model, one-line difficulty justification, token budget (or "unbounded"), declared output shape.
 - **Sequencing** — linear chain, parallel set, or DAG description.
-- **Recursion budget actually used** — depth, breadth, total agent count.
+- **Recursion budget actually used** — depth, breadth, total agent count, loop iterations used.
 - **Actual spend** — tokens in / tokens out / total per agent, plus sum.
 - **Four-component grade** per R21 (with judgment markers per R22).
-
-Missing any field violates R18.
+- **Bootstrap override** — if used, reproduce `{reason, scope}` verbatim.
+- **Telemetry emission status** — emitted / failed-with-reason.
 
 *Source:* P-SS-9, D-11.
 
 ### R23 — Context + Goal preamble required on both artifact files
 
-Both `domainspec-subagents-research.md` and `domainspec-subagents-findings.md` MUST begin with a **Context + Goal preamble** before any other section:
+Both `domainspec-subagents-research.md` and `domainspec-subagents-findings.md` MUST begin with a **Context + Goal preamble** before any other section.
 
-- **Context** — where the need for this dispatch arose (the situation, the question, the upstream artifact or conversation that triggered it).
-- **Goal** — what the dispatch was trying to achieve. Stated concretely enough that Coverage (R21) can be evaluated against it.
-
-The preamble appears before the per-child sections (in `domainspec-subagents-research.md`) and before the Dispatch record (in `domainspec-subagents-findings.md`). Without a recorded goal, Coverage cannot be graded; without recorded context, the artifact is not interpretable in isolation.
-
-*Source:* P-SS-9 (artifact as audit trail) + P-SS-10 Coverage component (requires a goal to evaluate against).
-
----
+*Source:* P-SS-9 + P-SS-10 Coverage component.
 
 ### R24 — Strategist is enacted by the skill; writers are platform-registered subagents
 
-The lifecycle splits into two implementation surfaces:
-
-- **Strategist role** — enacted by the parent Claude session through the skill `domainspec-subagents-strategy` (`.claude/skills/domainspec-subagents-strategy/SKILL.md` for Claude Code; equivalent for other runtimes). The strategist is **not** a separate subagent; the skill's body instructs the parent how to propose, dispatch, collect, and hand off. This matches the brainstorming/robot-talks pattern — orchestration lives in conversation, not in a dispatched process.
+- **Strategist role** — enacted by the parent Claude session through the skill `domainspec-subagents-strategy`. The strategist is not a separate subagent; the skill's body instructs the parent how to compose the spec (in chat), invoke the validator, propose, dispatch, persist (Step 2.5 spec only), collect, emit telemetry, and hand off.
 - **Three writer subagents** — defined in the runtime platform's agent registry:
   - **Claude Code**: `.claude/agents/<name>.agent.md`
   - **GitHub Copilot / VSCode**: `.github/agents/<name>.agent.md`
   - **Other runtimes**: their respective registry path.
 
-The three writer agents: `domainspec-subagents-research-writer`, `domainspec-subagents-findings-writer`, `domainspec-subagents-discovery-writer`. Each definition MUST honor the role contract below.
-
-**Cross-platform deployments** maintain parallel agent definitions with the same role contract; the constitution governs the role, not the platform binding. A platform-specific implementation MUST NOT relax or extend the role contract; it MAY adapt the tool list to the platform's tool taxonomy.
-
-The role contracts:
+The three writer agents: `domainspec-subagents-research-writer`, `domainspec-subagents-findings-writer`, `domainspec-subagents-discovery-writer`. Each MUST honor its role contract.
 
 | Surface | Receives | Returns / Persists |
 |---|---|---|
-| **Strategist** (skill body, parent session) | User intent | Chat proposal (R3 step 1) → after user confirm: dispatches children (step 3), collects returns (step 4), then dispatches the writer agents in turn (steps 5–7). Persists nothing directly. |
-| `domainspec-subagents-research-writer` (subagent) | Strategist's collected child returns + Context + Goal + working-folder path | Persists `<working_folder>/research/domainspec-subagents-research.md` per template (R5, R15, R23). Returns confirmation of write. |
-| `domainspec-subagents-findings-writer` (subagent) | Path to `domainspec-subagents-research.md` + original Context + Goal | Persists `<working_folder>/research/domainspec-subagents-findings.md` per template (R16, R17, R18, R23). Returns confirmation. |
-| `domainspec-subagents-discovery-writer` (subagent) | Path to `domainspec-subagents-findings.md` + user-confirmed discovery target path (knowledge: `vault/discovery/<topic>-definitions/<slug>.md`, or application: `docs/features/<feature>/discovery/<slug>.md`) + scope label | Persists the discovery node at the confirmed path with proper ontology frontmatter and connections. Returns the node path. |
+| **Strategist** (skill body, parent session) | User intent | Composes spec in chat (Step 0) → invokes validator (Step 0.5) → chat proposal (Step 1) → after user confirm: writes spec at Step 2.5 (one canonical artifact) → emits R28 telemetry (Step 3 lead-in) → dispatches children (Step 3) → collects returns (Step 4) → dispatches writer agents (Steps 5–7). |
+| `domainspec-subagents-research-writer` | Strategist's collected child returns + Context + Goal + working-folder path + spec path | Persists `<working_folder>/domainspec-subagents-research.md`. |
+| `domainspec-subagents-findings-writer` | Path to research.md + Context + Goal + spec path | Persists `<working_folder>/domainspec-subagents-findings.md`. |
+| `domainspec-subagents-discovery-writer` | Path to findings.md + user-confirmed discovery target path + scope label | Persists the discovery node at the confirmed path. |
 
-Child agents (the N agents the strategist dispatches in step 3) have ad-hoc role contracts defined per-dispatch in their R10 briefings; they are not pre-registered as named lifecycle agents.
-
-*Source:* P-SS-2 / P-SS-9 (separation of orchestration from persistence), the LLM-agnostic / platform-agnostic principle in feedback memory, and the brainstorming/robot-talks precedent (orchestrator role enacted by parent session, not dispatched).
+*Source:* P-SS-2 / P-SS-9, LLM-agnostic principle, robot-talks precedent.
 
 ---
 
@@ -312,18 +300,18 @@ Every dispatch declares exactly one of:
 - `single` — one agent, one question.
 - `task-fan-out` — N agents, partitioned concerns, parallel.
 - `robot-talks` — N agents, same question, declared perspectives, tensions desired.
-- `sequential` — linear chain; agent B depends on agent A.
-- `mixed` — multi-phase combinations; explicit DAG required.
+- `sequential` — linear chain; agent B depends on agent A. (Layer-to-layer sequencing across the spec also counts as `sequential`; intra-layer parallelism is expressed via `layers[].parallel`.)
+- `mixed` — **RESERVED. Not usable in v0.2.0.** Reserved pending introduction of a `depends_on:` per-agent field that gives the spec arbitrary-DAG semantics. The R26 validator MUST reject any dispatch declaring `mode: mixed` until that schema extension lands. Tracked as `OQ-mixed-dag-schema` in §12.
 
-The mode is declared in the strategist's chat proposal and recorded in the Dispatch record (R18).
+The mode is declared in the chat proposal and recorded in the R25 spec and the Dispatch record (R18).
 
 *Source:* D-4 of domainspec-subagents-strategy.md discovery.
 
 ### R20 — Robot-talks mode binds robot-talks-constitution
 
-A dispatch with `mode: robot-talks` additionally binds [robot-talks-constitution.md](robot-talks-constitution.md) on top of this constitution. Conflicts resolve in favor of robot-talks-constitution within robot-talks dispatches (it is more specific).
+A dispatch with `mode: robot-talks` additionally binds [robot-talks-constitution.md](robot-talks-constitution.md). Conflicts resolve in favor of robot-talks-constitution within robot-talks dispatches. See `OQ-robot-talks-stage-a` in §12 for an open ordering question.
 
-*Source:* D-4 of domainspec-subagents-strategy.md discovery.
+*Source:* D-4.
 
 ---
 
@@ -331,72 +319,224 @@ A dispatch with `mode: robot-talks` additionally binds [robot-talks-constitution
 
 ### R21 — Four-component grade recorded at dispatch close
 
-At dispatch close, the four-component grade MUST be recorded in the Dispatch record (R18) on a 0–1 scale:
+At dispatch close, the four-component grade MUST be recorded in the Dispatch record on a 0–1 scale:
 
-- **Coverage** — did the decomposition cover the goal?
-- **Independence** — were concerns non-overlapping?
-- **Fidelity** — were findings traceable to evidence?
-- **Cost discipline** — did agents stay within declared budgets?
-
-The grade MUST be present even when only the cost component is mechanically computed.
+- **Coverage**, **Independence**, **Fidelity**, **Cost discipline**.
 
 *Source:* P-SS-10.
 
 ### R22 — Judgments MUST be marked as judgments
 
-Of the four components, **only cost discipline is mechanically computed** (declared budget vs. actual spend). The other three are evaluator judgments. The Dispatch record MUST mark each judgment score with `(judgment)` next to the value, distinguishing it from the mechanical cost score. Treating the aggregate as a metric is a constitution violation.
+Only **cost discipline** is mechanically computed. The other three are evaluator judgments and MUST carry a `(judgment)` marker. Treating the aggregate as a metric is a constitution violation.
 
 *Source:* P-SS-10 discipline note.
 
 ---
 
-## 10. Governance
+## 10. Spec, Validator, Registry, Telemetry (R25–R28)
 
-### Adoption
+### R25 — Strategy spec is a content-addressed artifact written AFTER user confirmation
 
-This constitution is binding for all subagent dispatch initiated after its `last_updated` date. Pre-existing artifacts (notably the chat-ui-variants strategy file at `implementation/app-frontend/docs/features/app-release/agents-research/chat-ui-variants-via-shared-data-contract/agents-strategy.md`) are **grandfathered**: they remain valid in their current form and are flagged for opportunistic migration when next touched. Forced retroactive migration is not required.
+The strategist composes the spec **IN CHAT** as part of R3 Step 1; the chat proposal IS the human-readable narration of the YAML spec — both surfaces describe the same parameter set in the same turn. The R26 validator runs on the in-chat spec **before** user confirmation. No file is involved before Step 2.
 
-### Amendment process
+**Only AFTER R3 Step 2 user confirm** does the strategist persist the spec to:
 
-Rules in this constitution are derived from premises. To change a rule:
+- `vault/snapshots/dispatches/YYYY-MM-DD-<slug>-spec.yaml` for `dispatch_kind: standard`, or
+- `vault/snapshots/meta-dispatches/<slug>/spec.yaml` for `dispatch_kind: meta`.
 
-1. Revise the source premise(s) in `domainspec-subagents-strategy-premises.md` (bump version, update version history).
-2. Revise the dependent rule(s) here (bump version, update version history).
-3. Revise the implementing skill (forthcoming) to match.
+This is a narrowly scoped extension of R5's writer pattern: the parent session is the dedicated writer for this one canonical artifact, post-confirm only, one file per dispatch.
 
-A rule MUST NOT change without a corresponding premise change. A premise change MAY happen without a rule change (e.g., evidence accumulation that does not yet alter the rule).
+**Reconciliation:**
+- **R4 fully honored** — no file persists until the user has confirmed.
+- **R5 narrowly extended** — the parent writes exactly one file per dispatch at one canonical path; the three writer agents continue to own research / findings / discovery.
+- **R6a fully reversible** — Abandon at Step 2 leaves no file on disk.
 
-### Non-negotiable principles
+**Schema (top-level, required unless marked optional):**
 
-The following are load-bearing — they cannot be relaxed without revisiting the foundational premises and likely the schema chain:
+```yaml
+spec_version: "0.2.0"
+dispatch_id: <YYYY-MM-DD-<slug>>
+dispatch_kind: standard | meta
+mode: single | task-fan-out | robot-talks | sequential   # mixed is RESERVED (R19)
+goal: <one sentence>
+context: <2-4 sentences>
+heuristic_row: <published id> | user-specified
+loop_cap: <int, default 2, max 5>           # typed mechanical floor (harness MUST refuse loop N+1)
+stop_conditions:                            # free-text supplements; loop_cap is the typed floor
+  - <string>
+bootstrap_override:                         # optional; required object shape when present
+  reason: <non-empty string>
+  scope: spec-only | telemetry-only | working-folder | full
+working_folder: <path>                      # repo-relative
+layers:
+  - layer_id: <stable id>
+    role: investigate | evaluate | meta-evaluate | synthesize
+    n: <int >= 1>
+    parallel: <bool>
+    model: <model_id> | "parent"
+    agents:
+      - agent_id: <stable id>
+        angle: <one sentence>
+        model: <model_id> | "parent"        # "parent" valid only on synthesize-layer entries
+        difficulty_justification: <one line>
+        token_budget: <int> | "unbounded"
+        expected_output_shape: <one line>
+recursion_budget:
+  depth: <int>                              # default 2
+  breadth: <int>                            # default 5
+  total: <int>                              # default 10
+  parent_dispatch_id: <upstream dispatch_id or null>
+validator:
+  model: <model_id>
+  retry_policy: one-retry-then-escalate
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: <from latest vault/snapshots/*.json, or "BOOTSTRAP" under override>
+  spec_hash: <sha256 of this spec YAML, filled at Step 2.5>
+```
 
-- **R4** — proposal never persists. Phantom files break the user-confirmation gate.
-- **R5** — children never write files. Race conditions are silent and corrupting.
-- **R6** — both user gates are mandatory. Skipping either turns dispatch into improvisation.
-- **R11** — trust-but-verify on writes. Without it, subagent self-reports drift from reality.
-- **R17** — citation requirement on synthesis. Without it, fidelity collapses into opinion aggregation.
+The `model: "parent"` value is the ONLY mechanism by which a synthesize-layer entry may execute in the parent session rather than as a dispatched subagent. Non-synthesize layers MUST name a concrete model id. There is no `delegate_synthesis` escape hatch.
 
-### Known drift to fix in a separate ontology-amendment discovery
+*Source:* P-SS-2, P-SS-9.
 
-[`ontology-conventions.md`](../ontology-conventions.md) currently lists `domainspec-subagents-strategy` as a `node_type` value (line 56, line 123, line 609). D-10 of `domainspec-subagents-strategy.md` discovery was **reversed in v0.3.0** — no `domainspec-subagents-strategy` node_type is required because the dispatch record now lives as a section inside `domainspec-subagents-findings.md`. Removing it from the ontology requires its own discovery (per the schema-evolution gate). This constitution does not depend on the unused node_type, but the drift should be cleaned up.
+### R26 — Validator runs on the in-chat spec; trivial single-mode dispatches skip it
+
+A named validator (`strategy_spec_schema_valid`, registered per [`governs-runtime-witness-constitution.md`](governs-runtime-witness-constitution.md)) MUST run on the in-chat spec **before user confirmation**. Outcomes:
+
+- **accept** → proceed to chat proposal / user confirm.
+- **reject-with-fixes** → strategist revises in-chat spec and re-runs validator **ONCE**. Second rejection escalates to user.
+- **abstain** → treated as reject; escalate immediately.
+- **accept-with-bootstrap-override** → see Bootstrap override below.
+
+The validator MUST NOT also propose. The checklist verifies R10 / R13 / R14 / R15 / R19 / R23 / R25 / R27.
+
+**Trivial-dispatch carve-out.** When ALL of the following hold:
+- `mode: single`, AND
+- effective layers = 1, AND
+- effective agent count n = 1, AND
+- no `bootstrap_override` is present,
+
+the validator dispatch is **SKIPPED**. The R25 spec is still emitted post-confirm. Rationale: validator overhead is disproportionate for trivial lookups; spec emission alone is sufficient discipline.
+
+**Bootstrap override.** The first dispatch of a newly-amended constitution may legitimately fail the validator on items the amendment itself introduced (e.g., a R28 dispatch made before the telemetry sink exists). The strategist MAY include a top-level `bootstrap_override: {reason: <non-empty string>, scope: <named scope>}` in the spec; the validator then issues `accept-with-bootstrap-override`, with the override logged in telemetry and surfaced in the R18 Dispatch record. The `scope` field MUST name specific rule IDs and infrastructure gaps; a `bootstrap_override` with empty `reason` or empty `scope` MUST be rejected.
+
+**Anti-abuse.** Bootstrap override is for first-dispatch infrastructure gaps only. R28 telemetry records every use; `override_count > 1` per amendment cycle is a constitution violation flagged by the next residue-counter run.
+
+The harness MUST refuse a loop iteration beyond `loop_cap`. `stop_conditions` remains as non-binding human-readable supplements.
+
+*Source:* P-SS-9, governs-runtime-witness-constitution.md.
+
+### R27 — Agent-chosen defaults must cite their heuristic; additive-amendment path
+
+When the user does not specify dispatch parameters and the strategist picks defaults — per the heuristic table the skill publishes — the spec MUST record `heuristic_row:` for each agent entry. Allowed values: `<heuristic-id>` (a stable id from the skill's heuristic table) or `user-specified`. "Defaults applied without justification" is an R27 violation; R26 MUST reject.
+
+**Additive-amendment path.** Adding new operational mechanics (validator gates, telemetry sinks, parameter fields) that do NOT alter R1–R24 normative content follows the lighter amendment path: bump `version`, append Version History, append amendment-log entry per [schema-amendment-discipline-constitution.md](schema-amendment-discipline-constitution.md). No premise revision required when no rule semantics change. R25 / R26 / R28 themselves are additive-mechanics amendments under this path.
+
+*Source:* P-SS-9, R24, schema-amendment-discipline-constitution.md.
+
+### R28 — Telemetry event emission
+
+After Step 2.5 spec write and BEFORE Step 3 fan-out, the strategist MUST emit a telemetry event to `internal_tools/vault_telemetry/events/subagent-strategy.jsonl`:
+
+```json
+{
+  "event_name": "subagent-strategy.dispatched",
+  "dispatch_id": "YYYY-MM-DD-<slug>",
+  "spec_path": "vault/snapshots/.../spec.yaml",
+  "spec_hash": "<sha256>",
+  "corpus_hash": "<at emit time or 'BOOTSTRAP' under override>",
+  "mode": "<R19 value>",
+  "dispatch_kind": "standard|meta",
+  "loop_cap": 2,
+  "n_agents": 3,
+  "bootstrap_override_used": false,
+  "bootstrap_override_reason": null,
+  "bootstrap_override_scope": null,
+  "amendment_cycle": "<id or null>",
+  "timestamp": "<ISO-8601 UTC>"
+}
+```
+
+**Telemetry sink path.** `internal_tools/vault_telemetry/events/subagent-strategy.jsonl`. If the directory does not exist, the strategist MUST create it before the first emission. This bootstrap step is permitted without a separate user gate.
+
+**Bootstrap behavior.** When `bootstrap_override` is set on the spec, the telemetry event MUST still emit, with `corpus_hash` set to the most recent known snapshot OR the string `"BOOTSTRAP"` if no snapshot is reachable. The override reason populates `bootstrap_override_reason`; scope populates `bootstrap_override_scope`.
+
+Emission failures (filesystem, permissions) are logged and the dispatch proceeds: telemetry is an observability concern, not a dispatch gate.
+
+*Source:* P-SS-9, P-SS-10 (cost discipline mechanically computable).
 
 ---
 
-## 11. Connections
+## 11. Governance
+
+### Adoption
+
+Binding for all subagent dispatch initiated after `last_updated`. Pre-existing artifacts are grandfathered.
+
+**v0.2.0 grandfathering.** Pre-2026-05-16 dispatches are not retroactively required to satisfy R25–R28. Dispatches initiated on or after 2026-05-16 MUST satisfy R25–R28 (subject to R26 bootstrap-override on first invocation per amendment).
+
+### Amendment process
+
+Two paths:
+
+1. **Normative amendment** (changes R1–R24 substance, or R25/R26/R28 schema semantics): revise the source premise → revise the rule → revise the skill → bump version → append amendment log entry per [schema-amendment-discipline-constitution.md](schema-amendment-discipline-constitution.md).
+2. **Additive-operational-mechanics amendment** (R27 path): no premise revision; bump version, append Version History, append amendment log entry.
+
+A normative rule MUST NOT change without a corresponding premise change.
+
+### Non-negotiable principles
+
+Load-bearing — cannot be relaxed without revisiting foundational premises:
+
+- **R4** — proposal never persists before user confirm. (R25's post-confirm spec write is the deliberate, narrowly scoped extension.)
+- **R5** — only named writer surfaces persist files; the strategist's spec-write at Step 2.5 is the one carve-out, bounded to one path and one moment.
+- **R6** — both user gates mandatory.
+- **R11** — trust-but-verify.
+- **R17** — citation requirement.
+
+**R4 / R5 / R6 reconciliation note for v0.2.0.** R25's post-confirm spec write means R4 is fully honored (no pre-confirm persistence), R5 is narrowly extended (the parent writes exactly one canonical artifact per dispatch, post-confirm, as a named writer surface — distinct from the three writer agents which handle research / findings / discovery), and R6a's reversibility is fully preserved (Abandon leaves no file). The Wave-3 Constitutional-Purist review surfaced and resolved the prior conflict that would have existed under a pre-confirm spec write.
+
+### Known drift
+
+[`ontology-conventions.md`](../ontology-conventions.md) listing of `domainspec-subagents-strategy` as a `node_type` remains stale per the v0.1.5 note; cleanup deferred.
+
+### Known TODO — governs_check registry
+
+Frontmatter declares `governs_check: [strategy_spec_schema_valid]`. The validator function backing this check will be registered in `vault_common.governance.REGISTRY` in a follow-up commit; until that lands, the governs-runtime-witness audit will see an unresolved check. Acknowledged as v0.2.0 known TODO under the R26 bootstrap-override discipline for the first cycle.
+
+---
+
+## 12. Known Open Questions
+
+Items to resolve in v0.2.1 or as follow-up amendments:
+
+- **OQ-mixed-dag-schema** — `mode: mixed` is reserved (R19). Resolving requires a `depends_on:` per-agent field with DAG validation. Until then, multi-phase dispatches MUST decompose into sequential or fan-out steps.
+- **OQ-robot-talks-stage-a** — `mode: robot-talks` ordering with respect to [robot-talks-constitution.md](robot-talks-constitution.md) R2 Stage A is currently undefined: user-first scoping vs. spec-narrated-in-Step-1 needs explicit resolution.
+- **OQ-single-use-override-enforcement** — a machine-checkable counter for `bootstrap_override.scope` uses per amendment cycle (consuming R28 telemetry) is named but unimplemented.
+- **OQ-telemetry-consumer** — a consumer script reading `subagent-strategy.jsonl` and JOINing with R21 grades to produce per-cycle dashboards is not yet specified.
+- **OQ-non-claude-runtime-paths** — portable mapping for `vault/snapshots/dispatches/` and `internal_tools/vault_telemetry/` on non-Claude-Code runtimes is undefined; current paths assume Claude Code layout.
+
+---
+
+## 13. Connections
 
 | Document | Type | Description |
 |----------|------|-------------|
-| [domainspec-subagents-strategy-premises.md](../premise/domainspec-subagents-strategy-premises.md) | `derives-from` | Source premises (P-SS-1..10) for every rule here. Each rule cites the source premise inline. |
-| [domainspec-subagents-strategy.md](../discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md) | `discovery-of` | Discovery document that records the design decisions (D-1..12), alternatives considered (A-1..8), and open questions (OQ-1..7). |
-| [robot-talks-constitution.md](robot-talks-constitution.md) | `binds-when` | Mode-conditional binding — applies additionally when a dispatch declares `mode: robot-talks` (R20). |
-| [robot-talks-premises.md](../premise/robot-talks-premises.md) | `mode-of-source` | Source premises for the robot-talks-specific rules that R20 transitively binds. |
-| [system-premises.md](../premise/system-premises.md) | `derives-from` | P-SYS-3 (docs as source of truth) and P-SYS-7 (revisability) ground R10 (briefing) and R21 (grading). |
-| [ontology-conventions.md](../ontology-conventions.md) | `governed-by` | Frontmatter and node_type compliance. See §10 governance for known drift. |
-| [templates/domainspec-subagents-research.md](../templates/domainspec-subagents-research.md) | `shape-contract-for` | Skill-emitted research file template. Implements R5, R15 (per-child header convention). |
-| [templates/domainspec-subagents-findings.md](../templates/domainspec-subagents-findings.md) | `shape-contract-for` | Skill-emitted findings file template. Implements R15, R16, R17, R18, R21, R22. |
-| `.claude/skills/domainspec-subagents-strategy/` *(forthcoming)* | `operationalized-by` | Executable behavior that enforces this constitution at dispatch time. |
-| `vault/sessions/2026-05-03-0327-domainspec-subagents-strategy-scope-routed-promotion.md` | `modified-by` | Session that edited R3 step 7, R5, R15 (rewritten), R24 table row, and added Version History v0.1.5 entry. |
-| [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed the project-wide rename (`domainspec-subagents-strategy-constitution` → `domainspec-subagents-strategy-constitution`). |
+| [domainspec-subagents-strategy-premises.md](../premise/domainspec-subagents-strategy-premises.md) | `derives-from` | Source premises P-SS-1..10. |
+| [domainspec-subagents-strategy.md](../discovery/domainspec-subagents-strategy-definitions/domainspec-subagents-strategy.md) | `discovery-of` | Discovery doc with D-1..12, A-1..8, OQ-1..7. |
+| [robot-talks-constitution.md](robot-talks-constitution.md) | `binds-when` | Applies additionally when `mode: robot-talks` (R20). |
+| [robot-talks-premises.md](../premise/robot-talks-premises.md) | `mode-of-source` | Source premises for robot-talks-specific rules. |
+| [system-premises.md](../premise/system-premises.md) | `derives-from` | P-SYS-3, P-SYS-7 ground R10 and R21. |
+| [ontology-conventions.md](../ontology-conventions.md) | `governed-by` | Frontmatter / node_type compliance. |
+| [schema-amendment-discipline-constitution.md](schema-amendment-discipline-constitution.md) | `governed-by` | Amendment log discipline for both normative and additive paths. |
+| [governs-runtime-witness-constitution.md](governs-runtime-witness-constitution.md) | `governed-by` | R26 validator is registered per this constitution's witness discipline. |
+| [templates/domainspec-subagents-research.md](../templates/domainspec-subagents-research.md) | `shape-contract-for` | Research-writer template. |
+| [templates/domainspec-subagents-findings.md](../templates/domainspec-subagents-findings.md) | `shape-contract-for` | Findings-writer template. |
+| `.claude/skills/domainspec-subagents-strategy/` | `operationalized-by` | Executable behavior enforcing this constitution (v0.2.0 implements R25 spec, R26 validator, R27 heuristic_row, R28 telemetry). |
+| `internal_tools/vault_telemetry/events/subagent-strategy.jsonl` | `telemetry-sink-for` | R28 emission target. |
+| `vault/snapshots/dispatches/` | `artifact-path-for` | R25 standard-dispatch spec persistence. |
+| `vault/snapshots/meta-dispatches/` | `artifact-path-for` | R25 meta-dispatch spec persistence. |
+| [../amendments/2026-05-16-subagent-strategy-parametrization.md](../amendments/2026-05-16-subagent-strategy-parametrization.md) | `modified-by` | v0.2.0 amendment log entry. |
 
 ---
 
@@ -404,9 +544,10 @@ The following are load-bearing — they cannot be relaxed without revisiting the
 
 | Version | Date | Change |
 |---------|------|--------|
-| 0.1.5 | 2026-05-03 | **R15 + R3 step 7 + R24 revised — scope-routed discovery promotion.** Discovery-promotion target is no longer hardcoded to `vault/discovery/`. Knowledge-scope discoveries (claims governing vault discipline) still land at `vault/discovery/<topic>-definitions/<slug>.md`; application-scope discoveries (claims internal to one feature) land at `docs/features/<feature>/discovery/<slug>.md`. The strategist classifies at lifecycle step 7 and proposes the path; the user confirms before dispatch. No new frontmatter field — existing labels (`layer`, `scope`, `tags`) carry the conceptual discrimination, and the path encodes the operational choice. Resolves the divergence flagged in vault session `2026-05-03-0140-subagents-strategy-discovery-target-divergence`. |
-| 0.1.4 | 2026-05-02 | **R24 revised — strategist enacted by skill, not a subagent.** The strategist role is now embedded in the skill body (`.claude/skills/domainspec-subagents-strategy/SKILL.md`); the parent Claude session enacts it directly, matching the brainstorming/robot-talks precedent. Result: 3 subagent files instead of 4. Avoids the round-trip overhead of relaying every chat turn between user and a "strategist" subagent. The role-contracts table now has one strategist row (skill-body surface) and three writer-agent rows (subagent surface). |
-| 0.1.3 | 2026-05-02 | **Working folder + agent registry rules.** (1) **R15 strengthened**: artifacts MUST NOT be written to the vault — vault is reserved for codified discipline. The strategist's chat proposal MUST suggest one or more candidate working folders based on active context; the user explicitly confirms in lifecycle step 2. Discovery promotion is the only path to vault. (2) **R24 added**: agent definitions live in the platform's agent registry (`.claude/agents/` for Claude Code, `.github/agents/` for GitHub Copilot/VSCode, etc.); constitution governs the role contract, not the platform binding. Includes a role-contract table for the four lifecycle agents (receives / returns / persists). |
-| 0.1.2 | 2026-05-02 | **Research-writer split.** R3 lifecycle grew from 6 to 7 steps — strategist now *returns* collected child outputs and the original Context + Goal but does NOT write any file; a dedicated `domainspec-subagents-research-writer` agent persists `domainspec-subagents-research.md` (new step 5). R5 rewritten to make file persistence the exclusive responsibility of three dedicated writer agents (research-writer, findings-writer, discovery-writer); both children AND strategist are now forbidden from writing. Rationale: symmetric single-responsibility — every artifact has a dedicated writer; the strategist becomes pure orchestrator. Knock-on edits in discovery doc D-9 (4 lifecycle agents instead of 3) and §Lifecycle ASCII pending. |
-| 0.1.1 | 2026-05-02 | Added **R23 — Context + Goal preamble required on both artifact files**. Both `domainspec-subagents-research.md` and `domainspec-subagents-findings.md` MUST begin with Context (where the need arose) + Goal (what the dispatch is trying to achieve). Derives from P-SS-9 (audit trail) and P-SS-10 Coverage (needs a goal to grade against). Templates updated to include the preamble. Total rules: 23. |
-| 0.1.0 | 2026-05-02 | Initial constitution. Codifies domainspec-subagents-strategy-premises.md@v0.4.0 into 22 rules across 8 rule sections plus governance. Templates for `domainspec-subagents-research.md` and `domainspec-subagents-findings.md` created at `templates/`. Notes drift in `ontology-conventions.md` (`domainspec-subagents-strategy` listed as node_type but D-10 reversed in v0.3.0) for follow-up discovery. |
+| 0.2.0 | 2026-05-16 | **Spec + validator + registry + telemetry — new §10.** Introduced R25 (content-addressed spec, written post-confirm at Step 2.5; `dispatch_kind: standard\|meta`; `model` union `<model_id>\|"parent"` restricted to synthesize layers), R26 (validator with trivial-dispatch carve-out; `bootstrap_override = {reason, scope}` + anti-abuse; one-retry then escalate), R27 (heuristic_row attribution + additive-amendment path), R28 (JSONL telemetry sink at `internal_tools/vault_telemetry/events/subagent-strategy.jsonl`; bootstrap behavior for first-cycle dispatches). R3 lifecycle gains Step 2.5. R4 / R5 / R6 reconciled with explicit non-conflict note (Wave-3 Constitutional-Purist surfaced and resolved the prior conflict that would have existed under pre-confirm spec write). `loop_cap: int (default 2, max 5)` is a typed top-level schema field; harness MUST refuse beyond cap. `mode: mixed` RESERVED pending DAG schema (R19). `delegate_synthesis` escape hatch explicitly removed; synthesize layers MUST use `model: "parent"`. R14 gets a parent-model exception. Added §12 Known Open Questions. Frontmatter: `version` 0.1.4→0.2.0 (also acknowledging v0.1.5 was applied in history without a frontmatter bump), `last_updated: 2026-05-16`, `schema_version: 1`, `governs_pattern`, `governs_check`. §13 Connections: added schema-amendment-discipline, governs-runtime-witness, telemetry sink path, spec paths, and v0.2.0 amendment log entry. |
+| 0.1.5 | 2026-05-03 | R15 + R3 step 7 + R24 revised — scope-routed discovery promotion. |
+| 0.1.4 | 2026-05-02 | R24 revised — strategist enacted by skill, not a subagent. |
+| 0.1.3 | 2026-05-02 | Working folder + agent registry rules. |
+| 0.1.2 | 2026-05-02 | Research-writer split. R3 grew from 6 to 7 steps. |
+| 0.1.1 | 2026-05-02 | Added R23 Context + Goal preamble. |
+| 0.1.0 | 2026-05-02 | Initial constitution codifying premises@v0.4.0 into 22 rules. |

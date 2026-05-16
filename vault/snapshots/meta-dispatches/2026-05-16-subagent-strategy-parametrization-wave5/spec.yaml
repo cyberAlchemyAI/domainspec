@@ -1,0 +1,76 @@
+spec_version: "0.2.0"
+dispatch_id: 2026-05-16-subagent-strategy-parametrization-wave5
+dispatch_kind: meta
+mode: sequential
+goal: "Replace the subagents-strategy skill + constitution with a parameterized (goal, layers, agents, models, validator, telemetry) schema that subsumes single, flat-fanout, and nested shapes."
+context: "User requested consolidation of 3 overlapping subagents-strategy skills (existing umbrella + nested skill born 2026-05-16 + third-party superpowers) into one parametrized skill. Wave 1-2-3-4 produced first drafts; Wave-3 robot-talks consensus rejected for R4/R5/R6 weakening (Purist) + dead-code prediction (Future-Self). User chose Path Y; Wave-5 redrafters R1/R2 closed the 6 targeted edits. This is the Wave-5 dispatch spec — persisted at Step 2.5 after user said 'go ahead' confirming Path Y."
+heuristic_row: meta-dispatch
+loop_cap: 2
+bootstrap_override:
+  reason: "v0.2.0 first dispatch — telemetry sink at internal_tools/vault_telemetry/events/subagent-strategy.jsonl was created as part of this very dispatch; governance registry function `strategy_spec_schema_valid` not yet wired in vault_common.governance.REGISTRY (follow-up commit). Both are first-cycle infrastructure gaps."
+  scope: full
+stop_conditions:
+  - validator rejects twice → escalate to user
+  - robot-talks irreconcilable → escalate
+  - agent count >10 → escalate
+  - evaluator-irreconcilable contradiction → escalate
+working_folder: vault/snapshots/meta-dispatches/2026-05-16-subagent-strategy-parametrization-wave5/
+layers:
+  - layer_id: L1-redraft
+    role: investigate
+    n: 2
+    parallel: true
+    model: opus
+    agents:
+      - agent_id: W5-A1
+        angle: "redraft SKILL.md applying 6 edits to close Purist + Future-Self"
+        model: opus
+        difficulty_justification: "load-bearing prose; spec write reorder is structurally novel"
+        token_budget: unbounded
+        expected_output_shape: "full SKILL.md content + checklist"
+        heuristic_row: meta-dispatch
+      - agent_id: W5-A2
+        angle: "redraft constitution applying same 6 edits at rule layer"
+        model: opus
+        difficulty_justification: "constitution is law; R4/R5/R6 reconciliation must be precise"
+        token_budget: unbounded
+        expected_output_shape: "full constitution content + checklist"
+        heuristic_row: meta-dispatch
+  - layer_id: L2-validate
+    role: meta-evaluate
+    n: 1
+    parallel: false
+    model: opus
+    agents:
+      - agent_id: V3
+        angle: "final dogfood — verify Purist + Future-Self closure"
+        model: opus
+        difficulty_justification: "judgment + self-application; recursive dogfood test"
+        token_budget: unbounded
+        expected_output_shape: "ACCEPT/REJECT verdict against 9-item checklist"
+        heuristic_row: meta-dispatch
+  - layer_id: L3-synthesize
+    role: synthesize
+    n: 1
+    parallel: false
+    model: "parent"
+    agents:
+      - agent_id: parent
+        angle: "apply files to repo or escalate"
+        model: "parent"
+        difficulty_justification: "parent role exempt per R14 + R25"
+        token_budget: unbounded
+        expected_output_shape: "files committed or escalation"
+        heuristic_row: parent-synthesis
+recursion_budget:
+  depth: 1
+  breadth: 2
+  total: 10
+  parent_dispatch_id: null
+validator:
+  model: opus
+  retry_policy: one-retry-then-escalate
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: BOOTSTRAP
+  spec_hash: "computed-at-write-time"

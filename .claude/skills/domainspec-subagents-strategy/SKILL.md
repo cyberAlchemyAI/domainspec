@@ -1,110 +1,203 @@
 ---
 name: domainspec-subagents-strategy
-description: Coordinate fan-out (2+ parallel subagents) or recursive subagent dispatch using the 7-step lifecycle from domainspec-subagents-strategy-constitution.md. Use when about to dispatch 2+ subagents in parallel or to allow recursive dispatch. Single-agent dispatches run inline (no skill needed).
+description: Parametrize and govern any subagent dispatch — single, flat fan-out, or nested waves — under one schema. Use whenever an R1 trigger holds; the (goal, layers, agents, models) spec collapses to the right shape. Subsumes the deleted `nested-subagents-strategy` skill.
 ---
 
 # Subagents-Strategy Skill
 
-Operationalizes [vault/constitution/domainspec-subagents-strategy-constitution.md](../../../vault/constitution/domainspec-subagents-strategy-constitution.md). When this skill is active, **you (the parent Claude session) enact the strategist role**. Read the constitution for the full rules; this skill executes them.
+Operationalizes [vault/constitution/domainspec-subagents-strategy-constitution.md](../../../vault/constitution/domainspec-subagents-strategy-constitution.md). When this skill is active, **you (the parent Claude session) enact the strategist role** (R24).
+
+Every dispatch — whether one agent or three waves — is described by a single **strategy spec** (goal, layers, per-agent angles, per-agent models, stop conditions, telemetry). The spec is composed in chat, validated, narrated, user-confirmed, THEN persisted as a dispatch artifact. The 7-step lifecycle from the constitution is preserved as **R3 Step 1 / R3 Step 2 / R3 Step 3** anchors; Steps 0, 0.5, and 2.5 are added around them.
 
 ## When to invoke
 
-Invoke when about to dispatch **2+ subagents in parallel (fan-out)** or **allow recursive dispatch**. Single-agent dispatch runs inline.
+Invoke when an R1 trigger holds: synthesis (3+ sources), context protection (>~500 tokens), isolation (discardable exploration), or parallelism (independent tasks where wall-clock saving beats orchestration cost). If none holds, do not dispatch.
 
-The dispatch decision itself is governed by R1 (four triggers: synthesis / context-protection / isolation / parallelism). If none hold, do not dispatch at all.
+This skill subsumes three previously-distinct shapes:
 
-## The 7-step lifecycle (R3)
+- **Single dispatch** — `layers: 1`, `n: 1`. The spec is still composed (cheap), but R2's two-file artifact set is NOT produced (constitution carve-out for `single` mode). **Validator is also skipped** when `mode: single` AND `layers: 1` AND `n: 1` AND `bootstrap_override` is not set — the chat-emitted spec is enough discipline for trivial lookups.
+- **Flat fan-out** — `layers: 1`, `n ≥ 2`, `parallel: true`. The classic task-fan-out / robot-talks shape.
+- **Nested waves** — `layers: 3+` with roles `investigate → evaluate → synthesize` (optionally `meta-evaluate`). Generation and judgment are separated across waves; the parent owns synthesis.
 
-### Step 1 — Propose in chat (you, as strategist)
+All three collapse out of the same schema. There is no separate nested skill — `nested-subagents-strategy` was deleted in the same change that introduced this parametrization. Do not link to it.
 
-Output a chat proposal containing:
+---
 
-- **Mode** (R19): one of `single` | `task-fan-out` | `robot-talks` | `sequential` | `mixed`.
-- **Per-agent table** (R14, R18): for each child agent — id, model, one-liVne difficulty justification, token budget (or "unbounded"), declared output shape.
-- **Sequencing**: linear chain, parallel set, or DAG description.
-- **Recursion budget** (R13): defaults are depth 2 / breadth 5 / total cap 10. Override only with justification.
-- **Suggested working folder** (R15): propose `docs/features/<feature>/research/<topic>/` where `<feature>` is the active feature in the conversation and `<topic>` is the dispatch slug. The artifacts live alongside the feature's specs. **If no feature is active, halt the proposal and ask the user which feature this dispatch belongs to.** Never default to `.planning/` (deprecated) or `vault/` (reserved for codified discipline). If the work doesn't fit any existing feature, the user must name a new feature or decline the dispatch.
-- **Context** and **Goal** for this dispatch (R23): 2–4 sentences on where the need arose; 1–2 sentences on what the dispatch is trying to achieve.
+## The strategy spec (load-bearing)
 
-**No file is written.** R4: never persist the proposal as a file.
+The spec is composed **in chat** during Step 0 and only persisted to disk in Step 2.5 (AFTER user confirm) as a content-addressed YAML artifact:
 
-### Step 2 — User confirms
+```
+vault/snapshots/dispatches/YYYY-MM-DD-<slug>-spec.yaml
+```
 
-Wait for explicit user response (R6a). Three valid responses:
+For `dispatch_kind: meta` the path is `vault/snapshots/meta-dispatches/<slug>/spec.yaml`.
 
-- **Confirm** → proceed to Step 3.
-- **Revise** → re-draft Step 1.
-- **Abandon** → stop. Nothing persists.
+Because nothing persists before the user gate, R4 (proposal never persists) and R6a (user confirmation fully reversible) are honored strictly: on Abandon, **NOTHING is written**. The post-confirm write is the strategist's only file persistence, narrowly scoped to a dispatch artifact tracked by content hash — an acceptable extension of R5's "dedicated writer" pattern (the parent acts as the spec-writer in the same sense the skill body acts as the strategist).
 
-The user also confirms (or revises) the **working folder choice** here.
+### Schema
 
-### Step 3 — Single-message fan-out
+```yaml
+spec_version: "0.2.0"
+dispatch_id: <slug — UUIDv7 or YYYY-MM-DD-<topic>-<seq>>
+dispatch_kind: standard | meta            # meta = a dispatch that itself dispatches dispatches
+context: <2–4 sentences of inherited context>
+goal: <one sentence — the single thing this dispatch must answer>
+mode: single | task-fan-out | robot-talks | sequential     # R19. `mixed` is RESERVED.
+heuristic_row: single-lookup | flat-fanout | triangulation | adversarial-audit | parent-synthesis | meta-dispatch
+loop_cap: <int, default 2, max 5>          # typed mechanical floor; harness MUST refuse loop N+1
+bootstrap_override:                          # optional; required object shape when present
+  reason: <non-empty string>
+  scope: <one of: spec-only | telemetry-only | working-folder | full>
+layers:
+  - layer_id: <stable id, e.g. L1-investigate>
+    role: investigate | evaluate | meta-evaluate | synthesize
+    n: <int >= 1>
+    parallel: <bool>
+    model: <default model id for this layer — string | "parent">
+    agents:
+      - agent_id: <stable id, e.g. L1-A1>
+        angle: "<one sentence>"
+        model: <string | "parent">
+        difficulty_justification: "<one-line R14 justification>"
+        token_budget: <int>
+        expected_output_shape: "<one sentence — what the agent returns>"
+stop_conditions:
+  - <each as one sentence — free-text human-readable conditions in addition to loop_cap>
+validator:
+  model: <model id>
+  retry_policy: one-retry-then-escalate     # R26
+  checklist: [<each item from the canonical checklist below>]
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: <from latest vault/snapshots/*.json>
+  spec_hash: <sha256 of this spec YAML, filled at Step 2.5>
+recursion_budget:                            # R13 — defaults depth=2 breadth=5 total=10
+  depth: 2
+  breadth: 5
+  total: 10
+  parent_dispatch_id: <upstream dispatch_id or null>
+working_folder: docs/features/<feature>/research/<topic>/   # R15
+```
 
-Dispatch all children in **one** assistant message (R8) using the Agent tool. Each child's briefing MUST carry the R10 fields:
+`mode: mixed` is a **reserved** value pending a `depends_on` field on agents (for arbitrary DAG semantics). The validator MUST reject any dispatch with `mode: mixed` until the schema gains DAG support. Tracked as **OQ-mixed-dag-schema**.
 
-- **Goal** — what to produce.
-- **Why it matters** — context for judgment calls.
-- **Already ruled out** — what the agent should not re-explore.
-- **Expected output shape** — structure / length / format.
-- **Length cap** — token or word limit.
+### Role ordering invariant
 
-For **recursion** (children that may themselves dispatch): track running agent count across the dispatch tree. Refuse the next dispatch when total cap (R13: default 10) would be exceeded; escalate to user with: *"Budget hit at N agents — continue with raised budget, stop, or revise scope?"*
+`synthesize` may never precede `evaluate`; `meta-evaluate` may never precede `evaluate`. Investigate is always first. The validator enforces this. Synthesize layers MUST set `model: "parent"` — there is no override path.
 
-Children DO NOT write files (R5). They return findings to you.
+---
 
-### Step 4 — Collect and return (you, as strategist)
+## Agent-chosen defaults (heuristic table)
 
-After all children return: gather their verbatim outputs. Bundle these together with the original Context + Goal and the user-confirmed working-folder path. **Do not write any file yourself** (R5).
+When the user does not specify layers/n/models, the agent picks a row from this table AND records `heuristic_row: <id>` in the spec. No row → no auto-pick; ask the user.
 
-### Step 5 — Dispatch `domainspec-research-writer`
+| `heuristic_row` id | If goal is… | Layers | n per layer | Default model |
+|---|---|---|---|---|
+| `single-lookup` | single targeted lookup | 1 (investigate) | 1 | haiku |
+| `flat-fanout` | 2–4 independent subtasks, no triangulation | 1 (investigate, parallel) | n = tasks | sonnet |
+| `triangulation` | load-bearing triangulation needed | 3 (investigate → evaluate → synthesize) | 3–5 / 2–3 / parent | sonnet investigate, sonnet evaluate, parent synth |
+| `adversarial-audit` | high-stakes adversarial audit | 4 (add meta-evaluate) | 5–7 / 2–3 / 2 / parent | opus investigate-key + synth + validator; sonnet rest |
+| `parent-synthesis` | nested wave where parent does final synth | 3+ | layer-dependent | last layer `model: "parent"` |
+| `meta-dispatch` | dispatch that dispatches dispatches | varies | varies | `dispatch_kind: meta` |
 
-Invoke the agent with a briefing that contains:
+Model ids are free strings (the `model` field is a union: `string | "parent"`). There is no fixed tier vocabulary; the row names a starting point that the user revises in R3 Step 1 chat. R14 (per-child justification) still requires `difficulty_justification` on every agent.
 
-- The collected child returns (verbatim, one block per child).
-- The original Context + Goal (from Step 1, user-confirmed in Step 2).
-- The user-confirmed working folder path.
+---
 
-The agent persists `<working_folder>/research/domainspec-research.md` per the template at `templates/domainspec-research.md`.
+## Validator checklist (canonical, 9 items)
 
-### Step 6 — Dispatch `domainspec-findings-writer`
+The Step 0.5 validator agent receives the **in-chat spec YAML** in its briefing (no file path — the spec has not been written yet) and returns one of: `accept` / `reject-with-fixes` / `abstain` / `accept-with-bootstrap-override`. Per R26: **one retry only**, then escalate to the user.
 
-Invoke the agent with a briefing that contains:
+1. `goal` is a single sentence and is load-bearing — cite the criterion that makes it so.
+2. Layers are well-typed; the role order invariant holds (no synthesize-before-evaluate, no meta-evaluate-before-evaluate); synthesize layers use `model: "parent"`.
+3. Per-agent angles are mutually non-overlapping AND jointly close to covering the goal (independence + coverage in one check).
+4. Each agent has a non-empty `difficulty_justification` (R14); flag any opus pick without a model-specific reason.
+5. `loop_cap` is present and ≤ 5; `stop_conditions` declares at minimum: validator rejection, evaluator-irreconcilable contradiction, agent-count cap.
+6. Telemetry block names `subagent-strategy.dispatched` and includes `corpus_hash_at_emit` from the latest `vault/snapshots/*.json`.
+7. `mode: mixed` is rejected unconditionally until OQ-mixed-dag-schema is resolved.
+8. `dispatch_kind: meta` dispatches set `parent_dispatch_id` and target the meta-dispatch path.
+9. If `bootstrap_override` is set, the object MUST include a non-empty `reason` and a valid `scope`; reject otherwise.
 
-- The path to the freshly-written `domainspec-research.md`.
-- The original Context + Goal.
+**Validator skip rule:** when `mode: single` AND `layers: 1` AND `n: 1` AND `bootstrap_override` is NOT set, the validator is skipped entirely. For every other shape, the validator runs.
 
-The agent reads research.md and persists `<working_folder>/research/domainspec-findings.md` per the template at `templates/domainspec-findings.md`. The output MUST satisfy R16 (three sections in order), R17 (every Findings/Analysis claim cites research.md), R18 (Dispatch record schema fully populated), R21+R22 (four-component grade with `(judgment)` markers on coverage / independence / fidelity).
+A `reject-with-fixes` return lists the failing checklist item(s); the parent revises the in-chat spec and re-validates **once**. A second reject escalates to the user (R26). The validator is itself a subagent dispatch — the one exception to "validator gates dispatch": it gates the *child* dispatches, not itself.
+
+---
+
+## The 9-step lifecycle (R3 Step 1 / 2 / 3 preserved)
+
+Steps 1–7 are the constitution's R3 lifecycle; Step 1/2/3 are anchored as **R3 Step 1 / R3 Step 2 / R3 Step 3**. Steps 0, 0.5, and 2.5 are the new param/validate/persist machinery.
+
+### Step 0 — Compose strategy spec IN CHAT
+You (strategist) read the user's request, pick a `heuristic_row` if no explicit layout was given, and **render the spec YAML inline in the chat turn**. No file is written. The spec IS the machine-readable form of the proposal that R3 Step 1 narrates in human form.
+
+### Step 0.5 — Run the validator (against the in-chat spec)
+Skip if the trivial single-mode rule applies. Otherwise dispatch a single-agent validator (model from `validator.model`) with the spec YAML and the canonical checklist passed inline in the briefing. Return is `accept | reject-with-fixes | abstain | accept-with-bootstrap-override`. On `reject-with-fixes`: parent revises the in-chat spec and re-validates **ONCE**. A second reject escalates per R26.
+
+### R3 Step 1 — Chat proposal
+The same turn as Step 0 (or its revision): the in-chat spec, narrated in human-readable form — mode, per-agent table (`agent_id`, model, `difficulty_justification`, `token_budget`, `expected_output_shape`), sequencing, `recursion_budget`, `working_folder`, Context + Goal (R23). **No file is written.**
+
+### R3 Step 2 — User confirms / revises / abandons (R6a)
+Wait for explicit user response.
+- **Confirm** → proceed to Step 2.5.
+- **Revise** → re-draft the in-chat spec (re-run the validator if structural fields change).
+- **Abandon** → stop. **NOTHING persists.** R6a fully reversible.
+
+### Step 2.5 — Persist the spec (post-confirm)
+Now, AFTER user confirm, the parent writes the validated spec YAML to `vault/snapshots/dispatches/YYYY-MM-DD-<slug>-spec.yaml` (or `vault/snapshots/meta-dispatches/<slug>/spec.yaml` if `dispatch_kind: meta`), computes `spec_hash`, and stamps it into the spec's telemetry block. This satisfies R5: the write happens after the user gate, as part of dispatch initialization, not as a phantom-state hazard. The spec is now a legitimate dispatch artifact tracked by content hash.
+
+### R3 Step 3 — Telemetry emit + single-message fan-out (R8)
+Append a JSONL line to `internal_tools/vault_telemetry/events/subagent-strategy.jsonl` containing `event_name`, `spec_hash`, `corpus_hash_at_emit`, `mode`, `dispatch_kind`, `dispatch_id`, `parent_dispatch_id`, and timestamp — **before** the first child dispatch (cleaner audit trail).
+
+Then dispatch all children in **one** assistant message. Each child's briefing carries the R10 fields. For nested layouts: children of layer N are dispatched only after layer N−1 returns. For recursion: track running agent count; refuse at R13 `total` cap (and `loop_cap` after N loops) and escalate to the user.
+
+Children DO NOT write files (R5). They return findings.
+
+### Step 4 — Collect and return
+Gather verbatim child outputs, bundle with original Context + Goal and working-folder path. **Strategist writes no files beyond the Step 2.5 spec.**
+
+### Step 5 — Dispatch `domainspec-subagents-research-writer`
+Briefing contains collected child returns (verbatim), Context + Goal, working folder. Agent persists `<working_folder>/domainspec-subagents-research.md`.
+
+**Single-mode carve-out:** when `mode: single`, R2 exempts the dispatch from the two-file artifact set. Skip Steps 5 and 6; the briefing + child return is the audit trail. Step 7 still applies if the single agent produced a discoverable claim.
+
+### Step 6 — Dispatch `domainspec-subagents-findings-writer`
+Briefing contains path to `domainspec-subagents-research.md` and original Context + Goal. Agent persists `<working_folder>/domainspec-subagents-findings.md` per R16/R17/R18/R21/R22. The Dispatch record MUST include the spec file path and the telemetry emission status.
 
 ### Step 7 — User-gate discovery promotion (R6b)
+Present the findings file and ask whether to promote to a discovery. On confirm, classify scope (`knowledge` → `vault/discovery/<topic>-definitions/<slug>.md`; `application` → `docs/features/<feature>/discovery/<slug>.md`) per R15, propose 1–3 candidate paths, user confirms, dispatch `domainspec-discovery-writer`.
 
-Present the findings file to the user and ask:
+---
 
-> *"Findings written to `<path>/domainspec-findings.md`. Promote this to a discovery node? A discovery captures explored design space — options considered, trade-offs, decisions taken — so future work can build on it without re-doing the exploration."*
+## Subsumption story
 
-If the user confirms, classify the discovery's scope and propose the target path family:
+**Single dispatch.** `mode: single`, `layers: [{role: investigate, n: 1}]`. Spec composed in chat; validator SKIPPED (trivial rule). R3 Step 1 is a one-line "I will ask agent X for Y." On confirm, Step 2.5 persists the spec, telemetry emits, dispatch inline. R2's artifact pair is skipped per the `single` carve-out.
 
-- **Knowledge scope** → `vault/discovery/<topic>-definitions/<slug>.md`. Choose this when the discovery's load-bearing claims govern the vault's own discipline — ontology axes, schema, edges, agent/skill protocols, premises, constitutions, or any rule future vault nodes will derive from. Signals: prompt mentions `vault/`, `node_type`, `layer`, ontology vocabulary, agent protocols, the lifecycle steps; output frames as a rule/convention/discipline.
-- **Application scope** → `docs/features/<feature>/discovery/<slug>.md`. Choose this when the discovery's claims live or die with one feature. Signals: prompt mentions `docs/features/<feature>/`, a feature's `SPEC.md` / `STORIES.md` / `DECISIONS.md`, a user story, a UAT criterion, a specific business rule; output's "challenge response" is "update the feature spec," not "amend the constitution."
+**Flat fan-out.** `mode: task-fan-out` or `robot-talks`, `layers: [{role: investigate, n: 3, parallel: true, agents: [...]}]`. Validator confirms angles are non-overlapping and jointly covering. All N agents dispatch in one message (R8). Two-file artifact set is produced.
 
-The strategist proposes scope + 1–3 candidate paths; the user confirms (or revises) before dispatch. There is no `regime` frontmatter field — existing labels (`layer`, `scope`, `tags`) carry the conceptual discrimination; the path encodes the operational choice.
+**Nested waves.** `layers: [{role: investigate, n: 5, parallel: true}, {role: evaluate, n: 3, parallel: true}, {role: synthesize, n: 1, parallel: false, model: "parent"}]`. Layer 1 generates, layer 2 judges, layer 3 synthesizes (synthesize layer's `model` MUST be `"parent"`).
 
-After the user confirms the target path, dispatch `domainspec-discovery-writer` with: path to findings.md + the confirmed target path + scope label (`knowledge` | `application`) for the briefing record.
-
-If the user declines: dispatch ends. The two artifact files remain at `<working_folder>/research/`.
+---
 
 ## Verification before close (R11)
+- Read each child's actual return.
+- Confirm spec file exists at the Step 2.5 path and matches the telemetry payload's `spec_hash`.
+- Confirm telemetry line was appended (or that failure is logged).
+- Confirm both artifact files exist at `<working_folder>/` (skip for `mode: single`).
+- Confirm findings citations (R17) and Dispatch record completeness (R18, R21, R22).
+- Confirm the discovery-promotion gate was asked.
 
-Before treating the dispatch as complete:
-
-- Read each child's actual return (not just summaries).
-- Confirm both artifact files exist at `<working_folder>/research/`.
-- Confirm the findings file's Findings and Analysis sections have research.md citations.
-- Confirm the Dispatch record is fully populated, including the four-component grade with `(judgment)` markers.
-- Confirm the user was asked the discovery-promotion gate.
+## Known open questions (carried into v0.2.1)
+- **OQ-mixed-dag-schema** — `mode: mixed` blocked until a `depends_on` per-agent field is introduced.
+- **OQ-robot-talks-stage-a** — `mode: robot-talks` may conflict with robot-talks-constitution R2 Stage A (user-first scope).
+- **OQ-single-use-override-enforcement** — `bootstrap_override` single-use-per-cycle is prose-disciplined; needs machine-checkable counter.
+- **OQ-telemetry-consumer** — sink emits JSONL but no consumer reads it; orphan-event risk.
+- **OQ-non-claude-runtime-paths** — `vault/snapshots/dispatches/` and `internal_tools/vault_telemetry/` are domainspec-local.
 
 ## References
-
-- **Rules**: [vault/constitution/domainspec-subagents-strategy-constitution.md](../../../vault/constitution/domainspec-subagents-strategy-constitution.md) — 24 rules.
-- **Rationale & falsification**: [vault/premise/domainspec-subagents-strategy-premises.md](../../../vault/premise/domainspec-subagents-strategy-premises.md).
-- **Templates**: [templates/domainspec-research.md](../../../templates/domainspec-research.md), [templates/domainspec-findings.md](../../../templates/domainspec-findings.md).
-- **Writer agents** (defined under `.claude/agents/`): `domainspec-research-writer`, `domainspec-findings-writer`, `domainspec-discovery-writer`.
+- **Rules:** vault/constitution/domainspec-subagents-strategy-constitution.md — R4/R5/R6/R11/R17 are non-negotiable. R25 (spec schema), R26 (validator one-retry), R27 (additive-amendment path), R28 (telemetry) are the v0.2.0 additions.
+- **Templates:** templates/domainspec-subagents-research.md, templates/domainspec-subagents-findings.md.
+- **Writer agents:** `domainspec-subagents-research-writer`, `domainspec-subagents-findings-writer`, `domainspec-discovery-writer`.
+- **Telemetry sink:** `internal_tools/vault_telemetry/events/subagent-strategy.jsonl`.
+- **Vault snapshots (corpus_hash source):** `vault/snapshots/*.json`.
