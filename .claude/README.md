@@ -5,22 +5,34 @@ is_session: false
 layer: ontology
 nature: reference
 status: active
-version: 0.1.0
-last_updated: 2026-04-14
+version: 0.2.0
+last_updated: 2026-05-16
 ---
 
 # `.claude/` — Harness Configuration
 
-## Objective
+## What is this?
 
-Document how the Claude Code harness is configured for this repository — which hooks, skills, and settings are active, why they exist, and where to inspect them. Answers: "what automated behaviors does the harness enforce on top of agent routing, and how do I change them?"
+This folder configures the Claude Code harness for the DomainSpec repository. It declares which hooks fire automatically, which project-local skills are routed from `CLAUDE.md`, which agent definitions are available, and which helper scripts the harness invokes.
 
-## Contents
+## Business Context
 
-- `settings.json` — project-wide harness config (committed; applies to everyone using Claude Code on this repo)
-- `settings.local.json` — personal overrides (gitignored; permissions, personal env vars)
-- `skills/custom/` — project-specific skills routed from `CLAUDE.md`
-- `scripts/` — helper scripts invoked by settings or skills
+DomainSpec relies on agents (Claude Code, in particular) to drive the spec-first pipeline. The harness is the runtime that loads agents, applies tool permissions, and enforces deterministic behaviors via hooks. Anyone working in this repo with Claude Code inherits whatever lives here, so this folder is the contract between the framework and the agent runtime.
+
+## Why it matters
+
+`CLAUDE.md` routing is best-effort — the agent can forget or skip a step. Hooks installed here are enforced by the harness regardless of agent intent, which is the only reliable way to guarantee behaviors like "inject the frontmatter cheatsheet before any `.md` write." Without this folder being correct, the pipeline's load-bearing invariants degrade silently. Documenting it explicitly answers: "what automated behaviors does the harness enforce on top of agent routing, and how do I change them?"
+
+## 📁 Navigation
+
+- **[settings.json](settings.json)** — Project-wide harness config (committed; applies to every Claude Code user on this repo).
+- **[settings.local.json](settings.local.json)** — Personal overrides (gitignored; permissions, personal env vars).
+- **[launch.json](launch.json)** — Launch configuration for the harness.
+- **`agents/`** — Project-local agent definitions (`*.agent.md`).
+- **`skills/`** — Skill registry; `skills/custom/` holds project-specific skills routed from `CLAUDE.md`.
+- **`scripts/`** — Helper scripts invoked by settings or skills.
+- **`current_conversations/`** — Active conversation state (transient).
+- **`worktrees/`** — Worktree metadata used by isolation workflows.
 
 ## Active Hooks
 
@@ -42,9 +54,9 @@ Hooks are shell commands the harness runs automatically at specific lifecycle ev
 
 ## Where to inspect hooks
 
-- `/hooks` inside Claude Code — interactive menu listing all loaded hooks
-- `claude --debug` — verbose logs showing each hook invocation and its output
-- `settings.json` on disk — source of truth
+- `/hooks` inside Claude Code — interactive menu listing all loaded hooks.
+- `claude --debug` — verbose logs showing each hook invocation and its output.
+- `settings.json` on disk — source of truth.
 
 ## Reloading after changes
 
@@ -52,6 +64,6 @@ The harness watches settings files that existed when the session started. Adding
 
 ## Related
 
-- `CLAUDE.md` — agent routing table; references this README under Route 7
-- `.claude/skills/custom/frontmatter.md` — the cheatsheet this hook injects
-- `docs/vault/ontology-conventions.md` — full rationale behind the frontmatter schema
+- `CLAUDE.md` — agent routing table; references this README under Route 7.
+- `.claude/skills/custom/frontmatter.md` — the cheatsheet this hook injects.
+- `vault/ontology-conventions.md` — full rationale behind the frontmatter schema.

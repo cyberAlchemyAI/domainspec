@@ -1,17 +1,78 @@
+---
+tags: [framework, domainspec, root, navigation, pipeline]
+node_type: readme
+is_session: false
+layer: ontology, architecture, application
+nature: reference
+status: active
+version: 0.2.0
+last_updated: 2026-05-16
+---
+
 # Domainspec
 
 > Think first, code second. Understand the domain before writing a single line of code.
 
-Most software problems are not caused by bad code — they are caused by building the wrong thing. Misunderstood business rules, missing edge cases, and contradictory behavior between systems all stem from the same root: implementation outrunning understanding.
+## What is this?
 
-**DomainSpec** is a specification-first framework for autonomous software delivery. It provides a structured vocabulary (24 meta-types, 26 typed relationships), consistent templates, and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step.
+**DomainSpec** is a specification-first framework for autonomous software delivery. It provides a structured vocabulary (24 meta-types, 26 typed relationships), consistent templates, and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step. This repository is the framework itself: agents, skills, templates, the vault knowledge graph, governance assets, internal tooling, and the architecture pattern library that consumer projects import as a submodule.
 
-The framework is designed to converge with the [Agentic Delivery Lifecycle (ADLC)](https://caseywest.com/the-agentic-manifesto/) — where agents operate under domain governance, enforcement is automated, and production behavior feeds back into continuous tuning. See the [ADLC alignment roadmap](ADLC-ALIGNMENT.md) for the full convergence plan.
+## Business Context
 
-Canonical orientation references:
+Most software problems are not caused by bad code — they are caused by building the wrong thing. Misunderstood business rules, missing edge cases, and contradictory behavior between systems all stem from the same root: implementation outrunning understanding. DomainSpec exists for teams (and their AI copilots) that need a defensible chain of custody from business intent → spec → test → implementation → observability → deployment, so every produced artifact can be traced back to a domain decision. It is designed to converge with the [Agentic Delivery Lifecycle (ADLC)](https://caseywest.com/the-agentic-manifesto/) — agents operate under domain governance, enforcement is automated, and production behavior feeds back into continuous tuning.
 
-- [AUTHORITY-MAP.md](AUTHORITY-MAP.md) — canonical source map for each major system piece.
-- [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md) — canonical operational definition of drift, convergence, and how related control docs fit together.
+## Why it matters
+
+Without a spec-first contract, AI-driven implementation amplifies misunderstanding at machine speed. DomainSpec makes skipping steps visible and deliberate: every stage of the pipeline has explicit inputs and outputs, every concept is typed, every relationship is named, and every drift between docs and code is auditable. The payoff is throughput without loss of correctness, governance without ceremony, and an evolving knowledge graph (the vault) that compounds in value across features and projects.
+
+## 📁 Navigation
+
+Root-level orientation documents:
+
+- **[ADLC-ALIGNMENT.md](ADLC-ALIGNMENT.md)** — Convergence roadmap with the Agentic Delivery Lifecycle.
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — Pointer to the architecture surface (`/architecture`).
+- **[ARCHITECTURE-PATTERN-LIBRARY.md](ARCHITECTURE-PATTERN-LIBRARY.md)** — Pointer to the pattern library entry.
+- **[AUTHORITY-MAP.md](AUTHORITY-MAP.md)** — Canonical source map for each major system piece.
+- **[AXIOMS.md](AXIOMS.md)** — Foundational truths underpinning the framework.
+- **[CHANGELOG.md](CHANGELOG.md)** — Versioned framework changes.
+- **[CLAUDE.md](CLAUDE.md)** — Agent context router (route table for any task).
+- **[CONSTITUTION.md](CONSTITUTION.md)** — Governance constitution.
+- **[DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md)** — Operational definition of drift, convergence, and control docs.
+- **[GOVERNANCE-ATTENUATION.md](GOVERNANCE-ATTENUATION.md)** — Governance attenuation model.
+- **[GOVERNANCE-ATTENUATION-EXECUTION-BOARD.md](GOVERNANCE-ATTENUATION-EXECUTION-BOARD.md)** — Execution board for attenuation work.
+- **[INFRA-SETUP.md](INFRA-SETUP.md)** — Infrastructure setup conventions.
+- **[LICENSE](LICENSE)** — License terms.
+- **[OBSERVABILITY.md](OBSERVABILITY.md)** — Observability conventions.
+- **[PHASED-PLAN.md](PHASED-PLAN.md)** — Phased rollout plan.
+- **[PROMPT-AEO-TEST-TAG-TASKS.md](PROMPT-AEO-TEST-TAG-TASKS.md)** — Prompt notes for AEO test-tag tasks.
+- **[RELATIONSHIPS.md](RELATIONSHIPS.md)** — 26 typed relationship catalog.
+- **[TAXONOMY.md](TAXONOMY.md)** — 24 meta-concept taxonomy.
+- **[TEST-PIPELINE.md](TEST-PIPELINE.md)** — Doc → test generation rules.
+- **[TUNING-LOOP.md](TUNING-LOOP.md)** — Tuning loop architecture.
+- **[package.json](package.json)** / **[pnpm-workspace.yaml](pnpm-workspace.yaml)** / **[tsconfig.base.json](tsconfig.base.json)** — Workspace tooling configuration.
+
+Top-level directories:
+
+- **`.claude/`** — Claude Code harness configuration (settings, hooks, skills, agents).
+- **`.github/`** — GitHub Actions and PR templates.
+- **`.githooks/`** — Local git hooks.
+- **`.planning/`** — Planning scratch area used by GSD-style workflows.
+- **`apps/`** — Runnable applications built on the framework.
+- **`architecture/`** — Architecture surface, including the [pattern library](architecture/pattern-library/).
+- **`backend/`** — Backend implementation packages.
+- **`copilot/`** — [Reusable agent + skill pack](copilot/) (the public Copilot distribution).
+- **`docs/`** — [Project documentation](docs/) — features, registry, glossary, interviews, signals.
+- **`domainspec/`** — Symlink shim exposing canonical framework files under the `domainspec/` name for submodule consumers.
+- **`examples/`** — Worked examples.
+- **`governance/`** — [Governance artifacts](governance/) (tags, schemas, waivers, drift reports).
+- **`implementation/`** — Implementation notes and plans.
+- **`infra/`** — Infrastructure templates and IaC.
+- **`internal_tools/`** — [Vault platform](internal_tools/) (kernel, ctl, telemetry, retrieval, runner).
+- **`plan/`** — Implementation plans, including governance plan files.
+- **`starter/`** — Starter project for new consumers.
+- **`templates/`** — Canonical document templates used by the pipeline.
+- **`tools/`** — Repo-level scripts and developer tooling.
+- **`vault/`** — Knowledge graph (discoveries, sessions, ontology conventions, snapshots).
 
 ---
 

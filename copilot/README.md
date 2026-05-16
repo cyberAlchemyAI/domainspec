@@ -1,6 +1,34 @@
+---
+tags: [copilot, agents, skills, distribution, orchestrator]
+node_type: readme
+is_session: false
+layer: application, architecture
+nature: reference
+status: active
+version: 0.2.0
+last_updated: 2026-05-16
+---
+
 # DomainSpec Copilot Agent Pack
 
-This package provides reusable agents and commands for DomainSpec-driven development. It ships a unified user-facing orchestrator entrypoint, specialist lifecycle commands (still callable directly), advanced tuning commands, and internal bridge commands used by planner and implementer delegation flows.
+## What is this?
+
+The `copilot/` directory is the reusable agent + skill distribution that consumer projects install to drive DomainSpec workflows. It ships a unified user-facing orchestrator (`domainspec-orchestrate`), specialist lifecycle skills, advanced tuning commands, internal bridge commands for planner/implementer delegation, and the agents that execute them.
+
+## Business Context
+
+DomainSpec is imported as a submodule into many consumer repositories. Each consumer needs the same agent surface installed into its `.claude/` (or equivalent) so the pipeline runs identically across projects. `copilot/install.sh` performs that installation, and this folder is the single source of truth for what gets installed and how it is wired together.
+
+## Why it matters
+
+Without a packaged agent pack, every consumer would diverge — different agent definitions, different skill versions, different orchestration shapes. The pack guarantees that "run the pipeline for feature X" means the same thing everywhere, that telemetry shapes are uniform, and that the orchestrator's delegation profile (quick / standard / deep) is enforced consistently. It is the contract between the framework and its consumers.
+
+## 📁 Navigation
+
+- **[INSTALL.md](INSTALL.md)** — Copy + verification steps for installing the pack into a consumer repo.
+- **[install.sh](install.sh)** — Installer script invoked by consumers.
+- **`agents/`** — Agent definition files (`*.agent.md`), one per role (orchestrator, planner, spec-writer, implementer, verifier, auditors, UI/infra/otel specialists, mars-researcher, etc.).
+- **`skills/`** — Skill packages (one folder per `domainspec-*` command) shipped to consumers; each contains a `SKILL.md` plus supporting assets.
 
 ## What Is Included
 
