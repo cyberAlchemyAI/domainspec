@@ -16,15 +16,13 @@ from vault_common import (
 )
 
 from .cycles import app as cycles_app
-from .bets import app as bets_app
-from .amendments import app as amendments_app
-from .governance import app as governance_app
 
 app = typer.Typer(help="vault-ctl — invariant enforcement for the /domainspec vault")
+# `cycles` remains mounted here pending absorption into `vault_ctl validate`
+# Tier 3 (per audit T6 + vault_ctl SPEC §ValidateGraphTier3). All other
+# previously-mounted subapps (`bets`, `amendments`, `governance`) were
+# relocated to `vault_telemetry` and `vault_governance` per D-5 rescope.
 app.add_typer(cycles_app, name="cycles", help="Acyclicity checks on the typed edge graph (S10, closes R3).")
-app.add_typer(bets_app, name="bets", help="Bet ledger — instance carriers for high-convicção claims (closes R1).")
-app.add_typer(amendments_app, name="amendments", help="Schema-amendment discipline log (closes R2).")
-app.add_typer(governance_app, name="governance", help="Constitution coverage + runtime witness for governs edges (closes R4).")
 
 _EVENT_LOG = Path.home() / ".domainspec-vault" / "events.jsonl"
 _sink = EventSink(_EVENT_LOG)
