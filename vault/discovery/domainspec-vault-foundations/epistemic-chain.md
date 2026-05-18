@@ -308,6 +308,27 @@ The loop is closed. New observations become research; research becomes discovery
 
 ---
 
+### D-10 — Premise and axiom are two evidence-states of one claim; promotion is a file move, not a re-authoring
+
+**Decision:** A given epistemic claim has a single identity across its lifecycle. `premise` and `axiom` are not two distinct claims — they are two evidence-states of the same claim. The choice of which `node_type` to assign expresses the claim's current evidential standing; promotion (premise → axiom) or demotion (axiom → premise) reclassifies the same claim and is implemented as a *file move* between the corresponding folders (`vault/premise/<slug>.md` ↔ `vault/axiom/<slug>.md`), not as the creation of a new document.
+
+The discovery that authorizes the reclassification (per D-3 for promotion, D-8 for demotion) is the governance record. The file move is the *mechanical consequence* of that decision. Frontmatter changes (`node_type`, `veracidade`) and any tooling reindex follow the move; they do not substitute for it.
+
+**Rationale:** D-3 framed promotion as a `veracidade` threshold crossing; D-8 framed demotion as a discovery-driven governance act; neither stated how the on-disk artifact transitions. The two natural answers — "same file, frontmatter edit" vs "new file, old file retired" — have load-bearing consequences. Same-file-with-frontmatter-edit silently changes the claim's `node_type` without any folder signal and breaks the folder-as-stratification discipline the fractal-folder lens depends on. New-file-with-retirement fragments the git history of a single claim across two files and forces every inbound edge to be retargeted under a "claim was X, now Y" lookup table. Naming this explicitly — *one claim, identity preserved across a move* — keeps the folder layer honest (each folder still cleanly partitions by evidence-state) while preserving the audit trail (the move is one commit per reclassification, attributable to the authorizing discovery).
+
+This decision also closes a latent gap in the chain: a reader could otherwise interpret D-3 as license to edit a premise file's `node_type` to `axiom` in place, which would leave the file living under `vault/premise/` while declaring itself an axiom — a path/content drift the frontmatter-ownership constitution and any future fractal-layout validator would flag as inconsistent.
+
+**Consequence:**
+
+- The promotion/demotion operation is a single git commit that (a) moves the file between `vault/premise/` and `vault/axiom/`, (b) updates frontmatter (`node_type`, `veracidade`), and (c) cites the authorizing discovery in the commit message and in the file's `Connections`.
+- The slug should be preserved across the move when possible, so the claim's identifier is stable (only the folder changes).
+- Inbound edges (`derives-from`, `validates`, `contradicts`, etc.) become a real problem: a `derives-from` edge whose target was `vault/premise/foo.md` is broken the moment `foo.md` moves to `vault/axiom/foo.md`. The resolution mechanism is the subject of OQ-6.
+- Tooling (`vault_ctl`, retrieval indexes, snapshot pipelines) must treat the move as a *rename event*, not a delete + create — the claim's history continues across the move.
+
+**Status:** Settled (claim-identity rule). Edge-target resolution mechanism deferred to OQ-6.
+
+---
+
 ## Alternatives Considered
 
 ### A-1 — Keep `discovery` to mean both exploration and consolidation
@@ -416,6 +437,26 @@ The loop is closed. New observations become research; research becomes discovery
 
 ---
 
+### OQ-6 — Edge-target identity across promotion/demotion moves
+
+**Question:** D-10 establishes that promotion/demotion is a file move between `vault/premise/<slug>.md` and `vault/axiom/<slug>.md`. The move breaks every inbound path-based edge to the claim. What is the canonical resolution mechanism — and is the resolution permanent (target shape is path-stable) or maintenance-based (a rewrite pass runs at move time)?
+
+**Why it matters:** D-1 of `scope-and-domain-axes.md` already executed one such demotion (orthogonality, axiom → premise). At today's vault size, manual link rewriting is tractable. As the vault grows and more claims promote/demote, an unsolved edge-resolution model produces silent broken edges, partial rewrites, or rotting `Connections` tables — all of which degrade the graph's integrity faster than they are noticed.
+
+**Three candidate resolutions:**
+
+(a) **Stable claim-id with path resolution.** Each claim carries a stable identifier in frontmatter (a slug, a UUID, or the existing slug treated as identifier). Edges target the claim-id, not the path. A lookup layer (frontmatter index, `vault_ctl` query) resolves identifier → current path at read time. Moves are free at the edge level; the cost is the indirection layer and the requirement that no two claims (even across `premise/` and `axiom/`) collide on identifier.
+
+(b) **Path-based edges with mandatory rewrite pass.** Edges continue to target paths. Every promotion/demotion commit must include a sweep that rewrites all inbound edges and `Connections` references to the new path. The cost is the rewrite tool and the discipline of running it; the benefit is that edges remain locally readable in any document without an indirection layer.
+
+(c) **Accept breakage as governance signal.** Treat the rewrite as manual curation work attached to the authorizing discovery. The broken edges become a checklist that the discovery's author resolves explicitly. Cost: human cycles per move, and risk of partial coverage. Benefit: no tooling investment; the discipline is visible.
+
+**Interim rule:** Until this resolves, demotion/promotion authors must (i) list all inbound edges in the authorizing discovery's `Consequence` section, (ii) rewrite them by hand in the same commit as the move, and (iii) leave a note in the moved file's `Connections` recording the prior path. This is option (c) by default, with an upgrade path to (a) or (b) once `vault_ctl` lands.
+
+**Status:** Open.
+
+---
+
 ## Connections
 
 | Document | Type | Description |
@@ -424,7 +465,7 @@ The loop is closed. New observations become research; research becomes discovery
 | [ontology-conventions.md](../../ontology-conventions.md) | `refines` | This discovery proposes amendments: adding `research` as a named `node_type` value and clarifying the epistemic chain model for the existing `node_type` definitions. |
 | [confidence-levels.md](../../confidence-levels.md) | `derives-from` | The `veracidade` axis defined there is the promotion mechanism for premise → axiom (D-3); the `status` lifecycle informs the maturity model of the chain. |
 | `research/epistemic-chain-evidence-survey.md` | `derives-from` | The parallel evidence survey by W2 (running in parallel with this draft — file may not yet exist at time of writing; forward-reference declared). |
-| `vault/sessions/2026-05-02-1820-vault-foundations-oq-resolutions-and-recovery.md` | `provenance-for` | Session that surfaced OQ-NEW-2 (discovery vs session canonicity); D-9 records the resolution on disk. |
-| `vault/discovery/robot-talks-definitions/examples/robots-discussing.md` | `provenance-for` | Turn 2 raised the T2 tension between session logs and discovery text as competing canons; D-9 settles it in favor of the discovery. |
+| `vault/sessions/2026-05-02-1820-vault-foundations-oq-resolutions-and-recovery.md` | `created-by` | Session that surfaced OQ-NEW-2 (discovery vs session canonicity); D-9 records the resolution on disk. Replaces deprecated `provenance-for` per ontology-conventions Appendix C. |
+| `vault/discovery/robot-talks-definitions/examples/robots-discussing.md` | `created-by` | Turn 2 raised the T2 tension between session logs and discovery text as competing canons; D-9 settles it in favor of the discovery. Replaces deprecated `provenance-for` per ontology-conventions Appendix C. |
 | `vault/discovery/domainspec-vault-edges/research/domainspec-subagents-strategy.md` | `cited-by` | The vault-edges domainspec-subagents-strategy research cites D-1 through D-9 here as canonical chain edges that constrain its edge catalog. |
 | `vault/discovery/robot-talks-definitions/robot-talks.md` | `cited-by` | The robot-talks discovery cites D-9 (discovery is canonical, sessions are provenance only) as a precedence rule. |
