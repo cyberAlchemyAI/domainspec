@@ -9,9 +9,11 @@ import typer
 
 from vault_common import DEFAULT_CONFIG, walk_vault
 
+from .bets import app as bets_app
 from .residue import diff_snapshots
 
 app = typer.Typer(help="vault-telemetry — read-only metrics for the /domainspec vault")
+app.add_typer(bets_app, name="bets", help="Bet ledger — instance carriers for high-convicção claims (closes R1).")
 
 
 @app.command()

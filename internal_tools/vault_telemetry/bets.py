@@ -1,9 +1,16 @@
-"""vault-ctl bets — Typer subapp for the convicção bet ledger.
+"""vault-telemetry bets — Typer subapp for the convicção bet ledger.
 
-Integration: `from vault_ctl.bets import app as bets_app;
-app.add_typer(bets_app, name="bets")` in cli.py.
+Relocated from `vault_ctl/bets.py` per D-5 rescope (decision D-B in the
+2026-05-18 relocation session): bets are telemetry-shaped — the falsifiability
+mechanism for the same high-convicção claims telemetry will score for
+promotion/demotion. Mounted in `vault_telemetry/cli.py` as the `bets`
+subcommand.
 
 The `new` command honors no-auto-promotion: it prints, never writes.
+
+Per D-4: this subsystem MUST NOT read another subsystem's SQLite store. The
+current implementation reads only via the kernel walker (`walk_vault`,
+`parse_doc`) — no cross-subsystem DB access.
 """
 
 from __future__ import annotations
@@ -15,11 +22,12 @@ import typer
 from pydantic import ValidationError
 
 from vault_common import DEFAULT_CONFIG, parse_doc, walk_vault
-from vault_common.bets import (
+
+from ._bets_kernel import (
     BetFrontmatter, is_active_status, is_bet_path, is_live_bet,
 )
 
-app = typer.Typer(help="vault-ctl bets — convicção bet ledger (R1 closure)")
+app = typer.Typer(help="vault-telemetry bets — convicção bet ledger (R1 closure)")
 _STATUSES = ("open", "called-true", "called-false", "withdrawn")
 
 

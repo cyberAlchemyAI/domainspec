@@ -20,8 +20,9 @@ from .cycles import app as cycles_app
 app = typer.Typer(help="vault-ctl — invariant enforcement for the /domainspec vault")
 # `cycles` remains mounted here pending absorption into `vault_ctl validate`
 # Tier 3 (per audit T6 + vault_ctl SPEC §ValidateGraphTier3). All other
-# previously-mounted subapps (`bets`, `amendments`, `governance`) were
-# relocated to `vault_telemetry` and `vault_governance` per D-5 rescope.
+# previously-mounted subapps were relocated per D-5 rescope:
+#   - `bets`     → vault_telemetry  (D-B, 2026-05-18)
+#   - `amendments`, `governance` → vault_governance  (D-A, 2026-05-18)
 app.add_typer(cycles_app, name="cycles", help="Acyclicity checks on the typed edge graph (S10, closes R3).")
 
 _EVENT_LOG = Path.home() / ".domainspec-vault" / "events.jsonl"
