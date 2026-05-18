@@ -1,4 +1,13 @@
-"""Embedder protocol. Subsystems depend on the protocol, not implementations."""
+"""Embedder Protocol — the only thing the kernel ships for embeddings.
+
+Per OQ-D and the user memory `feedback_llm_agnostic_design.md`, the kernel
+declares NO provider, NO model name, NO API. Concrete implementations live
+under `vault_common.embedders.*` and consumers import them explicitly.
+
+`NullEmbedder` stays here because it is protocol-pure (deterministic
+SHA-256 stub, zero dependencies). It is a TEST FIXTURE — it has no
+production use; do not import it from non-test code.
+"""
 
 from __future__ import annotations
 
@@ -15,10 +24,10 @@ class Embedder(Protocol):
 
 
 class NullEmbedder:
-    """Stub embedder used when no real model is available.
+    """Test-only stub. Deterministic hash-based vector; zero dependencies.
 
-    Returns a deterministic hash-based vector. Useful for testing the pipeline
-    structure without committing to a model choice.
+    NOT for production use. Concrete production embedders live under
+    `vault_common.embedders.*` and must be imported explicitly.
     """
 
     def __init__(self, dim: int = 8):
@@ -30,6 +39,7 @@ class NullEmbedder:
 
     def embed(self, text: str) -> list[float]:
         import hashlib
+
         h = hashlib.sha256(text.encode("utf-8")).digest()
         return [(b - 128) / 128.0 for b in h[: self._dim]]
 
