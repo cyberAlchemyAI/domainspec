@@ -107,6 +107,7 @@ What remains open: whether the principle generalizes to non-spec templates (`arc
 | `domainspec/templates/TEST-SPEC.md` | `derives` | Canonical `TEST-SPEC.md` template produced by the dispatch and shaped by D-1, D-2, D-3 above. |
 | `vault/constitution/discovery-structure-constitution.md` | `governed-by` | This discovery follows the folder/README/lenses shape mandated by that constitution. The empty `lenses/` folder is intentional per §4 (lenses added only when they strengthen confidence or sharpen the boundary). |
 | `vault/ontology-conventions.md` | `governed-by` | Frontmatter classification (node_type, layer, nature, status) follows this constitution. `veracidade` and `convicção` are omitted per its Applicability rule for `node_type: discovery`. |
+| [../data-contract-as-formal-artifact/README.md](../data-contract-as-formal-artifact/README.md) | `cited-by` | The data-contract-as-formal-artifact discovery cites this discovery's `required minimum + demonstrated optional` rule as direct ground for its D-2 optional-tag-column posture. |
 
 ---
 

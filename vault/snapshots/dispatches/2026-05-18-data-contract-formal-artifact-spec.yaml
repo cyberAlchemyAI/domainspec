@@ -1,0 +1,91 @@
+spec_version: "0.2.0"
+dispatch_id: 2026-05-18-data-contract-formal-artifact-01
+dispatch_kind: standard
+context: |
+  User asked whether data-contract should become a formal DomainSpec artifact.
+  DomainSpec already encodes data-contract-like info in SPEC concept tables,
+  aspects, observability/OTel specs, and infra. Open question: is a dedicated
+  artifact justified, and should it be derived, governed, or tag-based.
+goal: Produce a discovery-ready proposal for how (and whether) data-contract becomes a formal DomainSpec artifact, with implementation sketch.
+mode: task-fan-out
+heuristic_row: triangulation
+loop_cap: 2
+layers:
+  - layer_id: L1-investigate
+    role: investigate
+    n: 4
+    parallel: true
+    model: sonnet
+    agents:
+      - agent_id: L1-A1
+        angle: "Audit DomainSpec repo for existing data-contract-like info in SPEC concept tables, glossary, registry, feature definitions — what's already encoded, where, and at what fidelity."
+        model: sonnet
+        difficulty_justification: "Repo-scoped audit across templates + vault + features; mechanical but high-volume."
+        token_budget: 25000
+        expected_output_shape: "Inventory of repo surfaces that already carry data-contract semantics, with file paths and example excerpts."
+      - agent_id: L1-A2
+        angle: "Audit DomainSpec repo for implicit contract seams: aspects, OTel observability specs, infra/INFRA-ARCHITECTURE, test specs — where contracts are implied but not enforced, and where drift is most likely."
+        model: sonnet
+        difficulty_justification: "Cross-cutting audit; needs judgment to identify implicit-vs-explicit seams."
+        token_budget: 25000
+        expected_output_shape: "List of seams where contract info is implied, with drift-risk assessment per seam."
+      - agent_id: L1-A3
+        angle: "Survey data contracts literature: Andrew Jones (Driving Data Quality with Data Contracts), Bitol/ODCS (Open Data Contract Standard), dbt model contracts, Data Mesh data products. Extract the core design ideas, what each artifact contains, and where they sit in the dev lifecycle."
+        model: sonnet
+        difficulty_justification: "External research with web fetch; needs synthesis across multiple sources."
+        token_budget: 30000
+        expected_output_shape: "Comparative summary of data-contract approaches: what's in the artifact, who owns it, how it's enforced, how it relates to schemas."
+      - agent_id: L1-A4
+        angle: "Survey schema/interface format prior art: JSON Schema, Avro, Protobuf, OpenAPI, AsyncAPI — how they relate to (and differ from) data contracts. What's the contract-vs-schema distinction in practice."
+        model: sonnet
+        difficulty_justification: "External research; needs to distinguish schema (shape) from contract (shape + semantics + SLOs + ownership)."
+        token_budget: 25000
+        expected_output_shape: "Schema-vs-contract distinction with concrete examples; how DomainSpec's existing concept tables map onto each."
+  - layer_id: L2-evaluate
+    role: evaluate
+    n: 2
+    parallel: true
+    model: sonnet
+    agents:
+      - agent_id: L2-E1
+        angle: "Evaluate the three design alternatives — (a) derived view from existing artifacts, (b) governed first-class artifact, (c) better tags on existing surfaces — against DomainSpec's existing principles. Recommend one with reasoning."
+        model: sonnet
+        difficulty_justification: "Judgment-heavy comparison; must weigh L1 evidence against DomainSpec constitution."
+        token_budget: 20000
+        expected_output_shape: "Comparison table + recommendation with explicit tradeoff rationale."
+      - agent_id: L2-E2
+        angle: "Adversarial review: what breaks if we formalize data-contract? Steelman the 'don't do it' position."
+        model: sonnet
+        difficulty_justification: "Adversarial framing; explicitly counter-positions the user's instinct."
+        token_budget: 20000
+        expected_output_shape: "List of failure modes with severity, plus conditions under which formalization is a net loss."
+  - layer_id: L3-synthesize
+    role: synthesize
+    n: 1
+    parallel: false
+    model: parent
+    agents:
+      - agent_id: L3-S1
+        angle: "Parent synthesizes L1+L2 into a discovery-ready proposal."
+        model: parent
+        difficulty_justification: "Parent owns synthesis (R3 Step 3 / synthesize-layer rule)."
+        token_budget: 0
+        expected_output_shape: "Discovery doc draft."
+stop_conditions:
+  - "Validator rejects spec twice → escalate to user (R26)."
+  - "L2-E2 surfaces an irreconcilable contradiction with DomainSpec constitution → escalate before synthesis."
+  - "Per-layer agent count cap (4 / 2 / 1) reached."
+validator:
+  model: sonnet
+  retry_policy: one-retry-then-escalate
+  checklist: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: 7e4b339b65ca7dfa6055b893c40189c2dcad7b92c46120842285f5798c471438
+  spec_hash: 1ac5bc0c3ae56829c773d730bf2ad450d90eb435bbdbc69d93bc63eb54e632ea
+recursion_budget:
+  depth: 2
+  breadth: 5
+  total: 10
+  parent_dispatch_id: null
+working_folder: vault/discovery/data-contract-as-formal-artifact/research/

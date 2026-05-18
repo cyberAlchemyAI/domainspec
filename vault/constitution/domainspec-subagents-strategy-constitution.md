@@ -537,6 +537,7 @@ Items to resolve in v0.2.1 or as follow-up amendments:
 | `vault/snapshots/dispatches/` | `artifact-path-for` | R25 standard-dispatch spec persistence. |
 | `vault/snapshots/meta-dispatches/` | `artifact-path-for` | R25 meta-dispatch spec persistence. |
 | [../amendments/2026-05-16-subagent-strategy-parametrization.md](../amendments/2026-05-16-subagent-strategy-parametrization.md) | `modified-by` | v0.2.0 amendment log entry. |
+| [../discovery/data-contract-as-formal-artifact/README.md](../discovery/data-contract-as-formal-artifact/README.md) | `governs` | Dispatch `2026-05-18-data-contract-formal-artifact-01` (triangulation) ran under R15/R16/R17/R18/R21/R22/R23 and produced this discovery. |
 
 ---
 
