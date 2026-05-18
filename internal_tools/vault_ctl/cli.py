@@ -11,8 +11,8 @@ import typer
 from pydantic import ValidationError
 
 from vault_common import (
-    DEFAULT_CONFIG, EDGE_TYPES, EventSink, extract_edges, parse_doc,
-    validate_node, walk_vault,
+    DEFAULT_CONFIG, EDGE_TYPES, EventSink, UnknownNodeTypeError,
+    extract_edges, parse_doc, validate_node, walk_vault,
 )
 
 from .cycles import app as cycles_app
@@ -48,7 +48,9 @@ def validate(
             continue
         if doc.is_session or doc.node_type:
             try:
-                validate_node(doc.frontmatter)
+                validate_node(doc.frontmatter, source_path=str(doc.path))
+            except UnknownNodeTypeError as e:
+                errors.append(f"{doc.path}: {e}")
             except ValidationError as e:
                 errors.append(f"{doc.path}: {e.errors()[0]['msg']} ({e.errors()[0]['loc']})")
 

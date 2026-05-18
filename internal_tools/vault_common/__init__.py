@@ -11,7 +11,14 @@ from .walker import VaultDoc, walk_vault, parse_doc
 from .frontmatter import (
     NodeFrontmatter, PremiseFrontmatter, ConstitutionFrontmatter,
     AxiomFrontmatter, ConceptualFrontmatter, DiscoveryFrontmatter,
-    SessionFrontmatter, LensFrontmatter, parse_frontmatter, validate_node,
+    ImplementationPlanFrontmatter, SpecFrontmatter, AuditFrontmatter,
+    TestFrontmatter, BacklogFrontmatter, ReadmeFrontmatter,
+    ResearchFrontmatter, DomainspecSubagentsStrategyFrontmatter,
+    SubagentsResearchFrontmatter, SubagentsFindingsFrontmatter,
+    DiscussionFrontmatter,
+    SessionFrontmatter, LensFrontmatter,
+    KNOWN_NODE_TYPES, UnknownNodeTypeError,
+    parse_frontmatter, validate_node,
 )
 from .edges import Edge, EDGE_TYPES, extract_edges
 from .sqlite import open_db
@@ -23,7 +30,13 @@ __all__ = [
     "VaultDoc", "walk_vault", "parse_doc",
     "NodeFrontmatter", "PremiseFrontmatter", "ConstitutionFrontmatter",
     "AxiomFrontmatter", "ConceptualFrontmatter", "DiscoveryFrontmatter",
+    "ImplementationPlanFrontmatter", "SpecFrontmatter", "AuditFrontmatter",
+    "TestFrontmatter", "BacklogFrontmatter", "ReadmeFrontmatter",
+    "ResearchFrontmatter", "DomainspecSubagentsStrategyFrontmatter",
+    "SubagentsResearchFrontmatter", "SubagentsFindingsFrontmatter",
+    "DiscussionFrontmatter",
     "SessionFrontmatter", "LensFrontmatter",
+    "KNOWN_NODE_TYPES", "UnknownNodeTypeError",
     "parse_frontmatter", "validate_node",
     "Edge", "EDGE_TYPES", "extract_edges",
     "open_db",
