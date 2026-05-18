@@ -1,0 +1,28 @@
+// Paste into football-stats-oracle/.claude/settings.json under a top-level
+// "hooks" key. If "hooks" already exists, merge the "Stop" array.
+//
+// Path: the hook script lives in football-stats-oracle/.claude/hooks/
+// should-close-session.sh after you copy it from the proposal folder.
+//
+// Env var SHOULD_CLOSE_OBSERVE_ONLY=1 keeps the hook silent (log-only) for the
+// first ~20 sessions. Flip to 0 only after hand-reviewing the log.
+
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/should-close-session.sh",
+            "timeout": 2000
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "SHOULD_CLOSE_OBSERVE_ONLY": "1"
+  }
+}
