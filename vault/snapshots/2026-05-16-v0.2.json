@@ -1,0 +1,498 @@
+{
+  "tag": "vault-corpus-v0.2",
+  "created_at": "2026-05-16T07:00:00-03:00",
+  "description": "Snapshot v0.2: after folder-structure-fractal discovery (3 wave-1 research lenses + 3 wave-2 evaluation lenses + 1 synthesis lens), the narrowed vault-folder-structure-constitution (draft), and the add-layer-field amendment entry. Migration script written but NOT executed. Layer field NOT yet applied to NodeFrontmatter (would reject ~100 existing files until migration runs).",
+  "parent_snapshot": "vault-corpus-v0.1",
+  "file_count": 122,
+  "corpus_hash": "7f00141d2738c63d07b4701094e632ce38713cf9474c5b9014633b887cdb885f",
+  "entries": {
+    "vault/agent-navigation.md": {
+      "sha256": "08db29da26f4ddbcd0014a35360fdacb6f2f9056ac5442f8bc8f0fca62aaf7d3",
+      "bytes": 6128
+    },
+    "vault/amendments/2026-05-16-add-layer-field-to-nodefrontmatter.md": {
+      "sha256": "f7e47a1ae8fc5e07318fb30c6ebc4ba22b610965c8b8c66b9008f28b63bef88b",
+      "bytes": 4063
+    },
+    "vault/amendments/2026-05-16-add-verification-field.md": {
+      "sha256": "88e8edfa57237de17dab02011c8a3e8442d0a39af2206348579fe1d115ccfe3b",
+      "bytes": 1857
+    },
+    "vault/axiom/domainspec-axioms.md": {
+      "sha256": "c67654220d495b665fe1348f179e82a59ea96738662f3a5599793437ee2cee2a",
+      "bytes": 14657
+    },
+    "vault/axiom/frontend-axioms.md": {
+      "sha256": "ff15ec49cfa6cfea1e3a53574866ac37b6954e3f36fae59323a802c0ba3e0360",
+      "bytes": 2263
+    },
+    "vault/axiom/ontology-axioms.md": {
+      "sha256": "d65cfe43d1945a17c2cde0bc7cecb31f32b2c1ae91b382db791663614c09efc4",
+      "bytes": 14844
+    },
+    "vault/axiom/system-axioms.md": {
+      "sha256": "847ed1199251f51fef0e15463dbeddc60eb583882f806bbc023e2acbe0968bc6",
+      "bytes": 4799
+    },
+    "vault/bets/B-001-graph-as-residue-attractor-load-bearing.md": {
+      "sha256": "bd11dd0a7db861939dedbde1517fe96b741761f3ced836dd4339fab01c3e9e0c",
+      "bytes": 2156
+    },
+    "vault/conceptual/agents-overview.md": {
+      "sha256": "d0126e884d3a7b676ae8f209c2510979dfda3172115b40e1ced48c0c42fdebf3",
+      "bytes": 12623
+    },
+    "vault/conceptual/epistemic-principles.md": {
+      "sha256": "ad0a2c4ca1ae222b080c2e395c6f3fbcaf34c00abf40a59154145d9af19307f9",
+      "bytes": 7616
+    },
+    "vault/confidence-levels.md": {
+      "sha256": "fd862fe58f5f9fcfed8fa7cbe69e7f1de39ff956b4673d6d0ac860052fff6ee6",
+      "bytes": 5307
+    },
+    "vault/constitution/commit-message-constitution.md": {
+      "sha256": "b332869147a3d081036f7d8b5340ea60f3394cee62242e56109b6604ab059af8",
+      "bytes": 7064
+    },
+    "vault/constitution/convic\u00e7\u00e3o-bet-ledger-constitution.md": {
+      "sha256": "cd226ab8e7148440ed44caffc4e0c5175bfe16ef022ef68c6ee9f51ac8d10b1f",
+      "bytes": 4899
+    },
+    "vault/constitution/development-practices-constitution.md": {
+      "sha256": "2d31dcb4f11d822ebf8d1a27672c90a038060dbc24a4fc2ecb1d3538af858c88",
+      "bytes": 9907
+    },
+    "vault/constitution/discovery-structure-constitution.md": {
+      "sha256": "509914e8c4af5d59d2e337639ca4dad195a3bc94fdd94ab1c9b8a74ba26207e1",
+      "bytes": 8655
+    },
+    "vault/constitution/domain-tagging-constitution.md": {
+      "sha256": "394ce2746e823da38d270dbe6e7d0ce3abbdbb9a7110a2f1c6a5e31c99ea789f",
+      "bytes": 23685
+    },
+    "vault/constitution/domainspec-subagents-strategy-constitution.md": {
+      "sha256": "9e2a7df3a061f3c7e6734bcfa729bd3cb555f27b534cbcac9ca3150c97d95f64",
+      "bytes": 28632
+    },
+    "vault/constitution/edge-acyclicity-constitution.md": {
+      "sha256": "03833a705371860a3d97b9256632574287d9ea930fb21545539bed8e62bc1751",
+      "bytes": 4242
+    },
+    "vault/constitution/event-system-constitution.md": {
+      "sha256": "e3c905f7966390626e507ee5f01377e67b25ec2f682f64b37c3d4b56e986047c",
+      "bytes": 27715
+    },
+    "vault/constitution/folder-structure-constitution.md": {
+      "sha256": "46d82969e86174998619ed074808a4d027ede20afed08bb2a6fef7a8faee9298",
+      "bytes": 10971
+    },
+    "vault/constitution/frontend-constitution.md": {
+      "sha256": "f590a5d4090c42faf515203f50658d051b56b65e2e78e44117b5d52ef32da24b",
+      "bytes": 9315
+    },
+    "vault/constitution/frontmatter-ownership-constitution.md": {
+      "sha256": "f189e9c2ac2f1ba8f38e9f24735f4caae297daf03615d8e1f3f7f6d806f8ef78",
+      "bytes": 4914
+    },
+    "vault/constitution/governs-runtime-witness-constitution.md": {
+      "sha256": "5a3494d55b0e3a54537f9cb658508e34ca41819144ed5310020f4ccf74771f55",
+      "bytes": 4492
+    },
+    "vault/constitution/ontology-constitution.md": {
+      "sha256": "a8438a9e6b9002197788fd3bd511e477461048e0cc88880525b26c31376f6013",
+      "bytes": 11926
+    },
+    "vault/constitution/robot-talks-constitution.md": {
+      "sha256": "d2db56ba7cc642132185ca15951cf4502dbda43418a78ac0754993379fe061cb",
+      "bytes": 18594
+    },
+    "vault/constitution/schema-amendment-discipline-constitution.md": {
+      "sha256": "0dd40ab17c9d1aba1812788eaab9c8c5957b07b8f2a396c405343d33fa9ccac2",
+      "bytes": 6077
+    },
+    "vault/constitution/vault-folder-structure-constitution.md": {
+      "sha256": "54b4099299241088debda4f4dfe0e0f9c403dbc83c8ece1b2a7363a6458a292d",
+      "bytes": 7505
+    },
+    "vault/discovery/_backlog.md": {
+      "sha256": "7caaa4736cc88d66e9c4ad80a0fa975b3b7716f80baa5df2494d8bafb36bea33",
+      "bytes": 23776
+    },
+    "vault/discovery/curator-pipeline-integration/README.md": {
+      "sha256": "60b322d6bf7861c50040b82307974575fecc89fc7046f999bb32ba189ecebe31",
+      "bytes": 2972
+    },
+    "vault/discovery/curator-pipeline-integration/discovery.md": {
+      "sha256": "c3619319852ed22bee88e5373d3cf27b4f739c0f6600d629e95a1a0a0cd06dc2",
+      "bytes": 31437
+    },
+    "vault/discovery/documents-metadata-enforcement/README.md": {
+      "sha256": "3e604fccb4d8e96b0560cba5cd60879359a6aec7a5c598c0cd5ef6448783bfa6",
+      "bytes": 5612
+    },
+    "vault/discovery/documents-metadata-enforcement/backlog.md": {
+      "sha256": "5adc23b3a021c0dbb80941c274ee18727641842023b23c6d220c713c17424263",
+      "bytes": 7313
+    },
+    "vault/discovery/documents-metadata-enforcement/documents-metadata-enforcement.md": {
+      "sha256": "e483825ff59cf2935e24100b7cf3c3aa2e239c0bc75c19d3e6ed6df2070d62d1",
+      "bytes": 29528
+    },
+    "vault/discovery/domainspec-axioms/research/domainspec-findings.md": {
+      "sha256": "c3f6f84f3ae03d3489177b5bff8132aa61aa37bb06a55abe54b7c59a611dbbea",
+      "bytes": 34759
+    },
+    "vault/discovery/domainspec-axioms/research/domainspec-research.md": {
+      "sha256": "4af61148f2a6cc7c2d21780e29b598492e6fdee853450235145ec049e3402ff3",
+      "bytes": 40084
+    },
+    "vault/discovery/domainspec-strategy-definitions/README.md": {
+      "sha256": "b008c00032ad5b5f7c616a93caa41a9679b670c22eefc872eb48309b37e72f76",
+      "bytes": 7385
+    },
+    "vault/discovery/domainspec-strategy-definitions/research/agents-strategy-prior-version.md": {
+      "sha256": "36a3207e0d7442304c424bfd5debb9482160361606ef1e5cabed7582a14885a6",
+      "bytes": 16748
+    },
+    "vault/discovery/domainspec-strategy-definitions/subagents-strategy.md": {
+      "sha256": "d805dd022a21308bd7f4d0f47b69fbb654fbb0b3799502443c1b1375fe279024",
+      "bytes": 38282
+    },
+    "vault/discovery/domainspec-types-and-edges-validation/discovery.md": {
+      "sha256": "f3417fafa4f9af2f6fed519b571aed63bac3613786b04e17f74e4b437e485ec4",
+      "bytes": 43766
+    },
+    "vault/discovery/domainspec-types-and-edges-validation/research/domainspec-findings.md": {
+      "sha256": "645358211c1d40aa8cc7d0a8f940ba8ce6174e7aaaf237f7d1eeaf543a2e80df",
+      "bytes": 25239
+    },
+    "vault/discovery/domainspec-types-and-edges-validation/research/domainspec-research.md": {
+      "sha256": "834ef1bfa0258acbcde0c4a3507fe1c886b92e4fc0653ffcbad8bbc048325900",
+      "bytes": 105181
+    },
+    "vault/discovery/domainspec-vault-edges/research/derives-from-overload-investigation.md": {
+      "sha256": "df38f3c116cd55934bb528cd76a6c0358d7e6d0553126b08ded1d8836f81ac9a",
+      "bytes": 28138
+    },
+    "vault/discovery/domainspec-vault-edges/research/findings.md": {
+      "sha256": "621c4f40a577bab81911abb0eb4de138ab0e75518bb3e16f591f640e4722485c",
+      "bytes": 14043
+    },
+    "vault/discovery/domainspec-vault-edges/research/research.md": {
+      "sha256": "3cf10514b78887a35f889a0431926123c5731c7739ab8bbd8a166cfb77a1c79b",
+      "bytes": 108935
+    },
+    "vault/discovery/domainspec-vault-edges/research/subagents-strategy.md": {
+      "sha256": "9356367850c50241e599f03d607dbaa8d81cd091d4dded752556b0d12d1dc070",
+      "bytes": 10696
+    },
+    "vault/discovery/domainspec-vault-foundations/README.md": {
+      "sha256": "07fd1aaa40a24fd21f9b9ecc58debc8328bd1733cff5017177461597897ce529",
+      "bytes": 9287
+    },
+    "vault/discovery/domainspec-vault-foundations/epistemic-chain.md": {
+      "sha256": "b9654e99c9114dd0e2e0b086461bc4b91ea78b1f298808cd7caf7a6e91e53e4d",
+      "bytes": 48360
+    },
+    "vault/discovery/domainspec-vault-foundations/research/epistemic-chain-evidence-survey.md": {
+      "sha256": "aa56000b9d07ab180ac57583506002a50998cc40923ba5cb92a4584f1b201cf4",
+      "bytes": 39542
+    },
+    "vault/discovery/domainspec-vault-foundations/research/scope-and-domain-axes-evidence.md": {
+      "sha256": "7f78ff43a67f9043b0bbee211504c79ba24084438338046ed1fb740284500883",
+      "bytes": 127426
+    },
+    "vault/discovery/domainspec-vault-foundations/scope-and-domain-axes.md": {
+      "sha256": "1d535800cb9b96572cdb13b8561a89f8bbfd8d2b4ed95326ab90b1abd3d426d9",
+      "bytes": 38729
+    },
+    "vault/discovery/folder-structure-fractal/README.md": {
+      "sha256": "6c38fac412fbbb0e16f9614d48414d29443d35293252dddf19b55f688d39623c",
+      "bytes": 6169
+    },
+    "vault/discovery/folder-structure-fractal/lenses/01-prior-research-catalog.md": {
+      "sha256": "3c6178f6cac96754222df6ba7d383c9f92a6da07a1a8b0d7fd5a92dbd9424a93",
+      "bytes": 18632
+    },
+    "vault/discovery/folder-structure-fractal/lenses/02-fractal-folder-theory.md": {
+      "sha256": "860e45c274cf4b955be6e9726f11dfb11d184b386a3c3f470fc7d2a015298314",
+      "bytes": 15601
+    },
+    "vault/discovery/folder-structure-fractal/lenses/03-external-prior-art.md": {
+      "sha256": "e1f95a3ff9e907ead3c126700a2e50a83f8f72e68a016d80da6f9e5ba7853648",
+      "bytes": 18001
+    },
+    "vault/discovery/folder-structure-fractal/lenses/04-adversarial-attack.md": {
+      "sha256": "f196b5b62d17f862b5a87415a0462be97330fd3a16865655ef19e218d3b73fe0",
+      "bytes": 19473
+    },
+    "vault/discovery/folder-structure-fractal/lenses/05-migration-cost-estimate.md": {
+      "sha256": "3df6dda7ce075253aad95da93706332fecbe667a15f48c7364ccc7d1c751a0e0",
+      "bytes": 19609
+    },
+    "vault/discovery/folder-structure-fractal/lenses/06-long-term-cross-repo.md": {
+      "sha256": "bb9756c150b1f5b9fedc8bdbcab5400434e9c8782559d071106bf589ee6d85cc",
+      "bytes": 18415
+    },
+    "vault/discovery/folder-structure-fractal/lenses/07-wave-2-synthesis-and-verdict.md": {
+      "sha256": "5a27f92bc9ec803b9405ddc0559819d655fc4b057e31c61648a929cecce2105f",
+      "bytes": 12651
+    },
+    "vault/discovery/graph-as-residue-attractor/README.md": {
+      "sha256": "07d5b4d25d4e374eb876d67418dd2069b7e5dc646223a53fec23014a10cc0ded",
+      "bytes": 6482
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/01-invariants-and-layer-alignment.md": {
+      "sha256": "3e845684500d2cd965f7d9963031c259575b0c4fafad55b09d838c91677c840e",
+      "bytes": 12964
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/02-evoc-algorithm.md": {
+      "sha256": "0b2120c94a93aed78bc1c3c3b4dfe00b684051f2b16b9d6cd06dff41c7cb0083",
+      "bytes": 4338
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/03-godel-lawvere-limits.md": {
+      "sha256": "7f74fa3716d26e2eab8956aa675b01e212ad6717d3e2bcb19741b1a57df93ebb",
+      "bytes": 11087
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/03b-godel-tarski-lob-corroborated.md": {
+      "sha256": "d47af047e2707eaa5216f6040d68c739a9541ea98963517953662773e7372dda",
+      "bytes": 12220
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/03c-lawvere-yanofsky-corroborated.md": {
+      "sha256": "e19634353e46ece20e9a742f9245a250259471f193c5c923adc2b2ca40e4f202",
+      "bytes": 11860
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/04-yoneda-lemma.md": {
+      "sha256": "c2a6784063dcb14d58181ae4d22d070801a959b8f414aeb23cafd32f286c70b0",
+      "bytes": 13993
+    },
+    "vault/discovery/graph-as-residue-attractor/lenses/05-kauffman-precedent-check.md": {
+      "sha256": "e4d84f7dad272dd856f07cb8229be8aab047b5d1726b7bf8d7b8ca1537b4009c",
+      "bytes": 15342
+    },
+    "vault/discovery/inverse-edge-fix/README.md": {
+      "sha256": "5c3d0d724456e08bdcc9f3da9be41c6561be54d79e122046a01455fb93b55bac",
+      "bytes": 1468
+    },
+    "vault/discovery/inverse-edge-fix/inverse-edge-fix.md": {
+      "sha256": "e6c68a9c674b1e1b8609dca1178684bea3c6494a9faaae4a4fdeaf5709b37fbd",
+      "bytes": 18328
+    },
+    "vault/discovery/robot-talks-definitions/README.md": {
+      "sha256": "94a6a1707e4580d3919d4a380d684f4a61971b3af98374ffcd89a8c9e1dff2d8",
+      "bytes": 6724
+    },
+    "vault/discovery/robot-talks-definitions/examples/robots-discussing.md": {
+      "sha256": "bbbff67be88cb9959a887c1c7ec97fc38c1329b0c1719449904d81a685c1ac69",
+      "bytes": 42524
+    },
+    "vault/discovery/robot-talks-definitions/robot-talks.md": {
+      "sha256": "906dc7a4805c82bdd189fd9ee550aa253d1273564d9dafdcf846f87b122bd353",
+      "bytes": 29957
+    },
+    "vault/discovery/two-layer-platform-architecture/README.md": {
+      "sha256": "fb83f32fe853541b4fd76b70022986e8f9b5abc721325f9b3cab12048db414fb",
+      "bytes": 7807
+    },
+    "vault/discovery/two-layer-platform-architecture/lenses/01-cross-cutting-analysis.md": {
+      "sha256": "cc4e909097d4418c1eb7ba77cbf37c69b659e9649165d12e94bade297f6432a0",
+      "bytes": 8234
+    },
+    "vault/discovery/two-layer-platform-architecture/lenses/02-critical-path.md": {
+      "sha256": "78f35972cff36b05a9c1525280f632fc316e8fbd723934046af8abcd825d3320",
+      "bytes": 9969
+    },
+    "vault/discovery/two-layer-platform-architecture/lenses/03-gap-analysis.md": {
+      "sha256": "4c86e448d17af779a935b4ca1e5a8ff8c01a3f2f76f11b2e2c7e30316bb5225d",
+      "bytes": 9484
+    },
+    "vault/discovery/two-layer-retrieval/README.md": {
+      "sha256": "f6dc07c24e71b545d1b38ba1e92e480bf62cb3b068c7a0b6edb69a386b7f5e8b",
+      "bytes": 6133
+    },
+    "vault/discovery/two-layer-retrieval/lenses/01-graphrag-state-of-the-art.md": {
+      "sha256": "39a5c3d561dd8e7f0faa5f0f4c470620560e3669c7231e15236e81f05c218313",
+      "bytes": 8858
+    },
+    "vault/discovery/two-layer-retrieval/lenses/02-formal-faithfulness.md": {
+      "sha256": "78fbf216964c00a20387fa1823e4d1b8d432062ebb92f7e2c018d8c12c16032b",
+      "bytes": 8780
+    },
+    "vault/discovery/two-layer-retrieval/lenses/03-vector-rag-failure-modes.md": {
+      "sha256": "58ad9bbb3a868626da9f9d6ff5edd98997799fd66c7eef5097e82ce1e08c2b6c",
+      "bytes": 6098
+    },
+    "vault/discovery/two-layer-retrieval/lenses/04-query-intent-ranking.md": {
+      "sha256": "32704dbe53a733f11a0f71bd6786dd7e273264aed2b6fa2c8274cb0c4d35c05c",
+      "bytes": 7897
+    },
+    "vault/foundational-knowledges.md": {
+      "sha256": "9a26b32163b0b44f8d6a4b4db892bd17d732f40682772829f26bd0183f262d00",
+      "bytes": 13499
+    },
+    "vault/human-navigation.md": {
+      "sha256": "9de1253d29e09c5dba2b9fa7df464b98ae76e63daed1e4d35b6d723906d7498d",
+      "bytes": 5451
+    },
+    "vault/ontology-architecture-draft.md": {
+      "sha256": "ab890e3ce08ea9e53d5a7a348d263593fd8ac1123e438d676fa49f2ddb2793cd",
+      "bytes": 8462
+    },
+    "vault/ontology-conventions.md": {
+      "sha256": "63216032d6ae5de0e9133cd45462456488a14bedcc68e9bd4b64ebc193981b47",
+      "bytes": 61045
+    },
+    "vault/premise/domainspec-premises.md": {
+      "sha256": "2521272d8e3ad36eb3026c38312549c7b368f2bbfd551e47c7e4e7941c27c8f7",
+      "bytes": 11909
+    },
+    "vault/premise/domainspec-subagents-strategy-premises.md": {
+      "sha256": "db0e83d1af3a218e7a6b112e35d1d7a408a8bc063851122f7afc166de025ee2c",
+      "bytes": 24935
+    },
+    "vault/premise/frontend-premises.md": {
+      "sha256": "7f002f15dbe680f07f0ae276e8240ad6a3bb2a48fc7fd8e2d1b96aee4ff4bee2",
+      "bytes": 3916
+    },
+    "vault/premise/ontology-premises.md": {
+      "sha256": "b66674bdac672552e432c7625ceec2fcd6dc1684b100f4b8daebb06c8a25ddab",
+      "bytes": 13270
+    },
+    "vault/premise/robot-talks-premises.md": {
+      "sha256": "98614b04065e59ab096cef14e5fb7e99026ec848a525aa6aa443b4b8940fe75f",
+      "bytes": 11520
+    },
+    "vault/premise/system-premises.md": {
+      "sha256": "1c152a4831180a68dcdfb5f8ae19f1f57828ee768f7c7297b3a5b84ccad1a5c2",
+      "bytes": 8754
+    },
+    "vault/sessions/2026-05-02-1646-agents-strategy-discovery.md": {
+      "sha256": "af58872a185695302de29bf12c61509adb5fd66a589bdf59293b16071a7a2e3c",
+      "bytes": 2322
+    },
+    "vault/sessions/2026-05-02-1711-subagents-strategy-redesign.md": {
+      "sha256": "2cb97879abed385fab7c9c563cdb8b831e0e5b500fac36676717d087094240b4",
+      "bytes": 14478
+    },
+    "vault/sessions/2026-05-02-1723-vault-foundations-redesign.md": {
+      "sha256": "5dc88f2df9aa83f69203b9a791248b1be40033d2ad2a31190f4d12eb72b24141",
+      "bytes": 3293
+    },
+    "vault/sessions/2026-05-02-1820-vault-foundations-oq-resolutions-and-recovery.md": {
+      "sha256": "5357bb443395893c035f80d9619c25290af55ff4246b563b63b8f8ac6e3fc116",
+      "bytes": 18202
+    },
+    "vault/sessions/2026-05-02-1830-subagents-strategy-execution-and-tensions.md": {
+      "sha256": "7419fa95d4e4687bd34ff2acaae7a20e37f662544552a7972c48d4f7ab5c84e0",
+      "bytes": 12372
+    },
+    "vault/sessions/2026-05-02-1943-subagents-strategy-premises-review.md": {
+      "sha256": "46d5a5d35ec1d78a7e4fa3b8ea2120e3b7399ed72d2ae13c3f85da4c74f179b0",
+      "bytes": 2831
+    },
+    "vault/sessions/2026-05-02-2230-ontology-evolution-edge-catalog-and-skills.md": {
+      "sha256": "17eac02bfd8608d6f1095359642762cb82e6d25c0155de0dc6ec2b853e761a2f",
+      "bytes": 4077
+    },
+    "vault/sessions/2026-05-02-2300-frontmatter-skill-schema-rewrite.md": {
+      "sha256": "6e455241983708d3f7cbaac047c1878979e16b43e14c354d55330e9752c0cd9d",
+      "bytes": 2201
+    },
+    "vault/sessions/2026-05-02-2330-writing-skills-subagents-research-and-findings.md": {
+      "sha256": "58ea4bdf4e576d5aba3a20b223aa57930456ca09e1aa38459c14f05e2e388331",
+      "bytes": 2013
+    },
+    "vault/sessions/2026-05-02-2333-edges-skill-review-and-metadata-curator-agent.md": {
+      "sha256": "f3a280573fd8d51ca0ed900dac92eef93157d2e7dac11922dfc5802bd33da40b",
+      "bytes": 2894
+    },
+    "vault/sessions/2026-05-02-2350-subagents-strategy-end-to-end-design.md": {
+      "sha256": "788ac9a4737d9d6ac044138c80af15556897b4b00202f1bae63f0b0fc955cc1c",
+      "bytes": 3658
+    },
+    "vault/sessions/2026-05-03-0030-curator-pipeline-wiring-and-session-ref-cleanup.md": {
+      "sha256": "31cc9ea90ffd35374f9487fad3d4ae4ab2e263aba4f6d87a98a3577507a7f3f9",
+      "bytes": 2908
+    },
+    "vault/sessions/2026-05-03-0140-subagents-strategy-discovery-target-divergence.md": {
+      "sha256": "41bf7f3723066336346da508328c012da99f66acdb12b4f757d43b9bba98eb85",
+      "bytes": 2709
+    },
+    "vault/sessions/2026-05-03-0216-close-session-edges-bootstrap.md": {
+      "sha256": "58f07c4ce17be77322b6b3e04a8bd1cc887bba654f3b65c9e3be918364ce9855",
+      "bytes": 3239
+    },
+    "vault/sessions/2026-05-03-0240-edge-catalog-skill-and-routing.md": {
+      "sha256": "90be27cfd2467c8be65ea2e22158ac75e73639122cb680593ff4fc30645c5261",
+      "bytes": 4496
+    },
+    "vault/sessions/2026-05-03-0255-oq1-closed-linter-backlog.md": {
+      "sha256": "169f312d0645cd480978672a580337f54b84f0f5d3f3463c296e868f6e7bba16",
+      "bytes": 3591
+    },
+    "vault/sessions/2026-05-03-0301-no-edges-on-backlog-files.md": {
+      "sha256": "fd25d8290b8290ae00458fa496dd87c9d22bda139e2e57d0334ec99816c71a86",
+      "bytes": 3877
+    },
+    "vault/sessions/2026-05-03-0326-claude-harness-curator-and-interviewer-wiring.md": {
+      "sha256": "d72ad6bf986cc2b1276475399d333658e70d5ff8b1548ad78a54f4c0690d4bdf",
+      "bytes": 3005
+    },
+    "vault/sessions/2026-05-03-0327-domainspec-strategy-scope-routed-promotion.md": {
+      "sha256": "5b485e8c248d43bcc577265584076d23e746ea03c074f3ffb8e940a0ab7855bb",
+      "bytes": 3961
+    },
+    "vault/sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md": {
+      "sha256": "580ab5ddf190513852ae4b2cb18bdbc5351af51c12a0da4b682fa7119fd186a8",
+      "bytes": 11492
+    },
+    "vault/sessions/2026-05-04-1205-disallowed-edges-audit-and-r15-rewrite.md": {
+      "sha256": "7a63126c7e2a6ae3b9ebd0d4fd3b50309c6c1058f9ba1f5d7ffe525d5bfa6391",
+      "bytes": 13709
+    },
+    "vault/sessions/2026-05-04-1244-mars-researcher-rename-and-planner-wiring.md": {
+      "sha256": "3b23a8a901b9442d03fce4c97fbaff2bff2da39769781b583edc599efa92908e",
+      "bytes": 3156
+    },
+    "vault/sessions/2026-05-04-1800-discovery-gate-wiring-and-stack-cleanup.md": {
+      "sha256": "3d8a7d6e7e58d332a3058f8d1487d34127d01f6fe74c76b78c082655ef7c04b9",
+      "bytes": 9387
+    },
+    "vault/sessions/2026-05-05-1147-domainspec-axioms-foundation.md": {
+      "sha256": "4cd6e3c4d97063cfc3c90e506bde1f2093dd90a01d98ec02661397a0f2016e3d",
+      "bytes": 3821
+    },
+    "vault/sessions/2026-05-11-1112-domainspec-types-and-edges-validation.md": {
+      "sha256": "fbac07aef8a72db80cbf246048d6345f6e4c1d99b48524aa17feb2780610fa9c",
+      "bytes": 3021
+    },
+    "vault/sessions/2026-05-12-0136-agents-skills-telemetry-design.md": {
+      "sha256": "49841dad6109fe786eca9dd76bad60653cfbbe4238830434a47a6696e11f3260",
+      "bytes": 2119
+    },
+    "vault/sessions/2026-05-12-0142-personal-assistant-whatsapp-fanout.md": {
+      "sha256": "7925a6e2579a1f584f16eaa72e704ac637b3b22eee6c836016989e8563b63fd7",
+      "bytes": 3588
+    },
+    "vault/sessions/2026-05-12-0453-subagents-r25-r26-design.md": {
+      "sha256": "4bbfd40e5d531727fb6ea9a224eb5b7feb0151ad70eea7442a7fd3cd908565ad",
+      "bytes": 2883
+    },
+    "vault/sessions/2026-05-14-agents-telemetry-empirical-closure.md": {
+      "sha256": "f2a16709eb31d620a34663b4f41e8a7858a19641a4a36ab5d04dcd6e3809f99d",
+      "bytes": 3038
+    },
+    "vault/sessions/2026-05-16-0406-strange-loop-complete.md": {
+      "sha256": "df4b764e08c51a4cba236ce0e7d46967d1cebc07451cd64059b6d05ad85602d3",
+      "bytes": 11441
+    },
+    "vault/sessions/2026-05-16-0500-platform-built-and-theorem-roadmap.md": {
+      "sha256": "902f314eb3b682d76405712947b930c06edf858ce8c1e71b0272db63556855d6",
+      "bytes": 10492
+    },
+    "vault/sessions/2026-05-16-0600-residue-closure-and-lean-drafts.md": {
+      "sha256": "a564a7d984545171772ef4aed8329deb05a364bc7bceff236d4b664924b39d31",
+      "bytes": 12259
+    }
+  }
+}
