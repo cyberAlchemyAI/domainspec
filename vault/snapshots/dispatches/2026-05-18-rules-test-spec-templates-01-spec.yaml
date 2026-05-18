@@ -1,0 +1,93 @@
+spec_version: "0.2.0"
+dispatch_id: 2026-05-18-rules-test-spec-templates-01
+dispatch_kind: standard
+context: |
+  domainspec-spec-writer recently improvised rules.md and TEST-SPEC.md inside
+  internal_tools/graph_retrieval/features/two-layer-retrieval/spec/ because no
+  templates exist in domainspec/templates/. The decision to add the templates
+  is already made; this dispatch determines the canonical shape, stress-tested
+  against three existing features.
+goal: "Produce canonical rules.md and TEST-SPEC.md templates that fit existing DomainSpec features without force-fitting."
+mode: task-fan-out
+heuristic_row: triangulation
+loop_cap: 1
+layers:
+  - layer_id: L1-propose
+    role: investigate
+    n: 4
+    parallel: true
+    model: sonnet
+    agents:
+      - agent_id: L1-A1
+        angle: "Schema-first rules.md + TEST-SPEC.md, optimized for linter enforcement"
+        model: sonnet
+        difficulty_justification: "Drafting + structural reasoning; sonnet sufficient"
+        token_budget: 8000
+        expected_output_shape: "two templates + rationale + rejected-fields list"
+      - agent_id: L1-A2
+        angle: "Schema-first templates optimized for downstream tooling (test runners, doc generators); stable IDs, cross-link conventions"
+        model: sonnet
+        difficulty_justification: "Drafting + structural reasoning; sonnet sufficient"
+        token_budget: 8000
+        expected_output_shape: "two templates + rationale + rejected-fields list"
+      - agent_id: L1-A3
+        angle: "Prose-first templates: minimum required scaffolding to prevent ambiguity"
+        model: sonnet
+        difficulty_justification: "Drafting + narrative; sonnet sufficient"
+        token_budget: 8000
+        expected_output_shape: "two templates + rationale + rejected-fields list"
+      - agent_id: L1-A4
+        angle: "Prose-first templates that are optional-everywhere with rich worked examples (copy-and-adapt model)"
+        model: sonnet
+        difficulty_justification: "Drafting + narrative; sonnet sufficient"
+        token_budget: 8000
+        expected_output_shape: "two templates + rationale + rejected-fields list"
+  - layer_id: L2-evaluate
+    role: evaluate
+    n: 2
+    parallel: true
+    model: opus
+    agents:
+      - agent_id: L2-E1
+        angle: "Defender of rigor — read all 4 L1 proposals + 3 stress features; argue for schema-first or tighter; cite concrete failure modes prose-first causes per stress feature"
+        model: opus
+        difficulty_justification: "Cross-cut adversarial judgment across 4 proposals × 2 templates × 3 stress features"
+        token_budget: 12000
+        expected_output_shape: "Per-template verdict (rules.md, TEST-SPEC.md separately): winning proposal, named failure modes of losing side per stress feature, hybrid changes required"
+      - agent_id: L2-E2
+        angle: "Defender of authorial freedom — argue for prose-first or looser; cite concrete failure modes rigid templates cause"
+        model: opus
+        difficulty_justification: "Cross-cut adversarial judgment"
+        token_budget: 12000
+        expected_output_shape: "Per-template verdict + failure modes + hybrid changes"
+  - layer_id: L3-synthesize
+    role: synthesize
+    n: 1
+    parallel: false
+    model: parent
+    agents:
+      - agent_id: L3-S1
+        angle: "Parent strategist synthesis — merge L2 verdicts into final rules.md and TEST-SPEC.md template proposals for user approval"
+        model: parent
+        difficulty_justification: "Synthesis is parent's role per skill invariant"
+        token_budget: 0
+        expected_output_shape: "Two final template files presented in chat for user gate"
+stop_conditions:
+  - "validator rejects spec twice — escalate to user (R26)"
+  - "L2 evaluators produce irreconcilable contradictions on both templates — escalate to user with both verdicts"
+  - "loop_cap of 1 reached without convergence"
+  - "agent-count cap (breadth 5 / total 10) — not expected to fire (7 total)"
+validator:
+  model: opus
+  retry_policy: one-retry-then-escalate
+  checklist: ["1","2","3","4","5","6","7","8","9"]
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: "7e4b339b65ca7dfa6055b893c40189c2dcad7b92c46120842285f5798c471438"
+  spec_hash: "e19e007552ad1ce3264c948039d1ddc8a4712aa4ceeb89e968089e32b5ebb7f0"
+recursion_budget:
+  depth: 1
+  breadth: 5
+  total: 10
+  parent_dispatch_id: null
+working_folder: docs/research/templates-rules-test-spec/
