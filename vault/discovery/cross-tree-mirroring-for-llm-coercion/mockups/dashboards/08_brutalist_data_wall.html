@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Brutalist Data Wall</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #fff; --ink: #000; --hi: #ff2d00; --hi2: #00d4d4; --concrete: #d8d4cc; --steel: #f0f0ee; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 13px; line-height: 1.35; }
+  .wall { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 80px; gap: 0; }
+  .b { border-right: 4px solid var(--ink); border-bottom: 4px solid var(--ink); padding: 12px 14px; overflow: hidden; position: relative; }
+
+  .c-2 { grid-column: span 2; } .c-3 { grid-column: span 3; } .c-4 { grid-column: span 4; } .c-5 { grid-column: span 5; } .c-6 { grid-column: span 6; } .c-7 { grid-column: span 7; } .c-8 { grid-column: span 8; } .c-12 { grid-column: span 12; }
+  .r-2 { grid-row: span 2; } .r-3 { grid-row: span 3; } .r-4 { grid-row: span 4; }
+
+  .hd { background: var(--ink); color: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; }
+  .hd h1 { font-family: 'Archivo Black', sans-serif; font-size: 36px; line-height: 0.9; letter-spacing: -1px; }
+  .hd .meta { font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: right; font-weight: 500; }
+  .hd .meta span { display: block; }
+  .hd .meta .hi { color: var(--hi2); }
+
+  .kpi .v { font-family: 'Archivo Black', sans-serif; font-size: 48px; line-height: 0.85; letter-spacing: -2px; }
+  .kpi .v.hi { color: var(--hi); }
+  .kpi .v.hi2 { color: var(--hi2); }
+  .kpi .l { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 500; margin-top: 6px; }
+  .kpi.inv { background: var(--ink); color: var(--bg); }
+  .kpi.inv .l { color: var(--steel); }
+  .kpi.fill-hi { background: var(--hi); color: var(--bg); }
+  .kpi.fill-hi .v { color: var(--bg); }
+  .kpi.fill-hi2 { background: var(--hi2); }
+
+  .title-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--ink); color: var(--bg); padding: 2px 6px; display: inline-block; margin-bottom: 8px; }
+
+  .matrix { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; padding-top: 6px; }
+  .matrix .cell { padding: 6px 8px; border: 2px solid var(--ink); font-size: 11px; }
+  .matrix .cell.pass { background: var(--hi2); }
+  .matrix .cell.warn { background: #ffce00; }
+  .matrix .cell.fail { background: var(--hi); color: var(--bg); }
+  .matrix .cell.hold { background: var(--concrete); }
+  .matrix .cell .feat { font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 10px; display: block; }
+  .matrix .cell .state { font-family: 'Archivo Black', sans-serif; font-size: 14px; letter-spacing: 0; }
+
+  table.brut { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.brut th { background: var(--ink); color: var(--bg); padding: 5px 8px; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; }
+  table.brut th.n { text-align: right; }
+  table.brut td { padding: 5px 8px; border-bottom: 2px solid var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  table.brut td.n { text-align: right; font-weight: 700; }
+  table.brut td.n.hi { color: var(--hi); }
+
+  .scream { background: var(--hi); color: var(--bg); padding: 14px 20px; font-family: 'Archivo Black', sans-serif; font-size: 24px; letter-spacing: -0.5px; line-height: 1; }
+  .scream em { font-style: normal; color: var(--bg); background: var(--ink); padding: 0 4px; }
+
+  .bar-chart { padding-top: 8px; }
+  .bar-row { display: grid; grid-template-columns: 100px 1fr 40px; gap: 8px; align-items: center; padding: 3px 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .bar-row .bar { background: var(--ink); height: 18px; }
+  .bar-row .bar .fill { height: 100%; background: var(--hi); }
+  .bar-row .n { text-align: right; font-weight: 700; }
+
+  .ascii-spark { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--hi); letter-spacing: -1px; line-height: 1; padding-top: 4px; word-break: break-all; }
+
+  .events .e { padding: 4px 0; border-bottom: 2px solid var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; display: grid; grid-template-columns: 50px 40px 1fr; gap: 6px; }
+  .events .e .l { font-weight: 700; }
+  .events .e .l.E { color: var(--hi); }
+  .events .e .l.W { color: #ce8b00; }
+  .events .e .l.I { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <h1>CTM<br>DATA WALL</h1>
+  <div class="meta">
+    <span>MAESTRO-TRAMA</span>
+    <span>2026-05-18 13:29</span>
+    <span class="hi">VALIDATOR ▾ FAIL</span>
+  </div>
+</div>
+
+<div class="wall">
+
+  <div class="b kpi fill-hi c-3 r-2">
+    <div class="title-tag" style="background:var(--bg); color:var(--ink);">XLINK</div>
+    <div class="v">50+</div>
+    <div class="l">BROKEN CROSS-LINKS · ↑316% 30D</div>
+  </div>
+
+  <div class="b kpi c-2">
+    <div class="title-tag">ORPHN</div>
+    <div class="v">4+4</div>
+    <div class="l">L₁ · L₂</div>
+  </div>
+
+  <div class="b kpi c-2">
+    <div class="title-tag">COLL</div>
+    <div class="v">2</div>
+    <div class="l">NAME COLLISIONS</div>
+  </div>
+
+  <div class="b kpi inv c-2">
+    <div class="title-tag" style="background:var(--bg); color:var(--ink);">QUEUE</div>
+    <div class="v">7</div>
+    <div class="l">PROMOTION QUEUE</div>
+  </div>
+
+  <div class="b kpi fill-hi2 c-3 r-2">
+    <div class="title-tag" style="background:var(--bg); color:var(--ink);">CMPRDY</div>
+    <div class="v">3/11</div>
+    <div class="l">L₁ COMPILE-READY</div>
+  </div>
+
+  <div class="b kpi c-3">
+    <div class="title-tag">SPEC-ONLY</div>
+    <div class="v">6</div>
+    <div class="l">FEATURES · NO L₂</div>
+  </div>
+
+  <div class="b kpi inv c-3">
+    <div class="title-tag" style="background:var(--bg); color:var(--ink);">POL</div>
+    <div class="v hi2">0</div>
+    <div class="l">PROMOTION POLICY IN REPO</div>
+  </div>
+
+  <div class="b c-12 r-3">
+    <div class="title-tag">VALIDATOR MATRIX · L₁ ↔ L₂</div>
+    <div class="matrix">
+      <div class="cell fail"><span class="feat">extraction · LP</span><span class="state">FAIL</span></div>
+      <div class="cell fail"><span class="feat">dashboard · LP</span><span class="state">FAIL</span></div>
+      <div class="cell fail"><span class="feat">label-curation · LP</span><span class="state">FAIL</span></div>
+      <div class="cell warn"><span class="feat">extraction · AD-CDNA</span><span class="state">COLL</span></div>
+      <div class="cell hold"><span class="feat">attribution · CCM</span><span class="state">SPEC</span></div>
+      <div class="cell hold"><span class="feat">surfacing · CCM</span><span class="state">SPEC</span></div>
+      <div class="cell hold"><span class="feat">policy · MS</span><span class="state">SPEC</span></div>
+      <div class="cell hold"><span class="feat">domain · MS</span><span class="state">DRFT</span></div>
+      <div class="cell hold"><span class="feat">producer · TR</span><span class="state">DRFT</span></div>
+      <div class="cell fail"><span class="feat">spend-pred · SP</span><span class="state">FAIL</span></div>
+      <div class="cell pass"><span class="feat">retrieval · CH</span><span class="state">LEG</span></div>
+      <div class="cell pass"><span class="feat">orchestrator · CA</span><span class="state">LEG</span></div>
+      <div class="cell pass"><span class="feat">validator · CA</span><span class="state">PASS</span></div>
+      <div class="cell pass"><span class="feat">interviewer · CA</span><span class="state">PASS</span></div>
+      <div class="cell warn"><span class="feat">leaderboard · EXP</span><span class="state">WARN</span></div>
+      <div class="cell pass"><span class="feat">scaffold · PS</span><span class="state">PASS</span></div>
+    </div>
+  </div>
+
+  <div class="b scream c-12">
+    THE AGENT HAD NO COMPUTABLE PATH. <em>SO IT GUESSED.</em> 50 TIMES.
+  </div>
+
+  <div class="b c-7 r-4">
+    <div class="title-tag">PROMOTION QUEUE · 7 READY</div>
+    <table class="brut">
+      <tr><th>SOURCE</th><th>→ TARGET</th><th class="n">AGE</th></tr>
+      <tr><td>research/notes/trama-decomp.md</td><td>trama / producer</td><td class="n">6d</td></tr>
+      <tr><td>research/sessions/extraction-arb.md</td><td>labeling-pf / extraction</td><td class="n">4d</td></tr>
+      <tr><td>research/lenses/exp-v1-takeaways.md</td><td>labeling-pf / extraction</td><td class="n">2d</td></tr>
+      <tr><td>research/biz-phil/manifesto-iii.md</td><td>_UNKNOWN</td><td class="n hi">11d</td></tr>
+      <tr><td>research/robot-talks/mut-tensions.md</td><td>mutation / policy</td><td class="n">9d</td></tr>
+      <tr><td>research/notes/spend-data-contract.md</td><td>spend-pred / prediction</td><td class="n">3d</td></tr>
+      <tr><td>research/sessions/dashboard-research.md</td><td>exp-dash / leaderboard</td><td class="n">1d</td></tr>
+    </table>
+  </div>
+
+  <div class="b c-5 r-2">
+    <div class="title-tag">XLINK TRAJECTORY · 30D</div>
+    <div class="ascii-spark">▁▁▂▂▂▃▃▃▄▄▄▅▅▅▆▆▆▆▇▇▇▇▇█████</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:8px; display:flex; justify-content:space-between;"><span>12</span><span style="color:var(--hi); font-weight:700;">→ 50+</span></div>
+  </div>
+
+  <div class="b c-5 r-2">
+    <div class="title-tag">COMPILE-READY BREAKDOWN</div>
+    <div class="bar-chart">
+      <div class="bar-row"><span>STR.COMPL</span><div class="bar"><div class="fill" style="width:55%; background:var(--ink);"></div></div><span class="n">6</span></div>
+      <div class="bar-row"><span>TEST-DRV</span><div class="bar"><div class="fill" style="width:36%; background:var(--ink);"></div></div><span class="n">4</span></div>
+      <div class="bar-row"><span>BOTH</span><div class="bar"><div class="fill" style="width:27%; background:var(--hi2);"></div></div><span class="n">3</span></div>
+      <div class="bar-row"><span>NEITHER</span><div class="bar"><div class="fill" style="width:73%; background:var(--hi);"></div></div><span class="n">8</span></div>
+    </div>
+  </div>
+
+  <div class="b c-12 events">
+    <div class="title-tag">EVENT STREAM · TODAY</div>
+    <div class="e"><span>13:29</span><span class="l I">INF</span><span>discovery.write cross-tree-mirroring · 6 files committed</span></div>
+    <div class="e"><span>12:14</span><span class="l I">INF</span><span>lens.adversarial · 5 attacks landed · concessions folded into D-1..D-6</span></div>
+    <div class="e"><span>12:08</span><span class="l W">WRN</span><span>validator.run · maestro-trama · 50 broken refs · 8 orphans</span></div>
+    <div class="e"><span>11:45</span><span class="l E">ERR</span><span>collision.detect · labeling-platform/extraction × ad-creative-dna/extraction</span></div>
+    <div class="e"><span>10:45</span><span class="l I">INF</span><span>lens.theorem-anchors · T0' deferred</span></div>
+  </div>
+
+</div>
+
+</body>
+</html>

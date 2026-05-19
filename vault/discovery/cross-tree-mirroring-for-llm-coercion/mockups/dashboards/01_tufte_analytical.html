@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Tufte Analytical</title>
+<link href="https://fonts.googleapis.com/css2?family=ET+Book:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #fffff8; --ink: #111; --muted: #888; --rule: #c8c2b0; --accent: #a02020; --good: #2a6f2a; }
+  body { background: var(--paper); color: var(--ink); font-family: 'ET Book', 'Iowan Old Style', Georgia, serif; font-size: 13px; line-height: 1.5; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 36px 40px 64px; }
+
+  header { border-bottom: 1px solid var(--ink); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: baseline; }
+  header h1 { font-weight: 400; font-size: 24px; letter-spacing: -0.5px; }
+  header h1 em { font-style: italic; color: var(--muted); font-weight: 400; }
+  header .meta { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  .lead { font-style: italic; color: var(--muted); margin: 12px 0 20px; max-width: 720px; }
+
+  .row { display: grid; gap: 28px; margin-top: 24px; }
+  .row.r5 { grid-template-columns: repeat(5, 1fr); }
+  .row.r3 { grid-template-columns: 2fr 2fr 1.2fr; }
+  .row.r2 { grid-template-columns: 1.4fr 1fr; }
+
+  .kpi .n { font-family: 'ET Book', serif; font-size: 38px; line-height: 1; font-weight: 700; }
+  .kpi .n.red { color: var(--accent); }
+  .kpi .n.green { color: var(--good); }
+  .kpi .l { font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .kpi .spark { display: block; height: 24px; margin-top: 6px; }
+
+  h2 { font-family: 'ET Book', serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; font-style: italic; }
+  .sublabel { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table th { text-align: left; padding: 4px 8px 4px 0; font-family: 'Inter', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--ink); }
+  table td { padding: 6px 8px 6px 0; vertical-align: top; border-bottom: 0.5px solid var(--rule); }
+  table td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  table td.n { text-align: right; font-family: 'ET Book', serif; }
+  table td.n.red { color: var(--accent); font-weight: 700; }
+  table td .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+  .dot.pass { background: var(--good); }
+  .dot.warn { background: #b88420; }
+  .dot.fail { background: var(--accent); }
+
+  .smallmult { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 18px; }
+  .smallmult .panel { font-size: 11px; }
+  .smallmult .panel .t { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .smallmult .panel .t .n { color: var(--accent); }
+  .smallmult .panel svg { display: block; width: 100%; height: 30px; margin-top: 2px; }
+
+  .figure-caption { font-style: italic; color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+  footer { margin-top: 40px; padding-top: 10px; border-top: 1px solid var(--ink); display: flex; justify-content: space-between; font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Cross-tree mirroring <em>— operational state of the validator</em></h1>
+    <div class="meta">2026-05-18 · v0.1.0 · idiom 1 / 15</div>
+  </header>
+  <div class="lead">A reading of the present state of structure across L₁ and L₂. The validator visits every path; the table below is its report. Numbers earn their ink.</div>
+
+  <div class="row r5">
+    <div class="kpi"><div class="n red">50+</div><div class="l">broken cross-links</div>
+      <svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,18 10,16 20,15 30,14 40,12 50,10 60,9 70,7 80,5 90,4 100,2" fill="none" stroke="#a02020" stroke-width="1"/></svg>
+    </div>
+    <div class="kpi"><div class="n">4+4</div><div class="l">orphans (proposals · apps)</div>
+      <svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,12 25,12 50,12 75,12 100,12" fill="none" stroke="#111" stroke-width="1"/></svg>
+    </div>
+    <div class="kpi"><div class="n">2</div><div class="l">name collisions</div>
+      <svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,16 50,16 51,8 100,8" fill="none" stroke="#111" stroke-width="1"/></svg>
+    </div>
+    <div class="kpi"><div class="n">7</div><div class="l">in promotion queue</div>
+      <svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 20,18 40,14 60,10 80,8 100,6" fill="none" stroke="#2a6f2a" stroke-width="1"/></svg>
+    </div>
+    <div class="kpi"><div class="n">3 / 11</div><div class="l">L₁ compile-ready</div>
+      <svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 20,18 40,16 60,12 80,10 100,8" fill="none" stroke="#2a6f2a" stroke-width="1"/></svg>
+    </div>
+  </div>
+
+  <div class="row r3">
+
+    <div>
+      <h2>Validator state — by feature</h2>
+      <div class="sublabel">L₁ ↔ L₂ path coherence, today</div>
+      <table>
+        <tr><th>Feature</th><th>L₁</th><th>L₂</th><th>State</th></tr>
+        <tr><td class="mono">labeling-platform/extraction</td><td class="mono">·spec ✓</td><td class="mono">·src ✓</td><td><span class="dot warn"></span>collision</td></tr>
+        <tr><td class="mono">labeling-platform/dashboard</td><td class="mono">— missing</td><td class="mono">·src ✓</td><td><span class="dot fail"></span>orphan</td></tr>
+        <tr><td class="mono">labeling-platform/label-curation</td><td class="mono">— missing</td><td class="mono">·src ✓</td><td><span class="dot fail"></span>orphan</td></tr>
+        <tr><td class="mono">ad-creative-dna/extraction</td><td class="mono">·spec ✓</td><td class="mono">·via manifest</td><td><span class="dot warn"></span>multi-impl</td></tr>
+        <tr><td class="mono">creative-catalog-management/*</td><td class="mono">·spec ✓</td><td class="mono">—</td><td><span class="dot warn"></span>spec-only</td></tr>
+        <tr><td class="mono">mutation-strategy/*</td><td class="mono">·spec ✓</td><td class="mono">—</td><td><span class="dot warn"></span>spec-only</td></tr>
+        <tr><td class="mono">trama/*</td><td class="mono">·draft</td><td class="mono">—</td><td><span class="dot warn"></span>spec-only</td></tr>
+        <tr><td class="mono">spend-predictor/spend-prediction</td><td class="mono">— missing</td><td class="mono">·src ✓</td><td><span class="dot fail"></span>orphan</td></tr>
+        <tr><td class="mono">creatives-harnessing/retrieval</td><td class="mono">·legacy</td><td class="mono">·src ✓</td><td><span class="dot pass"></span>legacy ok</td></tr>
+      </table>
+      <div class="figure-caption">Fig. 1 — Each row is a (layer, app, feature) coordinate. Where L₁ and L₂ both resolve, the validator passes.</div>
+    </div>
+
+    <div>
+      <h2>Promotion queue</h2>
+      <div class="sublabel">residue awaiting greenlight · identity earned</div>
+      <table>
+        <tr><th>Artifact</th><th>App</th><th>Feature</th><th>Age</th></tr>
+        <tr><td class="mono">research/notes/2026-05-12-trama-decomp.md</td><td class="mono">trama</td><td class="mono">producer</td><td class="n">6d</td></tr>
+        <tr><td class="mono">research/sessions/2026-05-14-extraction-arb.md</td><td class="mono">labeling-platform</td><td class="mono">extraction</td><td class="n">4d</td></tr>
+        <tr><td class="mono">research/lenses/labeling-experiment-v1-takeaways.md</td><td class="mono">labeling-platform</td><td class="mono">extraction</td><td class="n">2d</td></tr>
+        <tr><td class="mono">research/business-philosopher/manifesto-fragment-iii.md</td><td class="mono">_unknown</td><td class="mono">_unknown</td><td class="n">11d</td></tr>
+        <tr><td class="mono">research/robot-talks/2026-05-09-mutation-tensions.md</td><td class="mono">mutation-strategy</td><td class="mono">policy</td><td class="n">9d</td></tr>
+        <tr><td class="mono">research/notes/2026-05-15-spend-pred-data-contract.md</td><td class="mono">spend-predictor</td><td class="mono">spend-prediction</td><td class="n">3d</td></tr>
+        <tr><td class="mono">research/sessions/2026-05-17-dashboard-research.md</td><td class="mono">experiment-dashboard</td><td class="mono">view-leaderboard</td><td class="n">1d</td></tr>
+      </table>
+      <div class="figure-caption">Fig. 2 — All seven have earned an (app, feature). Greenlight is one command per row.</div>
+    </div>
+
+    <div>
+      <h2>Compile-readiness</h2>
+      <div class="sublabel">per L₁ feature</div>
+      <div class="smallmult">
+        <div class="panel"><div class="t">extraction <span class="n">·blocked</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="60" height="6" fill="#a02020"/><rect x="0" y="16" width="100" height="6" fill="#2a6f2a"/></svg></div>
+        <div class="panel"><div class="t">retrieval <span class="n">·ready</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="100" height="6" fill="#2a6f2a"/><rect x="0" y="16" width="100" height="6" fill="#2a6f2a"/></svg></div>
+        <div class="panel"><div class="t">spend-pred. <span class="n">·blocked</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="100" height="6" fill="#2a6f2a"/><rect x="0" y="16" width="35" height="6" fill="#a02020"/></svg></div>
+        <div class="panel"><div class="t">producer <span class="n">·draft</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="20" height="6" fill="#a02020"/><rect x="0" y="16" width="10" height="6" fill="#a02020"/></svg></div>
+        <div class="panel"><div class="t">curation <span class="n">·ready</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="100" height="6" fill="#2a6f2a"/><rect x="0" y="16" width="100" height="6" fill="#2a6f2a"/></svg></div>
+        <div class="panel"><div class="t">dashboard <span class="n">·partial</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="75" height="6" fill="#b88420"/><rect x="0" y="16" width="50" height="6" fill="#b88420"/></svg></div>
+        <div class="panel"><div class="t">policy <span class="n">·blocked</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="40" height="6" fill="#a02020"/><rect x="0" y="16" width="0" height="6" fill="#a02020"/></svg></div>
+        <div class="panel"><div class="t">attribution <span class="n">·ready</span></div><svg viewBox="0 0 100 30"><rect x="0" y="6" width="100" height="6" fill="#2a6f2a"/><rect x="0" y="16" width="100" height="6" fill="#2a6f2a"/></svg></div>
+      </div>
+      <div class="figure-caption">Fig. 3 — Top bar: structural completeness. Bottom bar: test-derivability.</div>
+    </div>
+
+  </div>
+
+  <div class="row r2">
+    <div>
+      <h2>Broken-link series</h2>
+      <div class="sublabel">last 30 days · daily count</div>
+      <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="display:block; width:100%; height:120px;">
+        <line x1="0" y1="100" x2="600" y2="100" stroke="#111" stroke-width="0.5"/>
+        <polyline points="0,90 20,88 40,86 60,82 80,76 100,70 120,68 140,62 160,60 180,56 200,52 220,48 240,46 260,42 280,40 300,38 320,36 340,32 360,30 380,28 400,26 420,24 440,22 460,20 480,18 500,18 520,16 540,14 560,12 580,10 600,8" fill="none" stroke="#a02020" stroke-width="1"/>
+        <text x="0" y="115" font-family="Inter" font-size="9" fill="#888">2026-04-19</text>
+        <text x="540" y="115" font-family="Inter" font-size="9" fill="#888">2026-05-18</text>
+        <text x="600" y="10" font-family="Inter" font-size="9" fill="#a02020" text-anchor="end">50+</text>
+        <text x="0" y="92" font-family="Inter" font-size="9" fill="#888" text-anchor="start">12</text>
+      </svg>
+      <div class="figure-caption">Fig. 4 — Rising. Patches add references; nothing structurally prevents invention of paths.</div>
+    </div>
+    <div>
+      <h2>Recent activity</h2>
+      <div class="sublabel">today</div>
+      <table>
+        <tr><td class="mono">13:29</td><td class="mono">discovery written: cross-tree-mirroring</td></tr>
+        <tr><td class="mono">12:14</td><td class="mono">adversarial-attack lens consolidated</td></tr>
+        <tr><td class="mono">11:02</td><td class="mono">maestro-trama-evidence lens · 50 broken-links flagged</td></tr>
+        <tr><td class="mono">10:45</td><td class="mono">theorem-anchors lens · T0' deferred</td></tr>
+        <tr><td class="mono">10:12</td><td class="mono">vault prior-art lens · OQ-4 unresolved</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <span>vault/discovery/cross-tree-mirroring-for-llm-coercion</span>
+    <span>Tufte analytical · 01 / 15</span>
+    <span>operator@domainspec</span>
+  </footer>
+
+</div>
+</body>
+</html>

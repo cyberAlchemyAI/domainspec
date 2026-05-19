@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Insider · Segment Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #f1f4fa; --panel: #ffffff; --navy: #0B1F3A; --text: #0B1F3A; --text-2: #4a5b76; --muted: #8090ab; --rule: #e0e7f1; --cyan: #00D4D4; --cyan-deep: #00a0a0; --purple: #7B61FF; --pink: #FF6B9D; --green: #1ec896; --amber: #ff9f43; --red: #ff5c5c; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .frame { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+  nav { background: var(--panel); border-right: 1px solid var(--rule); padding: 22px 16px; }
+  nav .logo { display: flex; align-items: center; gap: 10px; padding-bottom: 22px; }
+  nav .logo .mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--cyan), var(--purple)); }
+  nav .logo .name { font-weight: 700; font-size: 16px; }
+  nav .logo .name small { display: block; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  nav h4 { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; padding: 16px 8px 6px; font-weight: 600; }
+  nav a { display: block; padding: 7px 12px; font-size: 13px; color: var(--text-2); text-decoration: none; border-radius: 6px; margin-bottom: 1px; }
+  nav a.active { background: rgba(0,212,212,0.1); color: var(--cyan-deep); font-weight: 600; }
+  nav a:hover:not(.active) { background: var(--bg); }
+
+  main { padding: 28px 36px 64px; }
+
+  .pagehead { padding-bottom: 20px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: end; }
+  .pagehead h1 { font-size: 22px; font-weight: 600; }
+  .pagehead .sub { color: var(--muted); margin-top: 4px; font-size: 13px; }
+  .pagehead .right { display: flex; gap: 10px; align-items: center; }
+  .seg { display: inline-flex; background: white; border: 1px solid var(--rule); border-radius: 7px; padding: 2px; }
+  .seg button { padding: 5px 12px; border: 0; background: transparent; font-size: 12px; color: var(--text-2); cursor: pointer; border-radius: 5px; font-weight: 500; }
+  .seg button.on { background: var(--navy); color: white; }
+  .btn { padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--rule); background: white; color: var(--text); }
+  .btn.primary { background: var(--cyan); color: var(--navy); border-color: var(--cyan); }
+
+  /* Segments along the top — like Insider's audience segments */
+  .segments { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0; }
+  .seg-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .seg-card:hover { border-color: var(--cyan); }
+  .seg-card.active { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,212,0.1); }
+  .seg-card .icon { width: 28px; height: 28px; border-radius: 7px; background: rgba(0, 212, 212, 0.12); color: var(--cyan-deep); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; margin-bottom: 10px; }
+  .seg-card .icon.red { background: rgba(255,92,92,0.12); color: var(--red); }
+  .seg-card .icon.amber { background: rgba(255,159,67,0.12); color: var(--amber); }
+  .seg-card .icon.green { background: rgba(30,200,150,0.12); color: var(--green); }
+  .seg-card .icon.purple { background: rgba(123,97,255,0.12); color: var(--purple); }
+  .seg-card .icon.pink { background: rgba(255,107,157,0.12); color: var(--pink); }
+  .seg-card .ttl { font-size: 12px; font-weight: 600; color: var(--text); }
+  .seg-card .n { font-size: 22px; font-weight: 700; margin-top: 4px; letter-spacing: -0.3px; }
+  .seg-card .d { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .r-2-1 { grid-template-columns: 2fr 1fr; }
+
+  .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+  .panel-h { padding: 14px 18px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+  .panel-h h3 { font-size: 14px; font-weight: 600; }
+  .panel-h .more { font-size: 12px; color: var(--cyan-deep); cursor: pointer; font-weight: 600; }
+
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { text-align: left; padding: 9px 18px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; background: #f7fafd; border-bottom: 1px solid var(--rule); }
+  .tbl th.n { text-align: right; }
+  .tbl td { padding: 10px 18px; border-bottom: 1px solid var(--rule); }
+  .tbl td.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .tbl td.n { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .pill { padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .pill.pass { background: rgba(30, 200, 150, 0.12); color: var(--green); }
+  .pill.warn { background: rgba(255, 159, 67, 0.12); color: var(--amber); }
+  .pill.fail { background: rgba(255, 92, 92, 0.12); color: var(--red); }
+  .pill.hold { background: rgba(128, 144, 171, 0.12); color: var(--muted); }
+  .pill.info { background: rgba(0, 212, 212, 0.12); color: var(--cyan-deep); }
+
+  .funnel { padding: 18px; }
+  .funnel-row { display: flex; align-items: center; gap: 14px; padding: 6px 0; }
+  .funnel-row .lbl { width: 160px; font-size: 12px; font-weight: 500; }
+  .funnel-row .lbl small { color: var(--muted); font-weight: 400; }
+  .funnel-row .bar { flex: 1; height: 36px; background: var(--bg); border-radius: 8px; position: relative; overflow: hidden; }
+  .funnel-row .bar .fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple)); display: flex; align-items: center; padding-left: 12px; color: white; font-weight: 700; font-size: 13px; }
+  .funnel-row .n { width: 60px; text-align: right; font-weight: 700; font-size: 13px; }
+  .funnel-row .pct { width: 50px; text-align: right; color: var(--muted); font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <nav>
+    <div class="logo">
+      <span class="mark"></span>
+      <span class="name">Insider<small>CTM · ANALYTICS</small></span>
+    </div>
+    <h4>Reports</h4>
+    <a href="#" class="active">Mirror health</a>
+    <a href="#">Promotion funnel</a>
+    <a href="#">Validator runs</a>
+    <a href="#">Compilation gates</a>
+    <h4>Cohorts</h4>
+    <a href="#">By app</a>
+    <a href="#">By feature</a>
+    <a href="#">By state</a>
+    <h4>Repos</h4>
+    <a href="#">maestro-trama</a>
+    <a href="#">domainspec</a>
+  </nav>
+
+  <main>
+    <div class="pagehead">
+      <div>
+        <h1>Mirror health · maestro-trama</h1>
+        <div class="sub">Segmented view of every (app, feature) under cross-tree mirroring</div>
+      </div>
+      <div class="right">
+        <div class="seg"><button>1d</button><button>7d</button><button class="on">30d</button><button>QTD</button></div>
+        <button class="btn">Export CSV</button>
+        <button class="btn primary">Run validator</button>
+      </div>
+    </div>
+
+    <div class="segments">
+      <div class="seg-card"><div class="icon green">✓</div><div class="ttl">PASS</div><div class="n">4</div><div class="d">L₁↔L₂ paired</div></div>
+      <div class="seg-card active"><div class="icon red">!</div><div class="ttl">FAIL</div><div class="n">4</div><div class="d">orphan L₂</div></div>
+      <div class="seg-card"><div class="icon amber">⚠</div><div class="ttl">WARN</div><div class="n">2</div><div class="d">collision / multi</div></div>
+      <div class="seg-card"><div class="icon purple">◇</div><div class="ttl">SPEC-ONLY</div><div class="n">6</div><div class="d">no L₂ yet</div></div>
+      <div class="seg-card"><div class="icon pink">●</div><div class="ttl">QUEUE</div><div class="n">7</div><div class="d">awaiting promote</div></div>
+      <div class="seg-card"><div class="icon">○</div><div class="ttl">LEGACY</div><div class="n">3</div><div class="d">grandfathered</div></div>
+    </div>
+
+    <div class="row r-2-1">
+
+      <div class="panel">
+        <div class="panel-h"><h3>Segment: orphan L₂ (selected)</h3><span class="more">Build segment →</span></div>
+        <table class="tbl">
+          <thead><tr><th>Path</th><th>L₁ ancestor</th><th>L₂ size</th><th>Last L₂ change</th><th class="n">Broken refs</th><th>Suggested action</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">labeling-platform / dashboard</td><td>—</td><td>24 files</td><td>2d ago</td><td class="n" style="color:var(--red);">18</td><td><span class="pill info">DRAFT SPEC</span></td></tr>
+            <tr><td class="mono">labeling-platform / label-curation</td><td>—</td><td>12 files</td><td>4d ago</td><td class="n" style="color:var(--red);">9</td><td><span class="pill info">DRAFT SPEC</span></td></tr>
+            <tr><td class="mono">labeling-platform / extraction</td><td>—</td><td>31 files</td><td>2d ago</td><td class="n" style="color:var(--red);">23</td><td><span class="pill warn">RESOLVE COLLISION</span></td></tr>
+            <tr><td class="mono">spend-predictor / spend-prediction</td><td>—</td><td>8 files</td><td>2d ago</td><td class="n" style="color:var(--red);">0</td><td><span class="pill info">DRAFT SPEC</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h3>Promotion funnel</h3><span class="more">Last 30d</span></div>
+        <div class="funnel">
+          <div class="funnel-row">
+            <div class="lbl">Residue<small><br>filed</small></div>
+            <div class="bar"><div class="fill" style="width: 100%;">31</div></div>
+            <div class="pct">100%</div>
+          </div>
+          <div class="funnel-row">
+            <div class="lbl">Identity-earned<small><br>has (app, feature)</small></div>
+            <div class="bar"><div class="fill" style="width: 71%;">22</div></div>
+            <div class="pct">71%</div>
+          </div>
+          <div class="funnel-row">
+            <div class="lbl">Greenlit<small><br>operator promoted</small></div>
+            <div class="bar"><div class="fill" style="width: 48%;">15</div></div>
+            <div class="pct">48%</div>
+          </div>
+          <div class="funnel-row">
+            <div class="lbl">Compile-ready<small><br>validator passes</small></div>
+            <div class="bar"><div class="fill" style="width: 23%;">7</div></div>
+            <div class="pct">23%</div>
+          </div>
+          <div class="funnel-row">
+            <div class="lbl">Mirrored to L₂<small><br>code shipped</small></div>
+            <div class="bar"><div class="fill" style="width: 13%;">4</div></div>
+            <div class="pct">13%</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row r-2-1">
+      <div class="panel">
+        <div class="panel-h"><h3>All features · by state</h3><span class="more">Filter →</span></div>
+        <table class="tbl">
+          <thead><tr><th>Path</th><th>L₁</th><th>L₂</th><th>State</th><th>Age</th><th class="n">Δ broken</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">labeling-platform / extraction</td><td>spec ✓ drift</td><td>src ✓</td><td><span class="pill warn">COLLISION</span></td><td>2d</td><td class="n" style="color:var(--red);">+23</td></tr>
+            <tr><td class="mono">labeling-platform / dashboard</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td><td>14d</td><td class="n" style="color:var(--red);">+18</td></tr>
+            <tr><td class="mono">labeling-platform / label-curation</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td><td>14d</td><td class="n" style="color:var(--red);">+9</td></tr>
+            <tr><td class="mono">ad-creative-dna / extraction</td><td>spec ✓</td><td>manifest</td><td><span class="pill info">MULTI-IMPL</span></td><td>2d</td><td class="n">0</td></tr>
+            <tr><td class="mono">spend-predictor / spend-prediction</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td><td>2d</td><td class="n">0</td></tr>
+            <tr><td class="mono">mutation-strategy / policy</td><td>spec ✓</td><td>—</td><td><span class="pill hold">SPEC-ONLY</span></td><td>8d</td><td class="n">0</td></tr>
+            <tr><td class="mono">trama / producer</td><td>draft</td><td>—</td><td><span class="pill hold">DRAFT</span></td><td>3d</td><td class="n">0</td></tr>
+            <tr><td class="mono">creatives-harnessing / retrieval</td><td>legacy</td><td>src ✓</td><td><span class="pill pass">LEGACY OK</span></td><td>26d</td><td class="n">0</td></tr>
+            <tr><td class="mono">creative-analysis / orchestrator</td><td>legacy</td><td>src ✓</td><td><span class="pill pass">LEGACY OK</span></td><td>26d</td><td class="n">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h3>Recent activity</h3></div>
+        <table class="tbl">
+          <tr><td><div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">13:29</div><div>Discovery committed · 6 files</div></td></tr>
+          <tr><td><div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">12:14</div><div>Adversarial lens · 5 attacks</div></td></tr>
+          <tr><td><div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">12:08</div><div style="color:var(--amber);">Validator: 50 broken refs</div></td></tr>
+          <tr><td><div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">11:45</div><div style="color:var(--red);">Collision: extraction × 2</div></td></tr>
+          <tr><td><div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">10:45</div><div>Theorem lens: T0' deferred</div></td></tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

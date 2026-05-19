@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Insider · AI Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #0a1428; --bg-2: #0f1c36; --panel: #16244a; --panel-2: #1a2c56; --rule: #243766; --text: #e8eff9; --text-2: #9bafd0; --muted: #6680a8; --cyan: #00D4D4; --cyan-glow: rgba(0, 212, 212, 0.25); --purple: #9168FF; --pink: #FF6B9D; --green: #4eebb2; --amber: #ffb84a; --red: #ff7a7a; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.55; -webkit-font-smoothing: antialiased; min-height: 100vh; background-image: radial-gradient(ellipse at 0% 0%, rgba(0, 212, 212, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 100% 100%, rgba(145, 104, 255, 0.1) 0%, transparent 50%); background-attachment: fixed; }
+  .app { max-width: 1400px; margin: 0 auto; padding: 32px 40px 80px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 28px; }
+  .topbar .left { display: flex; align-items: center; gap: 12px; }
+  .topbar .mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--cyan), var(--purple)); position: relative; }
+  .topbar .mark::after { content: ""; position: absolute; inset: -3px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), var(--purple)); filter: blur(8px); opacity: 0.4; z-index: -1; }
+  .topbar .name { font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+  .topbar .name small { display: block; font-size: 10px; color: var(--cyan); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px; font-weight: 600; }
+  .topbar .right { display: flex; gap: 12px; align-items: center; }
+  .pill-live { background: rgba(78, 235, 178, 0.1); color: var(--green); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .pill-live::before { content: "● "; }
+
+  .hero-prompt { background: linear-gradient(135deg, var(--panel), var(--panel-2)); border: 1px solid var(--rule); border-radius: 16px; padding: 28px 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
+  .hero-prompt::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent); }
+  .hero-prompt .l { font-size: 11px; color: var(--cyan); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  .hero-prompt h2 { font-size: 24px; font-weight: 600; margin-top: 8px; letter-spacing: -0.4px; }
+  .hero-prompt .input-row { display: flex; gap: 12px; margin-top: 20px; align-items: center; background: var(--bg-2); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--rule); }
+  .hero-prompt .input-row .prefix { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px; }
+  .hero-prompt .input-row input { flex: 1; background: transparent; border: 0; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif; outline: none; }
+  .hero-prompt .input-row input::placeholder { color: var(--muted); }
+  .hero-prompt .input-row .send { background: linear-gradient(135deg, var(--cyan), var(--purple)); color: var(--bg); padding: 8px 16px; border: 0; border-radius: 7px; font-weight: 600; font-size: 12px; cursor: pointer; }
+  .hero-prompt .suggestions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .hero-prompt .suggestions span { background: var(--bg-2); color: var(--text-2); padding: 6px 12px; border-radius: 16px; font-size: 11px; cursor: pointer; border: 1px solid var(--rule); }
+  .hero-prompt .suggestions span:hover { color: var(--cyan); border-color: var(--cyan); }
+
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .r-4 { grid-template-columns: repeat(4, 1fr); }
+  .r-3 { grid-template-columns: 1.4fr 1fr 1fr; }
+
+  .stat-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; position: relative; overflow: hidden; }
+  .stat-card.glow { border-color: var(--cyan); box-shadow: 0 0 24px var(--cyan-glow); }
+  .stat-card .l { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .stat-card .v { font-size: 30px; font-weight: 600; margin-top: 8px; letter-spacing: -0.6px; }
+  .stat-card .v.cyan { color: var(--cyan); }
+  .stat-card .v.red { color: var(--red); }
+  .stat-card .v.green { color: var(--green); }
+  .stat-card .v.amber { color: var(--amber); }
+  .stat-card .d { font-size: 11px; color: var(--text-2); margin-top: 4px; }
+
+  .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; }
+  .panel-h { padding: 16px 20px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+  .panel-h h3 { font-size: 14px; font-weight: 600; }
+  .panel-h .ai-tag { background: linear-gradient(135deg, var(--cyan), var(--purple)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+
+  .ai-suggestion { padding: 14px 20px; border-bottom: 1px solid var(--rule); }
+  .ai-suggestion:last-child { border-bottom: none; }
+  .ai-suggestion .head { display: flex; gap: 10px; align-items: start; margin-bottom: 6px; }
+  .ai-suggestion .head .icon { width: 24px; height: 24px; border-radius: 6px; background: rgba(0, 212, 212, 0.15); color: var(--cyan); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .ai-suggestion .head .title { font-weight: 600; font-size: 13px; }
+  .ai-suggestion .head .conf { margin-left: auto; font-size: 10px; color: var(--cyan); font-family: 'JetBrains Mono', monospace; }
+  .ai-suggestion .body { color: var(--text-2); font-size: 12px; padding-left: 34px; }
+  .ai-suggestion .actions { padding-left: 34px; margin-top: 8px; display: flex; gap: 6px; }
+  .ai-suggestion .actions button { background: var(--bg-2); color: var(--text); border: 1px solid var(--rule); padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; }
+  .ai-suggestion .actions button.primary { background: var(--cyan); color: var(--bg); border: 0; font-weight: 600; }
+
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl td { padding: 10px 20px; border-bottom: 1px solid var(--rule); }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl td.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-2); }
+  .pill { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .pill.fail { background: rgba(255, 122, 122, 0.15); color: var(--red); }
+  .pill.warn { background: rgba(255, 184, 74, 0.15); color: var(--amber); }
+  .pill.pass { background: rgba(78, 235, 178, 0.15); color: var(--green); }
+  .pill.info { background: rgba(0, 212, 212, 0.15); color: var(--cyan); }
+  .pill.hold { background: rgba(102, 128, 168, 0.15); color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="left">
+      <span class="mark"></span>
+      <span class="name">Insider AI<small>CTM · COPILOT FOR STRUCTURE</small></span>
+    </div>
+    <div class="right">
+      <span class="pill-live">CONNECTED · maestro-trama</span>
+    </div>
+  </div>
+
+  <div class="hero-prompt">
+    <div class="l">BE PROGRESSIVE · ASK THE STRUCTURE</div>
+    <h2>What should I fix first in maestro-trama?</h2>
+    <div class="input-row">
+      <span class="prefix">›</span>
+      <input type="text" placeholder='try: "resolve the extraction collision" or "which features are ready to ship?"' value="">
+      <button class="send">Ask AI</button>
+    </div>
+    <div class="suggestions">
+      <span>↗ Resolve extraction/ collision</span>
+      <span>↗ Promote the 7 queue items</span>
+      <span>↗ Why are cross-links rising?</span>
+      <span>↗ Compile-readiness gaps</span>
+      <span>↗ Generate IMPLEMENTED-BY for ad-creative-dna</span>
+    </div>
+  </div>
+
+  <div class="row r-4">
+    <div class="stat-card"><div class="l">Broken cross-links</div><div class="v red">50+</div><div class="d">↑ 316% · 30d</div></div>
+    <div class="stat-card"><div class="l">Orphans</div><div class="v amber">4 + 4</div><div class="d">L₁ + L₂</div></div>
+    <div class="stat-card glow"><div class="l">Promotion queue</div><div class="v cyan">7</div><div class="d">awaiting greenlight</div></div>
+    <div class="stat-card"><div class="l">Compile-ready</div><div class="v green">3 / 11</div><div class="d">+1 today</div></div>
+  </div>
+
+  <div class="row r-3">
+    <div class="panel">
+      <div class="panel-h"><h3>AI suggestions</h3><span class="ai-tag">RANKED BY IMPACT</span></div>
+      <div>
+        <div class="ai-suggestion">
+          <div class="head"><span class="icon">★</span><span class="title">Resolve extraction/ collision</span><span class="conf">conf 0.93</span></div>
+          <div class="body">Two SPEC.md files exist for the same feature. Recommended: keep <code>docs/proposals/ad-creative-dna/features/extraction/SPEC.md</code> as primary, replace <code>apps/labeling-platform/features/extraction/SPEC.md</code> with a stub pointing to the primary. Eliminates 1 collision + ≈30 broken cross-references.</div>
+          <div class="actions"><button class="primary">Apply</button><button>Preview diff</button><button>Why?</button></div>
+        </div>
+        <div class="ai-suggestion">
+          <div class="head"><span class="icon">◆</span><span class="title">Generate IMPLEMENTED-BY manifest</span><span class="conf">conf 0.88</span></div>
+          <div class="body">5 spec-only features have no implementation declaration. I can produce starter manifests pointing to legacy L₂ paths where they exist. 3 candidates auto-detected.</div>
+          <div class="actions"><button class="primary">Generate</button><button>Show candidates</button></div>
+        </div>
+        <div class="ai-suggestion">
+          <div class="head"><span class="icon">▲</span><span class="title">Backfill L₁ for orphan apps</span><span class="conf">conf 0.71</span></div>
+          <div class="body">Three L₂-orphan features (<code>dashboard</code>, <code>label-curation</code>, <code>spend-prediction</code>) have no L₁ counterpart. I can draft minimal SPEC stubs by reading the existing code and tests.</div>
+          <div class="actions"><button class="primary">Draft stubs</button><button>Skip</button></div>
+        </div>
+        <div class="ai-suggestion">
+          <div class="head"><span class="icon">↻</span><span class="title">Greenlight queue · safe items</span><span class="conf">conf 0.66</span></div>
+          <div class="body">5 of 7 promotion-queue items have unambiguous (app, feature) identity. Greenlighting all 5 in one action will move them to L₁.</div>
+          <div class="actions"><button class="primary">Promote 5</button><button>Review each</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h3>Top failures</h3></div>
+      <table class="tbl">
+        <tr><td class="mono">labeling / extraction</td><td><span class="pill warn">COLLISION</span></td></tr>
+        <tr><td class="mono">labeling / dashboard</td><td><span class="pill fail">ORPHAN</span></td></tr>
+        <tr><td class="mono">labeling / curation</td><td><span class="pill fail">ORPHAN</span></td></tr>
+        <tr><td class="mono">spend-pred / prediction</td><td><span class="pill fail">ORPHAN</span></td></tr>
+        <tr><td class="mono">ad-creative / extraction</td><td><span class="pill info">MULTI</span></td></tr>
+        <tr><td class="mono">trama / producer</td><td><span class="pill hold">DRAFT</span></td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h3>Promotion queue</h3></div>
+      <table class="tbl">
+        <tr><td>→ trama / producer</td><td style="text-align:right; color: var(--text-2);">6d</td></tr>
+        <tr><td>→ labeling / extraction</td><td style="text-align:right; color: var(--text-2);">4d</td></tr>
+        <tr><td>→ labeling / extraction</td><td style="text-align:right; color: var(--text-2);">2d</td></tr>
+        <tr><td style="color: var(--amber);">→ _unknown</td><td style="text-align:right; color: var(--text-2);">11d</td></tr>
+        <tr><td>→ spend-pred / prediction</td><td style="text-align:right; color: var(--text-2);">3d</td></tr>
+        <tr><td>→ exp-dash / leaderboard</td><td style="text-align:right; color: var(--text-2);">1d</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

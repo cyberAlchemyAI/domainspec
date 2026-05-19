@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Insider · Journey Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #f6f8fc; --canvas: #ffffff; --grid: #eaeef6; --navy: #0B1F3A; --text: #0B1F3A; --text-2: #4a5b76; --muted: #8090ab; --rule: #e2e8f1; --cyan: #00D4D4; --cyan-deep: #00a0a0; --purple: #7B61FF; --green: #1ec896; --amber: #ff9f43; --red: #ff5c5c; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .frame { display: grid; grid-template-columns: 260px 1fr 320px; min-height: 100vh; }
+
+  nav { background: white; border-right: 1px solid var(--rule); padding: 24px 18px; }
+  nav .logo { display: flex; align-items: center; gap: 10px; padding-bottom: 24px; }
+  nav .logo .mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--cyan), var(--purple)); }
+  nav .logo .name { font-weight: 700; font-size: 16px; }
+  nav .logo .name small { display: block; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  nav h4 { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 16px 0 8px; }
+  nav .stage { padding: 10px 12px; border-radius: 8px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  nav .stage:hover { background: var(--bg); }
+  nav .stage.active { background: rgba(0,212,212,0.1); color: var(--cyan-deep); font-weight: 600; }
+  nav .stage .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
+  nav .stage.active .dot { background: var(--cyan); }
+  nav .stage .ct { margin-left: auto; font-size: 11px; color: var(--muted); }
+
+  main { padding: 28px 32px; }
+  .pagehead { display: flex; justify-content: space-between; align-items: end; padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+  .pagehead h1 { font-size: 22px; font-weight: 600; }
+  .pagehead .sub { color: var(--muted); margin-top: 4px; font-size: 13px; }
+  .pagehead .actions { display: flex; gap: 8px; }
+  .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--rule); background: white; color: var(--text); }
+  .btn.primary { background: var(--cyan); color: var(--navy); border-color: var(--cyan); }
+
+  .canvas { background: var(--canvas); border-radius: 14px; margin-top: 20px; padding: 32px; min-height: 520px; position: relative; background-image: radial-gradient(circle, var(--grid) 1.5px, transparent 1.5px); background-size: 24px 24px; border: 1px solid var(--rule); }
+  .stage-block { position: absolute; background: white; border: 2px solid var(--rule); border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px rgba(11, 31, 58, 0.04); width: 240px; }
+  .stage-block .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .stage-block .head .ttl { font-weight: 700; font-size: 13px; }
+  .stage-block .head .pill { padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
+  .stage-block .body { font-size: 11px; color: var(--text-2); }
+  .stage-block .ct { display: flex; gap: 14px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--rule); font-size: 11px; }
+  .stage-block .ct .v { font-weight: 700; color: var(--text); }
+  .stage-block .ct .l { color: var(--muted); }
+
+  .stage-block.residue { border-color: rgba(123, 97, 255, 0.4); }
+  .stage-block.residue .pill { background: rgba(123, 97, 255, 0.15); color: var(--purple); }
+  .stage-block.l1 { border-color: rgba(0, 212, 212, 0.5); }
+  .stage-block.l1 .pill { background: rgba(0, 212, 212, 0.15); color: var(--cyan-deep); }
+  .stage-block.l2 { border-color: rgba(30, 200, 150, 0.4); }
+  .stage-block.l2 .pill { background: rgba(30, 200, 150, 0.15); color: var(--green); }
+  .stage-block.gate { border-color: rgba(255, 92, 92, 0.4); background: rgba(255, 92, 92, 0.04); }
+  .stage-block.gate .pill { background: rgba(255, 92, 92, 0.15); color: var(--red); }
+
+  svg.connectors { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  .right-panel { background: white; border-left: 1px solid var(--rule); padding: 24px 20px; overflow-y: auto; }
+  .right-panel h3 { font-size: 13px; font-weight: 700; color: var(--text); padding-bottom: 8px; border-bottom: 1px solid var(--rule); margin-bottom: 12px; display: flex; justify-content: space-between; }
+  .right-panel h3 .tag { background: rgba(0,212,212,0.1); color: var(--cyan-deep); padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 600; }
+  .right-panel .row { padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 12px; }
+  .right-panel .row:last-child { border-bottom: none; }
+  .right-panel .row .src { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+  .right-panel .row .dst { font-weight: 600; font-size: 12px; margin-top: 2px; }
+  .right-panel .row .age { float: right; color: var(--muted); font-size: 11px; }
+
+  .stats-strip { display: flex; gap: 16px; margin-top: 20px; padding: 16px; background: linear-gradient(135deg, var(--navy), #1a2f5a); color: white; border-radius: 12px; }
+  .stats-strip .s { flex: 1; }
+  .stats-strip .s .v { font-size: 22px; font-weight: 700; }
+  .stats-strip .s .v.cyan { color: var(--cyan); }
+  .stats-strip .s .v.red { color: #ff8a8a; }
+  .stats-strip .s .l { font-size: 10px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <nav>
+    <div class="logo">
+      <span class="mark"></span>
+      <span class="name">Insider<small>CTM · CANVAS</small></span>
+    </div>
+    <h4>Lifecycle stages</h4>
+    <div class="stage active"><span class="dot"></span>Residue<span class="ct">12</span></div>
+    <div class="stage"><span class="dot"></span>Identity-earned<span class="ct">7</span></div>
+    <div class="stage"><span class="dot"></span>L₁ · Spec<span class="ct">11</span></div>
+    <div class="stage"><span class="dot"></span>Compile-ready<span class="ct">3</span></div>
+    <div class="stage"><span class="dot"></span>L₂ · Code<span class="ct">9</span></div>
+    <div class="stage"><span class="dot"></span>Mirror-paired<span class="ct">3</span></div>
+
+    <h4>Gates</h4>
+    <div class="stage"><span class="dot" style="background:var(--red)"></span>Promotion gate<span class="ct">manual</span></div>
+    <div class="stage"><span class="dot" style="background:var(--amber)"></span>Validator<span class="ct">FAIL</span></div>
+    <div class="stage"><span class="dot"></span>Test-derivability<span class="ct">passing</span></div>
+  </nav>
+
+  <main>
+    <div class="pagehead">
+      <div>
+        <h1>Lifecycle canvas — maestro-trama</h1>
+        <div class="sub">From residue to mirrored L₁/L₂ · today's flow</div>
+      </div>
+      <div class="actions">
+        <button class="btn">+ New stage</button>
+        <button class="btn primary">Run validator</button>
+      </div>
+    </div>
+
+    <div class="canvas">
+      <svg class="connectors" viewBox="0 0 900 540" preserveAspectRatio="none">
+        <defs>
+          <marker id="ar-cyan" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#00D4D4"/></marker>
+          <marker id="ar-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff5c5c"/></marker>
+        </defs>
+        <path d="M260,90 C 320,90 320,260 380,260" stroke="#7B61FF" stroke-width="2" fill="none" stroke-dasharray="5 3"/>
+        <path d="M260,260 L 380,260" stroke="#00D4D4" stroke-width="2.5" fill="none" marker-end="url(#ar-cyan)"/>
+        <path d="M620,260 L 700,260" stroke="#00D4D4" stroke-width="2.5" fill="none" marker-end="url(#ar-cyan)"/>
+        <path d="M260,430 C 320,430 320,260 380,260" stroke="#7B61FF" stroke-width="2" fill="none" stroke-dasharray="5 3"/>
+        <text x="320" y="245" font-family="Inter" font-size="10" font-weight="600" fill="#00a0a0">PROMOTE</text>
+        <text x="650" y="245" font-family="Inter" font-size="10" font-weight="600" fill="#00a0a0">COMPILE · Δ</text>
+        <text x="295" y="170" font-family="Inter" font-size="10" font-weight="600" fill="#7B61FF">identity earned</text>
+      </svg>
+
+      <div class="stage-block residue" style="top: 50px; left: 20px;">
+        <div class="head"><span class="ttl">Residue</span><span class="pill">12 items</span></div>
+        <div class="body">Pre-structural work. No (app, feature) identity yet.</div>
+        <div class="ct"><span><span class="l">avg age</span> <span class="v">8d</span></span><span><span class="l">oldest</span> <span class="v">26d</span></span></div>
+      </div>
+
+      <div class="stage-block residue" style="top: 220px; left: 20px;">
+        <div class="head"><span class="ttl">Identity-earned</span><span class="pill">7 items</span></div>
+        <div class="body">Knows its <code>(app, feature)</code>. Awaiting manual greenlight.</div>
+        <div class="ct"><span><span class="l">in queue</span> <span class="v">7</span></span><span><span class="l">+today</span> <span class="v" style="color:var(--green);">+1</span></span></div>
+      </div>
+
+      <div class="stage-block residue" style="top: 390px; left: 20px;">
+        <div class="head"><span class="ttl">_unknown/ staging</span><span class="pill">3 items</span></div>
+        <div class="body">Partial identity (app known, feature TBD or vice versa).</div>
+        <div class="ct"><span><span class="l">oldest</span> <span class="v" style="color:var(--amber);">11d</span></span></div>
+      </div>
+
+      <div class="stage-block l1" style="top: 220px; left: 380px;">
+        <div class="head"><span class="ttl">L₁ · /domain_knowledge</span><span class="pill">11 features</span></div>
+        <div class="body">Specs, invariants, models under <code>apps/X/features/Y/</code>.</div>
+        <div class="ct"><span><span class="l">spec-only</span> <span class="v">6</span></span><span><span class="l">ready</span> <span class="v" style="color:var(--green);">3</span></span></div>
+      </div>
+
+      <div class="stage-block l2" style="top: 220px; left: 700px;">
+        <div class="head"><span class="ttl">L₂ · /implementation</span><span class="pill">9 features</span></div>
+        <div class="body">Code, tests, ops. Mirrored under same grammar.</div>
+        <div class="ct"><span><span class="l">paired</span> <span class="v" style="color:var(--green);">3</span></span><span><span class="l">orphan L₂</span> <span class="v" style="color:var(--red);">4</span></span></div>
+      </div>
+
+      <div class="stage-block gate" style="top: 50px; left: 380px;">
+        <div class="head"><span class="ttl">⚠ Validator · FAIL</span><span class="pill">50+ broken</span></div>
+        <div class="body">50+ broken cross-references. 8 orphans. 2 collisions. Blocking compilation.</div>
+        <div class="ct"><span><span class="l">last run</span> <span class="v">13s ago</span></span></div>
+      </div>
+
+      <div class="stage-block gate" style="top: 50px; left: 700px;">
+        <div class="head"><span class="ttl">⚠ Δ admissibility</span><span class="pill">T0' deferred</span></div>
+        <div class="body">Compilation gated on structural completeness + test-derivability today. T0' aspiration.</div>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      <div class="s"><div class="v red">50+</div><div class="l">broken cross-links</div></div>
+      <div class="s"><div class="v">4 + 4</div><div class="l">orphans · L₁ + L₂</div></div>
+      <div class="s"><div class="v">2</div><div class="l">name collisions</div></div>
+      <div class="s"><div class="v cyan">7</div><div class="l">promotion queue</div></div>
+      <div class="s"><div class="v cyan">3/11</div><div class="l">compile-ready</div></div>
+    </div>
+
+  </main>
+
+  <aside class="right-panel">
+    <h3>Promotion queue<span class="tag">7 READY</span></h3>
+    <div class="row"><span class="age">6d</span><div class="src">research/notes/trama-decomp.md</div><div class="dst">→ trama / producer</div></div>
+    <div class="row"><span class="age">4d</span><div class="src">research/sessions/extraction-arb.md</div><div class="dst">→ labeling / extraction</div></div>
+    <div class="row"><span class="age">2d</span><div class="src">research/lenses/exp-v1-takeaways.md</div><div class="dst">→ labeling / extraction</div></div>
+    <div class="row"><span class="age">11d</span><div class="src">research/biz-philosopher/manifesto-iii.md</div><div class="dst" style="color: var(--amber);">→ _unknown</div></div>
+    <div class="row"><span class="age">3d</span><div class="src">research/notes/spend-data-contract.md</div><div class="dst">→ spend-pred / prediction</div></div>
+
+    <h3 style="margin-top:24px;">Today<span class="tag">live</span></h3>
+    <div class="row"><div class="src">13:29 · discovery committed</div><div class="dst">cross-tree-mirroring · 6 files</div></div>
+    <div class="row"><div class="src">12:14 · lens consolidated</div><div class="dst">adversarial · 5 attacks landed</div></div>
+    <div class="row"><div class="src">12:08 · validator</div><div class="dst" style="color: var(--amber);">50 broken refs</div></div>
+    <div class="row"><div class="src">11:45 · collision</div><div class="dst" style="color: var(--red);">extraction × 2</div></div>
+    <div class="row"><div class="src">10:45 · lens</div><div class="dst">theorem · T0' deferred</div></div>
+  </aside>
+
+</div>
+</body>
+</html>

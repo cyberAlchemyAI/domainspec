@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Editorial Newsprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+Pro:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #f6f1e8; --ink: #1a1612; --rule: #1a1612; --muted: #6b5d50; --accent: #8b1a1a; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Source Serif Pro', Georgia, serif; font-size: 14px; line-height: 1.55; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 48px 56px; }
+
+  .masthead { border-bottom: 4px double var(--ink); padding-bottom: 14px; text-align: center; }
+  .masthead .top { display: flex; justify-content: space-between; align-items: baseline; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid var(--rule); margin-bottom: 14px; }
+  .masthead h1 { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 72px; letter-spacing: -1px; line-height: 0.95; }
+  .masthead .deck { font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; color: var(--muted); margin-top: 10px; }
+  .masthead .byline { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+
+  .columns { column-count: 3; column-gap: 32px; column-rule: 1px solid var(--rule); padding-top: 32px; }
+  .columns > * { break-inside: avoid-column; }
+  .lede { font-size: 16px; line-height: 1.6; margin-bottom: 18px; }
+  .lede::first-letter { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 64px; float: left; line-height: 0.85; padding: 6px 8px 0 0; color: var(--accent); }
+  p { margin-bottom: 14px; }
+
+  h2 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 22px; margin-top: 20px; margin-bottom: 8px; line-height: 1.1; }
+  h2.section-break { text-align: center; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 8px 0; margin: 20px 0 16px; column-span: all; font-family: 'Source Serif Pro', serif; font-weight: 600; }
+
+  .sib { border-top: 2px solid var(--ink); padding-top: 10px; margin-bottom: 18px; }
+  .sib .name { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: var(--accent); }
+  .sib .role { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+  .pull { font-family: 'Playfair Display', serif; font-style: italic; font-size: 22px; line-height: 1.3; color: var(--ink); border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); padding: 14px 0; margin: 14px 0; text-align: center; column-span: all; }
+
+  .ops-grid { column-span: all; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 16px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 16px 0; }
+  .ops-grid h3 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px; border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
+  .ops-grid .formula { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 10px; }
+  .ops-grid p { font-size: 14px; }
+
+  .ticker { column-span: all; background: var(--ink); color: var(--paper); padding: 12px 16px; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; display: flex; gap: 32px; }
+  .ticker span b { color: #d6a04a; }
+
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: rgba(139, 26, 26, 0.08); padding: 1px 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div class="top"><span>Vol I, No. 03</span><span>The DomainSpec Chronicle</span><span>2026-05-18</span></div>
+    <h1>The Three-Sibling Plan</h1>
+    <div class="deck">A structural prescription for repos that wish to force LLM agents to write the right code — by making the path from any code edit to its governing spec mechanically computable.</div>
+    <div class="byline">— Filed from the Vault · Status: Exploratory · Pilot: maestro-trama</div>
+  </div>
+
+  <div class="columns">
+
+    <p class="lede">For years the framework asked a single engineering question: <em>can I force the model to write the right code?</em> The category theory came later, as the apparatus to make "right" checkable. Last week the question came back in a sharp form. An agent editing <code>apps/labeling-platform/features/extraction/SPEC.md</code> invented the path <code>../../../../docs/features/...</code> — a path that does not exist. Across the repo, fifty-plus broken cross-references of the same shape were waiting to be found.</p>
+
+    <p>The failure is not aesthetic. It is the same failure mode the framework exists to prevent, performed on the framework's own substrate. A repository whose own structure cannot guide a careful agent has no business demanding the agent be careful.</p>
+
+    <p>This discovery proposes a structural fix: three top-level siblings, with the two structured siblings sharing a feature grammar so any path on one side maps mechanically to the other.</p>
+
+    <h2 class="section-break">The Three Siblings</h2>
+
+    <div class="sib">
+      <div class="name">/research</div>
+      <div class="role">Residue · sibling, not peer</div>
+      <p>Pre-structural work that has not yet earned an <code>(app, feature)</code> identity. Sessions, robot-talks, lenses-in-progress, ideas without a home. Forcing it into the structured grammar would <em>invent</em> identity rather than earn it.</p>
+    </div>
+
+    <div class="sib">
+      <div class="name">/domain_knowledge</div>
+      <div class="role">L₁ · structured</div>
+      <p>Specs, discoveries, invariants. Structured under <code>apps/X/features/Y/{…}</code>. Every artifact has a known identity.</p>
+    </div>
+
+    <div class="sib">
+      <div class="name">/implementation</div>
+      <div class="role">L₂ · mirrored</div>
+      <p>Code, tests, ops. Mirrored under the <em>same</em> grammar. The mirror is the precondition for a computable spec lookup.</p>
+    </div>
+
+    <p class="pull">"Structure provides the signal. The validator provides the enforcement. The coercion of the LLM is the long-term hypothesis this enables."</p>
+
+    <div class="ops-grid">
+      <div>
+        <h3>Promotion</h3>
+        <div class="formula">residue → L₁</div>
+        <p><b>Necessary:</b> earned <code>(app, feature)</code> identity — the author can name them without inventing them.<br><b>Sufficient:</b> manual greenlight from the operator.</p>
+        <p>Partial identity (knows the app, not the feature) files under <code>features/_unknown/</code> and promotes by frontmatter edit. Other signals — stability, citation, confidence — are observational, not gates.</p>
+      </div>
+      <div>
+        <h3>Compilation</h3>
+        <div class="formula">L₁ → L₂</div>
+        <p><b>Gate:</b> the path-coherence validator (generalizing the vault's <code>layer:</code> field). Every L₂ feature must have an L₁ counterpart; every L₁ feature must declare its implementations or carry <code>spec-only</code>.</p>
+        <p><b>Plus:</b> downstream test-derivability. If tests cannot be derived deterministically from the spec, the spec is underspecified and compilation is blocked. T0' is the long-term aspiration.</p>
+      </div>
+    </div>
+
+    <h2 class="section-break">From the Pilot</h2>
+
+    <p>Maestro-trama is the test bed. Its current state is the discovery's worked example: four proposal-orphans, four app-orphans, the <code>extraction/</code> name collision created in a single commit on 2026-05-16 with no arbitration, and the fifty-plus broken cross-references discovered while patching that very file.</p>
+
+    <p>The migration is costed at twenty to thirty hours — roughly two times the prior <code>folder-structure-fractal</code> vault migration. Most of it is link rewriting; the rest is the unresolved <code>business-philosopher/</code> question and the <code>extraction/</code> arbitration that should have happened a week ago.</p>
+
+    <div class="ticker">
+      <span><b>50+</b> broken cross-links</span>
+      <span><b>4+4</b> orphans (proposals + apps)</span>
+      <span><b>2</b> drifting <code>extraction/</code> specs</span>
+      <span><b>20–30h</b> pilot migration estimate</span>
+    </div>
+
+    <h2 class="section-break">What This Is Not</h2>
+
+    <p>This discovery does not claim that structure forces LLM correctness. That stronger claim — the one that would justify the whole apparatus — is parked behind a measurement plan we do not yet have. The validator delivers enforcement; whether enforcement plus structural symmetry actually reduces the agent error rate is an empirical question.</p>
+
+    <p>Until that measurement lands, the discovery is a navigation aid with a coercion <em>hypothesis</em> behind it, not a coercion result. The adversarial review forced this honesty: the prior <code>folder-structure-fractal</code> work was diminished by undefended theoretical claims, and we have no interest in repeating that error.</p>
+
+    <p>The full body lives at <code>vault/discovery/cross-tree-mirroring-for-llm-coercion/discovery.md</code>. The brief that started this conversation, at <code>maestro-trama/docs/repo-mirroring-problem.md</code>, can now be marked superseded.</p>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Mathematical Manuscript</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Latin+Modern+Math&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #fbfaf6; --ink: #1a1812; --rule: #c8c2b0; --accent: #6b1818; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Crimson Text', 'Latin Modern Roman', Garamond, serif; font-size: 16px; line-height: 1.55; }
+  .page { max-width: 760px; margin: 0 auto; padding: 64px 48px 96px; }
+
+  .head { text-align: center; padding-bottom: 32px; border-bottom: 1px solid var(--ink); }
+  .meta { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #888; }
+  h1 { font-size: 34px; font-weight: 700; margin-top: 12px; line-height: 1.2; }
+  h1 .small { font-size: 22px; font-style: italic; font-weight: 400; display: block; margin-top: 4px; }
+  .authors { font-style: italic; font-size: 15px; margin-top: 16px; }
+  .date { font-size: 13px; color: #555; margin-top: 4px; }
+
+  .abstract { padding: 24px 32px; margin-top: 32px; border-left: 3px solid var(--accent); background: rgba(107, 24, 24, 0.03); font-size: 14px; }
+  .abstract::before { content: "Abstract."; font-weight: 700; font-style: italic; margin-right: 6px; }
+
+  section { margin-top: 32px; }
+  h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  h2 .num { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 16px; font-weight: 700; font-style: italic; margin-top: 18px; margin-bottom: 8px; }
+
+  p { margin-bottom: 12px; text-align: justify; text-indent: 0; }
+  p + p { text-indent: 1.5em; }
+
+  .definition, .theorem, .remark, .proposition { padding: 14px 18px; margin: 16px 0; border-left: 3px solid var(--accent); background: rgba(107, 24, 24, 0.03); font-size: 15px; }
+  .definition::before { content: "Definition " attr(data-n) "."; font-weight: 700; font-style: italic; margin-right: 6px; color: var(--accent); }
+  .theorem::before { content: "Theorem " attr(data-n) "."; font-weight: 700; font-style: italic; margin-right: 6px; color: var(--accent); }
+  .proposition::before { content: "Proposition " attr(data-n) "."; font-weight: 700; font-style: italic; margin-right: 6px; color: var(--accent); }
+  .remark::before { content: "Remark " attr(data-n) "."; font-weight: 700; font-style: italic; margin-right: 6px; color: var(--accent); }
+
+  .math { font-family: 'Latin Modern Math', 'Crimson Text', serif; font-style: italic; }
+  code, .mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-style: normal; background: rgba(107, 24, 24, 0.06); padding: 1px 4px; }
+
+  .diagram { text-align: center; margin: 24px 0; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8; }
+  .diagram .row { display: flex; align-items: center; justify-content: center; gap: 20px; }
+  .diagram .node { padding: 8px 14px; border: 1px solid var(--ink); }
+  .diagram .arrow { font-style: italic; font-family: 'Crimson Text', serif; }
+
+  ol.cond { padding-left: 28px; margin: 8px 0; }
+  ol.cond li { margin: 4px 0; }
+
+  .refs { margin-top: 32px; font-size: 13px; padding-top: 16px; border-top: 1px solid var(--rule); }
+  .refs h2 { font-size: 15px; }
+  .refs ol { padding-left: 24px; }
+  .refs li { margin-bottom: 6px; font-size: 13px; }
+
+  .pagenum { text-align: center; margin-top: 32px; font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="head">
+    <div class="meta">DomainSpec · Vault · Discovery 0.1.0</div>
+    <h1>Cross-Tree Mirroring as a Coercion Mechanism<span class="small">for LLM-Authored Code</span></h1>
+    <div class="authors">Operator and Robot, working session 2026-05-18</div>
+    <div class="date">vault/discovery/cross-tree-mirroring-for-llm-coercion</div>
+  </div>
+
+  <div class="abstract">
+    We propose a three-sibling top-level repository structure (<span class="mono">/research</span>, <span class="mono">/domain_knowledge</span>, <span class="mono">/implementation</span>) in which the two structured siblings share a feature-grammar so that for any artifact in one tree, the path of its counterpart in the other is computable rather than searchable. We distinguish two operations — <em>promotion</em>, taking residue into structure, and <em>compilation</em>, the categorical Δ taking <span class="math">L₁</span> into <span class="math">L₂</span> — with separate admissibility conditions. Adversarial review of the proposal forced the demotion of the strong "structure forces correctness" claim to "structure provides a computable spec lookup, enforced by a path-coherence validator," recoverable upon falsifiable measurement. Scope is narrowed to <span class="mono">/domainspec</span> and <span class="mono">/maestro-trama</span>.
+  </div>
+
+  <section>
+    <h2><span class="num">§1</span>Motivation</h2>
+    <p>The originating engineering question of the framework is whether one can force a language model to write the right code. The categorical apparatus — the functor <span class="math">Δ : L₁ → L₂</span>, the fractality predicates, the residue calculus — was developed afterward, as the apparatus by which "right" becomes checkable and "force" becomes mechanical.</p>
+    <p>The pilot repository <span class="mono">maestro-trama</span> exposes the failure mode the framework exists to prevent. An agent editing <span class="mono">apps/labeling-platform/features/extraction/SPEC.md</span> referenced <span class="mono">../../../../docs/features/...</span> — a path that does not resolve. Fifty-plus broken cross-links of the same shape exist across the repository. The failure is structural: the agent had no computable path from its edit site to the spec that governs it.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§2</span>Definitions and Structure</h2>
+
+    <div class="definition" data-n="2.1">A <em>sibling tree</em> is a top-level directory in the repository. We propose three siblings: <span class="mono">/research</span>, <span class="mono">/domain_knowledge</span>, and <span class="mono">/implementation</span>.</div>
+
+    <div class="definition" data-n="2.2">The <em>feature grammar</em> is the path schema <span class="mono">apps/X/features/Y/{aspect}</span> shared between <span class="mono">/domain_knowledge</span> and <span class="mono">/implementation</span>. The sibling <span class="mono">/research</span> does not obey this grammar.</div>
+
+    <div class="proposition" data-n="2.3">The two structured siblings form an isomorphism on objects at the (app, feature) level. That is, the function <span class="math">π : implementation → domain_knowledge</span> defined by replacement of top-level prefix is a bijection on the set of paths obeying the feature grammar, modulo the multi-implementation case treated in §3.</div>
+
+    <div class="diagram">
+      <div class="row">
+        <div class="node">/domain_knowledge/apps/X/features/Y/</div>
+        <span class="arrow">⟷ Δ ⟷</span>
+        <div class="node">/implementation/apps/X/features/Y/</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">§3</span>Multi-Implementation</h2>
+    <p>The strict bijection of Proposition 2.3 fails when a single specification is implemented by more than one application. In <span class="mono">maestro-trama</span>, the feature <span class="mono">extraction</span> is owned by the proposal <span class="mono">ad-creative-dna</span> (L₁) and instantiated by the application <span class="mono">labeling-platform</span> (L₂).</p>
+    <div class="definition" data-n="3.1">A spec is <em>multi-implemented</em> when its <span class="mono">IMPLEMENTED-BY.md</span> manifest names more than one path in <span class="mono">/implementation/apps/</span>. Each named implementation carries a reciprocal <span class="mono">IMPLEMENTS.md</span> pointing back to the spec.</div>
+    <p>Under this convention, specs are <em>primary</em>: code is an instance of a spec, not its peer. The functor Δ thereby admits one-to-many on objects.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§4</span>Operations</h2>
+
+    <div class="definition" data-n="4.1">A <em>promotion</em> is the operation taking a residue artifact to an L₁ artifact in place — an identity change without copy or compilation. Its admissibility conditions are:</div>
+    <ol class="cond">
+      <li><b>Necessary:</b> the artifact has an earned (app, feature) identity.</li>
+      <li><b>Sufficient:</b> manual greenlight from the operator.</li>
+    </ol>
+    <p>Partial identity (knowledge of app without feature, or feature without app) admits a relaxed form in which the artifact files under <span class="mono">features/_unknown/</span> and promotes by frontmatter edit when the missing component earns itself.</p>
+
+    <div class="definition" data-n="4.2">A <em>compilation</em> is the application of the functor <span class="math">Δ : L₁ → L₂</span>, generating a new artifact in the mirror tree. Its admissibility is gated by two conditions:</div>
+    <ol class="cond">
+      <li>The structural-completeness validator (§5) accepts the L₁ source.</li>
+      <li>The test-derivation procedure produces tests deterministically (so the spec is not underspecified).</li>
+    </ol>
+
+    <div class="remark" data-n="4.3">The T0' obligations of <span class="mono">DomainSpec.lean</span> — determinism, image-validity, entropy-bound — are the formal compilation admissibility conditions. They are deferred here as long-term aspiration; the structural validator suffices for the present discovery.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">§5</span>Validator</h2>
+    <p>Let <span class="math">P</span> denote the set of all file paths in the repository. The path-coherence validator is the predicate <span class="math">V : P → {accept, reject}</span> defined by:</p>
+    <ol class="cond">
+      <li><span class="math">V(p) = reject</span> if <span class="math">p ∈ /implementation/apps/X/features/Y/</span> and there is no <span class="math">q ∈ /domain_knowledge/apps/X/features/Y/</span>, unless <span class="mono">IMPLEMENTS.md</span> exists.</li>
+      <li><span class="math">V(p) = reject</span> if <span class="math">p ∈ /domain_knowledge/apps/X/features/Y/SPEC.md</span> and neither <span class="mono">IMPLEMENTED-BY.md</span> nor <span class="mono">status: spec-only</span> is declared.</li>
+      <li><span class="math">V(p) = reject</span> if <span class="math">p ∉ /research/</span> and <span class="math">p</span> does not parse as a tuple <span class="math">(layer, app, feature, aspect)</span>.</li>
+    </ol>
+    <p>The validator is implemented as a pre-commit hook and CI gate. This is the enforcement layer; the coercion claim is recoverable only after measurement (see §6).</p>
+  </section>
+
+  <section>
+    <h2><span class="num">§6</span>Open Question — Falsifiability of the Coercion Claim</h2>
+    <p>The discovery does not claim that structural symmetry forces LLM correctness. That claim is held in reserve, pending a measurement protocol. The candidate protocol instruments N model-authored edits in <span class="mono">maestro-trama</span> pre- and post-migration, measuring the rate of broken cross-references and the rate of spec-divergent code. Should the structural mirror fail to move these rates, the warrant collapses and the proposal reduces to a navigation aid.</p>
+  </section>
+
+  <div class="refs">
+    <h2>References</h2>
+    <ol>
+      <li><em>folder-structure-fractal/discovery.md</em>. Prior vault-internal discovery. domainspec/vault/discovery/.</li>
+      <li><em>reflection-tower.md</em>. Two-layer formalism; residue as complement. domainspec-theorem/docs/.</li>
+      <li><em>DomainSpec.lean</em>. T0' obligations; left Kan extension of Δ. domainspec-theorem/lean-formalization/.</li>
+      <li><em>categorical-extraction-schema.md</em>. JSON diagnostic shape for compilation admissibility. domainspec-theorem/docs/.</li>
+      <li><em>repo-mirroring-problem.md</em>. The brief that prompted the discovery. maestro-trama/docs/.</li>
+    </ol>
+  </div>
+
+  <div class="pagenum">— 06 of 10 —</div>
+
+</div>
+</body>
+</html>

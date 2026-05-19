@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Mission Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #0a0d12; --panel: #11161e; --panel2: #161c26; --rule: #222a36; --text: #d8dee8; --muted: #6b7588; --green: #4ce58a; --amber: #f5b942; --red: #ff5a5a; --blue: #5ab8ff; --magenta: #c25aff; }
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.5; padding: 12px; }
+  .grid { display: grid; grid-template-columns: 220px 1fr 280px; grid-template-rows: 60px 1fr 1fr 140px; gap: 8px; height: calc(100vh - 24px); }
+
+  .panel { background: var(--panel); border: 1px solid var(--rule); padding: 10px 12px; overflow: hidden; }
+  .panel > h3 { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--rule); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .panel > h3 .tag { color: var(--blue); font-weight: 500; letter-spacing: 1px; }
+
+  .top { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--panel); border: 1px solid var(--rule); }
+  .top .logo { font-weight: 700; color: var(--green); letter-spacing: 2px; }
+  .top .status { display: flex; gap: 18px; font-size: 11px; }
+  .top .status .b { color: var(--text); }
+  .top .status .l { color: var(--muted); margin-right: 6px; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+  .top .clock { color: var(--green); font-weight: 700; letter-spacing: 2px; }
+
+  .side { grid-column: 1; grid-row: 2 / 5; }
+  .side .kpi { padding: 12px 0; border-bottom: 1px dashed var(--rule); }
+  .side .kpi:last-child { border-bottom: none; }
+  .side .kpi .v { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .side .kpi .v.red { color: var(--red); }
+  .side .kpi .v.amber { color: var(--amber); }
+  .side .kpi .v.green { color: var(--green); }
+  .side .kpi .l { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .main { grid-column: 2; grid-row: 2 / 4; }
+  .matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 4px; }
+  .cell { background: var(--panel2); border: 1px solid var(--rule); padding: 8px; font-size: 11px; min-height: 64px; position: relative; }
+  .cell .name { font-weight: 700; color: var(--text); font-size: 11px; }
+  .cell .sub { color: var(--muted); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
+  .cell .state { position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 1px 6px; letter-spacing: 1px; font-weight: 700; }
+  .cell .state.PASS { background: rgba(76, 229, 138, 0.15); color: var(--green); border: 1px solid var(--green); }
+  .cell .state.WARN { background: rgba(245, 185, 66, 0.15); color: var(--amber); border: 1px solid var(--amber); }
+  .cell .state.FAIL { background: rgba(255, 90, 90, 0.15); color: var(--red); border: 1px solid var(--red); }
+  .cell .state.HOLD { background: rgba(90, 184, 255, 0.15); color: var(--blue); border: 1px solid var(--blue); }
+
+  .right { grid-column: 3; grid-row: 2 / 4; }
+  .queue { display: flex; flex-direction: column; gap: 6px; }
+  .qitem { background: var(--panel2); padding: 8px 10px; border-left: 3px solid var(--magenta); font-size: 11px; }
+  .qitem .path { color: var(--text); font-size: 10px; word-break: break-all; }
+  .qitem .ident { font-family: 'Inter', sans-serif; font-size: 9px; color: var(--blue); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .qitem .age { color: var(--muted); font-size: 9px; float: right; }
+
+  .stream { grid-column: 2; grid-row: 4 / 5; }
+  .stream .row { padding: 4px 0; border-bottom: 1px dashed var(--rule); display: flex; gap: 12px; font-size: 11px; }
+  .stream .row .t { color: var(--muted); }
+  .stream .row .s { padding: 0 4px; font-weight: 700; font-size: 9px; }
+  .stream .row .s.OK { color: var(--green); }
+  .stream .row .s.WRN { color: var(--amber); }
+  .stream .row .s.ERR { color: var(--red); }
+  .stream .row .s.INF { color: var(--blue); }
+
+  .gauge { grid-column: 3; grid-row: 4 / 5; }
+  .gauge .ring { display: flex; align-items: center; justify-content: space-around; padding-top: 6px; }
+  .gauge .ring .g { text-align: center; }
+  .gauge .ring .g svg { width: 70px; height: 70px; }
+  .gauge .ring .g .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .blink { animation: blink 1.4s infinite; }
+  @keyframes blink { 50% { opacity: 0.4; } }
+</style>
+</head>
+<body>
+<div class="grid">
+
+  <div class="top">
+    <div class="logo">▸ CTM · MISSION CONTROL</div>
+    <div class="status">
+      <span><span class="l">build</span><span class="b">v0.1.0</span></span>
+      <span><span class="l">repo</span><span class="b">maestro-trama</span></span>
+      <span><span class="l">validator</span><span class="b" style="color: var(--red);">● FAIL</span></span>
+      <span><span class="l">queue</span><span class="b">7 awaiting</span></span>
+    </div>
+    <div class="clock blink">2026-05-18 · 13:29:04 UTC</div>
+  </div>
+
+  <div class="panel side">
+    <h3>Vitals <span class="tag">REAL-TIME</span></h3>
+    <div class="kpi"><div class="v red">50+</div><div class="l">broken cross-links</div></div>
+    <div class="kpi"><div class="v amber">4+4</div><div class="l">orphans · prop · app</div></div>
+    <div class="kpi"><div class="v amber">2</div><div class="l">name collisions</div></div>
+    <div class="kpi"><div class="v">7</div><div class="l">promotion queue</div></div>
+    <div class="kpi"><div class="v green">3 / 11</div><div class="l">L₁ compile-ready</div></div>
+    <div class="kpi"><div class="v">0</div><div class="l">policy in repo</div></div>
+  </div>
+
+  <div class="panel main">
+    <h3>Validator Matrix · L₁ ↔ L₂ <span class="tag">11 FEATURES</span></h3>
+    <div class="matrix">
+      <div class="cell"><span class="state FAIL">FAIL</span><div class="name">extraction</div><div class="sub">labeling-platform</div></div>
+      <div class="cell"><span class="state FAIL">FAIL</span><div class="name">dashboard</div><div class="sub">labeling-platform</div></div>
+      <div class="cell"><span class="state FAIL">FAIL</span><div class="name">label-curation</div><div class="sub">labeling-platform</div></div>
+      <div class="cell"><span class="state WARN">WARN</span><div class="name">extraction</div><div class="sub">ad-creative-dna</div></div>
+      <div class="cell"><span class="state HOLD">SPEC</span><div class="name">extraction</div><div class="sub">creative-cat-mgmt</div></div>
+      <div class="cell"><span class="state HOLD">SPEC</span><div class="name">policy</div><div class="sub">mutation-strategy</div></div>
+
+      <div class="cell"><span class="state HOLD">SPEC</span><div class="name">domain</div><div class="sub">mutation-strategy</div></div>
+      <div class="cell"><span class="state HOLD">DRAFT</span><div class="name">producer</div><div class="sub">trama</div></div>
+      <div class="cell"><span class="state FAIL">FAIL</span><div class="name">spend-prediction</div><div class="sub">spend-predictor</div></div>
+      <div class="cell"><span class="state PASS">LEGACY</span><div class="name">retrieval</div><div class="sub">creatives-harn.</div></div>
+      <div class="cell"><span class="state PASS">LEGACY</span><div class="name">core</div><div class="sub">creative-analysis</div></div>
+      <div class="cell"><span class="state PASS">PASS</span><div class="name">orchestrator</div><div class="sub">creative-analysis</div></div>
+
+      <div class="cell"><span class="state PASS">PASS</span><div class="name">validator</div><div class="sub">creative-analysis</div></div>
+      <div class="cell"><span class="state PASS">PASS</span><div class="name">interviewer</div><div class="sub">creative-analysis</div></div>
+      <div class="cell"><span class="state WARN">WARN</span><div class="name">view-leaderboard</div><div class="sub">experiment-dash</div></div>
+      <div class="cell"><span class="state HOLD">SPEC</span><div class="name">attribution</div><div class="sub">creative-cat-mgmt</div></div>
+      <div class="cell"><span class="state HOLD">DRAFT</span><div class="name">surfacing</div><div class="sub">creative-cat-mgmt</div></div>
+      <div class="cell"><span class="state PASS">PASS</span><div class="name">scaffold</div><div class="sub">platform-skeleton</div></div>
+    </div>
+  </div>
+
+  <div class="panel right">
+    <h3>Promotion Queue <span class="tag">7 READY</span></h3>
+    <div class="queue">
+      <div class="qitem"><span class="age">6d</span><div class="path">research/notes/2026-05-12-trama-decomp.md</div><div class="ident">→ trama / producer</div></div>
+      <div class="qitem"><span class="age">4d</span><div class="path">research/sessions/2026-05-14-extraction-arb.md</div><div class="ident">→ labeling-platform / extraction</div></div>
+      <div class="qitem"><span class="age">2d</span><div class="path">research/lenses/labeling-exp-v1-takeaways.md</div><div class="ident">→ labeling-platform / extraction</div></div>
+      <div class="qitem" style="border-left-color: var(--amber);"><span class="age">11d</span><div class="path">research/biz-philosopher/manifesto-iii.md</div><div class="ident">→ _unknown / _unknown</div></div>
+      <div class="qitem"><span class="age">9d</span><div class="path">research/robot-talks/mutation-tensions.md</div><div class="ident">→ mutation-strategy / policy</div></div>
+      <div class="qitem"><span class="age">3d</span><div class="path">research/notes/spend-data-contract.md</div><div class="ident">→ spend-predictor / spend-prediction</div></div>
+      <div class="qitem"><span class="age">1d</span><div class="path">research/sessions/dashboard-research.md</div><div class="ident">→ experiment-dash / view-leaderboard</div></div>
+    </div>
+  </div>
+
+  <div class="panel stream">
+    <h3>Event Stream <span class="tag">LIVE</span></h3>
+    <div class="row"><span class="t">13:29:04</span><span class="s INF">INF</span><span>discovery.write · cross-tree-mirroring-for-llm-coercion · 6 files committed</span></div>
+    <div class="row"><span class="t">13:14:22</span><span class="s OK">OK </span><span>lens.adversarial · 5 attacks landed · concessions folded into D-1..D-6</span></div>
+    <div class="row"><span class="t">12:08:19</span><span class="s WRN">WRN</span><span>validator.run · maestro-trama · 50 broken refs detected · 8 orphans</span></div>
+    <div class="row"><span class="t">11:45:01</span><span class="s ERR">ERR</span><span>collision.detect · labeling-platform/extraction ↔ ad-creative-dna/extraction</span></div>
+    <div class="row"><span class="t">10:45:33</span><span class="s INF">INF</span><span>lens.theorem-anchors · T0' deferred to long-term aspiration</span></div>
+    <div class="row"><span class="t">10:12:08</span><span class="s INF">INF</span><span>lens.vault-prior-art · OQ-4 confirmed unresolved</span></div>
+  </div>
+
+  <div class="panel gauge">
+    <h3>Coverage <span class="tag">L₁ × L₂</span></h3>
+    <div class="ring">
+      <div class="g">
+        <svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="none" stroke="#222a36" stroke-width="6"/><circle cx="35" cy="35" r="28" fill="none" stroke="#4ce58a" stroke-width="6" stroke-dasharray="55 176" transform="rotate(-90 35 35)"/><text x="35" y="40" text-anchor="middle" font-size="14" font-weight="700" fill="#4ce58a">31%</text></svg>
+        <div class="lbl">paths paired</div>
+      </div>
+      <div class="g">
+        <svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="none" stroke="#222a36" stroke-width="6"/><circle cx="35" cy="35" r="28" fill="none" stroke="#f5b942" stroke-width="6" stroke-dasharray="32 176" transform="rotate(-90 35 35)"/><text x="35" y="40" text-anchor="middle" font-size="14" font-weight="700" fill="#f5b942">18%</text></svg>
+        <div class="lbl">spec-only</div>
+      </div>
+      <div class="g">
+        <svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="none" stroke="#222a36" stroke-width="6"/><circle cx="35" cy="35" r="28" fill="none" stroke="#ff5a5a" stroke-width="6" stroke-dasharray="90 176" transform="rotate(-90 35 35)"/><text x="35" y="40" text-anchor="middle" font-size="14" font-weight="700" fill="#ff5a5a">51%</text></svg>
+        <div class="lbl">orphans</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

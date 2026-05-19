@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Grafana / Datadog Telemetry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #161719; --panel: #1f1f23; --panel2: #25262a; --rule: #2e3036; --text: #e7e8eb; --muted: #8e9097; --orange: #ff8800; --green: #73bf69; --red: #f2495c; --amber: #ff9830; --blue: #5794f2; --purple: #b877d9; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.45; padding: 8px; }
+
+  .topbar { background: var(--panel); border: 1px solid var(--rule); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-radius: 3px; }
+  .topbar .left { display: flex; align-items: center; gap: 12px; }
+  .topbar .logo { width: 22px; height: 22px; background: var(--orange); border-radius: 4px; display: inline-block; }
+  .topbar .crumbs { font-size: 13px; }
+  .topbar .crumbs .sep { color: var(--muted); margin: 0 8px; }
+  .topbar .crumbs b { font-weight: 600; }
+  .topbar .right { display: flex; gap: 8px; align-items: center; }
+  .timerange { background: var(--panel2); padding: 4px 12px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue); border: 1px solid var(--rule); }
+  .refresh { background: var(--panel2); padding: 4px 10px; border-radius: 3px; font-size: 11px; color: var(--green); border: 1px solid var(--rule); }
+  .refresh::before { content: "● "; }
+
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: minmax(110px, auto); gap: 8px; }
+  .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 3px; padding: 8px 12px; overflow: hidden; }
+  .panel .title { font-size: 11px; font-weight: 500; color: var(--muted); padding-bottom: 4px; border-bottom: 1px solid var(--rule); margin-bottom: 8px; display: flex; justify-content: space-between; letter-spacing: 0.2px; }
+  .panel .title .unit { color: var(--muted); font-weight: 400; font-size: 10px; }
+  .panel.stat { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 16px; }
+  .panel.stat .v { font-size: 40px; font-weight: 300; line-height: 1; letter-spacing: -1px; font-family: 'Inter', sans-serif; }
+  .panel.stat .v.red { color: var(--red); }
+  .panel.stat .v.amber { color: var(--amber); }
+  .panel.stat .v.green { color: var(--green); }
+  .panel.stat .v.blue { color: var(--blue); }
+  .panel.stat .sub { font-size: 10px; color: var(--muted); margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .panel.stat .spark { width: 100%; height: 24px; margin-top: 6px; }
+
+  .c-1 { grid-column: span 1; } .c-2 { grid-column: span 2; } .c-3 { grid-column: span 3; }
+  .c-4 { grid-column: span 4; } .c-5 { grid-column: span 5; } .c-6 { grid-column: span 6; }
+  .c-7 { grid-column: span 7; } .c-8 { grid-column: span 8; } .c-12 { grid-column: span 12; }
+  .r-2 { grid-row: span 2; } .r-3 { grid-row: span 3; }
+
+  .heatmap { display: grid; grid-template-columns: repeat(11, 1fr); gap: 2px; margin-top: 4px; }
+  .hcell { aspect-ratio: 1; border-radius: 2px; position: relative; cursor: pointer; }
+  .hcell.pass { background: rgba(115, 191, 105, 0.7); }
+  .hcell.warn { background: rgba(255, 152, 48, 0.7); }
+  .hcell.fail { background: rgba(242, 73, 92, 0.8); }
+  .hcell.hold { background: rgba(142, 144, 151, 0.4); }
+  .hcell.empty { background: rgba(46, 48, 54, 0.5); }
+
+  .legend { display: flex; gap: 12px; margin-top: 6px; font-size: 10px; color: var(--muted); }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+  table.tbl th { text-align: left; padding: 3px 6px; color: var(--muted); border-bottom: 1px solid var(--rule); font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 500; }
+  table.tbl td { padding: 3px 6px; border-bottom: 1px solid var(--rule); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  table.tbl td.n { text-align: right; }
+  table.tbl td.red { color: var(--red); }
+  table.tbl td.amber { color: var(--amber); }
+  table.tbl td.green { color: var(--green); }
+
+  .logrow { padding: 3px 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; display: grid; grid-template-columns: 80px 50px 1fr; gap: 8px; border-bottom: 1px dashed var(--rule); }
+  .logrow .t { color: var(--muted); }
+  .logrow .l { font-weight: 700; }
+  .logrow .l.INF { color: var(--blue); }
+  .logrow .l.WRN { color: var(--amber); }
+  .logrow .l.ERR { color: var(--red); }
+
+  .gauge { display: flex; align-items: center; gap: 12px; padding-top: 4px; }
+  .gauge svg { width: 100px; height: 60px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="left">
+    <span class="logo"></span>
+    <div class="crumbs"><b>DomainSpec</b><span class="sep">›</span>Cross-Tree Mirroring<span class="sep">›</span><b>maestro-trama</b></div>
+  </div>
+  <div class="right">
+    <span class="refresh">live</span>
+    <span class="timerange">Last 30d</span>
+    <span class="timerange">step 1h</span>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="panel stat c-2"><div class="title">broken_cross_links<span class="unit">count</span></div><div class="v red">50+</div><div class="sub">↑ 4.2× vs 30d ago</div><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 20,18 40,15 60,12 80,8 100,4" fill="none" stroke="#f2495c" stroke-width="1.5"/></svg></div>
+  <div class="panel stat c-2"><div class="title">orphans<span class="unit">L₁ + L₂</span></div><div class="v amber">4+4</div><div class="sub">flat · 14d</div><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,14 20,14 40,14 60,14 80,14 100,14" fill="none" stroke="#ff9830" stroke-width="1.5"/></svg></div>
+  <div class="panel stat c-2"><div class="title">name_collisions<span class="unit">count</span></div><div class="v amber">2</div><div class="sub">↑ from 0 · 7d</div><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 50,20 51,10 100,10" fill="none" stroke="#ff9830" stroke-width="1.5"/></svg></div>
+  <div class="panel stat c-2"><div class="title">promotion_queue<span class="unit">items</span></div><div class="v blue">7</div><div class="sub">+1 today</div><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 20,18 40,16 60,14 80,10 100,8" fill="none" stroke="#5794f2" stroke-width="1.5"/></svg></div>
+  <div class="panel stat c-2"><div class="title">compile_ready<span class="unit">/ total</span></div><div class="v green">3/11</div><div class="sub">+1 today</div><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,22 20,20 40,18 60,16 80,14 100,10" fill="none" stroke="#73bf69" stroke-width="1.5"/></svg></div>
+  <div class="panel stat c-2"><div class="title">policy_in_repo<span class="unit">bool</span></div><div class="v red">0</div><div class="sub">missing · 0d</div><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><line x1="0" y1="22" x2="100" y2="22" stroke="#f2495c" stroke-width="1.5"/></svg></div>
+
+  <div class="panel c-8 r-2">
+    <div class="title">broken_cross_links over time<span class="unit">count · 30d window · 1h step</span></div>
+    <svg viewBox="0 0 800 240" preserveAspectRatio="none" style="width:100%; height:240px;">
+      <defs>
+        <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#f2495c" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#f2495c" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="200" x2="800" y2="200" stroke="#2e3036"/>
+      <line x1="0" y1="150" x2="800" y2="150" stroke="#2e3036" stroke-dasharray="2 4"/>
+      <line x1="0" y1="100" x2="800" y2="100" stroke="#2e3036" stroke-dasharray="2 4"/>
+      <line x1="0" y1="50" x2="800" y2="50" stroke="#2e3036" stroke-dasharray="2 4"/>
+      <text x="4" y="204" font-size="9" fill="#8e9097">0</text>
+      <text x="4" y="154" font-size="9" fill="#8e9097">15</text>
+      <text x="4" y="104" font-size="9" fill="#8e9097">30</text>
+      <text x="4" y="54" font-size="9" fill="#8e9097">45</text>
+      <path d="M0,190 L30,188 L60,184 L90,180 L120,170 L150,160 L180,156 L210,148 L240,142 L270,134 L300,128 L330,120 L360,112 L390,104 L420,98 L450,90 L480,82 L510,76 L540,68 L570,60 L600,52 L630,46 L660,40 L690,32 L720,26 L750,20 L780,14 L800,10 L800,200 L0,200 Z" fill="url(#g1)"/>
+      <polyline points="0,190 30,188 60,184 90,180 120,170 150,160 180,156 210,148 240,142 270,134 300,128 330,120 360,112 390,104 420,98 450,90 480,82 510,76 540,68 570,60 600,52 630,46 660,40 690,32 720,26 750,20 780,14 800,10" fill="none" stroke="#f2495c" stroke-width="2"/>
+      <text x="500" y="76" font-size="10" fill="#ff9830">▲ 2026-05-16 collision detected</text>
+      <line x1="500" y1="80" x2="500" y2="68" stroke="#ff9830" stroke-width="1" stroke-dasharray="2 2"/>
+    </svg>
+  </div>
+
+  <div class="panel c-4">
+    <div class="title">coverage_breakdown<span class="unit">paths · paired vs orphan</span></div>
+    <div class="gauge">
+      <svg viewBox="0 0 100 60">
+        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#2e3036" stroke-width="8"/>
+        <path d="M 10 50 A 40 40 0 0 1 50 10" fill="none" stroke="#73bf69" stroke-width="8"/>
+        <text x="50" y="48" text-anchor="middle" font-size="20" font-weight="600" fill="#73bf69">31%</text>
+      </svg>
+      <div style="font-size:11px;">
+        <div><span style="color:#73bf69;">●</span> paired · 3</div>
+        <div><span style="color:#ff9830;">●</span> spec-only · 6</div>
+        <div><span style="color:#f2495c;">●</span> orphan L₂ · 4</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel c-4">
+    <div class="title">validator_state · heatmap<span class="unit">feature × time · last 11d</span></div>
+    <div class="heatmap">
+      <div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div>
+      <div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div>
+      <div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell warn"></div><div class="hcell warn"></div><div class="hcell warn"></div><div class="hcell warn"></div>
+      <div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell warn"></div><div class="hcell warn"></div><div class="hcell fail"></div><div class="hcell fail"></div><div class="hcell fail"></div><div class="hcell fail"></div>
+      <div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell pass"></div><div class="hcell fail"></div><div class="hcell fail"></div><div class="hcell fail"></div><div class="hcell fail"></div>
+      <div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell empty"></div><div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell hold"></div><div class="hcell fail"></div><div class="hcell fail"></div>
+    </div>
+    <div class="legend"><span><i style="background:#73bf69"></i>pass</span><span><i style="background:#ff9830"></i>warn</span><span><i style="background:#f2495c"></i>fail</span><span><i style="background:#8e9097"></i>spec-only</span></div>
+  </div>
+
+  <div class="panel c-4">
+    <div class="title">feature_summary<span class="unit">11 features</span></div>
+    <table class="tbl">
+      <tr><th>state</th><th class="n">count</th><th class="n">%</th></tr>
+      <tr><td class="green">PASS</td><td class="n">4</td><td class="n">36%</td></tr>
+      <tr><td class="amber">WARN</td><td class="n">2</td><td class="n">18%</td></tr>
+      <tr><td class="red">FAIL</td><td class="n">3</td><td class="n">27%</td></tr>
+      <tr><td>SPEC-ONLY</td><td class="n">2</td><td class="n">18%</td></tr>
+    </table>
+  </div>
+
+  <div class="panel c-8">
+    <div class="title">recent_events<span class="unit">log stream</span></div>
+    <div class="logrow"><span class="t">13:29:04</span><span class="l INF">INF</span><span>discovery.write cross-tree-mirroring · 6 files</span></div>
+    <div class="logrow"><span class="t">12:14:22</span><span class="l INF">INF</span><span>lens.adversarial consolidated · 5 attacks landed</span></div>
+    <div class="logrow"><span class="t">12:08:19</span><span class="l WRN">WRN</span><span>validator: 50 broken refs in maestro-trama</span></div>
+    <div class="logrow"><span class="t">11:45:01</span><span class="l ERR">ERR</span><span>collision: labeling-platform/extraction × ad-creative-dna/extraction</span></div>
+    <div class="logrow"><span class="t">10:45:33</span><span class="l INF">INF</span><span>lens.theorem · T0' deferred to aspiration</span></div>
+    <div class="logrow"><span class="t">10:12:08</span><span class="l INF">INF</span><span>lens.vault-prior-art · OQ-4 confirmed unresolved</span></div>
+  </div>
+
+  <div class="panel c-4">
+    <div class="title">promotion_queue<span class="unit">7 items</span></div>
+    <table class="tbl">
+      <tr><th>→ target</th><th class="n">age</th></tr>
+      <tr><td>trama / producer</td><td class="n">6d</td></tr>
+      <tr><td>labeling / extraction</td><td class="n">4d</td></tr>
+      <tr><td>labeling / extraction</td><td class="n">2d</td></tr>
+      <tr><td class="amber">_unknown</td><td class="n">11d</td></tr>
+      <tr><td>mutation / policy</td><td class="n">9d</td></tr>
+      <tr><td>spend-pred / prediction</td><td class="n">3d</td></tr>
+      <tr><td>exp-dash / leaderboard</td><td class="n">1d</td></tr>
+    </table>
+  </div>
+
+</div>
+
+</body>
+</html>

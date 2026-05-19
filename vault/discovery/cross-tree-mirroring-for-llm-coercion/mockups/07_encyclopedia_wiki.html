@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Encyclopedia / Wiki</title>
+<link href="https://fonts.googleapis.com/css2?family=Linux+Libertine&family=Source+Sans+Pro:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #ffffff; --text: #202122; --rule: #a2a9b1; --link: #0645ad; --link-visited: #6b48a0; --infobg: #f8f9fa; --section: #000; --accent: #36c; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans Pro', 'Linux Libertine', Georgia, serif; font-size: 14px; line-height: 1.6; }
+  .frame { display: grid; grid-template-columns: 200px 1fr; max-width: 1200px; margin: 0 auto; }
+
+  aside { background: var(--infobg); border-right: 1px solid var(--rule); padding: 24px 16px; font-size: 13px; }
+  aside h3 { font-size: 12px; text-transform: uppercase; color: #54595d; letter-spacing: 1px; margin-bottom: 8px; }
+  aside ul { list-style: none; padding: 0; margin-bottom: 18px; }
+  aside li { padding: 3px 0; }
+  aside a { color: var(--link); text-decoration: none; }
+  aside a:hover { text-decoration: underline; }
+  aside .logo { font-family: 'Linux Libertine', serif; font-size: 22px; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+  aside .logo small { display: block; font-size: 11px; font-weight: 400; color: #54595d; }
+
+  main { padding: 24px 32px; }
+  .topbar { font-size: 12px; color: #54595d; border-bottom: 1px solid var(--rule); padding-bottom: 8px; display: flex; gap: 16px; }
+  .topbar a { color: var(--link); text-decoration: none; }
+
+  h1.title { font-family: 'Linux Libertine', serif; font-weight: 400; font-size: 32px; line-height: 1.1; padding: 14px 0; border-bottom: 1px solid var(--rule); margin-bottom: 8px; }
+  .subtitle { font-style: italic; font-size: 14px; color: #54595d; margin-bottom: 16px; }
+
+  .layout { display: grid; grid-template-columns: 1fr 290px; gap: 24px; }
+  .article a { color: var(--link); text-decoration: none; }
+  .article a:hover { text-decoration: underline; }
+  .article p { margin-bottom: 12px; }
+
+  h2 { font-family: 'Linux Libertine', serif; font-weight: 400; font-size: 24px; border-bottom: 1px solid var(--rule); padding-bottom: 2px; margin-top: 24px; margin-bottom: 10px; }
+  h3 { font-family: 'Linux Libertine', serif; font-weight: 400; font-size: 18px; margin-top: 14px; margin-bottom: 6px; }
+
+  .infobox { background: var(--infobg); border: 1px solid var(--rule); padding: 0; font-size: 12px; }
+  .infobox h4 { background: #eaecf0; padding: 8px 10px; font-size: 13px; font-weight: 700; text-align: center; border-bottom: 1px solid var(--rule); }
+  .infobox h5 { background: #eaecf0; padding: 4px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #54595d; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-top: 8px; }
+  .infobox table { width: 100%; border-collapse: collapse; }
+  .infobox td { padding: 5px 10px; vertical-align: top; border-bottom: 1px solid #eaecf0; }
+  .infobox td.k { font-weight: 700; width: 110px; color: #54595d; }
+  .infobox .figure { text-align: center; padding: 12px; border-bottom: 1px solid var(--rule); }
+  .infobox .figure pre { font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1.5; text-align: left; display: inline-block; }
+  .infobox .caption { font-style: italic; font-size: 11px; padding: 6px 10px; color: #54595d; }
+
+  .toc { background: var(--infobg); border: 1px solid var(--rule); padding: 12px 16px; max-width: 320px; margin: 12px 0; font-size: 13px; }
+  .toc h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #54595d; margin-bottom: 6px; }
+  .toc ol { padding-left: 22px; }
+  .toc ol li { padding: 1px 0; }
+
+  code, .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  .note { padding: 10px 14px; background: #fdf2dc; border-left: 4px solid #c8a02e; font-size: 13px; margin: 12px 0; }
+  .note::before { content: "Note: "; font-weight: 700; }
+
+  table.wiki { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  table.wiki th { background: #eaecf0; padding: 6px 10px; text-align: left; border: 1px solid var(--rule); font-weight: 700; }
+  table.wiki td { padding: 6px 10px; border: 1px solid var(--rule); }
+  table.wiki td.n { text-align: right; font-weight: 700; }
+
+  footer { padding: 20px 32px; margin-top: 32px; border-top: 1px solid var(--rule); font-size: 11px; color: #54595d; }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <aside>
+    <div class="logo">DSPedia<small>The DomainSpec encyclopedia</small></div>
+    <h3>Navigation</h3>
+    <ul>
+      <li><a href="#">Main page</a></li>
+      <li><a href="#">Discoveries</a></li>
+      <li><a href="#">Constitutions</a></li>
+      <li><a href="#">Vault</a></li>
+    </ul>
+    <h3>Related</h3>
+    <ul>
+      <li><a href="#">Folder-structure fractal</a></li>
+      <li><a href="#">Reflection tower</a></li>
+      <li><a href="#">Two-layer framework</a></li>
+      <li><a href="#">Categorical extraction</a></li>
+      <li><a href="#">Repo mirroring problem</a></li>
+    </ul>
+    <h3>Tools</h3>
+    <ul>
+      <li><a href="#">What links here</a></li>
+      <li><a href="#">Cite this page</a></li>
+      <li><a href="#">Page history</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <a href="#">Article</a><a href="#">Discussion</a><a href="#">Edit</a><a href="#">History</a>
+      <span style="margin-left:auto">Last updated: 2026-05-18</span>
+    </div>
+
+    <h1 class="title">Cross-Tree Mirroring for LLM Coercion</h1>
+    <div class="subtitle">From DSPedia, the DomainSpec encyclopedia. (Redirected from <em>Three-sibling structure</em>.)</div>
+
+    <div class="layout">
+
+      <div class="article">
+        <p><strong>Cross-tree mirroring</strong> is a proposed structural prescription for DomainSpec repositories in which the L₁ (knowledge) tree and L₂ (implementation) tree share an identical <code>apps/X/features/Y/</code> grammar, with a third sibling tree (<a href="#">/research</a>) hosting pre-structural work. The prescription is anchored in the engineering question that originated the framework: <em>can I force an LLM to write the right code?</em></p>
+
+        <p>The proposal extends <a href="#">folder-structure-fractal</a>, which addressed vault-internal layout only, to the cross-tree case between knowledge and code. It introduces two distinct operations — <a href="#promotion">promotion</a> (taking residue into L₁) and <a href="#compilation">compilation</a> (taking L₁ into L₂) — and a <a href="#validator">path-coherence validator</a> that enforces the mirror invariant mechanically.</p>
+
+        <div class="toc">
+          <h4>Contents</h4>
+          <ol>
+            <li><a href="#etymology">Etymology and origin</a></li>
+            <li><a href="#structure">Structure</a></li>
+            <li><a href="#promotion">Promotion</a></li>
+            <li><a href="#compilation">Compilation</a></li>
+            <li><a href="#validator">Validator</a></li>
+            <li><a href="#pilot">Pilot — maestro-trama</a></li>
+            <li><a href="#criticism">Criticism</a></li>
+          </ol>
+        </div>
+
+        <h2 id="etymology">1. Etymology and origin</h2>
+        <p>The term <em>cross-tree mirroring</em> denotes the symmetric relationship between two file trees joined by a structural functor. It contrasts with <a href="#">folder-structure-fractal</a>, which used <em>fractal</em> to describe within-tree recursive self-similarity. The proposal was first articulated in a working session on 2026-05-18 in response to a brief at <code>maestro-trama/docs/repo-mirroring-problem.md</code>.</p>
+
+        <h2 id="structure">2. Structure</h2>
+        <p>The proposal mandates three top-level sibling directories. The two <strong>structured</strong> siblings (<code>/domain_knowledge</code>, <code>/implementation</code>) share the feature grammar. The <strong>unstructured</strong> sibling (<code>/research</code>) hosts residue — work-in-progress that has not yet earned an <code>(app, feature)</code> identity.</p>
+
+        <h3>2.1 /research</h3>
+        <p>The residue holding pen. Forcing pre-structural work into the structured grammar would <em>invent</em> identity rather than earn it. The theorem (see <a href="#">reflection-tower</a>) admits only two horizontal layers; <code>/research</code> sits beside them as a sibling, not above them as a third layer.</p>
+
+        <h3>2.2 /domain_knowledge</h3>
+        <p>The L₁ tree. Specs, discoveries, domain models, invariants. Every artifact has a known <code>(app, feature)</code> identity and lives at <code>apps/X/features/Y/{aspect}</code>.</p>
+
+        <h3>2.3 /implementation</h3>
+        <p>The L₂ tree. Code, tests, ops. Mirrored under the same grammar. For any path <code>/implementation/apps/X/features/Y/...</code>, the L₁ counterpart <code>/domain_knowledge/apps/X/features/Y/</code> is computable by prefix substitution.</p>
+
+        <h2 id="promotion">3. Promotion</h2>
+        <p><strong>Promotion</strong> is the operation moving a residue artifact from <code>/research</code> into <code>/domain_knowledge/apps/X/features/Y/</code>. Promotion is an identity change in place — distinct from <a href="#compilation">compilation</a>, which generates a new artifact in the mirror tree.</p>
+        <div class="note">Promotion conditions are <em>binary</em>: identity-earned + manual greenlight. Stability, citation pull, and confidence thresholds are observational signals, not gates.</div>
+
+        <h2 id="compilation">4. Compilation</h2>
+        <p><strong>Compilation</strong> is the application of the functor <code>Δ: L₁ → L₂</code>, a left Kan extension defined in <a href="#">DomainSpec.lean</a>. In the present discovery the compilation gate is operationalized as a <a href="#validator">structural-completeness validator</a>; the formal T0' obligations are deferred as a long-term aspiration.</p>
+
+        <h2 id="validator">5. Validator</h2>
+        <p>The path-coherence validator extends the <code>layer:</code> mechanism of <a href="#">vault-folder-structure-constitution</a> to the cross-tree case. It is implemented as a pre-commit hook and CI gate. Rejects any L₂ path with no L₁ counterpart (unless <code>IMPLEMENTS.md</code> exists), any L₁ spec without <code>IMPLEMENTED-BY.md</code> or <code>spec-only</code> status, and any non-research path that does not parse as <code>(layer, app, feature, aspect)</code>.</p>
+
+        <h2 id="pilot">6. Pilot — maestro-trama</h2>
+        <table class="wiki">
+          <tr><th>Defect</th><th>Count</th><th>Resolution under proposal</th></tr>
+          <tr><td>Broken cross-links</td><td class="n">50+</td><td>Mirror grammar</td></tr>
+          <tr><td>Proposal orphans</td><td class="n">4</td><td>IMPLEMENTED-BY manifest</td></tr>
+          <tr><td>App orphans</td><td class="n">4</td><td>L₁ stub or legacy mark</td></tr>
+          <tr><td>extraction/ collision</td><td class="n">2</td><td>Arbitration; spec primary</td></tr>
+          <tr><td>Formal promotion mechanics</td><td class="n">0</td><td>identity + greenlight</td></tr>
+        </table>
+
+        <h2 id="criticism">7. Criticism</h2>
+        <p>The adversarial review (<a href="#">Lens 04</a>) raised seven attacks; five landed materially. The "coercion" warrant was demoted to "navigational signal + validator enforcement," recoverable only after a measurement protocol is established (see <a href="#">OQ-1</a>). Multi-implementation cases require manifest indirection rather than a strict bijection. Scope is narrowed to <code>/domainspec</code> and maestro-trama-shaped repos; <code>/house_project</code>, <code>/financas_pessoais</code>, <code>/football-stats-oracle</code> require separate discoveries.</p>
+      </div>
+
+      <div class="infobox">
+        <h4>Cross-Tree Mirroring</h4>
+        <div class="figure">
+          <pre>/research          residue
+   │
+/domain_knowledge   L₁ ┐
+   │                    ├── Δ ── shared grammar
+/implementation     L₂ ┘</pre>
+          <div class="caption">Three siblings; L₁ and L₂ share <code>apps/X/features/Y/</code>.</div>
+        </div>
+        <table>
+          <tr><td class="k">Type</td><td>Discovery (exploratory)</td></tr>
+          <tr><td class="k">Version</td><td>0.1.0</td></tr>
+          <tr><td class="k">Filed</td><td>2026-05-18</td></tr>
+          <tr><td class="k">Scope</td><td>/domainspec, maestro-trama</td></tr>
+          <tr><td class="k">Pilot</td><td>maestro-trama</td></tr>
+          <tr><td class="k">Lenses</td><td>4 (3 evidence + 1 adversarial)</td></tr>
+        </table>
+        <h5>Key concepts</h5>
+        <table>
+          <tr><td class="k">Promotion</td><td>residue → L₁</td></tr>
+          <tr><td class="k">Compilation</td><td>L₁ → L₂ (Δ)</td></tr>
+          <tr><td class="k">Validator</td><td>path-coherence</td></tr>
+          <tr><td class="k">Identity</td><td>(app, feature)</td></tr>
+        </table>
+        <h5>Anchors</h5>
+        <table>
+          <tr><td class="k">Theorem</td><td>reflection-tower</td></tr>
+          <tr><td class="k">Prior</td><td>folder-structure-fractal</td></tr>
+          <tr><td class="k">Brief</td><td>repo-mirroring-problem</td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <footer>
+      Categories: <a href="#">Discoveries</a> · <a href="#">Folder structure</a> · <a href="#">Two-layer framework</a> · <a href="#">LLM coercion</a> | Page 07 of 10
+    </footer>
+
+  </main>
+
+</div>
+</body>
+</html>

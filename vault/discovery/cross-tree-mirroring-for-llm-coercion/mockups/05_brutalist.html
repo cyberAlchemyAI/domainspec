@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Brutalist</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #ffffff; --ink: #000; --rule: #000; --hi: #ff3a00; --concrete: #d6d3cc; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.45; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0; }
+
+  .megahead { padding: 32px 24px 24px; border-bottom: 16px solid var(--ink); }
+  .megahead .row { display: flex; justify-content: space-between; padding-bottom: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .megahead h1 { font-family: 'Archivo Black', sans-serif; font-size: 140px; line-height: 0.85; letter-spacing: -4px; text-transform: uppercase; margin-top: 16px; }
+  .megahead .sub { background: var(--ink); color: var(--bg); padding: 12px 16px; margin-top: 16px; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 16px solid var(--ink); }
+  .cell { padding: 28px 20px; border-right: 4px solid var(--ink); position: relative; min-height: 280px; }
+  .cell:last-child { border-right: none; }
+  .cell .num { font-family: 'Archivo Black', sans-serif; font-size: 80px; line-height: 0.8; color: var(--hi); }
+  .cell .path { font-family: 'Archivo Black', sans-serif; font-size: 28px; text-transform: uppercase; margin-top: 8px; word-break: break-word; }
+  .cell .role { background: var(--ink); color: var(--bg); padding: 4px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 12px; }
+  .cell p { margin-top: 14px; font-size: 13px; }
+
+  .strip { background: var(--hi); color: var(--ink); padding: 16px 24px; font-family: 'Archivo Black', sans-serif; font-size: 28px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 16px solid var(--ink); }
+
+  .ops { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 16px solid var(--ink); }
+  .op { padding: 32px 24px; border-right: 4px solid var(--ink); }
+  .op:last-child { border-right: none; background: var(--concrete); }
+  .op h2 { font-family: 'Archivo Black', sans-serif; font-size: 56px; text-transform: uppercase; line-height: 0.9; }
+  .op .arrow { font-family: 'Archivo Black', sans-serif; font-size: 24px; color: var(--hi); margin: 12px 0; }
+  .op ul { list-style: none; padding-left: 0; }
+  .op li { padding: 10px 0; border-top: 2px solid var(--ink); font-size: 14px; }
+  .op li strong { background: var(--ink); color: var(--bg); padding: 2px 6px; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-right: 8px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 16px solid var(--ink); }
+  .stats div { padding: 24px; border-right: 4px solid var(--ink); }
+  .stats div:last-child { border-right: none; }
+  .stats .n { font-family: 'Archivo Black', sans-serif; font-size: 64px; line-height: 0.85; color: var(--hi); }
+  .stats .l { font-size: 11px; text-transform: uppercase; font-weight: 700; margin-top: 8px; letter-spacing: 1px; }
+
+  .mirror { padding: 32px 24px; border-bottom: 16px solid var(--ink); background: var(--concrete); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
+  .mirror pre { font-family: 'Space Mono', monospace; font-size: 13px; line-height: 1.7; background: var(--bg); padding: 16px; border: 4px solid var(--ink); }
+  .mirror .delta { font-family: 'Archivo Black', sans-serif; font-size: 80px; color: var(--hi); }
+
+  .foot { padding: 16px 24px; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="megahead">
+    <div class="row"><span>2026-05-18</span><span>DomainSpec / Vault / Discovery</span><span>Sheet 05 / 10</span></div>
+    <h1>Three<br>Siblings.</h1>
+    <div class="sub">L₁ ↔ L₂ Mirror. Residue Holding Pen. Force the model to write the right code — or admit you cannot.</div>
+  </div>
+
+  <div class="grid">
+    <div class="cell">
+      <div class="num">01</div>
+      <div class="path">/research</div>
+      <span class="role">Residue · Sibling</span>
+      <p>Pre-structural work. No earned identity. The theorem refuses a third horizontal layer; residue sits beside the structured pair, not above it.</p>
+    </div>
+    <div class="cell">
+      <div class="num">02</div>
+      <div class="path">/domain_knowledge</div>
+      <span class="role">L₁ · Structured</span>
+      <p>Specs. Invariants. Domain models. apps/X/features/Y/. Every artifact has a known (app, feature). This is where compilation reads from.</p>
+    </div>
+    <div class="cell">
+      <div class="num">03</div>
+      <div class="path">/implementation</div>
+      <span class="role">L₂ · Mirrored</span>
+      <p>Code. Tests. Ops. Identical grammar to L₁. Counterpart path is computable, not searchable. This is where the agent writes.</p>
+    </div>
+  </div>
+
+  <div class="strip">If the path to the spec is not computable, the agent will invent one. We have 50+ such inventions.</div>
+
+  <div class="mirror">
+    <pre>/domain_knowledge
+└── apps/
+    └── labeling-platform/
+        └── features/
+            └── extraction/
+                ├── SPEC.md
+                ├── domain.md
+                └── operations.md</pre>
+    <div class="delta">Δ</div>
+    <pre>/implementation
+└── apps/
+    └── labeling-platform/
+        └── features/
+            └── extraction/
+                ├── src/
+                ├── tests/
+                └── ops/</pre>
+  </div>
+
+  <div class="ops">
+    <div class="op">
+      <h2>Promote</h2>
+      <div class="arrow">residue ───▶ L₁</div>
+      <ul>
+        <li><strong>Need</strong>Earned (app, feature) identity</li>
+        <li><strong>Trigger</strong>Manual greenlight</li>
+        <li><strong>Edge</strong>Partial → features/_unknown/</li>
+      </ul>
+    </div>
+    <div class="op">
+      <h2>Compile</h2>
+      <div class="arrow">L₁ ───▶ L₂</div>
+      <ul>
+        <li><strong>Gate</strong>Path-coherence validator</li>
+        <li><strong>Plus</strong>Test-derivability check</li>
+        <li><strong>Later</strong>T0' Lean obligations</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div><div class="n">50+</div><div class="l">Broken cross-links</div></div>
+    <div><div class="n">4+4</div><div class="l">Proposal / app orphans</div></div>
+    <div><div class="n">2</div><div class="l">Drifting extraction SPECs</div></div>
+    <div><div class="n">0</div><div class="l">Promotion mechanics</div></div>
+  </div>
+
+  <div class="foot">
+    <span>vault/discovery/cross-tree-mirroring-for-llm-coercion</span>
+    <span>Pilot: maestro-trama · 20–30h migration</span>
+    <span>05 / 10</span>
+  </div>
+
+</div>
+</body>
+</html>

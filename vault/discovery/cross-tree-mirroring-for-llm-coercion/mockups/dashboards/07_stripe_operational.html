@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Stripe Operational</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #f6f9fc; --panel: #ffffff; --text: #1a1f36; --text-2: #425466; --muted: #8898aa; --rule: #e6ebf1; --primary: #635bff; --primary-bg: #f0f0ff; --green: #00875a; --amber: #f5a623; --red: #e25950; --shadow-1: 0 1px 3px 0 rgba(50,50,93,0.04), 0 1px 1px 0 rgba(0,0,0,0.02); --shadow-2: 0 6px 12px -2px rgba(50,50,93,0.06), 0 3px 7px -3px rgba(0,0,0,0.04); }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .frame { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+  nav { background: var(--panel); border-right: 1px solid var(--rule); padding: 24px 16px; }
+  nav .brand { display: flex; align-items: center; gap: 8px; padding-bottom: 24px; }
+  nav .brand .mark { width: 24px; height: 24px; background: var(--primary); border-radius: 6px; }
+  nav .brand .name { font-weight: 700; font-size: 16px; }
+  nav .group { margin-bottom: 18px; }
+  nav .group .gh { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 8px 6px; }
+  nav .group a { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; font-size: 13px; color: var(--text-2); text-decoration: none; border-radius: 5px; margin-bottom: 1px; }
+  nav .group a.active { background: var(--primary-bg); color: var(--primary); font-weight: 500; }
+  nav .group a:hover:not(.active) { background: var(--bg); }
+  nav .group a .ct { font-size: 11px; color: var(--muted); }
+  nav .group a.active .ct { color: var(--primary); }
+
+  main { padding: 32px 40px 64px; }
+
+  .pagehead { display: flex; justify-content: space-between; align-items: end; padding-bottom: 24px; }
+  .pagehead h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; }
+  .pagehead .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .pagehead .actions { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 0; background: var(--panel); color: var(--text); box-shadow: var(--shadow-1); }
+  .btn.primary { background: var(--primary); color: white; }
+
+  .seg { display: inline-flex; background: var(--panel); border-radius: 6px; box-shadow: var(--shadow-1); padding: 2px; margin-bottom: 16px; }
+  .seg button { padding: 5px 12px; border: 0; background: transparent; font-size: 12px; color: var(--text-2); cursor: pointer; border-radius: 4px; font-weight: 500; }
+  .seg button.on { background: var(--bg); color: var(--text); }
+
+  .grid-k { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi { background: var(--panel); border-radius: 10px; padding: 18px; box-shadow: var(--shadow-1); }
+  .kpi .l { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .kpi .v { font-size: 26px; font-weight: 600; margin-top: 4px; letter-spacing: -0.5px; }
+  .kpi .v.red { color: var(--red); }
+  .kpi .v.amber { color: var(--amber); }
+  .kpi .v.green { color: var(--green); }
+  .kpi .d { font-size: 12px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+  .kpi .d .pill { padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .kpi .d .pill.up { background: rgba(226, 89, 80, 0.1); color: var(--red); }
+  .kpi .d .pill.dn { background: rgba(0, 135, 90, 0.1); color: var(--green); }
+
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .r-2-1 { grid-template-columns: 2fr 1fr; }
+
+  .panel { background: var(--panel); border-radius: 10px; box-shadow: var(--shadow-1); }
+  .panel-h { padding: 16px 20px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+  .panel-h h3 { font-size: 15px; font-weight: 600; }
+  .panel-h .more { font-size: 12px; color: var(--primary); cursor: pointer; }
+
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { text-align: left; padding: 10px 20px; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--rule); background: var(--bg); }
+  .tbl td { padding: 10px 20px; border-bottom: 1px solid var(--rule); }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl td.path { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .tbl td .pill { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .pill.pass { background: rgba(0, 135, 90, 0.1); color: var(--green); }
+  .pill.warn { background: rgba(245, 166, 35, 0.1); color: var(--amber); }
+  .pill.fail { background: rgba(226, 89, 80, 0.1); color: var(--red); }
+  .pill.hold { background: rgba(136, 152, 170, 0.1); color: var(--muted); }
+  .pill.info { background: var(--primary-bg); color: var(--primary); }
+
+  .q-list { padding: 8px 0; }
+  .q-item { padding: 12px 20px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+  .q-item:last-child { border-bottom: none; }
+  .q-item .src { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .q-item .dst { font-size: 13px; font-weight: 500; margin-top: 2px; color: var(--text); }
+  .q-item .age { font-size: 12px; color: var(--muted); margin-right: 12px; }
+  .q-item .btn-sm { padding: 4px 12px; font-size: 12px; }
+
+  .chart { padding: 20px; }
+  .chart svg { width: 100%; height: 200px; }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <nav>
+    <div class="brand"><span class="mark"></span><span class="name">CTM</span></div>
+    <div class="group">
+      <div class="gh">Overview</div>
+      <a href="#" class="active">Dashboard <span class="ct">●</span></a>
+      <a href="#">Features <span class="ct">11</span></a>
+      <a href="#">Mirror health</a>
+      <a href="#">Validator runs</a>
+    </div>
+    <div class="group">
+      <div class="gh">Workflow</div>
+      <a href="#">Promotion queue <span class="ct">7</span></a>
+      <a href="#">Compilation gates</a>
+      <a href="#">Diagnostics</a>
+    </div>
+    <div class="group">
+      <div class="gh">Repository</div>
+      <a href="#">maestro-trama</a>
+      <a href="#">domainspec</a>
+      <a href="#" style="color: var(--muted);">+ Add repo</a>
+    </div>
+    <div class="group">
+      <div class="gh">Settings</div>
+      <a href="#">Policy</a>
+      <a href="#">Validator config</a>
+      <a href="#">API keys</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <div class="pagehead">
+      <div>
+        <h1>Cross-tree mirroring</h1>
+        <div class="sub">Operational state of structure between L₁ and L₂ · maestro-trama</div>
+      </div>
+      <div class="actions">
+        <button class="btn">Export</button>
+        <button class="btn primary">Run validator</button>
+      </div>
+    </div>
+
+    <div class="seg">
+      <button>1d</button>
+      <button>7d</button>
+      <button class="on">30d</button>
+      <button>90d</button>
+      <button>YTD</button>
+      <button>Custom</button>
+    </div>
+
+    <div class="grid-k">
+      <div class="kpi"><div class="l">Broken cross-links</div><div class="v red">50+</div><div class="d"><span class="pill up">↑ 316%</span>from 12 · 30d ago</div></div>
+      <div class="kpi"><div class="l">Orphan features</div><div class="v amber">8</div><div class="d"><span class="pill" style="background: rgba(136,152,170,.1); color: var(--muted);">→ 0%</span>4 L₁ + 4 L₂</div></div>
+      <div class="kpi"><div class="l">Promotion queue</div><div class="v">7</div><div class="d"><span class="pill dn">+1</span>today</div></div>
+      <div class="kpi"><div class="l">Compile-ready</div><div class="v green">3 / 11</div><div class="d"><span class="pill dn">+1</span>today</div></div>
+    </div>
+
+    <div class="row r-2-1">
+      <div class="panel">
+        <div class="panel-h"><h3>Broken cross-links</h3><span class="more">View detail →</span></div>
+        <div class="chart">
+          <svg viewBox="0 0 800 200" preserveAspectRatio="none">
+            <defs><linearGradient id="sg" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#635bff" stop-opacity="0.18"/><stop offset="100%" stop-color="#635bff" stop-opacity="0"/></linearGradient></defs>
+            <line x1="40" y1="180" x2="800" y2="180" stroke="#e6ebf1"/>
+            <line x1="40" y1="130" x2="800" y2="130" stroke="#e6ebf1" stroke-dasharray="2 4"/>
+            <line x1="40" y1="80" x2="800" y2="80" stroke="#e6ebf1" stroke-dasharray="2 4"/>
+            <line x1="40" y1="30" x2="800" y2="30" stroke="#e6ebf1" stroke-dasharray="2 4"/>
+            <text x="34" y="184" text-anchor="end" font-size="10" fill="#8898aa">0</text>
+            <text x="34" y="134" text-anchor="end" font-size="10" fill="#8898aa">15</text>
+            <text x="34" y="84" text-anchor="end" font-size="10" fill="#8898aa">30</text>
+            <text x="34" y="34" text-anchor="end" font-size="10" fill="#8898aa">50</text>
+            <text x="40" y="196" font-size="10" fill="#8898aa">Apr 19</text>
+            <text x="800" y="196" text-anchor="end" font-size="10" fill="#8898aa">May 18</text>
+            <path d="M50,170 L80,168 L110,164 L140,158 L170,150 L200,144 L230,138 L260,130 L290,124 L320,116 L350,108 L380,100 L410,90 L440,82 L470,74 L500,66 L530,58 L560,52 L590,44 L620,40 L650,36 L680,30 L710,26 L740,22 L770,18 L800,14 L800,180 L50,180 Z" fill="url(#sg)"/>
+            <polyline points="50,170 80,168 110,164 140,158 170,150 200,144 230,138 260,130 290,124 320,116 350,108 380,100 410,90 440,82 470,74 500,66 530,58 560,52 590,44 620,40 650,36 680,30 710,26 740,22 770,18 800,14" fill="none" stroke="#635bff" stroke-width="2.5"/>
+            <circle cx="800" cy="14" r="4" fill="#635bff"/>
+          </svg>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>Promotion queue</h3><span class="more">View all →</span></div>
+        <div class="q-list">
+          <div class="q-item">
+            <div><div class="src">research/notes/trama-decomp.md</div><div class="dst">→ trama / producer</div></div>
+            <div style="display:flex; align-items:center;"><span class="age">6d</span><button class="btn primary btn-sm">Promote</button></div>
+          </div>
+          <div class="q-item">
+            <div><div class="src">research/sessions/extraction-arb.md</div><div class="dst">→ labeling-platform / extraction</div></div>
+            <div style="display:flex; align-items:center;"><span class="age">4d</span><button class="btn primary btn-sm">Promote</button></div>
+          </div>
+          <div class="q-item">
+            <div><div class="src">research/biz-philosopher/manifesto-iii.md</div><div class="dst" style="color: var(--amber);">→ _unknown / _unknown</div></div>
+            <div style="display:flex; align-items:center;"><span class="age">11d</span><button class="btn btn-sm" style="color: var(--muted);">Hold</button></div>
+          </div>
+          <div class="q-item">
+            <div><div class="src">research/notes/spend-data-contract.md</div><div class="dst">→ spend-predictor / prediction</div></div>
+            <div style="display:flex; align-items:center;"><span class="age">3d</span><button class="btn primary btn-sm">Promote</button></div>
+          </div>
+          <div class="q-item">
+            <div><div class="src">research/sessions/dashboard-research.md</div><div class="dst">→ experiment-dash / leaderboard</div></div>
+            <div style="display:flex; align-items:center;"><span class="age">1d</span><button class="btn primary btn-sm">Promote</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h3>Features</h3><span class="more">All features →</span></div>
+      <table class="tbl">
+        <thead><tr><th>Path</th><th>L₁</th><th>L₂</th><th>State</th><th>Last change</th></tr></thead>
+        <tbody>
+          <tr><td class="path">labeling-platform / extraction</td><td>spec ✓ (drift)</td><td>src ✓</td><td><span class="pill warn">COLLISION</span></td><td>2 days ago</td></tr>
+          <tr><td class="path">labeling-platform / dashboard</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td><td>14 days ago</td></tr>
+          <tr><td class="path">labeling-platform / label-curation</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td><td>14 days ago</td></tr>
+          <tr><td class="path">ad-creative-dna / extraction</td><td>spec ✓</td><td>via manifest</td><td><span class="pill info">MULTI-IMPL</span></td><td>2 days ago</td></tr>
+          <tr><td class="path">spend-predictor / spend-prediction</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td><td>2 days ago</td></tr>
+          <tr><td class="path">mutation-strategy / policy</td><td>spec ✓</td><td>—</td><td><span class="pill hold">SPEC-ONLY</span></td><td>8 days ago</td></tr>
+          <tr><td class="path">trama / producer</td><td>draft</td><td>—</td><td><span class="pill hold">DRAFT</span></td><td>3 days ago</td></tr>
+          <tr><td class="path">creatives-harnessing / retrieval</td><td>legacy</td><td>src ✓</td><td><span class="pill pass">LEGACY OK</span></td><td>26 days ago</td></tr>
+          <tr><td class="path">creative-analysis / orchestrator</td><td>legacy</td><td>src ✓</td><td><span class="pill pass">LEGACY OK</span></td><td>26 days ago</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

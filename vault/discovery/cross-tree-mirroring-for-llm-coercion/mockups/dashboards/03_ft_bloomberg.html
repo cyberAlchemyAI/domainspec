@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — FT / Bloomberg Editorial-Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #fff1e5; --ink: #33302e; --rule: #d5d0cb; --muted: #66605c; --pink: #cc0066; --teal: #006c66; --gold: #b58b00; --red: #cc0000; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Source Serif Pro', Georgia, serif; font-size: 13px; line-height: 1.5; }
+  .page { max-width: 1280px; margin: 0 auto; padding: 24px 32px 48px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: end; }
+  header .left h1 { font-family: 'Source Serif Pro', serif; font-weight: 700; font-size: 28px; line-height: 1; letter-spacing: -0.5px; }
+  header .left h1 .pink { color: var(--pink); }
+  header .left .sub { font-family: 'Inter', sans-serif; font-style: italic; font-size: 13px; color: var(--muted); margin-top: 4px; }
+  header .right { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); text-align: right; }
+  header .right .now { font-weight: 700; color: var(--ink); font-size: 13px; }
+
+  .ticker { background: var(--ink); color: var(--paper); padding: 8px 16px; margin-top: 8px; display: flex; gap: 24px; font-family: 'Inter', sans-serif; font-size: 12px; }
+  .ticker .item .l { color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+  .ticker .item .v { font-weight: 700; }
+  .ticker .item .delta { color: var(--gold); font-size: 11px; margin-left: 4px; }
+  .ticker .item .delta.up { color: #f08080; }
+
+  .layout { display: grid; grid-template-columns: 240px 1fr 320px; gap: 28px; margin-top: 20px; }
+
+  .lede { font-family: 'Source Serif Pro', serif; font-size: 15px; line-height: 1.6; }
+  .lede h2 { font-family: 'Source Serif Pro', serif; font-weight: 700; font-size: 22px; line-height: 1.1; margin-bottom: 8px; }
+  .lede h2::after { content: ""; display: block; width: 40px; height: 3px; background: var(--pink); margin-top: 8px; }
+  .lede p { margin-bottom: 10px; }
+  .lede p:first-of-type::first-letter { font-family: 'Source Serif Pro', serif; font-weight: 700; font-size: 42px; float: left; line-height: 0.85; padding: 4px 6px 0 0; color: var(--ink); }
+  .lede .pull { font-family: 'Source Serif Pro', serif; font-style: italic; font-size: 16px; padding: 10px 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); margin: 12px 0; }
+  .lede .byline { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+
+  .center { }
+  .center h3 { font-family: 'Source Serif Pro', serif; font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+  .center .sub { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.5px; }
+
+  table.data { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 12px; }
+  table.data th { background: var(--ink); color: var(--paper); padding: 6px 8px; text-align: left; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  table.data th.n { text-align: right; }
+  table.data td { padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.data td.n { text-align: right; font-family: 'JetBrains Mono', monospace; }
+  table.data td .pill { display: inline-block; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  table.data td .pill.pass { background: rgba(0, 108, 102, 0.15); color: var(--teal); }
+  table.data td .pill.warn { background: rgba(181, 139, 0, 0.15); color: var(--gold); }
+  table.data td .pill.fail { background: rgba(204, 0, 0, 0.15); color: var(--red); }
+  table.data td .pill.hold { background: rgba(102, 96, 92, 0.15); color: var(--muted); }
+  table.data td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  .chartblock { margin-top: 24px; padding: 14px 0; border-top: 1px solid var(--ink); }
+  .chartblock h4 { font-family: 'Source Serif Pro', serif; font-weight: 700; font-size: 16px; }
+  .chartblock .sub { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .chartblock svg { width: 100%; height: 160px; }
+  .chartblock .cap { font-family: 'Source Serif Pro', serif; font-style: italic; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  aside h3 { font-family: 'Source Serif Pro', serif; font-weight: 700; font-size: 16px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); margin-bottom: 10px; }
+  aside .qitem { padding: 8px 0; border-bottom: 1px solid var(--rule); font-family: 'Inter', sans-serif; font-size: 12px; }
+  aside .qitem .src { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); display: block; }
+  aside .qitem .dst { color: var(--pink); font-weight: 600; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+  aside .qitem .age { float: right; color: var(--muted); font-size: 11px; }
+
+  footer { margin-top: 28px; padding-top: 10px; border-top: 1px solid var(--rule); font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; letter-spacing: 1px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="left">
+      <h1>The DomainSpec <span class="pink">DAILY</span></h1>
+      <div class="sub">Cross-tree mirroring — operational state, today's read</div>
+    </div>
+    <div class="right">
+      <div>WED 18 MAY 2026 · v0.1.0 · maestro-trama</div>
+      <div class="now">13:29 UTC · validator FAIL</div>
+    </div>
+  </header>
+
+  <div class="ticker">
+    <div class="item"><span class="l">XLINK</span><span class="v">50+</span><span class="delta up">▲ from 12 (30d)</span></div>
+    <div class="item"><span class="l">ORPHN</span><span class="v">4+4</span><span class="delta">flat</span></div>
+    <div class="item"><span class="l">COLL</span><span class="v">2</span><span class="delta up">▲ from 0 (7d)</span></div>
+    <div class="item"><span class="l">Q.PROM</span><span class="v">7</span><span class="delta">+1 today</span></div>
+    <div class="item"><span class="l">CMPRDY</span><span class="v">3/11</span><span class="delta">unchanged</span></div>
+    <div class="item"><span class="l">POL.IN.REPO</span><span class="v">0</span><span class="delta">—</span></div>
+  </div>
+
+  <div class="layout">
+
+    <div class="lede">
+      <h2>An agent's broken path is the framework's broken structure.</h2>
+      <p>Maestro-trama presents this morning with fifty-plus broken cross-references. The agent that wrote them was not careless. It had no computable path from its edit site to the spec that should have governed it, so it guessed, and the structure of the repository did not catch the guess.</p>
+      <p>The proposal under review — three top-level siblings with a mirrored feature grammar between L₁ and L₂ — is the structural fix. The validator state below reports the work still to do.</p>
+      <div class="pull">"The agent had no computable path. So it guessed."</div>
+      <p>Adversarial review forced narrowing. The strong "coercion" claim is parked behind measurement; the immediate enforcement is the path-coherence validator.</p>
+      <div class="byline">By the Robot · Filed from the vault</div>
+    </div>
+
+    <div class="center">
+      <h3>Validator state — L₁ ↔ L₂ feature pairs</h3>
+      <div class="sub">11 features under review · 4 PASS · 2 WARN · 4 FAIL · 6 spec-only</div>
+
+      <table class="data">
+        <thead>
+          <tr><th>Feature path</th><th>L₁ status</th><th>L₂ status</th><th class="n">Δ age</th><th>Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">labeling-platform / extraction</td><td>spec ✓ (drift)</td><td>src ✓</td><td class="n">2d</td><td><span class="pill warn">COLLISION</span></td></tr>
+          <tr><td class="mono">labeling-platform / dashboard</td><td>missing</td><td>src ✓</td><td class="n">—</td><td><span class="pill fail">ORPHAN L₂</span></td></tr>
+          <tr><td class="mono">labeling-platform / label-curation</td><td>missing</td><td>src ✓</td><td class="n">—</td><td><span class="pill fail">ORPHAN L₂</span></td></tr>
+          <tr><td class="mono">ad-creative-dna / extraction</td><td>spec ✓</td><td>via manifest</td><td class="n">2d</td><td><span class="pill warn">MULTI-IMPL</span></td></tr>
+          <tr><td class="mono">creative-catalog-mgmt / *</td><td>spec ✓</td><td>—</td><td class="n">—</td><td><span class="pill hold">SPEC-ONLY</span></td></tr>
+          <tr><td class="mono">mutation-strategy / policy</td><td>spec ✓</td><td>—</td><td class="n">—</td><td><span class="pill hold">SPEC-ONLY</span></td></tr>
+          <tr><td class="mono">mutation-strategy / domain</td><td>spec ✓</td><td>—</td><td class="n">—</td><td><span class="pill hold">SPEC-ONLY</span></td></tr>
+          <tr><td class="mono">trama / producer</td><td>draft</td><td>—</td><td class="n">3d</td><td><span class="pill hold">DRAFT</span></td></tr>
+          <tr><td class="mono">spend-predictor / spend-prediction</td><td>missing</td><td>src ✓</td><td class="n">—</td><td><span class="pill fail">ORPHAN L₂</span></td></tr>
+          <tr><td class="mono">creatives-harnessing / retrieval</td><td>legacy mark</td><td>src ✓</td><td class="n">26d</td><td><span class="pill pass">LEGACY OK</span></td></tr>
+          <tr><td class="mono">creative-analysis-harnessing / orchestrator</td><td>legacy mark</td><td>src ✓</td><td class="n">26d</td><td><span class="pill pass">LEGACY OK</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="chartblock">
+        <h4>Broken cross-references, last 30 days</h4>
+        <div class="sub">daily count, maestro-trama</div>
+        <svg viewBox="0 0 800 160" preserveAspectRatio="none">
+          <line x1="0" y1="140" x2="800" y2="140" stroke="#33302e" stroke-width="1"/>
+          <line x1="0" y1="40" x2="800" y2="40" stroke="#d5d0cb" stroke-width="0.5" stroke-dasharray="2 2"/>
+          <text x="2" y="36" font-family="Inter" font-size="9" fill="#66605c">50</text>
+          <text x="2" y="142" font-family="Inter" font-size="9" fill="#66605c">0</text>
+          <polyline points="0,128 30,124 60,120 90,116 120,108 150,100 180,96 210,88 240,84 270,76 300,72 330,68 360,64 390,60 420,56 450,52 480,48 510,46 540,44 570,42 600,40 630,38 660,34 690,32 720,28 750,24 780,20 800,16" fill="none" stroke="#cc0066" stroke-width="2"/>
+          <circle cx="800" cy="16" r="3" fill="#cc0066"/>
+          <text x="784" y="13" font-family="Inter" font-size="11" font-weight="700" fill="#cc0066" text-anchor="end">50+</text>
+        </svg>
+        <div class="cap">Trend rising. Every patch invents more references; no structural mechanism caps the invention.</div>
+      </div>
+    </div>
+
+    <aside>
+      <h3>Promotion Queue</h3>
+      <div class="qitem"><span class="age">6d</span><span class="src">research/notes/trama-decomp.md</span><span class="dst">→ trama / producer</span></div>
+      <div class="qitem"><span class="age">4d</span><span class="src">research/sessions/extraction-arb.md</span><span class="dst">→ labeling-pf / extraction</span></div>
+      <div class="qitem"><span class="age">2d</span><span class="src">research/lenses/exp-v1-takeaways.md</span><span class="dst">→ labeling-pf / extraction</span></div>
+      <div class="qitem"><span class="age">11d</span><span class="src">research/biz-philosopher/manifesto-iii.md</span><span class="dst" style="color: var(--gold);">→ _unknown / _unknown</span></div>
+      <div class="qitem"><span class="age">9d</span><span class="src">research/robot-talks/mutation-tensions.md</span><span class="dst">→ mutation-strat / policy</span></div>
+      <div class="qitem"><span class="age">3d</span><span class="src">research/notes/spend-data-contract.md</span><span class="dst">→ spend-pred / prediction</span></div>
+      <div class="qitem"><span class="age">1d</span><span class="src">research/sessions/dashboard-research.md</span><span class="dst">→ exp-dash / leaderboard</span></div>
+
+      <h3 style="margin-top: 24px;">Today</h3>
+      <div class="qitem"><span class="src">13:29 · discovery committed</span> 6 files</div>
+      <div class="qitem"><span class="src">12:14 · adversarial lens consolidated</span> 5 attacks · concessions folded</div>
+      <div class="qitem"><span class="src">11:02 · evidence lens consolidated</span> maestro-trama inventory</div>
+      <div class="qitem"><span class="src">10:45 · theorem lens consolidated</span> T0' deferred</div>
+    </aside>
+
+  </div>
+
+  <footer>
+    <span>vault/discovery/cross-tree-mirroring-for-llm-coercion</span>
+    <span>FT / Bloomberg idiom · 03 / 15</span>
+    <span>© DomainSpec daily</span>
+  </footer>
+
+</div>
+</body>
+</html>

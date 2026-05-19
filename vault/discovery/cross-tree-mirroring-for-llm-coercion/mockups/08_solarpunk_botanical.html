@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Solarpunk Botanical</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #f5efdf; --leaf: #3f6b3a; --leaf-deep: #264a25; --leaf-light: #7fa86a; --bark: #6b4a2a; --sun: #d99a3a; --terra: #b5532b; --ink: #1a2418; --stone: #e8dfc8; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; background-image: radial-gradient(circle at 10% 10%, rgba(217, 154, 58, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(127, 168, 106, 0.1) 0%, transparent 50%); }
+  .page { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  .head { display: grid; grid-template-columns: 1fr auto; align-items: end; padding-bottom: 24px; border-bottom: 1px solid var(--leaf); }
+  .head .text h1 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 56px; line-height: 1; color: var(--leaf-deep); }
+  .head .text .sub { font-family: 'Fraunces', serif; font-style: italic; font-size: 20px; color: var(--bark); margin-top: 8px; font-weight: 400; }
+  .head .meta { text-align: right; font-size: 12px; color: var(--bark); }
+  .head .meta span { display: block; }
+  .head .meta .seal { display: inline-block; width: 50px; height: 50px; border: 2px solid var(--terra); border-radius: 50%; color: var(--terra); text-align: center; line-height: 46px; font-weight: 700; margin-top: 8px; font-family: 'Fraunces', serif; }
+
+  .lede { font-family: 'Fraunces', serif; font-size: 20px; font-style: italic; line-height: 1.5; color: var(--leaf-deep); margin-top: 24px; max-width: 760px; }
+
+  .section { margin-top: 40px; }
+  .label { display: inline-block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--terra); padding: 4px 12px; background: rgba(181, 83, 43, 0.1); border-radius: 12px; margin-bottom: 16px; font-weight: 700; }
+
+  .garden { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .plot { background: var(--stone); border-radius: 16px; padding: 24px; position: relative; overflow: hidden; }
+  .plot::before { content: ""; position: absolute; bottom: -30px; right: -30px; width: 120px; height: 120px; background: radial-gradient(circle, var(--leaf-light) 0%, transparent 70%); opacity: 0.5; }
+  .plot .leaf { font-size: 28px; color: var(--leaf); margin-bottom: 8px; }
+  .plot .name { font-family: 'Fraunces', serif; font-weight: 800; font-size: 22px; color: var(--leaf-deep); }
+  .plot .latin { font-style: italic; font-family: 'Fraunces', serif; font-size: 13px; color: var(--bark); margin-top: 2px; margin-bottom: 12px; }
+  .plot p { font-size: 13px; color: var(--ink); position: relative; z-index: 1; }
+  .plot code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: rgba(63, 107, 58, 0.1); padding: 1px 4px; border-radius: 3px; }
+
+  .growth { background: linear-gradient(135deg, var(--leaf-light) 0%, var(--leaf) 100%); color: var(--paper); padding: 32px; border-radius: 24px; margin-top: 16px; }
+  .growth h3 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 24px; margin-bottom: 16px; }
+  .growth-flow { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .growth-flow .stage { background: rgba(255,255,255,0.15); padding: 12px 18px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13px; backdrop-filter: blur(4px); }
+  .growth-flow .arrow { font-family: 'Fraunces', serif; font-size: 24px; font-style: italic; }
+
+  .twoops { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+  .op { background: var(--paper); border: 2px solid var(--leaf); border-radius: 16px; padding: 24px; }
+  .op h3 { font-family: 'Fraunces', serif; font-weight: 800; font-size: 26px; color: var(--leaf-deep); }
+  .op .formula { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--terra); margin: 4px 0 14px; }
+  .op .cond { padding: 8px 0; border-bottom: 1px dashed var(--leaf-light); font-size: 13px; }
+  .op .cond:last-child { border-bottom: none; }
+  .op .cond b { color: var(--leaf-deep); font-weight: 700; }
+
+  .harvest { background: var(--sun); color: var(--ink); padding: 24px; border-radius: 16px; margin-top: 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .harvest .stat { text-align: center; }
+  .harvest .n { font-family: 'Fraunces', serif; font-weight: 800; font-size: 36px; line-height: 1; color: var(--terra); }
+  .harvest .l { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 700; }
+
+  .seed { margin-top: 32px; font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--bark); text-align: center; padding: 16px; border-top: 1px solid var(--leaf-light); border-bottom: 1px solid var(--leaf-light); }
+
+  .foot { margin-top: 24px; text-align: center; font-size: 11px; color: var(--bark); letter-spacing: 1px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="head">
+    <div class="text">
+      <h1>Cross-Tree Mirroring</h1>
+      <div class="sub">Three siblings sharing one root — a structural garden where residue can grow into knowledge, and knowledge into code.</div>
+    </div>
+    <div class="meta">
+      <span>Discovery 0.1.0</span>
+      <span>2026-05-18</span>
+      <div class="seal">08</div>
+    </div>
+  </div>
+
+  <div class="lede">"Forcing residue into the structured grammar would invent identity rather than earn it. So we keep a sibling plot where work-in-progress is allowed to be unformed until it knows what it is."</div>
+
+  <div class="section">
+    <div class="label">The Three Plots</div>
+    <div class="garden">
+      <div class="plot">
+        <div class="leaf">🌱</div>
+        <div class="name">/research</div>
+        <div class="latin">Residua liminalis</div>
+        <p>The seed bed. Pre-structural work. Sessions, robot-talks, unformed ideas. Not a peer layer — there is no functor leaving here. Things grow <em>out</em> of this plot when they earn their identity.</p>
+      </div>
+      <div class="plot">
+        <div class="leaf">🌿</div>
+        <div class="name">/domain_knowledge</div>
+        <div class="latin">L₁ structurata</div>
+        <p>The cultivated grove. Specs, invariants, domain models filed under <code>apps/X/features/Y/</code>. Every artifact knows its identity. This is what compilation reads from.</p>
+      </div>
+      <div class="plot">
+        <div class="leaf">🌳</div>
+        <div class="name">/implementation</div>
+        <div class="latin">L₂ speculum</div>
+        <p>The mirrored canopy. Code, tests, ops, under the same <code>apps/X/features/Y/</code> grammar as L₁. Counterpart paths are computable, not searched.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="growth">
+    <h3>The Growth Cycle</h3>
+    <div class="growth-flow">
+      <div class="stage">unformed thought</div>
+      <span class="arrow">→</span>
+      <div class="stage">/research</div>
+      <span class="arrow">— promotion →</span>
+      <div class="stage">/domain_knowledge</div>
+      <span class="arrow">— compilation Δ →</span>
+      <div class="stage">/implementation</div>
+    </div>
+    <p style="margin-top: 14px; font-family: 'Fraunces', serif; font-style: italic; font-size: 14px;">Two operations. The first is identity in place — an artifact graduating because it now knows where it belongs. The second is generation in the mirror — a spec begetting its code.</p>
+  </div>
+
+  <div class="section">
+    <div class="label">Two Operations</div>
+    <div class="twoops">
+      <div class="op">
+        <h3>Promotion 🌱→🌿</h3>
+        <div class="formula">residue → L₁</div>
+        <div class="cond"><b>Necessary:</b> the artifact has earned an <code>(app, feature)</code> identity.</div>
+        <div class="cond"><b>Sufficient:</b> manual greenlight from the operator.</div>
+        <div class="cond"><b>Partial:</b> files under <code>features/_unknown/</code> until the missing piece is named.</div>
+      </div>
+      <div class="op">
+        <h3>Compilation 🌿→🌳</h3>
+        <div class="formula">L₁ → L₂ (Δ as Left Kan extension)</div>
+        <div class="cond"><b>Gate:</b> structural-completeness validator (path-coherence enforced).</div>
+        <div class="cond"><b>Plus:</b> test-derivability — if tests cannot be derived from the spec, the spec is underspecified.</div>
+        <div class="cond"><b>Deferred:</b> the formal T0' obligations from the theorem.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">Harvest from maestro-trama</div>
+    <div class="harvest">
+      <div class="stat"><div class="n">50+</div><div class="l">Broken links today</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">Orphan trees</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">Drifting extraction specs</div></div>
+      <div class="stat"><div class="n">20–30h</div><div class="l">Migration estimate</div></div>
+    </div>
+  </div>
+
+  <div class="seed">— The strong claim (structure forces correctness) is parked behind measurement. Today this is a garden, not a guarantee. —</div>
+
+  <div class="foot">vault/discovery/cross-tree-mirroring-for-llm-coercion · 08 of 10</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Tree Mirroring — Swiss Minimalism</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #ffffff; --text: #111; --muted: #666; --rule: #e4e4e4; --accent: #d32f2f; --tint: #fafafa;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 980px; margin: 0 auto; padding: 64px 40px 96px; }
+
+  .head { border-bottom: 3px solid var(--text); padding-bottom: 18px; }
+  .eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 0.95; margin-top: 8px; text-transform: uppercase; }
+  .deck { font-size: 18px; font-weight: 300; color: var(--muted); margin-top: 14px; max-width: 720px; line-height: 1.4; }
+  .meta { display: flex; gap: 24px; margin-top: 16px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+
+  .section { padding-top: 48px; }
+  .label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin-bottom: 24px; }
+
+  .siblings { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .sib { padding: 24px; border: 1px solid var(--rule); }
+  .sib h3 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 500; margin-bottom: 12px; color: var(--accent); }
+  .sib .role { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+  .sib p { font-size: 13px; color: var(--text); }
+
+  .mirror { display: grid; grid-template-columns: 1fr 80px 1fr; align-items: center; gap: 16px; margin-top: 24px; }
+  .tree { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--tint); padding: 20px; line-height: 1.7; }
+  .tree .root { color: var(--accent); font-weight: 600; }
+  .arrow { text-align: center; font-size: 24px; color: var(--accent); }
+  .arrow .label-mid { display: block; font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  .ops { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .op { border-top: 2px solid var(--text); padding-top: 16px; }
+  .op h4 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .op .formula { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 14px; }
+  .op .cond { font-size: 13px; color: var(--text); margin-bottom: 6px; }
+  .op .cond strong { font-weight: 600; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-top: 16px; }
+  .stat { padding: 20px 0; border-right: 1px solid var(--rule); padding-left: 16px; }
+  .stat:last-child { border-right: none; }
+  .stat .n { font-size: 40px; font-weight: 800; letter-spacing: -1px; color: var(--accent); }
+  .stat .lbl { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  .footnote { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="head">
+    <div class="eyebrow">DomainSpec / Discovery 0.1.0</div>
+    <h1>Cross-Tree<br>Mirroring</h1>
+    <div class="deck">Three-sibling repo structure for L₁↔L₂ symmetry. The precondition for forcing LLM agents to write the right code: a spec governing any code edit must sit at a <em>computable</em> path.</div>
+    <div class="meta"><span>2026-05-18</span><span>Status: Exploratory</span><span>Pilot: maestro-trama</span></div>
+  </div>
+
+  <div class="section">
+    <div class="label">The Three Siblings</div>
+    <div class="siblings">
+      <div class="sib">
+        <h3>/research</h3>
+        <div class="role">Residue · sibling, not peer</div>
+        <p>Pre-structural work without an earned <code>(app, feature)</code> identity. Filed freely. Forcing it into <code>apps/X/features/Y/</code> would invent identity rather than earn it.</p>
+      </div>
+      <div class="sib">
+        <h3>/domain_knowledge</h3>
+        <div class="role">L₁ · structured</div>
+        <p>Specs, discoveries, domain models, invariants. Every artifact has a known <code>(app, feature)</code> and lives at <code>apps/X/features/Y/{…}</code>.</p>
+      </div>
+      <div class="sib">
+        <h3>/implementation</h3>
+        <div class="role">L₂ · mirrored</div>
+        <p>Code, tests, ops. Same <code>apps/X/features/Y/{…}</code> grammar. Every artifact has a structurally-locatable L₁ counterpart.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">Mirror Grammar</div>
+    <div class="mirror">
+      <div class="tree">
+<span class="root">/domain_knowledge</span>
+└── apps/
+    └── labeling-platform/
+        └── features/
+            └── extraction/
+                ├── SPEC.md
+                ├── domain.md
+                └── operations.md
+      </div>
+      <div class="arrow">↔<span class="label-mid">Δ</span></div>
+      <div class="tree">
+<span class="root">/implementation</span>
+└── apps/
+    └── labeling-platform/
+        └── features/
+            └── extraction/
+                ├── src/
+                ├── tests/
+                └── ops/
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">Two Operations</div>
+    <div class="ops">
+      <div class="op">
+        <h4>Promotion</h4>
+        <div class="formula">residue → L₁</div>
+        <div class="cond"><strong>Necessary:</strong> earned <code>(app, feature)</code> identity</div>
+        <div class="cond"><strong>Sufficient:</strong> manual greenlight</div>
+        <div class="cond">Partial identity files under <code>features/_unknown/</code></div>
+      </div>
+      <div class="op">
+        <h4>Compilation</h4>
+        <div class="formula">L₁ → L₂</div>
+        <div class="cond"><strong>Gate:</strong> structural-completeness validator</div>
+        <div class="cond"><strong>Plus:</strong> test-derivability check</div>
+        <div class="cond">T0' (Lean) is long-term aspiration, not entry condition</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">Maestro-trama Pilot — Before / After</div>
+    <div class="stats">
+      <div class="stat"><div class="n">50+</div><div class="lbl">Broken cross-links today</div></div>
+      <div class="stat"><div class="n">4+4</div><div class="lbl">Orphan proposals + orphan apps</div></div>
+      <div class="stat"><div class="n">0</div><div class="lbl">Promotion mechanics in repo</div></div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <span>Theorem anchor: <code>domainspec-theorem/docs/reflection-tower.md</code> — two-layer is locked; residue is dynamic.</span>
+    <span>01 / 10</span>
+  </div>
+
+</div>
+</body>
+</html>

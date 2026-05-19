@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Linear / Vercel Modern SaaS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #fafafa; --panel: #ffffff; --text: #0a0a0a; --muted: #6b7280; --rule: #ececec; --rule-strong: #d4d4d8; --accent: #5b5bd6; --green: #16a34a; --amber: #d97706; --red: #dc2626; --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.05); }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .app { max-width: 1280px; margin: 0 auto; padding: 32px 40px 64px; }
+
+  .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 24px; }
+  .header .title { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; }
+  .header .title .crumb { color: var(--muted); font-weight: 400; }
+  .header .actions { display: flex; gap: 8px; }
+  .btn { padding: 6px 14px; font-size: 13px; font-weight: 500; border-radius: 6px; cursor: pointer; border: 1px solid var(--rule-strong); background: white; }
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn.primary:hover { opacity: 0.9; }
+
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .r5 { grid-template-columns: repeat(5, 1fr); }
+  .r3 { grid-template-columns: 2fr 1fr 1fr; }
+  .r2 { grid-template-columns: 1.5fr 1fr; }
+
+  .card { background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 20px; }
+  .card h3 { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  .card .num { font-size: 32px; font-weight: 600; letter-spacing: -1px; margin-top: 6px; }
+  .card .num.red { color: var(--red); }
+  .card .num.green { color: var(--green); }
+  .card .num.amber { color: var(--amber); }
+  .card .delta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+  .card .delta.up { color: var(--red); }
+  .card .delta.dn { color: var(--green); }
+
+  .panel { background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); }
+  .panel-h { padding: 16px 20px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; }
+  .panel-h h3 { font-size: 14px; font-weight: 600; }
+  .panel-h .sub { color: var(--muted); font-size: 13px; }
+  .panel-b { padding: 8px 0; }
+
+  .feature-row { padding: 12px 20px; display: grid; grid-template-columns: 1fr auto auto auto; gap: 16px; align-items: center; border-bottom: 1px solid var(--rule); }
+  .feature-row:last-child { border-bottom: none; }
+  .feature-row .name { display: flex; align-items: center; gap: 10px; }
+  .feature-row .name .ico { width: 28px; height: 28px; border-radius: 6px; background: rgba(91, 91, 214, 0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+  .feature-row .name .label { font-weight: 500; font-size: 13px; }
+  .feature-row .name .label .path { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 400; display: block; margin-top: 2px; }
+  .feature-row .pair { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+  .feature-row .age { font-size: 12px; color: var(--muted); }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+  .badge.pass { background: rgba(22, 163, 74, 0.1); color: var(--green); }
+  .badge.warn { background: rgba(217, 119, 6, 0.1); color: var(--amber); }
+  .badge.fail { background: rgba(220, 38, 38, 0.1); color: var(--red); }
+  .badge.hold { background: rgba(107, 114, 128, 0.1); color: var(--muted); }
+
+  .q-row { padding: 10px 20px; display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; border-bottom: 1px solid var(--rule); }
+  .q-row:last-child { border-bottom: none; }
+  .q-row .src { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .q-row .dst { font-size: 12px; color: var(--text); font-weight: 500; margin-top: 2px; }
+  .q-row .age { font-size: 11px; color: var(--muted); }
+  .q-row .greenlight { background: var(--accent); color: white; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; border: 0; }
+
+  .activity { padding: 12px 20px; display: flex; gap: 12px; border-bottom: 1px solid var(--rule); font-size: 13px; }
+  .activity:last-child { border-bottom: none; }
+  .activity .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); margin-top: 7px; flex-shrink: 0; }
+  .activity .dot.green { background: var(--green); }
+  .activity .dot.red { background: var(--red); }
+  .activity .dot.amber { background: var(--amber); }
+  .activity .when { color: var(--muted); width: 56px; font-size: 12px; }
+
+  .chart-card { padding: 20px; }
+  .chart-card h3 { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  .chart-card .num { font-size: 28px; font-weight: 600; margin: 4px 0 12px; }
+  .chart-card svg { width: 100%; height: 80px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="title"><span class="crumb">maestro-trama / </span>Cross-tree mirroring</div>
+    <div class="actions">
+      <button class="btn">Export</button>
+      <button class="btn">Filter</button>
+      <button class="btn primary">Run validator</button>
+    </div>
+  </div>
+
+  <div class="row r5">
+    <div class="card"><h3>Broken cross-links</h3><div class="num red">50+</div><div class="delta up">↑ from 12 · 30d</div></div>
+    <div class="card"><h3>Orphans (L₁ + L₂)</h3><div class="num amber">4 + 4</div><div class="delta">unchanged · 14d</div></div>
+    <div class="card"><h3>Name collisions</h3><div class="num amber">2</div><div class="delta up">↑ from 0 · 7d</div></div>
+    <div class="card"><h3>Promotion queue</h3><div class="num">7</div><div class="delta">+1 today</div></div>
+    <div class="card"><h3>L₁ compile-ready</h3><div class="num green">3 / 11</div><div class="delta">+1 today</div></div>
+  </div>
+
+  <div class="row r3">
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3>Features</h3>
+        <span class="sub">11 features · grouped by app</span>
+      </div>
+      <div class="panel-b">
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">LP</div>
+            <div class="label">extraction <div class="path">labeling-platform / extraction</div></div>
+          </div>
+          <div class="pair">L₁ ✓ · L₂ ✓</div>
+          <div class="age">2d</div>
+          <span class="badge warn">collision</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">LP</div>
+            <div class="label">dashboard <div class="path">labeling-platform / dashboard</div></div>
+          </div>
+          <div class="pair">L₁ — · L₂ ✓</div>
+          <div class="age">14d</div>
+          <span class="badge fail">orphan L₂</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">AD</div>
+            <div class="label">extraction <div class="path">ad-creative-dna / extraction</div></div>
+          </div>
+          <div class="pair">L₁ ✓ · manifest</div>
+          <div class="age">2d</div>
+          <span class="badge warn">multi-impl</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">MS</div>
+            <div class="label">policy <div class="path">mutation-strategy / policy</div></div>
+          </div>
+          <div class="pair">L₁ ✓ · L₂ —</div>
+          <div class="age">8d</div>
+          <span class="badge hold">spec-only</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">TR</div>
+            <div class="label">producer <div class="path">trama / producer</div></div>
+          </div>
+          <div class="pair">L₁ draft · L₂ —</div>
+          <div class="age">3d</div>
+          <span class="badge hold">draft</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">SP</div>
+            <div class="label">spend-prediction <div class="path">spend-predictor / spend-prediction</div></div>
+          </div>
+          <div class="pair">L₁ — · L₂ ✓</div>
+          <div class="age">2d</div>
+          <span class="badge fail">orphan L₂</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">CH</div>
+            <div class="label">retrieval <div class="path">creatives-harnessing / retrieval</div></div>
+          </div>
+          <div class="pair">L₁ legacy · L₂ ✓</div>
+          <div class="age">26d</div>
+          <span class="badge pass">legacy ok</span>
+        </div>
+        <div class="feature-row">
+          <div class="name">
+            <div class="ico">CA</div>
+            <div class="label">orchestrator <div class="path">creative-analysis / orchestrator</div></div>
+          </div>
+          <div class="pair">L₁ legacy · L₂ ✓</div>
+          <div class="age">26d</div>
+          <span class="badge pass">legacy ok</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3>Promotion queue</h3>
+        <span class="sub">7 ready</span>
+      </div>
+      <div class="panel-b">
+        <div class="q-row">
+          <div><div class="src">research/notes/trama-decomp.md</div><div class="dst">→ trama / producer</div></div>
+          <div class="age">6d</div>
+          <button class="greenlight">Promote</button>
+        </div>
+        <div class="q-row">
+          <div><div class="src">research/sessions/extraction-arb.md</div><div class="dst">→ labeling-platform / extraction</div></div>
+          <div class="age">4d</div>
+          <button class="greenlight">Promote</button>
+        </div>
+        <div class="q-row">
+          <div><div class="src">research/lenses/exp-v1-takeaways.md</div><div class="dst">→ labeling-platform / extraction</div></div>
+          <div class="age">2d</div>
+          <button class="greenlight">Promote</button>
+        </div>
+        <div class="q-row">
+          <div><div class="src">research/biz-philosopher/manifesto-iii.md</div><div class="dst" style="color: var(--amber);">→ _unknown / _unknown</div></div>
+          <div class="age">11d</div>
+          <button class="greenlight" style="background: var(--rule-strong); color: var(--muted); cursor: not-allowed;">Hold</button>
+        </div>
+        <div class="q-row">
+          <div><div class="src">research/notes/spend-data-contract.md</div><div class="dst">→ spend-predictor / spend-prediction</div></div>
+          <div class="age">3d</div>
+          <button class="greenlight">Promote</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3>Recent activity</h3>
+        <span class="sub">today</span>
+      </div>
+      <div class="panel-b">
+        <div class="activity"><span class="dot green"></span><span class="when">13:29</span><span>Discovery committed · cross-tree-mirroring</span></div>
+        <div class="activity"><span class="dot green"></span><span class="when">12:14</span><span>Adversarial lens consolidated · 5 attacks</span></div>
+        <div class="activity"><span class="dot amber"></span><span class="when">12:08</span><span>Validator · 50 broken refs in maestro-trama</span></div>
+        <div class="activity"><span class="dot red"></span><span class="when">11:45</span><span>Collision detected · extraction/ × 2</span></div>
+        <div class="activity"><span class="dot"></span><span class="when">10:45</span><span>Theorem lens · T0' deferred</span></div>
+        <div class="activity"><span class="dot"></span><span class="when">10:12</span><span>Vault lens · OQ-4 unresolved</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row r3">
+    <div class="card chart-card">
+      <h3>Broken cross-links · 30d</h3>
+      <div class="num red">50+</div>
+      <svg viewBox="0 0 300 80" preserveAspectRatio="none"><path d="M0,72 L20,68 L40,64 L60,60 L80,54 L100,48 L120,44 L140,38 L160,34 L180,28 L200,24 L220,20 L240,18 L260,14 L280,10 L300,8" fill="none" stroke="#dc2626" stroke-width="2"/><path d="M0,72 L20,68 L40,64 L60,60 L80,54 L100,48 L120,44 L140,38 L160,34 L180,28 L200,24 L220,20 L240,18 L260,14 L280,10 L300,8 L300,80 L0,80 Z" fill="rgba(220, 38, 38, 0.08)"/></svg>
+    </div>
+    <div class="card chart-card">
+      <h3>Promotions · 30d</h3>
+      <div class="num green">+12</div>
+      <svg viewBox="0 0 300 80" preserveAspectRatio="none"><rect x="0" y="60" width="14" height="20" fill="#16a34a"/><rect x="20" y="50" width="14" height="30" fill="#16a34a"/><rect x="40" y="65" width="14" height="15" fill="#16a34a"/><rect x="60" y="40" width="14" height="40" fill="#16a34a"/><rect x="80" y="55" width="14" height="25" fill="#16a34a"/><rect x="100" y="30" width="14" height="50" fill="#16a34a"/><rect x="120" y="45" width="14" height="35" fill="#16a34a"/><rect x="140" y="35" width="14" height="45" fill="#16a34a"/><rect x="160" y="50" width="14" height="30" fill="#16a34a"/><rect x="180" y="25" width="14" height="55" fill="#16a34a"/><rect x="200" y="40" width="14" height="40" fill="#16a34a"/><rect x="220" y="55" width="14" height="25" fill="#16a34a"/><rect x="240" y="30" width="14" height="50" fill="#16a34a"/><rect x="260" y="35" width="14" height="45" fill="#16a34a"/><rect x="280" y="20" width="14" height="60" fill="#16a34a"/></svg>
+    </div>
+    <div class="card chart-card">
+      <h3>Compile-ready · 30d</h3>
+      <div class="num">3 / 11</div>
+      <svg viewBox="0 0 300 80" preserveAspectRatio="none"><polyline points="0,60 30,60 60,55 90,55 120,50 150,45 180,45 210,40 240,35 270,30 300,28" fill="none" stroke="#5b5bd6" stroke-width="2"/></svg>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

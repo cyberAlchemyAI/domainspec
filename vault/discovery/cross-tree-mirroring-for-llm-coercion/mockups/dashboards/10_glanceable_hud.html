@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Glanceable HUD</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #f7f7f8; --panel: #ffffff; --text: #0f0f12; --muted: #888892; --rule: #ebebee; --red: #e23b3b; --amber: #f0a93c; --green: #2ea65e; --blue: #2f6bf1; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+  .hud { display: grid; grid-template-columns: 1fr 1.4fr 1fr; grid-template-rows: 80px 1fr 200px; height: 100vh; gap: 16px; padding: 16px; }
+
+  .top { grid-column: 1 / -1; background: var(--panel); border-radius: 16px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .top .left { display: flex; align-items: center; gap: 16px; }
+  .top .left .mark { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #2f6bf1, #6f3bf1); }
+  .top .left .ttl { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+  .top .left .ttl small { display: block; font-size: 11px; font-weight: 400; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1px; }
+  .top .center { display: flex; align-items: center; gap: 14px; }
+  .top .center .vbtn { background: rgba(226, 59, 59, 0.1); color: var(--red); font-weight: 700; padding: 10px 24px; border-radius: 30px; font-size: 13px; letter-spacing: 1px; }
+  .top .right { display: flex; gap: 18px; align-items: center; color: var(--muted); font-size: 12px; }
+  .top .right .now { font-family: 'JetBrains Mono', monospace; }
+
+  .heroL { background: var(--panel); border-radius: 16px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .heroL::before { content: ""; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(226,59,59,0.08), transparent 70%); }
+  .heroL .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .heroL .num { font-size: 120px; font-weight: 300; line-height: 1; letter-spacing: -6px; color: var(--red); margin-top: 8px; }
+  .heroL .num small { font-size: 36px; font-weight: 400; letter-spacing: 0; }
+  .heroL .delta { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .heroL .delta b { color: var(--red); font-weight: 600; }
+  .heroL .ttl { font-size: 22px; font-weight: 600; margin-top: 16px; max-width: 320px; line-height: 1.25; }
+  .heroL .desc { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
+
+  .heroC { background: var(--panel); border-radius: 16px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+  .heroC .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .heroC .head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 24px; }
+  .heroC .head .big { font-size: 56px; font-weight: 300; letter-spacing: -2px; line-height: 1; }
+  .heroC .head .frac { font-size: 18px; color: var(--muted); margin-bottom: 6px; }
+
+  .lights { display: grid; grid-template-columns: repeat(11, 1fr); gap: 8px; }
+  .light { aspect-ratio: 1; border-radius: 8px; position: relative; }
+  .light.pass { background: rgba(46, 166, 94, 0.2); border: 2px solid var(--green); }
+  .light.warn { background: rgba(240, 169, 60, 0.2); border: 2px solid var(--amber); }
+  .light.fail { background: rgba(226, 59, 59, 0.2); border: 2px solid var(--red); }
+  .light.hold { background: rgba(136, 136, 146, 0.15); border: 2px dashed rgba(136, 136, 146, 0.5); }
+  .light .lbl { position: absolute; bottom: 6px; left: 6px; right: 6px; font-size: 9px; font-weight: 600; letter-spacing: 0; color: var(--text); }
+
+  .heroC .legend { display: flex; gap: 14px; margin-top: 14px; font-size: 11px; color: var(--muted); }
+  .heroC .legend span { display: flex; align-items: center; gap: 4px; }
+  .heroC .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  .heroC .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 24px; }
+  .heroC .ss { background: var(--bg); border-radius: 10px; padding: 14px 16px; }
+  .heroC .ss .v { font-size: 28px; font-weight: 600; line-height: 1; }
+  .heroC .ss .v.green { color: var(--green); }
+  .heroC .ss .v.amber { color: var(--amber); }
+  .heroC .ss .v.red { color: var(--red); }
+  .heroC .ss .l { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
+  .heroR { background: var(--panel); border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+  .heroR .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 14px; }
+  .heroR .qcount { font-size: 64px; font-weight: 300; line-height: 1; letter-spacing: -3px; color: var(--blue); }
+  .heroR .qsub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .heroR .qlist { margin-top: 18px; }
+  .heroR .qitem { padding: 10px 0; border-bottom: 1px solid var(--rule); }
+  .heroR .qitem:last-child { border-bottom: none; }
+  .heroR .qitem .dst { font-weight: 600; font-size: 13px; }
+  .heroR .qitem .age { color: var(--muted); font-size: 11px; margin-left: 8px; }
+  .heroR .qitem .from { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .bot { grid-column: 1 / -1; background: var(--panel); border-radius: 16px; padding: 24px 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
+  .bot .chart h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .bot .chart svg { width: 100%; height: 130px; margin-top: 8px; }
+  .bot .events h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; }
+  .bot .events .e { padding: 5px 0; font-size: 12px; display: flex; gap: 10px; border-bottom: 1px solid var(--rule); }
+  .bot .events .e:last-child { border: 0; }
+  .bot .events .e .when { font-family: 'JetBrains Mono', monospace; color: var(--muted); width: 38px; }
+  .bot .events .e .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); margin-top: 6px; }
+  .bot .events .e .dot.r { background: var(--red); }
+  .bot .events .e .dot.a { background: var(--amber); }
+  .bot .events .e .dot.g { background: var(--green); }
+</style>
+</head>
+<body>
+<div class="hud">
+
+  <div class="top">
+    <div class="left"><span class="mark"></span><span class="ttl">Cross-tree mirroring<small>maestro-trama · v0.1.0</small></span></div>
+    <div class="center"><span class="vbtn">● VALIDATOR · FAIL</span></div>
+    <div class="right"><span>last run · 13s ago</span><span class="now">2026-05-18 · 13:29</span></div>
+  </div>
+
+  <div class="heroL">
+    <div>
+      <div class="label">Broken cross-links</div>
+      <div class="num">50<small>+</small></div>
+      <div class="delta">↑ from 12 · 30d ago · <b>+316%</b></div>
+    </div>
+    <div>
+      <div class="ttl">The agent had no computable path. So it guessed.</div>
+      <div class="desc">Every patch under <code>apps/labeling-platform/features/</code> adds more invented references. Nothing structural prevents the next invention.</div>
+    </div>
+  </div>
+
+  <div class="heroC">
+    <div class="head">
+      <div>
+        <div class="label">Compile-ready features</div>
+        <div class="big">3 <span class="frac">/ 11</span></div>
+      </div>
+      <div style="text-align: right;">
+        <div class="label">Mirror coverage</div>
+        <div class="big" style="color: var(--green);">31<span style="font-size: 22px;">%</span></div>
+      </div>
+    </div>
+
+    <div class="lights">
+      <div class="light pass"><span class="lbl">val</span></div>
+      <div class="light pass"><span class="lbl">int</span></div>
+      <div class="light pass"><span class="lbl">orch</span></div>
+      <div class="light pass"><span class="lbl">retr</span></div>
+      <div class="light warn"><span class="lbl">ext.AD</span></div>
+      <div class="light warn"><span class="lbl">ldr</span></div>
+      <div class="light fail"><span class="lbl">ext.LP</span></div>
+      <div class="light fail"><span class="lbl">dash</span></div>
+      <div class="light fail"><span class="lbl">curat</span></div>
+      <div class="light fail"><span class="lbl">spend</span></div>
+      <div class="light hold"><span class="lbl">prod</span></div>
+      <div class="light hold"><span class="lbl">pol</span></div>
+      <div class="light hold"><span class="lbl">dom</span></div>
+      <div class="light hold"><span class="lbl">attr</span></div>
+      <div class="light hold"><span class="lbl">surf</span></div>
+      <div class="light hold"><span class="lbl">ext.CC</span></div>
+      <div class="light pass"><span class="lbl">scaf</span></div>
+      <div class="light pass"><span class="lbl">core</span></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#2ea65e"></i> pass</span>
+      <span><i style="background:#f0a93c"></i> warn</span>
+      <span><i style="background:#e23b3b"></i> fail</span>
+      <span><i style="background:#888892"></i> spec-only / draft</span>
+    </div>
+
+    <div class="summary-row">
+      <div class="ss"><div class="v green">7</div><div class="l">pass</div></div>
+      <div class="ss"><div class="v amber">2</div><div class="l">warn</div></div>
+      <div class="ss"><div class="v red">4</div><div class="l">fail</div></div>
+      <div class="ss"><div class="v">6</div><div class="l">spec-only</div></div>
+    </div>
+  </div>
+
+  <div class="heroR">
+    <div class="label">Promotion queue</div>
+    <div class="qcount">7</div>
+    <div class="qsub">awaiting greenlight</div>
+    <div class="qlist">
+      <div class="qitem"><div class="dst">→ trama / producer<span class="age">6d</span></div><div class="from">research/notes/trama-decomp.md</div></div>
+      <div class="qitem"><div class="dst">→ labeling / extraction<span class="age">4d</span></div><div class="from">research/sessions/extraction-arb.md</div></div>
+      <div class="qitem"><div class="dst" style="color: var(--amber);">→ _unknown<span class="age">11d</span></div><div class="from">research/biz-philosopher/manifesto-iii.md</div></div>
+      <div class="qitem"><div class="dst">→ spend-pred / prediction<span class="age">3d</span></div><div class="from">research/notes/spend-data-contract.md</div></div>
+    </div>
+  </div>
+
+  <div class="bot">
+    <div class="chart">
+      <h3>Broken cross-links · 30 days</h3>
+      <svg viewBox="0 0 800 130" preserveAspectRatio="none">
+        <defs><linearGradient id="hg" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#e23b3b" stop-opacity="0.2"/><stop offset="100%" stop-color="#e23b3b" stop-opacity="0"/></linearGradient></defs>
+        <path d="M0,110 L30,108 L60,106 L90,102 L120,96 L150,90 L180,86 L210,80 L240,76 L270,68 L300,64 L330,58 L360,54 L390,48 L420,42 L450,38 L480,32 L510,28 L540,24 L570,20 L600,18 L630,14 L660,12 L690,10 L720,8 L750,6 L780,4 L800,2 L800,130 L0,130 Z" fill="url(#hg)"/>
+        <polyline points="0,110 30,108 60,106 90,102 120,96 150,90 180,86 210,80 240,76 270,68 300,64 330,58 360,54 390,48 420,42 450,38 480,32 510,28 540,24 570,20 600,18 630,14 660,12 690,10 720,8 750,6 780,4 800,2" fill="none" stroke="#e23b3b" stroke-width="2.5"/>
+        <circle cx="800" cy="2" r="4" fill="#e23b3b"/>
+      </svg>
+    </div>
+    <div class="events">
+      <h3>Today</h3>
+      <div class="e"><span class="dot g"></span><span class="when">13:29</span><span>Discovery committed</span></div>
+      <div class="e"><span class="dot g"></span><span class="when">12:14</span><span>Adversarial lens · 5 attacks</span></div>
+      <div class="e"><span class="dot a"></span><span class="when">12:08</span><span>Validator · 50 broken refs</span></div>
+      <div class="e"><span class="dot r"></span><span class="when">11:45</span><span>Collision · extraction × 2</span></div>
+      <div class="e"><span class="dot"></span><span class="when">10:45</span><span>Theorem lens · T0' deferred</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

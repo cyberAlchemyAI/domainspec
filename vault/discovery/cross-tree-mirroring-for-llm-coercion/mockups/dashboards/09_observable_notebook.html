@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CTM Dashboard — Observable Notebook</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #ffffff; --text: #15161f; --muted: #6b7280; --accent: #ff7222; --link: #1f7ad3; --rule: #ececec; --soft: #f9f9fb; --green: #2da44e; --red: #cf222e; --amber: #b08800; --code-bg: #f6f8fa; }
+  body { background: var(--paper); color: var(--text); font-family: 'Source Serif Pro', Georgia, serif; font-size: 15px; line-height: 1.6; }
+  .nb { max-width: 720px; margin: 0 auto; padding: 48px 16px 80px; }
+  .nb-wide { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+  header { padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+  header .crumbs { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--muted); }
+  header .crumbs a { color: var(--link); text-decoration: none; }
+  header h1 { font-family: 'Source Serif Pro', serif; font-weight: 600; font-size: 34px; line-height: 1.1; margin-top: 4px; }
+  header .byline { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--muted); margin-top: 8px; }
+  header .byline strong { color: var(--text); font-weight: 600; }
+
+  h2 { font-family: 'Source Serif Pro', serif; font-weight: 600; font-size: 22px; margin-top: 36px; margin-bottom: 8px; }
+  h3 { font-family: 'Source Serif Pro', serif; font-weight: 600; font-size: 17px; margin-top: 24px; margin-bottom: 6px; }
+  p { margin-bottom: 14px; }
+  p a { color: var(--link); }
+
+  .cell { background: var(--code-bg); border-radius: 6px; padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; margin: 12px 0; color: #5e5e5e; position: relative; }
+  .cell::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 3px 0 0 3px; }
+  .cell.input { background: #fafafa; }
+  .cell .kw { color: #cf222e; }
+  .cell .str { color: #0a3069; }
+  .cell .com { color: var(--muted); font-style: italic; }
+
+  .output { padding: 8px 0; }
+  .output-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 12px 16px; background: var(--soft); border-radius: 8px; margin: 12px 0; }
+  .kpi { text-align: left; }
+  .kpi .v { font-family: 'Inter', sans-serif; font-size: 26px; font-weight: 600; line-height: 1; }
+  .kpi .v.red { color: var(--red); } .kpi .v.amber { color: var(--amber); } .kpi .v.green { color: var(--green); }
+  .kpi .l { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 13px; }
+  table th { text-align: left; padding: 8px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--rule); }
+  table td { padding: 8px; border-bottom: 1px solid var(--rule); }
+  table td.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .pill { padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; font-family: 'Inter', sans-serif; }
+  .pill.pass { background: rgba(45, 164, 78, 0.12); color: var(--green); }
+  .pill.warn { background: rgba(176, 136, 0, 0.12); color: var(--amber); }
+  .pill.fail { background: rgba(207, 34, 46, 0.12); color: var(--red); }
+  .pill.hold { background: rgba(107, 114, 128, 0.12); color: var(--muted); }
+
+  figure { margin: 16px 0; }
+  figure svg { width: 100%; height: 280px; background: white; }
+  figcaption { font-family: 'Source Serif Pro', serif; font-style: italic; font-size: 13px; color: var(--muted); margin-top: 4px; text-align: center; }
+
+  blockquote { border-left: 3px solid var(--accent); padding: 4px 16px; font-style: italic; color: #555; margin: 16px 0; font-size: 15px; }
+
+  hr { border: none; border-top: 1px solid var(--rule); margin: 36px 0; }
+</style>
+</head>
+<body>
+
+<div class="nb">
+
+  <header>
+    <div class="crumbs"><a href="#">DomainSpec</a> / <a href="#">Discoveries</a> / cross-tree-mirroring</div>
+    <h1>The state of structure: a 30-day reading</h1>
+    <div class="byline">By <strong>Robot @ DomainSpec</strong> · Published 2026-05-18 · Maestro-trama</div>
+  </header>
+
+  <p>This notebook is the operational backstory of the discovery filed today. The proposal is that an LLM agent editing code at any path should be able to <em>compute</em>, not search, the path of its governing spec. The data below is the case that the current structure does not afford this — and the report card for the proposal's pilot.</p>
+
+  <p>We begin with the headline numbers, then the breakdown by feature, the promotion queue, and finally the trend over the last 30 days that explains the urgency.</p>
+
+  <div class="cell input"><span class="com"># load validator state and pilot signals</span><br><span class="kw">const</span> v = <span class="kw">await</span> validator.run(<span class="str">"maestro-trama"</span>);<br><span class="kw">return</span> v.summary</div>
+
+  <div class="output">
+    <div class="output-label">→ summary</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="v red">50+</div><div class="l">broken cross-links</div></div>
+      <div class="kpi"><div class="v amber">4 + 4</div><div class="l">orphans · L₁ · L₂</div></div>
+      <div class="kpi"><div class="v amber">2</div><div class="l">name collisions</div></div>
+      <div class="kpi"><div class="v">7</div><div class="l">promotion queue</div></div>
+      <div class="kpi"><div class="v green">3 / 11</div><div class="l">compile-ready</div></div>
+    </div>
+  </div>
+
+  <p>Three out of eleven features pass the structural-completeness validator. Eight do not. None of the failures are mysterious — they are spelled out in the by-feature view below.</p>
+
+  <h2>By feature</h2>
+
+  <div class="cell input"><span class="com"># tabulate validator state per feature</span><br>v.features.<span class="kw">map</span>(f =&gt; ({ path: f.path, L1: f.l1, L2: f.l2, state: f.state }))</div>
+
+  <div class="output">
+    <div class="output-label">→ table (11 rows)</div>
+    <table>
+      <thead><tr><th>Feature path</th><th>L₁</th><th>L₂</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">labeling-platform / extraction</td><td>spec ✓ (drift)</td><td>src ✓</td><td><span class="pill warn">COLLISION</span></td></tr>
+        <tr><td class="mono">labeling-platform / dashboard</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td></tr>
+        <tr><td class="mono">labeling-platform / label-curation</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td></tr>
+        <tr><td class="mono">ad-creative-dna / extraction</td><td>spec ✓</td><td>via manifest</td><td><span class="pill warn">MULTI-IMPL</span></td></tr>
+        <tr><td class="mono">spend-predictor / spend-prediction</td><td>—</td><td>src ✓</td><td><span class="pill fail">ORPHAN L₂</span></td></tr>
+        <tr><td class="mono">mutation-strategy / policy</td><td>spec ✓</td><td>—</td><td><span class="pill hold">SPEC-ONLY</span></td></tr>
+        <tr><td class="mono">trama / producer</td><td>draft</td><td>—</td><td><span class="pill hold">DRAFT</span></td></tr>
+        <tr><td class="mono">creatives-harnessing / retrieval</td><td>legacy</td><td>src ✓</td><td><span class="pill pass">LEGACY OK</span></td></tr>
+        <tr><td class="mono">creative-analysis / orchestrator</td><td>legacy</td><td>src ✓</td><td><span class="pill pass">LEGACY OK</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The most consequential row is the first one. <code>extraction/</code> exists at both <code>docs/proposals/ad-creative-dna/features/extraction/</code> and <code>apps/labeling-platform/features/extraction/</code>, with separate SPEC.md files. They were created in a single commit on May 16 with no arbitration mechanism. Content has begun to drift.</p>
+
+</div>
+
+<div class="nb-wide">
+  <figure>
+    <svg viewBox="0 0 1000 280">
+      <line x1="50" y1="240" x2="990" y2="240" stroke="#15161f" stroke-width="1"/>
+      <line x1="50" y1="180" x2="990" y2="180" stroke="#ececec" stroke-dasharray="2 4"/>
+      <line x1="50" y1="120" x2="990" y2="120" stroke="#ececec" stroke-dasharray="2 4"/>
+      <line x1="50" y1="60" x2="990" y2="60" stroke="#ececec" stroke-dasharray="2 4"/>
+      <text x="44" y="244" text-anchor="end" font-family="Inter" font-size="11" fill="#6b7280">0</text>
+      <text x="44" y="184" text-anchor="end" font-family="Inter" font-size="11" fill="#6b7280">15</text>
+      <text x="44" y="124" text-anchor="end" font-family="Inter" font-size="11" fill="#6b7280">30</text>
+      <text x="44" y="64" text-anchor="end" font-family="Inter" font-size="11" fill="#6b7280">50</text>
+      <text x="50" y="262" font-family="Inter" font-size="11" fill="#6b7280">Apr 19</text>
+      <text x="990" y="262" text-anchor="end" font-family="Inter" font-size="11" fill="#6b7280">May 18</text>
+      <polyline points="50,228 80,224 110,220 140,216 170,208 200,200 230,194 260,184 290,176 320,168 350,160 380,150 410,140 440,130 470,118 500,106 530,96 560,86 590,76 620,68 650,60 680,52 710,46 740,40 770,32 800,28 830,24 860,20 890,16 920,12 950,10 980,8" fill="none" stroke="#ff7222" stroke-width="2.5"/>
+      <circle cx="980" cy="8" r="4" fill="#ff7222"/>
+      <text x="976" y="2" font-family="Inter" font-size="12" font-weight="600" fill="#ff7222" text-anchor="end">50+</text>
+      <line x1="730" y1="55" x2="730" y2="240" stroke="#cf222e" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="734" y="55" font-family="Inter" font-size="11" fill="#cf222e">May 12 migration (commit 1260582)</text>
+      <text x="734" y="70" font-family="Inter" font-size="11" fill="#cf222e">— path schema changed; old refs broke</text>
+    </svg>
+    <figcaption>Figure 1. Broken cross-references in <code>apps/labeling-platform/features/</code>, daily count. The May 12 migration is the inflection.</figcaption>
+  </figure>
+</div>
+
+<div class="nb">
+
+  <p>The migration that produced the asymmetry was a half-migration: <code>docs/features/</code> renamed to <code>docs/proposals/</code> on the L₁ side, but the L₂ side's references to the old prefix were not rewritten. Every patch since has added more references. None of them break the build. The structure of the repository does not catch the divergence.</p>
+
+  <blockquote>The agent was not careless. It had no computable path from its edit site to the spec that should have governed it, so it guessed, and the structure did not catch the guess.</blockquote>
+
+  <h2>The promotion queue</h2>
+
+  <div class="cell input"><span class="com"># residue with earned identity, awaiting greenlight</span><br>v.queue.<span class="kw">filter</span>(q =&gt; q.identity_earned)</div>
+
+  <div class="output">
+    <div class="output-label">→ table (7 rows)</div>
+    <table>
+      <thead><tr><th>Source</th><th>→ Target</th><th>Age</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">research/notes/trama-decomp.md</td><td class="mono">trama / producer</td><td>6d</td></tr>
+        <tr><td class="mono">research/sessions/extraction-arb.md</td><td class="mono">labeling-platform / extraction</td><td>4d</td></tr>
+        <tr><td class="mono">research/lenses/exp-v1-takeaways.md</td><td class="mono">labeling-platform / extraction</td><td>2d</td></tr>
+        <tr><td class="mono">research/biz-philosopher/manifesto-iii.md</td><td class="mono" style="color: var(--amber);">_unknown / _unknown</td><td>11d</td></tr>
+        <tr><td class="mono">research/notes/spend-data-contract.md</td><td class="mono">spend-predictor / spend-prediction</td><td>3d</td></tr>
+        <tr><td class="mono">research/sessions/dashboard-research.md</td><td class="mono">experiment-dash / leaderboard</td><td>1d</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Six of seven have earned identity (a known app and feature). One — the manifesto fragment — has not, and lives in the awkward middle: stable enough to deserve survival, unstructured enough to resist filing. The proposal's <code>_unknown/</code> staging slot is the candidate landing zone.</p>
+
+  <hr>
+
+  <h2>What this notebook reports, and what it does not</h2>
+
+  <p>This is a state reading, not a verdict. The proposal's <em>coercion</em> claim — that structural symmetry forces correctness — is parked behind a measurement plan that does not yet exist. Today's data demonstrates the cost of the missing structure; it does not yet demonstrate that the proposed structure lowers that cost. The follow-on notebook (<code>OQ-1</code>) is where that question lives.</p>
+
+  <p>Read the full discovery at <a href="#"><code>vault/discovery/cross-tree-mirroring-for-llm-coercion/</code></a>.</p>
+
+</div>
+
+</body>
+</html>

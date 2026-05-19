@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Architectural Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #f3eddc; --ink: #1a3a6b; --ink-soft: #4a6a96; --rule: #b8a888; --red: #a83232; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Archivo Narrow', sans-serif; font-size: 13px; line-height: 1.5; min-height: 100vh; background-image: linear-gradient(rgba(26,58,107,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(26,58,107,0.05) 1px, transparent 1px); background-size: 20px 20px; }
+  .sheet { max-width: 1100px; margin: 0 auto; padding: 40px; border: 2px solid var(--ink); margin-top: 24px; margin-bottom: 24px; background: var(--paper); position: relative; }
+
+  .titleblock { border: 2px solid var(--ink); padding: 0; display: grid; grid-template-columns: 3fr 1fr 1fr; margin-bottom: 24px; }
+  .titleblock > div { border-right: 1px solid var(--ink); padding: 12px 16px; }
+  .titleblock > div:last-child { border-right: none; }
+  .titleblock .main h1 { font-size: 34px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
+  .titleblock .main .sub { font-size: 12px; color: var(--ink-soft); margin-top: 4px; letter-spacing: 1px; }
+  .titleblock .field .k { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); }
+  .titleblock .field .v { font-size: 14px; font-weight: 500; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+
+  .plate { border: 1px dashed var(--ink-soft); padding: 24px; margin-bottom: 24px; position: relative; }
+  .plate-label { position: absolute; top: -10px; left: 16px; background: var(--paper); padding: 0 8px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); font-weight: 700; }
+
+  .plan { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; padding: 24px 0; }
+  .box { border: 2px solid var(--ink); padding: 18px; position: relative; min-height: 180px; }
+  .box .corner { position: absolute; width: 8px; height: 8px; border: 1px solid var(--ink); background: var(--paper); }
+  .box .corner.tl { top: -5px; left: -5px; }
+  .box .corner.tr { top: -5px; right: -5px; }
+  .box .corner.bl { bottom: -5px; left: -5px; }
+  .box .corner.br { bottom: -5px; right: -5px; }
+  .box .ident { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 500; color: var(--red); margin-bottom: 4px; }
+  .box .role { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+  .box .dim { position: absolute; bottom: 4px; right: 8px; font-size: 9px; color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; }
+  .box p { font-size: 12px; }
+
+  .elevation { display: grid; grid-template-columns: 1fr 120px 1fr; align-items: stretch; gap: 0; margin-top: 16px; }
+  .col { border: 2px solid var(--ink); padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.8; }
+  .col .head { font-weight: 700; color: var(--red); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); letter-spacing: 1px; }
+  .bridge { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+  .bridge svg { width: 100%; height: 100%; }
+  .bridge .lbl { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--paper); padding: 4px 10px; border: 1px solid var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--red); font-weight: 700; }
+
+  .ops { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .op { border-left: 4px solid var(--red); padding-left: 16px; }
+  .op h4 { font-size: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .op .formula { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); margin: 4px 0 12px; }
+  .op .list { font-size: 12px; }
+  .op .list b { font-weight: 700; color: var(--red); }
+
+  .schedule { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .schedule th { background: var(--ink); color: var(--paper); padding: 8px; text-align: left; font-size: 10px; letter-spacing: 1px; }
+  .schedule td { padding: 8px; border-bottom: 1px solid var(--rule); }
+  .schedule td.n { text-align: right; font-weight: 700; color: var(--red); }
+
+  .stamp { position: absolute; top: 60px; right: 60px; border: 2px solid var(--red); color: var(--red); padding: 8px 16px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; transform: rotate(-12deg); font-weight: 700; }
+
+  .footer { display: flex; justify-content: space-between; margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--ink); font-size: 10px; color: var(--ink-soft); letter-spacing: 1px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="stamp">Exploratory</div>
+
+  <div class="titleblock">
+    <div class="main">
+      <h1>Cross-Tree Mirroring</h1>
+      <div class="sub">L₁↔L₂ Three-Sibling Repo Structure · LLM-Coercion Precondition</div>
+    </div>
+    <div class="field"><div class="k">Sheet</div><div class="v">02 / 10</div></div>
+    <div class="field"><div class="k">Rev</div><div class="v">0.1.0 — 2026-05-18</div></div>
+  </div>
+
+  <div class="plate">
+    <div class="plate-label">Plan View — Three Siblings</div>
+    <div class="plan">
+      <div class="box">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="ident">/research</div>
+        <div class="role">Residue · Holding Pen</div>
+        <p>Pre-structural work. No earned identity. Sibling, not peer — theorem admits only 2 horizontal layers.</p>
+        <div class="dim">SIB-01</div>
+      </div>
+      <div class="box">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="ident">/domain_knowledge</div>
+        <div class="role">L₁ · Structured</div>
+        <p>Specs, invariants, domain models. <code>apps/X/features/Y/</code> grammar. Identity earned.</p>
+        <div class="dim">SIB-02</div>
+      </div>
+      <div class="box">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="ident">/implementation</div>
+        <div class="role">L₂ · Mirrored</div>
+        <p>Code, tests, ops. Identical grammar to L₁. Counterpart paths computable, not searchable.</p>
+        <div class="dim">SIB-03</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plate">
+    <div class="plate-label">Section A-A — Mirror Δ</div>
+    <div class="elevation">
+      <div class="col">
+        <div class="head">L₁ · /domain_knowledge</div>
+        apps/<br>&nbsp;&nbsp;labeling-platform/<br>&nbsp;&nbsp;&nbsp;&nbsp;features/<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extraction/<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPEC.md<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;domain.md<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;operations.md
+      </div>
+      <div class="bridge">
+        <svg viewBox="0 0 120 200" preserveAspectRatio="none"><line x1="0" y1="100" x2="120" y2="100" stroke="#1a3a6b" stroke-width="2" stroke-dasharray="4 4"/><polygon points="0,100 12,94 12,106" fill="#1a3a6b"/><polygon points="120,100 108,94 108,106" fill="#1a3a6b"/></svg>
+        <div class="lbl">Δ</div>
+      </div>
+      <div class="col">
+        <div class="head">L₂ · /implementation</div>
+        apps/<br>&nbsp;&nbsp;labeling-platform/<br>&nbsp;&nbsp;&nbsp;&nbsp;features/<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extraction/<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;src/<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tests/<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ops/
+      </div>
+    </div>
+  </div>
+
+  <div class="plate">
+    <div class="plate-label">Operations — Promotion & Compilation</div>
+    <div class="ops">
+      <div class="op">
+        <h4>Promotion</h4>
+        <div class="formula">residue → L₁ (identity change in place)</div>
+        <div class="list"><b>Necessary:</b> earned <code>(app, feature)</code> identity.<br><b>Sufficient:</b> manual greenlight.<br>Partial identity → <code>features/_unknown/</code>.</div>
+      </div>
+      <div class="op">
+        <h4>Compilation</h4>
+        <div class="formula">L₁ → L₂ (Δ: Left Kan Extension)</div>
+        <div class="list"><b>Gate:</b> structural-completeness validator.<br><b>Plus:</b> test-derivability check.<br>T0' obligations — long-term aspiration.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plate">
+    <div class="plate-label">Schedule — Maestro-trama Pilot</div>
+    <table class="schedule">
+      <thead><tr><th>Defect Today</th><th>Count</th><th>Resolution Under New Structure</th></tr></thead>
+      <tbody>
+        <tr><td>Broken <code>../../../../docs/features/...</code> refs</td><td class="n">50+</td><td>Mirror grammar makes path computable</td></tr>
+        <tr><td>Proposal orphans (no app counterpart)</td><td class="n">4</td><td>IMPLEMENTED-BY manifest or spec-only status</td></tr>
+        <tr><td>App orphans (no proposal counterpart)</td><td class="n">4</td><td>Backfill <code>/domain_knowledge/apps/&lt;name&gt;/</code> stub or legacy mark</td></tr>
+        <tr><td><code>extraction/</code> SPEC duplication</td><td class="n">2</td><td>Arbitration; L₁ primary, manifest on L₂</td></tr>
+        <tr><td>Formal promotion mechanics</td><td class="n">0</td><td>Identity-earned + manual greenlight</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <span>DomainSpec · vault/discovery/cross-tree-mirroring-for-llm-coercion</span>
+    <span>Drawn by: Robot · Approved by: ___</span>
+    <span>Sheet 02 of 10</span>
+  </div>
+
+</div>
+</body>
+</html>

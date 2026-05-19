@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Modernist Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper: #f4ecd8; --ink: #0a0a0a; --red: #d62828; --blue: #1d4e89; --yellow: #f4c430; --cream: #faf3e0; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Work Sans', sans-serif; font-size: 14px; line-height: 1.5; }
+  .poster { max-width: 900px; margin: 0 auto; padding: 0; background: var(--paper); border: 8px solid var(--ink); margin-top: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
+
+  .header { padding: 32px 32px 16px; position: relative; border-bottom: 8px solid var(--ink); }
+  .header .small { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 120px; line-height: 0.85; letter-spacing: 1px; margin-top: 8px; }
+  .header h1 .red { color: var(--red); }
+  .header h1 .blue { color: var(--blue); }
+  .header .lead { font-size: 16px; font-weight: 500; margin-top: 12px; max-width: 600px; }
+  .header .circle { position: absolute; top: 32px; right: 32px; width: 100px; height: 100px; background: var(--yellow); border: 4px solid var(--ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; transform: rotate(-8deg); }
+  .header .circle .n { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 0.8; }
+  .header .circle .l { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+  .geometry { display: grid; grid-template-columns: 1fr 1fr 1fr; height: 280px; border-bottom: 8px solid var(--ink); }
+  .geo { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .geo.g1 { background: var(--yellow); }
+  .geo.g2 { background: var(--cream); border-left: 4px solid var(--ink); border-right: 4px solid var(--ink); }
+  .geo.g3 { background: var(--blue); color: var(--paper); }
+  .geo .shape { position: absolute; opacity: 0.85; }
+  .geo.g1 .shape { width: 120px; height: 120px; background: var(--red); border-radius: 50%; bottom: -40px; right: -20px; }
+  .geo.g2 .shape { width: 160px; height: 4px; background: var(--ink); bottom: 80px; right: -20px; transform: rotate(-30deg); transform-origin: right; }
+  .geo.g2 .shape2 { position: absolute; width: 80px; height: 80px; background: var(--yellow); border: 4px solid var(--ink); bottom: 40px; right: 40px; opacity: 0.95; }
+  .geo.g3 .shape { width: 160px; height: 160px; border: 8px solid var(--yellow); bottom: -40px; left: -40px; }
+  .geo .num { font-family: 'Bebas Neue', sans-serif; font-size: 80px; line-height: 1; position: relative; z-index: 1; }
+  .geo .name { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; position: relative; z-index: 1; }
+  .geo .desc { font-size: 12px; font-weight: 500; position: relative; z-index: 1; max-width: 180px; }
+  .geo.g3 .desc { color: var(--paper); }
+
+  .axis { background: var(--ink); color: var(--paper); padding: 32px; }
+  .axis h2 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; line-height: 1; color: var(--yellow); margin-bottom: 12px; }
+  .axis-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 16px; }
+  .axis-flow .node { background: var(--paper); color: var(--ink); padding: 12px 14px; text-align: center; border: 3px solid var(--paper); }
+  .axis-flow .node .top { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+  .axis-flow .node .bot { font-size: 11px; text-transform: uppercase; color: #555; margin-top: 4px; }
+  .axis-flow .arrow { color: var(--yellow); font-family: 'Bebas Neue', sans-serif; font-size: 24px; text-align: center; }
+  .axis-flow .arrow .l { display: block; font-size: 11px; letter-spacing: 1px; font-family: 'Work Sans', sans-serif; font-weight: 700; color: var(--paper); }
+
+  .stack { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 8px solid var(--ink); }
+  .stack > div { padding: 24px; }
+  .stack .left { background: var(--red); color: var(--paper); border-right: 4px solid var(--ink); }
+  .stack .right { background: var(--paper); }
+  .stack h3 { font-family: 'Bebas Neue', sans-serif; font-size: 42px; line-height: 1; letter-spacing: 1px; }
+  .stack .formula { font-family: 'JetBrains Mono', monospace; font-size: 12px; margin: 6px 0 14px; opacity: 0.85; }
+  .stack ul { list-style: none; }
+  .stack li { padding: 6px 0; font-size: 13px; border-top: 2px solid rgba(255,255,255,0.3); }
+  .stack .right li { border-top: 2px solid var(--ink); }
+  .stack li b { font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+
+  .bars { padding: 24px 32px; background: var(--cream); }
+  .bars h2 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; margin-bottom: 16px; }
+  .bar-row { display: grid; grid-template-columns: 160px 1fr 80px; gap: 12px; align-items: center; margin-bottom: 12px; font-size: 13px; }
+  .bar { height: 24px; background: var(--ink); position: relative; }
+  .bar .fill { height: 100%; background: var(--red); }
+  .bar-val { font-family: 'Bebas Neue', sans-serif; font-size: 24px; line-height: 1; text-align: right; color: var(--red); }
+
+  .footer { background: var(--ink); color: var(--paper); padding: 16px 32px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+  .footer .yellow { color: var(--yellow); }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <div class="header">
+    <div class="small">DomainSpec · Discovery 0.1.0 · 2026-05-18</div>
+    <h1>FORCE<br>THE <span class="red">MODEL</span><br>TO <span class="blue">MIRROR</span>.</h1>
+    <div class="lead">A three-sibling repo structure. Mirror the L₁ tree and the L₂ tree under one feature grammar — and the path from any code edit to its governing spec becomes computable, not invented.</div>
+    <div class="circle">
+      <div class="n">10</div>
+      <div class="l">of 10</div>
+    </div>
+  </div>
+
+  <div class="geometry">
+    <div class="geo g1">
+      <div class="shape"></div>
+      <div>
+        <div class="num">01</div>
+        <div class="name">/research</div>
+      </div>
+      <div class="desc">Residue holding pen. Sibling, not peer. Pre-structural work without earned identity.</div>
+    </div>
+    <div class="geo g2">
+      <div class="shape"></div>
+      <div class="shape2"></div>
+      <div>
+        <div class="num">02</div>
+        <div class="name">/domain_knowledge</div>
+      </div>
+      <div class="desc">L₁. Structured under apps/X/features/Y/. Specs, invariants, domain models.</div>
+    </div>
+    <div class="geo g3">
+      <div class="shape"></div>
+      <div>
+        <div class="num">03</div>
+        <div class="name">/implementation</div>
+      </div>
+      <div class="desc">L₂. Mirrored under identical grammar. Code, tests, ops.</div>
+    </div>
+  </div>
+
+  <div class="axis">
+    <h2>The Flow</h2>
+    <div class="axis-flow">
+      <div class="node"><div class="top">/research</div><div class="bot">residue</div></div>
+      <div class="arrow">→<span class="l">PROMOTE</span></div>
+      <div class="node"><div class="top">/domain_knowledge</div><div class="bot">L₁ · spec</div></div>
+      <div class="arrow">→<span class="l">COMPILE Δ</span></div>
+      <div class="node"><div class="top">/implementation</div><div class="bot">L₂ · code</div></div>
+    </div>
+  </div>
+
+  <div class="stack">
+    <div class="left">
+      <h3>PROMOTE</h3>
+      <div class="formula">residue → L₁ · identity in place</div>
+      <ul>
+        <li><b>Necessary</b><br>Earned (app, feature) identity</li>
+        <li><b>Sufficient</b><br>Manual greenlight</li>
+        <li><b>Partial</b><br>features/_unknown/</li>
+      </ul>
+    </div>
+    <div class="right">
+      <h3>COMPILE</h3>
+      <div class="formula">L₁ → L₂ · Δ Left Kan extension</div>
+      <ul>
+        <li><b>Gate</b><br>Path-coherence validator</li>
+        <li><b>Plus</b><br>Test-derivability check</li>
+        <li><b>Deferred</b><br>T0' Lean obligations</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bars">
+    <h2>The Pilot — Maestro-trama</h2>
+    <div class="bar-row"><div>Broken cross-links</div><div class="bar"><div class="fill" style="width:100%"></div></div><div class="bar-val">50+</div></div>
+    <div class="bar-row"><div>Proposal orphans</div><div class="bar"><div class="fill" style="width:32%"></div></div><div class="bar-val">4</div></div>
+    <div class="bar-row"><div>App orphans</div><div class="bar"><div class="fill" style="width:32%"></div></div><div class="bar-val">4</div></div>
+    <div class="bar-row"><div>Drifting extraction specs</div><div class="bar"><div class="fill" style="width:16%"></div></div><div class="bar-val">2</div></div>
+    <div class="bar-row"><div>Formal promotion mechanics</div><div class="bar"><div class="fill" style="width:0%"></div></div><div class="bar-val">0</div></div>
+    <div class="bar-row"><div>Migration estimate (h)</div><div class="bar"><div class="fill" style="width:60%" style="background:var(--blue)"></div></div><div class="bar-val">20–30</div></div>
+  </div>
+
+  <div class="footer">
+    <span>vault/discovery/cross-tree-mirroring-for-llm-coercion</span>
+    <span class="yellow">EXPLORATORY · v0.1.0</span>
+    <span>POSTER 10 / 10</span>
+  </div>
+
+</div>
+</body>
+</html>

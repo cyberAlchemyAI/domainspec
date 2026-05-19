@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Dashboard / Telemetry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #0d1117; --panel: #161b22; --border: #30363d; --text: #c9d1d9; --muted: #7d8590; --green: #3fb950; --red: #f85149; --amber: #d29922; --blue: #58a6ff; --purple: #a371f7; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 13px; line-height: 1.5; padding: 20px; }
+  .wrap { max-width: 1300px; margin: 0 auto; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; }
+  .topbar .left { display: flex; align-items: center; gap: 12px; }
+  .topbar .logo { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; color: var(--blue); }
+  .topbar .crumb { color: var(--muted); font-size: 12px; }
+  .topbar .crumb b { color: var(--text); }
+  .topbar .right { display: flex; gap: 8px; align-items: center; font-size: 11px; color: var(--muted); }
+  .topbar .pill { background: rgba(63, 185, 80, 0.15); color: var(--green); padding: 3px 10px; border-radius: 12px; font-weight: 700; font-size: 11px; }
+
+  h1 { font-size: 24px; font-weight: 700; padding: 16px 0 4px; }
+  .deck { color: var(--muted); font-size: 14px; margin-bottom: 16px; max-width: 800px; }
+
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .row.r4 { grid-template-columns: repeat(4, 1fr); }
+  .row.r3 { grid-template-columns: repeat(3, 1fr); }
+  .row.r2 { grid-template-columns: 1fr 1fr; }
+  .row.split { grid-template-columns: 2fr 1fr; }
+
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .card .ck { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .card .cv { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; margin-top: 8px; }
+  .card .cv.red { color: var(--red); }
+  .card .cv.amber { color: var(--amber); }
+  .card .cv.green { color: var(--green); }
+  .card .cv.blue { color: var(--blue); }
+  .card .delta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .panel h3 { font-size: 13px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .panel h3 .tag { background: rgba(88, 166, 255, 0.15); color: var(--blue); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+
+  .tree-cmp { display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .tree-cmp pre { background: rgba(13, 17, 23, 0.6); padding: 12px; border-radius: 6px; line-height: 1.7; border: 1px solid var(--border); }
+  .tree-cmp .root { color: var(--blue); font-weight: 700; }
+  .tree-cmp .delta { display: flex; align-items: center; justify-content: center; color: var(--purple); font-size: 28px; font-weight: 700; padding: 0 12px; }
+
+  .sibs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .sib { padding: 12px; background: rgba(13, 17, 23, 0.6); border: 1px solid var(--border); border-radius: 6px; }
+  .sib .path { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+  .sib.s1 .path { color: var(--amber); }
+  .sib.s2 .path { color: var(--green); }
+  .sib.s3 .path { color: var(--blue); }
+  .sib .role { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 4px 0 8px; }
+  .sib p { font-size: 12px; color: var(--text); }
+
+  .ops { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .op { background: rgba(13, 17, 23, 0.6); padding: 14px; border-radius: 6px; border: 1px solid var(--border); border-left: 3px solid var(--purple); }
+  .op h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .op .from-to { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .op .cond-row { display: flex; gap: 8px; align-items: center; padding: 4px 0; font-size: 12px; }
+  .op .cond-row .badge { background: var(--green); color: var(--bg); padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; flex-shrink: 0; }
+  .op .cond-row .badge.amber { background: var(--amber); }
+  .op .cond-row .badge.muted { background: var(--muted); }
+
+  .diag { padding: 10px; background: rgba(13, 17, 23, 0.6); border: 1px solid var(--border); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin: 8px 0; }
+  .diag .key { color: var(--muted); }
+  .diag .val.ok { color: var(--green); }
+  .diag .val.fail { color: var(--red); }
+  .diag .val.warn { color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table th { text-align: left; padding: 6px 8px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  table td.n { text-align: right; font-family: 'JetBrains Mono', monospace; color: var(--red); font-weight: 700; }
+  table td.ok { color: var(--green); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="left">
+      <span class="logo">domainspec://</span>
+      <span class="crumb">vault / discovery / <b>cross-tree-mirroring-for-llm-coercion</b></span>
+    </div>
+    <div class="right">
+      <span class="pill">● exploratory</span>
+      <span>v0.1.0</span>
+      <span>2026-05-18</span>
+      <span>09/10</span>
+    </div>
+  </div>
+
+  <h1>Cross-Tree Mirroring — Status Board</h1>
+  <div class="deck">Three-sibling repo structure for L₁↔L₂ symmetry. A computable spec-lookup path is the precondition for forcing LLM agents to write the right code. Live state of the proposal and the pilot.</div>
+
+  <div class="row r4">
+    <div class="card"><div class="ck">Broken cross-links (maestro-trama)</div><div class="cv red">50+</div><div class="delta">↑ rising · agents inventing paths</div></div>
+    <div class="card"><div class="ck">Orphans (proposals + apps)</div><div class="cv amber">4 + 4</div><div class="delta">Undefined Δ at object level</div></div>
+    <div class="card"><div class="ck">Name collisions drifting</div><div class="cv amber">2</div><div class="delta">extraction/ — single commit, no arbitration</div></div>
+    <div class="card"><div class="ck">Promotion mechanics in any repo</div><div class="cv red">0</div><div class="delta">Greenfield · operator-driven only</div></div>
+  </div>
+
+  <div class="row split">
+    <div class="panel">
+      <h3>Three Siblings <span class="tag">structure</span></h3>
+      <div class="sibs">
+        <div class="sib s1"><div class="path">/research</div><div class="role">Residue · sibling</div><p>Pre-structural work without earned identity. Filed freely. Not a peer layer.</p></div>
+        <div class="sib s2"><div class="path">/domain_knowledge</div><div class="role">L₁ · structured</div><p>apps/X/features/Y/ — specs, invariants, models.</p></div>
+        <div class="sib s3"><div class="path">/implementation</div><div class="role">L₂ · mirrored</div><p>apps/X/features/Y/ — code, tests, ops.</p></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Validator State <span class="tag">enforcement</span></h3>
+      <div class="diag"><span class="key">implementation/labeling-platform/extraction → L₁</span> <span class="val fail">[FAIL] no counterpart</span></div>
+      <div class="diag"><span class="key">domain_knowledge/ad-creative-dna/extraction → L₂</span> <span class="val warn">[WARN] missing IMPLEMENTED-BY</span></div>
+      <div class="diag"><span class="key">research/sessions/2026-05-12.md</span> <span class="val ok">[OK] residue</span></div>
+      <div class="diag"><span class="key">apps/spend-predictor/spend-prediction</span> <span class="val warn">[WARN] no L₁ ancestor</span></div>
+    </div>
+  </div>
+
+  <div class="row split">
+    <div class="panel">
+      <h3>Mirror Grammar (Δ) <span class="tag">computable path</span></h3>
+      <div class="tree-cmp">
+        <pre><span class="root">/domain_knowledge</span>
+└── apps/
+    └── labeling-platform/
+        └── features/
+            └── extraction/
+                ├── SPEC.md
+                ├── domain.md
+                └── operations.md</pre>
+        <div class="delta">Δ</div>
+        <pre><span class="root">/implementation</span>
+└── apps/
+    └── labeling-platform/
+        └── features/
+            └── extraction/
+                ├── src/
+                ├── tests/
+                └── ops/</pre>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Operations <span class="tag">policy</span></h3>
+      <div class="ops" style="grid-template-columns: 1fr; gap: 10px;">
+        <div class="op">
+          <h4>promotion</h4>
+          <div class="from-to">residue → L₁</div>
+          <div class="cond-row"><span class="badge">need</span>Earned (app, feature) identity</div>
+          <div class="cond-row"><span class="badge amber">trig</span>Manual greenlight</div>
+          <div class="cond-row"><span class="badge muted">edge</span>features/_unknown/ for partial id</div>
+        </div>
+        <div class="op">
+          <h4>compilation</h4>
+          <div class="from-to">L₁ → L₂ · Δ Left Kan extension</div>
+          <div class="cond-row"><span class="badge">gate</span>Path-coherence validator</div>
+          <div class="cond-row"><span class="badge amber">plus</span>Test-derivability</div>
+          <div class="cond-row"><span class="badge muted">defer</span>T0' Lean obligations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row r2">
+    <div class="panel">
+      <h3>Adversarial Review — Attacks Landed <span class="tag">lens 04</span></h3>
+      <table>
+        <tr><th>#</th><th>Attack</th><th>Concession</th></tr>
+        <tr><td>A1</td><td>Multi-app features</td><td class="ok">IMPLEMENTED-BY manifest</td></tr>
+        <tr><td>A2</td><td>Partial identity</td><td class="ok">features/_unknown/</td></tr>
+        <tr><td>A3</td><td>T0' premature</td><td class="ok">Deferred to aspiration</td></tr>
+        <tr><td>A4</td><td>Coercion rhetorical</td><td class="ok">Demoted to nav signal + validator</td></tr>
+        <tr><td>A5</td><td>Migration cost understated</td><td class="ok">20–30h concrete</td></tr>
+        <tr><td>A6</td><td>Cross-repo conflation</td><td class="ok">Scope: domainspec + maestro-trama</td></tr>
+        <tr><td>A7</td><td>Signals underdefined</td><td class="ok">Binary rule</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>Pilot Migration — maestro-trama <span class="tag">D-6</span></h3>
+      <table>
+        <tr><th>Item</th><th>Count</th></tr>
+        <tr><td>Files to relocate</td><td class="n">~40</td></tr>
+        <tr><td>Link rewrites (broken + breaking)</td><td class="n">~150</td></tr>
+        <tr><td>extraction/ arbitrations</td><td class="n">1</td></tr>
+        <tr><td>business-philosopher/ placement decision</td><td class="n">1</td></tr>
+        <tr><td>Total estimated effort</td><td class="n">20–30h</td></tr>
+        <tr><td>vs vault-only baseline</td><td class="n">≈2×</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

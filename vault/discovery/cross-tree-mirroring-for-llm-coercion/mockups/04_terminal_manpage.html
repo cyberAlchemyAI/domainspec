@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-Tree Mirroring — Terminal Manpage</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --bg: #0a0e0a; --green: #5eff7a; --green-dim: #2d8a3c; --amber: #ffb84d; --red: #ff5555; --text: #c8d0c8; --rule: #1a2a1a; }
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 13px; line-height: 1.6; padding: 24px; }
+  .term { max-width: 1000px; margin: 0 auto; border: 1px solid var(--green-dim); background: var(--bg); position: relative; }
+  .titlebar { background: var(--green-dim); color: var(--bg); padding: 6px 12px; font-size: 11px; font-weight: 700; display: flex; justify-content: space-between; }
+  .titlebar .dots { display: flex; gap: 6px; }
+  .titlebar .dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--bg); }
+  .body { padding: 28px 32px; }
+
+  .prompt { color: var(--green); }
+  .cmd { color: var(--green); font-weight: 500; }
+  .out { color: var(--text); }
+  .ok { color: var(--green); }
+  .warn { color: var(--amber); }
+  .err { color: var(--red); }
+  .dim { color: var(--green-dim); }
+  .hl { color: var(--green); font-weight: 700; }
+
+  .manhead { border-bottom: 1px dashed var(--green-dim); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; }
+  .manhead .name { color: var(--green); font-weight: 700; }
+
+  h2 { color: var(--green); font-weight: 700; font-size: 13px; margin-top: 24px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+  pre { white-space: pre; font-family: inherit; font-size: 13px; line-height: 1.6; }
+  .tree { color: var(--text); }
+  .tree .root { color: var(--green); font-weight: 700; }
+  .tree .file { color: var(--amber); }
+
+  .block { border-left: 2px solid var(--green-dim); padding-left: 14px; margin: 8px 0; }
+
+  .table { width: 100%; margin: 8px 0; border-collapse: collapse; }
+  .table th, .table td { padding: 4px 12px; text-align: left; border-bottom: 1px solid var(--rule); }
+  .table th { color: var(--green); font-weight: 700; border-bottom: 1px solid var(--green-dim); }
+  .table td.n { color: var(--red); font-weight: 700; }
+
+  .cursor { display: inline-block; width: 8px; height: 14px; background: var(--green); animation: blink 1s steps(2, start) infinite; vertical-align: text-bottom; }
+  @keyframes blink { to { visibility: hidden; } }
+
+  .footer { border-top: 1px dashed var(--green-dim); padding-top: 10px; margin-top: 24px; color: var(--green-dim); font-size: 11px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="term">
+  <div class="titlebar">
+    <span class="dots"><span></span><span></span><span></span></span>
+    <span>operator@domainspec:~/vault/discovery$ man cross-tree-mirroring</span>
+    <span>04 / 10</span>
+  </div>
+  <div class="body">
+
+    <div class="manhead">
+      <span class="name">CROSS-TREE-MIRRORING(7)</span>
+      <span>DomainSpec Discovery Manual</span>
+      <span class="name">CROSS-TREE-MIRRORING(7)</span>
+    </div>
+
+<h2>NAME</h2>
+<pre>     cross-tree-mirroring — three-sibling repo structure for L1<->L2 symmetry,
+     a precondition for forcing LLM agents to write the right code.</pre>
+
+<h2>SYNOPSIS</h2>
+<pre>     repo/
+     ├── <span class="hl">/research</span>           # residue holding pen  (sibling, not peer)
+     ├── <span class="hl">/domain_knowledge</span>   # L1  (structured)     apps/X/features/Y/...
+     └── <span class="hl">/implementation</span>     # L2  (mirrored)       apps/X/features/Y/...</pre>
+
+<h2>DESCRIPTION</h2>
+<pre>     The originating question of DomainSpec is engineering: <span class="hl">can I force</span>
+     <span class="hl">LLMs to write the right code?</span>  The functor formalism came later as
+     the apparatus to make "right" checkable.
+
+     Today's repos make neither cheap.  An agent editing
+     apps/labeling-platform/features/extraction/SPEC.md has no
+     deterministic way to locate the L1 spec it must be faithful to.
+     Last week's patch invented <span class="err">../../../../docs/features/...</span> — a path
+     that does not exist (actual: docs/proposals/.../features/...).
+     <span class="err">50+ broken cross-links of that pattern exist across</span>
+     <span class="err">apps/labeling-platform/features/.</span>
+
+     This discovery proposes a structural fix: three top-level siblings,
+     with the two structured siblings sharing a feature grammar so any
+     path on one side maps mechanically to the other.</pre>
+
+<h2>SIBLINGS</h2>
+<pre>     <span class="hl">/research</span>            Pre-structural work without earned (app, feature)
+                          identity.  Filed freely.  <span class="dim">Sibling, not peer:</span>
+                          <span class="dim">theorem admits only 2 horizontal layers.</span>
+
+     <span class="hl">/domain_knowledge</span>    L1.  apps/X/features/Y/{...}  Specs, invariants,
+                          domain models.  Every artifact has known identity.
+
+     <span class="hl">/implementation</span>      L2.  apps/X/features/Y/{...}  Code, tests, ops.
+                          Mirrors L1 grammar exactly.</pre>
+
+<h2>MIRROR GRAMMAR</h2>
+<pre class="tree">     <span class="root">/domain_knowledge</span>                           <span class="root">/implementation</span>
+     └── apps/                                   └── apps/
+         └── labeling-platform/                      └── labeling-platform/
+             └── features/                               └── features/
+                 └── extraction/                             └── extraction/
+                     ├── <span class="file">SPEC.md</span>         <span class="dim">←─Δ─→</span>          ├── <span class="file">src/</span>
+                     ├── <span class="file">domain.md</span>                       ├── <span class="file">tests/</span>
+                     └── <span class="file">operations.md</span>                   └── <span class="file">ops/</span></pre>
+
+<h2>OPERATIONS</h2>
+<div class="block">
+<pre><span class="hl">promotion</span>(residue → L1)
+     necessary:  earned (app, feature) identity
+     sufficient: manual greenlight
+     partial:    file under features/_unknown/
+
+<span class="hl">compilation</span>(L1 → L2)
+     gate:       structural-completeness validator
+     plus:       test-derivability check
+     deferred:   T0' Lean obligations (long-term)</pre>
+</div>
+
+<h2>VALIDATOR</h2>
+<pre>     Generalizes the vault's <span class="hl">layer:</span> path-coherence pattern to cross-tree.
+
+     <span class="ok">[OK]</span>     implementation/apps/X/features/Y/ has counterpart in
+              domain_knowledge/apps/X/features/Y/
+
+     <span class="err">[FAIL]</span>   implementation/apps/labeling-platform/features/extraction/
+              has no L1 counterpart — orphan, blocked at pre-commit
+
+     <span class="warn">[WARN]</span>   docs/proposals/ad-creative-dna/features/extraction/SPEC.md
+              and apps/labeling-platform/features/extraction/SPEC.md
+              both exist — name collision, requires arbitration</pre>
+
+<h2>PILOT — maestro-trama</h2>
+<table class="table">
+<tr><th>defect</th><th>count</th><th>resolved by</th></tr>
+<tr><td>broken ../../../../docs/features/ refs</td><td class="n">50+</td><td>mirror grammar</td></tr>
+<tr><td>proposal orphans</td><td class="n">4</td><td>IMPLEMENTED-BY manifest</td></tr>
+<tr><td>app orphans</td><td class="n">4</td><td>L1 stub or legacy mark</td></tr>
+<tr><td>extraction/ duplication</td><td class="n">2</td><td>L1 primary, manifest on L2</td></tr>
+<tr><td>promotion mechanics</td><td class="n">0</td><td>identity-earned + greenlight</td></tr>
+</table>
+<pre>     estimated migration:  <span class="hl">20–30h</span>  (≈2× vault-only baseline)</pre>
+
+<h2>STATUS</h2>
+<pre>     exploratory.  4 lenses complete (vault prior-art, theorem anchors,
+     maestro-trama evidence, adversarial).  Adversarial forced narrowing:
+     T0' demoted to aspiration, "coercion" demoted to "navigational signal
+     + validator enforcement," scope narrowed to domainspec + maestro-trama.</pre>
+
+<h2>SEE ALSO</h2>
+<pre>     folder-structure-fractal(7), reflection-tower(7), DomainSpec.lean(7),
+     categorical-extraction-schema(7), repo-mirroring-problem(brief)</pre>
+
+      <div class="footer">
+        <span>DomainSpec 0.1.0</span>
+        <span><span class="prompt">$</span> <span class="cursor"></span></span>
+        <span>2026-05-18</span>
+      </div>
+
+  </div>
+</div>
+</body>
+</html>
