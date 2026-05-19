@@ -1,0 +1,5 @@
+name = "lean-code-validator"
+defaultTargets = ["LeanCodeValidator"]
+
+[[lean_lib]]
+name = "LeanCodeValidator"
