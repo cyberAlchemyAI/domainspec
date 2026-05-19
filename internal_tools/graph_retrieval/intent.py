@@ -21,9 +21,9 @@ _RULES: list[tuple[re.Pattern[str], Intent]] = [
     (re.compile(r"\bwhat do we believe\b|\bcanon\b|\bcurrently believe\b", re.I), Intent.CANON),
     (re.compile(r"\bevidence for\b|\bsupports?\b|\bderives? from\b", re.I), Intent.PROVENANCE),
     (re.compile(r"\bexplor(e|ing)\b|\bworking on\b|\bdraft\b|\bfrontier\b", re.I), Intent.FRONTIER),
-    (re.compile(r"\bcontradict\b|\brefute\b|\bdisagree\b|\btension\b", re.I), Intent.TENSION),
+    (re.compile(r"\bcontradict\w*\b|\brefute\w*\b|\bdisagree\w*\b|\btension\w*\b", re.I), Intent.TENSION),
     (re.compile(r"\bbreaks?\b|\bdepends on\b|\bblast radius\b|\bimpact of\b", re.I), Intent.BLAST_RADIUS),
-    (re.compile(r"\blens(es)?\b|\btriangulat\b|\bangles?\b", re.I), Intent.LENS_TRIANGULATION),
+    (re.compile(r"\blens(es)?\b|\btriangulat\w*\b|\bangles?\b", re.I), Intent.LENS_TRIANGULATION),
     (re.compile(r"\bdefin(e|ition)\b|\bmean(s|ing)?\b|\bglossary\b", re.I), Intent.DEFINITIONAL),
 ]
 

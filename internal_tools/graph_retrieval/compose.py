@@ -50,52 +50,94 @@ def verification_prior(verification: list[str], *, intent: Intent) -> float:
 
 
 # Compose-functions per intent ---------------------------------------------------
+#
+# Each scorer returns (score, components). `components` is the per-term
+# breakdown surfaced on ScoredNode.score_components for explainability
+# (architecture R-003).
 
-def score_canon(query: str, n: NodeView) -> float:
+_SUPERSEDES_EPSILON = 1e-3  # F5: superseding node ranks strictly above superseded
+
+ScoreResult = tuple[float, dict[str, float]]
+
+
+def score_canon(query: str, n: NodeView) -> ScoreResult:
     if n.node_type not in {"axiom", "constitution"}:
-        return 0.0
+        return 0.0, {"hard_filter": 0.0}
     if n.status not in {"consolidated", "evergreen"}:
-        return 0.0
-    return stage_prior(n.status) * verification_prior(n.verification, intent=Intent.CANON) * n.body_sim
+        return 0.0, {"hard_filter": 0.0}
+    sp = stage_prior(n.status)
+    vp = verification_prior(n.verification, intent=Intent.CANON)
+    sup = _SUPERSEDES_EPSILON * len(n.outbound_edges.get("supersedes", []))
+    value = sp * vp * n.body_sim + sup
+    return value, {
+        "stage_prior": sp,
+        "verification_prior": vp,
+        "body_sim": n.body_sim,
+        "supersedes_bump": sup,
+    }
 
 
-def score_provenance(query: str, n: NodeView, *, decay: float = 0.6) -> float:
-    # depth-1 inbound through derives-from / cites — MVP uses count, not depth
+def score_provenance(query: str, n: NodeView, *, decay: float = 0.6) -> ScoreResult:
     inbound = len(n.inbound_edges.get("derives-from", [])) + len(n.inbound_edges.get("cites", []))
     if inbound == 0:
-        return 0.0
-    return (1 - decay ** inbound) * verification_prior(n.verification, intent=Intent.PROVENANCE)
+        return 0.0, {"inbound_provenance": 0.0}
+    saturation = 1 - decay ** inbound
+    vp = verification_prior(n.verification, intent=Intent.PROVENANCE)
+    return saturation * vp, {
+        "inbound_provenance": float(inbound),
+        "saturation": saturation,
+        "verification_prior": vp,
+    }
 
 
-def score_frontier(query: str, n: NodeView, *, lambda_decay: float = 0.05) -> float:
+def score_frontier(query: str, n: NodeView, *, lambda_decay: float = 0.05) -> ScoreResult:
     if n.status not in {"draft", "exploratory"}:
-        return 0.0
+        return 0.0, {"hard_filter": 0.0}
     import math
     recency = math.exp(-lambda_decay * (n.last_updated_days_ago or 365))
-    return recency * n.body_sim
+    return recency * n.body_sim, {
+        "recency": recency,
+        "body_sim": n.body_sim,
+    }
 
 
-def score_tension(query: str, n: NodeView) -> float:
+def score_tension(query: str, n: NodeView) -> ScoreResult:
     inbound = len(n.inbound_edges.get("contradicts", [])) + len(n.inbound_edges.get("supersedes", []))
-    return min(1.0, inbound * 0.5) + 0.05 * n.body_sim
+    tension_term = min(1.0, inbound * 0.5)
+    body_term = 0.05 * n.body_sim
+    return tension_term + body_term, {
+        "tension_term": tension_term,
+        "body_sim_weighted": body_term,
+    }
 
 
-def score_semantic(query: str, n: NodeView) -> float:
-    return n.body_sim
+def score_semantic(query: str, n: NodeView) -> ScoreResult:
+    return n.body_sim, {"body_sim": n.body_sim}
 
 
-def score_blast_radius(query: str, n: NodeView) -> float:
+def score_blast_radius(query: str, n: NodeView) -> ScoreResult:
     governs_in = len(n.inbound_edges.get("governs", []))
     derives_in = len(n.inbound_edges.get("derives-from", []))
-    return min(1.0, (0.7 * governs_in + 0.3 * derives_in) * 0.5) * stage_prior(n.status)
+    dependency_term = min(1.0, (0.7 * governs_in + 0.3 * derives_in) * 0.5)
+    sp = stage_prior(n.status)
+    return dependency_term * sp, {
+        "governs_in": float(governs_in),
+        "derives_in": float(derives_in),
+        "dependency_term": dependency_term,
+        "stage_prior": sp,
+    }
 
 
-def score_definitional(query: str, n: NodeView) -> float:
+def score_definitional(query: str, n: NodeView) -> ScoreResult:
     if n.node_type != "conceptual":
-        return 0.0
+        return 0.0, {"hard_filter": 0.0}
     if n.status not in {"active", "consolidated", "evergreen"}:
-        return 0.0
-    return verification_prior(n.verification, intent=Intent.DEFINITIONAL) * n.body_sim
+        return 0.0, {"hard_filter": 0.0}
+    vp = verification_prior(n.verification, intent=Intent.DEFINITIONAL)
+    return vp * n.body_sim, {
+        "verification_prior": vp,
+        "body_sim": n.body_sim,
+    }
 
 
 SCORERS = {
@@ -109,5 +151,5 @@ SCORERS = {
 }
 
 
-def score(intent: Intent, query: str, n: NodeView) -> float:
+def score(intent: Intent, query: str, n: NodeView) -> ScoreResult:
     return SCORERS[intent](query, n)
