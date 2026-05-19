@@ -1,0 +1,81 @@
+spec_version: "0.2.0"
+dispatch_id: 2026-05-18-agent-skill-categorization-001
+dispatch_kind: standard
+context: |
+  User has ~80+ agents/skills under .claude/ with implicit prefix grouping
+  (domainspec-*, gsd-*, gitnexus-*) and is questioning whether an explicit
+  categorization (knowledge vs application, or other axes) is worth introducing.
+  No prior discovery exists on this topic. The decision the taxonomy must
+  serve has NOT been articulated — Lens 4 forces that question.
+goal: "Determine optimal categorization scheme (or null) for .claude/agents/** and skills, with as-is gap and migration cost."
+mode: robot-talks
+heuristic_row: parent-synthesis
+loop_cap: 1
+layers:
+  - layer_id: L1-investigate
+    role: investigate
+    n: 5
+    parallel: true
+    model: sonnet
+    agents:
+      - agent_id: L1-A1-external-literature
+        angle: "Survey AutoGen, CrewAI, LangGraph, OpenAI Agents SDK, Anthropic Claude Code skill/agent docs, Semantic Kernel, MoE-router literature for agent taxonomy axes; extract recurring axes, hierarchical vs flat+tags, what problem categorization solves."
+        model: sonnet
+        difficulty_justification: "Web survey across 6+ frameworks; synthesis not deep reasoning."
+        token_budget: 8000
+        expected_output_shape: "Comparison table + recurring-axes list + URLs."
+      - agent_id: L1-A2-weights-taxonomy
+        angle: "From weights only: enumerate axes (cognitive role, lifecycle, tool-surface, domain, invocation pattern) with pros/cons/failure modes/hybrid-forcing; recommend most load-bearing axis in the abstract."
+        model: sonnet
+        difficulty_justification: "Conceptual taxonomy reasoning, no tools."
+        token_budget: 6000
+        expected_output_shape: "Per-axis pros/cons table + opinionated abstract recommendation."
+      - agent_id: L1-A3-repo-asis
+        angle: "Inventory .claude/agents/** and all skills; derive IMPLICIT taxonomy (prefix count, lifecycle-verb count, hybrid list). Description only, no proposal."
+        model: sonnet
+        difficulty_justification: "Mechanical inventory + light NLP on descriptions."
+        token_budget: 6000
+        expected_output_shape: "Three counts + hybrid list + as-is grouping description."
+      - agent_id: L1-A4-decision-framing
+        angle: "Enumerate candidate decisions (routing/discoverability/governance/telemetry/onboarding/deprecation); per-decision user + today's failure + best-fit axis; conclude with single opinionated 'optimize X first' pick."
+        model: sonnet
+        difficulty_justification: "Opinion-forcing reasoning task."
+        token_budget: 5000
+        expected_output_shape: "Per-decision table + single opinionated pick."
+      - agent_id: L1-A5-adversarial-null
+        angle: "Steelman: do NOT categorize. Cover taxonomy rot, false-dichotomy hybrids, existing prefix-as-tag, Anthropic flat skill model, per-new-agent cost. End with threshold conditions for categorization to win."
+        model: sonnet
+        difficulty_justification: "Adversarial steelman."
+        token_budget: 5000
+        expected_output_shape: "Five-point steelman + threshold conditions."
+  - layer_id: L2-synthesize
+    role: synthesize
+    n: 1
+    parallel: false
+    model: parent
+    agents:
+      - agent_id: L2-A1-parent-synth
+        angle: "Merge L1-A1..A5 into recommended axis (or null), as-is gap, migration cost, honest counter-position."
+        model: parent
+        difficulty_justification: "Synthesize layer must be parent per skill invariant."
+        token_budget: n/a
+        expected_output_shape: "Synthesis section for findings-writer."
+stop_conditions:
+  - "Validator rejection (one retry then escalate)."
+  - "Any L1 agent returns an irreconcilable contradiction the others cannot place — escalate to user."
+  - "loop_cap 1 reached (agent-count cap enforced by loop_cap + recursion_budget.total)."
+validator:
+  model: sonnet
+  retry_policy: one-retry-then-escalate
+  checklist: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: "58af094d89ce121cade1dac1459e32f63481967e2bcda7ae8ff046e2d12eccbf"
+  spec_hash: "3b1e8284548be3e3ba43c97ad721c787b87ff75f27943e9305f54be3589427c5"
+recursion_budget:
+  depth: 2
+  breadth: 5
+  total: 10
+  parent_dispatch_id: null
+working_folder: docs/features/agent-skill-categorization/research/
+# R15 correction: vault/** is forbidden for research/findings working folder; promoted-discovery may still land in vault/discovery/ at Step 7.

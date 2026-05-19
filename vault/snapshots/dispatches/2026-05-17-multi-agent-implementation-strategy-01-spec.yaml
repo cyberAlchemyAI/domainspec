@@ -1,0 +1,69 @@
+spec_version: "0.2.0"
+dispatch_id: 2026-05-17-multi-agent-implementation-strategy-01
+dispatch_kind: standard
+context: |
+  User asked whether implementation execution should benefit from a structured
+  multi-agent strategy analogous to domainspec-subagents-strategy. Parent dispatched
+  4 parallel research lenses informally (raw Agent calls, not via this skill).
+  Children have already returned. This spec is a retroactive record so the
+  dispatch joins the audit trail before the findings-writer runs.
+goal: |
+  Determine whether implementation execution (writing code from a plan) should
+  be governed by a structured multi-agent strategy, and if so, name its minimal
+  legitimate shape.
+mode: task-fan-out
+heuristic_row: flat-fanout
+loop_cap: 2
+bootstrap_override:
+  reason: "Retroactive wrap of a dispatch that ran via raw Agent calls before the skill was invoked; spec persists as record so findings-writer and discovery-promotion gate can run with full provenance."
+  scope: spec-only
+layers:
+  - layer_id: L1-investigate
+    role: investigate
+    n: 4
+    parallel: true
+    model: sonnet
+    agents:
+      - agent_id: L1-A1-repo-audit
+        angle: "Map existing implementation-orchestration artifacts in /Users/victorboscaro/domainspec and identify gaps a new strategy would need to fill."
+        model: sonnet
+        difficulty_justification: "Repo enumeration + structured read of ~10 skill/agent files; no novel reasoning required."
+        token_budget: 60000
+        expected_output_shape: "Lens markdown: claim + what-exists + gap + load-bearing evidence + open questions."
+      - agent_id: L1-A2-external-prior-art
+        angle: "Survey external multi-agent code-generation frameworks for empirical evidence on whether structured multi-agent implementation outperforms single-agent."
+        model: sonnet
+        difficulty_justification: "Web survey + citation discipline; requires distinguishing marketing claims from ablation results."
+        token_budget: 80000
+        expected_output_shape: "Lens markdown: claim + recurring patterns + empirical evidence + negative results + load-bearing references."
+      - agent_id: L1-A3-first-principles
+        angle: "Reason a priori about whether implementation has a multi-agent-shaped structure, and if so propose the triad."
+        model: sonnet
+        difficulty_justification: "Pure reasoning, no retrieval; angle requires constructive triad proposal + steelman of null hypothesis."
+        token_budget: 30000
+        expected_output_shape: "Lens markdown: claim + ontology + parallelism unit + coherence constraints + proposed triad + steelman + open questions."
+      - agent_id: L1-A4-adversarial
+        angle: "Argue forcefully that introducing a multi-agent implementation strategy would be a net negative for domainspec."
+        model: sonnet
+        difficulty_justification: "Adversarial steelman — requires concrete failure modes and strong commitment to the negative case."
+        token_budget: 30000
+        expected_output_shape: "Lens markdown: claim + core failure + supporting failure modes + transfer failure + opportunity cost + concessions."
+stop_conditions:
+  - "Validator rejection on the retroactive spec."
+  - "Evaluator-irreconcilable contradiction across lenses requiring a second wave (not triggered — convergence was high)."
+  - "Agent-count cap (4 ≤ recursion_budget.breadth = 5)."
+validator:
+  model: sonnet
+  retry_policy: one-retry-then-escalate
+  checklist: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  verdict: accept-with-bootstrap-override
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: 58af094d89ce121cade1dac1459e32f63481967e2bcda7ae8ff046e2d12eccbf
+  spec_hash: 41e77b07654df871a522aed57b552043654385970f5d1cbee9c97cde0d94b3c6
+recursion_budget:
+  depth: 2
+  breadth: 5
+  total: 10
+  parent_dispatch_id: null
+working_folder: vault/discovery/multi-agent-implementation-strategy/research/

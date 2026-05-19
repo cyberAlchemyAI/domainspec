@@ -1,0 +1,57 @@
+spec_version: "0.2.0"
+dispatch_id: 2026-05-18-open-items-followup-01
+dispatch_kind: standard
+context: |
+  Three open items from the 2026-05-18-rules-test-spec-templates-01 dispatch
+  (G1 fix, inverse-edge policy on templates/, frontmatter schema conflict)
+  need decisions and concrete diffs. Children return proposals; parent
+  performs inline synthesis post-L1 and applies the writes per R5 (no
+  children writing files).
+goal: "Produce decisions and concrete diffs for G1, inverse-edge policy on templates/, and frontmatter schema unification across domainspec templates"
+mode: task-fan-out
+heuristic_row: flat-fanout
+loop_cap: 1
+layers:
+  - layer_id: L1
+    role: investigate
+    n: 3
+    parallel: true
+    model: sonnet
+    agents:
+      - agent_id: L1-A1
+        angle: "G1 fix: read vault/discovery/two-layer-retrieval/lenses/04-query-intent-ranking.md notes on LENS_TRIANGULATION, decide remove-from-Intent-enum vs write minimal scorer, return concrete diff for intent.py and/or compose.py"
+        model: sonnet
+        difficulty_justification: "Decision with concrete code diff; sonnet sufficient"
+        token_budget: 6000
+        expected_output_shape: "Verdict (remove or implement) + diff for intent.py/compose.py + 2-line rationale"
+      - agent_id: L1-A2
+        angle: "Inverse-edge policy: research what templates/ files carry today, cross-check vault edge conventions in vault/ontology-conventions.md and vault/constitution/frontmatter-ownership-constitution.md, return INCLUDE or EXCLUDE policy + diffs if INCLUDE"
+        model: sonnet
+        difficulty_justification: "Governance research + concrete proposal; sonnet sufficient"
+        token_budget: 8000
+        expected_output_shape: "Policy decision + cited rules + diffs (if INCLUDE) or rationale (if EXCLUDE)"
+      - agent_id: L1-A3
+        angle: "Frontmatter schema audit: list every file under templates/, classify as vault-standard / feature-docType / mixed / none. Pick a winning schema with rationale. Return migration plan as a table (file path → action: keep/rewrite/add)"
+        model: sonnet
+        difficulty_justification: "Audit + design call across ~37 files; sonnet sufficient"
+        token_budget: 8000
+        expected_output_shape: "Audit table + verdict + migration plan table (plan only, parent gates before write)"
+stop_conditions:
+  - "validator rejects spec twice — escalate"
+  - "any L1 agent returns 'cannot decide, need user input' — halt and escalate the specific item"
+  - "loop_cap of 1 reached"
+  - "agent-count cap (breadth 5 / total 10)"
+validator:
+  model: opus
+  retry_policy: one-retry-then-escalate
+  checklist: ["1","2","3","4","5","6","7","8","9"]
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: "7e4b339b65ca7dfa6055b893c40189c2dcad7b92c46120842285f5798c471438"
+  spec_hash: "0774308ae7f28773712c392f1261dfe47716016d9a98b90f053bef59a3087ca2"
+recursion_budget:
+  depth: 1
+  breadth: 5
+  total: 10
+  parent_dispatch_id: null
+working_folder: docs/research/open-items-followup-2026-05-18/
