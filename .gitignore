@@ -10,3 +10,8 @@ dist/
 .env.*
 governance/tags/code-tags.json
 apps/personal-assistant/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.gitnexus
