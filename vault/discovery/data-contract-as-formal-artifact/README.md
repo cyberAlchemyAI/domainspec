@@ -5,8 +5,8 @@ is_session: false
 layer: ontology, architecture
 nature: explanatory, reference
 status: exploratory
-version: 0.2.0
-last_updated: 2026-05-18
+version: 0.3.0
+last_updated: 2026-05-19
 ---
 
 # Data Contract as Formal Artifact
@@ -37,7 +37,7 @@ The investigation's structure mattered: the constructive evaluator (L2-E1) and t
 
 **Decision.** DomainSpec-core ships zero new artifact node types for data contracts. The 16-value `node_type` enum stays as-is. No `## Connections` edges are coined for "contract" relationships at the DomainSpec-core level.
 
-**Rationale.** A contract presupposes counterparties (promisor + promisee). DomainSpec-core is a meta-framework imported as a submodule into consumer repos; it ships templates and tooling but operates no producer and binds no consumer (T2). Coining a `DATA-CONTRACT` node type at this level would create an artifact with no party able to make or receive the promise it encodes. The adversarial evaluator's strongest argument is here: *the gap is governance metadata on existing surfaces, not a missing artifact* (F7). The constructive evaluator agreed under analysis (T1).
+**Rationale.** A contract presupposes counterparties (promisor + promisee). DomainSpec-core is a meta-framework imported as a submodule into consumer repos; it ships templates and tooling but operates no producer and binds no consumer (T2). Coining a `DATA-CONTRACT` node type at this level would create an artifact with no party able to make or receive the promise it encodes. The adversarial evaluator's strongest argument is here: *the gap is governance metadata on existing surfaces, not a missing artifact* (F7). The constructive evaluator agreed under analysis (T1). The OQ-6 Robot-Talks (2026-05-19) supplies a second independent sustaining argument: under the reframe that the upstream tagged spec IS the contract, D-1 holds even more tightly — the contract surface already exists, distributed across tagged concept tables, event payload tables, OTel attribute specs, and slos.md, leaving no material for a new node type to carry.
 
 **Status.** `active` within this discovery. Will be re-tested if a consumer repo finds the tag-plus-generator approach insufficient.
 
@@ -65,13 +65,13 @@ The investigation's structure mattered: the constructive evaluator (L2-E1) and t
 
 **Status.** `active`. Implementation lives in `internal_tools/`; specifics deferred to an implementation-plan.
 
-### D-4 — Optional `contract_view` generator (kernel + plugin, owned by core — resolved by OQ-4 / 2026-05-18)
+### D-4 — Optional `contract_view` generator (kernel + plugin, owned by core — resolved by OQ-4 / 2026-05-18; contract locus reframed by OQ-6 / 2026-05-19)
 
-**Decision.** Ship a generator (canonical name: `contract_view`) that emits `docs/contracts/<feature>/<wire-location>.md` as a read-only derived view. The generated view is the contract. Consumer repos opt in.
+**Decision.** Ship a generator (canonical name: `contract_view`) that emits `docs/contracts/<feature>/<wire-location>.md` as a read-only derived view. **The contract itself lives upstream in the tagged spec (concept tables + event payload tables + OTel attribute specs + slos.md); the generated view is a per-wire-location *binding instance* — a resolved, materialized projection of the upstream contract bound to one counterparty's interaction surface.** Consumer repos opt in.
 
-**Rationale.** The view-as-contract pattern resolves the layer split: DomainSpec-core remains contract-artifact-free (D-1), while consumer repos get a concrete document bound to one wire location that producers and consumers can both point at. The generator doubles as a checker (it can refuse to emit if tag fill rates are below a threshold), which is the constructive evaluator's strongest argument (F6). Whether the generator binary itself lives in DomainSpec-core or only in consumer repos is unresolved — see OQ-4.
+**Rationale.** The reframe (OQ-6, 2026-05-19) aligns DomainSpec with the cross-ecosystem prior-art consensus (OpenAPI, datacontract.com, dbt, Buf, Confluent Schema Registry) where the upstream spec is the contract and rendered artifacts are downstream bindings. Three downstream gains: (1) **resolves the D-3 ↔ D-4 internal inconsistency** — D-3 lints already validate the spec, not the view, so under the reframe the lints coherently enforce the contract; (2) **stable contract identity over time** is inherited from the versioned upstream spec (`spec@v1.3.2`) and the view becomes a binding at that version (`view@v1.3.2-kafka-orders`), supporting incident citation and regulator references; (3) **the OQ-4 kernel+plugin architecture aligns even more cleanly** — plugins become renderers of contracts (Buf/Terraform style), not contract authors. The generator still doubles as a checker (can refuse to emit if fill rates are below threshold), and the derivation invariant (L2-E1's strongest original argument — non-drift by construction) is preserved.
 
-**Status.** `active` in principle. Location resolved by OQ-4 (2026-05-18): kernel + plugin, owned by core; ships as dual-shape library+CLI in `internal_tools/contract_view/`. The "the contract IS the view" framing is flagged for re-examination — see OQ-6. The 4-stage migration sketched by L2-E1 (extend templates optional → warnings 1 cycle → ship generator → promote warnings to errors per-tag) is accepted as the rollout shape.
+**Status.** `active`. Location resolved by OQ-4 (2026-05-18): kernel + plugin, owned by core; ships as dual-shape library+CLI in `internal_tools/contract_view/`. Contract locus resolved by OQ-6 (2026-05-19): contract lives upstream in the tagged spec; view is the per-wire binding instance. Spec versioning discipline (required for stable contract citation) is now OQ-7. The 4-stage migration sketched by L2-E1 (extend templates optional → warnings 1 cycle → ship generator → promote warnings to errors per-tag) is accepted as the rollout shape.
 
 ---
 
@@ -93,7 +93,7 @@ The investigation's structure mattered: the constructive evaluator (L2-E1) and t
 
 **Shape.** Extend existing surfaces with governance tags (D-2) and ship CI lints (D-3), but do not ship the generator (D-4).
 
-**Why rejected — but only weakly.** This is exactly the adversarial evaluator's preferred end-state and survives all of L2-E2's objections (F7). The reason it isn't chosen is that without the generator, the producer's contractual position remains scattered across six surfaces — there is no single artifact that a consumer can point at and say *"this is what I'm holding the producer to."* The constructive evaluator's argument for the generator (F6) is that the synthesizing view is itself a useful artifact even though it is derived. This is the surviving disagreement; see OQ-4.
+**Why rejected — but only weakly.** This is exactly the adversarial evaluator's preferred end-state and survives all of L2-E2's objections (F7). The reason it isn't chosen is that without the generator, the producer's contractual position remains scattered across six surfaces — there is no single artifact that a consumer can point at and say *"this is what I'm holding the producer to."* The constructive evaluator's argument for the generator (F6) is that the synthesizing view is itself a useful artifact even though it is derived. This is the surviving disagreement; see OQ-4. (Note 2026-05-19: under the OQ-6 reframe, A-3's "scattered across six surfaces" objection actually weakens — scatter is acceptable if the tagged surfaces collectively ARE the contract, which is the cross-ecosystem prior-art pattern. D-4's surviving justification is now the value of a materialized per-wire binding instance for consumer integration, plus the derivation invariant and emit-gate enforcement — not the "no pointable artifact" rationale.)
 
 ---
 
@@ -123,7 +123,7 @@ Does the per-consumer SLA live on the `Produces For` edge rows (one SLA per prod
 - **L2-E1's "single upgrade path"** does not survive submodule SHA-pinning. Each consumer pins its own SHA; propagation is N-deferred regardless. The real benefit is "single source to fix."
 - **D-1 does not entail consumer-only generator.** D-1's stated rationale is *promisor/promisee asymmetry* — a generator binary has neither role; only the emitted view-in-consumer-repo does. L2-E2's "D-1 ⇒ consumer-only" inference is not entailed.
 - **Parametric vs variadic is the real architectural question.** Tag validation, fill-rate gating, and slos projection are parametric (one binary, config-driven). Per-wire-location body sections and per-protocol `compat_mode` semantics (Avro vs Protobuf vs SQL) are variadic. Every comparable ecosystem (Buf, Terraform, ESLint, Sphinx, datacontract-cli, dbt+adapters) honors that boundary with **kernel + plugin** or **fat-core + many built-in exporters**.
-- **Whoever ships the binary ships the projection policy** (fill-rate thresholds, well-formedness rules, `compat_mode` enum vocabulary). By the frontmatter-ownership constitution's Rule 1 ("single authoritative schema, no folklore"), policy ownership belongs to core.
+- **Whoever ships the binary ships the projection policy** (fill-rate thresholds, well-formedness rules, `compat_mode` enum vocabulary). By the frontmatter-ownership constitution's Rule 1 ("single authoritative schema, no folklore"), policy ownership belongs to core. *(Footnote 2026-05-19: under the OQ-6 reframe, this argument's premise shifts — projection policy is now "rendering fidelity discipline" rather than "contract terms" — but the conclusion that core owns it stands, because the rendering fidelity discipline still maps to template-calibration policy already owned by core.)*
 
 **Resolved position.** Reframe to **kernel + plugin, owned by core**:
 
@@ -146,9 +146,29 @@ Roots in T5 from the Robot-Talks synthesis. Must be resolved before the `contrac
 
 The contract view is, structurally, an L₂ projection of L₁ material (concept tables, aspect specs) plus L₁-tagged governance. Does it integrate into `_categorical/extraction.log.md` as another L₂ projection, or sit as a separate layer downstream of extraction? Roots in F2's Seam 8 (L₁ → L₂ mapping). The former keeps one extraction pipeline; the latter keeps the contract view's mapping rules independent of the categorical extraction's mapping rules.
 
-### OQ-6 — Reconsider D-4: is "the contract IS the view"? (flagged by Robot-Talks 2026-05-18)
+*Update 2026-05-19 (per OQ-6 Robot-Talks B2):* under the OQ-6 reframe (view as binding instance of upstream contract), this OQ leans toward "integrate into `_categorical/extraction.log.md` as another L₂ projection" — because the view stops being a semantically novel artifact and becomes one projection among many.
 
-The OQ-4 Robot-Talks investigation surfaced a cross-ecosystem anomaly: D-4 holds *"the generated view is the contract,"* but every comparable ecosystem (datacontract-cli, dbt, Buf, Terraform) treats the **upstream spec** as the contract — the view is one of N derivations. This is out of OQ-4 scope but materially affects D-4's framing. If the upstream tagged spec is the contract, then the `contract_view` is a *rendering*, not the artifact itself — which changes both who "holds" the contract and what the generator's job is (project, not author). Worth a dedicated dispatch before the D-4 implementation-plan is written. See `.claude/current_conversations/2026-05-18-1945-oq4-generator-location-robot-talks.md` Tension T6 / A4 prior-art findings.
+### OQ-6 — Locus of the contract: view vs upstream spec → RESOLVED 2026-05-19
+
+**Original framing.** D-4 held *"the generated view IS the contract."* The OQ-4 Robot-Talks surfaced a cross-ecosystem anomaly: every comparable ecosystem (datacontract.com, dbt, Buf, Terraform, OpenAPI, Confluent Schema Registry) treats the *upstream spec* as the contract, with rendered artifacts as downstream bindings.
+
+**Resolution.** A 4-agent Robot-Talks investigation (`vault/sessions/2026-05-19-oq6-contract-locus-robot-talks.md`) reframed D-4: the **upstream tagged spec IS the contract**; the **generated view is a per-wire-location binding instance** of that contract. Key tensions resolved:
+
+- **T1 — Provenance.** "View IS contract" was a parent-synthesizer gloss in the original `findings.md` (L146/L152); no L1 agent and not L2-E1 explicitly made that metaphysical claim. L2-E1's actual strongest argument was the *derivation invariant* (non-drift by construction), which is a property of the generator, not a label on the artifact.
+- **T2 — D-3 ↔ D-4 internal inconsistency.** D-3 lints validate the spec, not the view. Under the original framing, the discovery was enforcing one thing as "the contract" while declaring a different thing as the contract. The reframe makes D-3 coherent.
+- **T3 — Prior-art consensus.** 5 of 6 spec-as-contract forcing functions are present in DomainSpec (multiple renderings, pre-render validation, subject/subscriber asymmetry, tooling coupling, compat-check natural home); the Pact consumer-driven counter-pattern does not apply (DomainSpec has in-repo producer-owned specs).
+- **T4 — Per-wire granularity (resolved by the hybrid).** F5's "bind to one wire location" property is preserved: the view as *binding instance* is per-wire; the contract as *definition* is per-feature. This matches OpenAPI's spec-with-per-endpoint-operations pattern.
+- **T5 — Stable identity.** Versioning the upstream spec gives the contract stable identity over time; the view inherits identity from the spec version it was generated at.
+- **T6 — D-4 ↔ A-3 coupling.** A-3's "no pointable artifact" objection weakens under the reframe; D-4 is re-justified on binding-instance + derivation-invariant + emit-gate grounds (see D-4 above).
+- **T7 — OQ-4 resolution.** Conclusion (core owns the generator) survives; premise shifts (see OQ-4 footnote).
+
+**Downstream:** opens OQ-7 (spec versioning discipline for stable contract citation).
+
+### OQ-7 — Spec versioning discipline for stable contract citation
+
+For the upstream tagged spec to serve as a citable contract over time (incident reports, regulator references, breaking-change diffs), it needs explicit version identity. Options: (a) `version` frontmatter field on SPEC.md bumped per breaking change (manual, follows existing frontmatter discipline), (b) content hash auto-derived per CI run (mechanical, no human discipline required, but cryptic), (c) both — semantic version for humans, content hash for tools, with a CI lint enforcing that the version bumps when the hash changes across a PR.
+
+Roots in T5 from the OQ-6 Robot-Talks synthesis. Preliminary lean: (c), because semantic versioning is already the discovery's own discipline (frontmatter `version: 0.x.x`) and a content-hash check is a small CI lint sitting next to D-3. Must be resolved before the `contract_view` implementation-plan ships stage 3 (generator emission), because emitted views need to record the spec version they were generated against.
 
 ---
 
@@ -180,7 +200,8 @@ Carried verbatim from L2-E1's recommended rollout (F6) and the cross-cutting syn
 | `vault/snapshots/dispatches/2026-05-18-data-contract-formal-artifact-spec.yaml` | `derives-from` | Frozen dispatch spec (spec_hash `1ac5bc0c3ae56829c773d730bf2ad450d90eb435bbdbc69d93bc63eb54e632ea`) under which the six agents ran. |
 | [../../constitution/domainspec-subagents-strategy-constitution.md](../../constitution/domainspec-subagents-strategy-constitution.md) | `governed-by` | The dispatch lifecycle that produced this discovery is governed by the subagents-strategy constitution (R15, R16, R17, R18, R21, R22, R23). |
 | [../template-calibration-discipline/README.md](../template-calibration-discipline/README.md) | `cites` | The `required minimum + demonstrated optional` rule from template-calibration-discipline directly informs D-2's optional-tag-column posture. |
-| `.claude/current_conversations/2026-05-18-1945-oq4-generator-location-robot-talks.md` | `derives-from` | Robot-Talks investigation that resolved OQ-4 (kernel + plugin, owned by core) and flagged D-4 for re-examination (OQ-6). |
+| [../../sessions/2026-05-18-1945-oq4-generator-location-robot-talks.md](../../sessions/2026-05-18-1945-oq4-generator-location-robot-talks.md) | `derives-from` | Robot-Talks investigation that resolved OQ-4 (kernel + plugin, owned by core) and flagged D-4 for re-examination (which became OQ-6). |
+| [../../sessions/2026-05-19-oq6-contract-locus-robot-talks.md](../../sessions/2026-05-19-oq6-contract-locus-robot-talks.md) | `derives-from` | Robot-Talks investigation that resolved OQ-6 (reframed D-4: contract lives upstream in tagged spec; view is per-wire binding instance) and opened OQ-7 (spec versioning discipline). |
 
 ---
 
