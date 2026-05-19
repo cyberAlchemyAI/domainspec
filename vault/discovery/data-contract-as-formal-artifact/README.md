@@ -5,7 +5,7 @@ is_session: false
 layer: ontology, architecture
 nature: explanatory, reference
 status: exploratory
-version: 0.1.0
+version: 0.2.0
 last_updated: 2026-05-18
 ---
 
@@ -65,13 +65,13 @@ The investigation's structure mattered: the constructive evaluator (L2-E1) and t
 
 **Status.** `active`. Implementation lives in `internal_tools/`; specifics deferred to an implementation-plan.
 
-### D-4 — Optional `contract_view` generator, location undecided
+### D-4 — Optional `contract_view` generator (kernel + plugin, owned by core — resolved by OQ-4 / 2026-05-18)
 
 **Decision.** Ship a generator (canonical name: `contract_view`) that emits `docs/contracts/<feature>/<wire-location>.md` as a read-only derived view. The generated view is the contract. Consumer repos opt in.
 
 **Rationale.** The view-as-contract pattern resolves the layer split: DomainSpec-core remains contract-artifact-free (D-1), while consumer repos get a concrete document bound to one wire location that producers and consumers can both point at. The generator doubles as a checker (it can refuse to emit if tag fill rates are below a threshold), which is the constructive evaluator's strongest argument (F6). Whether the generator binary itself lives in DomainSpec-core or only in consumer repos is unresolved — see OQ-4.
 
-**Status.** `active` in principle, `exploratory` on location. The 4-stage migration sketched by L2-E1 (extend templates optional → warnings 1 cycle → ship generator → promote warnings to errors per-tag) is accepted as the rollout shape.
+**Status.** `active` in principle. Location resolved by OQ-4 (2026-05-18): kernel + plugin, owned by core; ships as dual-shape library+CLI in `internal_tools/contract_view/`. The "the contract IS the view" framing is flagged for re-examination — see OQ-6. The 4-stage migration sketched by L2-E1 (extend templates optional → warnings 1 cycle → ship generator → promote warnings to errors per-tag) is accepted as the rollout shape.
 
 ---
 
@@ -113,13 +113,42 @@ Does `schema_ref` resolve to a co-located file (e.g., `./schemas/foo.avsc` relat
 
 Does the per-consumer SLA live on the `Produces For` edge rows (one SLA per producer-consumer pair stated where the edge is declared) or on `slos.md` keyed by `(producer, consumer)` (one SLA per pair stated centrally)? Roots in F1's per-consumer-SLA gap. Edge-row placement keeps the SLA next to the relationship it describes; centralized placement gives a single read for SLA audit.
 
-### OQ-4 — `contract_view` generator location (the surviving evaluator disagreement)
+### OQ-4 — `contract_view` generator location → RESOLVED (reframed) 2026-05-18
 
-Does the generator binary live in DomainSpec-core (so every consumer repo inherits it by submodule update) or only in consumer repos (so each repo opts in by copying or implementing the generator locally)? L2-E2 leans consumer-only — keeps DomainSpec-core's surface minimal, consistent with D-1. L2-E1 leans core — single implementation, single bug surface, single upgrade path. This is the only surviving architectural disagreement from the dispatch.
+**Original framing.** Does the generator binary live in DomainSpec-core or only in consumer repos? L2-E2 leaned consumer-only (minimal core surface, consistent with D-1); L2-E1 leaned core (single implementation, single bug surface, single upgrade path).
+
+**Resolution.** The binary framing was wrong. A 4-agent Robot-Talks investigation (`.claude/current_conversations/2026-05-18-1945-oq4-generator-location-robot-talks.md`) found that three independent agents — distribution-mechanics (A1), governance-coherence (A3), and prior-art (A4) — converged on the conclusion that OQ-4 collapses three independent axes into one: `{spec location} × {executor location} × {policy location}`. Both original positions lost their strongest planks under evidence:
+
+- **L2-E2's "minimal core surface"** is aesthetic, not derived. `internal_tools/pyproject.toml` already ships three console scripts; a fourth is not meaningful surface expansion. Core *already* ships tooling that operates on consumer-repo content (`vault-ctl framework pull`, validators) — explicit precedent.
+- **L2-E1's "single upgrade path"** does not survive submodule SHA-pinning. Each consumer pins its own SHA; propagation is N-deferred regardless. The real benefit is "single source to fix."
+- **D-1 does not entail consumer-only generator.** D-1's stated rationale is *promisor/promisee asymmetry* — a generator binary has neither role; only the emitted view-in-consumer-repo does. L2-E2's "D-1 ⇒ consumer-only" inference is not entailed.
+- **Parametric vs variadic is the real architectural question.** Tag validation, fill-rate gating, and slos projection are parametric (one binary, config-driven). Per-wire-location body sections and per-protocol `compat_mode` semantics (Avro vs Protobuf vs SQL) are variadic. Every comparable ecosystem (Buf, Terraform, ESLint, Sphinx, datacontract-cli, dbt+adapters) honors that boundary with **kernel + plugin** or **fat-core + many built-in exporters**.
+- **Whoever ships the binary ships the projection policy** (fill-rate thresholds, well-formedness rules, `compat_mode` enum vocabulary). By the frontmatter-ownership constitution's Rule 1 ("single authoritative schema, no folklore"), policy ownership belongs to core.
+
+**Resolved position.** Reframe to **kernel + plugin, owned by core**:
+
+- **Core** ships the parametric kernel as a dual-shape library + CLI under `internal_tools/contract_view/`, slotting into existing `[project.scripts]` next to `vault-ctl`. Handles tag validation, fill-rate gating, slos projection, and `docs/contracts/<feature>/<wire-location>.md` skeleton emission.
+- **Core** defines the plugin interface for per-protocol resolvers (Avro / JSON Schema / Protobuf / SQL DDL) that render `compat_mode` semantics correctly. First-party resolvers ship in core; third-party resolvers shippable by consumers (Buf/Terraform-style).
+- **Core** owns the projection policy (thresholds, required-tag floors, well-formedness rules).
+- **Consumers configure, do not fork.** They may ship third-party protocol plugins if their stack isn't covered.
+
+This dissolves the original L2-E1/L2-E2 standoff: L2-E1's "single source to fix" preserved; L2-E2's surface worry dissolved (surface concern was never about CLI count); the parametric/variadic boundary honored architecturally; D-1 not violated.
+
+**Downstream:** opens OQ-4.1 (plugin interface design) and OQ-6 (D-4 re-examination — see below).
+
+### OQ-4.1 — Plugin interface for per-protocol resolvers
+
+Given OQ-4's resolution (kernel + plugin), what is the plugin interface contract? Options span: (a) in-process Python entry-points (ESLint/Sphinx style — simplest, language-locked), (b) subprocess/CLI invocation with stdin/stdout JSON contract (Buf style — language-agnostic, more overhead), (c) gRPC plugin protocol (Terraform style — overkill at current scale), (d) Mustache/Jinja templates loaded as data (OpenAPI-Generator style — works only if all variance is presentational, not semantic).
+
+Roots in T5 from the Robot-Talks synthesis. Must be resolved before the `contract_view` implementation-plan can be written. Preliminary lean: (a) for v0 given DomainSpec-core is Python-only and there is no current cross-language consumer pressure; revisit if a non-Python consumer surfaces.
 
 ### OQ-5 — Interaction with the existing extraction pipeline
 
 The contract view is, structurally, an L₂ projection of L₁ material (concept tables, aspect specs) plus L₁-tagged governance. Does it integrate into `_categorical/extraction.log.md` as another L₂ projection, or sit as a separate layer downstream of extraction? Roots in F2's Seam 8 (L₁ → L₂ mapping). The former keeps one extraction pipeline; the latter keeps the contract view's mapping rules independent of the categorical extraction's mapping rules.
+
+### OQ-6 — Reconsider D-4: is "the contract IS the view"? (flagged by Robot-Talks 2026-05-18)
+
+The OQ-4 Robot-Talks investigation surfaced a cross-ecosystem anomaly: D-4 holds *"the generated view is the contract,"* but every comparable ecosystem (datacontract-cli, dbt, Buf, Terraform) treats the **upstream spec** as the contract — the view is one of N derivations. This is out of OQ-4 scope but materially affects D-4's framing. If the upstream tagged spec is the contract, then the `contract_view` is a *rendering*, not the artifact itself — which changes both who "holds" the contract and what the generator's job is (project, not author). Worth a dedicated dispatch before the D-4 implementation-plan is written. See `.claude/current_conversations/2026-05-18-1945-oq4-generator-location-robot-talks.md` Tension T6 / A4 prior-art findings.
 
 ---
 
@@ -151,6 +180,7 @@ Carried verbatim from L2-E1's recommended rollout (F6) and the cross-cutting syn
 | `vault/snapshots/dispatches/2026-05-18-data-contract-formal-artifact-spec.yaml` | `derives-from` | Frozen dispatch spec (spec_hash `1ac5bc0c3ae56829c773d730bf2ad450d90eb435bbdbc69d93bc63eb54e632ea`) under which the six agents ran. |
 | [../../constitution/domainspec-subagents-strategy-constitution.md](../../constitution/domainspec-subagents-strategy-constitution.md) | `governed-by` | The dispatch lifecycle that produced this discovery is governed by the subagents-strategy constitution (R15, R16, R17, R18, R21, R22, R23). |
 | [../template-calibration-discipline/README.md](../template-calibration-discipline/README.md) | `cites` | The `required minimum + demonstrated optional` rule from template-calibration-discipline directly informs D-2's optional-tag-column posture. |
+| `.claude/current_conversations/2026-05-18-1945-oq4-generator-location-robot-talks.md` | `derives-from` | Robot-Talks investigation that resolved OQ-4 (kernel + plugin, owned by core) and flagged D-4 for re-examination (OQ-6). |
 
 ---
 

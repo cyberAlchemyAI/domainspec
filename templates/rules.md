@@ -117,3 +117,9 @@ intent ≠ CANON ⇒
 <!-- Optional: cross-reference invariants in workflows.md rather than duplicating. -->
 
 See [workflows.md#invariants](workflows.md#invariants) for I1–I{n}.
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| [vault/discovery/template-calibration-discipline/README.md](../vault/discovery/template-calibration-discipline/README.md) | `derives-from` | This template's required floor (heading-slug stable IDs, `**Checked by:**` per rule) and demonstrated-optional pattern are the application of that discovery. |

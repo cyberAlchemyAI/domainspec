@@ -108,3 +108,9 @@ the test — should be re-examined.
 <!-- Optional. List by noun what this spec deliberately does not cover. -->
 
 - {Thing not tested and why.}
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| [vault/discovery/template-calibration-discipline/README.md](../vault/discovery/template-calibration-discipline/README.md) | `derives-from` | This template's required floor (Test Matrix row per test with `Validates` citation) and demonstrated-optional pattern are the application of that discovery. |

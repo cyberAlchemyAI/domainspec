@@ -16,8 +16,8 @@ is_session: true | false
 layer: <one or more of the values below>
 nature: <one or more of the values below>
 status: draft | exploratory | active | consolidated | evergreen
-veracidade: high | medium | low   # only for axiom | premise | discovery | audit
-convicção: high | medium | low    # only for axiom | premise | discovery | audit
+veracidade: high | medium | low   # required for axiom/premise; optional for discovery/audit; omit otherwise
+convicção: high | medium | low    # required for axiom/premise; optional for discovery/audit; omit otherwise
 version: 0.x.x
 last_updated: YYYY-MM-DD
 ---
@@ -91,7 +91,11 @@ Lifecycle stage. Start at `draft`.
 | `evergreen` | Long-lived reference; updated when underlying truth changes |
 
 ### `veracidade`
-Confidence the claim matches reality. **Only for** `axiom`, `premise`, `discovery`, `audit`. Omit for the others. (For `research`, `subagents-*`, `discussion` — see constitution §6.)
+Confidence the claim matches reality. Per `ontology-conventions.md` line 61, this field is **optional for non-belief docs**.
+
+- **Required** for `axiom`, `premise` — these are belief docs whose whole point is a tracked confidence level.
+- **Optional** for `discovery`, `audit` — include only when the doc commits to a single load-bearing stance. Omit when a `discovery` holds multiple options at varying confidence (per-option confidence belongs inline in the doc body).
+- **Omit** for all other types (`constitution`, `spec`, `implementation-plan`, `readme`, `conceptual`, `test`, `backlog`, `research`, `subagents-*`, `discussion`). For `research`, `subagents-*`, `discussion` see ontology-conventions.md §6.
 
 | Value | Meaning |
 |-------|---------|
@@ -100,7 +104,11 @@ Confidence the claim matches reality. **Only for** `axiom`, `premise`, `discover
 | `low` | Speculative or weakly supported |
 
 ### `convicção`
-Author's commitment to the claim, independent of evidence. **Only for** `axiom`, `premise`, `discovery`, `audit`. Omit for the others.
+Author's commitment to the claim, independent of evidence. Same applicability as `veracidade`:
+
+- **Required** for `axiom`, `premise`.
+- **Optional** for `discovery`, `audit` — include only when the doc commits to a single load-bearing stance.
+- **Omit** for all other types.
 
 | Value | Meaning |
 |-------|---------|
