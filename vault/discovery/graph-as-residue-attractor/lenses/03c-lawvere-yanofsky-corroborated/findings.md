@@ -1,12 +1,23 @@
 ---
-lens: lawvere-yanofsky-corroborated
-date: 2026-05-16
-dispatched_by: subagent (general-purpose) — hard-fetch required, every claim corroborated against a retrieved URL
-addresses: Re-dispatch of 03-godel-lawvere-limits with primary-source quotes for the Lawvere/Yanofsky half of the quintet
-verification: [web-fetched-primary]
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
 
-# Lawvere and Yanofsky (corroborated)
+# Findings — Lawvere / Yanofsky (Corroborated)
+
+## Objective
+
+Re-dispatch of 03-godel-lawvere-limits with primary-source quotes for the Lawvere/Yanofsky half of the quintet.
+
+## Findings
+
+### Lawvere and Yanofsky (corroborated)
 
 Companion to `03-godel-lawvere-limits.md` (model-recall) and `03b-godel-tarski-lob-corroborated.md` (sibling fetch on the logic side). Sources fetched: Lawvere 1969 TAC reprint PDF; Yanofsky 2003 arXiv PDF; nLab "Lawvere's fixed point theorem"; nLab "diagonal argument"; Wikipedia "Lawvere's fixed-point theorem". See ledger.
 
@@ -109,3 +120,16 @@ Residue in the parent discovery's sense is exactly Yanofsky's $g$: a predicate c
 | http://tac.mta.ca/tac/reprints/articles/15/tr15abs.html | ECONNREFUSED | Not retrieved |
 | Pavlovic 1996 | Not attempted | Honest negative |
 | Bauer 2014 | Not attempted | Honest negative |
+
+## Caveats
+
+- Did not fetch Pavlovic 1996 ("On the structure of paradoxes") or Bauer 2014 — out of scope-time.
+- nLab "Lawvere's fixed point theorem" page uses *point-surjective* rather than Lawvere's original *weakly point-surjective* — minor strengthening of hypothesis; flagged.
+- Yanofsky page references are from extracted text of arXiv:math/0305282v1; pagination may differ from journal version (BSL 9.3).
+- The "applied to the graded knowledge graph" §4–5 sections are theorem-as-applied, not formal proof that the GKG's category satisfies CCC hypotheses.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `corroborates` → `../03-godel-lawvere-limits/findings.md`
+- `cited-by` → `../../discovery.md`

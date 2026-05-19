@@ -1,18 +1,23 @@
 ---
-lens: invariants-and-layer-alignment
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — read /domainspec-theorem/docs, /house_project/docs/vault, /maestro-trama/vault, /domainspec/vault samples
-addresses: Decompose the knowledge-curation operation's invariants into schema-layer and instance-layer, identify alignment residues, and sketch uniqueness arguments per invariant
-sources:
-  - /Users/victorboscaro/domainspec-theorem/docs/domainspec-two-layer-framework.md
-  - /Users/victorboscaro/domainspec-theorem/docs/meta-layers-reference.md
-  - /Users/victorboscaro/domainspec-theorem/docs/categorical-extraction-schema.md
-  - /Users/victorboscaro/house_project/docs/vault/ (graph-edges.md, ontology-architecture-draft.md, ontology-constitution.md, sampled axiom/premise/constitution)
-  - /Users/victorboscaro/maestro-trama/vault/, /Users/victorboscaro/maestro-trama/domainspec/
-verification: [local-files-read]
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
 
-# Graded Knowledge Graph: Two-Layer Invariant Analysis
+# Findings — Invariants and Layer Alignment
+
+## Objective
+
+Decompose the knowledge-curation operation's invariants into schema-layer and instance-layer, identify alignment residues, and sketch uniqueness arguments per invariant.
+
+## Findings
+
+### Graded Knowledge Graph: Two-Layer Invariant Analysis
 
 The knowledge-curation operation κ takes (corpus, new evidence, session) → (corpus'). The graded knowledge graph (GKG) — typed nodes {premise, axiom, constitution} × {conceptual, discovery, session}, typed edges {derives-from, contextualizes, governs, implements, contradicts}, condensation operator promoting nodes through `draft → exploratory → active → consolidated → evergreen` — is conjectured the unique fixed point of κ under two-layer residue accounting.
 
@@ -103,3 +108,14 @@ Invariants S7 and S12 lack uniqueness sketches → likely descriptive rather tha
 7. **Adversarial contradicts-flooding.** S11 + I5 admit a denial-of-service: an adversary submits contradicts-edges at the rate of legitimate promotions, freezing the corpus at active forever. Regime boundary: I5 needs a trust-weighted variant (already implicit in confidence axes) — but this is exactly where convicção-instance residue from §C bites.
 
 Net: GKG is well-defined precisely in the regime where (i) residue is positive on at least one layer, (ii) articulation rate > 0 but schema-edit rate << population-rate, (iii) authorship is attributable, (iv) domain is discrete or canonically discretizable. Outside this regime, the structure either trivializes (case 1), starves (case 2), saturates (case 3), or is captured (case 7).
+
+## Caveats
+
+- Invariants S7 (promotion-as-homomorphism) and S12 (governs-only-from-constitution) lack sharp uniqueness arguments — they may be descriptive theorems *about* the GKG rather than generative constituents.
+- The four flagged alignment residues (convicção, schema-meta evolution, derives-chain circularity, governs-edges enforcement) are predictions; none have been tested over time.
+- Boundary statements in §E are proposals, not encoded tests.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

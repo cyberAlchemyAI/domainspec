@@ -1,24 +1,23 @@
 ---
-lens: yoneda-lemma
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 4 tool calls; read /domainspec-theorem files, plus training-time recall of categorical results
-addresses: Assess Yoneda's role in the framework — where it is load-bearing, where it is scaffolding — and the new theorems it forces on the graded knowledge graph
-sources:
-  - /Users/victorboscaro/domainspec-theorem/docs/domainspec-two-layer-framework.md (§3.2, §3.3, §3.6)
-  - /Users/victorboscaro/domainspec-theorem/docs/lean-formalization-guide.md (lines 211, 266)
-  - /Users/victorboscaro/domainspec-theorem/lean-formalization/DomainSpec.lean (lines 29, 288–357)
-  - Mac Lane, *Categories for the Working Mathematician* 2e, Springer 1998 (III.2, IV.1, X.3–X.7)
-  - Riehl, *Category Theory in Context*, Dover 2016 (§2.2–2.3, §6.2, §7.2)
-  - Borceux, *Handbook of Categorical Algebra* Vol 1, CUP 1994 (§3.7)
-  - Lawvere 1969, "Diagonal arguments and Cartesian closed categories," TAC Reprints 15 (2006)
-  - Yanofsky 2003, "A universal approach to self-referential paradoxes…", BSL 9.3
-  - Day 1970, "On closed categories of functors," LNM 137
-  - Spivak 2012, "Functorial Data Migration," Inf. Comp. 217
-  - nLab pages: "Yoneda lemma", "co-Yoneda lemma", "representable functor", "Kan extension", "dense functor", "Lawvere's fixed point theorem", "free cocompletion"
-verification: [local-files-read, model-recall]
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
 
-## A. The Yoneda Lemma
+# Findings — Yoneda Lemma
+
+## Objective
+
+Assess Yoneda's role in the framework — where it is load-bearing, where it is scaffolding — and the new theorems it forces on the graded knowledge graph.
+
+## Findings
+
+### A. The Yoneda Lemma
 
 **Lemma (Yoneda).** Let $\mathcal{C}$ be a locally small category, $F : \mathcal{C}^{\mathrm{op}} \to \mathbf{Set}$ a presheaf, $c \in \mathcal{C}$. There is a bijection, natural in both $c$ and $F$:
 $$\mathrm{Nat}(\mathrm{Hom}_\mathcal{C}(-, c),\ F) \;\cong\; F(c).$$
@@ -90,3 +89,15 @@ The honest sentence: **Yoneda is the lemma that makes "representability," "ident
 6. **Canonical (up-to-equivalence) shape of any reflective tower built by free cocompletion.** This is iterated Yoneda. Without it, the tower's transfinite structure has no canonical form and uniqueness of the reflection tower cannot even be stated, let alone proved.
 
 What **cannot** be claimed by Yoneda alone, and would need to be credited elsewhere: existence of $\Sigma_\Delta \dashv \Delta^* \dashv \Pi_\Delta$ (Spivak / Kan), existence of fixed-point witnesses (Lawvere / cartesian closure), the actual refutation of unrestricted M2 and strong M6 (the four-object comma-category computation), persistence guarantees in EVōC (empirical), and consistency of the Feferman reflection sequence (proof-theoretic, not categorical).
+
+## Caveats
+
+- Yoneda is silent on whether the typed-edge category is *the right* base — if agents disagree on edge typing, their presheaf categories are over different bases and Yoneda cannot compare them.
+- The forced node-identity criterion and the convergence-as-hom-presheaf-iso definition presuppose that the typed-edge category is well-defined and locally small — not yet pinned down for the GKG.
+- The "embedding as restricted Yoneda" bridge to EVōC is a falsifiable claim, not an established result.
+- Verification mix: `[local-files-read, model-recall]` — the categorical literature (Mac Lane, Riehl, Borceux) is cited from training, not fetched.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

@@ -1,20 +1,23 @@
 ---
-lens: kauffman-precedent-check
-slug: kauffman-precedent-check
-dispatched_by: "subagent (general-purpose, Sonnet) — Kauffman direct-read for CE-1 verification"
-addresses:
-  - "Adversarial CE-1: does Kauffman's reflexive-domain / eigenform program already publish the four-component synthesis (form-as-conserved + fractal self-similarity + strange-loop closure + emergence-via-residue) the user's framework claims as novel?"
-  - "Does Kauffman frame form-invariance as a substitute for completeness, and does he invoke physics precedent (renormalization group, Noether)?"
-  - "Does Kauffman address proof-theoretic reflection (Feferman, Turing-Feferman progressions, Gödel as architecture) or is his program synchronic?"
-sources:
-  - "http://homepages.math.uic.edu/~kauffman/ReflexANPA.pdf (Kauffman, 'Reflexivity, Eigenform and Foundations of Physics', ANPA) — fetched, pdftotext, read"
-  - "http://homepages.math.uic.edu/~kauffman/Eigen.pdf (Kauffman, 'EigenForm', Kybernetes 34(1/2), 2005, pp.129-150) — fetched, pdftotext, read"
-  - "https://arxiv.org/pdf/1109.1892.pdf (Kauffman, 'Eigenforms and Quantum Physics', arXiv:1109.1892) — fetched, pdftotext, read"
-  - "https://constructivist.info/4/3/121.kauffman (Kauffman 2009 'Reflexivity and Eigenform: The Shape of Process', Constructivist Foundations 4(3): 121–137) — metadata only; full text gated behind registration wall; PDF URL returns HTML login page"
-verification: "[web-fetched]"
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
 
-# Kauffman precedent check (direct-read)
+# Findings — Kauffman Precedent Check
+
+## Objective
+
+Adversarially check whether Kauffman's reflexive-domain / eigenform program already publishes the four-component synthesis (form-as-conserved + fractal self-similarity + strange-loop closure + emergence-via-residue) claimed as novel, whether he frames form-invariance as a substitute for completeness or invokes RG/Noether, and whether he addresses proof-theoretic reflection.
+
+## Findings
+
+### Kauffman precedent check (direct-read)
 
 ## A. What Kauffman explicitly claims (per paper)
 
@@ -139,3 +142,15 @@ Negative confirmations by grep across all three open PDFs: **zero hits** for `re
 - I could not read the Constructivist Foundations 2009 paper directly (gated). Given the abstract's overlap with the ANPA paper and Kauffman's habit of expanding the same material across venues, I assess low probability (<15%) that the 2009 paper introduces Feferman-style reflection or explicit RG/Noether framing that the ANPA paper omits — but I cannot rule it out. If decisive, obtain via Constructivist Foundations registration (free) or ILL.
 - I did not consult Kauffman's earlier "Self-reference and recursive forms" (1987) or "Virtual logic" (1995-96), which the ANPA references. If reflection-tower material exists in Kauffman, those would be the next places to look.
 - The 2016 "Cybernetics, Reflexivity and Second-Order Science" and 2017 "Eigenform and Reflexivity" follow-ups in *Constructivist Foundations* were not fetched. They are also likely gated.
+
+## Caveats
+
+- The finding itself is a caveat against overclaiming: the synchronic four-component synthesis (form-as-conserved + fractal + strange-loop + emergence-via-residue) is prior art in Kauffman's eigenform program and must be cited as such. The framework's surviving novel claim narrows to three pieces (diachronic reflection tower, Spivak-style two-layer separation, RG/Noether physics-precedent framing).
+- Could not read the 2009 Constructivist Foundations paper (gated). Probability <15% it adds Feferman-style reflection that the open ANPA paper omits, but cannot be ruled out.
+- Did not consult Kauffman's 1987 "Self-reference and recursive forms" or 1995-96 "Virtual logic" — next places to look for reflection-tower material if any exists in Kauffman.
+- 2016/2017 follow-ups in *Constructivist Foundations* not fetched.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

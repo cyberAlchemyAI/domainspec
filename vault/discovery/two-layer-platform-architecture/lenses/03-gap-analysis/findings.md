@@ -1,17 +1,22 @@
 ---
-lens: gap-analysis
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 4 tool calls; investigated what the five proposers did not address
-addresses: Identify what the five infrastructure proposals do NOT cover but will be needed; prioritize gaps; flag honest non-concerns
-sources:
-  - /Users/victorboscaro/domainspec/vault/discovery/graph-as-residue-attractor/README.md
-  - /Users/victorboscaro/domainspec/vault/discovery/graph-as-residue-attractor/lenses/01-invariants-and-layer-alignment.md (residue predictions)
-  - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
-  - /Users/victorboscaro/domainspec-theorem/docs/domainspec-two-layer-framework.md (skim)
-verification: [local-files-read]
+tags: [vault, lens-findings, two-layer-platform-architecture]
+node_type: findings
+is_session: false
+layer: architecture
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# Gap Analysis: What the Five Proposals Missed
+# Findings — Gap Analysis: What the Five Proposals Missed
+
+## Objective
+
+Identify what the five infrastructure proposals do NOT cover but will be needed; prioritize gaps; flag honest non-concerns.
+
+## Findings
 
 ## 1. Gap catalog
 
@@ -103,3 +108,14 @@ verification: [local-files-read]
 - **Gap 3 (backups) less urgent than it sounds for *source* files.** Git + remote already gives 3-copy redundancy for markdown. Real risk is regenerable indices, recoverable in days, not lost. Accepting the risk for 6 months is defensible.
 - **Gap 7 (CI smoke) not load-bearing until at least two tools exist and compose.** Building it now tests nothing.
 - **A "master ontology" file (one variant of Gap 2) is probably the wrong shape.** Reference-from-siblings (or `git subtree`) is lighter and avoids a new artifact whose own evolution would need governing (S5 recursion).
+
+## Caveats
+
+- Original lens dispatched 2026-05-16 by general-purpose Sonnet subagent (4 tool calls); dispatch prompt unrecoverable.
+- Sources read parent README, sibling lens 01 (residue predictions), discovery-structure-constitution, and a skim of /domainspec-theorem two-layer framework.
+- Verification level `[local-files-read]`.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

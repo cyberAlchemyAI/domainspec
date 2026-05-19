@@ -1,27 +1,24 @@
 ---
-lens: graphrag-state-of-the-art
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 18 tool calls, web-fetched
-addresses: Survey the GraphRAG ecosystem and determine whether the proposed combination (typed edges + intent-conditioned ranking + stage and verification filtering + Yoneda identity) is published anywhere
-sources:
-  - https://arxiv.org/abs/2404.16130 (Microsoft GraphRAG, Edge et al. 2024)
-  - https://microsoft.github.io/graphrag/
-  - https://microsoft.github.io/graphrag/index/inputs/
-  - https://arxiv.org/abs/2410.05779 (LightRAG, HKU 2024)
-  - https://github.com/HKUDS/LightRAG
-  - https://arxiv.org/abs/2405.14831 (HippoRAG, OSU 2024)
-  - https://arxiv.org/abs/2401.18059 (RAPTOR, Stanford 2024)
-  - https://arxiv.org/abs/2504.11544 (NodeRAG 2025)
-  - https://arxiv.org/abs/2501.00309 (GraphRAG survey, Jan 2025)
-  - https://aclanthology.org/2025.naacl-long.449/ (KG2RAG, NAACL 2025)
-  - https://www.mdpi.com/2079-9292/14/21/4227 (Clinical RAG metadata-aware ranking)
-  - https://github.com/DEEP-PolyU/Awesome-GraphRAG
-verification: [web-fetched]
+tags: [vault, lens-findings, two-layer-retrieval, graphrag]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory, reference
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# GraphRAG Ecosystem Survey: Fit for a Typed, Stage-Aware, Intent-Conditioned Vault
+# Findings — GraphRAG State of the Art
 
-## A. Comparison table
+## Objective
+
+Survey the GraphRAG ecosystem and determine whether the proposed combination (pre-existing typed edges + intent-conditioned ranking + evidence-stage and verification-provenance filtering + Yoneda identity check) is published anywhere; if not, surface the closest precedents and the gap to be filled.
+
+## Findings
+
+### A. Comparison table
 
 | Variant | (1) Pre-existing typed edges? | (2) Node-type filtering at retrieval? | (3) Evidence-stage / epistemic-status ranking? | (4) Query-intent-conditioned ranking? | Notes |
 |---|---|---|---|---|---|
@@ -36,7 +33,7 @@ verification: [web-fetched]
 | **SELF-RAG** (general RAG, not graph) | n/a | n/a | **Partial** — ISREL / ISSUP reflection tokens grade relevance and support | No | Not graph; but its evidence-grading tokens are the nearest analog to evidence-stage tags |
 | **Clinical-decision-support metadata-aware RAG** (MDPI 14/21/4227, 2025) | n/a | n/a | **Yes** — confidence weights from author credentials, regulatory status, peer-review history, document age | No | Domain-specific; ad-hoc weighting, not a general framework |
 
-## B. Novelty assessment
+### B. Novelty assessment
 
 **Well-covered:** Pre-existing typed edges as input (BYOG in Microsoft GraphRAG; default in KG2RAG, REANO). Multiple retrieval modes per query (GraphRAG's global/local/DRIFT, LightRAG's dual-level/mix, RAPTOR's tree-vs-collapsed). None of them, though, *learn* the mode from intent — the caller picks it.
 
@@ -46,7 +43,7 @@ verification: [web-fetched]
 
 **The combination** — pre-existing human-authored typed edges + query-intent-conditioned layer composition + evidence-stage + verification-provenance as ranking filters + identity-by-edges — is **not published anywhere I could reach**. The closest single papers are Jin et al. [186] (type-aware routing) and REANO (query-conditioned edge weighting); neither touches epistemic stage or provenance, neither composes intent-specific layer stacks, and neither addresses identity-by-edges. **Treat the combination as novel.**
 
-## C. Recommendation — three options
+### C. Recommendation — three options
 
 **Option 1 — Adopt NodeRAG, modify heavily.** NodeRAG is the only published system with first-class heterogeneous nodes and a router that respects them. Modifications required: replace its 7 fixed node types with our 6 (premise/constitution/axiom/conceptual/discovery/session); swap LLM/HNSW edge construction for our pre-existing typed edges; add `evidence_stage` and `provenance` attributes; replace structural importance (K-core/betweenness) with a stage-weighted prior; add an intent classifier that selects which retrievable-node types and which edge types to traverse. The intent router is the load-bearing new piece — NodeRAG has no such router.
 
@@ -60,6 +57,19 @@ verification: [web-fetched]
 
 Items 1, 2, and 4 do not appear in any retrieved source. Item 3 generalizes the clinical-RAG metadata-weighting idea into a graph retriever.
 
-## D. Sources
+### D. Sources reached vs. secondhand
 
-URLs in frontmatter. Not reached as primary sources: KG2RAG full PDF, REANO original paper, Jin et al. [186], SELF-RAG paper, MIND-RAG. Only known through the survey's secondhand description or search snippets. Claims attributed to them should be re-verified before publication.
+Primary URLs: arXiv 2404.16130 (Microsoft GraphRAG), microsoft.github.io/graphrag, arXiv 2410.05779 (LightRAG), HKUDS/LightRAG repo, arXiv 2405.14831 (HippoRAG), arXiv 2401.18059 (RAPTOR), arXiv 2504.11544 (NodeRAG), arXiv 2501.00309 (GraphRAG survey), aclanthology.org/2025.naacl-long.449 (KG2RAG), mdpi 14/21/4227 (clinical RAG), Awesome-GraphRAG.
+
+Not reached as primary sources: KG2RAG full PDF, REANO original paper, Jin et al. [186], SELF-RAG paper, MIND-RAG. Only known through the survey's secondhand description or search snippets. **Claims attributed to them should be re-verified before publication.**
+
+## Caveats
+
+- The "no published variant does this" conclusion is strong but **not exhaustive** — KG2RAG, REANO, Jin et al. [186], SELF-RAG, and MIND-RAG were only reached through secondhand survey descriptions. Re-verification against the primary papers is required before any external novelty claim.
+- The comparison table grades on 4 axes only; other axes (latency, training cost, build-time, schema-mutability) were not surveyed.
+- The "intent classifier" load-bearing in Option 3 is named, not specified — lens 04 owns its taxonomy and ranking sketches.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

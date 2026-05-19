@@ -1,16 +1,22 @@
 ---
-lens: critical-path
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 3 tool calls; read parent discovery + infrastructure inventory
-addresses: Build the dependency DAG for the five subsystems; identify the critical path; identify the smallest viable infrastructure set that unblocks the parent discovery's two empirical questions; produce a 6-week schedule
-sources:
-  - /Users/victorboscaro/domainspec/vault/discovery/graph-as-residue-attractor/README.md (parent — lists "Next Moves" that tools enable)
-  - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
-  - The five infrastructure proposal outputs (in conversation context)
-verification: [local-files-read]
+tags: [vault, lens-findings, two-layer-platform-architecture]
+node_type: findings
+is_session: false
+layer: architecture
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# Infrastructure Critical-Path Analysis
+# Findings — Infrastructure Critical-Path Analysis
+
+## Objective
+
+Build the dependency DAG for the five subsystems; identify the critical path; identify the smallest viable infrastructure set that unblocks the parent discovery's two empirical questions; produce a 6-week schedule.
+
+## Findings
 
 ## 1. Dependency DAG
 
@@ -119,3 +125,14 @@ Reasons:
 1. The only subsystem on the *hard* side of every dependency edge. Skipping it makes every other build fragile or premature.
 2. The empirical question — "do the four residues generate new constitutions in the next 30 days?" — is a before/after diff over the vault. A diff requires a fixed *before*. Snapshot zero is the single highest-leverage artifact in the platform plan; everything else can be back-filled; a snapshot taken in week 3 cannot become a snapshot taken in week 1.
 3. Cheapest of the five (no novel ML, no theory dependencies). Two weeks is realistic with margin.
+
+## Caveats
+
+- Original lens dispatched 2026-05-16 by general-purpose Sonnet subagent (3 tool calls); dispatch prompt unrecoverable.
+- Sources read parent discovery README + discovery-structure-constitution + the five proposals in conversation context.
+- Verification level `[local-files-read]`.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

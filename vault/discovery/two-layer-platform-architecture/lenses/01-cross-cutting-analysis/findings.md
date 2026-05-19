@@ -1,17 +1,22 @@
 ---
-lens: cross-cutting-analysis
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 6 tool calls; read /domainspec and inspected existing tooling patterns
-addresses: Evaluate whether five proposed infrastructure tools (retrieval, vault CLI, telemetry, convergence runner, Lean pipeline) are genuinely five independent tools or one platform with five subsystems on a shared kernel
-sources:
-  - The five infrastructure proposal outputs (in conversation context; not on disk)
-  - /Users/victorboscaro/domainspec/vault/ structure
-  - /Users/victorboscaro/domainspec/vault/ontology-conventions.md
-  - Existing maestro-trama internal_tools/ patterns (vault_routing, semantic_index — referenced for design conventions only, not for code reuse)
-verification: [local-files-read]
+tags: [vault, lens-findings, two-layer-platform-architecture]
+node_type: findings
+is_session: false
+layer: architecture
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# Cross-Cutting Platform Analysis
+# Findings — Cross-Cutting Platform Analysis
+
+## Objective
+
+Evaluate whether five proposed infrastructure tools (retrieval, vault CLI, telemetry, convergence runner, Lean pipeline) are genuinely five independent tools or one platform with five subsystems on a shared kernel.
+
+## Findings
 
 ## 1. Position
 
@@ -65,3 +70,14 @@ Cost: ~3 engineer-days to land `vault_common/` from scratch (walker, frontmatter
 If `vault_common` owns it, every subsystem is forced to validate against one Pydantic model, and adding a field (e.g., `lean_ref`, a new `node_type`, `addresses-residue:`) becomes a single PR with five downstream consumers known at compile time. If each subsystem owns its own view, the schema becomes a folklore contract — five tools each parsing `convicção` slightly differently, telemetry silently dropping documents `vault_ctl` accepts, `pipeline` rejecting documents `graph_retrieval` happily indexes. Every other decision (shared walker, shared store, event-bus seam) is downstream of this one.
 
 **Decide frontmatter ownership first; the rest follows.** Recommended: `vault_common` owns it, written as a Pydantic v2 model that *is* the executable form of `ontology-conventions.md`. The constitution becomes code.
+
+## Caveats
+
+- Original lens dispatched 2026-05-16 by a general-purpose Sonnet subagent (6 tool calls); dispatch prompt is unrecoverable, hence `dispatch_status: backfilled-no-prompt-recoverable`.
+- Source inventory referenced the five infrastructure proposal outputs that lived in conversation context only; not on disk.
+- Verification level was `[local-files-read]` — no web-fetched corroboration.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

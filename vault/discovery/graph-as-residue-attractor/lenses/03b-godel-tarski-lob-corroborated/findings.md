@@ -1,13 +1,23 @@
 ---
-lens: godel-tarski-lob-corroborated
-date: 2026-05-16
-dispatched_by: subagent (re-dispatch with hard-fetch requirement; companion to 03)
-addresses: Corroborate the Gödel/Tarski/Löb half of lens 03 with primary/secondary sources actually retrieved, and re-derive what each forbids the graded knowledge graph from doing.
-verification: [web-fetched]
-sibling: 03c (Lawvere/Yanofsky, separate agent)
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
 
-# Gödel / Tarski / Löb — corroborated
+# Findings — Gödel / Tarski / Löb (Corroborated)
+
+## Objective
+
+Corroborate the Gödel/Tarski/Löb half of lens 03 with primary/secondary sources actually retrieved, and re-derive what each forbids the graded knowledge graph from doing.
+
+## Findings
+
+### Gödel / Tarski / Löb — corroborated
 
 This lens re-states the four classical limitative results with sources actually fetched, then applies each to the graded knowledge graph (premise → constitution → axiom with a condensation operator over a schema/instance presheaf). Lawvere and Yanofsky are deliberately omitted; a sibling lens covers them.
 
@@ -135,3 +145,16 @@ Lens 03 stated the four results from training-time recall and (by its own admiss
 - Löb → a single `meta-soundness.md` adds nothing; reflection is paid for in axioms, not schemas.
 
 Lens 03 may now be treated as load-bearing for the Gödel/Tarski/Löb half. The Lawvere/Yanofsky half awaits the sibling re-dispatch.
+
+## Caveats
+
+- No primary papers fetched (Gödel 1931, Tarski 1936, Löb 1955, Feferman 1960); every formal statement is reproduced from a fetched secondary source (SEP, Wikipedia, nLab).
+- The SEP Tarski entry does not contain the undefinability theorem; Wikipedia's formulation was relied on — weakest source-chain in the lens.
+- nLab's Löb page is thin; Wikipedia filled in the historical derivability conditions.
+- Intensionality details for G2 (Rosser evasion, Feferman Σ⁰₁ resolution) are summarised, not independently corroborated.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `corroborates` → `../03-godel-lawvere-limits/findings.md`
+- `cited-by` → `../../discovery.md`

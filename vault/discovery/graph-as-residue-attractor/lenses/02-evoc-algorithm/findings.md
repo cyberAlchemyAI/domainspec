@@ -1,19 +1,23 @@
 ---
-lens: evoc-algorithm
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — web search (5 tool calls)
-addresses: Identify the EVōC algorithm, assess relevance to the condensation operator and the multi-agent convergence criterion, and propose a concrete pipeline
-sources:
-  - https://github.com/TutteInstitute/evoc
-  - https://evoc.readthedocs.io/en/latest/
-  - https://pypi.org/project/evoc/
-  - https://x.com/leland_mcinnes/status/2039062782507688025
-  - https://www.youtube.com/watch?v=ES4PPjK21TM
-  - arXiv:2512.16558 (PLSCAN; Bot, McInnes, Aerts, 2025)
-verification: [web-fetched]
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
 
-# EVōC — Research Note
+# Findings — EVōC Algorithm
+
+## Objective
+
+Identify the EVōC algorithm, assess relevance to the condensation operator and the multi-agent convergence criterion, and propose a concrete pipeline.
+
+## Findings
+
+### EVōC — Research Note
 
 ## 1. What it is
 
@@ -34,3 +38,14 @@ verification: [web-fetched]
 ## 4. Concrete proposal
 
 Plug EVōC in as the **geometric realizer** of the condensation operator. Pipeline: (i) embed all stage-0 notes/bundles with a fixed encoder; (ii) run EVōC to obtain the full persistence hierarchy; (iii) define stage-k nodes as clusters surviving above persistence threshold τ_k, with the evidence set = member points and the condensation map = persistence parent pointer; (iv) for the convergence test, have each agent independently embed and cluster, then compare persistence diagrams (bottleneck distance) and hierarchy alignment (hierarchy-NMI or tree-edit distance on the cluster tree) — declare convergence when both metrics fall below ε at every stage. This gives a concrete, falsifiable instantiation of the multi-agent convergence criterion, and the persistence structure is exactly the kind of object structure-theorem-grade results live on (cf. stability theorems for persistence modules).
+
+## Caveats
+
+- The EVōC algorithm itself is unpublished; the cluster-extraction step cites the PLSCAN paper (Bot, McInnes, Aerts, arXiv:2512.16558, 2025).
+- The pipeline has not been run on any real vault — this is an empirical bet, not a tested result.
+- EVōC is agnostic to the schema/instance distinction; the two-layer split must be imposed by the user.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

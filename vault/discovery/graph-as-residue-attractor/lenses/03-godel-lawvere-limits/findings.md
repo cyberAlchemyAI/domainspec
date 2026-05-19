@@ -1,19 +1,25 @@
 ---
-lens: godel-lawvere-limits
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 0 tool calls; entirely produced from training-time knowledge
-addresses: Use Gödel / Tarski / Löb / Lawvere to identify the boundary of any structure-theorem claim about a self-describing graded knowledge graph, and reformulate "unique fixed point" into "unique reflection tower"
-sources:
-  - "Cited in the body: SEP entries on Gödel's theorems and Tarski's truth definitions; nLab on Löb's theorem, Lawvere's fixed point theorem, free cocompletion; Lawvere 1969 (TAC Reprints 15); Yanofsky 2003 (BSL 9.3); Smith, Gödel Without Tears"
-  - "None of the above were actually fetched — see verification field"
-verification: [model-recall]
+tags: [vault, lens-findings, graph-as-residue-attractor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
 ---
+
+# Findings — Gödel / Lawvere Limits
+
+## Objective
+
+Use Gödel / Tarski / Löb / Lawvere to identify the boundary of any structure-theorem claim about a self-describing graded knowledge graph, and reformulate "unique fixed point" into "unique reflection tower".
+
+## Findings
 
 > **Verification caveat.** This lens was produced without any web fetch or file read. The content reflects the dispatched agent's training-time knowledge of well-established results (Gödel, Tarski, Löb, Lawvere) and is articulate but not investigated. The citations should be treated as **plausible pointers to corroborate**, not as confirmed references. Re-dispatch with hard-fetch requirements is queued as a Next Move in the parent discovery.
 
----
-
-# Formal-logic constraints on the graded knowledge graph
+### Formal-logic constraints on the graded knowledge graph
 
 ## A. The five results
 
@@ -72,3 +78,15 @@ The boundary clauses, in concrete language:
 Lawvere's framing makes the residue-as-emergence intuition formally natural. The condensation operator $C$ on the graded truth-object has fixed points exactly where schema and instance agree; **residue is the obstruction to point-surjectivity of the naming map** — instance states whose characteristic predicate is not yet a constitution. Tarski hierarchies, Feferman's reflective closure, and ordinal analysis (Gentzen, $\varepsilon_0$ for PA; Rathjen for stronger systems) all show the same pattern: each incompleteness witness $G_n$ becomes a new axiom at level $n+1$, and the transfinite iteration *is* the meaningful object. In the present setting this suggests a formal home: schema/instance misalignment is a Lawvere diagonal witness, and the operation "promote the residue to a new constitution" is the reflection step that climbs the tower. Uniqueness then holds **transfinitely** (the tower is canonical up to ordinal analysis of the base system) even though it fails at every finite level — the structure theorem migrates from "unique fixed point" to "unique reflection tower," which is the strongest honest form.
 
 Sources (as recalled, not fetched): SEP entries on Gödel's theorems, Tarski's truth definitions; nLab on Löb's theorem, Lawvere's fixed point theorem; Lawvere 1969 (*Diagonal arguments and cartesian closed categories*); Yanofsky 2003 (*A universal approach to self-referential paradoxes*, BSL) — the canonical modern unification of all five.
+
+## Caveats
+
+- **Load-bearing caveat: `[model-recall]` only.** This lens was produced entirely from training-time knowledge with zero web fetches or file reads. The cited sources (SEP, nLab, Lawvere 1969, Yanofsky 2003) are plausible pointers but were not verified during the dispatch. Do not treat this lens as citable evidence on its own; use the corroborated re-runs 03b (Gödel/Tarski/Löb, hard-fetched) and 03c (Lawvere/Yanofsky, hard-fetched against primary sources) instead.
+- The "applied to the graph" sections are theorem-as-applied at informal hypothesis-check level, not Lean-grade.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `corroborated-by` → `../03b-godel-tarski-lob-corroborated/findings.md`
+- `corroborated-by` → `../03c-lawvere-yanofsky-corroborated/findings.md`
+- `cited-by` → `../../discovery.md`

@@ -1,23 +1,24 @@
 ---
-lens: query-intent-ranking
-date: 2026-05-16
-dispatched_by: subagent (general-purpose, Sonnet) — 9 tool calls, web-fetched + derivation
-addresses: Propose a query-intent taxonomy for the graded vault; derive per-intent ranking functions composing body-similarity, edge-traversal, and type/stage/verification filters
-sources:
-  - Broder 2002, *A taxonomy of web search*, SIGIR Forum (https://sigir.org/files/forum/F2002/broder.pdf)
-  - Rose & Levinson 2004, *Understanding user goals in web search* (ScienceDirect)
-  - Arora et al. 2024, *Intent Detection in the Age of LLMs* (https://arxiv.org/html/2410.01627v1)
-  - Cormack et al., Reciprocal Rank Fusion (OpenSearch blog)
-  - Dali et al., *Learning to Rank with KG-derived features* (ScienceDirect)
-  - LlamaIndex KG-RAG query engine docs (https://developers.llamaindex.ai/python/examples/query_engine/knowledge_graph_rag_query_engine/)
-  - Xiong et al., *Explicit Semantic Ranking* (AI2)
-  - MIND-RAG (ICCV 2025 — intent-aware multimodal RAG)
-verification: [web-fetched, model-recall]
+tags: [vault, lens-findings, two-layer-retrieval, intent-classification, ranking]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# Intent-Conditioned Composition for Graded-Vault Retrieval
+# Findings — Query-Intent Conditioned Ranking
 
-## A. Literature survey (web-fetched)
+## Objective
+
+Propose a query-intent taxonomy for the graded vault; derive per-intent ranking functions composing body-similarity, edge-traversal, and type/stage/verification filters.
+
+## Findings
+
+### A. Literature survey (web-fetched)
 
 - **Query-intent taxonomies.** Broder (2002): navigational / informational / transactional. Rose-Levinson refines into hierarchy (informational ~62%, navigational ~13%, transactional ~24%). LLM-era conversational search uses SetFit→LLM hybrids achieving within ~2% of pure-LLM accuracy at half the latency. **Gap for us:** no taxonomy includes intents whose target is an *epistemic structure* (axioms vs drafts, derivation chains, contradiction sets). They classify intent *about the world*, not *about the corpus's own confidence shape*.
 - **Faceted retrieval.** Treats categorical attributes as filters layered over a similarity score. Amazon's learning-to-rank-and-retrieve combines structured filters with learned ranking inside one model. **Gap:** facets are flat; our `derives-from` / `supersedes` / `contradicts` are typed graph relations, which facet vocabularies don't model.
@@ -25,7 +26,7 @@ verification: [web-fetched, model-recall]
 - **Multi-strategy retrievers.** LlamaIndex `RouterRetriever` uses an LLM selector over candidate retrievers' metadata to dispatch a query. LangChain `MultiQueryRetriever` and ensembles fuse multiple strategies but route by configuration. **Gap:** routers select retrievers but do not parametrise the *ranking function within* a retriever by intent.
 - **Intent-conditioned KG ranking.** Closest prior art: Xiong et al.'s Explicit Semantic Ranking; MIND-RAG (ICCV 2025) injects fine-grained intent signals (modality, domain) into reranking. **Gap for us:** no published system lets the *typed edge being traversed* be a function of the *classified intent*, with stage and verification facets co-varying.
 
-## B. Intent taxonomy for the graded vault
+### B. Intent taxonomy for the graded vault
 
 Let $V = (N, E)$ with node types $T_N$, edge types $T_E$, stages $S$, verification $P$. Node $n$ has body embedding $\mathbf{b}(n)$, type $\tau(n)$, stage $\sigma(n)$, verification $\pi(n) \subseteq P$.
 
@@ -42,7 +43,7 @@ Let $V = (N, E)$ with node types $T_N$, edge types $T_E$, stages $S$, verificati
 
 I1, I3, I5 are *body-leaning*; I2, I4, I6, I7 are *edge-leaning*; I8 is mixed.
 
-## C. Compose-function sketches
+### C. Compose-function sketches
 
 $\cos(q, n) = \langle \mathbf{q}, \mathbf{b}(n)\rangle / (\|\mathbf{q}\|\|\mathbf{b}(n)\|)$. For anchor $a$ and edge subset $E' \subseteq T_E$, $d_{E'}(a, n)$ = shortest directed path along edges in $E'$; $\rho_{E'}(a, n) = \gamma^{d_{E'}(a, n)}$. Stage prior $\mu(\sigma) \in [0,1]$ monotone. Verification prior $\nu(\pi) = 1 - \alpha \cdot \mathbb{1}[\pi = \{\text{recall}\}]$.
 
@@ -64,10 +65,23 @@ $$r_{\text{I8}}(q, n) = \mathbb{1}[\tau(n) = \text{conceptual}] \cdot \mathbb{1}
 
 Two templates fall out: **body-leaning** $r = (\text{type/stage filter}) \cdot \nu(\pi) \cdot \cos$, and **edge-leaning** $r = \mathbb{1}[\text{reachable via } E'] \cdot \rho_{E'}(a, n) \cdot (\text{prior})$. I7 is the only intent requiring a *diversity* objective rather than a pointwise score — the ranker returns sets, not lists, for triangulation intents.
 
-## D. Open design questions
+### D. Open design questions
 
 1. **Intent detection mechanism.** Rule-based is brittle; pure-LLM is expensive; SetFit→LLM hybrid needs labelled vault queries we don't yet have. Bootstrap: hand-label ~200 historical queries, or generate synthetic queries from the taxonomy?
 2. **Multi-intent queries.** "Evidence for X, and what contradicts it?" is I2 ∪ I4. Decompose into sub-queries? Define a product ranker $r_{\text{I2}} \cdot r_{\text{I4}}$? Treat intents as a soft distribution $p(i \mid q)$ and compose $r = \sum_i p(i \mid q) \, r_i$? Option (c) requires score-comparability — the problem RRF was invented to dodge.
 3. **Graceful degradation when structure is absent.** I2 on a node with no inbound `derives-from` returns nothing. Fall back to I5 (semantic proxy)? Or report the structural void?
 4. **Anchor resolution.** Edge-leaning intents require an anchor; anchor resolution is itself a retrieval (I5/I8). Two-stage pipeline. What confidence on anchor resolution justifies committing to the edge-leaning ranker?
 5. **Verification as filter vs prior.** For I1, should `recall`-only axioms be *excluded* (hard filter) or *demoted* (soft prior)? Suggests $\nu_i(\pi)$ intent-conditioned, not global $\nu(\pi)$.
+
+## Caveats
+
+- **The eight-intent taxonomy is a proposal**, not a validation against historical vault queries. No labelled corpus exists yet; partition cleanness is asserted, not measured.
+- **Compose-function sketches are skeleton ranking functions**, not specifications. Constants ($\gamma$, $\lambda$, $\alpha$, $w_{E'}$, $\epsilon$) are unset; learning vs. fixed values is deferred.
+- **Intent classifier mechanism is unspecified** (D.1). Without it, the whole intent-conditioning architecture has no front door.
+- I7 (Lens-triangulation) is the only intent demanding a diversity objective; the architecture spec must handle pointwise-vs-set rankers as distinct paths.
+- Verification-as-filter-vs-prior (D.5) is the open lever closest to the discovery's epistemic discipline; treating it as global $\nu(\pi)$ would silently flatten the vault's confidence ladder.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`
