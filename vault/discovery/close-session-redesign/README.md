@@ -27,14 +27,17 @@ The propose wave produced rich designs (7-gate routing trees, kernel/adapter shi
 
 ## 📁 Navigation
 
-- [lenses/01-record-layer-mechanics.md](lenses/01-record-layer-mechanics.md) — Schema, `record_budget` formula, freeze via sentinel, edge cases.
-- [lenses/02-reckon-layer-discipline.md](lenses/02-reckon-layer-discipline.md) — 7-gate routing tree, verbatim refusals, promotion/retirement flagging, 10-line cap enforcement.
-- [lenses/03-adversarial.md](lenses/03-adversarial.md) — Judgment laundering, budget gaming, override cascade, 100-session drift, un-falsifiable objective terms.
-- [lenses/04-cross-skill-continuity.md](lenses/04-cross-skill-continuity.md) — Downstream readers, schema versioning, bidirectional vs unidirectional edges, kernel/adapter across repos, Emergence Ratio.
-- [meta-lenses/A-cross-cutting.md](meta-lenses/A-cross-cutting.md) — Eight convergences, ten compatible-but-uncombined moves, shared mental model.
-- [meta-lenses/B-gap-analysis.md](meta-lenses/B-gap-analysis.md) — Seven holes the objective demands but no lens fills; first-use walkthrough; prompt-text requirements; honest defers.
-- [meta-lenses/C-adversarial-review.md](meta-lenses/C-adversarial-review.md) — Weakest proposal, most over-engineered, most likely to be ignored, fixed-point walk-through, 5-rule MVP.
-- [proposal/SKILL.md](proposal/SKILL.md) — The proposed ~150-line replacement SKILL.md, ready for evaluation.
+- [discovery.md](discovery.md) — The discovery commitments; the load-bearing artifact (v0.2.0).
+- [research/research.md](research/research.md) — Cross-lens consolidation under the new convention (meta-lens-consolidation method).
+- [research/research-synthesis.md](research/research-synthesis.md) — ≤500-word short-form summary.
+- [lenses/01-record-layer-mechanics/findings.md](lenses/01-record-layer-mechanics/findings.md) — Schema, `record_budget` formula, freeze via sentinel, edge cases.
+- [lenses/02-reckon-layer-discipline/findings.md](lenses/02-reckon-layer-discipline/findings.md) — 7-gate routing tree, verbatim refusals, promotion/retirement flagging, 10-line cap enforcement.
+- [lenses/03-adversarial/findings.md](lenses/03-adversarial/findings.md) — Judgment laundering, budget gaming, override cascade, 100-session drift, un-falsifiable objective terms.
+- [lenses/04-cross-skill-continuity/findings.md](lenses/04-cross-skill-continuity/findings.md) — Downstream readers, schema versioning, bidirectional vs unidirectional edges, kernel/adapter across repos, Emergence Ratio.
+- [lenses/META-cross-cutting/findings.md](lenses/META-cross-cutting/findings.md) — Second-order meta-lens (preserved verbatim): eight convergences, compatible-but-uncombined moves, shared mental model.
+- [lenses/META-gap-analysis/findings.md](lenses/META-gap-analysis/findings.md) — Second-order meta-lens: seven gaps the objective demands but no lens fills; first-use walkthrough; honest defers.
+- [lenses/META-adversarial-review/findings.md](lenses/META-adversarial-review/findings.md) — Second-order meta-lens: weakest proposal, most over-engineered, most likely to be ignored, 5-rule MVP.
+- [proposal/SKILL.md](proposal/SKILL.md) — The proposed ~150-line replacement SKILL.md, ready for evaluation. **This is a downstream artifact (skill spec), not part of the lens/research/discovery chain.**
 
 ## Claim
 

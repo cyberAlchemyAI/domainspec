@@ -1,9 +1,25 @@
 ---
-lens: prior-research-catalog
-date: 2026-05-16
-dispatched_by: subagent — exhaustive read of prior /domainspec vault folder research
-addresses: Catalog what's already been decided, debated, and assumed about the vault's folder structure
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — Prior Research Catalog
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `01-prior-research-catalog`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** subagent — exhaustive read of prior /domainspec vault folder research
+- **Original `addresses` line.** Catalog what's already been decided, debated, and assumed about the vault's folder structure
+- **Verification.** [local-files-read]
+- **Sources (pre-migration list).**
   - /Users/victorboscaro/domainspec/vault/constitution/folder-structure-constitution.md
   - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
   - /Users/victorboscaro/domainspec/vault/discovery/domainspec-vault-foundations/README.md
@@ -19,10 +35,7 @@ sources:
   - /Users/victorboscaro/domainspec/vault/ (ls top-level)
   - /Users/victorboscaro/house_project/docs/vault/ (ls)
   - /Users/victorboscaro/maestro-trama/vault/ (ls)
-verification: [local-files-read]
----
 
-# Lens 01 — Prior Research Catalog: Vault Folder Structure
 
 ## A. What's already decided
 
@@ -175,3 +188,8 @@ Today: flat. Frontmatter does all the work. The two-layer framing has not reache
 ---
 
 **Bottom line for the fractal.** The vault has exactly *one* formal folder rule (discovery shape, 2026-05-16, exploratory) and a constitution that misleadingly names itself folder-structure but governs code. Everything else is convention, observed but not declared. The graph-as-residue-attractor and two-layer-platform-architecture work has surfaced the framework that the folder layer would need to internalize, but the folder layer is still pre-framework.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

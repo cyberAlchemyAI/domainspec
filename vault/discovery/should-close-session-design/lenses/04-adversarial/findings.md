@@ -1,3 +1,27 @@
+---
+tags: [vault, lens-findings, should-close-session-design, adversarial]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: first
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes: []
+retrofits: ../../discovery.md
+---
+
+# Findings — Adversarial Analysis
+
+## Objective
+
+Steelman the case for not building the recommender; enumerate failure modes (reflexivity, false-signpost cascade, topic-drift, context-pressure, bootstrap, "user is the LLM," unmeasurable metric); declare a kill-switch up front.
+
+## Findings
+
 # Lens 04 — Adversarial Analysis
 
 ## Claim
@@ -119,3 +143,8 @@ Measured over a rolling 30-session window after the 20-session observe-only boot
 4. Does the redesigned `close-session`'s `CLOSE_DEFERRED` exit already absorb the "don't close prematurely" failure mode well enough that a recommender adds nothing? The deferral is post-hoc but cheap (one line, no note written) — pre-hoc recommending may be strictly redundant.
 5. What is the minimum recommender output that does not trigger reflexive bias (Failure 2)? Is it possible at all, or is "mechanical observables only" a fig leaf that the agent will still interpret normatively?
 6. If `useful_fire_rate` is unmeasurable in practice (because "followed by a close that produced a non-empty note" requires the agent to log the linkage honestly, and the agent is biased), then the success metric is also fictional. Is there an external observer (the user, manually) willing to label fires for 30 sessions? If not, the metric collapses and so does the design.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

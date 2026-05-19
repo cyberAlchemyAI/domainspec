@@ -1,9 +1,25 @@
 ---
-lens: external-prior-art
-date: 2026-05-16
-dispatched_by: subagent — web-fetched survey of knowledge-base folder-structure traditions
-addresses: How do major knowledge-management systems organize folders, fractality, and layer-separation; what should /domainspec borrow vs invent
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — External Prior Art
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `03-external-prior-art`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** subagent — web-fetched survey of knowledge-base folder-structure traditions
+- **Original `addresses` line.** How do major knowledge-management systems organize folders, fractality, and layer-separation; what should /domainspec borrow vs invent
+- **Verification.** [web-fetched]
+- **Sources (pre-migration list).**
   - https://fortelabs.com/blog/para/
   - https://zettelkasten.de/introduction/
   - https://notes.andymatuschak.org/Evergreen_notes
@@ -17,10 +33,7 @@ sources:
   - https://en.wikipedia.org/wiki/Zettelkasten
   - https://zettelkasten.de/posts/introduction-antinet-zettelkasten/
   - https://forum.obsidian.md/t/folders-vs-linking-vs-tags-the-definitive-guide-extremely-short-read-this/78468
-verification: [web-fetched]
----
 
-# External prior art: how KM systems organize folders, fractality, and layer-separation
 
 ## Per-system survey
 
@@ -167,3 +180,8 @@ verification: [web-fetched]
 | https://zettelkasten.de/posts/introduction-antinet-zettelkasten/ | via WebSearch summary |
 
 **Not fetched cleanly:** Roam's own docs (could not access primary source — relied on Antinet/Luhmann analogies and general knowledge); Logseq full docs (size cap — only partial); Confluence (not attempted, auth-walled); the Scheper book itself (not attempted, paywalled).
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

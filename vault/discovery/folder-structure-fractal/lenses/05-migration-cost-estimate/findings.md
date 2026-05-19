@@ -1,9 +1,25 @@
 ---
-lens: migration-cost-estimate
-date: 2026-05-16
-dispatched_by: subagent — engineering estimate of migration cost for the fractal-folder proposal
-addresses: Precise migration cost for adopting the proposal in /domainspec; cheaper alternatives; recommendation
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — Migration Cost Estimate
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `05-migration-cost-estimate`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** subagent — engineering estimate of migration cost for the fractal-folder proposal
+- **Original `addresses` line.** Precise migration cost for adopting the proposal in /domainspec; cheaper alternatives; recommendation
+- **Verification.** [local-files-read]
+- **Sources (pre-migration list).**
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/README.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/02-fractal-folder-theory.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/01-prior-research-catalog.md
@@ -21,10 +37,7 @@ sources:
   - /Users/victorboscaro/domainspec/internal_tools/vault_common/governance.py
   - /Users/victorboscaro/domainspec/internal_tools/vault_telemetry/residue.py
   - /Users/victorboscaro/domainspec/vault/migrations/v0-to-v1.py
-verification: [local-files-read]
----
 
-# Lens 05 — Migration Cost Estimate
 
 ## A. File-move count
 
@@ -191,3 +204,8 @@ Argument:
 **Total committed cost: ~14 h (partial+layer-marker), vs ~37 h (full fractal). Saves ~23 h with ~80% of the claimed benefit.**
 
 The full fractal proposal is **not rejected** — it is **deferred until measured load justifies it**. This is exactly the discovery-side `graph-as-residue-attractor` discipline applied to its own folder-shape mirror: act when the residue is large enough to be a signal, not when the theorem is elegant.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

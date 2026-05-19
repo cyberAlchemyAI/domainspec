@@ -1,3 +1,31 @@
+---
+tags: [vault, lens-findings, should-close-session-design, meta-lens, gap-analysis]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: second
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes:
+  - ../01-signal-design/findings.md
+  - ../02-form-factor/findings.md
+  - ../03-non-nag-discipline/findings.md
+  - ../04-adversarial/findings.md
+retrofits: ../../discovery.md
+---
+
+# Findings — Gap Analysis (Meta-Lens B)
+
+## Objective
+
+Enumerate the gaps the design target demands but no propose-wave lens fills, run a first-use walkthrough to surface missing pieces, inventory undrafted artifacts (SKILL.md, hook script), and name the load-bearing honest defers.
+
+## Findings
+
 # Meta-Lens B — Gap Analysis
 
 ## Gaps the design target demands but no lens fills
@@ -79,3 +107,12 @@ Things lenses defer that *must* appear in the SKILL.md or hook comments:
 6. **No kill-switch evaluator exists.** Either commit to quarterly hand-review or drop thresholds and replace with "if it annoys you, delete the file at `<path>`."
 7. **Cross-repo write to `domainspec/vault/discovery/...`**: hook lives in football-stats-oracle; telemetry lives in domainspec. Either move telemetry to football-stats-oracle's `.claude/` or specify cross-repo write contract.
 8. **Sentinel cleanup**: Lens 02 says either close-session deletes it or it lives next to scratchpad and dies naturally. Pick one. If neither, every session after the first starts with stale sentinel and the recommender is permanently silent.
+
+## Connections
+
+- `derives-from` → `../01-signal-design/findings.md`
+- `derives-from` → `../02-form-factor/findings.md`
+- `derives-from` → `../03-non-nag-discipline/findings.md`
+- `derives-from` → `../04-adversarial/findings.md`
+- `cited-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

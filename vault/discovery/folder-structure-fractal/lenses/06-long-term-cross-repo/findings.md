@@ -1,9 +1,25 @@
 ---
-lens: long-term-cross-repo
-date: 2026-05-16
-dispatched_by: subagent — long-term scaling + cross-repo applicability evaluation
-addresses: Whether the fractal-folder proposal survives growth and works across the five vaults
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — Long-Term Scale + Cross-Repo Applicability
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `06-long-term-cross-repo`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** subagent — long-term scaling + cross-repo applicability evaluation
+- **Original `addresses` line.** Whether the fractal-folder proposal survives growth and works across the five vaults
+- **Verification.** [local-files-read]
+- **Sources (pre-migration list).**
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/README.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/02-fractal-folder-theory.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/01-prior-research-catalog.md
@@ -12,10 +28,7 @@ sources:
   - /Users/victorboscaro/maestro-trama/vault/ (ls + discovery/)
   - /Users/victorboscaro/financas_pessoais/ (no vault; agents/<role>/{manifesto,backlog,newsletter,constitution}.md instead)
   - /Users/victorboscaro/football-stats-oracle/domain_knowledge/ (discovery/<date-slug>/raw/)
-verification: [local-files-read]
----
 
-# Lens 06 — Long-Term Scale + Cross-Repo Applicability
 
 The proposal (lens 02) defines `Unit ::= README.md schema/ instance/ lenses/`, top-level `vault/{schema,instance}/`, and `layer:` frontmatter as a redundant validator. The fractal claim is normative: the host shape should witness the residue-attractor theorem. The question this lens asks is empirical: does the shape survive five very different repos and three orders of magnitude of growth?
 
@@ -114,3 +127,8 @@ A secondary concern: financas_pessoais demonstrates that a working knowledge-sys
 8. **Before any of (1)–(7), draft the cross-repo schema-canonicalization protocol** that (E) identifies as missing. Drift detection without a resolution rule is half a feature. Without this, the proposal makes drift *visible* and *unactionable*, which is worse than invisible drift because it generates open tickets without closing them.
 
 The proposal's core move — making schema/instance separation visible at the folder level — is right and should ship. The proposal's maximal move — recursive Unit at every depth, mirror schema/instance inside every Unit, one grammar across all five repos — overreaches what the next 12 months will actually use. Ship the floor; defer the ceiling; revisit at 1k files.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

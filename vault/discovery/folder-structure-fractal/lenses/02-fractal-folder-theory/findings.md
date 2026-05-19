@@ -1,19 +1,32 @@
 ---
-lens: fractal-folder-theory
-date: 2026-05-16
-dispatched_by: subagent — theoretical proposal for fractal folder structure with two-layer guarantee
-addresses: Define precisely what "fractal folder" and "guarantee two layers" mean for the /domainspec vault; produce a concrete proposal
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — Fractal Folder Theory + Two-Layer Guarantee
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `02-fractal-folder-theory`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** subagent — theoretical proposal for fractal folder structure with two-layer guarantee
+- **Original `addresses` line.** Define precisely what "fractal folder" and "guarantee two layers" mean for the /domainspec vault; produce a concrete proposal
+- **Verification.** [local-files-read, model-recall]
+- **Sources (pre-migration list).**
   - /Users/victorboscaro/domainspec/vault/discovery/graph-as-residue-attractor/README.md
   - /Users/victorboscaro/domainspec/vault/discovery/graph-as-residue-attractor/lenses/01-invariants-and-layer-alignment.md
   - /Users/victorboscaro/domainspec/vault/discovery/graph-as-residue-attractor/lenses/05-kauffman-precedent-check.md
   - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
   - /Users/victorboscaro/domainspec/vault/constitution/frontmatter-ownership-constitution.md
   - /Users/victorboscaro/domainspec-theorem/docs/domainspec-two-layer-framework.md
-verification: [local-files-read, model-recall]
----
 
-# Fractal Folder Theory + Two-Layer Guarantee
 
 The central claim of `graph-as-residue-attractor` is that **form-invariance across self-similar levels produces stability without completeness**. If true, the *folder structure* that hosts the graph must itself be form-invariant — otherwise the host shape contradicts the hosted theorem. This lens states precisely what "fractal folder" and "guarantee the two layers" mean, then proposes a concrete layout.
 
@@ -153,6 +166,10 @@ A leaf lens stays a single `.md` file. A lens that needs its own triangulation u
 4. **Hierarchical-thinking humans pay a translation tax.** People who navigate by "where do constitutions live" must now navigate by "schema/constitution," one extra hop. The single-rule benefit (one shape at every depth) only pays back after enough depth.
 5. **Two layers everywhere risks ceremonial empty folders.** Many discoveries genuinely have no local schema. Forcing the slot wastes attention; making it optional weakens the form-invariance. The proposal chooses optional + validator-enforced naming when present.
 
+6. **Migration cost is recurring, not one-time.** The v1→v2 fractal migration is itself a one-shot link-rewrite. But the same class of cost recurs *indefinitely* every time a claim is promoted or demoted between `instance/premise/` and `instance/axiom/` — per `epistemic-chain.md` D-10, promotion is a file move, and under the fractal layout every such move triggers exactly the same link-rewrite mechanics as the v1→v2 migration, scoped to one claim. The fractal layout doesn't *cause* this cost (any path-based layout has it), but it inherits it. The resolution mechanism — stable claim-id, path rewrite pass, or accept-breakage — is open in `epistemic-chain.md` OQ-6 and is load-bearing for whether `vault_ctl` needs a frontmatter index or merely a path-walker.
+
+7. **The schema/instance cut bisects the epistemic stack.** Under the proposal, `constitution/` lives in `schema/` while `premise/` and `axiom/` live in `instance/`. The epistemic-chain stack (`premise/axiom` → `constitution/skill` → executable code) is a *typed sequence* (belief → norm → executable). The fractal cut splits this sequence in the middle: the belief layer is instance-typed (claims about the world), the norm layer is schema-typed (rules of the system), and the executable layer is partly outside the vault entirely. This is defensible — beliefs are *content of the graph* while norms are *rules that govern the graph* — but it means a reader who learned the epistemic chain as one upward arrow has to additionally learn that the chain crosses a layer boundary between premise/axiom and constitution. Worth naming explicitly in the schema/instance constitution rather than left implicit in the migration map.
+
 ## F. The 2-3 hardest cases
 
 **(1) `vault/ontology-conventions.md` and the other root-level loose files.** They are schema by content (governs how nodes are written). Proposal: move to `vault/schema/conventions/ontology-conventions.md`. The root-level placement was already a *visible* S5 violation (schema as peer of instance subtrees). Fix is mechanical; cost is link rewriting.
@@ -160,6 +177,8 @@ A leaf lens stays a single `.md` file. A lens that needs its own triangulation u
 **(2) `vault/amendments/` and `vault/backlog/`.** Genuine ambiguity. Amendments are *changes-to-schema* — they are schema-evolution records, themselves instance-like artifacts about schema. Proposal: `vault/schema/amendments/` (Unit shape: README + instance/ = the amendment files). This makes them schema *meta-history*. Backlog is *instance-of-work-to-do* about *both layers*; it cannot live cleanly on one side. Proposal: `vault/instance/backlog/`, with frontmatter `targets: schema | instance` per item. Acknowledged: this is the residue point where the two-layer split *itself* needs an instance carrier — exactly the §C residue (ii) the lens-01 analysis predicted.
 
 **(3) Existing `vault/discovery/*` folders.** Their internal shape (README + lenses/) is already a degenerate Unit. Migration is **path-only**: `git mv vault/discovery vault/instance/discovery`. The internal structure is preserved; the fractal shape is honored vacuously (no local schema/instance slots needed). Lenses that have already grown beyond a single file (none currently) would be upgraded leaf→Unit individually.
+
+**(4) `vault/premise/` and `vault/axiom/` as sibling vs unified folders.** Both go under `instance/` (they are claims, not rules), so the schema/instance cut is decided. But sibling-folder placement vs a single `instance/claims/` folder with a `node_type` frontmatter discriminator is *not* decided, and it interacts directly with `epistemic-chain.md` D-10 (promotion = file move) and OQ-6 (edge-target identity). Sibling folders make the evidence-state visible in the path — `instance/premise/foo.md` vs `instance/axiom/foo.md` — at the cost of recurring `git mv` operations and inbound-edge breakage on every promotion/demotion. A unified `instance/claims/foo.md` with `node_type: premise|axiom` in frontmatter makes promotion a frontmatter edit with no path change, at the cost of losing the folder-as-stratification signal that B(1) and B(2) make load-bearing for the rest of the schema (the path no longer tells you the claim's evidence-state). The fractal proposal as currently written assumes sibling folders by inheriting the existing layout, but this is *not* an argued choice — it is a default. The decision is owed to a follow-up lens or to the OQ-6 resolution; whichever resolves first should pin the other.
 
 ## G. Honest acknowledgment
 
@@ -173,3 +192,8 @@ Under-specified or speculative:
 - **No migration is free.** I have not estimated link-rewrite cost on the current vault; the migration script is named but not designed.
 
 The proposal lives or dies on whether the *fractal* (Unit) shape actually reduces complexity over its alternative (flat + frontmatter type-marker only). I believe it does, because the discovery it instantiates requires it. But the empirical test is: after migration, does `vault_ctl walk` get shorter, and does onboarding time drop? Those are the falsification criteria.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

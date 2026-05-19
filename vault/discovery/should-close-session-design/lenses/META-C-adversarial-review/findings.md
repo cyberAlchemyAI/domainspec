@@ -1,3 +1,31 @@
+---
+tags: [vault, lens-findings, should-close-session-design, meta-lens, adversarial-review]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: second
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes:
+  - ../01-signal-design/findings.md
+  - ../02-form-factor/findings.md
+  - ../03-non-nag-discipline/findings.md
+  - ../04-adversarial/findings.md
+retrofits: ../../discovery.md
+---
+
+# Findings — Adversarial Review (Meta-Lens C)
+
+## Objective
+
+Stress-test the four propose-wave lenses: identify the weakest proposal, the most over-engineered, the rules most likely to be ignored, walk a real session as a fixed-point check, and collapse the survivors into a minimum viable version.
+
+## Findings
+
 # Meta-Lens C — Adversarial Review
 
 ## Weakest proposal
@@ -70,3 +98,12 @@ What is dropped, and why:
 - **`useful_fire_rate` dashboards (Lens 04):** right idea, wrong scale. Observe-only log + eyeball review *is* the metric.
 
 The kernel is roughly Lens 04's steelman-against-building-it with one concession: a 30-line hook plus a 20-session observation period, no skill registered. **If after 20 sessions the user reviews the observations and concludes the hook caught nothing they wouldn't have caught themselves, delete the hook and do not build the skill.** Honest design target at solo-dev scale.
+
+## Connections
+
+- `derives-from` → `../01-signal-design/findings.md`
+- `derives-from` → `../02-form-factor/findings.md`
+- `derives-from` → `../03-non-nag-discipline/findings.md`
+- `derives-from` → `../04-adversarial/findings.md`
+- `cited-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

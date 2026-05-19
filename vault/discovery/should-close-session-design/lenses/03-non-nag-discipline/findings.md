@@ -1,3 +1,27 @@
+---
+tags: [vault, lens-findings, should-close-session-design, non-nag-discipline]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: first
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes: []
+retrofits: ../../discovery.md
+---
+
+# Findings — Non-Nag Discipline
+
+## Objective
+
+Specify the silence-by-default rules, prompt budgets, snooze/acknowledge state machine, and trust-recovery logic that keep the recommender from training itself out of relevance.
+
+## Findings
+
 # Lens 03 — Non-Nag Discipline
 
 ## Claim
@@ -119,3 +143,8 @@ This precondition is checked *before* the multi-signal threshold, not after, bec
 5. The "informational line" escape hatch for very long sessions (>6h, >10k-line scratchpad) is the one place this lens admits a second utterance per session. Is it worth the consistency cost? It might be better to drop it entirely and accept that very long sessions sometimes go un-prompted.
 6. Trust score initialization at 0.7 is a guess. Should new installations start at 1.0 (give the user the benefit of the doubt) or 0.5 (earn trust from neutral)? 0.7 assumes a competent default calibration; 0.5 assumes nothing.
 7. Does "explicit dismissal" need natural-language understanding, or is a short keyword list sufficient? Keyword list is more predictable but will miss phrasings like "I want to keep pushing on this for a bit"; NLU is more accurate but introduces a dependency and a failure mode where misunderstood dismissals are recorded as ignores.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

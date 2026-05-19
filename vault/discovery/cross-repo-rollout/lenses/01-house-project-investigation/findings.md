@@ -1,27 +1,26 @@
 ---
-lens: house-project-investigation
-date: 2026-05-16
-dispatched_by: subagent — read-only investigation of /house_project for cross-repo rollout
-addresses: Current state + compatibility + low-risk/high-risk separation for adopting /domainspec discipline in /house_project
-sources:
-  - /Users/victorboscaro/house_project/
-  - /Users/victorboscaro/house_project/docs/
-  - /Users/victorboscaro/house_project/docs/vault/
-  - /Users/victorboscaro/house_project/docs/vault/constitution/
-  - /Users/victorboscaro/house_project/docs/vault/discovery/
-  - /Users/victorboscaro/house_project/docs/vault/axiom/
-  - /Users/victorboscaro/house_project/docs/vault/premise/
-  - /Users/victorboscaro/house_project/docs/vault/conversations/
-  - /Users/victorboscaro/house_project/docs/features/
-  - /Users/victorboscaro/house_project/internal_tools/
-  - /Users/victorboscaro/house_project/scripts/
-  - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
-verification: [local-files-read]
+tags: [vault, lens-findings, cross-repo-rollout, house-project]
+node_type: findings
+is_session: false
+layer: architecture
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-17
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# House Project — vault state for cross-repo rollout
+# Findings — House Project Investigation
 
-## A. Current state inventory
+## Objective
+
+Investigate `house_project` for cross-repo rollout of /domainspec discipline: current vault state, compatibility with the 7 framework constitutions, and separation of low-risk additive moves from higher-risk deferred items. Original dispatch date 2026-05-16; verification `[local-files-read]`; sources included `house_project/` (top-level, docs/, docs/vault/{constitution,discovery,axiom,premise,conversations}, docs/features/, internal_tools/, scripts/) and `/domainspec/vault/constitution/discovery-structure-constitution.md` for comparison.
+
+## Findings
+
+### House Project — vault state for cross-repo rollout
+
+#### A. Current state inventory
 
 **Top-level shape** — house_project is a working Django/Celery codebase (`/domains`, `/infrastructure`, `/shared_services`, `/dashboard`, `/frontend`, `/internal_tools`, `/migrations`, `/scripts`), with documentation under `/docs`. There is no `vault/` at repo root; the vault lives at `docs/vault/`.
 
@@ -51,14 +50,14 @@ Also present at vault root (not folders): `agent-navigation.md`, `human-navigati
 
 **Tooling:** `/scripts/` has `scaffold_domain.py` plus many domain-data scripts (no vault tooling visible). `/internal_tools/` includes `ccb-registration-demo/`, `commits_productivity/`, `personal_assistant/`, `semantic_index/`, `vault_routing/` — the last is the closest to vault tooling. No `vault_common/` Pydantic schema, no `vault_ctl`-style CLI, no `vault/onboarding/`, no `vault/snapshots/`, no `vault/migrations/` (these last three are absent at the vault root).
 
-## B. Compatibility assessment with /domainspec discipline
+#### B. Compatibility assessment with /domainspec discipline
 
 - **Frontmatter format.** Same family — `node_type`, `layer`, `nature`, `status`, `version`, `last_updated`, `tags`, `audience`, `veracidade`, `convicção`, `is_session` are all in use across house_project. House_project is in fact the *source* of the convention; `ontology-conventions.md` (61 KB) here is plausibly the parent of /domainspec's. So: **compatible at field level**.
 - **Constitution shape.** Identical pattern — YAML frontmatter + `# Constitution: …` + Objective + numbered rules + Connections table. Matches /domainspec's constitution shape closely.
 - **Discovery shape.** **Divergent.** House_project uses **flat single-file discoveries**, /domainspec uses **README + `lenses/NN-*.md`** with an explicit `verification:` field. No house_project discovery has a `lenses/` folder; none use the `verification` field.
 - **Edge declarations.** **Prose + table-based**, not typed frontmatter edges. Connections are declared in a markdown "Connections" table at the bottom of each doc (see `folder-structure-constitution.md` lines 222–228) and in a top-level `graph-edges.md`. No `edges:` frontmatter key. /domainspec's edge-acyclicity model assumes typed frontmatter edges — adopting it requires a migration.
 
-## C. The 7 framework constitutions — does each apply cleanly?
+#### C. The 7 framework constitutions — does each apply cleanly?
 
 | Constitution | Verdict | Why |
 |---|---|---|
@@ -70,13 +69,13 @@ Also present at vault root (not folders): `agent-navigation.md`, `human-navigati
 | **governs-runtime-witness** | PARTIAL | House_project does have code/doc binding (constitutions reference skills, e.g. `folder-structure-constitution` → `.claude/skills/custom/folder-structure.md`), but no `governs:` frontmatter contract and no runtime witness pattern. Adoption requires both the field and an enforcement loop (pre-commit or CI). |
 | **vault-folder-structure (draft)** | PARTIAL | House_project's vault has extras (`conversations/`, `domain/`, `conceptual/`, `dictionary-*.md`, `graph-*.md`, dual navigation files) and is missing canonical pieces (`bets/`, `amendments/`, `snapshots/`, `migrations/`, `onboarding/`, lens-shaped `discovery/`). Adoption needs a "house_project profile" of the constitution, or a layered v0 → v1 path. |
 
-## D. Features documentation
+#### D. Features documentation
 
 The features corpus (13 features × ~16 aspect files = 213 .md) is **already a near-perfect mapping to instance/feature shape**. Each feature folder is self-contained, has consistent aspect files, and every file has frontmatter with `node_type`, `layer`, `nature`, `status`. Most have `veracidade`/`convicção`.
 
 Verdict: each feature folder could become `vault/instance/feature/<feature>/` with `SPEC.md` (or `FEATURE-OVERVIEW.md`) acting as the README, and the aspect files (`domain.md`, `events.md`, `interfaces.md`, `operations.md`, `queries.md`, `states.md`, `workflows.md`, `mappings.md`) acting as lens-equivalents — though they are not currently named `lenses/NN-*.md` and the README requirement isn't formalized. They behave like discoveries: triangulated, cross-referenced, with explicit gap-questions and decisions logs. **Lowest-cost path:** add `verification:` to each aspect file and a `README.md` that points to the existing FEATURE-OVERVIEW.md as the canonical synthesis; do not rename folders.
 
-## E. Recommendation — low-risk vs higher-risk
+#### E. Recommendation — low-risk vs higher-risk
 
 **Tonight, low-risk (additive only, no rename/no edit of existing files):**
 
@@ -95,7 +94,7 @@ Verdict: each feature folder could become `vault/instance/feature/<feature>/` wi
 - Promotion of the existing `ontology-conventions.md` to a formal schema with amendment ledger (it is load-bearing; editing it needs the schema-amendment constitution to already be in force — chicken-and-egg).
 - Renaming features/ aspect files or wrapping them as `vault/instance/feature/<name>/` (213 files, breaks external links).
 
-## F. Migration cost estimate for full /domainspec-style adoption
+#### F. Migration cost estimate for full /domainspec-style adoption
 
 | Phase | Scope | Effort |
 |---|---|---|
@@ -109,9 +108,20 @@ Verdict: each feature folder could become `vault/instance/feature/<feature>/` wi
 
 **Total realistic: 7–11 sessions** to reach full /domainspec parity, of which **only P0 is safe tonight**.
 
-## Key observations
+#### Key observations
 
 - House_project is **schema-compatible** with /domainspec because /domainspec inherited the vocabulary from house_project (same field names, same `convicção`/`veracidade` axis, same `node_type` enum extended). The discipline gap is **shape and process**, not vocabulary.
 - The biggest divergence is **edges-as-prose vs edges-as-frontmatter**. Until that is resolved, edge-acyclicity cannot be mechanically enforced.
 - `conversations/` is house_project's de facto session+spec+discovery dumping ground (474 files) — the cleanest /domainspec mapping is to treat it as a *legacy basin* and not retro-migrate, while applying new discipline only to new artifacts.
 - The features/ corpus is the **best candidate** for first /domainspec-style enforcement: 13 self-contained folders, already aspect-organized, frontmatter-clean. A pilot here would prove the rollout pattern before touching `vault/`.
+
+## Caveats
+
+- Investigation was read-only; counts and node-type distributions reflect filesystem state at 2026-05-16 and may have drifted.
+- The 7-constitution framing pre-dates the canonical framework constitution catalog; one-to-one mapping is approximate.
+- Effort estimates in §F are session-count guesses, not measured.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

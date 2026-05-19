@@ -1,4 +1,23 @@
-# Meta-Lens A — Cross-Cutting
+---
+tags: [vault, lens-findings, close-session-redesign, meta-lens]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-17
+dispatch_status: historical
+retrofits: true
+lens_order: second
+synthesized-by: ../../research/research.md
+backfilled: true
+---
+
+# Findings — Meta-Lens A: Cross-Cutting
+
+> **Lens order: second.** This is a meta-lens — a cross-lens consolidation dispatched during the original evaluate wave (2026-05-16/17). Its substantive content has been re-aggregated under the new convention's `research.md` (see `../../research/research.md`); this file is preserved verbatim as historical record of the second-order lens.
+
 
 ## Convergences (≥3 lenses agree)
 
@@ -31,3 +50,12 @@ A **write-once, append-only valve in a directional compression pipeline** (sessi
 **Corroborations.** Every lens treats compression/emergence as the telos and signpost as the form. Auditable-both-directions is honored by Lens 01's write order, Lens 02's `evidence_pointer:` back-refs, Lens 04's typed bidirectional/unidirectional edge rule, Lens 03's outbound-link requirement. Promotion-as-flag-only is universal.
 
 **Quiet contradictions.** Lens 03 argues the objective terms ("compression," "emergence," "signpost") are operationally vacuous and that no skill design rescues them — only an external metric and periodic re-derivation can. Lens 04 partly answers with the Emergence Ratio but concedes the walker is out of scope. Lens 01's `record_budget: auto` scales with counted activity, which Lens 03 names as exactly the gameable surface. The lenses also tacitly endorse "most sessions should not visibly move the pipeline" — true but not endorsed by the stated objective.
+
+## Connections
+
+- `derives-from` → `../../discovery.md`
+- `derives-from` → `../../research/research.md`
+- `derives-from` → `../01-record-layer-mechanics/findings.md`
+- `derives-from` → `../02-reckon-layer-discipline/findings.md`
+- `derives-from` → `../03-adversarial/findings.md`
+- `derives-from` → `../04-cross-skill-continuity/findings.md`

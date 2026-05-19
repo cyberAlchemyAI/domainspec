@@ -1,4 +1,23 @@
-# Meta-Lens B — Gap Analysis
+---
+tags: [vault, lens-findings, close-session-redesign, meta-lens]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-17
+dispatch_status: historical
+retrofits: true
+lens_order: second
+synthesized-by: ../../research/research.md
+backfilled: true
+---
+
+# Findings — Meta-Lens B: Gap Analysis
+
+> **Lens order: second.** Meta-lens from the original evaluate wave; consolidated upstream in `../../research/research.md`. Preserved verbatim here as the historical record.
+
 
 ## Gaps the objective demands but no lens fills
 
@@ -58,3 +77,12 @@ These cannot be silently deferred — the SKILL.md must name them at the top:
 5. Nobody reviews promotion candidates in football-stats-oracle; the `promotion_candidate: true` flag is write-only by default.
 6. Multiple scratchpads must trigger explicit refusal, not guess.
 7. Slug collision policy must be specified, even trivially.
+
+## Connections
+
+- `derives-from` → `../../discovery.md`
+- `derives-from` → `../../research/research.md`
+- `derives-from` → `../01-record-layer-mechanics/findings.md`
+- `derives-from` → `../02-reckon-layer-discipline/findings.md`
+- `derives-from` → `../03-adversarial/findings.md`
+- `derives-from` → `../04-cross-skill-continuity/findings.md`

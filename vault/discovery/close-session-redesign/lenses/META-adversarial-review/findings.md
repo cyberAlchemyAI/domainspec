@@ -1,4 +1,23 @@
-# Meta-Lens C — Adversarial Review
+---
+tags: [vault, lens-findings, close-session-redesign, meta-lens]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-17
+dispatch_status: historical
+retrofits: true
+lens_order: second
+synthesized-by: ../../research/research.md
+backfilled: true
+---
+
+# Findings — Meta-Lens C: Adversarial Review
+
+> **Lens order: second.** Meta-lens from the original evaluate wave; consolidated upstream in `../../research/research.md`. Preserved verbatim here as the historical record.
+
 
 ## Weakest proposal
 
@@ -44,3 +63,12 @@ The irreducible kernel for solo-dev, sole-reader scale:
 5. **Triage: if all of `files_touched`, `premise_tests`, `candidate_premises` are empty → no note. Delete the scratchpad, exit.** Only judgment call, binary.
 
 Every additional rule from the four lenses must justify itself by naming a specific reader that needs it *today*.
+
+## Connections
+
+- `derives-from` → `../../discovery.md`
+- `derives-from` → `../../research/research.md`
+- `derives-from` → `../01-record-layer-mechanics/findings.md`
+- `derives-from` → `../02-reckon-layer-discipline/findings.md`
+- `derives-from` → `../03-adversarial/findings.md`
+- `derives-from` → `../04-cross-skill-continuity/findings.md`

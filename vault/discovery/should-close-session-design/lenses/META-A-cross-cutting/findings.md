@@ -1,3 +1,31 @@
+---
+tags: [vault, lens-findings, should-close-session-design, meta-lens, cross-cutting]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: second
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes:
+  - ../01-signal-design/findings.md
+  - ../02-form-factor/findings.md
+  - ../03-non-nag-discipline/findings.md
+  - ../04-adversarial/findings.md
+retrofits: ../../discovery.md
+---
+
+# Findings — Cross-Cutting (Meta-Lens A)
+
+## Objective
+
+Triangulate the four propose-wave lenses: catalog convergences (≥3 lenses agree), surface compatible-but-uncombined moves, name the shared mental model, and audit corroboration vs contradiction against the design target.
+
+## Findings
+
 # Meta-Lens A — Cross-Cutting
 
 ## Convergences (≥3 lenses agree)
@@ -29,3 +57,12 @@ All four lenses converge on one picture: the user is a competent solo dev whose 
 **Corroboration.** The design target says "signals when to invoke close-session… does NOT auto-close… balances closing too late vs nagging." All four lenses treat these as load-bearing and operationalize them congruently. The non-auto-close requirement is honored by every lens. The nag/late balance is treated as asymmetric — nagging is worse — which matches solo-dev (no other user to dilute irritation). The sibling skill's triage rule is adopted verbatim as a precondition by every lens.
 
 **Contradiction.** The design target's framing ("watches a running session, signals **when** to invoke") presumes the skill exists. Lens 04 directly challenges this: its steelman concludes the skill should likely not be built and proposes `close-session --dry-run` as a strictly better tool. Lens 02 embeds a softer contradiction — its hook does not "watch" continuously, it is a stateless per-turn check. A second tension: the target's "signals when" implies positive prescription, while Lenses 01, 03, 04 all argue the output should be either silent or maximally restrained. The unresolved disagreement is whether the primary output is a *recommendation* (target framing) or an *observation* (Lens 04's structural fix). That is the open design question the meta-lens cannot collapse from the inputs alone.
+
+## Connections
+
+- `derives-from` → `../01-signal-design/findings.md`
+- `derives-from` → `../02-form-factor/findings.md`
+- `derives-from` → `../03-non-nag-discipline/findings.md`
+- `derives-from` → `../04-adversarial/findings.md`
+- `cited-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

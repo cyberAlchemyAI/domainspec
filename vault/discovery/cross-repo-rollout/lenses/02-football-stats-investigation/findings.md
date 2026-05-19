@@ -1,21 +1,26 @@
 ---
-lens: football-stats-investigation
-date: 2026-05-16
-dispatched_by: subagent — read-only investigation of /football-stats-oracle for cross-repo rollout
-addresses: Current state + compatibility + the reciprocal flow back to the seed repo
-sources:
-  - /Users/victorboscaro/football-stats-oracle/
-  - /Users/victorboscaro/football-stats-oracle/.claude/skills/close-session/SKILL.md
-  - /Users/victorboscaro/football-stats-oracle/.claude/skills/folder-structure/SKILL.md
-  - /Users/victorboscaro/football-stats-oracle/domain_knowledge/ (all subfolders)
-  - /Users/victorboscaro/football-stats-oracle/docs/references/2026-05-15-build-surface-bootstrap/raw/
-  - /Users/victorboscaro/football-stats-oracle/domain_knowledge/discovery/2026-05-15-foundations-bootstrap/raw/
-verification: [local-files-read]
+tags: [vault, lens-findings, cross-repo-rollout, football-stats-oracle]
+node_type: findings
+is_session: false
+layer: architecture
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-17
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# Football-Stats-Oracle: state and rollout fit
+# Findings — Football-Stats-Oracle Investigation
 
-## A. Current state inventory
+## Objective
+
+Investigate `football-stats-oracle` for cross-repo rollout: current vault/skill state, compatibility with /domainspec discipline, and the reciprocal-flow question (what the framework owes back to the seed repo that gave it the evidence-stage ladder and close-session skill). Original dispatch date 2026-05-16; verification `[local-files-read]`; sources included repo root, `.claude/skills/{close-session,folder-structure}/SKILL.md`, all `domain_knowledge/` subfolders, and the two May-15 bootstrap raw bundles.
+
+## Findings
+
+### Football-Stats-Oracle: state and rollout fit
+
+#### A. Current state inventory
 
 Top-level:
 
@@ -41,7 +46,7 @@ Companion bundle in `docs/references/2026-05-15-build-surface-bootstrap/raw/` �
 
 Net: this is a freshly bootstrapped repo. Only the discovery bundles have content; the evidence-tree folders (premise/constitution/conceptual) and sessions are all empty.
 
-## B. Compatibility assessment
+#### B. Compatibility assessment
 
 **Frontmatter.** The football discovery raw files (`d1-rules.md` etc.) have **no YAML frontmatter** — they open with `# Title` directly. The session-note schema in `close-session/SKILL.md` defines rich frontmatter (`evidence_stage`, `decisions_made`, `files_touched`, `experiments_run`, `premise_tests_run`, `candidate_premises`, `promotion_candidate`, `retires`, `artifacts`), but no session note has yet been written, so it's spec-only.
 
@@ -57,7 +62,7 @@ These are **two different artifact types**: football's `raw/` is closer to /doma
 
 **Evidence-stage vocabulary.** Football's `premise → constitution → axiom` ladder is **the same vocabulary** /domainspec's framework uses. Identical lineage — because this repo seeded it.
 
-## C. The 7 framework constitutions: applicability
+#### C. The 7 framework constitutions: applicability
 
 (Inferring the 7 from /domainspec context: vault-as-residue, evidence-stage discipline, lens-shaped discoveries, snapshot-zero, edge-typed graph, close-session, folder-structure-fractal.)
 
@@ -71,7 +76,7 @@ These are **two different artifact types**: football's `raw/` is closer to /doma
 | 6 | Close-session | **Native + canonical.** This *is* the source. See §D. |
 | 7 | Folder-structure-fractal (folder is the schema) | **Mostly native.** `folder-structure/SKILL.md` defines kind × evidence-stage as the placement axes. Doesn't yet do the fractal recursion /domainspec added. |
 
-## D. Close-session — has the seed been honored?
+#### D. Close-session — has the seed been honored?
 
 The football close-session skill (`.claude/skills/close-session/SKILL.md`, 25 lines body cap, evidence-stage frontmatter, refuse-to-promote stance, "sessions are signposts not documents") is the **original**. /domainspec's session-note pattern derives from it.
 
@@ -79,7 +84,7 @@ The football close-session skill (`.claude/skills/close-session/SKILL.md`, 25 li
 
 **Has /domainspec used this skill?** Yes — /domainspec session notes were spawned from this shape. The discipline now exists in /domainspec at higher fidelity than in its own repo of origin.
 
-## E. The football vault structure and schema/instance mapping
+#### E. The football vault structure and schema/instance mapping
 
 Football already encodes **two orthogonal axes**:
 - **Kind:** `domain_knowledge/` vs `docs/` vs `data/` vs `infra/` vs `tooling/` vs `experiments/`
@@ -91,7 +96,7 @@ The `conceptual/` folder is interesting — it's the "derived concepts / vocabul
 
 `evidence_stage` as a frontmatter field is **the same vocabulary** /domainspec uses on session notes — direct lift.
 
-## F. Recommendation — low-risk vs higher-risk
+#### F. Recommendation — low-risk vs higher-risk
 
 **Tonight (low-risk, additive only):**
 1. Write the first session note covering the May 15 bootstrap, using the skill that already exists. This is overdue and tests the skill against real load.
@@ -106,7 +111,7 @@ The `conceptual/` folder is interesting — it's the "derived concepts / vocabul
 4. Fractal folder-structure. Wait for /domainspec to harden the pattern; football is a good second adopter, not co-designer.
 5. The other 5 framework constitutions beyond close-session + folder-structure — port one at a time, each via its own session note.
 
-## G. The reciprocal question — what flows back to the seed?
+#### G. The reciprocal question — what flows back to the seed?
 
 Football-stats was the seed. Two things shipped from here to /domainspec: the evidence-stage ladder, and the close-session skill (including the 25-line body cap and refuse-to-promote stance). Both are now used in /domainspec at higher fidelity than they're used in their own repo.
 
@@ -123,3 +128,14 @@ Football-stats was the seed. Two things shipped from here to /domainspec: the ev
 5. **Harmonization debt.** The skill says write a session note for substantive changes — yet the bootstrap day generated 20 substantive files and zero session notes. Either the trigger is wrong or the discipline lapsed. /domainspec's experience honoring the skill is evidence the skill works; the gap is repo-local, not skill-local. First action in football should be: write the retroactive bootstrap session note. That single act closes the loop — the seed repo finally uses the skill it gave away.
 
 The reciprocal flow is therefore not framework → seed in the trivial sense. It is: framework gives the seed back its **own discipline made explicit and verifiable**, plus the curated-lens layer the seed never built on top of its raw bundles. Net: low-risk, high-symbolism, do it tonight.
+
+## Caveats
+
+- Read-only snapshot at 2026-05-16; the football repo was freshly bootstrapped and may have evolved.
+- The "7 framework constitutions" list in §C is *inferred* from /domainspec context, not pulled from a canonical catalog — the names may not match the framework's final naming.
+- The reciprocal-flow narrative is partly editorial framing of objective gaps.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

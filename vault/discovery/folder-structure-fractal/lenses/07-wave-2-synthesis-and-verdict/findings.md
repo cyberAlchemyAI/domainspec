@@ -1,9 +1,25 @@
 ---
-lens: wave-2-synthesis-and-verdict
-date: 2026-05-16
-dispatched_by: synthesizer — integrate lenses 04, 05, 06 into a single verdict and adoption plan
-addresses: State precisely what survives Wave 2 evaluation of the fractal-folder proposal, what is deferred, what is declined, and the amendment cascade required to adopt
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — Wave 2 Synthesis and Verdict (Proto-Synthesis)
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `07-wave-2-synthesis-and-verdict`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** synthesizer — integrate lenses 04, 05, 06 into a single verdict and adoption plan
+- **Original `addresses` line.** State precisely what survives Wave 2 evaluation of the fractal-folder proposal, what is deferred, what is declined, and the amendment cascade required to adopt
+- **Verification.** [local-files-read]
+- **Sources (pre-migration list).**
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/02-fractal-folder-theory.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/04-adversarial-attack.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/05-migration-cost-estimate.md
@@ -11,10 +27,7 @@ sources:
   - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
   - /Users/victorboscaro/domainspec/vault/constitution/schema-amendment-discipline-constitution.md
   - /Users/victorboscaro/domainspec/vault/constitution/frontmatter-ownership-constitution.md
-verification: [local-files-read]
----
 
-# Lens 07 — Wave 2 Synthesis and Verdict
 
 The three Wave 2 evaluators (E1 adversarial, E2 migration-cost, E3 long-term + cross-repo) read the lens 02 proposal independently and converged on the same shape of answer: **partial adoption.** The two-layer top-level split survives. The recursive mirror, the all-the-way-down Unit grammar, and the cross-repo universalism do not.
 
@@ -99,3 +112,8 @@ The cascade is short because the narrowing dissolved the worst conflict (A2). Th
 **Adopt the narrowed proposal as the new draft constitution. Execute the cascade in the order specified in §E. Do not flip the constitution to `active` until the migration script's dry-run has been reviewed and the `layer:` validator has landed in code.** Revisit the deferred items at 1k files or when `vault_ctl walk` starts case-splitting, whichever comes first.
 
 The proposal lives — in a smaller body than it was born in.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

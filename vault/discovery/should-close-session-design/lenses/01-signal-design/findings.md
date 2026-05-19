@@ -1,3 +1,27 @@
+---
+tags: [vault, lens-findings, should-close-session-design, signal-design]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: first
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes: []
+retrofits: ../../discovery.md
+---
+
+# Findings — Signal Design
+
+## Objective
+
+Catalog the signals available to a `should-close-session` recommender, rank them by reliability for this user's solo-dev workflow, and define a silent-by-default scoring rule that fires at most once per phase.
+
+## Findings
+
 # Lens 01 — Signal Design
 
 ## Claim
@@ -100,3 +124,8 @@ Anti-nag mechanics:
 4. Is there value in a **negative** signal — actively suppressing close recommendations during known long-form tasks (e.g., a multi-file refactor explicitly scoped in the opening turn)?
 5. How do we evaluate the recommender after deployment without a labeled dataset of "good close moments"? Candidate: post-hoc, compare actual `close-session` invocations against recommender fire history and measure precision/recall on the user's own behavior.
 6. Should `note_likely` peek at the redesigned `close-session` logic directly (call it in dry-run mode) rather than reimplementing the check? That would keep the two skills in lockstep but couples them.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

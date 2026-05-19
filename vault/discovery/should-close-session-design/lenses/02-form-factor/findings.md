@@ -1,3 +1,27 @@
+---
+tags: [vault, lens-findings, should-close-session-design, form-factor]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+lens_order: first
+dispatch_status: backfilled-no-prompt-recoverable
+synthesized-by: ../../research/research.md
+synthesizes: []
+retrofits: ../../discovery.md
+---
+
+# Findings — Form Factor
+
+## Objective
+
+Choose the Claude Code surface (Stop hook, UserPromptSubmit, Skill self-invocation, cron, slash command, etc.) that delivers the recommender with minimum solo-dev maintenance burden and the right signal-to-noise.
+
+## Findings
+
 # Lens 02 — Form Factor
 
 ## Claim
@@ -72,3 +96,8 @@ Honest about what this form factor *cannot* do:
 - Is there a `Notification` or `PreCompact` hook surface in this Claude Code version that gives a *more user-visible* nudge than `additionalContext`? Worth checking the harness changelog. If `Notification` posts a system notification, it might be the right secondary surface for the "you've been at this 4 hours" signal.
 - Does the project-level `hooks` block fully merge with the global one in `~/.claude/settings.json`, or does either override the other for the same event? The plugin hooks coexisting with user hooks suggests merge, but worth confirming before shipping — a silently-overridden hook is worse than no hook.
 - Should the SKILL.md be in `football-stats-oracle/.claude/skills/` (per-project, where folder-structure and close-session already live) or in `~/.claude/skills/` (user-global, reusable across projects)? Per-project for v1 — this skill's signals are tuned to this repo's vault shape. If a second project ever wants it, extract then.
+
+## Connections
+
+- `derives-from` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

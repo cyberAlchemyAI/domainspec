@@ -1,30 +1,34 @@
 ---
-lens: maestro-trama-investigation
-date: 2026-05-16
-dispatched_by: subagent — read-only investigation of /maestro-trama for cross-repo rollout
-addresses: Current state + the duplicate-domainspec question + the existing-internal_tools question + low-risk/high-risk separation
-sources:
-  - /Users/victorboscaro/maestro-trama/ (top-level)
-  - /Users/victorboscaro/maestro-trama/vault/ (incl. constitution/, discovery/, sessions/, axiom/, premise/, conceptual/, backlog/)
-  - /Users/victorboscaro/maestro-trama/domainspec (symlink → ../domainspec)
-  - /Users/victorboscaro/maestro-trama/.claude (symlink → domainspec/.claude → ../domainspec/.claude)
-  - /Users/victorboscaro/maestro-trama/business-philosopher/ (manifesto.md, write-style.md, discovery/persona.md)
-  - /Users/victorboscaro/maestro-trama/internal_tools/ (vault_routing, semantic_index, creative_harnessing, creative_analysis_harnessing)
-  - /Users/victorboscaro/domainspec/ (for comparison)
-verification: [local-files-read]
+tags: [vault, lens-findings, cross-repo-rollout, maestro-trama]
+node_type: findings
+is_session: false
+layer: architecture
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-17
+dispatch_status: backfilled-no-prompt-recoverable
 ---
 
-# Maestro-Trama Investigation — Cross-Repo Rollout Lens
+# Findings — Maestro-Trama Investigation
 
-## Headline finding (resolves a premise of the task)
+## Objective
+
+Investigate `maestro-trama` for cross-repo rollout: current vault state, resolve the "duplicate /domainspec" premise, assess existing `internal_tools/` overlap, and separate low-risk additive moves from deferred items. Original dispatch date 2026-05-16; verification `[local-files-read]`; sources included repo top-level, full `vault/`, the `domainspec` and `.claude` symlinks, `business-philosopher/`, `internal_tools/`, and `/domainspec/` for comparison.
+
+## Findings
+
+### Maestro-Trama Investigation — Cross-Repo Rollout Lens
+
+#### Headline finding (resolves a premise of the task)
 
 **`/Users/victorboscaro/maestro-trama/domainspec` is a symlink to `../domainspec`.** So is `.claude` (→ `domainspec/.claude` → `../domainspec/.claude`). There is **no duplicate /domainspec** — maestro-trama already mounts the canonical `/Users/victorboscaro/domainspec` directly at its root. Section D below revisits this in detail; it reshapes the whole rollout question.
 
 ---
 
-## A. Current state inventory
+#### A. Current state inventory
 
-### Top-level (notable entries only)
+##### Top-level (notable entries only)
 
 | Path | Kind | Notes |
 |---|---|---|
@@ -38,7 +42,7 @@ verification: [local-files-read]
 | `apps/`, `data/`, `claude/` | dirs | runtime/code, out of scope |
 | `AGENTS.md`, `CLAUDE.md`, `README.md` | files | governance docs at repo root |
 
-### vault/
+##### vault/
 
 | Subfolder | Contents | Has frontmatter? |
 |---|---|---|
@@ -53,7 +57,7 @@ verification: [local-files-read]
 | `ontology-constitution.md`, `ontology-conventions.md`, `confidence-levels.md`, `agent-navigation.md`, `human-navigation.md` | top-of-vault governance | yes |
 | `.smart-env/`, `.obsidian/` | Obsidian + Smart Connections plugin state | — |
 
-### internal_tools/
+##### internal_tools/
 
 | Tool | Notable contents | Role |
 |---|---|---|
@@ -62,13 +66,13 @@ verification: [local-files-read]
 | `creative_harnessing/` | cli, store, search, mcp_server, ui_server, creative_embeddings.db, creative_harnessing.db, docs, tests | domain-specific creative DB + MCP + UI |
 | `creative_analysis_harnessing/` | api, axes, brief, causality, classifier, compare, config, coverage, describe, diagnose, examples, gates, narrator, orchestrator, planner/, interviewer/, primitives, queries, rank, research/, telemetry/, tests | the heavy creative-analysis pipeline |
 
-### Existing close-session
+##### Existing close-session
 
 `.claude/skills/close-session/SKILL.md` exists (via the symlink, this is the same close-session that lives in /domainspec). It already implements the Sonnet-delegation classification step, scratchpad sweep from `claude/current_conversations/`, and references `.claude/skills/custom/frontmatter.md`, `frontmatter-semantics.md`, `edges.md`, `edge-catalog.md`. Custom skill catalog in `.claude/skills/custom/` includes: backlog-pattern, code, debugging, discovery-writing, domain-dictionary, domain-tagging-code, domainspec-findings-writing, domainspec-research-writing, edge-catalog, edges, event-system, folder-structure, frontend, frontmatter-semantics, frontmatter, infrastructure-guide, newspaper-orchestration, readme-pattern, semantic-index, testing.
 
 ---
 
-## B. Compatibility assessment
+#### B. Compatibility assessment
 
 | Dimension | maestro-trama | /domainspec framework | Compatibility |
 |---|---|---|---|
@@ -80,7 +84,7 @@ verification: [local-files-read]
 
 ---
 
-## C. The 7 framework constitutions — applicability
+#### C. The 7 framework constitutions — applicability
 
 | Framework constitution | maestro-trama state | Recommendation |
 |---|---|---|
@@ -96,7 +100,7 @@ All 7 are technically applicable; 5 are low-risk additions, 1 (edge acyclicity) 
 
 ---
 
-## D. The "duplicate /domainspec" problem — RESOLVED to "it's a symlink"
+#### D. The "duplicate /domainspec" problem — RESOLVED to "it's a symlink"
 
 **`ls -l` output:**
 ```
@@ -117,7 +121,7 @@ So the "rollout" question for maestro-trama is **not** "how do we copy /domainsp
 
 ---
 
-## E. The existing internal_tools/ — DEFERRED, high-stakes
+#### E. The existing internal_tools/ — DEFERRED, high-stakes
 
 maestro-trama's `internal_tools/` has four tools — **none of which exist in `/domainspec/internal_tools/`**, and vice versa:
 
@@ -139,7 +143,7 @@ The right answer turns on whether you want maestro's vault_routing to govern *al
 
 ---
 
-## F. business-philosopher/ as a peer vault
+#### F. business-philosopher/ as a peer vault
 
 This folder already has its own discipline:
 
@@ -152,9 +156,9 @@ This folder already has its own discipline:
 
 ---
 
-## G. Recommendation — low-risk vs higher-risk
+#### G. Recommendation — low-risk vs higher-risk
 
-### Low-risk (additive, can be done tonight)
+##### Low-risk (additive, can be done tonight)
 
 1. Add lens-shape `discovery/` entries going forward in `maestro-trama/vault/discovery/` and `business-philosopher/discovery/` (the folders already exist).
 2. Declare snapshot-zero pattern in `maestro-trama/vault/` (single new file).
@@ -163,7 +167,7 @@ This folder already has its own discipline:
 5. Add `verification:` field to the one existing discovery file in `vault/discovery/edges-and-types/...` as a backfill.
 6. Symlink or copy `.claude/skills/close-session/` into business-philosopher if its sessions should be classified the same way (the maestro root already inherits it via the symlink chain).
 
-### Higher-risk (must defer)
+##### Higher-risk (must defer)
 
 - **[DEFERRED TO USER]** Symlink stability question (D). Is `maestro-trama/domainspec → ../domainspec` permanent? The rollout shape changes if not.
 - **[DEFERRED TO USER]** `internal_tools/` canonicalization (E). Three live options; no read-only signal is decisive.
@@ -171,14 +175,14 @@ This folder already has its own discipline:
 - **[DEFERRED TO USER]** Edge-acyclicity constitution adoption is gated on the above.
 - Governs/runtime-witness adoption — wait for runtime surface.
 
-### Not recommended
+##### Not recommended
 
 - Backfilling all existing maestro `vault/` nodes into lens shape. The existing shape is internally consistent and works; only new discoveries should adopt the lens convention.
 - Touching `business-philosopher/` content. Add structure around it; don't rewrite voice artifacts.
 
 ---
 
-## H. Migration cost estimate (future session, full adoption)
+#### H. Migration cost estimate (future session, full adoption)
 
 | Workstream | Effort | Risk |
 |---|---|---|
@@ -191,3 +195,14 @@ This folder already has its own discipline:
 | Symlink question resolution (if "transitional" — physical separation of repos) | **wildcard** — could be a few minutes (it's permanent, do nothing) or a multi-session refactor (de-symlink, vendor framework into maestro, set up sync) | conditional |
 
 **Bottom line.** With the symlink intact, the low-risk additive layer (G) is a single session of mostly file authoring. The two real costs are the edge-catalog reconciliation (mid-size, contained) and the `internal_tools/` canonicalization (high, with a working MCP server in the middle of it). The latter is the only item that could justify deferring further until /domainspec's own `vault_ctl`/`graph_retrieval` line stabilizes enough to make a clean comparison possible.
+
+## Caveats
+
+- The symlink stability (`maestro-trama/domainspec → ../domainspec`) is unverified in repo intent and `.gitignore` treatment — the rollout shape inverts if transitional.
+- `internal_tools/` overlap was assessed by directory shape only; no functional comparison of `vault_routing` vs `vault_ctl`/`graph_retrieval` was performed.
+- The 14-edge equality claim between maestro's Appendix C and the framework's `edge-catalog.md` was *not* verified by side-by-side diff in this lens.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`

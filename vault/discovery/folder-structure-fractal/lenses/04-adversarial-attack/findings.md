@@ -1,9 +1,25 @@
 ---
-lens: adversarial-attack
-date: 2026-05-16
-dispatched_by: subagent — adversarial attack on the fractal-folder + two-layer proposal
-addresses: Find concrete ways the proposal breaks; assess severity; recommend defensive amendments
-sources:
+tags: [vault, lens-findings, folder-structure-fractal]
+node_type: findings
+is_session: false
+layer: ontology
+nature: explanatory
+status: consolidated
+version: 0.1.0
+last_updated: 2026-05-18
+dispatch_status: backfilled-no-prompt-recoverable
+---
+
+# Findings — Adversarial Attack on the Fractal-Folder + Two-Layer Proposal
+
+## Provenance (pre-migration lens header)
+
+- **Lens slug.** `04-adversarial-attack`
+- **Original dispatch date.** 2026-05-16
+- **Dispatched by.** subagent — adversarial attack on the fractal-folder + two-layer proposal
+- **Original `addresses` line.** Find concrete ways the proposal breaks; assess severity; recommend defensive amendments
+- **Verification.** [local-files-read]
+- **Sources (pre-migration list).**
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/README.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/01-prior-research-catalog.md
   - /Users/victorboscaro/domainspec/vault/discovery/folder-structure-fractal/lenses/02-fractal-folder-theory.md
@@ -11,10 +27,7 @@ sources:
   - /Users/victorboscaro/domainspec/vault/constitution/discovery-structure-constitution.md
   - /Users/victorboscaro/domainspec/vault/ (ls)
   - grep counts of internal path refs across vault
-verification: [local-files-read]
----
 
-# Lens 04 — Adversarial attack on the fractal-folder + two-layer proposal
 
 The proposal in lens 02 makes three coupled claims: (i) a recursive `Unit ::= README.md schema/ instance/ lenses/` grammar applied at every depth; (ii) a top-level sibling split `vault/schema/` vs `vault/instance/`; (iii) a `layer:` frontmatter invariant cross-checking (i)+(ii). I attack each surface in turn. Severities: FATAL (proposal cannot be adopted as written), SERIOUS (must amend or pay cost), MINOR (cosmetic), CONFUSED (the proposal itself is unclear on what it claims).
 
@@ -133,3 +146,8 @@ Is the proposal refutable in principle? *Mostly yes, with one soft spot.* The gr
 The soft spot is the optional-slot grammar (A3). When every slot is optional, the rule degenerates to "anything goes," and the proposal can deflect any concrete attack with "we didn't mean to force that slot there." This is a defect. **Defensive amendment: make slot-presence rules explicit per node-type** (e.g., "discoveries: REQUIRED lenses/, OPTIONAL schema/, OPTIONAL instance/; constitutions: REQUIRED nothing beyond README; premises: LeafEntry only unless promoted"). Without per-type slot rules, the grammar is unfalsifiable, which is itself fatal.
 
 Net verdict: the proposal has real attack surfaces (A2, A8 most serious) and one rhetorical weakness (A6, A10 oversell). It is salvageable but not as written. The strongest version is much narrower: top-level `schema/` vs `instance/` split + mandatory validator + per-type slot rules + explicit retraction of the conflicting constitution §1 + dropped S5/Kauffman rhetoric. That version is worth the migration cost. The version in lens 02, as written, is not.
+
+## Connections
+
+- `synthesized-by` → `../../research/research.md`
+- `cited-by` → `../../discovery.md`
