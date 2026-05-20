@@ -17,7 +17,7 @@ Briefing for a SWE who is new to this repo. No theory. Just: what is DomainSpec,
 
 ## What DomainSpec is, in one paragraph
 
-DomainSpec is a **meta-framework for spec-driven development with LLM agents**. It is not a runtime, not a library you import at compile time. It is a folder of (a) markdown templates, (b) agent prompts, and (c) skills (callable workflows). You drop it into a project as a **git submodule**. The project then writes feature specs in a fixed vocabulary; the agents generate tests, code, OTel instrumentation, and deploy artifacts from those specs. Consumer repos today: `house_project`, `financas_pessoais`.
+DomainSpec is a **meta-framework for spec-driven development with LLM agents**. It is not a runtime, not a library you import at compile time. It is a folder of (a) markdown templates, (b) agent prompts, and (c) skills (callable workflows). You drop it into a project as a **git submodule**. The project then writes feature specs in a fixed vocabulary; the agents generate tests, code, OTel instrumentation, and deploy artifacts from those specs.
 
 The bet is: if specs are machine-readable enough, the gap between "what the product is supposed to do" and "what the code actually does" collapses, and an LLM can keep them in sync.
 
