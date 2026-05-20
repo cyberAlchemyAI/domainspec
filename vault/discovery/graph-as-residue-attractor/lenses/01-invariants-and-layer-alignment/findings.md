@@ -5,8 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+dispatch_status: historical
+lens_order: first
+version: 0.1.1
+last_updated: 2026-05-19
 ---
 
 # Findings — Invariants and Layer Alignment
@@ -117,5 +119,7 @@ Net: GKG is well-defined precisely in the regime where (i) residue is positive o
 
 ## Connections
 
-- `derives-from` → `../../research/research.md`
-- `cited-by` → `../../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../../research/research.md` | `synthesized-by` | Consolidated into the cross-lens research synthesis (Theme 6). |
+| `../../discovery.md` | `derives` | The discovery's commitments derive from this findings file's invariant catalog and residue flags. |

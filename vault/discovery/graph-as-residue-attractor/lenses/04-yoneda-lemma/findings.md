@@ -5,8 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+dispatch_status: historical
+lens_order: first
+version: 0.1.1
+last_updated: 2026-05-19
 ---
 
 # Findings — Yoneda Lemma
@@ -99,5 +101,7 @@ What **cannot** be claimed by Yoneda alone, and would need to be credited elsewh
 
 ## Connections
 
-- `derives-from` → `../../research/research.md`
-- `cited-by` → `../../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../../research/research.md` | `synthesized-by` | Consolidated into the cross-lens research synthesis (Theme 3, with bridge into Theme 5). |
+| `../../discovery.md` | `derives` | Decision D-4 (the three Yoneda load-bearing places) derives from this lens. |

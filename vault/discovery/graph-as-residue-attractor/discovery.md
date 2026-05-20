@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: exploratory
-version: 0.2.0
-last_updated: 2026-05-18
+version: 0.2.1
+last_updated: 2026-05-19
 ---
 
 # Graph as Residue Attractor
@@ -41,11 +41,11 @@ Four independent conversations across four repositories landed on the same grade
 
 ### What's broken (claims the design space surfaced)
 
-- The initial "unique fixed point" formulation is **refuted** by Lawvere's diagonal theorem in any setting where the truth-object is binary and the naming map is point-surjective (see [lenses/03c-lawvere-yanofsky-corroborated.md](lenses/03c-lawvere-yanofsky-corroborated.md) §4). The slogan "the graph is the unique attractor of κ" cannot stand without qualification. `[theorem-cited]`
-- Two slogans of the system — "a node *is* what its typed edges say it is" and "two agents *have converged* iff their hom-presheaves agree per node" — are stated colloquially in earlier vault docs without proof. Yoneda upgrades both to theorems *if* the typed-edge category is well-defined and locally small ([lenses/04-yoneda-lemma.md](lenses/04-yoneda-lemma.md) §B.2). `[theorem-as-applied, informal — depends on identifying the right base category]`
-- The condensation operator has no falsifiable geometric realizer in the current vault. EVōC (Tutte Institute, McInnes 2024) is proposed as a candidate; it has not been run on a real vault yet ([lenses/02-evoc-algorithm.md](lenses/02-evoc-algorithm.md) §4). `[empirical bet, not yet tested]`
-- Schema/instance alignment has four flagged residues — convicção (schema-only), schema-meta evolution, derives-chain circularity, governs-edges enforcement — at which the framework predicts new constitutions will emerge ([lenses/01-invariants-and-layer-alignment.md](lenses/01-invariants-and-layer-alignment.md) §C). The prediction has not been tested over time. `[empirical bet]`
-- Two of the twelve schema invariants (S7 promotion-as-homomorphism, S12 governs-only-from-constitution) lack uniqueness sketches ([lenses/01-invariants-and-layer-alignment.md](lenses/01-invariants-and-layer-alignment.md) §D). They may be descriptive theorems *about* the GKG rather than constituents of it. `[honest gap]`
+- The initial "unique fixed point" formulation is **refuted** by Lawvere's diagonal theorem in any setting where the truth-object is binary and the naming map is point-surjective (see [lenses/03c-lawvere-yanofsky-corroborated/findings.md](lenses/03c-lawvere-yanofsky-corroborated/findings.md) §4). The slogan "the graph is the unique attractor of κ" cannot stand without qualification. `[theorem-cited]`
+- Two slogans of the system — "a node *is* what its typed edges say it is" and "two agents *have converged* iff their hom-presheaves agree per node" — are stated colloquially in earlier vault docs without proof. Yoneda upgrades both to theorems *if* the typed-edge category is well-defined and locally small ([lenses/04-yoneda-lemma/findings.md](lenses/04-yoneda-lemma/findings.md) §B.2). `[theorem-as-applied, informal — depends on identifying the right base category]`
+- The condensation operator has no falsifiable geometric realizer in the current vault. EVōC (Tutte Institute, McInnes 2024) is proposed as a candidate; it has not been run on a real vault yet ([lenses/02-evoc-algorithm/findings.md](lenses/02-evoc-algorithm/findings.md) §4). `[empirical bet, not yet tested]`
+- Schema/instance alignment has four flagged residues — convicção (schema-only), schema-meta evolution, derives-chain circularity, governs-edges enforcement — at which the framework predicts new constitutions will emerge ([lenses/01-invariants-and-layer-alignment/findings.md](lenses/01-invariants-and-layer-alignment/findings.md) §C). The prediction has not been tested over time. `[empirical bet]`
+- Two of the twelve schema invariants (S7 promotion-as-homomorphism, S12 governs-only-from-constitution) lack uniqueness sketches ([lenses/01-invariants-and-layer-alignment/findings.md](lenses/01-invariants-and-layer-alignment/findings.md) §D). They may be descriptive theorems *about* the GKG rather than constituents of it. `[honest gap]`
 
 ### What stays the same
 
@@ -90,13 +90,13 @@ Identify each node $n$ with the presheaf $h_n := \mathrm{Hom}(-, n)$ on the type
 
 **Decision.** The structure-theorem statement for the GKG is to be written in the reflection-tower form, not the flat fixed-point form. The headline phrasing is: "within level $\mathcal{G}_n$ with truth-object $Y_n$ chosen so that all $\sigma$ arising from $\mathcal{G}_n$-constitutions have fixed points in $Y_n$, $\mathcal{G}_n$ is the within-level attractor; uniqueness across the tower $\mathcal{G}_0 \subset \mathcal{G}_1 \subset \dots$ is uniqueness of the *tower*."
 
-**Rationale.** The flat form is refuted by Lawvere 1.2 / Yanofsky Theorem 1 whenever the truth-object admits a fixed-point-free endomorphism (e.g., $Y = 2$ with negation). The tower form is the strongest honest reformulation: it survives Lawvere by stratifying, survives Tarski by stratifying truth predicates, and survives Löb by paying for reflection in axioms rather than schemas. The argument is corroborated by hard-fetched primary sources in [lenses/03c-lawvere-yanofsky-corroborated.md](lenses/03c-lawvere-yanofsky-corroborated.md) and the Gödel/Tarski/Löb side in [lenses/03b-godel-tarski-lob-corroborated.md](lenses/03b-godel-tarski-lob-corroborated.md).
+**Rationale.** The flat form is refuted by Lawvere 1.2 / Yanofsky Theorem 1 whenever the truth-object admits a fixed-point-free endomorphism (e.g., $Y = 2$ with negation). The tower form is the strongest honest reformulation: it survives Lawvere by stratifying, survives Tarski by stratifying truth predicates, and survives Löb by paying for reflection in axioms rather than schemas. The argument is corroborated by hard-fetched primary sources in [lenses/03c-lawvere-yanofsky-corroborated/findings.md](lenses/03c-lawvere-yanofsky-corroborated/findings.md) and the Gödel/Tarski/Löb side in [lenses/03b-godel-tarski-lob-corroborated/findings.md](lenses/03b-godel-tarski-lob-corroborated/findings.md).
 
 **Status.** Adopted as the working formulation. Still `[theorem-as-applied, informal]` until a Lean-grade or paper-grade statement actually demonstrates the hypotheses against a concrete category extracted from the vault.
 
 ### D-2. Treat lens 03 as load-bearing only via the corroborated re-runs
 
-**Decision.** Lens [03](lenses/03-godel-lawvere-limits.md) is preserved as the original synthesis but flagged `verification: [model-recall]`. The corroborated lenses [03b](lenses/03b-godel-tarski-lob-corroborated.md) (Gödel/Tarski/Löb, hard-fetched) and [03c](lenses/03c-lawvere-yanofsky-corroborated.md) (Lawvere/Yanofsky, hard-fetched against the Lawvere 1969 TAC reprint PDF and arXiv math/0305282) are the citable load-bearing forms.
+**Decision.** Lens [03](lenses/03-godel-lawvere-limits/findings.md) is preserved as the original synthesis but flagged `verification: [model-recall]`. The corroborated lenses [03b](lenses/03b-godel-tarski-lob-corroborated/findings.md) (Gödel/Tarski/Löb, hard-fetched) and [03c](lenses/03c-lawvere-yanofsky-corroborated/findings.md) (Lawvere/Yanofsky, hard-fetched against the Lawvere 1969 TAC reprint PDF and arXiv math/0305282) are the citable load-bearing forms.
 
 **Rationale.** Per the memory rule on epistemic honesty: a "rule" backed only by training-time recall is heuristic, not theorem. The hard-fetched re-runs do not materially change lens 03's content but they upgrade the source-chain. The verification ledger in 03c also records honest negatives (Pavlovic 1996, Bauer 2014, Kauffman 2009 Constructivist Foundations — none fetched).
 
@@ -104,7 +104,7 @@ Identify each node $n$ with the presheaf $h_n := \mathrm{Hom}(-, n)$ on the type
 
 ### D-3. Honor the Kauffman precedent check; reposition the framework's novelty claim
 
-**Decision.** Per [lenses/05-kauffman-precedent-check.md](lenses/05-kauffman-precedent-check.md), the synchronic four-component synthesis (form-as-conserved + fractal self-similarity + strange-loop closure + emergence-via-residue) is **prior art under Kauffman's reflexive-domain / eigenform program** (ANPA paper and Kybernetes 2005). The framework's genuinely novel load-bearing pieces narrow to three: (i) the **diachronic** reflection tower (Kauffman is synchronic; he resolves paradox by Church-Curry, not by Feferman ascent), (ii) the **Spivak-style two-layer (structure/instance) separation** (Kauffman's domain is one expandable magma), (iii) the **explicit physics-precedent claim** invoking RG/Noether (zero hits for "renormaliz" or "noether" across all three open Kauffman PDFs, verified by grep). Future writeups must cite Kauffman for the prior-art base.
+**Decision.** Per [lenses/05-kauffman-precedent-check/findings.md](lenses/05-kauffman-precedent-check/findings.md), the synchronic four-component synthesis (form-as-conserved + fractal self-similarity + strange-loop closure + emergence-via-residue) is **prior art under Kauffman's reflexive-domain / eigenform program** (ANPA paper and Kybernetes 2005). The framework's genuinely novel load-bearing pieces narrow to three: (i) the **diachronic** reflection tower (Kauffman is synchronic; he resolves paradox by Church-Curry, not by Feferman ascent), (ii) the **Spivak-style two-layer (structure/instance) separation** (Kauffman's domain is one expandable magma), (iii) the **explicit physics-precedent claim** invoking RG/Noether (zero hits for "renormaliz" or "noether" across all three open Kauffman PDFs, verified by grep). Future writeups must cite Kauffman for the prior-art base.
 
 **Rationale.** The adversarial CE-1 partially lands. Refusing to honor it would be over-claiming.
 
@@ -112,7 +112,7 @@ Identify each node $n$ with the presheaf $h_n := \mathrm{Hom}(-, n)$ on the type
 
 ### D-4. Identify the M2 / M6′ Yoneda-load-bearing places explicitly
 
-**Decision.** Per [lenses/04-yoneda-lemma.md](lenses/04-yoneda-lemma.md) §B.5, Yoneda is load-bearing in three places: M2 representability conjecture (the conjecture is literally a Yoneda-image question), M6′ base case (`$\Delta$ faithful $\iff$ $\mathrm{y}\Delta$ faithful` is a one-line corollary), and the forced identity-of-nodes criterion ($n \cong m \iff h_n \cong h_m$). Kan extensions, the adjoint triple $\Sigma \dashv \Delta^* \dashv \Pi$, and Lawvere's diagonal *use* Yoneda but their headline content is independent.
+**Decision.** Per [lenses/04-yoneda-lemma/findings.md](lenses/04-yoneda-lemma/findings.md) §B.5, Yoneda is load-bearing in three places: M2 representability conjecture (the conjecture is literally a Yoneda-image question), M6′ base case (`$\Delta$ faithful $\iff$ $\mathrm{y}\Delta$ faithful` is a one-line corollary), and the forced identity-of-nodes criterion ($n \cong m \iff h_n \cong h_m$). Kan extensions, the adjoint triple $\Sigma \dashv \Delta^* \dashv \Pi$, and Lawvere's diagonal *use* Yoneda but their headline content is independent.
 
 **Rationale.** Naming which results actually depend on Yoneda (vs which use it as scaffolding) is required to honor the math-vs-metaphor distinction. Without this triage, "Yoneda is everywhere" reads as decoration.
 
@@ -140,7 +140,7 @@ Identify each node $n$ with the presheaf $h_n := \mathrm{Hom}(-, n)$ on the type
 
 **Sketch.** Stake the framework's novelty on the synchronic four-component synthesis (form-as-conserved + fractal + strange-loop + emergence-via-residue) and the categorical formalization, and skip the diachronic tower.
 
-**Why rejected.** [Lens 05](lenses/05-kauffman-precedent-check.md) refutes this directly: Kauffman has the synchronic synthesis already in print. Pursuing it as novel would be inadvertent re-derivation.
+**Why rejected.** [Lens 05](lenses/05-kauffman-precedent-check/findings.md) refutes this directly: Kauffman has the synchronic synthesis already in print. Pursuing it as novel would be inadvertent re-derivation.
 
 ### A-3. Replace EVōC with an in-house persistence algorithm
 
@@ -184,7 +184,7 @@ Seven boundary statements were proposed (fully formal corpus trivializes, purely
 
 ### OQ-7. Does the unread Kauffman 2009 Constructivist Foundations paper add reflection-tower material?
 
-[Lens 05](lenses/05-kauffman-precedent-check.md) could not read this paper (gated). Probability `<15%` it introduces Feferman-style reflection that the ANPA paper omits, but cannot rule out. **Recommendation.** Obtain via free CF registration or ILL; re-run the precedent check if it adds material.
+[Lens 05](lenses/05-kauffman-precedent-check/findings.md) could not read this paper (gated). Probability `<15%` it introduces Feferman-style reflection that the ANPA paper omits, but cannot rule out. **Recommendation.** Obtain via free CF registration or ILL; re-run the precedent check if it adds material.
 
 ---
 
@@ -202,13 +202,13 @@ Seven boundary statements were proposed (fully formal corpus trivializes, purely
 This discovery was promoted (lifecycle step 7 of the `/domainspec-subagents-strategy` skill, user-confirmed 2026-05-17) from the eight artifacts under [`lenses/`](lenses/) and the navigation [README.md](README.md):
 
 - [README.md](README.md) — folder navigation, claim, status, next moves.
-- [lenses/01-invariants-and-layer-alignment.md](lenses/01-invariants-and-layer-alignment.md) — schema/instance invariants, alignment residues, uniqueness sketches, boundary statements.
-- [lenses/02-evoc-algorithm.md](lenses/02-evoc-algorithm.md) — EVōC research note and pipeline proposal.
-- [lenses/03-godel-lawvere-limits.md](lenses/03-godel-lawvere-limits.md) — original Gödel/Tarski/Löb/Lawvere synthesis (model-recall; superseded for citation purposes by 03b/03c).
-- [lenses/03b-godel-tarski-lob-corroborated.md](lenses/03b-godel-tarski-lob-corroborated.md) — hard-fetch re-run of the logic side.
-- [lenses/03c-lawvere-yanofsky-corroborated.md](lenses/03c-lawvere-yanofsky-corroborated.md) — hard-fetch re-run of the categorical side, primary sources.
-- [lenses/04-yoneda-lemma.md](lenses/04-yoneda-lemma.md) — Yoneda load-bearing assessment.
-- [lenses/05-kauffman-precedent-check.md](lenses/05-kauffman-precedent-check.md) — adversarial precedent check against Kauffman's reflexive-domain / eigenform program.
+- [lenses/01-invariants-and-layer-alignment/findings.md](lenses/01-invariants-and-layer-alignment/findings.md) — schema/instance invariants, alignment residues, uniqueness sketches, boundary statements.
+- [lenses/02-evoc-algorithm/findings.md](lenses/02-evoc-algorithm/findings.md) — EVōC research note and pipeline proposal.
+- [lenses/03-godel-lawvere-limits/findings.md](lenses/03-godel-lawvere-limits/findings.md) — original Gödel/Tarski/Löb/Lawvere synthesis (model-recall; superseded for citation purposes by 03b/03c).
+- [lenses/03b-godel-tarski-lob-corroborated/findings.md](lenses/03b-godel-tarski-lob-corroborated/findings.md) — hard-fetch re-run of the logic side.
+- [lenses/03c-lawvere-yanofsky-corroborated/findings.md](lenses/03c-lawvere-yanofsky-corroborated/findings.md) — hard-fetch re-run of the categorical side, primary sources.
+- [lenses/04-yoneda-lemma/findings.md](lenses/04-yoneda-lemma/findings.md) — Yoneda load-bearing assessment.
+- [lenses/05-kauffman-precedent-check/findings.md](lenses/05-kauffman-precedent-check/findings.md) — adversarial precedent check against Kauffman's reflexive-domain / eigenform program.
 
 The convergence trigger (four independent conversations in the same hour across four repositories landing on the same graded-graph construction) is recorded in the README's Business Context paragraph; no session log for that convergence currently exists in the vault.
 
@@ -218,6 +218,12 @@ The convergence trigger (four independent conversations in the same hour across 
 
 | Document | Type | Description |
 |----------|------|-------------|
-| `vault/discovery/graph-as-residue-attractor/README.md` | `derives-from` | This discovery is promoted from the lens collection navigated by the README. |
-| `vault/discovery/graph-as-residue-attractor/research/research.md` | `derives-from` | Post-hoc cross-lens synthesis added under v0.2.0 convention alignment (2026-05-18). |
+| `vault/discovery/graph-as-residue-attractor/research/research.md` | `derives-from` | Post-hoc cross-lens synthesis (backfilled 2026-05-18) — the canonical research-layer source for this discovery. |
+| `vault/discovery/graph-as-residue-attractor/lenses/01-invariants-and-layer-alignment/findings.md` | `derives-from` | Invariant catalog (12+12), alignment table, four flagged residues, S7/S12 honest gaps — informs C2, C4, OQ-2, OQ-5. |
+| `vault/discovery/graph-as-residue-attractor/lenses/02-evoc-algorithm/findings.md` | `derives-from` | EVōC as candidate geometric realizer of condensation — informs C5, A-3. |
+| `vault/discovery/graph-as-residue-attractor/lenses/03-godel-lawvere-limits/findings.md` | `derives-from` | Original `[model-recall]` synthesis that triggered the reflection-tower reformulation — informs C3, D-2; load-bearing only via 03b/03c. |
+| `vault/discovery/graph-as-residue-attractor/lenses/03b-godel-tarski-lob-corroborated/findings.md` | `derives-from` | Hard-fetch logic-side corroboration — informs D-1, D-2. |
+| `vault/discovery/graph-as-residue-attractor/lenses/03c-lawvere-yanofsky-corroborated/findings.md` | `derives-from` | Hard-fetch categorical-side corroboration with "weakly point-surjective" precision — informs D-1, D-2. |
+| `vault/discovery/graph-as-residue-attractor/lenses/04-yoneda-lemma/findings.md` | `derives-from` | Yoneda load-bearing triage and embeddings-as-restricted-Yoneda bridge — informs C6, D-4. |
+| `vault/discovery/graph-as-residue-attractor/lenses/05-kauffman-precedent-check/findings.md` | `derives-from` | Adversarial precedent check; narrows novelty claim to three pieces — informs D-3, OQ-7. |
 | `vault/ontology-conventions.md` | `cites` | The 21-edge catalog, node-type vocabulary, and §6 Applicability rule (omit veracidade/convicção for discoveries) are load-bearing for D-5 and for the GKG description in C2. |

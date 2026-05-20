@@ -5,8 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+dispatch_status: historical
+lens_order: second
+version: 0.1.1
+last_updated: 2026-05-19
 ---
 
 # Findings — Gödel / Tarski / Löb (Corroborated)
@@ -155,6 +157,8 @@ Lens 03 may now be treated as load-bearing for the Gödel/Tarski/Löb half. The 
 
 ## Connections
 
-- `derives-from` → `../../research/research.md`
-- `corroborates` → `../03-godel-lawvere-limits/findings.md`
-- `cited-by` → `../../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../../research/research.md` | `synthesized-by` | Consolidated into the cross-lens research synthesis (Theme 2). |
+| `../03-godel-lawvere-limits/findings.md` | `corroborates` | Hard-fetched primary/secondary sources confirm the logic-side claims of lens 03 without material correction. |
+| `../../discovery.md` | `derives` | Decision D-2 (treat 03 as load-bearing only via corroborated re-runs) derives from this lens. |

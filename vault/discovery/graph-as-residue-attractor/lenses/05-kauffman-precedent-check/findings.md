@@ -5,8 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+dispatch_status: historical
+lens_order: second
+version: 0.1.1
+last_updated: 2026-05-19
 ---
 
 # Findings — Kauffman Precedent Check
@@ -152,5 +154,7 @@ Negative confirmations by grep across all three open PDFs: **zero hits** for `re
 
 ## Connections
 
-- `derives-from` → `../../research/research.md`
-- `cited-by` → `../../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../../research/research.md` | `synthesized-by` | Consolidated into the cross-lens research synthesis (Theme 4). |
+| `../../discovery.md` | `derives` | Decision D-3 (novelty repositioning per Kauffman precedent) derives from this lens. |

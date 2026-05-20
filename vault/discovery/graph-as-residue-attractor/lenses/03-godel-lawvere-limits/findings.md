@@ -5,8 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+dispatch_status: historical
+lens_order: first
+version: 0.1.1
+last_updated: 2026-05-19
 ---
 
 # Findings — Gödel / Lawvere Limits
@@ -86,7 +88,9 @@ Sources (as recalled, not fetched): SEP entries on Gödel's theorems, Tarski's t
 
 ## Connections
 
-- `derives-from` → `../../research/research.md`
-- `corroborated-by` → `../03b-godel-tarski-lob-corroborated/findings.md`
-- `corroborated-by` → `../03c-lawvere-yanofsky-corroborated/findings.md`
-- `cited-by` → `../../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../../research/research.md` | `synthesized-by` | Consolidated into the cross-lens research synthesis (Theme 2). |
+| `../03b-godel-tarski-lob-corroborated/findings.md` | `corroborated-by` | Hard-fetch re-run of the logic-side claims (G1, G2, Tarski, Löb). |
+| `../03c-lawvere-yanofsky-corroborated/findings.md` | `corroborated-by` | Hard-fetch re-run of the categorical-side claims (Lawvere, Yanofsky). |
+| `../../discovery.md` | `derives` | The discovery's reflection-tower reformulation is derived (with verification caveat) from this lens. |

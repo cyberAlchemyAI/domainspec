@@ -5,8 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+dispatch_status: historical
+lens_order: second
+version: 0.1.1
+last_updated: 2026-05-19
 ---
 
 # Findings — Lawvere / Yanofsky (Corroborated)
@@ -130,6 +132,8 @@ Residue in the parent discovery's sense is exactly Yanofsky's $g$: a predicate c
 
 ## Connections
 
-- `derives-from` → `../../research/research.md`
-- `corroborates` → `../03-godel-lawvere-limits/findings.md`
-- `cited-by` → `../../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../../research/research.md` | `synthesized-by` | Consolidated into the cross-lens research synthesis (Theme 2). |
+| `../03-godel-lawvere-limits/findings.md` | `corroborates` | Hard-fetched against Lawvere 1969 TAC reprint PDF and Yanofsky arXiv; adds the "weakly point-surjective" precision. |
+| `../../discovery.md` | `derives` | Decision D-1 (reflection-tower reformulation) and D-2 (corroborated re-runs as load-bearing) derive from this lens. |

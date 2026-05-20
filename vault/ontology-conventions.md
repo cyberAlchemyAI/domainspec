@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: reference
 status: consolidated
-version: 2.0.0
-last_updated: 2026-05-02
+version: 2.1.1
+last_updated: 2026-05-19
 ---
 
 # Vault Conventions
@@ -576,6 +576,9 @@ The vault has **21 forward edges** organized into three categories: universal (a
 | `subclass-of` | `superclass-of` | conceptual, premise (also domain-axis values) | conceptual, premise | N:1 (tree-constrained) | A is a more specific kind of B. Tree, not DAG — multiple inheritance forbidden. |
 | `part-of` | `has-part` | conceptual, spec | conceptual, spec | N:1 | A is a structural component of B. |
 | `alternative-to` | `has-alternative` | discovery (Alternatives section) | discovery | 1:N | A was considered as a competing path before B's decision was made. |
+| `synthesized-by` | `synthesizes` | findings | research | N:1 | The findings of one lens are consolidated into a research synthesis. Forward-in-time edge: findings exist first, research synthesizes them. Declared bidirectionally between every `lenses/<slug>/findings.md` and the folder's `research/research.md`. |
+| `corroborates` | `corroborated-by` | findings | findings | N:M | A lens re-runs / verifies / hardens the claims of another lens (typically a `[model-recall]` lens corroborated by a `[web-fetched]` re-dispatch). Both endpoints are lens findings within the same discovery folder. |
+| `retrofits` | (forward-only by source) | research | findings | N:M | A backfill marker declared on a `research.md` when the research synthesis was written AFTER its lens findings and after the parent discovery already existed. Forward-only by source (no inverse on findings) — the canonical `synthesized-by`/`synthesizes` pair carries the bidirectionality; `retrofits` adds honest provenance direction. Used only when `backfilled: true` on the research file. |
 
 ### Session-specific edges
 
@@ -645,3 +648,5 @@ Every vault document carries up to 7 classification labels. Each answers a diffe
 | `discovery/domainspec-vault-foundations/research/scope-and-domain-axes-evidence.md` | `cited-by` | The scope-and-domain-axes evidence survey cites this conventions document as the direct input for §3 growth rules, §4 structural commitment, and §8 scope definitions. |
 | `premise/ontology-premises.md` | `derives` | This conventions document codifies (and therefore derives from) the ontology premises. |
 | `discovery/domainspec-vault-edges/research/domainspec-subagents-strategy.md` | `cited-by` | The vault-edges domainspec-subagents-strategy research cites this conventions document as the constitution whose Appendix C edge catalog the research is positioned to refine. |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L3/L4 layers cite Section 8 bidirectionality and Appendix C edge catalog as the operational expression of typed-graph knowledge representation. |
+| [conceptual/epistemic-principles.md](conceptual/epistemic-principles.md) | `cited-by` | The epistemic-principles catalog cites this conventions document as the operational expression of the Orthogonality Principle (inverse added 2026-05-19 alongside epistemic-principles' retarget of its stale `house_project` link). |

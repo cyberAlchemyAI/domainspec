@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: reference
 status: draft
-version: 0.1.0
-last_updated: 2026-05-16
+version: 0.2.0
+last_updated: 2026-05-19
 ---
 
 # Foundational Knowledges
@@ -40,9 +40,7 @@ L4  Knowledge representation  ─┐
 L5  Software architecture      │  Methods      (how)
 L6  Engineering practice       │
 L7  Multi-agent orchestration ─┘
-L8  Governance & institutions ─┐
-L9  Business / domain          │  Application  (what)
-                              ─┘
+L8  Governance & institutions  ─  Application  (what)
 ```
 
 ---
@@ -172,23 +170,10 @@ L9  Business / domain          │  Application  (what)
 
 ---
 
-## L9 — Business / domain (the work being produced)
-
-*The industries DomainSpec has actually been pointed at.*
-
-| Domain | Where it lives |
-|--------|----------------|
-| Payments / FIDC (Brazilian receivables funds) | [docs/features/payment-processing/](../docs/features/payment-processing/), [examples/payment-processing/](../examples/payment-processing/) |
-| Inventory, orders, user accounts | [examples/](../examples/) reference slices |
-| House / personal-finance / Maestro-Trama | Consumer repos that import DomainSpec as a submodule |
-| Knowledge-graph visualization, UI prototyping studio | Internal DomainSpec features |
-
----
-
 ## How the layers relate
 
 - **Foundations (L0–L3) constrain Methods (L4–L7).** A method that violates an epistemic axiom is wrong before it is run.
-- **Methods enable Application (L8–L9).** Governance and business features compose from architectural and orchestration primitives.
+- **Methods enable Application (L8).** Governance composes from architectural and orchestration primitives.
 - **Application produces signals that feed back to Foundations (L7 → L0).** Telemetry on agent dispatches surfaces which axioms held, which premises drifted, and which discoveries need re-opening.
 
 This is the load-bearing loop. Cutting any one layer collapses the others into ungrounded opinion.
@@ -198,8 +183,11 @@ This is the load-bearing loop. Cutting any one layer collapses the others into u
 ## Open questions
 
 - **OQ-1.** Is L7 (multi-agent orchestration) a genuinely new layer, or a special case of L1 (control theory) applied to LLMs? Treating it as new for now; revisit when the constitution stabilizes.
-- **OQ-2.** Does L9 belong in the vault at all, or only in `docs/features/`? Listed here for completeness but it may migrate.
 - **OQ-3.** The implicit attributions (Wiener/Ashby for cybernetics, Evans for DDD, OWL/RDF for ontology) are unverified — they reflect the design space, not direct citations. Promote to explicit only if a load-bearing claim depends on them.
+
+## Resolved questions
+
+- **OQ-2 (Resolved 2026-05-19).** Does L9 (business/domain) belong in the vault at all, or only in `docs/features/`? **Resolved:** L9 belongs only in `docs/features/`, not in the vault foundational map. The vault holds discipline-level lineage; specific business domains DomainSpec has been pointed at (payments/FIDC, inventory, personal finance, etc.) are feature-folder concerns, not foundational knowledge. L9 section removed in v0.2.0.
 
 ---
 
@@ -213,3 +201,19 @@ This is the load-bearing loop. Cutting any one layer collapses the others into u
 | `.claude/agents/domainspec-l1-extractor.agent.md` | `cites` | L3 — extracts the domain category for the functor Δ. |
 | `.claude/agents/domainspec-l2-extractor.agent.md` | `cites` | L3 — extracts the code category for the functor Δ. |
 | `.claude/agents/domainspec-delta-extractor.agent.md` | `cites` | L3 — reconstructs the compilation functor Δ : L₁ → L₂. |
+| `vault/conceptual/epistemic-principles.md` | `cites` | L0 epistemology — the catalog of thinking heuristics (Occam, Lindy, orthogonality) cited as the operational expression of falsifiability discipline. |
+| `vault/axiom/domainspec-axioms.md` | `cites` | L0/L8 — AX-DS-1…AX-DS-4 are the methodology axioms the foundational map rests on for the spec→code direction and decision-space preservation. |
+| `vault/axiom/ontology-axioms.md` | `cites` | L4 knowledge representation — AX-ONT-1/2/4/5 are the load-bearing claims for orthogonal classification and explicit-question accounting. |
+| `vault/axiom/system-axioms.md` | `cites` | L1 systems & control — AX-SYS-1…AX-SYS-5 (determinism, immutability, observability) anchor the architecture-layer commitments. |
+| `vault/axiom/frontend-axioms.md` | `cites` | L6 engineering practice — frontend axioms (determinism, unidirectional data flow, fetch/render separation) anchor the UI craft layer. |
+| `vault/constitution/domainspec-subagents-strategy-constitution.md` | `cites` | L7 multi-agent orchestration — the dispatch-strategy constitution is the load-bearing rule set for fan-out, synthesis, and lifecycle of subagents. |
+| `vault/constitution/event-system-constitution.md` | `cites` | L5 software architecture — event-driven coordination rules are cited as the load-bearing async pattern. |
+| `vault/constitution/folder-structure-constitution.md` | `cites` | L5 software architecture — folder-structure-as-architecture is cited as the load-bearing layout encoding intent. |
+| `vault/constitution/robot-talks-constitution.md` | `cites` | L7 multi-agent orchestration — adversarial parallel investigation is cited as the load-bearing rule set for multi-perspective scope decomposition. |
+| `vault/constitution/commit-message-constitution.md` | `cites` | L6 engineering practice — atomic commit discipline is cited as the load-bearing rule for review-grade history. |
+| `vault/ontology-conventions.md` | `cites` | L3/L4 — Section 8 bidirectionality rule and Appendix C edge catalog are cited as the operational expression of typed-graph knowledge representation. |
+| `vault/ontology-architecture-draft.md` | `cites` | L4 knowledge representation — Bayesian agent + gates-of-trust architecture cited as the future instrumentation layer for the foundational lineage. |
+| `vault/premise/systems-control-premise.md` | `cites` | L1 systems & control — load-bearing premise that software delivery is a control system; drift is measured, not predicted. |
+| `vault/premise/choice-architecture-premise.md` | `cites` | L2 behavioral / decision science — load-bearing premise that prompt structure is causal to LLM-agent outcomes. |
+| `vault/axiom/category-theory-compilation-axiom.md` | `cites` | L3 mathematics / formal methods — load-bearing axiom that domain and code form categories, with compilation as a functor Δ. |
+| `vault/premise/multi-agent-composition-premise.md` | `cites` | L7 multi-agent orchestration — load-bearing premise that reliable pipelines require governed dispatch + typed outputs + telemetry. |

@@ -5,9 +5,10 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: consolidated
-version: 0.1.0
-last_updated: 2026-05-18
+version: 0.1.1
+last_updated: 2026-05-19
 backfilled: true
+analysis-method: post-hoc-independent-read
 ---
 
 # Research — Graph as Residue Attractor
@@ -108,12 +109,21 @@ These are decision-shaped questions that lens-layer investigation cannot resolve
 
 ## Connections
 
-- `derives-from` → `../lenses/01-invariants-and-layer-alignment/findings.md`
-- `derives-from` → `../lenses/02-evoc-algorithm/findings.md`
-- `derives-from` → `../lenses/03-godel-lawvere-limits/findings.md`
-- `derives-from` → `../lenses/03b-godel-tarski-lob-corroborated/findings.md`
-- `derives-from` → `../lenses/03c-lawvere-yanofsky-corroborated/findings.md`
-- `derives-from` → `../lenses/04-yoneda-lemma/findings.md`
-- `derives-from` → `../lenses/05-kauffman-precedent-check/findings.md`
-- `cited-by` → `research-synthesis.md`
-- `cited-by` → `../discovery.md`
+| Document | Type | Description |
+|----------|------|-------------|
+| `../lenses/01-invariants-and-layer-alignment/findings.md` | `synthesizes` | Schema/instance invariant decomposition consolidated into Theme 6. |
+| `../lenses/02-evoc-algorithm/findings.md` | `synthesizes` | EVōC operational pipeline consolidated into Theme 5. |
+| `../lenses/03-godel-lawvere-limits/findings.md` | `synthesizes` | Original limitative synthesis consolidated into Theme 2 (with verification caveat). |
+| `../lenses/03b-godel-tarski-lob-corroborated/findings.md` | `synthesizes` | Hard-fetch logic-side corroboration consolidated into Theme 2. |
+| `../lenses/03c-lawvere-yanofsky-corroborated/findings.md` | `synthesizes` | Hard-fetch categorical-side corroboration consolidated into Theme 2. |
+| `../lenses/04-yoneda-lemma/findings.md` | `synthesizes` | Yoneda load-bearing triage consolidated into Theme 3 and bridge to Theme 5. |
+| `../lenses/05-kauffman-precedent-check/findings.md` | `synthesizes` | Adversarial Kauffman precedent check consolidated into Theme 4. |
+| `../lenses/01-invariants-and-layer-alignment/findings.md` | `retrofits` | Backfill marker: this research was written after the findings already existed. |
+| `../lenses/02-evoc-algorithm/findings.md` | `retrofits` | Backfill marker. |
+| `../lenses/03-godel-lawvere-limits/findings.md` | `retrofits` | Backfill marker. |
+| `../lenses/03b-godel-tarski-lob-corroborated/findings.md` | `retrofits` | Backfill marker. |
+| `../lenses/03c-lawvere-yanofsky-corroborated/findings.md` | `retrofits` | Backfill marker. |
+| `../lenses/04-yoneda-lemma/findings.md` | `retrofits` | Backfill marker. |
+| `../lenses/05-kauffman-precedent-check/findings.md` | `retrofits` | Backfill marker. |
+| `research-synthesis.md` | `cited-by` | The ≤500-word synthesis cites this research file for every claim. |
+| `../discovery.md` | `derives` | The discovery's commitments derive from this cross-lens synthesis. |

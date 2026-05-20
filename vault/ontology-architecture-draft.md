@@ -5,8 +5,8 @@ nature: reference
 status: active
 node_type: conceptual
 is_session: false
-version: 0.1.0
-last_updated: 2026-03-19
+version: 0.2.1
+last_updated: 2026-05-19
 
 ---
 
@@ -153,3 +153,5 @@ When a user asks a question, an LLM router determines the optimal "Entry Node", 
 |----------|------|-------------|
 | `sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md` | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session bootstrapped this `## Connections` block as Tier-1 of the `inverse-edge-fix` discovery's plan. |
 | [discovery/domainspec-vault-foundations/scope-and-domain-axes.md](discovery/domainspec-vault-foundations/scope-and-domain-axes.md) | `cited-by` | The scope-and-domain-axes discovery cites the Bayesian agent described here as the future instrumentation layer that would promote orthogonality from heuristic to measured rule. |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L4 knowledge-representation layer cites this draft as the future instrumentation layer (Bayesian agent + gates-of-trust) for the foundational lineage. |
+| [conceptual/epistemic-principles.md](conceptual/epistemic-principles.md) | `cited-by` | The epistemic-principles catalog cites this draft as Occam's Razor applied to the technology choices (inverse added 2026-05-19 alongside epistemic-principles' retarget of its stale `house_project` link). |
