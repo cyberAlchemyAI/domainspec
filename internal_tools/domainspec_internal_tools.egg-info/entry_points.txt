@@ -1,0 +1,4 @@
+[console_scripts]
+convergence-runner = convergence_runner.cli:app
+vault-ctl = vault_ctl.cli:app
+vault-telemetry = vault_telemetry.cli:app

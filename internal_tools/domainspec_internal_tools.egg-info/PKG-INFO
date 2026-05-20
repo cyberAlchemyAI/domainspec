@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: domainspec-internal-tools
+Version: 0.1.0
+Summary: Vault platform for /domainspec — shared kernel + subsystems
+Requires-Python: >=3.11
+Requires-Dist: pydantic>=2.5
+Requires-Dist: typer>=0.12
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: jinja2>=3.1
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4; extra == "dev"
+Requires-Dist: mypy>=1.7; extra == "dev"
+Requires-Dist: ruff>=0.1; extra == "dev"
+Provides-Extra: graph-retrieval
+Requires-Dist: networkx>=3.0; extra == "graph-retrieval"
+Requires-Dist: sentence-transformers>=2.5; extra == "graph-retrieval"
+Requires-Dist: numpy>=1.24; extra == "graph-retrieval"

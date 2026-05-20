@@ -1,0 +1,14 @@
+pydantic>=2.5
+typer>=0.12
+PyYAML>=6.0
+jinja2>=3.1
+
+[dev]
+pytest>=7.4
+mypy>=1.7
+ruff>=0.1
+
+[graph-retrieval]
+networkx>=3.0
+sentence-transformers>=2.5
+numpy>=1.24
