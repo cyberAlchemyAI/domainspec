@@ -82,6 +82,14 @@ Place this block near the bottom of the document. One row per outgoing edge.
 | `part-of` | `has-part` | A is a structural component of B (conceptual or spec). |
 | `alternative-to` | `has-alternative` | A was considered as a competing path before B's decision was made (Alternatives sections of discoveries). |
 
+### Lens-Research-Discovery layout (between `findings`, `research`, `research-synthesis`)
+
+| Forward | Inverse | When to use |
+|---------|---------|-------------|
+| `synthesized-by` | `synthesizes` | A `findings.md` is consolidated by a `research.md`. Forward-in-time: findings → research. Declared bidirectionally between every lens findings file and the folder's research synthesis. |
+| `corroborates` | `corroborated-by` | One lens re-runs / hardens / verifies another (e.g., a `[model-recall]` lens corroborated by a `[web-fetched]` re-dispatch). Both endpoints are lens findings in the same discovery folder. |
+| `retrofits` | (forward-only by source) | Backfill marker on a `research.md` whose synthesis was written AFTER its lens findings and after the parent discovery. Forward-only by source; the canonical `synthesized-by`/`synthesizes` pair carries the bidirectional structure. Used only with `backfilled: true`. |
+
 ### Session-specific (source must be `is_session: true`)
 
 | Forward | Inverse | When to use |

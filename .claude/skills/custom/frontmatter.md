@@ -49,6 +49,9 @@ What kind of document this is. Single value. Drives the "if challenged, the righ
 | `subagents-research` | Raw evidence from one domainspec-subagents-strategy dispatch — challenge by tracing back to the strategy's prompts and source data |
 | `subagents-findings` | Synthesis of subagents-research from one dispatch — challenge a claim by tracing it to the research it cites |
 | `discussion` | Multi-perspective debate — close with a discovery or escalate |
+| `findings` | One lens's output inside a `lenses/<slug>/findings.md` slot. Frozen on write; supersede by re-running the lens (new slug + new findings.md). |
+| `research-synthesis` | Executive summary of a `research/research.md`. Hard cap ≤500 words body. Adds no analysis; cites `research.md` for every claim. |
+| `agent-dispatch` | Re-runnable snapshot of one dispatched agent (prompt verbatim, model, tools, context paths). Frozen on write. Lives at `lenses/<slug>/dispatch.md`. Optional — omit for backfills where the prompt is unrecoverable. |
 
 ### `is_session`
 Whether this file is a conversation/session record.
@@ -121,6 +124,42 @@ Semver `0.x.x`. Bump on substantive change to the document's content.
 
 ### `last_updated`
 `YYYY-MM-DD` of the last meaningful change.
+
+## Lens-Research-Discovery convention fields
+
+These fields apply only to `findings`, `research`, and `research-synthesis` node types inside a `vault/discovery/<topic>/` folder following the lens-research-discovery layout. See `.claude/skills/custom/lens-research-discovery-layout.md` for the full convention.
+
+### `dispatch_status` — on `findings` only
+
+| Value | Meaning |
+|-------|---------|
+| `live` | Dispatch artifact (`dispatch.md`) exists alongside this `findings.md` — re-runnable |
+| `historical` | Pre-convention lens; dispatch metadata is embedded in the frontmatter rather than a separate file |
+| `backfilled-no-prompt-recoverable` | Pre-convention lens; literal prompt is unrecoverable. No `dispatch.md` exists or will be created |
+
+### `lens_order` — on `findings` only (optional)
+
+| Value | Meaning |
+|-------|---------|
+| `first` | First-order lens — investigates the discovery's object directly |
+| `second` | Meta-lens — investigates the first-order lens set itself (cross-cutting, gap-analysis, adversarial-review) |
+
+Omit for plain first-order lenses; the convention default is `first`.
+
+### `backfilled` — on `research` only
+
+| Value | Meaning |
+|-------|---------|
+| `true` | Research synthesis was written AFTER `discovery.md` already existed. Carry a prominent backfill note at the top of the body. |
+| `false` | Research synthesis was written BEFORE the discovery (causal order). |
+
+### `analysis-method` — on `research` only (required when `backfilled: true`)
+
+| Value | Meaning |
+|-------|---------|
+| `live-during-dispatch` | Greenfield — research synthesis written as lenses landed; causal order preserved |
+| `post-hoc-independent-read` | Backfill — analyst read the lens findings AFTER the discovery existed, deliberately without consulting the discovery, to test whether commitments survive an independent cross-lens read |
+| `meta-lens-consolidation` | Backfill — three meta-lens files already existed as the cross-cutting analysis; research synthesis is a structural reformat, not a new analysis |
 
 ## References
 

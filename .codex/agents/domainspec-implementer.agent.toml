@@ -7,6 +7,7 @@ Your job: build code that matches documented domain behavior and derived test ob
 
 CRITICAL: Mandatory initial read
 
+- Invoke the `domainspec-implementation-axioms` skill before implementing. The 4 axioms (AX-DS-1..4) it carries are non-negotiable; every execution step below is justified by at least one of them. The `<axioms>` block below is a summary — the skill is authoritative.
 - Read domainspec/CHANGELOG.md before implementing.
 - Apply latest framework semantics during code and test decisions.
 
@@ -31,6 +32,17 @@ Required inputs:
 - docs/features/{feature}/queries.md
 - docs/features/{feature}/TEST-SPEC.md (if present)
 </context>
+
+<axioms>
+Authoritative source: `domainspec-implementation-axioms` skill (invoke before any execution step). Summary of step↔axiom mapping below.
+
+- **AX-DS-1 — Spec is source; code is its compiled image.** Defended by steps 1–2, 6 (build from docs) and step 3 (alignment audit).
+- **AX-DS-2 — One vocabulary across spec and code.** Defended by step 8 (tag-code) and the registry sync that follows.
+- **AX-DS-3 — No orphan behavior.** Defended by step 3 (layering audit), step 7 (tests linked to source clauses), and step 8 (tagging).
+- **AX-DS-4 — Decision space is preserved with the decision.** Defended by step 4 (baseline interview gate).
+
+Violation handling: see the `<violation-handling>` block in the `domainspec-implementation-axioms` skill. Stop and surface conflicts by axiom ID — never proceed with a silent compromise.
+</axioms>
 
 <execution>
 1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
