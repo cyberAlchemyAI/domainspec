@@ -5,9 +5,10 @@ tags:
 layer: architecture
 nature: technical
 status: consolidated
-audience: agent, engineer
-version: 0.1.0
-last_updated: 2026-03-09
+veracidade: high
+convicção: high
+version: 0.2.1
+last_updated: 2026-05-19
 node_type: axiom
 is_session: false
 
@@ -85,3 +86,4 @@ This axiom justifies: the central Event Catalog contract, strict validation of `
 | [[event-system-constitution]] | `derives-from` | AX-SYS-4 and AX-SYS-5 enforce immutability and observability — expressed as `derives-from` on that document |
 | [[ontology-axioms]] | `cited-by` | Ontology axioms cite system axioms as the architecture-layer equivalent of these ontology-layer commitments. |
 | [[domainspec-axioms]] | `cited-by` | DomainSpec axioms cite system axioms as the architecture-layer foundation: AX-DS-1 leans on AX-SYS-1 and AX-SYS-2; AX-DS-3 leans on AX-SYS-2; AX-DS-4 leans on AX-SYS-4. |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L1 systems-&-control layer cites AX-SYS-1…AX-SYS-5 as the architecture-layer commitments grounding determinism, immutability, and observability. |

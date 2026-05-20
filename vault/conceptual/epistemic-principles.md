@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: reference
 status: draft
-version: 0.1.0
-last_updated: 2026-03-19
+version: 0.2.1
+last_updated: 2026-05-19
 ---
 
 # Epistemic Principles
@@ -124,6 +124,6 @@ Before adding a principle to this catalog, it must pass:
 
 | Document | Type | Description |
 |----------|------|-------------|
-| [ontology-conventions.md](file:///Users/victorboscaro/house_project/docs/vault/ontology-conventions.md) | `cites` | The Orthogonality Principle is the governing constraint of the conventions |
-| [event-system-foundations.md](file:///Users/victorboscaro/house_project/docs/vault/conceptual/event-system-foundations.md) | `cites` | Event Sourcing as Ledger principle applied to the event system |
-| [ontology-architecture-draft.md](file:///Users/victorboscaro/house_project/docs/vault/ontology-architecture-draft.md) | `cites` | Occam's Razor applied to the technology choices |
+| [ontology-conventions.md](../ontology-conventions.md) | `cites` | The Orthogonality Principle is the governing constraint of the conventions (retargeted 2026-05-19 from stale `house_project` cross-repo link to in-repo equivalent). |
+| [ontology-architecture-draft.md](../ontology-architecture-draft.md) | `cites` | Occam's Razor applied to the technology choices (retargeted 2026-05-19 from stale `house_project` cross-repo link to in-repo equivalent). |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L0 epistemology layer cites this catalog as the operational expression of falsifiability discipline. |

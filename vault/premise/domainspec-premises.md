@@ -147,3 +147,4 @@ Files under `.claude/skills/**` and `.claude/agents/**` are operational artifact
 | [[system-premises]] | `cites` | P-DS-6 (LLM-agnostic agents) and P-DS-10 (decisions as graph nodes) are methodology-layer extensions of P-SYS-7 (refactoring as primary mechanism) and P-SYS-5 (boundaries as hypotheses). |
 | [[ontology-premises]] | `cites` | P-DS-9 (mechanical registry sync) operationalizes the AX-ONT-2 / AX-ONT-3 commitments at the methodology layer. |
 | [[domainspec-subagents-strategy-premises]] | `derives` | The subagents-strategy premises (P-SS-*) are domain-specific specializations of P-DS-1 (multi-agent decomposition) and P-DS-8 (recommend-don't-auto-invoke). |
+| `vault/axiom/category-theory-compilation-axiom.md` | `cited-by` | The category-theory-compilation axiom cites P-DS-2 (L1/L2 extraction) and P-DS-3 (Δ-witnessed verification) as its operational obligations. |

@@ -6,8 +6,8 @@ nature: explanatory, technical
 status: exploratory
 veracidade: low
 convicção: high
-version: 0.1.0
-last_updated: 2026-03-17
+version: 0.2.0
+last_updated: 2026-05-19
 is_session: false
 
 ---
@@ -280,3 +280,4 @@ AX-ONT-7 (reasoning is navigation; topology engineered)   ← ROOT
 | [[confidence-levels]] | `derives-from` | The maturity lifecycle implements P-ONT-9 (adaptivity) |
 | [[ontology-constitution]] | `cites` | The constitution describes the intellectual foundations; these axioms formalize the mathematical commitments |
 | [[domainspec-axioms]] | `cited-by` | DomainSpec axioms cite ontology axioms as the knowledge-organization foundation: AX-DS-3 (no orphan behavior) is the methodology-layer counterpart of AX-ONT-4 (implicit knowledge is lost); AX-DS-4 (decision space preservation) is the methodology-layer counterpart of AX-ONT-5 (explicit questions increase information). |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L4 knowledge-representation layer cites AX-ONT-1/2/4/5 as load-bearing for orthogonal classification and explicit-question accounting. |

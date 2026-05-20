@@ -6,10 +6,12 @@ tags:
 node_type: axiom
 is_session: false
 layer: architecture
-nature: universal
+nature: explanatory, technical
 status: active
-version: 1.0.0
-last_updated: 2026-04-10
+veracidade: high
+convicção: high
+version: 1.1.1
+last_updated: 2026-05-19
 ---
 
 # Frontend Axioms
@@ -50,8 +52,9 @@ These axioms are immutable within the React paradigm. Changing an axiom requires
 
 ## Connections
 
-| Document | Relationship | Description |
-|----------|--------------|-------------|
-| [[frontend-premises]] | `inform` | Premises operationalize these axioms |
+| Document | Type | Description |
+|----------|------|-------------|
+| [[frontend-premises]] | `cites` | Premises cite these axioms as the load-bearing claims they operationalize |
 | [[frontend-constitution]] | `derives-from` | Constitutional rules implement these axioms |
-| [[development-practices-constitution]] | `aligns-with` | Core Principle: "Pure Domain Slices" mirrors A1 |
+| [[development-practices-constitution]] | `aligns-with` | Core Principle: "Pure Domain Slices" mirrors A1 (NON-CATALOG edge — flagged 2026-05-19 for user decision) |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L6 engineering-practice layer cites these frontend axioms as the load-bearing UI craft commitments (determinism, unidirectional flow, fetch/render separation). |

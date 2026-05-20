@@ -280,6 +280,7 @@ This premise is false if: evaluations correlate poorly with downstream outcome q
 | `templates/domainspec-subagents-research.md` *(forthcoming — folder does not yet exist)* | `shape-contract-for` | Skill-emitted research file: per-agent verbatim findings under per-child headers, no synthesis |
 | `templates/domainspec-subagents-findings.md` *(forthcoming)* | `shape-contract-for` | Skill-emitted findings file: Dispatch record + Findings + Analysis sections; both findings and analysis cite research.md |
 | [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed the project-wide rename (`domainspec-subagents-strategy-premises` → `domainspec-subagents-strategy-premises`). |
+| `vault/premise/multi-agent-composition-premise.md` | `cited-by` | The multi-agent-composition premise cites these strategy premises as the fan-out-subcase specialization of its general claim. |
 
 ---
 

@@ -6,8 +6,8 @@ nature: explanatory, technical
 status: exploratory
 veracidade: medium
 convicção: high
-version: 0.5.0
-last_updated: 2026-05-05
+version: 0.6.0
+last_updated: 2026-05-19
 is_session: false
 ---
 
@@ -287,3 +287,5 @@ Grouped by the axiom whose Math section they back.
 | [[ontology-axioms]] | `cites` | AX-DS-3 is the methodology-layer counterpart of AX-ONT-4; AX-DS-4 is the methodology-layer counterpart of AX-ONT-5. |
 | [[domainspec-premises]] | `derives` | DomainSpec premises sit on top of these axioms. |
 | [[system-premises]] | `cites` | AX-DS-1 is the formal promotion of P-SYS-3; the premise is preserved there for provenance. |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L0/L8 layers cite AX-DS-1…AX-DS-4 as the methodology axioms anchoring spec→code direction and decision-space preservation. |
+| `vault/axiom/category-theory-compilation-axiom.md` | `cited-by` | The category-theory-compilation axiom cites AX-DS-1/2/3 as deriving their structural form from the functor framing it records. |

@@ -8,8 +8,8 @@ is_session: false
 layer: architecture, product
 nature: strategic, context-dependent
 status: active
-version: 1.1.0
-last_updated: 2026-04-10
+version: 1.1.1
+last_updated: 2026-05-19
 ---
 
 # Frontend Premises
@@ -89,7 +89,7 @@ Changing a premise requires alignment between Product and Engineering. The cost 
 
 ## Connections
 
-| Document | Relationship | Description |
-|----------|--------------|-------------|
-| [[frontend-axioms]] | `operationalize` | These premises apply the axioms to the current product context |
-| [[frontend-constitution]] | `drive` | Constitutional rules operationalize these premises |
+| Document | Type | Description |
+|----------|------|-------------|
+| [[frontend-axioms]] | `cited-by` | These premises cite the frontend axioms as the load-bearing claims they operationalize (inverse of `cites` from frontend-axioms; renamed from non-catalog `operationalize` on 2026-05-19). |
+| [[frontend-constitution]] | `drive` | Constitutional rules operationalize these premises (NON-CATALOG edge — pre-existing, not in scope of 2026-05-19 cleanup pass). |
