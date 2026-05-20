@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: active
-version: 0.2.0
-last_updated: 2026-05-16
+version: 0.2.1
+last_updated: 2026-05-19
 schema_version: 1
 governs_pattern: .claude/skills/domainspec-subagents-strategy/**
 governs_check: [strategy_spec_schema_valid]
@@ -538,6 +538,8 @@ Items to resolve in v0.2.1 or as follow-up amendments:
 | `vault/snapshots/meta-dispatches/` | `artifact-path-for` | R25 meta-dispatch spec persistence. |
 | [../amendments/2026-05-16-subagent-strategy-parametrization.md](../amendments/2026-05-16-subagent-strategy-parametrization.md) | `modified-by` | v0.2.0 amendment log entry. |
 | [../discovery/data-contract-as-formal-artifact/README.md](../discovery/data-contract-as-formal-artifact/README.md) | `governs` | Dispatch `2026-05-18-data-contract-formal-artifact-01` (triangulation) ran under R15/R16/R17/R18/R21/R22/R23 and produced this discovery. |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L7 multi-agent-orchestration layer cites this constitution as the load-bearing rule set for subagent fan-out, synthesis, and lifecycle. |
+| `vault/premise/multi-agent-composition-premise.md` | `cited-by` | The multi-agent-composition premise cites this constitution as the operational expression of its condition (a) — governed dispatch. |
 
 ---
 

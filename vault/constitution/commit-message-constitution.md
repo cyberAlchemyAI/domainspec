@@ -7,8 +7,8 @@ layer: architecture
 nature: procedural
 status: draft
 audience: agent, engineer
-version: 1.0.0
-last_updated: 2026-04-07
+version: 1.1.0
+last_updated: 2026-05-19
 node_type: constitution
 is_session: false
 
@@ -219,3 +219,4 @@ Files:
 |----------|------|-------------|
 | [[development-practices-constitution]] | `derives-from` | Inherits governance process and agent autonomy rules |
 | [commit-message (skill)](../../../.claude/skills/commit-message/SKILL.md) | `operationalizes` | Slash-command skill: `/commit-message` |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L6 engineering-practice layer cites this constitution as the load-bearing atomic-commit discipline for review-grade history. |

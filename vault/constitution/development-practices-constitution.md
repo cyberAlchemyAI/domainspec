@@ -8,8 +8,8 @@ status: active
 veracidade: high
 convicção: high
 audience: agent, engineer, tech-lead, new-member
-version: 2.0.0
-last_updated: 2026-03-09
+version: 2.0.1
+last_updated: 2026-05-19
 node_type: constitution
 is_session: false
 
@@ -152,3 +152,4 @@ Classification rules constitute the contract between domain logic and analytics.
 |----------|------|-------------|
 | [[folder-structure-constitution]] | `cites` | Folder structure constitution applies these principles to directory organization |
 | [[system-premises]] | `derives-from` | P1, P3, P6 directly motivate these development practices |
+| [robot-talks-constitution.md](./robot-talks-constitution.md) | `cited-by` | Robot-talks constitution cites these development practices as governance patterns (inverse of `cites` from robot-talks-constitution; added 2026-05-19 alongside that file's `informs`→`cites` rename). |

@@ -5,8 +5,8 @@ is_session: false
 layer: architecture, ontology
 nature: procedural, technical
 status: active
-version: 0.6.0
-last_updated: 2026-04-10
+version: 0.7.1
+last_updated: 2026-05-19
 ---
 
 # Robot-Talks Constitution
@@ -308,17 +308,18 @@ Robot-talks MUST always:
 
 ## Connections
 
-| Node | Relationship | Purpose |
-|------|--------------|---------|
+| Document | Type | Description |
+|----------|------|-------------|
 | [robot-talks-premises.md](../premise/robot-talks-premises.md) | `codifies` | Constitutional rules codify the 8 working hypotheses (P-RT-1 through P-RT-8) declared in the premises. |
 | [robot-talks (skill)](../../../.claude/skills/robot-talks/SKILL.md) | `operationalized-by` | Slash-command skill: `/robot-talks` |
-| [robot-talks-discovery.md](../../../specs/ontology/possible_constitutions/robot-talks/robot-talks-discovery.md) | `grounded-by` | Theoretical argument for why this pattern works |
-| [CLAUDE.md Route 10](../../../CLAUDE.md) | `integrated-into` | Robot-talks routing in agent context router |
-| [tese-orquestracao-por-pulso.md](../../business-philosopher/assuntos/orquestracao-multi-agente/tese-orquestracao-por-pulso.md) | `instantiates` | Robot-talks are pulsed orchestration applied to investigation |
+| [robot-talks-discovery.md](../../../specs/ontology/possible_constitutions/robot-talks/robot-talks-discovery.md) | `derives-from` | Theoretical argument for why this pattern works (renamed from non-catalog `grounded-by` on 2026-05-19). |
+| [CLAUDE.md Route 10](../../../CLAUDE.md) | `integrated-into` | Robot-talks routing in agent context router (NON-CATALOG edge — left in place 2026-05-19, target is non-vault file, semantics closer to "registered with" than structural composition; flagged for user decision). |
+| [tese-orquestracao-por-pulso.md](../../business-philosopher/assuntos/orquestracao-multi-agente/tese-orquestracao-por-pulso.md) | `instantiates` | Robot-talks are pulsed orchestration applied to investigation (NON-CATALOG edge — left in place 2026-05-19, no clean catalog equivalent for instance→class; flagged for user decision). |
 | [frontend-backend-alignment (POC sessions)](../../../claude/current_conversations/) | `validated-by` | 4 agents, 4 tensions identified, demonstrates scope decomposition and synthesis |
-| [development-practices-constitution.md](./development-practices-constitution.md) | `informs` | Governance patterns |
+| [development-practices-constitution.md](./development-practices-constitution.md) | `cites` | Governance patterns (renamed from non-catalog `informs` on 2026-05-19). |
 | [discovery/robot-talks-definitions/robot-talks.md](../discovery/robot-talks-definitions/robot-talks.md) | `codifies` | The robot-talks discovery names this constitution as the enforceable rule set (PM-1 through PM-8 plus R1–R7) that codifies its consolidated premises. |
 | [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed an in-content rename sweep (`subagents-*` → `domainspec-*`). |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L7 multi-agent-orchestration layer cites this constitution as the load-bearing rule set for adversarial-parallel multi-perspective investigation. |
 ---
 
 ## Version History

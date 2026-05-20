@@ -9,8 +9,8 @@ status: consolidated
 veracidade: high
 convicção: high
 audience: agent, engineer, tech-lead, new-member
-version: 2.2.0
-last_updated: 2026-04-07
+version: 2.3.0
+last_updated: 2026-05-19
 node_type: constitution
 is_session: false
 
@@ -591,3 +591,4 @@ When reviewing a PR that emits events, verify:
 | [[system-premises]] | `derives-from` | P-SYS-6 (Implied Knowledge is Lost Knowledge) motivates the strict catalog contract |
 | [[event-system-foundations]] | `derives-from` | Ontology, Digital Twins, and Event Sourcing are the three traditions that shaped the design |
 | [event-system (skill)](../../../.claude/skills/custom/event-system.md) | `operationalizes` | Condensed skill for agent execution |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L5 software-architecture layer cites this constitution as the load-bearing async coordination pattern (event-driven architecture). |

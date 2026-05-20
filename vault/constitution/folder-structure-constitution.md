@@ -8,8 +8,8 @@ status: consolidated
 veracidade: high
 convicção: high
 audience: agent, engineer
-version: 2.0.0
-last_updated: 2026-03-09
+version: 2.1.0
+last_updated: 2026-05-19
 node_type: constitution
 is_session: false
 
@@ -227,3 +227,4 @@ domains/stock/
 | [folder-structure (skill)](../../../.claude/skills/custom/folder-structure.md) | `operationalizes` | Condensed skill for agent execution |
 | [[development-practices-constitution]] | `cited-by` | Development practices constitution cites this folder-structure constitution as the directory-organization application of its principles. |
 | [[event-system-constitution]] | `cited-by` | Event-system constitution cites this folder-structure constitution to locate event_log_service.py, event_catalog.py, and domain folders. |
+| `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L5 software-architecture layer cites this constitution as the load-bearing expression of folder-structure-as-architecture (physical layout encoding intent). |
