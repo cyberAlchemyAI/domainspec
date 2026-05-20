@@ -30,15 +30,19 @@ pay zero observability cost.
 
 ## Environment configuration
 
-Honored at first metric emission, only if `configure_observability`
-has not been called:
+Kernel vars (read by `vault_common.otel`, only if
+`configure_observability` has not been called):
 
 | Var | Type | Default | Effect |
 | --- | ---- | ------- | ------ |
 | `OTEL_EXPORTER` | enum string | `noop` | `noop` / `console` / `otlp` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | URL | unset | Target for OTLP exporter; required when `OTEL_EXPORTER=otlp` |
+
+Feature vars (read by `graph_retrieval.instrumented`, on every call):
+
+| Var | Type | Default | Effect |
+| --- | ---- | ------- | ------ |
 | `GRAPH_RETRIEVAL_GUARD_MODE` | enum string | `off` | `off` / `debug` |
-| `GRAPH_RETRIEVAL_LOG_LEVEL` | level name | `INFO` | Standard `logging` level |
 
 ## Exporter setup
 
