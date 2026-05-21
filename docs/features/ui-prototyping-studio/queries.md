@@ -5,6 +5,8 @@
 - [Component Reuse Registry](SPEC.md#component-reuse-registry)
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 - [Annotation and Deterministic Task Synthesis](SPEC.md#annotation-and-deterministic-task-synthesis)
+- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
+- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
 - [Design Artifact Export and Handoff](SPEC.md#design-artifact-export-and-handoff)
 
 ## GetSessionSnapshot
@@ -28,24 +30,25 @@ Returns current session state, gates, and integration readiness.
 
 ### Output
 
-| Field          | Type                                                   | Source                                                      | Description          |
-| -------------- | ------------------------------------------------------ | ----------------------------------------------------------- | -------------------- |
-| sessionId      | string                                                 | [StudioSession](domain.md#studiosession).sessionId          | Session identifier   |
-| prompt         | string                                                 | [StudioSession](domain.md#studiosession).prompt             | Active prompt text   |
-| variantCount   | integer                                                | [StudioSession](domain.md#studiosession).variantCount.value | Active variant count |
-| variantLabels  | string[]                                               | [StudioSession](domain.md#studiosession).variantLabels      | Candidate labels     |
-| baseline       | [BaselineProvenance](domain.md#baselineprovenance)     | [StudioSession](domain.md#studiosession).baseline           | Baseline provenance  |
-| revisionHeadId | string                                                 | [StudioSession](domain.md#studiosession).revisionHeadId     | Latest revision ID   |
-| selectionGate  | string                                                 | [StudioSession](domain.md#studiosession).selectionGate      | Selection gate state |
-| applyGate      | string                                                 | [StudioSession](domain.md#studiosession).applyGate          | Apply gate state     |
-| state          | string                                                 | [StudioSession](domain.md#studiosession).state              | Session state        |
-| integration    | [IntegrationReadiness](domain.md#integrationreadiness) | [StudioSession](domain.md#studiosession).integration        | Downstream readiness |
+| Field                   | Type                                                         | Source                                                           | Description             |
+| ----------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------- | ----------------------- |
+| sessionId               | string                                                       | [StudioSession](domain.md#studiosession).sessionId               | Session identifier      |
+| prompt                  | string                                                       | [StudioSession](domain.md#studiosession).prompt                  | Active prompt text      |
+| variantCount            | integer                                                      | [StudioSession](domain.md#studiosession).variantCount.value      | Active variant count    |
+| variantLabels           | string[]                                                     | [StudioSession](domain.md#studiosession).variantLabels           | Candidate labels        |
+| baseline                | [BaselineProvenance](domain.md#baselineprovenance)           | [StudioSession](domain.md#studiosession).baseline                | Baseline provenance     |
+| baselineGenealogyFamily | [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) | [StudioSession](domain.md#studiosession).baselineGenealogyFamily | Selected lineage family |
+| revisionHeadId          | string                                                       | [StudioSession](domain.md#studiosession).revisionHeadId          | Latest revision ID      |
+| selectionGate           | string                                                       | [StudioSession](domain.md#studiosession).selectionGate           | Selection gate state    |
+| applyGate               | string                                                       | [StudioSession](domain.md#studiosession).applyGate               | Apply gate state        |
+| state                   | string                                                       | [StudioSession](domain.md#studiosession).state                   | Session state           |
+| integration             | [IntegrationReadiness](domain.md#integrationreadiness)       | [StudioSession](domain.md#studiosession).integration             | Downstream readiness    |
 
 ### Reads From
 
-| Entity                                   | Relationship | Fields Used                                                                                                            |
-| ---------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| [StudioSession](domain.md#studiosession) | queries      | sessionId, prompt, variantCount, variantLabels, baseline, revisionHeadId, selectionGate, applyGate, state, integration |
+| Entity                                   | Relationship | Fields Used                                                                                                                                     |
+| ---------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| [StudioSession](domain.md#studiosession) | queries      | sessionId, prompt, variantCount, variantLabels, baseline, baselineGenealogyFamily, revisionHeadId, selectionGate, applyGate, state, integration |
 
 ---
 
@@ -209,3 +212,80 @@ Returns contract references used by downstream UI bridge, test generation, and i
 | -------------------------------------------------------- | ------------ | -------------------------------------------------------------- |
 | [StudioSession](domain.md#studiosession)                 | queries      | sessionId, revisionHeadId, baseline, variantCount, integration |
 | [RevisionManifestEntry](domain.md#revisionmanifestentry) | queries      | revisionId, baseline, variantCount                             |
+
+---
+
+## GetEvolutionCycle
+
+**Type:** Query (read-only)
+**Actor:** User or System
+
+Returns the genetic algorithm view of one studio cycle.
+
+### Input
+
+| Field     | Type   | Required | Description                                               |
+| --------- | ------ | -------- | --------------------------------------------------------- |
+| sessionId | string | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
+| cycleId   | string | yes      | Target [EvolutionCycle](domain.md#evolutioncycle).cycleId |
+
+### Output
+
+| Field                   | Type                                               | Source                                                             | Description               |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------------------ | ------------------------- |
+| cycleId                 | string                                             | [EvolutionCycle](domain.md#evolutioncycle).cycleId                 | Cycle identifier          |
+| generationIndex         | integer                                            | [EvolutionCycle](domain.md#evolutioncycle).generationIndex         | Generation number         |
+| genome                  | [PrototypeGenome](domain.md#prototypegenome)       | [EvolutionCycle](domain.md#evolutioncycle).genome                  | Encoded prototype genome  |
+| populationVariantLabels | string[]                                           | [EvolutionCycle](domain.md#evolutioncycle).populationVariantLabels | Candidate population      |
+| fitnessSignalIds        | string[]                                           | [EvolutionCycle](domain.md#evolutioncycle).fitnessSignalIds        | Selection-pressure events |
+| selectedBaseline        | [BaselineProvenance](domain.md#baselineprovenance) | [EvolutionCycle](domain.md#evolutioncycle).selectedBaseline        | Selected lineage          |
+| mutationBatchId         | string                                             | [EvolutionCycle](domain.md#evolutioncycle).mutationBatchId         | Proposed mutation batch   |
+| proofStatus             | [ProofStatus](domain.md#proofstatus)               | [EvolutionCycle](domain.md#evolutioncycle).proofStatus             | Current proof-gate status |
+| state                   | string                                             | [EvolutionCycle](domain.md#evolutioncycle).state                   | Evolution lifecycle state |
+
+### Reads From
+
+| Entity                                     | Relationship | Fields Used                                                                                                                        |
+| ------------------------------------------ | ------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [EvolutionCycle](domain.md#evolutioncycle) | queries      | cycleId, generationIndex, genome, populationVariantLabels, fitnessSignalIds, selectedBaseline, mutationBatchId, proofStatus, state |
+
+---
+
+## ListFitnessSignals
+
+**Type:** Query (read-only)
+**Actor:** User or System
+
+Returns fitness signals captured for a session or cycle.
+
+### Input
+
+| Field     | Type   | Required | Description                                                 |
+| --------- | ------ | -------- | ----------------------------------------------------------- |
+| sessionId | string | yes      | Target [StudioSession](domain.md#studiosession).sessionId   |
+| cycleId   | string | no       | Optional [EvolutionCycle](domain.md#evolutioncycle).cycleId |
+
+### Filters
+
+| Field     | Type   | Default | Description                                                    |
+| --------- | ------ | ------- | -------------------------------------------------------------- |
+| source    | string | any     | Filter by [FitnessSignalSource](domain.md#fitnesssignalsource) |
+| targetRef | string | any     | Filter by target variant/comment/batch/revision                |
+
+### Output
+
+| Field                | Type                                                 | Source                                              | Description         |
+| -------------------- | ---------------------------------------------------- | --------------------------------------------------- | ------------------- |
+| signals[].signalId   | string                                               | [FitnessSignal](domain.md#fitnesssignal).signalId   | Signal identifier   |
+| signals[].cycleId    | string                                               | [FitnessSignal](domain.md#fitnesssignal).cycleId    | Owning cycle        |
+| signals[].source     | [FitnessSignalSource](domain.md#fitnesssignalsource) | [FitnessSignal](domain.md#fitnesssignal).source     | Signal source       |
+| signals[].targetRef  | string                                               | [FitnessSignal](domain.md#fitnesssignal).targetRef  | Evaluated target    |
+| signals[].vector     | [FitnessVector](domain.md#fitnessvector)             | [FitnessSignal](domain.md#fitnesssignal).vector     | Fitness direction   |
+| signals[].rationale  | string                                               | [FitnessSignal](domain.md#fitnesssignal).rationale  | Selection rationale |
+| signals[].capturedAt | string                                               | [FitnessSignal](domain.md#fitnesssignal).capturedAt | Capture timestamp   |
+
+### Reads From
+
+| Entity                                   | Relationship | Fields Used                                                         |
+| ---------------------------------------- | ------------ | ------------------------------------------------------------------- |
+| [FitnessSignal](domain.md#fitnesssignal) | queries      | signalId, cycleId, source, targetRef, vector, rationale, capturedAt |

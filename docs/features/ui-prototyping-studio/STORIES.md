@@ -7,7 +7,7 @@ updatedAt: 2026-05-07
 
 # UI Prototyping Studio Stories
 
-> Navigate by capability: [Variant Generation and Baseline Gate](#variant-generation-and-baseline-gate) · [Annotation and Deterministic Task Synthesis](#annotation-and-deterministic-task-synthesis) · [Manual Governance and Apply Control](#manual-governance-and-apply-control) · [Prototype Revision Loop](#prototype-revision-loop)
+> Navigate by capability: [Variant Generation and Baseline Gate](#variant-generation-and-baseline-gate) · [Annotation and Deterministic Task Synthesis](#annotation-and-deterministic-task-synthesis) · [Manual Governance and Apply Control](#manual-governance-and-apply-control) · [Prototype Revision Loop](#prototype-revision-loop) · [Genetic Evolution and Godel Proof](#genetic-evolution-and-godel-proof)
 
 ## Variant Generation and Baseline Gate
 
@@ -223,6 +223,69 @@ As an **engineer**, I want **every applied batch to append a revision manifest r
 
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 
+## Genetic Evolution and Godel Proof
+
+### US-008 Bounded Evolution Population
+
+As a **product strategist**, I want **generated variants to be modeled as a bounded genetic population**, so that **we can explain which interface lineage survived and why**.
+
+**Given** a session with a submitted prompt and `variantCount` in `1..3`
+**When** variants are generated
+**Then** the evolution cycle records a population whose size equals `variantCount`.
+
+**Acceptance checks**
+
+- [ ] Population size equals `variantCount`.
+- [ ] The cycle genome links prompt, component constraints, environment refs, and active comment/task inputs.
+- [ ] Baseline selection records a genealogy family containing the population labels, selected survivor, actor, timestamp, and baseline revision anchor.
+
+**Covered concepts (IDs)**
+
+- [EvolutionCycle](domain.md#evolutioncycle) (`ui-prototyping-studio.EvolutionCycle`)
+- [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) (`ui-prototyping-studio.BaselineGenealogyFamily`)
+- [PrototypeGenome](domain.md#prototypegenome) (`ui-prototyping-studio.PrototypeGenome`)
+- [RecordFitnessSignal](operations.md#recordfitnesssignal) (`ui-prototyping-studio.RecordFitnessSignal`)
+
+**Aspect evidence**
+
+- [GodelDarwinEvolutionWorkflow](workflows.md#godeldarwinevolutionworkflow)
+- [EvolutionCycleState](states.md#evolutioncyclestate)
+- [GetEvolutionCycle](queries.md#getevolutioncycle)
+
+**Capability links**
+
+- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
+
+### US-009 Proof-Gated Self-Improvement
+
+As a **governance owner**, I want **generation-rule improvements to require explicit proof obligations**, so that **the studio cannot self-modify its process without evidence**.
+
+**Given** a proposed generation-rule, prompt-template, critique-rubric, or mutation-strategy improvement
+**When** proof obligations are evaluated
+**Then** promotion is blocked unless every proof obligation passes and a non-auto governance actor approves.
+
+**Acceptance checks**
+
+- [ ] Proof status returns `pass`, `flag`, or `block`.
+- [ ] Missing evidence is treated as `block`.
+- [ ] MVP runtime rule-promotion attempts are recorded as deferred/rejected, not applied.
+
+**Covered concepts (IDs)**
+
+- [ProofObligation](domain.md#proofobligation) (`ui-prototyping-studio.ProofObligation`)
+- [EvaluateProofGate](operations.md#evaluateproofgate) (`ui-prototyping-studio.EvaluateProofGate`)
+- [PromoteEvolutionRule](operations.md#promoteevolutionrule) (`ui-prototyping-studio.PromoteEvolutionRule`)
+
+**Aspect evidence**
+
+- [GodelProofGatePolicy](workflows.md#godelproofgatepolicy)
+- [EvolutionCycleState](states.md#evolutioncyclestate)
+- [ProofStatus](domain.md#proofstatus)
+
+**Capability links**
+
+- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
+
 ## Story Coverage Matrix
 
 | Capability                                  | Story IDs              | Covered Concepts                                                                                                                                                   | Notes                                                         |
@@ -231,3 +294,5 @@ As an **engineer**, I want **every applied batch to append a revision manifest r
 | Annotation and Deterministic Task Synthesis | US-003, US-004         | ui-prototyping-studio.CommentEvent, ui-prototyping-studio.CaptureCommentEvent, ui-prototyping-studio.SynthesizeMutationBatch, ui-prototyping-studio.MutationBatch  | Covers canonical schema and deterministic synthesis           |
 | Manual Governance and Apply Control         | US-005                 | ui-prototyping-studio.ApproveMutationBatch, ui-prototyping-studio.ApplyApprovedBatch, ui-prototyping-studio.GovernanceGatePolicy                                   | Covers manual gates and auto-apply prohibition                |
 | Prototype Revision Loop                     | US-006                 | ui-prototyping-studio.RevisionManifestEntry, ui-prototyping-studio.ListRevisionManifest, ui-prototyping-studio.StudioSessionState                                  | Covers append-only revision evidence and head updates         |
+| Genetic Evolution Engine                    | US-008                 | ui-prototyping-studio.EvolutionCycle, ui-prototyping-studio.PrototypeGenome, ui-prototyping-studio.FitnessSignal                                                   | Covers population, genome, fitness, and lineage semantics     |
+| Godel Proof and Self-Improvement Gate       | US-009                 | ui-prototyping-studio.ProofObligation, ui-prototyping-studio.EvaluateProofGate, ui-prototyping-studio.PromoteEvolutionRule                                         | Covers proof-gated self-improvement and MVP deferral          |

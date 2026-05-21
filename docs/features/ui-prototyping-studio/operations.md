@@ -6,6 +6,8 @@
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 - [Annotation and Deterministic Task Synthesis](SPEC.md#annotation-and-deterministic-task-synthesis)
 - [Manual Governance and Apply Control](SPEC.md#manual-governance-and-apply-control)
+- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
+- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
 - [Design Artifact Export and Handoff](SPEC.md#design-artifact-export-and-handoff)
 
 ## InitializeSession
@@ -155,11 +157,20 @@
 
 ### Rules
 
-| ID  | Rule                                              | Formal                                                                  |
-| --- | ------------------------------------------------- | ----------------------------------------------------------------------- |
-| R1  | Multi-option mode requires explicit selection     | `variantCount>1 -> selectedLabel in variantLabels`                      |
-| R2  | Single-option mode commits baseline automatically | `variantCount=1 -> baseline.mode='committed'`                           |
-| R3  | Baseline provenance mode must match branch        | `variantCount>1 -> mode='selected'; variantCount=1 -> mode='committed'` |
+| ID  | Rule                                              | Formal                                                                         |
+| --- | ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| R1  | Multi-option mode requires explicit selection     | `variantCount>1 -> selectedLabel in variantLabels`                             |
+| R2  | Single-option mode commits baseline automatically | `variantCount=1 -> baseline.mode='committed'`                                  |
+| R3  | Baseline provenance mode must match branch        | `variantCount>1 -> mode='selected'; variantCount=1 -> mode='committed'`        |
+| R4  | Baseline resolution creates a genealogy family    | `BaselineReady -> exists BaselineGenealogyFamily(sessionId, selectedBaseline)` |
+
+### Calculations
+
+| ID  | Calculation                | Formula                                                                 |
+| --- | -------------------------- | ----------------------------------------------------------------------- |
+| C1  | Family population snapshot | `populationVariantLabels = variants.map(variantLabel)`                  |
+| C2  | Baseline revision anchor   | `baselineRevisionId = StudioSession.revisionHeadId ?? 'rev-0000'`       |
+| C3  | Family selected baseline   | `selectedBaseline = BaselineProvenance(mode, selectedLabel or primary)` |
 
 ### State Transition
 
@@ -168,6 +179,7 @@
 ### Postconditions
 
 - [BaselineProvenance](domain.md#baselineprovenance) is persisted on session.
+- [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) is persisted for the generated population and selected survivor.
 - `selectionGate` moves to [GateState](domain.md#gatestate).`satisfied`.
 
 ### Error States
@@ -359,6 +371,146 @@
 | Auto-apply attempt    | Reject with `AUTO_APPLY_FORBIDDEN`    |
 | Batch not approved    | Reject with `BATCH_APPROVAL_REQUIRED` |
 | Source revision stale | Reject with `BATCH_STALE_FOR_HEAD`    |
+
+---
+
+## RecordFitnessSignal
+
+**Type:** Operation (mutation)
+**Actor:** User or System
+**Triggers:** Baseline selection, comment capture, test result, risk review, or governance evidence capture
+
+### Input
+
+| Field      | Type                                                 | Required | Description                                               |
+| ---------- | ---------------------------------------------------- | -------- | --------------------------------------------------------- |
+| sessionId  | string                                               | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
+| cycleId    | string                                               | yes      | Target [EvolutionCycle](domain.md#evolutioncycle).cycleId |
+| source     | [FitnessSignalSource](domain.md#fitnesssignalsource) | yes      | Source of the selection pressure                          |
+| targetRef  | string                                               | yes      | Variant, comment, batch, revision, or rule reference      |
+| vector     | [FitnessVector](domain.md#fitnessvector)             | yes      | Normalized fitness direction                              |
+| rationale  | string                                               | yes      | Why this signal matters                                   |
+| capturedBy | string                                               | yes      | Capturing actor                                           |
+
+### Rules
+
+| ID  | Rule                                    | Formal                                                       |
+| --- | --------------------------------------- | ------------------------------------------------------------ |
+| R1  | Evolution cycle must exist              | `exists EvolutionCycle(cycleId)`                             |
+| R2  | Target must belong to the same session  | `targetRef.sessionId = sessionId` where target is resolvable |
+| R3  | Fitness vector confidence is normalized | `0.0 <= vector.confidence <= 1.0`                            |
+| R4  | Rationale is required for auditability  | `len(trim(rationale)) > 0`                                   |
+
+### State Transition
+
+[EvolutionCycle](domain.md#evolutioncycle): `PopulationGenerated -> FitnessEvaluated`
+
+### Postconditions
+
+- One [FitnessSignal](domain.md#fitnesssignal) is appended to the cycle.
+- [EvolutionCycle](domain.md#evolutioncycle).fitnessSignalIds includes the new signal.
+
+### Error States
+
+| Condition              | Result                                    |
+| ---------------------- | ----------------------------------------- |
+| Cycle not found        | Reject with `CYCLE_NOT_FOUND`             |
+| Target outside session | Reject with `FITNESS_TARGET_OUT_OF_SCOPE` |
+| Invalid fitness vector | Reject with `FITNESS_VECTOR_INVALID`      |
+
+---
+
+## EvaluateProofGate
+
+**Type:** Operation (calculation + mutation)
+**Actor:** System
+**Triggers:** Before apply, handoff export, or generation-rule promotion
+
+### Input
+
+| Field       | Type                                           | Required | Description                                               |
+| ----------- | ---------------------------------------------- | -------- | --------------------------------------------------------- |
+| sessionId   | string                                         | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
+| cycleId     | string                                         | yes      | Target [EvolutionCycle](domain.md#evolutioncycle).cycleId |
+| targetRef   | string                                         | yes      | Mutation batch, revision, or evolution rule reference     |
+| obligations | [ProofObligation](domain.md#proofobligation)[] | yes      | Evidence obligations to evaluate                          |
+| evaluatedBy | string                                         | yes      | Evaluating actor                                          |
+
+### Rules
+
+| ID  | Rule                                      | Formal                                                    |
+| --- | ----------------------------------------- | --------------------------------------------------------- |
+| R1  | Proof obligations must be non-empty       | `count(obligations) > 0`                                  |
+| R2  | Any blocker blocks target promotion/apply | `exists obligation.status='block' -> proofStatus='block'` |
+| R3  | Any flag without blockers returns flag    | `no(block) and exists(flag) -> proofStatus='flag'`        |
+| R4  | All pass returns pass                     | `forall obligations.status='pass' -> proofStatus='pass'`  |
+| R5  | Missing evidence is treated as blocker    | `missing(evidenceRef) -> obligation.status='block'`       |
+
+### Calculations
+
+| ID  | Calculation  | Formula                                                  |
+| --- | ------------ | -------------------------------------------------------- |
+| C1  | Proof status | `block if any block; flag if any flag; pass if all pass` |
+
+### State Transition
+
+[EvolutionCycle](domain.md#evolutioncycle): `MutationProposed -> ProofEvaluated`
+
+### Postconditions
+
+- [EvolutionCycle](domain.md#evolutioncycle).proofStatus is updated.
+- Apply or self-improvement promotion remains blocked unless proof status is `pass`.
+
+### Error States
+
+| Condition         | Result                                        |
+| ----------------- | --------------------------------------------- |
+| Empty obligations | Reject with `PROOF_OBLIGATIONS_EMPTY`         |
+| Missing evidence  | Reject or block with `PROOF_EVIDENCE_MISSING` |
+
+---
+
+## PromoteEvolutionRule
+
+**Type:** Operation (mutation)
+**Actor:** User or Governance System
+**Triggers:** Approved self-improvement request for generation heuristic, prompt template, critique rubric, or mutation strategy
+
+### Input
+
+| Field           | Type                                 | Required | Description                                               |
+| --------------- | ------------------------------------ | -------- | --------------------------------------------------------- |
+| sessionId       | string                               | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
+| cycleId         | string                               | yes      | Source [EvolutionCycle](domain.md#evolutioncycle).cycleId |
+| ruleRef         | string                               | yes      | Generation rule, heuristic, template, or rubric reference |
+| proofGateStatus | [ProofStatus](domain.md#proofstatus) | yes      | Result from [EvaluateProofGate](#evaluateproofgate)       |
+| promotedBy      | string                               | yes      | Human/governance actor                                    |
+
+### Rules
+
+| ID  | Rule                                                   | Formal                                                         |
+| --- | ------------------------------------------------------ | -------------------------------------------------------------- |
+| R1  | Rule promotion is deferred beyond MVP runtime          | `runtimeMvp -> reject`                                         |
+| R2  | Proof gate must pass before any durable promotion      | `proofGateStatus='pass'`                                       |
+| R3  | Promotion actor must not be autonomous generation loop | `promotedBy != 'system:auto'`                                  |
+| R4  | Rule lineage must cite revision and fitness evidence   | `has(revisionManifestRef, fitnessSignalIds, proofObligations)` |
+
+### State Transition
+
+[EvolutionCycle](domain.md#evolutioncycle): `ProofEvaluated -> RulePromotionDeferred | RulePromoted`
+
+### Postconditions
+
+- In MVP, no generation rule is promoted at runtime; a deferred improvement request is recorded.
+- In later phases, a rule may be promoted only when proof status is `pass` and governance approval is present.
+
+### Error States
+
+| Condition                     | Result                                          |
+| ----------------------------- | ----------------------------------------------- |
+| MVP runtime promotion attempt | Reject with `EVOLUTION_RULE_PROMOTION_DEFERRED` |
+| Proof not passed              | Reject with `PROOF_GATE_NOT_PASSED`             |
+| Autonomous promotion attempt  | Reject with `AUTO_PROMOTION_FORBIDDEN`          |
 
 ---
 

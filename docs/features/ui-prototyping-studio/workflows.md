@@ -5,6 +5,8 @@
 - [Variant Generation and Baseline Gate](SPEC.md#variant-generation-and-baseline-gate)
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 - [Manual Governance and Apply Control](SPEC.md#manual-governance-and-apply-control)
+- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
+- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
 - [Design Artifact Export and Handoff](SPEC.md#design-artifact-export-and-handoff)
 
 ## MVPStudioIterationWorkflow
@@ -130,3 +132,98 @@ isValid = variantCount in {1,2,3}
 | minVariantCount     | integer | 1       | Lower bound     |
 | maxVariantCount     | integer | 3       | Upper bound     |
 | defaultVariantCount | integer | 3       | Session default |
+
+---
+
+## GodelDarwinEvolutionWorkflow
+
+**Type:** Workflow
+**Triggers:** Variant generation, baseline selection, comment capture, mutation synthesis, proof evaluation, revision apply
+**Orchestrates:** [GenerateVariants](operations.md#generatevariants), [RecordFitnessSignal](operations.md#recordfitnesssignal), [SelectOrCommitBaseline](operations.md#selectorcommitbaseline), [SynthesizeMutationBatch](operations.md#synthesizemutationbatch), [EvaluateProofGate](operations.md#evaluateproofgate), [ApproveMutationBatch](operations.md#approvemutationbatch), [ApplyApprovedBatch](operations.md#applyapprovedbatch), [PromoteEvolutionRule](operations.md#promoteevolutionrule)
+**Compensation Strategy:** defer promotion; preserve prior lineage
+**Idempotency:** deterministic by session + generation index + genome + proof obligations
+
+### Steps
+
+```mermaid
+graph TD
+    A[Encode prototype genome] --> B[Generate bounded population]
+    B --> C[Record fitness signals]
+    C --> D[Select or commit lineage]
+    D --> E[Save genealogy family]
+    E --> F[Propose mutation batch]
+    F --> G[Evaluate proof gate]
+    G -->|Pass| H[Approve/apply mutation]
+    G -->|Flag or block| I[Defer or reject promotion]
+    H --> J[Record lineage manifest]
+    J --> K{Improve generation rule?}
+    K -->|Proof passed + approved + post-MVP| L[Promote evolution rule]
+    K -->|MVP or proof gap| M[Record deferred improvement]
+    L --> B
+    M --> B
+```
+
+### Genetic Mapping
+
+| Genetic Concept | Studio Concept                                           | Operational Anchor                                               |
+| --------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| Genome          | [PrototypeGenome](domain.md#prototypegenome)             | Prompt, constraints, comments, tasks, environment refs           |
+| Population      | [PrototypeVariant](domain.md#prototypevariant) set       | [GenerateVariants](operations.md#generatevariants)               |
+| Fitness         | [FitnessSignal](domain.md#fitnesssignal) set             | [RecordFitnessSignal](operations.md#recordfitnesssignal)         |
+| Selection       | [BaselineProvenance](domain.md#baselineprovenance)       | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline)   |
+| Family          | [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline) |
+| Mutation        | [MutationBatch](domain.md#mutationbatch)                 | [SynthesizeMutationBatch](operations.md#synthesizemutationbatch) |
+| Proof           | [ProofObligation](domain.md#proofobligation)             | [EvaluateProofGate](operations.md#evaluateproofgate)             |
+| Lineage         | [RevisionManifestEntry](domain.md#revisionmanifestentry) | [ApplyApprovedBatch](operations.md#applyapprovedbatch)           |
+
+### Invariants
+
+| ID      | Invariant                                                            | Formal                                                        |
+| ------- | -------------------------------------------------------------------- | ------------------------------------------------------------- |
+| GD-WF-1 | Population size is bounded by [VariantCount](domain.md#variantcount) | `count(population) in {1,2,3}`                                |
+| GD-WF-2 | Selection pressure must be captured before self-improvement          | `PromoteEvolutionRule -> count(FitnessSignal)>0`              |
+| GD-WF-3 | Mutation cannot enter lineage without genealogy, proof, and approval | `ApplyApprovedBatch -> exists(BaselineGenealogyFamily) and proofStatus='pass' and batch.approved` |
+| GD-WF-4 | MVP self-improvement is recorded as deferred, not applied            | `runtimeMvp -> RulePromotionDeferred`                         |
+
+---
+
+## GeneticSelectionPolicy
+
+**Type:** Policy
+**Applies To:** [GodelDarwinEvolutionWorkflow](#godeldarwinevolutionworkflow) population, fitness, and baseline selection stages
+**Trigger Conditions:** Variant review, human selection, risk review, automated test feedback
+
+### Decision Table
+
+| Condition                                      | Selected Behavior                         | Notes                                          |
+| ---------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
+| Human selects a baseline                       | Treat as primary positive fitness signal  | Preserves intentional selection pressure       |
+| Variant has high risk without offsetting value | Record negative risk fitness signal       | Does not auto-reject; informs proof layer      |
+| Test/acceptance check passes for a revision    | Record positive evidence fitness signal   | Can support future generation-rule improvement |
+| Test/acceptance check fails                    | Record blocker or negative fitness signal | Prevents unsafe promotion                      |
+
+### Configuration Parameters
+
+| Parameter                    | Type    | Default | Description                                        |
+| ---------------------------- | ------- | ------- | -------------------------------------------------- |
+| maxPopulationSize            | integer | 3       | Upper bound for generated variants                 |
+| requireHumanLineageSelection | boolean | true    | Multi-variant lineage requires explicit selection  |
+| acceptTestFitnessSignals     | boolean | true    | Allows test results to contribute to proof context |
+
+---
+
+## GodelProofGatePolicy
+
+**Type:** Policy
+**Applies To:** [EvaluateProofGate](operations.md#evaluateproofgate), [PromoteEvolutionRule](operations.md#promoteevolutionrule), [ApplyApprovedBatch](operations.md#applyapprovedbatch)
+**Trigger Conditions:** Apply attempt, handoff export, or generation-rule promotion request
+
+### Decision Table
+
+| Condition                                      | Selected Behavior                       | Notes                                       |
+| ---------------------------------------------- | --------------------------------------- | ------------------------------------------- |
+| Any proof obligation is `block`                | Block apply or promotion                | Missing evidence is blocker by default      |
+| Any proof obligation is `flag` and none block  | Allow handoff with gap; block promotion | Usable artifact, unsafe self-improvement    |
+| All proof obligations pass                     | Allow approved mutation apply           | Promotion still requires human governance   |
+| Actor is `system:auto` for promotion or apply  | Reject                                  | Prevents autonomous durable mutation        |
+| Runtime phase is MVP and target is rule change | Defer promotion                         | Self-improvement contract is documented now |

@@ -7,6 +7,8 @@
 - [Annotation and Deterministic Task Synthesis](SPEC.md#annotation-and-deterministic-task-synthesis)
 - [Manual Governance and Apply Control](SPEC.md#manual-governance-and-apply-control)
 - [Newspaper Adapter Compatibility](SPEC.md#newspaper-adapter-compatibility)
+- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
+- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
 - [Design Artifact Export and Handoff](SPEC.md#design-artifact-export-and-handoff)
 
 ## External: UIPrototypingStudioAPI (REST)
@@ -89,7 +91,7 @@
 
 | Status | Condition          | Body                   |
 | ------ | ------------------ | ---------------------- |
-| 200    | Success            | Updated baseline state |
+| 200    | Success            | Updated baseline state plus [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) |
 | 409    | Selection required | Rule violation         |
 | 422    | Label invalid      | Validation error       |
 
@@ -186,6 +188,7 @@
 
 **Exposes:** [GetSessionSnapshot](queries.md#getsessionsnapshot)
 **Auth:** Bearer token (`domainspec.ui-prototyping.read`)
+**Returns:** Session state, gate state, baseline provenance, and baseline genealogy family when baseline is ready.
 
 ### GET /api/ui-prototyping-studio/sessions/:sessionId/variants
 
@@ -223,6 +226,9 @@
 | synthesizeMutationBatch(input) | [SynthesizeMutationBatch](operations.md#synthesizemutationbatch) | Produce deterministic draft batch          |
 | approveMutationBatch(input)    | [ApproveMutationBatch](operations.md#approvemutationbatch)       | Apply explicit approval metadata           |
 | applyApprovedBatch(input)      | [ApplyApprovedBatch](operations.md#applyapprovedbatch)           | Apply approved batch and append revision   |
+| recordFitnessSignal(input)     | [RecordFitnessSignal](operations.md#recordfitnesssignal)         | Append genetic fitness signal              |
+| evaluateProofGate(input)       | [EvaluateProofGate](operations.md#evaluateproofgate)             | Evaluate proof obligations for mutation    |
+| promoteEvolutionRule(input)    | [PromoteEvolutionRule](operations.md#promoteevolutionrule)       | Record or apply governed self-improvement  |
 | exportDesignHandoff(input)     | [ExportDesignHandoff](operations.md#exportdesignhandoff)         | Prepare downstream handoff bundle          |
 | getSessionSnapshot(input)      | [GetSessionSnapshot](queries.md#getsessionsnapshot)              | Read current session state                 |
 | listSessionVariants(input)     | [ListSessionVariants](queries.md#listsessionvariants)            | Read generated variants                    |
@@ -243,3 +249,18 @@
 | mapRevisionManifestEntry(input) | [ApplyApprovedBatch](operations.md#applyapprovedbatch)           | Map revision evidence to adapter manifest row     |
 
 **Boundary Rule:** Adapter methods are internal mapping helpers only and must not import newspaper runtime modules.
+
+---
+
+## Internal: GodelDarwinEvolutionAdapter Interface
+
+**Consumers:** Studio orchestration module, future generation strategy registry
+
+| Method                       | Maps To                                                    | Description                                                |
+| ---------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| encodePrototypeGenome(input) | [EvolutionCycle](domain.md#evolutioncycle)                 | Builds genome from prompt, constraints, comments, and refs |
+| recordFitnessSignal(input)   | [RecordFitnessSignal](operations.md#recordfitnesssignal)   | Captures human/test/risk/governance selection pressure     |
+| evaluateProofGate(input)     | [EvaluateProofGate](operations.md#evaluateproofgate)       | Produces pass/flag/block proof status                      |
+| requestRulePromotion(input)  | [PromoteEvolutionRule](operations.md#promoteevolutionrule) | Defers or promotes generation strategy changes             |
+
+**Boundary Rule:** The adapter may summarize evidence and propose future rule changes, but MVP runtime MUST defer direct generation-rule promotion.

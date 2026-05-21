@@ -14,11 +14,11 @@ not-started
 
 ## DomainSpec Coverage
 
-| Source                             | Coverage IDs                                                             |
-| ---------------------------------- | ------------------------------------------------------------------------ |
-| [SPEC.md](../../SPEC.md)           | FR-001, FR-005, FR-012, AC-003, AC-004, AC-007, AC-010, AC-011           |
-| [TEST-SPEC.md](../../TEST-SPEC.md) | UPS-CON-001, UPS-CON-011, UPS-OP-001, UPS-OP-010, UPS-UI-001, UPS-UI-008 |
-| [workflows.md](../../workflows.md) | GovernanceGatePolicy, MVPStudioIterationWorkflow                         |
+| Source                             | Coverage IDs                                                                                         |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [SPEC.md](../../SPEC.md)           | FR-001, FR-005, FR-012, FR-016..FR-020, AC-003, AC-004, AC-007, AC-010..AC-015                       |
+| [TEST-SPEC.md](../../TEST-SPEC.md) | UPS-CON-001, UPS-CON-011..013, UPS-OP-001, UPS-OP-010..013, UPS-UI-001, UPS-UI-008                   |
+| [workflows.md](../../workflows.md) | GovernanceGatePolicy, MVPStudioIterationWorkflow, GodelDarwinEvolutionWorkflow, GodelProofGatePolicy |
 
 ## Architecture References
 
@@ -48,7 +48,9 @@ not-started
 
 ## Decision Lock
 
-| Decision ID | Required | Status   | Note                                                  |
-| ----------- | -------- | -------- | ----------------------------------------------------- |
-| D-005       | yes      | selected | Manual governance gate outcomes must be verified      |
-| D-007       | yes      | selected | Adapter-only boundary must be checked in verification |
+| Decision ID | Required | Status   | Note                                                     |
+| ----------- | -------- | -------- | -------------------------------------------------------- |
+| D-005       | yes      | selected | Manual governance gate outcomes must be verified         |
+| D-007       | yes      | selected | Adapter-only boundary must be checked in verification    |
+| D-008       | yes      | selected | Genetic evolution concepts must remain traceable         |
+| D-009       | yes      | selected | Proof-gated self-improvement must remain deferred in MVP |
