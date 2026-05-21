@@ -1,8 +1,8 @@
-# TASK-UPS-WP-06-PROOF-GATE - L2 Proof Gate Enforcement
+# TASK-UPS-WP-06-PROOF-GATE - L2 Proof Promotion Enforcement
 
 ## Goal
 
-Implement proof obligation evaluation and MVP self-improvement deferral gates so unsafe mutation or generation-rule promotion remains blocked.
+Implement proof obligation evaluation and self-improvement deferral gates so unsafe generation-rule promotion remains blocked.
 
 ## Wave Assignment
 
@@ -15,18 +15,21 @@ not-started
 
 ## DomainSpec Coverage
 
-| Source                               | Coverage IDs                                       |
-| ------------------------------------ | -------------------------------------------------- |
-| [domain.md](../../domain.md)         | ProofObligation, ProofStatus                       |
-| [operations.md](../../operations.md) | EvaluateProofGate, PromoteEvolutionRule            |
-| [workflows.md](../../workflows.md)   | GodelProofGatePolicy, GodelDarwinEvolutionWorkflow |
-| [states.md](../../states.md)         | EvolutionCycleState, EC4, EC5                      |
-| [TEST-SPEC.md](../../TEST-SPEC.md)   | UPS-CON-012, UPS-ST-011, UPS-OP-012, UPS-OP-013    |
+| Source                               | Coverage IDs                                                 |
+| ------------------------------------ | ------------------------------------------------------------ |
+| [domain.md](../../domain.md)         | ProofObligation, ProofStatus, RulePromotionRequest           |
+| [operations.md](../../operations.md) | EvaluateProofGate, PromoteEvolutionRule                      |
+| [workflows.md](../../workflows.md)   | GodelProofGatePolicy, GodelDarwinEvolutionWorkflow           |
+| [states.md](../../states.md)         | EvolutionCycleState, EC4, EC5                                |
+| [queries.md](../../queries.md)       | ListRulePromotionRequests                                    |
+| [TEST-SPEC.md](../../TEST-SPEC.md)   | UPS-CON-012, UPS-ST-011, UPS-OP-012, UPS-OP-013, UPS-API-015 |
 
 ## Architecture References
 
-- [ARCHITECTURE.md](../../ARCHITECTURE.md#godel-darwin-machine)
+- [ARCHITECTURE.md](../../ARCHITECTURE.md#evolution-engine)
 - [ARCHITECTURE.md](../../ARCHITECTURE.md#decision-flow-view)
+- [EVOLUTION-ARCHITECTURE.md](../../EVOLUTION-ARCHITECTURE.md#gate-rules)
+- [EVOLUTION-ARCHITECTURE.md](../../EVOLUTION-ARCHITECTURE.md#failure-semantics)
 - [IMPLEMENTATION-LAYERING.md](../../IMPLEMENTATION-LAYERING.md#layer-definitions)
 - [Dependency rules](../../../../../architecture/pattern-library/DEPENDENCY-RULES.md)
 
@@ -35,7 +38,7 @@ not-started
 - Implement `EvaluateProofGate` as deterministic pass/flag/block evaluation.
 - Treat missing evidence as `block`.
 - Keep MVP generation-rule promotion deferred/rejected.
-- Reject `system:auto` for apply or promotion paths.
+- Reject `system:auto` for promotion paths and preserve the existing apply actor guard.
 - Preserve existing `ApplyApprovedBatch` manual approval semantics.
 
 ## Completion Criteria

@@ -6,6 +6,7 @@ sourceDocs:
   - DISCOVERY.md
   - SPEC.md
   - ARCHITECTURE.md
+  - EVOLUTION-ARCHITECTURE.md
   - IMPLEMENTATION-LAYERING.md
   - UI-SPEC.md
   - STORIES.md
@@ -29,46 +30,49 @@ The central concept is not "generate a screen." The central concept is **make UI
 
 Modern UI prototyping is fast, but often loses the reasoning trail. Feedback lives in chat, screenshots, comments, or memory. Implementation then starts with ambiguity: which variant won, which comments mattered, which changes were approved, and what evidence supports the next step?
 
-UI Prototyping Studio answers with a capability stack wrapped around an evolutionary engine:
+UI Prototyping Studio answers with a capability stack wrapped around an internal Evolution Engine:
 
-- **Exploration** creates bounded candidate directions.
+- **Explore** creates bounded candidate directions.
+- **Exploit** creates baseline-conforming candidates from confirmed identity and visual DNA.
 - **Selection** turns options into an intentional baseline.
+- **Identity and Visual DNA** preserve what UI elements are, why they were chosen, and which visual traits define them.
 - **Annotation** captures feedback at the element level.
 - **Synthesis** turns feedback into deterministic work.
 - **Governance** keeps mutation under human control.
 - **Revision Evidence** records what changed and why.
 - **Handoff** connects the loop to DomainSpec delivery artifacts.
 
-The deeper product idea is a **Godel-Darwin machine for UI work**: a system that generates variants, subjects them to selection pressure, mutates the chosen lineage, and only lets the machine improve itself when the proof/evidence layer says the change is acceptable.
+The public product idea is accountable UI exploration. The internal architecture is an **Evolution Engine**: a system that generates variants, records qualitative selection evidence, mutates the chosen lineage through manual gates, and only lets the generation process improve itself when proof/evidence says the change is acceptable.
 
 ## Evolutionary Frame
 
 The studio can be understood as a genetic loop for product interfaces.
 
-| Genetic Concept | Studio Concept                                                               | Meaning                                                |
-| --------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Genome          | Prompt, component metadata, constraints, comments, and mutation tasks        | The encoded instructions that shape the next prototype |
-| Phenotype       | Rendered HTML-first prototype variant                                        | The visible expression of the genome                   |
-| Population      | Candidate variants A/B/C                                                     | The set of competing interface possibilities           |
-| Fitness Signal  | Human selection, severity, intent, risk, acceptance checks, and tests        | The pressure that determines what survives             |
-| Selection       | Baseline choice or committed single-variant path                             | The decision that chooses a lineage                    |
-| Family          | Baseline genealogy family                                                    | The first durable record of the selected lineage       |
-| Mutation        | Approved task batch applied to the baseline                                  | The controlled change that creates the next revision   |
-| Lineage         | Revision manifest                                                            | The ancestry of decisions, changes, and evidence       |
-| Environment     | DomainSpec requirements, UI-SPEC, test obligations, architecture constraints | The world each prototype must survive in               |
+| Genetic Concept  | Studio Concept                                                                | Meaning                                                     |
+| ---------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Genome           | Prompt, component metadata, constraints, comments, and mutation tasks         | The encoded instructions that shape the next prototype      |
+| Phenotype        | Rendered HTML-first prototype variant                                         | The visible expression of the genome                        |
+| Population       | Candidate variants A/B/C                                                      | The set of competing interface possibilities                |
+| Fitness Evidence | Human selection, severity, intent, risk, acceptance checks, and tests         | Evidence that explains why a path was preferred or rejected |
+| Selection        | Baseline choice or committed single-variant path                              | The decision that chooses a lineage                         |
+| Identity DNA     | UI element identity, rendered instance, visual signature, and decision record | The inheritable design traits preserved or changed          |
+| Family           | Baseline genealogy family                                                     | The first durable record of the selected lineage            |
+| Mutation         | Approved task batch applied to the baseline                                   | The controlled change that creates the next revision        |
+| Lineage          | Revision manifest                                                             | The ancestry of decisions, changes, and evidence            |
+| Environment      | DomainSpec requirements, UI-SPEC, test obligations, architecture constraints  | The world each prototype must survive in                    |
 
-This makes the product more than a prototyping canvas. It is a controlled evolutionary system where interface variants compete, selected traits are preserved, and approved mutations create the next generation.
+This makes the product more than a prototyping canvas. It is a controlled evolution system where interface variants are compared, selected traits are preserved, and approved mutations create the next generation.
 
-## Godel-Darwin Machine
+## Evolution Engine
 
-The Godel-Darwin machine framing adds a second layer: the system does not merely evolve prototype outputs; it can evolve its own design process when evidence justifies the change.
+The Evolution Engine framing adds a second layer: the system does not merely evolve prototype outputs; it can evolve its own design process when evidence justifies the change.
 
 In this feature, that means:
 
-- **Darwin side:** generate populations, apply selection pressure, preserve winning lineages, and mutate through approved batches.
-- **Godel side:** require explicit proof obligations before the process changes itself: checksums, gates, tests, manifests, and handoff evidence.
+- **Lineage side:** generate populations, capture selection evidence, preserve winning lineages, and mutate through approved batches.
+- **Proof side:** require explicit proof obligations before the process changes itself: checksums, gates, tests, manifests, and handoff evidence.
 
-The machine is "Darwin" because it explores and selects. It is "Godel" because every durable change must carry a reason, an invariant, or a proof artifact that says why the change is allowed.
+Existing formal concept IDs may still use `GodelDarwin` or `GodelProof` for compatibility, but product prose should describe this as the Evolution Engine.
 
 ```mermaid
 flowchart TD
@@ -77,12 +81,12 @@ flowchart TD
   C --> D[Select Baseline Lineage]
   D --> E[Capture Feedback Genome]
   E --> F[Synthesize Mutation Batch]
-  F --> G{Proof / Gate Check}
+  F --> G{Manual Apply Gate}
   G -->|approved| H[Apply Mutation]
   G -->|blocked| I[Revise or Reject]
   H --> J[Record Lineage Evidence]
   J --> K[Export Handoff]
-  J --> L[Improve Future Generation Rules]
+  J --> L[Proof-Gated Rule Improvement]
   L --> B
 ```
 
@@ -114,28 +118,26 @@ flowchart TD
   J[Newspaper-Style Contract Pattern] --> D
   J --> E
   J --> G
-  K[Genetic Evolution Engine] --> B
+  K[Evolution Engine] --> B
   K --> C
   K --> F
-  L[Godel Proof Layer] --> F
-  L --> G
-  L --> H
+  L[Proof Promotion Layer] --> H
 ```
 
 ## Capability View
 
-| Capability           | Product Meaning                                             | Core Questions It Answers                                                 | Evidence In MVP                                                           |
-| -------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Intent Capture       | Converts a product idea into a studio session               | What are we trying to prototype? How many options do we want?             | Session controls, prompt submission, `variantCount` contract              |
-| Variant Exploration  | Produces bounded candidate prototype directions             | What are the viable UI directions? What are their tradeoffs?              | Candidate A/B/C previews with rationale, risk, components used            |
-| Baseline Governance  | Establishes a chosen source of truth before feedback        | Which option are we iterating? Was it selected or committed?              | Selection gate, committed single-variant path                             |
-| Element Feedback     | Captures visual critique as structured data                 | What element is affected? How severe is it? What is the intent?           | Annotation panel, canonical comment payload                               |
-| Task Synthesis       | Converts comments into replayable mutation work             | What tasks should the next revision perform? Is the output deterministic? | Draft mutation batch and task list                                        |
-| Manual Apply Control | Requires explicit approval before prototype mutation        | Who approved the change? Is auto-apply blocked?                           | Approval gate and disabled apply control                                  |
-| Revision Evidence    | Records each applied change as provenance                   | What changed? From which baseline? Which tasks were applied?              | Revision timeline and manifest entries                                    |
-| DomainSpec Handoff   | Bridges exploration into delivery workflow                  | Which stories, specs, tests, and implementation paths are ready?          | Handoff summary and bundle references                                     |
-| Evolution Engine     | Treats variants and revisions as a selected/mutated lineage | What survived, why, and what should evolve next?                          | Variant population, baseline selection, mutation batch, revision manifest |
-| Proof Layer          | Allows durable change only when gates and evidence pass     | What proves the mutation is allowed?                                      | Apply gate, checksum, server-side rejection, e2e obligations              |
+| Capability           | Product Meaning                                                       | Core Questions It Answers                                                 | Evidence In MVP                                                           |
+| -------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Intent Capture       | Converts a product idea into a studio session                         | What are we trying to prototype? How many options do we want?             | Session controls, prompt submission, `variantCount` contract              |
+| Variant Exploration  | Produces bounded candidate prototype directions                       | What are the viable UI directions? What are their tradeoffs?              | Candidate A/B/C previews with rationale, risk, components used            |
+| Baseline Governance  | Establishes a chosen source of truth before feedback                  | Which option are we iterating? Was it selected or committed?              | Selection gate, committed single-variant path                             |
+| Element Feedback     | Captures visual critique as structured data                           | What element is affected? How severe is it? What is the intent?           | Annotation panel, canonical comment payload                               |
+| Task Synthesis       | Converts comments into replayable mutation work                       | What tasks should the next revision perform? Is the output deterministic? | Draft mutation batch and task list                                        |
+| Manual Apply Control | Requires explicit approval before prototype mutation                  | Who approved the change? Is auto-apply blocked?                           | Approval gate and disabled apply control                                  |
+| Revision Evidence    | Records each applied change as provenance                             | What changed? From which baseline? Which tasks were applied?              | Revision timeline and manifest entries                                    |
+| DomainSpec Handoff   | Bridges exploration into delivery workflow                            | Which stories, specs, tests, and implementation paths are ready?          | Handoff summary and bundle references                                     |
+| Evolution Engine     | Treats variants and revisions as a selected/mutated lineage           | What survived, why, and what should evolve next?                          | Variant population, baseline selection, mutation batch, revision manifest |
+| Proof Layer          | Allows generation-process improvement only when proof evidence passes | What proves self-improvement is allowed?                                  | Deferred promotion request, proof vocabulary, future proof obligations    |
 
 ## Capability Details
 
@@ -168,10 +170,10 @@ The baseline is the studio's anchor. Every comment, task, and revision must atta
 
 There are two baseline modes:
 
-| Mode        | When It Happens    | Meaning                                                           |
-| ----------- | ------------------ | ----------------------------------------------------------------- |
-| `selected`  | `variantCount > 1` | A human chose one candidate before annotation began               |
-| `committed` | `variantCount = 1` | The single generated candidate becomes the baseline automatically |
+| Mode        | When It Happens    | Meaning                                                                                   |
+| ----------- | ------------------ | ----------------------------------------------------------------------------------------- |
+| `selected`  | `variantCount > 1` | A human chose one candidate before annotation began                                       |
+| `committed` | `variantCount = 1` | The single generated candidate becomes the baseline through the single-option commit path |
 
 This is the feature's first major governance move: it prevents downstream work from being attached to an ambiguous option.
 

@@ -5,15 +5,15 @@
 - [Variant Generation and Baseline Gate](SPEC.md#variant-generation-and-baseline-gate)
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 - [Manual Governance and Apply Control](SPEC.md#manual-governance-and-apply-control)
-- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
-- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
+- [Evolution Engine](SPEC.md#evolution-engine)
+- [Proof and Self-Improvement Gate](SPEC.md#proof-and-self-improvement-gate)
 - [Design Artifact Export and Handoff](SPEC.md#design-artifact-export-and-handoff)
 
 ## MVPStudioIterationWorkflow
 
 **Type:** Workflow
-**Triggers:** Session start, prompt submit, batch approval, apply, handoff export
-**Orchestrates:** [InitializeSession](operations.md#initializesession), [SubmitPrompt](operations.md#submitprompt), [GenerateVariants](operations.md#generatevariants), [SelectOrCommitBaseline](operations.md#selectorcommitbaseline), [CaptureCommentEvent](operations.md#capturecommentevent), [SynthesizeMutationBatch](operations.md#synthesizemutationbatch), [ApproveMutationBatch](operations.md#approvemutationbatch), [ApplyApprovedBatch](operations.md#applyapprovedbatch), [ExportDesignHandoff](operations.md#exportdesignhandoff)
+**Triggers:** Session start, prompt submit, identity confirmation, batch approval, apply, handoff export
+**Orchestrates:** [InitializeSession](operations.md#initializesession), [SubmitPrompt](operations.md#submitprompt), [GenerateVariants](operations.md#generatevariants), [SelectOrCommitBaseline](operations.md#selectorcommitbaseline), [ConfirmUIDecisionEvidence](operations.md#confirmuidecisionevidence), [CaptureCommentEvent](operations.md#capturecommentevent), [SynthesizeMutationBatch](operations.md#synthesizemutationbatch), [ApproveMutationBatch](operations.md#approvemutationbatch), [ApplyApprovedBatch](operations.md#applyapprovedbatch), [ExportDesignHandoff](operations.md#exportdesignhandoff)
 **Compensation Strategy:** notify-only
 **Idempotency:** conditional (deterministic by session + revision + ordered comment set)
 
@@ -23,11 +23,15 @@
 graph TD
     A[Step 1: Initialize session] --> B[Step 2: Submit prompt]
     B --> C[Step 3: Generate variants]
-    C --> D{variantCount > 1?}
+    C --> N{generationMode}
+    N -->|Explore| D{variantCount > 1?}
+    N -->|Exploit| X[Generate baseline-conforming candidates]
+    X --> D
     D -->|Yes| E[Step 4a: Select baseline]
     D -->|No| F[Step 4b: Commit baseline]
-    E --> G[Step 5: Capture comments]
-    F --> G
+    E --> Y[Step 5: Confirm identity/DNA evidence]
+    F --> Y
+    Y --> G[Step 6: Capture comments]
     G --> H[Step 6: Synthesize draft mutation batch]
     H --> I[Step 7: Manual approval]
     I --> J[Step 8: Apply approved batch]
@@ -39,29 +43,32 @@ graph TD
 
 ### Step Table
 
-| #   | Step                     | Actor       | Operation                                                        | On Success               | On Failure                 | Compensation                   |
-| --- | ------------------------ | ----------- | ---------------------------------------------------------------- | ------------------------ | -------------------------- | ------------------------------ |
-| 1   | Initialize session       | User        | [InitializeSession](operations.md#initializesession)             | Session ready            | Return validation error    | Show variant count remediation |
-| 2   | Submit prompt            | User        | [SubmitPrompt](operations.md#submitprompt)                       | Prompt captured          | Return prompt error        | Keep session initialized       |
-| 3   | Generate variants        | System      | [GenerateVariants](operations.md#generatevariants)               | Variants ready           | Return generation error    | Keep prompt context            |
-| 4   | Resolve baseline         | User/System | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline)   | Baseline ready           | Return baseline gate error | Keep variants visible          |
-| 5   | Capture comments         | User        | [CaptureCommentEvent](operations.md#capturecommentevent)         | Comment log updated      | Return schema error        | Keep previous comments         |
-| 6   | Draft mutation batch     | System      | [SynthesizeMutationBatch](operations.md#synthesizemutationbatch) | Draft batch created      | Return synthesis error     | Keep comment set               |
-| 7   | Approve batch            | User        | [ApproveMutationBatch](operations.md#approvemutationbatch)       | Batch approved           | Return approval error      | Keep draft batch               |
-| 8   | Apply batch              | User        | [ApplyApprovedBatch](operations.md#applyapprovedbatch)           | Revision applied         | Return gate/stale error    | Keep prior revision head       |
-| 9   | Record revision evidence | System      | [ApplyApprovedBatch](operations.md#applyapprovedbatch)           | Manifest appended        | Return append error        | Mark apply as failed           |
-| 10  | Export handoff           | User/System | [ExportDesignHandoff](operations.md#exportdesignhandoff)         | Handoff bundle published | Return reference error     | Keep revision evidence         |
+| #   | Step                     | Actor       | Operation                                                            | On Success                        | On Failure                 | Compensation                   |
+| --- | ------------------------ | ----------- | -------------------------------------------------------------------- | --------------------------------- | -------------------------- | ------------------------------ |
+| 1   | Initialize session       | User        | [InitializeSession](operations.md#initializesession)                 | Session ready                     | Return validation error    | Show variant count remediation |
+| 2   | Submit prompt            | User        | [SubmitPrompt](operations.md#submitprompt)                           | Prompt captured                   | Return prompt error        | Keep session initialized       |
+| 3   | Generate variants        | System      | [GenerateVariants](operations.md#generatevariants)                   | Explore or Exploit variants ready | Return generation error    | Keep prompt context            |
+| 4   | Resolve baseline         | User/System | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline)       | Baseline anchor and family ready  | Return baseline gate error | Keep variants visible          |
+| 5   | Confirm identity/DNA     | User        | [ConfirmUIDecisionEvidence](operations.md#confirmuidecisionevidence) | Decision evidence durable         | Return evidence error      | Keep suggestions non-durable   |
+| 6   | Capture comments         | User        | [CaptureCommentEvent](operations.md#capturecommentevent)             | Comment log updated               | Return schema error        | Keep previous comments         |
+| 6   | Draft mutation batch     | System      | [SynthesizeMutationBatch](operations.md#synthesizemutationbatch)     | Draft batch created               | Return synthesis error     | Keep comment set               |
+| 7   | Approve batch            | User        | [ApproveMutationBatch](operations.md#approvemutationbatch)           | Batch approved                    | Return approval error      | Keep draft batch               |
+| 8   | Apply batch              | User        | [ApplyApprovedBatch](operations.md#applyapprovedbatch)               | Revision applied                  | Return gate/stale error    | Keep prior revision head       |
+| 9   | Record revision evidence | System      | [ApplyApprovedBatch](operations.md#applyapprovedbatch)               | Manifest appended                 | Return append error        | Mark apply as failed           |
+| 10  | Export handoff           | User/System | [ExportDesignHandoff](operations.md#exportdesignhandoff)             | Handoff bundle published          | Return reference error     | Keep revision evidence         |
 
 ### Invariants
 
-| ID     | Invariant                                                                      | Formal                                                                   |
-| ------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| I-WF-1 | Variant count remains bounded through all workflow steps                       | `StudioSession.variantCount.value in {1,2,3}`                            |
-| I-WF-2 | Multi-option flow cannot enter apply branch before explicit baseline selection | `variantCount>1 -> selectionGate='satisfied' before ApplyApprovedBatch`  |
-| I-WF-3 | Single-option flow marks baseline as committed before comment stage            | `variantCount=1 -> baseline.mode='committed' before CaptureCommentEvent` |
-| I-WF-4 | Draft batches require explicit approval prior to apply                         | `MutationBatch.status='draft' -> not ApplyApprovedBatch`                 |
-| I-WF-5 | Auto-apply is forbidden                                                        | `applyRequestedBy != 'system:auto'`                                      |
-| I-WF-6 | Every successful apply appends exactly one manifest entry                      | `appendCount(RevisionManifestEntry)=1 per successful apply`              |
+| ID     | Invariant                                                                      | Formal                                                                           |
+| ------ | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| I-WF-1 | Variant count remains bounded through all workflow steps                       | `StudioSession.variantCount.value in {1,2,3}`                                    |
+| I-WF-2 | Multi-option flow cannot enter apply branch before explicit baseline selection | `variantCount>1 -> selectionGate='satisfied' before ApplyApprovedBatch`          |
+| I-WF-3 | Single-option flow marks baseline as committed before comment stage            | `variantCount=1 -> baseline.mode='committed' before CaptureCommentEvent`         |
+| I-WF-4 | Draft batches require explicit approval prior to apply                         | `MutationBatch.status='draft' -> not ApplyApprovedBatch`                         |
+| I-WF-5 | Auto-apply is forbidden                                                        | `applyRequestedBy != 'system:auto'`                                              |
+| I-WF-6 | Every successful apply appends exactly one manifest entry                      | `appendCount(RevisionManifestEntry)=1 per successful apply`                      |
+| I-WF-7 | Normal MVP apply is not proof-gated                                            | `ApplyApprovedBatch -> GovernanceGatePolicy and not required(EvaluateProofGate)` |
+| I-WF-8 | Exploit generation requires confirmed baseline identity/DNA                    | `generationMode='exploit' -> exists(BaselineGenealogyFamily)`                    |
 
 ---
 
@@ -143,6 +150,8 @@ isValid = variantCount in {1,2,3}
 **Compensation Strategy:** defer promotion; preserve prior lineage
 **Idempotency:** deterministic by session + generation index + genome + proof obligations
 
+**Layering note:** MVP manual apply uses baseline, approval, actor, and staleness gates. Baseline family plus identity/DNA confirmation are MVP contract behavior; L1 hardens observability read models. Proof gates govern promotion/self-improvement by default and do not gate normal apply unless a future path is explicitly marked proof-governed.
+
 ### Steps
 
 ```mermaid
@@ -150,10 +159,10 @@ graph TD
     A[Encode prototype genome] --> B[Generate bounded population]
     B --> C[Record fitness signals]
     C --> D[Select or commit lineage]
-    D --> E[Save genealogy family]
+    D --> E[Save genealogy family and identity/DNA]
     E --> F[Propose mutation batch]
-    F --> G[Evaluate proof gate]
-    G -->|Pass| H[Approve/apply mutation]
+    F --> H[Approve/apply mutation through manual gate]
+    F --> G[Evaluate proof gate for promotion]
     G -->|Flag or block| I[Defer or reject promotion]
     H --> J[Record lineage manifest]
     J --> K{Improve generation rule?}
@@ -165,25 +174,27 @@ graph TD
 
 ### Genetic Mapping
 
-| Genetic Concept | Studio Concept                                           | Operational Anchor                                               |
-| --------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
-| Genome          | [PrototypeGenome](domain.md#prototypegenome)             | Prompt, constraints, comments, tasks, environment refs           |
-| Population      | [PrototypeVariant](domain.md#prototypevariant) set       | [GenerateVariants](operations.md#generatevariants)               |
-| Fitness         | [FitnessSignal](domain.md#fitnesssignal) set             | [RecordFitnessSignal](operations.md#recordfitnesssignal)         |
-| Selection       | [BaselineProvenance](domain.md#baselineprovenance)       | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline)   |
-| Family          | [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline) |
-| Mutation        | [MutationBatch](domain.md#mutationbatch)                 | [SynthesizeMutationBatch](operations.md#synthesizemutationbatch) |
-| Proof           | [ProofObligation](domain.md#proofobligation)             | [EvaluateProofGate](operations.md#evaluateproofgate)             |
-| Lineage         | [RevisionManifestEntry](domain.md#revisionmanifestentry) | [ApplyApprovedBatch](operations.md#applyapprovedbatch)           |
+| Genetic Concept  | Studio Concept                                                                                                                                     | Operational Anchor                                                                |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Genome           | [PrototypeGenome](domain.md#prototypegenome)                                                                                                       | Prompt, constraints, UI identities, visual DNA, comments, tasks, environment refs |
+| Population       | [PrototypeVariant](domain.md#prototypevariant) set                                                                                                 | [GenerateVariants](operations.md#generatevariants)                                |
+| Fitness Evidence | [FitnessSignal](domain.md#fitnesssignal) set                                                                                                       | [RecordFitnessSignal](operations.md#recordfitnesssignal)                          |
+| Selection        | [BaselineProvenance](domain.md#baselineprovenance)                                                                                                 | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline)                    |
+| Family           | [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily)                                                                                       | [SelectOrCommitBaseline](operations.md#selectorcommitbaseline)                    |
+| Identity DNA     | [UIElementIdentity](domain.md#uielementidentity), [UIVisualSignature](domain.md#uivisualsignature), [UIDecisionRecord](domain.md#uidecisionrecord) | [ConfirmUIDecisionEvidence](operations.md#confirmuidecisionevidence)              |
+| Mutation         | [MutationBatch](domain.md#mutationbatch)                                                                                                           | [SynthesizeMutationBatch](operations.md#synthesizemutationbatch)                  |
+| Proof            | [ProofObligation](domain.md#proofobligation)                                                                                                       | [EvaluateProofGate](operations.md#evaluateproofgate)                              |
+| Lineage          | [RevisionManifestEntry](domain.md#revisionmanifestentry)                                                                                           | [ApplyApprovedBatch](operations.md#applyapprovedbatch)                            |
 
 ### Invariants
 
-| ID      | Invariant                                                            | Formal                                                        |
-| ------- | -------------------------------------------------------------------- | ------------------------------------------------------------- |
-| GD-WF-1 | Population size is bounded by [VariantCount](domain.md#variantcount) | `count(population) in {1,2,3}`                                |
-| GD-WF-2 | Selection pressure must be captured before self-improvement          | `PromoteEvolutionRule -> count(FitnessSignal)>0`              |
-| GD-WF-3 | Mutation cannot enter lineage without genealogy, proof, and approval | `ApplyApprovedBatch -> exists(BaselineGenealogyFamily) and proofStatus='pass' and batch.approved` |
-| GD-WF-4 | MVP self-improvement is recorded as deferred, not applied            | `runtimeMvp -> RulePromotionDeferred`                         |
+| ID      | Invariant                                                                 | Formal                                                                     |
+| ------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| GD-WF-1 | Population size is bounded by [VariantCount](domain.md#variantcount)      | `count(population) in {1,2,3}`                                             |
+| GD-WF-2 | Selection pressure must be captured before self-improvement               | `PromoteEvolutionRule -> count(FitnessSignal)>0`                           |
+| GD-WF-3 | Normal mutation cannot enter lineage without genealogy and approval       | `exists(BaselineGenealogyFamily) and batch.approved`                       |
+| GD-WF-5 | Promotion cannot proceed without proof pass and owner/governance approval | `PromoteEvolutionRule -> proofStatus='pass' and promotedBy!='system:auto'` |
+| GD-WF-4 | MVP self-improvement is recorded as deferred, not applied                 | `runtimeMvp -> RulePromotionDeferred`                                      |
 
 ---
 
@@ -195,12 +206,14 @@ graph TD
 
 ### Decision Table
 
-| Condition                                      | Selected Behavior                         | Notes                                          |
-| ---------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
-| Human selects a baseline                       | Treat as primary positive fitness signal  | Preserves intentional selection pressure       |
-| Variant has high risk without offsetting value | Record negative risk fitness signal       | Does not auto-reject; informs proof layer      |
-| Test/acceptance check passes for a revision    | Record positive evidence fitness signal   | Can support future generation-rule improvement |
-| Test/acceptance check fails                    | Record blocker or negative fitness signal | Prevents unsafe promotion                      |
+| Condition                                       | Selected Behavior                                         | Notes                                          |
+| ----------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------- |
+| Human selects a baseline                        | Treat as primary positive fitness signal                  | Preserves intentional selection pressure       |
+| Human confirms UI identity or visual DNA        | Record decision evidence and optional positive fit signal | Preserves baseline visual genealogy            |
+| Exploit candidate violates confirmed visual DNA | Record negative fit or drift signal                       | Does not auto-reject in L1; informs review     |
+| Variant has high risk without offsetting value  | Record negative risk fitness signal                       | Does not auto-reject; informs proof layer      |
+| Test/acceptance check passes for a revision     | Record positive evidence fitness signal                   | Can support future generation-rule improvement |
+| Test/acceptance check fails                     | Record blocker or negative fitness signal                 | Prevents unsafe promotion                      |
 
 ### Configuration Parameters
 
@@ -215,15 +228,15 @@ graph TD
 ## GodelProofGatePolicy
 
 **Type:** Policy
-**Applies To:** [EvaluateProofGate](operations.md#evaluateproofgate), [PromoteEvolutionRule](operations.md#promoteevolutionrule), [ApplyApprovedBatch](operations.md#applyapprovedbatch)
-**Trigger Conditions:** Apply attempt, handoff export, or generation-rule promotion request
+**Applies To:** [EvaluateProofGate](operations.md#evaluateproofgate), [PromoteEvolutionRule](operations.md#promoteevolutionrule)
+**Trigger Conditions:** Generation-rule promotion request or explicitly proof-governed future path
 
 ### Decision Table
 
-| Condition                                      | Selected Behavior                       | Notes                                       |
-| ---------------------------------------------- | --------------------------------------- | ------------------------------------------- |
-| Any proof obligation is `block`                | Block apply or promotion                | Missing evidence is blocker by default      |
-| Any proof obligation is `flag` and none block  | Allow handoff with gap; block promotion | Usable artifact, unsafe self-improvement    |
-| All proof obligations pass                     | Allow approved mutation apply           | Promotion still requires human governance   |
-| Actor is `system:auto` for promotion or apply  | Reject                                  | Prevents autonomous durable mutation        |
-| Runtime phase is MVP and target is rule change | Defer promotion                         | Self-improvement contract is documented now |
+| Condition                                      | Selected Behavior                                  | Notes                                        |
+| ---------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| Any proof obligation is `block`                | Block promotion                                    | Missing evidence is blocker by default       |
+| Any proof obligation is `flag` and none block  | Allow handoff with gap; block promotion            | Usable artifact, unsafe self-improvement     |
+| All proof obligations pass                     | Allow promotion to continue to governance approval | Normal apply is unaffected                   |
+| Actor is `system:auto` for promotion           | Reject                                             | Prevents autonomous durable self-improvement |
+| Runtime phase is MVP and target is rule change | Defer promotion                                    | Self-improvement contract is documented now  |

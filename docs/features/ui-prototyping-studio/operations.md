@@ -6,8 +6,8 @@
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 - [Annotation and Deterministic Task Synthesis](SPEC.md#annotation-and-deterministic-task-synthesis)
 - [Manual Governance and Apply Control](SPEC.md#manual-governance-and-apply-control)
-- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
-- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
+- [Evolution Engine](SPEC.md#evolution-engine)
+- [Proof and Self-Improvement Gate](SPEC.md#proof-and-self-improvement-gate)
 - [Design Artifact Export and Handoff](SPEC.md#design-artifact-export-and-handoff)
 
 ## InitializeSession
@@ -18,10 +18,11 @@
 
 ### Input
 
-| Field                 | Type    | Required | Description           |
-| --------------------- | ------- | -------- | --------------------- |
-| requestedVariantCount | integer | no       | Desired variant count |
-| requestedBy           | string  | yes      | User identifier       |
+| Field                 | Type                                       | Required | Description                            |
+| --------------------- | ------------------------------------------ | -------- | -------------------------------------- |
+| requestedVariantCount | integer                                    | no       | Desired variant count                  |
+| generationMode        | [GenerationMode](domain.md#generationmode) | no       | Defaults to `explore` for new sessions |
+| requestedBy           | string                                     | yes      | User identifier                        |
 
 ### Rules
 
@@ -30,6 +31,7 @@
 | R1  | Missing `requestedVariantCount` defaults to `3` | `variantCount = requestedVariantCount ?? 3`       |
 | R2  | Variant count is bounded                        | `variantCount in {1,2,3}`                         |
 | R3  | Session starts with manual governance gates     | `selectionGate='pending' and applyGate='pending'` |
+| R4  | Missing generation mode defaults to Explore     | `generationMode = generationMode ?? 'explore'`    |
 
 ### Calculations
 
@@ -44,6 +46,7 @@
 ### Postconditions
 
 - One [StudioSession](domain.md#studiosession) is persisted with [VariantCount](domain.md#variantcount).
+- Session [GenerationMode](domain.md#generationmode) is set.
 - `selectionGate` and `applyGate` are initialized to [GateState](domain.md#gatestate).`pending`.
 
 ### Error States
@@ -102,20 +105,24 @@
 
 ### Input
 
-| Field       | Type   | Required | Description                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------- |
-| sessionId   | string | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
-| requestedBy | string | yes      | Actor requesting generation                               |
+| Field          | Type                                       | Required | Description                                                                 |
+| -------------- | ------------------------------------------ | -------- | --------------------------------------------------------------------------- |
+| sessionId      | string                                     | yes      | Target [StudioSession](domain.md#studiosession).sessionId                   |
+| generationMode | [GenerationMode](domain.md#generationmode) | yes      | `explore` for new directions; `exploit` for baseline-constrained candidates |
+| requestedBy    | string                                     | yes      | Actor requesting generation                                                 |
 
 ### Rules
 
-| ID  | Rule                                                      | Formal                                                                      |
-| --- | --------------------------------------------------------- | --------------------------------------------------------------------------- |
-| R1  | Session must have prompt before generation                | `len(trim(StudioSession.prompt)) > 0`                                       |
-| R2  | Emit exactly `variantCount` variants                      | `count(PrototypeVariant where sessionId)=StudioSession.variantCount.value`  |
-| R3  | Every variant must include metadata contract              | `forall variant: has(componentsUsed,rationale,tradeoffs,risk)`              |
-| R4  | For `variantCount = 1`, baseline is committed immediately | `variantCount=1 -> baseline.mode='committed' and selectionGate='satisfied'` |
-| R5  | For `variantCount > 1`, selection gate remains pending    | `variantCount>1 -> selectionGate='pending'`                                 |
+| ID  | Rule                                                      | Formal                                                                                      |
+| --- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| R1  | Session must have prompt before generation                | `len(trim(StudioSession.prompt)) > 0`                                                       |
+| R2  | Emit exactly `variantCount` variants                      | `count(PrototypeVariant where sessionId)=StudioSession.variantCount.value`                  |
+| R3  | Every variant must include metadata contract              | `forall variant: has(componentsUsed,rationale,tradeoffs,risk)`                              |
+| R4  | For `variantCount = 1`, baseline is committed immediately | `variantCount=1 -> baseline.mode='committed' and selectionGate='satisfied'`                 |
+| R5  | For `variantCount > 1`, selection gate remains pending    | `variantCount>1 -> selectionGate='pending'`                                                 |
+| R6  | Explore offers new solution directions                    | `generationMode='explore' -> candidates are not constrained by existing family`             |
+| R7  | Exploit conforms to selected baseline                     | `generationMode='exploit' -> requires baseline and uses confirmed identity/DNA constraints` |
+| R8  | Identity and visual DNA metadata starts as suggestion     | `suggested(UIElementIdentity, UIVisualSignature) and not durable until confirmed`           |
 
 ### Calculations
 
@@ -131,12 +138,14 @@
 
 - [PrototypeVariant](domain.md#prototypevariant) rows are persisted for current cycle.
 - Session selection gate state is updated according to `variantCount` semantics.
+- Generated variants attach proposed [UIElementIdentity](domain.md#uielementidentity) and [UIVisualSignature](domain.md#uivisualsignature) IDs for baseline or exploit review.
 
 ### Error States
 
 | Condition                   | Result                                          |
 | --------------------------- | ----------------------------------------------- |
 | Missing prompt              | Reject with `PROMPT_NOT_SET`                    |
+| Exploit without baseline    | Reject with `EXPLOIT_BASELINE_REQUIRED`         |
 | Variant generation mismatch | Reject with `VARIANT_GENERATION_COUNT_MISMATCH` |
 
 ---
@@ -157,20 +166,21 @@
 
 ### Rules
 
-| ID  | Rule                                              | Formal                                                                         |
-| --- | ------------------------------------------------- | ------------------------------------------------------------------------------ |
-| R1  | Multi-option mode requires explicit selection     | `variantCount>1 -> selectedLabel in variantLabels`                             |
-| R2  | Single-option mode commits baseline automatically | `variantCount=1 -> baseline.mode='committed'`                                  |
-| R3  | Baseline provenance mode must match branch        | `variantCount>1 -> mode='selected'; variantCount=1 -> mode='committed'`        |
-| R4  | Baseline resolution creates a genealogy family    | `BaselineReady -> exists BaselineGenealogyFamily(sessionId, selectedBaseline)` |
+| ID  | Rule                                                      | Formal                                                                  |
+| --- | --------------------------------------------------------- | ----------------------------------------------------------------------- |
+| R1  | Multi-option mode requires explicit selection             | `variantCount>1 -> selectedLabel in variantLabels`                      |
+| R2  | Single-option mode commits the only baseline              | `variantCount=1 -> baseline.mode='committed'`                           |
+| R3  | Baseline provenance mode must match branch                | `variantCount>1 -> mode='selected'; variantCount=1 -> mode='committed'` |
+| R4  | Baseline resolution creates explicit anchor               | `BaselineReady -> create BaselineRevisionAnchor(baselineRevisionId)`    |
+| R5  | Baseline resolution creates genealogy family idempotently | `BaselineReady createsOrUpdates BaselineGenealogyFamily(sessionId)`     |
 
 ### Calculations
 
-| ID  | Calculation                | Formula                                                                 |
-| --- | -------------------------- | ----------------------------------------------------------------------- |
-| C1  | Family population snapshot | `populationVariantLabels = variants.map(variantLabel)`                  |
-| C2  | Baseline revision anchor   | `baselineRevisionId = StudioSession.revisionHeadId ?? 'rev-0000'`       |
-| C3  | Family selected baseline   | `selectedBaseline = BaselineProvenance(mode, selectedLabel or primary)` |
+| ID  | Calculation                | Formula                                                                                            |
+| --- | -------------------------- | -------------------------------------------------------------------------------------------------- |
+| C1  | Family population snapshot | `populationVariantLabels = variants.map(variantLabel)`                                             |
+| C2  | Baseline revision anchor   | `baselineRevisionId = createStableAnchor(sessionId, selectedBaseline, selectedVariantArtifactRef)` |
+| C3  | Family selected baseline   | `selectedBaseline = BaselineProvenance(mode, selectedLabel or primary)`                            |
 
 ### State Transition
 
@@ -179,8 +189,10 @@
 ### Postconditions
 
 - [BaselineProvenance](domain.md#baselineprovenance) is persisted on session.
-- [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) is persisted for the generated population and selected survivor.
+- [BaselineRevisionAnchor](domain.md#baselinerevisionanchor) is created and assigned to the session.
+- [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) is created or updated idempotently for the generated population and selected survivor.
 - `selectionGate` moves to [GateState](domain.md#gatestate).`satisfied`.
+- For single-variant sessions that already reached baseline-ready during [GenerateVariants](#generatevariants), genealogy creation uses that committed baseline as the selected survivor.
 
 ### Error States
 
@@ -211,11 +223,12 @@
 
 ### Rules
 
-| ID  | Rule                                    | Formal                                          |
-| --- | --------------------------------------- | ----------------------------------------------- |
-| R1  | Session baseline gate must be satisfied | `StudioSession.selectionGate='satisfied'`       |
-| R2  | Canonical comment schema is mandatory   | `has(target,severity,intent,note)`              |
-| R3  | Severity must be valid enum value       | `severity in {'blocker','high','medium','low'}` |
+| ID  | Rule                                     | Formal                                                                                   |
+| --- | ---------------------------------------- | ---------------------------------------------------------------------------------------- |
+| R1  | Session baseline gate must be satisfied  | `StudioSession.selectionGate='satisfied'`                                                |
+| R2  | Canonical comment schema is mandatory    | `has(target,severity,intent,note)`                                                       |
+| R3  | Severity must be valid enum value        | `severity in {'blocker','high','medium','low'}`                                          |
+| R4  | Comment targets explicit baseline anchor | `revisionId = StudioSession.baselineRevisionAnchor.baselineRevisionId or revisionHeadId` |
 
 ### State Transition
 
@@ -382,15 +395,15 @@
 
 ### Input
 
-| Field      | Type                                                 | Required | Description                                               |
-| ---------- | ---------------------------------------------------- | -------- | --------------------------------------------------------- |
-| sessionId  | string                                               | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
-| cycleId    | string                                               | yes      | Target [EvolutionCycle](domain.md#evolutioncycle).cycleId |
-| source     | [FitnessSignalSource](domain.md#fitnesssignalsource) | yes      | Source of the selection pressure                          |
-| targetRef  | string                                               | yes      | Variant, comment, batch, revision, or rule reference      |
-| vector     | [FitnessVector](domain.md#fitnessvector)             | yes      | Normalized fitness direction                              |
-| rationale  | string                                               | yes      | Why this signal matters                                   |
-| capturedBy | string                                               | yes      | Capturing actor                                           |
+| Field      | Type                                                 | Required | Description                                                                                |
+| ---------- | ---------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| sessionId  | string                                               | yes      | Target [StudioSession](domain.md#studiosession).sessionId                                  |
+| cycleId    | string                                               | yes      | Target [EvolutionCycle](domain.md#evolutioncycle).cycleId                                  |
+| source     | [FitnessSignalSource](domain.md#fitnesssignalsource) | yes      | Source of the selection pressure                                                           |
+| targetRef  | [TypedReference](domain.md#typedreference)           | yes      | Variant, comment, batch, revision, identity, visual signature, decision, or rule reference |
+| vector     | [FitnessVector](domain.md#fitnessvector)             | yes      | Normalized fitness direction                                                               |
+| rationale  | string                                               | yes      | Why this signal matters                                                                    |
+| capturedBy | string                                               | yes      | Capturing actor                                                                            |
 
 ### Rules
 
@@ -420,11 +433,59 @@
 
 ---
 
+## ConfirmUIDecisionEvidence
+
+**Type:** Operation (mutation)
+**Actor:** User
+**Triggers:** Baseline selection review or exploit candidate review
+
+Confirms proposed UI element identity, rendered instance, visual DNA, and decision evidence so genealogy can relate later Explore and Exploit generations.
+
+### Input
+
+| Field             | Type                                             | Required | Description                                                                  |
+| ----------------- | ------------------------------------------------ | -------- | ---------------------------------------------------------------------------- |
+| sessionId         | string                                           | yes      | Target [StudioSession](domain.md#studiosession).sessionId                    |
+| genealogyFamilyId | string                                           | yes      | Target [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily).familyId |
+| identity          | [UIElementIdentity](domain.md#uielementidentity) | yes      | Conceptual UI element identity to confirm                                    |
+| instance          | [UIElementInstance](domain.md#uielementinstance) | yes      | Rendered occurrence of that identity                                         |
+| visualSignature   | [UIVisualSignature](domain.md#uivisualsignature) | yes      | Visual DNA evidence for the rendered occurrence                              |
+| decisionRecord    | [UIDecisionRecord](domain.md#uidecisionrecord)   | yes      | Human-confirmed rationale and decision type                                  |
+| confirmedBy       | string                                           | yes      | Human actor confirming the evidence                                          |
+
+### Rules
+
+| ID  | Rule                                      | Formal                                                           |
+| --- | ----------------------------------------- | ---------------------------------------------------------------- |
+| R1  | Baseline family must exist                | `exists BaselineGenealogyFamily(genealogyFamilyId)`              |
+| R2  | Identity must belong to the same family   | `identity.genealogyFamilyId = genealogyFamilyId`                 |
+| R3  | Instance must reference the identity      | `instance.identityId = identity.identityId`                      |
+| R4  | Visual DNA must use controlled vocabulary | `forall signature fields: value in controlled enum or tokenRefs` |
+| R5  | Decision rationale is required            | `len(trim(decisionRecord.rationale)) > 0`                        |
+| R6  | Human confirmation is required            | `confirmedBy != 'system:auto'`                                   |
+
+### Postconditions
+
+- [UIElementIdentity](domain.md#uielementidentity), [UIElementInstance](domain.md#uielementinstance), [UIVisualSignature](domain.md#uivisualsignature), and [UIDecisionRecord](domain.md#uidecisionrecord) are durable genealogy evidence.
+- [BaselineGenealogyFamily](domain.md#baselinegenealogyfamily) includes the confirmed identity, decision, and visual signature IDs.
+- Generated suggestions not included in this operation remain non-durable.
+
+### Error States
+
+| Condition                  | Result                                       |
+| -------------------------- | -------------------------------------------- |
+| Missing baseline family    | Reject with `GENEALOGY_FAMILY_REQUIRED`      |
+| Identity/family mismatch   | Reject with `IDENTITY_FAMILY_MISMATCH`       |
+| Invalid visual DNA enum    | Reject with `VISUAL_DNA_INVALID`             |
+| Missing human confirmation | Reject with `DECISION_CONFIRMATION_REQUIRED` |
+
+---
+
 ## EvaluateProofGate
 
 **Type:** Operation (calculation + mutation)
 **Actor:** System
-**Triggers:** Before apply, handoff export, or generation-rule promotion
+**Triggers:** Generation-rule promotion or explicitly proof-governed future paths
 
 ### Input
 
@@ -432,19 +493,19 @@
 | ----------- | ---------------------------------------------- | -------- | --------------------------------------------------------- |
 | sessionId   | string                                         | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
 | cycleId     | string                                         | yes      | Target [EvolutionCycle](domain.md#evolutioncycle).cycleId |
-| targetRef   | string                                         | yes      | Mutation batch, revision, or evolution rule reference     |
+| targetRef   | [TypedReference](domain.md#typedreference)     | yes      | Promotion rule or explicitly proof-governed target        |
 | obligations | [ProofObligation](domain.md#proofobligation)[] | yes      | Evidence obligations to evaluate                          |
 | evaluatedBy | string                                         | yes      | Evaluating actor                                          |
 
 ### Rules
 
-| ID  | Rule                                      | Formal                                                    |
-| --- | ----------------------------------------- | --------------------------------------------------------- |
-| R1  | Proof obligations must be non-empty       | `count(obligations) > 0`                                  |
-| R2  | Any blocker blocks target promotion/apply | `exists obligation.status='block' -> proofStatus='block'` |
-| R3  | Any flag without blockers returns flag    | `no(block) and exists(flag) -> proofStatus='flag'`        |
-| R4  | All pass returns pass                     | `forall obligations.status='pass' -> proofStatus='pass'`  |
-| R5  | Missing evidence is treated as blocker    | `missing(evidenceRef) -> obligation.status='block'`       |
+| ID  | Rule                                   | Formal                                                    |
+| --- | -------------------------------------- | --------------------------------------------------------- |
+| R1  | Proof obligations must be non-empty    | `count(obligations) > 0`                                  |
+| R2  | Any blocker blocks target promotion    | `exists obligation.status='block' -> proofStatus='block'` |
+| R3  | Any flag without blockers returns flag | `no(block) and exists(flag) -> proofStatus='flag'`        |
+| R4  | All pass returns pass                  | `forall obligations.status='pass' -> proofStatus='pass'`  |
+| R5  | Missing evidence is treated as blocker | `missing(evidenceRef) -> obligation.status='block'`       |
 
 ### Calculations
 
@@ -459,7 +520,8 @@
 ### Postconditions
 
 - [EvolutionCycle](domain.md#evolutioncycle).proofStatus is updated.
-- Apply or self-improvement promotion remains blocked unless proof status is `pass`.
+- Self-improvement promotion remains blocked unless proof status is `pass`.
+- Normal MVP apply remains governed by [GovernanceGatePolicy](workflows.md#governancegatepolicy), not by this proof gate.
 
 ### Error States
 
@@ -478,13 +540,13 @@
 
 ### Input
 
-| Field           | Type                                 | Required | Description                                               |
-| --------------- | ------------------------------------ | -------- | --------------------------------------------------------- |
-| sessionId       | string                               | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
-| cycleId         | string                               | yes      | Source [EvolutionCycle](domain.md#evolutioncycle).cycleId |
-| ruleRef         | string                               | yes      | Generation rule, heuristic, template, or rubric reference |
-| proofGateStatus | [ProofStatus](domain.md#proofstatus) | yes      | Result from [EvaluateProofGate](#evaluateproofgate)       |
-| promotedBy      | string                               | yes      | Human/governance actor                                    |
+| Field           | Type                                       | Required | Description                                               |
+| --------------- | ------------------------------------------ | -------- | --------------------------------------------------------- |
+| sessionId       | string                                     | yes      | Target [StudioSession](domain.md#studiosession).sessionId |
+| cycleId         | string                                     | yes      | Source [EvolutionCycle](domain.md#evolutioncycle).cycleId |
+| ruleRef         | [TypedReference](domain.md#typedreference) | yes      | Generation rule, heuristic, template, or rubric reference |
+| proofGateStatus | [ProofStatus](domain.md#proofstatus)       | yes      | Result from [EvaluateProofGate](#evaluateproofgate)       |
+| promotedBy      | string                                     | yes      | Human/governance actor                                    |
 
 ### Rules
 
@@ -501,7 +563,7 @@
 
 ### Postconditions
 
-- In MVP, no generation rule is promoted at runtime; a deferred improvement request is recorded.
+- In MVP/L1/L2, no generation rule is promoted at runtime; a [RulePromotionRequest](domain.md#rulepromotionrequest) is recorded as deferred or rejected.
 - In later phases, a rule may be promoted only when proof status is `pass` and governance approval is present.
 
 ### Error States

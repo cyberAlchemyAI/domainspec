@@ -11,26 +11,29 @@ owners:
 
 # UI Prototyping Studio Architecture
 
-This architecture bundle follows the Arcanum `invoke design` six-view contract for the UI Prototyping Studio Godel-Darwin machine.
+This architecture bundle follows the Arcanum `invoke design` six-view contract for the UI Prototyping Studio Evolution Engine.
+
+Use this file as the system-level architecture summary. Use [EVOLUTION-ARCHITECTURE.md](EVOLUTION-ARCHITECTURE.md) for the detailed internals of the evolution loop, baseline genealogy, proof gates, and self-improvement layering.
 
 ## Source Contracts
 
-| Source                             | Role                                                   |
-| ---------------------------------- | ------------------------------------------------------ |
-| [PRODUCT-VIEW.md](PRODUCT-VIEW.md) | Conceptual product and capability view                 |
-| [SPEC.md](SPEC.md)                 | DomainSpec capability registry and FR/AC contract      |
-| [domain.md](domain.md)             | Entities, value objects, enums, genetic/proof concepts |
-| [operations.md](operations.md)     | Mutation, fitness, proof, and handoff operations       |
-| [workflows.md](workflows.md)       | MVP workflow plus Godel-Darwin evolution workflow      |
-| [states.md](states.md)             | Session and evolution-cycle state machines             |
-| [UI-SPEC.md](UI-SPEC.md)           | Frontend route and panel contract                      |
-| [TEST-SPEC.md](TEST-SPEC.md)       | Verification obligations                               |
+| Source                                                 | Role                                                             |
+| ------------------------------------------------------ | ---------------------------------------------------------------- |
+| [PRODUCT-VIEW.md](PRODUCT-VIEW.md)                     | Conceptual product and capability view                           |
+| [SPEC.md](SPEC.md)                                     | DomainSpec capability registry and FR/AC contract                |
+| [domain.md](domain.md)                                 | Entities, value objects, enums, genetic/proof concepts           |
+| [operations.md](operations.md)                         | Mutation, fitness, proof, and handoff operations                 |
+| [workflows.md](workflows.md)                           | MVP workflow plus compatibility-named evolution workflow         |
+| [states.md](states.md)                                 | Session and evolution-cycle state machines                       |
+| [EVOLUTION-ARCHITECTURE.md](EVOLUTION-ARCHITECTURE.md) | Detailed evolution, genealogy, proof, and promotion architecture |
+| [UI-SPEC.md](UI-SPEC.md)                               | Frontend route and panel contract                                |
+| [TEST-SPEC.md](TEST-SPEC.md)                           | Verification obligations                                         |
 
 ## 1. Context View
 
 UI Prototyping Studio sits between product ideation and formal UI implementation.
 
-The feature receives interface intent, generates bounded prototype populations, captures selection pressure, applies approved mutations, and exports evidence into the DomainSpec UI delivery pipeline. It is not a general autonomous design agent; it is a governed evolution workbench where each durable change must be explainable through state, gate, task, revision, or proof evidence.
+The feature receives interface intent, generates bounded Explore/Exploit prototype populations, captures qualitative selection evidence, applies approved mutations, and exports evidence into the DomainSpec UI delivery pipeline. It is not a general autonomous design agent; it is a governed evolution workbench where each durable change must be explainable through state, gate, task, revision, or proof evidence.
 
 ### Actors
 
@@ -64,10 +67,10 @@ graph TD
     B --> G[Revision Manifest Writer]
     B --> H[Handoff Publisher]
 
-    C --> I[Genetic Evolution Engine]
+    C --> I[Evolution Engine]
     D --> I
     E --> I
-    I --> J[Godel Proof Layer]
+    I --> J[Proof Promotion Layer]
     F --> J
     J --> G
     G --> H
@@ -80,27 +83,28 @@ graph TD
 
 ### Primary Subsystems
 
-| Subsystem                    | Owns                                                                     |
-| ---------------------------- | ------------------------------------------------------------------------ |
-| Workbench UI                 | Route, panels, forms, state indicators, disabled/enabled gate feedback   |
-| Studio Orchestration Module  | Operation sequencing, session state, API boundary coordination           |
-| Genetic Evolution Engine     | Genome, population, fitness signals, selected lineage, mutation proposal |
-| Godel Proof Layer            | Proof obligations, pass/flag/block evaluation, self-improvement deferral |
-| Revision Manifest Writer     | Append-only lineage evidence and revision head update                    |
-| DomainSpec Handoff Publisher | Story/spec/UI/test/implementation references                             |
+| Subsystem                    | Owns                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Workbench UI                 | Route, panels, forms, state indicators, disabled/enabled gate feedback                                    |
+| Studio Orchestration Module  | Operation sequencing, session state, API boundary coordination                                            |
+| Evolution Engine             | Genome, population, fitness evidence, selected genealogy family, identity/DNA evidence, mutation proposal |
+| Proof Promotion Layer        | Proof obligations, pass/flag/block evaluation, self-improvement deferral                                  |
+| Revision Manifest Writer     | Append-only lineage evidence and revision head update                                                     |
+| DomainSpec Handoff Publisher | Story/spec/UI/test/implementation references                                                              |
 
 ## 3. Low-Level Components View
 
-| Component                     | DomainSpec Concept                                  | Implementation Responsibility                                      |
-| ----------------------------- | --------------------------------------------------- | ------------------------------------------------------------------ |
-| `StudioWorkbenchLayout`       | `ui-prototyping-studio.StudioWorkbenchPage`         | Composes visible product surface                                   |
-| `SessionControlsPanel`        | `ui-prototyping-studio.SessionControlsPanel`        | Captures prompt and bounded variant count                          |
-| `VariantCanvas`               | `ui-prototyping-studio.VariantCanvas`               | Displays population candidates and baseline controls               |
-| `AnnotationPanel`             | `ui-prototyping-studio.AnnotationPanel`             | Captures element-level comment events                              |
-| `MutationApprovalPanel`       | `ui-prototyping-studio.MutationApprovalPanel`       | Reviews draft mutations and enforces manual approval               |
-| `RevisionTimeline`            | `ui-prototyping-studio.RevisionTimeline`            | Displays lineage evidence                                          |
-| `HandoffSummaryPanel`         | `ui-prototyping-studio.HandoffSummaryPanel`         | Publishes downstream readiness                                     |
-| `GodelDarwinEvolutionAdapter` | `ui-prototyping-studio.GodelDarwinEvolutionAdapter` | Encodes genome, records fitness, evaluates proof, defers promotion |
+| Component                     | DomainSpec Concept                                  | Implementation Responsibility                                                               |
+| ----------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `StudioWorkbenchLayout`       | `ui-prototyping-studio.StudioWorkbenchPage`         | Composes visible product surface                                                            |
+| `SessionControlsPanel`        | `ui-prototyping-studio.SessionControlsPanel`        | Captures prompt and bounded variant count                                                   |
+| `VariantCanvas`               | `ui-prototyping-studio.VariantCanvas`               | Displays Explore/Exploit candidates and baseline controls                                   |
+| `IdentityEvidencePanel`       | `ui-prototyping-studio.IdentityEvidencePanel`       | Confirms UI identity and visual DNA evidence                                                |
+| `AnnotationPanel`             | `ui-prototyping-studio.AnnotationPanel`             | Captures element-level comment events                                                       |
+| `MutationApprovalPanel`       | `ui-prototyping-studio.MutationApprovalPanel`       | Reviews draft mutations and enforces manual approval                                        |
+| `RevisionTimeline`            | `ui-prototyping-studio.RevisionTimeline`            | Displays lineage evidence                                                                   |
+| `HandoffSummaryPanel`         | `ui-prototyping-studio.HandoffSummaryPanel`         | Publishes downstream readiness                                                              |
+| `GodelDarwinEvolutionAdapter` | `ui-prototyping-studio.GodelDarwinEvolutionAdapter` | Encodes genome, records baseline family, records fitness, evaluates proof, defers promotion |
 
 ## 4. Workflow Process View
 
@@ -111,16 +115,28 @@ flowchart LR
     C --> D[Fitness Signals]
     D --> E[Lineage Selection]
     E --> F[Mutation Batch]
-    F --> G[Proof Gate]
-    G -->|pass + approval| H[Apply Mutation]
-    G -->|flag/block| I[Defer or Reject]
+    F --> H[Manual Apply Gate]
+    F --> G[Proof Gate for Rule Promotion]
+    G -->|flag/block| I[Defer or Reject Promotion]
     H --> J[Revision Manifest]
     J --> K[Handoff]
     J --> L[Future Rule Improvement Request]
     L --> G
 ```
 
-The MVP uses the existing studio iteration loop to prove the Darwin side: bounded population, baseline selection, mutation, and lineage. The Godel side is formalized as a proof layer that blocks self-improvement until future implementation layers supply proof pass and governance approval.
+The MVP uses the existing studio iteration loop to prove accountable Explore/Exploit evolution: bounded population, baseline selection, identity/DNA confirmation, mutation, and lineage. The proof layer blocks self-improvement until future implementation layers supply proof pass and governance approval; it does not block normal MVP apply.
+
+## Evolution Engine
+
+The full engine internals are specified in [EVOLUTION-ARCHITECTURE.md](EVOLUTION-ARCHITECTURE.md#evolution-engine). This summary architecture owns the subsystem boundaries; the detailed evolution architecture owns layer-specific runtime obligations. Existing formal IDs may retain `GodelDarwin` or `GodelProof` compatibility names.
+
+| Concern               | Summary Boundary                                                                       | Detailed Contract                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Population and genome | Variants and prompts become bounded candidate populations                              | [EVOLUTION-ARCHITECTURE.md#data-ownership](EVOLUTION-ARCHITECTURE.md#data-ownership)                         |
+| Baseline genealogy    | MVP records the selected or committed family and explicit baseline anchor idempotently | [EVOLUTION-ARCHITECTURE.md#baseline-family-recording](EVOLUTION-ARCHITECTURE.md#baseline-family-recording)   |
+| Fitness signals       | L1 records qualitative/test pressure as evidence, not ranking                          | [EVOLUTION-ARCHITECTURE.md#read-models](EVOLUTION-ARCHITECTURE.md#read-models)                               |
+| Proof gates           | L2 evaluates pass/flag/block before promotion by default                               | [EVOLUTION-ARCHITECTURE.md#gate-rules](EVOLUTION-ARCHITECTURE.md#gate-rules)                                 |
+| Rule promotion        | L3 only, with proof pass, owner approval, and rollback evidence                        | [EVOLUTION-ARCHITECTURE.md#interface-responsibilities](EVOLUTION-ARCHITECTURE.md#interface-responsibilities) |
 
 ## 5. Decision Flow View
 
@@ -155,8 +171,9 @@ The MVP uses the existing studio iteration loop to prove the Darwin side: bounde
 
 ## Design Gaps
 
-| Gap                              | Status   | Resolution Path                                              |
-| -------------------------------- | -------- | ------------------------------------------------------------ |
-| Fitness scoring model            | open     | Resolve O-004 in [DECISIONS.md](DECISIONS.md#open-decisions) |
-| Promotable generation-rule types | open     | Resolve O-005 before post-MVP self-improvement               |
-| Runtime proof storage schema     | deferred | Define in L1/L2 implementation layering                      |
+| Gap                              | Status   | Resolution Path                                                                                        |
+| -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------ |
+| Fitness scoring model            | open     | Resolve O-004 in [DECISIONS.md](DECISIONS.md#open-decisions)                                           |
+| Promotable generation-rule types | open     | Resolve O-005 before post-MVP self-improvement                                                         |
+| Evolution read-model storage     | deferred | Define in [EVOLUTION-ARCHITECTURE.md](EVOLUTION-ARCHITECTURE.md#open-architecture-questions) during L1 |
+| Runtime proof storage schema     | deferred | Define in [EVOLUTION-ARCHITECTURE.md](EVOLUTION-ARCHITECTURE.md#open-architecture-questions) during L2 |

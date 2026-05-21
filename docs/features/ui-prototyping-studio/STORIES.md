@@ -7,7 +7,7 @@ updatedAt: 2026-05-07
 
 # UI Prototyping Studio Stories
 
-> Navigate by capability: [Variant Generation and Baseline Gate](#variant-generation-and-baseline-gate) · [Annotation and Deterministic Task Synthesis](#annotation-and-deterministic-task-synthesis) · [Manual Governance and Apply Control](#manual-governance-and-apply-control) · [Prototype Revision Loop](#prototype-revision-loop) · [Genetic Evolution and Godel Proof](#genetic-evolution-and-godel-proof)
+> Navigate by capability: [Variant Generation and Baseline Gate](#variant-generation-and-baseline-gate) · [Annotation and Deterministic Task Synthesis](#annotation-and-deterministic-task-synthesis) · [Manual Governance and Apply Control](#manual-governance-and-apply-control) · [Prototype Revision Loop](#prototype-revision-loop) · [Evolution Engine and Proof Promotion](#evolution-engine-and-proof-promotion)
 
 ## Variant Generation and Baseline Gate
 
@@ -72,7 +72,7 @@ As a **designer**, I want **explicit baseline selection when multiple candidates
 
 ### US-007 Single-Variant Committed Path
 
-As a **designer**, I want **single-variant mode to commit the baseline automatically**, so that **quick iterations skip unnecessary multi-option selection gates**.
+As a **designer**, I want **single-variant mode to commit the only option as the baseline**, so that **quick iterations skip unnecessary multi-option selection gates**.
 
 **Given** a session with `variantCount = 1`
 **When** variants are generated
@@ -223,7 +223,7 @@ As an **engineer**, I want **every applied batch to append a revision manifest r
 
 - [Prototype Revision Loop](SPEC.md#prototype-revision-loop)
 
-## Genetic Evolution and Godel Proof
+## Evolution Engine and Proof Promotion
 
 ### US-008 Bounded Evolution Population
 
@@ -254,7 +254,7 @@ As a **product strategist**, I want **generated variants to be modeled as a boun
 
 **Capability links**
 
-- [Genetic Evolution Engine](SPEC.md#genetic-evolution-engine)
+- [Evolution Engine](SPEC.md#evolution-engine)
 
 ### US-009 Proof-Gated Self-Improvement
 
@@ -284,15 +284,15 @@ As a **governance owner**, I want **generation-rule improvements to require expl
 
 **Capability links**
 
-- [Godel Proof and Self-Improvement Gate](SPEC.md#godel-proof-and-self-improvement-gate)
+- [Proof and Self-Improvement Gate](SPEC.md#proof-and-self-improvement-gate)
 
 ## Story Coverage Matrix
 
-| Capability                                  | Story IDs              | Covered Concepts                                                                                                                                                   | Notes                                                         |
-| ------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| Variant Generation and Baseline Gate        | US-001, US-002, US-007 | ui-prototyping-studio.VariantCount, ui-prototyping-studio.GenerateVariants, ui-prototyping-studio.SelectOrCommitBaseline, ui-prototyping-studio.BaselineProvenance | Covers bounded multi-option and single-option committed paths |
-| Annotation and Deterministic Task Synthesis | US-003, US-004         | ui-prototyping-studio.CommentEvent, ui-prototyping-studio.CaptureCommentEvent, ui-prototyping-studio.SynthesizeMutationBatch, ui-prototyping-studio.MutationBatch  | Covers canonical schema and deterministic synthesis           |
-| Manual Governance and Apply Control         | US-005                 | ui-prototyping-studio.ApproveMutationBatch, ui-prototyping-studio.ApplyApprovedBatch, ui-prototyping-studio.GovernanceGatePolicy                                   | Covers manual gates and auto-apply prohibition                |
-| Prototype Revision Loop                     | US-006                 | ui-prototyping-studio.RevisionManifestEntry, ui-prototyping-studio.ListRevisionManifest, ui-prototyping-studio.StudioSessionState                                  | Covers append-only revision evidence and head updates         |
-| Genetic Evolution Engine                    | US-008                 | ui-prototyping-studio.EvolutionCycle, ui-prototyping-studio.PrototypeGenome, ui-prototyping-studio.FitnessSignal                                                   | Covers population, genome, fitness, and lineage semantics     |
-| Godel Proof and Self-Improvement Gate       | US-009                 | ui-prototyping-studio.ProofObligation, ui-prototyping-studio.EvaluateProofGate, ui-prototyping-studio.PromoteEvolutionRule                                         | Covers proof-gated self-improvement and MVP deferral          |
+| Capability                                  | Story IDs              | Covered Concepts                                                                                                                                                   | Notes                                                              |
+| ------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| Variant Generation and Baseline Gate        | US-001, US-002, US-007 | ui-prototyping-studio.VariantCount, ui-prototyping-studio.GenerateVariants, ui-prototyping-studio.SelectOrCommitBaseline, ui-prototyping-studio.BaselineProvenance | Covers bounded multi-option and single-option committed paths      |
+| Annotation and Deterministic Task Synthesis | US-003, US-004         | ui-prototyping-studio.CommentEvent, ui-prototyping-studio.CaptureCommentEvent, ui-prototyping-studio.SynthesizeMutationBatch, ui-prototyping-studio.MutationBatch  | Covers canonical schema and deterministic synthesis                |
+| Manual Governance and Apply Control         | US-005                 | ui-prototyping-studio.ApproveMutationBatch, ui-prototyping-studio.ApplyApprovedBatch, ui-prototyping-studio.GovernanceGatePolicy                                   | Covers manual gates and auto-apply prohibition                     |
+| Prototype Revision Loop                     | US-006                 | ui-prototyping-studio.RevisionManifestEntry, ui-prototyping-studio.ListRevisionManifest, ui-prototyping-studio.StudioSessionState                                  | Covers append-only revision evidence and head updates              |
+| Evolution Engine                            | US-008                 | ui-prototyping-studio.EvolutionCycle, ui-prototyping-studio.PrototypeGenome, ui-prototyping-studio.FitnessSignal                                                   | Covers population, genome, fitness evidence, and lineage semantics |
+| Proof and Self-Improvement Gate             | US-009                 | ui-prototyping-studio.ProofObligation, ui-prototyping-studio.EvaluateProofGate, ui-prototyping-studio.PromoteEvolutionRule                                         | Covers proof-gated self-improvement and MVP deferral               |
