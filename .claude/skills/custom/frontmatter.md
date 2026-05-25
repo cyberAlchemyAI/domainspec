@@ -20,6 +20,7 @@ veracidade: high | medium | low   # required for axiom/premise; optional for dis
 convicção: high | medium | low    # required for axiom/premise; optional for discovery/audit; omit otherwise
 version: 0.x.x
 last_updated: YYYY-MM-DD
+created_by: <username or email>   # optional — provenance placeholder until event sourcing is in place
 ---
 ```
 
@@ -124,6 +125,9 @@ Semver `0.x.x`. Bump on substantive change to the document's content.
 
 ### `last_updated`
 `YYYY-MM-DD` of the last meaningful change.
+
+### `created_by`
+Username or email of the original author. **Optional** — include when known, omit when authorship is unclear. This is a provenance placeholder; it will be superseded by event-sourced authorship once the platform tracks document creation events. A single string value — do not use a list.
 
 ## Lens-Research-Discovery convention fields
 

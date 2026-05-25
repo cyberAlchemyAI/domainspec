@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: reference
 status: consolidated
-version: 2.1.1
-last_updated: 2026-05-19
+version: 2.2.0
+last_updated: 2026-05-25
 ---
 
 # Vault Conventions
@@ -62,6 +62,7 @@ veracidade: high | medium | low        # Optional for non-belief docs
 convicção: high | medium | low         # Optional for non-belief docs
 version: 0.x.x
 last_updated: YYYY-MM-DD
+created_by: <username or email>   # Optional — provenance placeholder until event sourcing is in place
 ---
 ```
 
@@ -635,6 +636,7 @@ Every vault document carries up to 7 classification labels. Each answers a diffe
 | **`veracidade`** | *How much evidence backs it?* | External evidence: how tested against reality | `convicção` (you can have evidence for something you ignore) |
 | **`convicção`** | *How hard are we betting on it?* | Internal commitment: how much it drives decisions | `veracidade` (you can bet on something unproven) |
 | **`tags`** | *What specific topics does it touch?* | Domain keywords: `#fidc`, `#event-system`, `#ccb` | All others — tags are purely topical, no epistemic weight |
+| **`created_by`** | *Who created this document?* | Provenance: username or email of the original author. Optional — omit when unknown. Placeholder until event-sourced authorship is implemented. | All others — authorship is independent of role, scope, format, or maturity |
 
 > **Why not fewer labels?** If we merged `node_type` and `status` into one dimension, we couldn't distinguish "this is an axiom in draft" from "this is a premise that's consolidated." If we merged `layer` and `nature`, we couldn't distinguish "a market document written as a reference table" from "a market document written as a how-to." Each label captures information that NO other label can express.
 
