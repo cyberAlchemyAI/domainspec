@@ -14,17 +14,15 @@ created_by: victorboscaro@gmail.com
 
 ## Introduction
 
-> **Epistemic note:** This section distinguishes between what is observed, what is our central hypothesis, and what is a strategic bet. Claims are labeled. We do not know these claims are true — we are building on them and expect to falsify or confirm them through usage.
+Software is not just logic; it is a formalized representation of reality. Building it means codifying things that exist in the real world: rules, contracts, state changes, and flows. When these elements are unknown or poorly designed, systems silently drift. What follows is a product proposal that aims to solve for that.
 
-**Observed:** Code generation benchmarks have improved substantially (SWE-bench scores rose from ~2% in 2023 to over 40% on constrained tasks by mid-2025; sources: [SWE-bench leaderboard](https://www.swebench.com), [GitHub Copilot productivity study 2023](https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-real-world/)). Capable agents can now generate, test, and refactor bounded implementations from a clear description.
+Bad specification is one of the most consistent cost centers in software development. It generates rework, misaligned teams, and systems built for the wrong problem. This cost has always existed. What changed is that it is now the dominant one: agents can generate well-tested, documented code from a clear description. Writing code got cheaper. Knowing precisely what to write did not.
 
-**Hypothesis (veracidade: low, convicção: high):** As code generation capability increases, the marginal bottleneck for software teams shifts from writing correct code to having a clear, shared, and correct understanding of what to build. We have not measured this transition point. We are betting that it is happening for teams actively using AI-assisted development. This is the central hypothesis DomainSpec is built on — we need to validate it.
+Two things need to be true for a system to serve its domain well over time. The team needs a shared, maintained model of what it is building — one that survives people leaving, requirements changing, and the codebase growing. And the team needs a way to discover what is actually true about the domain, because most of what a team knows at the start is hypothesis. The truth emerges through operation, evidence, and iteration. DomainSpec is built for both.
 
-**Hypothesis (veracidade: low, convicção: high):** When a team's understanding of a domain is fragmentary — held by different people, expressed in incompatible terms, unevenly distributed across stakeholders — a more capable code generator does not resolve that fragmentation. It implements it faithfully. The result is a coherent, well-typed, well-tested system encoding the wrong understanding. We have not measured this failure mode at scale. It is a plausible causal argument, not a confirmed empirical pattern. Internal vault context: [vault/discovery/knowledge-calibration-geometry/discovery.md](vault/discovery/knowledge-calibration-geometry/discovery.md).
+Knowledge about a domain lives in three places. In people — the practitioners who understand how things actually work, often without being able to fully articulate it. In documentation — the specs, rules, and decisions the organization has written down. And in code — what the system actually executes, regardless of what anyone intended. These three rarely agree perfectly. DomainSpec measures where they diverge and helps close the gap.
 
-**Characterization (not independently verified):** The prevailing response in the industry — better prompts, richer context windows, smarter retrieval, automated code review — addresses the translation layer between human intent and generated code. Tools like Cursor, GitHub Copilot, Devin, and Claude Code all invest here. This is a characterization based on public product descriptions, not a systematic survey of industry investment.
-
-**Our bet:** Improving translation does not repair what is being translated. If shared understanding is fragmented, a more capable translator produces a more polished representation of that fragmentation. DomainSpec starts from the premise that the load-bearing intervention is not in the translation layer but in the knowledge layer — establishing and maintaining shared understanding before translation happens. This has not been validated in a controlled study. We are building to find out.
+The hardest part is building good documentation — not because writing is hard, but because writing after the fact is unreliable. When teams document after building, they describe what they built, not what the domain actually requires. DomainSpec starts earlier: it structures the process of capturing what people know through interviews and domain investigation, turning that into formal decisions before a line of code is written. Every spec has an origin. Every rule traces back to something observed or decided. This is what makes the formalization trustworthy enough to build from.
 
 ---
 
@@ -54,18 +52,6 @@ Core sources:
 - [internal_tools/](internal_tools/) - knowledge platform: retrieval, calibration, convergence, telemetry.
 - [plan/DOMAINSPEC-UNIFIED-PRODUCT-VISION.md](plan/DOMAINSPEC-UNIFIED-PRODUCT-VISION.md) - product vision across knowledge, specs, code, observability, governance, harness.
 - [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md) - operational definition of knowledge divergence and correction loops.
-
-## Knowledge as the Load-Bearing Concept
-
-> **Epistemic note:** This section describes our architectural thesis, not empirical findings. The causal chains here are our design bets. Internal vault nodes are cited where they exist; external evidence is cited where we have it.
-
-**Design thesis:** Specs are derivative artifacts — a spec is only as coherent as the knowledge it formalizes. This is the load-bearing design decision behind DomainSpec's architecture. It determines where the system intervenes (at the knowledge layer, not the spec or code layer). Whether this intervention point is correct is a falsifiable claim. Evidence for or against it should be recorded in [vault/discovery/knowledge-calibration-geometry/discovery.md](vault/discovery/knowledge-calibration-geometry/discovery.md) as it accumulates.
-
-**Hypothesis (veracidade: low, convicção: high):** When knowledge is unified across stakeholders, downstream artifacts (specs, tests, code, observability) can be derived with high determinism. We have not measured this. The closest evidence we have is internal: the DomainSpec pipeline produces consistent outputs when the vault is well-structured. This is a property we observe informally, not one we have measured rigorously.
-
-**Our operational definition of drift:** "Spec diverged from code" is a symptom. The root is "our mental models diverged from what the system actually does." This is a definitional choice, not an empirical claim. It shapes what DomainSpec measures and where it intervenes. Definition source: [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md).
-
-**Illustration (not a measured frequency):** When unexpected production behavior is reported, one plausible root cause is a knowledge gap rather than a coding error — for example: "we assumed users behave like X, but they behave like Y." We do not have data on how often this is the primary cause versus a spec ambiguity or an implementation bug. We expect this to vary significantly by domain and team maturity. We need case studies to substantiate this claim before using it as a product marketing argument.
 
 ## Cross-Component Invariants
 
