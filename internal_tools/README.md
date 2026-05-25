@@ -31,6 +31,8 @@ If subsystems reach into each other's SQLite stores or fork the frontmatter mode
 - **`vault_telemetry/`** — Read-only metrics aggregator. The residue counter (MVP) measures whether the four predicted residues from `graph-as-residue-attractor` empirically generate new constitutions. CLI: `vault-telemetry scan | report | residues`.
 - **`convergence_runner/`** — Multi-agent dispatch with structured logging. Re-runs lens experiments with hard-fetch enforcement. CLI: `convergence-runner dispatch | replay`.
 - **`graph_retrieval/`** — Two-layer retrieval prototype. Per-intent compose-functions over typed-edge subgraph.
+- **`categorical_tooling_guard/`** — Gate 1 CLI/CI wrapper over `scripts/audit_richness.py`, normalizing L1 audit output into `pass | flag | block`.
+- **`tower_explorer/`** — Gate 0 structural checker for vault-style knowledge graphs, starting with origin-rung certification on cross-layer edges.
 - **`agents-telemetry/`** — Agent-activity telemetry pipeline (canon, features, scripts, docs, data).
 - **`visualizations/`** — Vault visualization assets.
 - **`tests/`** — Test suite covering the kernel and subsystems.

@@ -22,9 +22,11 @@ graph-retrieval = ["networkx>=3.0", "sentence-transformers>=2.5", "numpy>=1.24"]
 vault-ctl = "vault_ctl.cli:app"
 vault-telemetry = "vault_telemetry.cli:app"
 convergence-runner = "convergence_runner.cli:app"
+categorical-tooling-guard = "categorical_tooling_guard.cli:main"
+tower-explorer = "tower_explorer.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["vault_common*", "vault_ctl*", "vault_telemetry*", "vault_governance*", "convergence_runner*", "graph_retrieval*"]
+include = ["vault_common*", "vault_ctl*", "vault_telemetry*", "vault_governance*", "convergence_runner*", "graph_retrieval*", "categorical_tooling_guard*", "tower_explorer*"]
 
 [tool.ruff]
 line-length = 100
