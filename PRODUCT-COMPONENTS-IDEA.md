@@ -14,15 +14,17 @@ created_by: victorboscaro@gmail.com
 
 ## Introduction
 
-The productivity promise of the current decade is this: if you can describe what you want clearly enough, an agent can implement it. The promise is delivering. Code generation is fast, capable, and improving. The bottleneck is no longer writing code.
+> **Epistemic note:** This section distinguishes between what is observed, what is our central hypothesis, and what is a strategic bet. Claims are labeled. We do not know these claims are true — we are building on them and expect to falsify or confirm them through usage.
 
-The bottleneck is knowing what to build.
+**Observed:** Code generation benchmarks have improved substantially (SWE-bench scores rose from ~2% in 2023 to over 40% on constrained tasks by mid-2025; sources: [SWE-bench leaderboard](https://www.swebench.com), [GitHub Copilot productivity study 2023](https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-real-world/)). Capable agents can now generate, test, and refactor bounded implementations from a clear description.
 
-When a team's understanding of a domain is fragmentary — held by different people, expressed in incompatible terms, unevenly distributed across stakeholders — the agent does not resolve that fragmentation. It implements it. The result is not a wrong line of code. It is a coherent, well-typed, well-tested system that faithfully encodes the wrong understanding. The defect is not in the implementation; it is in the knowledge that produced the implementation. This is the failure mode that scales fastest in the agentic era: not bugs, but faithful translations of incoherent intent.
+**Hypothesis (veracidade: low, convicção: high):** As code generation capability increases, the marginal bottleneck for software teams shifts from writing correct code to having a clear, shared, and correct understanding of what to build. We have not measured this transition point. We are betting that it is happening for teams actively using AI-assisted development. This is the central hypothesis DomainSpec is built on — we need to validate it.
 
-The industry response has been to improve the translation layer — better prompts, richer context windows, smarter code review. But improving translation does not repair what is being translated. If shared understanding of a domain is fragmented, a more capable translator produces a more polished representation of that fragmentation.
+**Hypothesis (veracidade: low, convicção: high):** When a team's understanding of a domain is fragmentary — held by different people, expressed in incompatible terms, unevenly distributed across stakeholders — a more capable code generator does not resolve that fragmentation. It implements it faithfully. The result is a coherent, well-typed, well-tested system encoding the wrong understanding. We have not measured this failure mode at scale. It is a plausible causal argument, not a confirmed empirical pattern. Internal vault context: [vault/discovery/knowledge-calibration-geometry/discovery.md](vault/discovery/knowledge-calibration-geometry/discovery.md).
 
-DomainSpec starts from a different premise.
+**Characterization (not independently verified):** The prevailing response in the industry — better prompts, richer context windows, smarter retrieval, automated code review — addresses the translation layer between human intent and generated code. Tools like Cursor, GitHub Copilot, Devin, and Claude Code all invest here. This is a characterization based on public product descriptions, not a systematic survey of industry investment.
+
+**Our bet:** Improving translation does not repair what is being translated. If shared understanding is fragmented, a more capable translator produces a more polished representation of that fragmentation. DomainSpec starts from the premise that the load-bearing intervention is not in the translation layer but in the knowledge layer — establishing and maintaining shared understanding before translation happens. This has not been validated in a controlled study. We are building to find out.
 
 ---
 
@@ -55,11 +57,15 @@ Core sources:
 
 ## Knowledge as the Load-Bearing Concept
 
-Specs are not the foundation—they are derivative artifacts. A spec is only as coherent as the knowledge it formalizes; if the shared understanding of a domain is fragmented or contradictory, the spec will encode those fractures. Code, in turn, implements what specs declare. When specs reflect incoherent knowledge, code scales that incoherence deterministically. Worse, agents trained on incoherent specs will generate defects at scale.
+> **Epistemic note:** This section describes our architectural thesis, not empirical findings. The causal chains here are our design bets. Internal vault nodes are cited where they exist; external evidence is cited where we have it.
 
-The true load-bearing layer is **shared knowledge**—the aligned mental models that humans, systems, and agents hold about business concepts, rules, constraints, trade-offs, and assumptions. When this knowledge is unified across stakeholders, everything else becomes mechanical: specs derive deterministically from knowledge; tests derive from specs; code derives from tests; observability specs follow; governance gates validate knowledge richness rather than spec completeness; and feedback loops correct knowledge instead of just patching bugs.
+**Design thesis:** Specs are derivative artifacts — a spec is only as coherent as the knowledge it formalizes. This is the load-bearing design decision behind DomainSpec's architecture. It determines where the system intervenes (at the knowledge layer, not the spec or code layer). Whether this intervention point is correct is a falsifiable claim. Evidence for or against it should be recorded in [vault/discovery/knowledge-calibration-geometry/discovery.md](vault/discovery/knowledge-calibration-geometry/discovery.md) as it accumulates.
 
-Drift, properly understood, is not "spec diverged from code." Drift is "our mental models diverged from what the system actually does." When users report unexpected behavior in production, the root is rarely a spec bug—it's usually a knowledge gap: "we assumed users behave like X, but they behave like Y" or "we assumed the architecture was A, but the real topology is B" or "we assumed the integration was synchronous, but it's asynchronous with retry loops." These are knowledge divergences that produce code defects. The product suite's foundation must therefore be **knowledge infrastructure**—the vault (where knowledge lives), retrieval (how we access it), calibration (how we align it), and gates (how we validate readiness before committing to specs and code).
+**Hypothesis (veracidade: low, convicção: high):** When knowledge is unified across stakeholders, downstream artifacts (specs, tests, code, observability) can be derived with high determinism. We have not measured this. The closest evidence we have is internal: the DomainSpec pipeline produces consistent outputs when the vault is well-structured. This is a property we observe informally, not one we have measured rigorously.
+
+**Our operational definition of drift:** "Spec diverged from code" is a symptom. The root is "our mental models diverged from what the system actually does." This is a definitional choice, not an empirical claim. It shapes what DomainSpec measures and where it intervenes. Definition source: [DRIFT-CONVERGENCE.md](DRIFT-CONVERGENCE.md).
+
+**Illustration (not a measured frequency):** When unexpected production behavior is reported, one plausible root cause is a knowledge gap rather than a coding error — for example: "we assumed users behave like X, but they behave like Y." We do not have data on how often this is the primary cause versus a spec ambiguity or an implementation bug. We expect this to vary significantly by domain and team maturity. We need case studies to substantiate this claim before using it as a product marketing argument.
 
 ## Cross-Component Invariants
 
