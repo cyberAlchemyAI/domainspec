@@ -676,6 +676,8 @@ This suggests a future distinction between:
 | `../../../TUNING-LOOP.md` | `cites` | Existing calibration language on the system side. This discovery suggests a broader cross-category calibration surface rather than a system-only tuning loop. |
 | `../../../docs/README.md` | `cites` | Documentation as canonical meaning surface. This discovery keeps that role but treats it as one category among several, not as the whole domain of knowledge. |
 | `../domainspec-axioms/discovery.md` | `cites` | Connects especially to the existing navigation/calibration posture in the vault-side ontology work; this discovery re-reads that posture through a product metric lens. |
+| `../questions-game/README.md` | `cited-by` | The questions-game folder navigation cites this discovery as the shared substrate (probe taxonomy, evidence schema, three-category frame) that all of its child discoveries consume without redescribing. |
+| `../questions-game/individual-fidelity/discovery.md` | `cited-by` | The individual-fidelity child discovery cites this parent for the `C_head`/`C_spec`/`C_system` frame, the anti-dashboard discipline (H-11), the reference-as-surface posture (H-5), and the minimum calibration-item schema seed (OQ-21). |
 
 ---
 
