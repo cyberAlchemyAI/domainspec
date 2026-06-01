@@ -1,0 +1,90 @@
+spec_version: "0.3.0"
+dispatch_id: 2026-05-28-interviewer-entropy-reduction-1
+dispatch_kind: standard
+context: |
+  Usuário avaliou `domainspec-interviewer.agent.md`, considera OK mas não
+  suficientemente intencional ao perguntar. Quer cada pergunta escolhida para
+  reduzir entropia do domínio (maximizar information gain). Heurísticas atuais
+  ("focused"/"discriminating") sem critério formal. Próximo passo (NÃO agora):
+  escrever discovery propondo redesign do interviewer.
+goal: |
+  Produzir base teórica (vault interno) + base de literatura (externa) que
+  subsidie a discovery de redesign do `domainspec-interviewer` como agente
+  intencional de redução de entropia sobre o espaço de hipóteses do domínio.
+mode: task-fan-out
+heuristic_row: flat-fanout
+loop_cap: 2
+layers:
+  - layer_id: L1-investigate
+    role: investigate
+    mode: task-fan-out
+    n: 2
+    parallel: true
+    model: parent
+    tension_axis: |
+      corpus (vault interno vs literatura externa) × methodology (mapeamento
+      normativo do framework vs revisão empírica/crítica de literatura) — os
+      dois filhos previsivelmente discordariam sobre se as suposições atuais
+      do vault são justificadas por evidência externa.
+    agents:
+      - agent_id: L1-A1-vault-theorem
+        subagent_type: Explore
+        angle: |
+          Mapear o que o vault DomainSpec JÁ assume sobre redução de entropia
+          em entrevista — axiomas, premissas, constituições, discoveries.
+          Corpus INTERNO (vault/).
+        model: parent
+        difficulty_justification: |
+          Busca semântica + leitura de nós do vault; Explore é especializado
+          em locate/lookup; sem síntese pesada.
+        token_budget: 12000
+        expected_output_shape: |
+          Lista de nós relevantes (path + 1-linha) + síntese 3-5 bullets do
+          que o framework já assume.
+      - agent_id: L1-A2-external-literature
+        subagent_type: general-purpose
+        angle: |
+          Revisar literatura externa sobre formação intencional de perguntas
+          que maximizam ganho de informação — Bayesian experimental design /
+          EIG, twenty-questions, active inference, decision-analysis
+          interviewing, Socratic method, LLM-driven elicitation 2023-2025.
+          Corpus EXTERNO (web/papers).
+        model: parent
+        difficulty_justification: |
+          Síntese cross-literatura com WebSearch; general-purpose tem acesso
+          amplo; não é adversarial.
+        token_budget: 14000
+        expected_output_shape: |
+          5-8 vertentes priorizadas: princípio + fórmula/heurística +
+          crítica/limitação.
+stop_conditions:
+  - "Ambos filhos retornam saída no formato esperado."
+  - "Loop cap 2 atingido."
+  - "Validator rejection."
+  - "Evaluator-irreconcilable contradiction (filhos retornam contradições irreconciliáveis entre corpus interno e externo)."
+  - "Agent-count cap (recursion_budget.total=2 atingido)."
+validator:
+  model: sonnet
+  retry_policy: one-retry-then-escalate
+  checklist:
+    - "1. goal é única sentença load-bearing"
+    - "2. layers bem-tipados, role-order invariant"
+    - "3. angles pairwise tensionadas (R29)"
+    - "4. cada agente tem difficulty_justification não-vazio"
+    - "5. loop_cap presente e ≤5, stop_conditions cobrem mínimos"
+    - "6. telemetry com corpus_hash_at_emit"
+    - "7. per-layer mode bem-formado"
+    - "8. dispatch_kind meta requer parent_dispatch_id"
+    - "9. bootstrap_override exige reason+scope"
+    - "10. ping-pong block bem-formado (n/a aqui)"
+    - "11. tension-axis nomeado (R29)"
+telemetry:
+  event_name: subagent-strategy.dispatched
+  corpus_hash_at_emit: 58af094d89ce121cade1dac1459e32f63481967e2bcda7ae8ff046e2d12eccbf
+  spec_hash: 1c83ade5d0019c54047e24db8953ede18bb6c59f1417510ab2898e556b85a50d
+recursion_budget:
+  depth: 1
+  breadth: 2
+  total: 2
+  parent_dispatch_id: null
+working_folder: vault/discovery/interviewer-entropy-reduction/research/
