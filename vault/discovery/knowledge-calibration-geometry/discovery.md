@@ -678,6 +678,8 @@ This suggests a future distinction between:
 | `../domainspec-axioms/discovery.md` | `cites` | Connects especially to the existing navigation/calibration posture in the vault-side ontology work; this discovery re-reads that posture through a product metric lens. |
 | `../questions-game/README.md` | `cited-by` | The questions-game folder navigation cites this discovery as the shared substrate (probe taxonomy, evidence schema, three-category frame) that all of its child discoveries consume without redescribing. |
 | `../questions-game/individual-fidelity/discovery.md` | `cited-by` | The individual-fidelity child discovery cites this parent for the `C_head`/`C_spec`/`C_system` frame, the anti-dashboard discipline (H-11), the reference-as-surface posture (H-5), and the minimum calibration-item schema seed (OQ-21). |
+| `../questions-game/learning-speed/discovery.md` | `cited-by` | The learning-speed skeleton inherits the `C_head`/`C_spec`/`C_system` frame and the anti-dashboard discipline (H-11) from this parent. Derivative-of-productivity is framed as a temporal reading of distance over the same triangle. |
+| `../questions-game/abstraction-level/discovery.md` | `cited-by` | The abstraction-level skeleton inherits the same parent frame and adds an orthogonal dimension to fidelity — operating level of person vs required level of tool/spec. |
 
 ---
 
