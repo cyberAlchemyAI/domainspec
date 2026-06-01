@@ -5,8 +5,8 @@ is_session: false
 layer: ontology, architecture, application
 nature: reference
 status: active
-version: 0.2.0
-last_updated: 2026-05-16
+version: 0.3.0
+last_updated: 2026-06-01
 ---
 
 # Domainspec
@@ -15,7 +15,7 @@ last_updated: 2026-05-16
 
 ## What is this?
 
-**DomainSpec** is a specification-first framework for autonomous software delivery. It provides a structured vocabulary (24 meta-types, 26 typed relationships), consistent templates, and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step. This repository is the framework itself: agents, skills, templates, the vault knowledge graph, governance assets, internal tooling, and the architecture pattern library that consumer projects import as a submodule.
+**DomainSpec** is a specification-first framework for autonomous software delivery. It provides two complementary ontologies — a **spec-layer taxonomy** (24 meta-types, 26 typed relationships) that classifies and connects concepts inside a feature spec, and a **vault graph schema** (22 forward edge types across 3 categories: epistemic, provenance, reference) that governs how knowledge artifacts relate across the project's knowledge graph — plus consistent templates and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step. The framework is **framework-generic by constitution** (see [folder-structure-constitution v3.0.0](vault/constitution/folder-structure-constitution.md)): library and framework choices belong in per-app sub-constitutions, not in the core. This repository is the framework itself — agents, skills, templates, the vault knowledge graph, governance assets, internal tooling, and the architecture pattern library — imported by consumer projects as a submodule.
 
 ## Business Context
 
@@ -30,6 +30,7 @@ Without a spec-first contract, AI-driven implementation amplifies misunderstandi
 Root-level orientation documents:
 
 - **[ADLC-ALIGNMENT.md](ADLC-ALIGNMENT.md)** — Convergence roadmap with the Agentic Delivery Lifecycle.
+- **[AGENTS.md](AGENTS.md)** — Roster of DomainSpec agents with their roles and tool surfaces.
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — Pointer to the architecture surface (`/architecture`).
 - **[ARCHITECTURE-PATTERN-LIBRARY.md](ARCHITECTURE-PATTERN-LIBRARY.md)** — Pointer to the pattern library entry.
 - **[AUTHORITY-MAP.md](AUTHORITY-MAP.md)** — Canonical source map for each major system piece.
@@ -44,16 +45,18 @@ Root-level orientation documents:
 - **[LICENSE](LICENSE)** — License terms.
 - **[OBSERVABILITY.md](OBSERVABILITY.md)** — Observability conventions.
 - **[PHASED-PLAN.md](PHASED-PLAN.md)** — Phased rollout plan.
+- **[PRODUCT-COMPONENTS-IDEA.md](PRODUCT-COMPONENTS-IDEA.md)** — Working notes on candidate product components above the framework.
 - **[PROMPT-AEO-TEST-TAG-TASKS.md](PROMPT-AEO-TEST-TAG-TASKS.md)** — Prompt notes for AEO test-tag tasks.
 - **[RELATIONSHIPS.md](RELATIONSHIPS.md)** — 26 typed relationship catalog.
 - **[TAXONOMY.md](TAXONOMY.md)** — 24 meta-concept taxonomy.
 - **[TEST-PIPELINE.md](TEST-PIPELINE.md)** — Doc → test generation rules.
+- **[TOBANOV.md](TOBANOV.md)** — Working notes on the TOBANOV concept (cross-component invariants).
 - **[TUNING-LOOP.md](TUNING-LOOP.md)** — Tuning loop architecture.
 - **[package.json](package.json)** / **[pnpm-workspace.yaml](pnpm-workspace.yaml)** / **[tsconfig.base.json](tsconfig.base.json)** — Workspace tooling configuration.
 
 Top-level directories:
 
-- **`.claude/`** — Claude Code harness configuration (settings, hooks, skills, agents).
+- **`.claude/`** — Claude Code harness configuration (settings, hooks, skills, agents). Active hooks include `.claude/hooks/inject-domainspec-axioms.sh`, which injects the DomainSpec Implementation Axioms cheatsheet on prompt submit for spec/discovery/plan work.
 - **`.github/`** — GitHub Actions and PR templates.
 - **`.githooks/`** — Local git hooks.
 - **`.planning/`** — Planning scratch area used by GSD-style workflows.
@@ -72,7 +75,29 @@ Top-level directories:
 - **`starter/`** — Starter project for new consumers.
 - **`templates/`** — Canonical document templates used by the pipeline.
 - **`tools/`** — Repo-level scripts and developer tooling.
-- **`vault/`** — Knowledge graph (discoveries, sessions, ontology conventions, snapshots).
+- **`vault/`** — Project knowledge graph governed by the **vault graph schema** (22 forward edge types in 3 categories: epistemic, provenance, reference). Root-level files: [`ontology-conventions.md`](vault/ontology-conventions.md) (the schema itself), [`agent-navigation.md`](vault/agent-navigation.md), [`human-navigation.md`](vault/human-navigation.md), [`foundational-knowledges.md`](vault/foundational-knowledges.md), [`confidence-levels.md`](vault/confidence-levels.md), [`ontology-architecture-draft.md`](vault/ontology-architecture-draft.md). Subdirectories: `constitution/` (18 enforceable rule sets), `axiom/`, `premise/`, `discovery/` (35 families), `conceptual/`, `sessions/`, `snapshots/` (including `snapshots/dispatches/`).
+
+---
+
+## Vault & Governance
+
+DomainSpec runs on two ontologies. They serve different purposes and should not be conflated:
+
+| Ontology | Scope | Sizes | Source of truth |
+|---|---|---|---|
+| **Spec-layer taxonomy** | Inside a feature spec — classifies and connects domain concepts | 24 meta-types, 26 typed relationships | [TAXONOMY.md](TAXONOMY.md), [RELATIONSHIPS.md](RELATIONSHIPS.md) |
+| **Vault graph schema** | Across the project — governs how knowledge artifacts (axioms, premises, constitutions, discoveries, specs, sessions, audits, research) relate | 22 forward edge types in 3 categories (epistemic / provenance / reference) | [vault/ontology-conventions.md](vault/ontology-conventions.md) |
+
+The **vault** is the project's typed knowledge graph. It holds the long-lived "why" behind every framework decision: foundational axioms, working premises, enforceable constitutions, in-progress discoveries, and the session record that produced them. Four constitutions are particularly load-bearing for new readers:
+
+- **[ontology-constitution.md](vault/constitution/ontology-constitution.md)** — the philosophical foundation behind the vault graph schema.
+- **[folder-structure-constitution.md](vault/constitution/folder-structure-constitution.md)** (v3.0.0) — the framework-generic folder rulebook; the source of DomainSpec's framework-agnostic posture.
+- **[edge-acyclicity-constitution.md](vault/constitution/edge-acyclicity-constitution.md)** — directionality and acyclicity rules for the vault graph.
+- **[frontmatter-ownership-constitution.md](vault/constitution/frontmatter-ownership-constitution.md)** — who owns each frontmatter field and how it evolves.
+
+**Discovery placement.** Discoveries — exploratory documents that map the design space before a spec is written — may live in two places: `vault/discovery/<topic>/` for vault-internal concerns (schema, ontology, agent behavior), and `docs/features/<feature>/discovery/` for feature-design concerns. The full placement rule is in [discovery-structure-constitution.md](vault/constitution/discovery-structure-constitution.md).
+
+Governance is orthogonal to the pipeline diagram below: vault artifacts inform every pipeline stage but do not appear as a stage themselves. [CLAUDE.md](CLAUDE.md) is the canonical agent context router for any task.
 
 ---
 
@@ -120,7 +145,7 @@ flowchart LR
     I --> J["10 Verify<br>& Readiness"]
 ```
 
-Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate.
+Each stage depends on the previous. You cannot write meaningful tests without formal specifications, and you cannot implement correctly without tests. DomainSpec makes skipping steps visible and deliberate. The vault graph schema and its constitutions sit orthogonal to this flow — they govern every stage but are not themselves a stage (see the Vault & Governance section above).
 
 | Stage                | Input                                         | Output                                                  |
 | -------------------- | --------------------------------------------- | ------------------------------------------------------- |
@@ -328,7 +353,7 @@ timeline
 
 ## Stage 1 — Classify Concepts with the Taxonomy
 
-The first thing to understand is how DomainSpec classifies domain knowledge. Every concept in your system belongs to exactly one of 24 meta-types — 13 for backend domain logic and 11 for UI presentation.
+The first thing to understand is how DomainSpec's **spec-layer taxonomy** classifies domain knowledge inside a feature spec. Every concept in your feature spec belongs to exactly one of 24 meta-types — 13 for backend domain logic and 11 for UI presentation. (This is distinct from the vault graph schema described in the Vault & Governance section above, which governs knowledge artifacts across the project.)
 
 These categories reflect the fundamental questions every system must answer:
 
@@ -349,7 +374,7 @@ These categories reflect the fundamental questions every system must answer:
 
 ## Stage 2 — Connect Concepts with Relationships
 
-Once you have classified concepts, you connect them using 26 typed relationship edges — 12 for the backend domain graph, 8 for intra-UI navigation, and 6 for cross-layer traceability from screen to database. This forms a **knowledge graph** — from any concept, you can follow edges to understand everything it touches.
+Once you have classified concepts, you connect them using the **spec-layer taxonomy's** 26 typed relationship edges — 12 for the backend domain graph, 8 for intra-UI navigation, and 6 for cross-layer traceability from screen to database. This forms a per-feature **knowledge graph** — from any concept, you can follow edges to understand everything it touches. (Note: the vault graph schema described in the Vault & Governance section has its own 22 edge types operating at the artifact level, not the concept level.)
 
 | Edge           | Connects                    | Answers                                           |
 | -------------- | --------------------------- | ------------------------------------------------- |
@@ -880,6 +905,13 @@ All templates live in [templates/](templates/):
 | [copilot/INSTALL.md](copilot/INSTALL.md)             | Installation guide (includes Playwright MCP setup)                           |
 | [tools/](tools/)                                     | Framework validation and index generation tools                              |
 | [tools/check_docs_sync.sh](tools/check_docs_sync.sh) | Deterministic docs-versus-assets drift guard for maintainers                 |
+| [CLAUDE.md](CLAUDE.md)                               | Canonical agent context router — route table for any task                    |
+| [vault/ontology-conventions.md](vault/ontology-conventions.md) | Vault graph schema — 22 forward edges, 3 categories, 7 classification labels |
+| [vault/constitution/ontology-constitution.md](vault/constitution/ontology-constitution.md) | Philosophical foundation behind the vault graph schema |
+| [vault/constitution/folder-structure-constitution.md](vault/constitution/folder-structure-constitution.md) | Framework-generic folder rulebook (v3.0.0) — source of DomainSpec's framework-agnostic posture |
+| [vault/constitution/edge-acyclicity-constitution.md](vault/constitution/edge-acyclicity-constitution.md) | Directionality and acyclicity rules for vault edges |
+| [vault/constitution/frontmatter-ownership-constitution.md](vault/constitution/frontmatter-ownership-constitution.md) | Frontmatter field ownership and evolution rules |
+| [vault/constitution/discovery-structure-constitution.md](vault/constitution/discovery-structure-constitution.md) | Where discoveries live (vault-internal vs feature-scoped) |
 
 ---
 
