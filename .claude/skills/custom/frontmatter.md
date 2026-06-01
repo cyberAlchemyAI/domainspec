@@ -168,6 +168,6 @@ Omit for plain first-order lenses; the convention default is `first`.
 ## References
 
 - Edge catalog cheatsheet: `.claude/skills/custom/edges.md`
-- Full 21-edge catalog and bidirectional declaration rule: `vault/ontology-conventions.md` Appendix C, §8 (forward-only edges into skill/agent files are legal-by-design; see edges.md exception clause)
+- Full 22-edge catalog (3 categories: epistemic / provenance / reference) and bidirectional declaration rule: `vault/ontology-conventions.md` Appendix C, §8 (forward-only edges into skill/agent files are legal-by-design; see edges.md exception clause)
 - Definition of every tag and value (thin reference): `.claude/skills/custom/frontmatter-semantics.md`
 - Full rationale, status lifecycle, and edge type catalog: `vault/ontology-conventions.md`

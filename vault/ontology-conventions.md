@@ -5,7 +5,7 @@ is_session: false
 layer: ontology
 nature: reference
 status: consolidated
-version: 2.2.0
+version: 2.3.0
 last_updated: 2026-05-25
 ---
 
@@ -553,21 +553,23 @@ For documents that genuinely span multiple layers, use multi-value: `layer: arch
 
 ## Appendix C: Edge Type Catalog
 
-The vault has **21 forward edges** organized into three categories: universal (apply to both sessions and documents), document-specific (don't apply to sessions), and session-specific (only sessions originate them). Per the Directionality Principle (Section 8), every forward edge has an inverse name and both must be declared in Markdown on the respective endpoints — except when the target is a `.claude/skills/*` or `.claude/agents/*` file (see Section 8 carve-out).
+The vault has **22 forward edges** organized into three semantically distinct categories. Each category encodes a different kind of relationship: **epistemic edges** describe the logical structure of formalized knowledge; **provenance edges** describe what sessions causally did; **reference edges** are bibliographic pointers that any node type may originate.
 
-### Universal edges
+This three-way split is the load-bearing design decision of the catalog. A session cannot originate an epistemic edge — doing so would make the session an epistemic actor, which it is not. Sessions are causal/temporal processes. Their intellectual contributions are expressed through the artifacts they create, which then carry epistemic edges. Formalized nodes cannot originate provenance edges — they do not "do" things; sessions do.
+
+Per the Directionality Principle (Section 8), every forward edge has an inverse name and both must be declared in Markdown on the respective endpoints — except when the target is a `.claude/skills/*` or `.claude/agents/*` file (see Section 8 carve-out).
+
+---
+
+### Epistemic edges
+
+Describe logical or intellectual relationships between **formalized knowledge nodes** (discoveries, axioms, premises, constitutions, specs, implementation-plans, audits, tests, conceptuals, research, findings). Sessions cannot originate these edges. The epistemic claim belongs on the artifact that makes it.
 
 | Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
 |---------|---------|--------------------|--------------------|-------------|------------|
-| `derives-from` | `derives` | any | any | N:M | A draws intellectual or evidential basis from B. The chain backbone — research derives from strategy, discovery derives from research, premise derives from discovery, etc. |
-| `cites` | `cited-by` | any | any | N:M | A cites B as supporting a load-bearing claim. Removing the cite weakens the argument. Replaces the deprecated `references` and `contextualizes`. |
-| `contradicts` | `contradicts` (symmetric) | any | any | N:M | A logically conflicts with B. Must be resolved before either document promotes. The same edge name is declared on both sides. |
+| `derives-from` | `derives` | formalized nodes | formalized nodes | N:M | A draws intellectual or evidential basis from B. The chain backbone — research derives from strategy, discovery derives from research, premise derives from discovery, etc. If a session synthesizes two discoveries into a new third, the session uses `creates`; the new artifact then declares `derives-from` toward its sources. |
 | `supersedes` | `superseded-by` | discovery, implementation-plan, constitution, spec | (same node_type) | 1:1 | A wholesale replaces B. B becomes historical. |
-
-### Document-specific edges
-
-| Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
-|---------|---------|--------------------|--------------------|-------------|------------|
+| `contradicts` | `contradicts` (symmetric) | formalized nodes | formalized nodes | N:M | A logically conflicts with B — a symmetric, artifact-level declaration. Must be resolved before either document promotes. **Usage constraint:** only declared inside an artifact, never by a session directly. When a session observes a conflict, it uses `surfaces-conflict` (see Provenance edges). |
 | `codified-as` | `codifies` | premise, axiom, discovery | constitution | 1:N | A is rendered as an enforceable rule by B. Chain-mandated (epistemic-chain.md D-4). |
 | `operationalized-by` | `operationalizes` | constitution, discovery | skill | 1:N | A is executed as runnable behavior by skill B. Chain-mandated (epistemic-chain.md D-4). |
 | `implements` | `implemented-by` | implementation-plan | discovery | N:1 | A executes the decisions recorded in B. |
@@ -578,12 +580,18 @@ The vault has **21 forward edges** organized into three categories: universal (a
 | `part-of` | `has-part` | conceptual, spec | conceptual, spec | N:1 | A is a structural component of B. |
 | `alternative-to` | `has-alternative` | discovery (Alternatives section) | discovery | 1:N | A was considered as a competing path before B's decision was made. |
 | `synthesized-by` | `synthesizes` | findings | research | N:1 | The findings of one lens are consolidated into a research synthesis. Forward-in-time edge: findings exist first, research synthesizes them. Declared bidirectionally between every `lenses/<slug>/findings.md` and the folder's `research/research.md`. |
-| `corroborates` | `corroborated-by` | findings | findings | N:M | A lens re-runs / verifies / hardens the claims of another lens (typically a `[model-recall]` lens corroborated by a `[web-fetched]` re-dispatch). Both endpoints are lens findings within the same discovery folder. |
-| `retrofits` | (forward-only by source) | research | findings | N:M | A backfill marker declared on a `research.md` when the research synthesis was written AFTER its lens findings and after the parent discovery already existed. Forward-only by source (no inverse on findings) — the canonical `synthesized-by`/`synthesizes` pair carries the bidirectionality; `retrofits` adds honest provenance direction. Used only when `backfilled: true` on the research file. |
+| `corroborates` | `corroborated-by` | findings | findings | N:M | **Scoped to lens findings only** (lens-research-discovery pattern). A lens re-runs / verifies / hardens the claims of another lens (typically a `[model-recall]` lens corroborated by a `[web-fetched]` re-dispatch). Both endpoints must be `findings` nodes within the same discovery folder. Do not use as a general evidence edge — `validates` covers that. |
+| `retrofits` | *(no inverse — see note)* | research | findings | N:M | A backfill marker declared on a `research.md` when the research synthesis was written AFTER its lens findings and after the parent discovery already existed. Forward-only by design — the canonical `synthesized-by`/`synthesizes` pair carries the bidirectionality; `retrofits` adds honest provenance direction. Used only when `backfilled: true` on the research file. **Note:** `retrofits` intentionally lacks an inverse. If query patterns require "what did this node retrofit onto," trace via the parent `research.md`. |
 
-### Session-specific edges
+---
 
-All have source `node_type` matching `is_session: true` documents. Sessions are processes; these edges encode what the session *did*.
+### Provenance edges
+
+Describe what **sessions** causally did — temporal and causal relationships. All have source `node_type` matching `is_session: true` documents. Sessions are processes; these edges encode what the session *did*, not what it *knows*.
+
+`refutes` can target formalized nodes (discoveries, axioms, premises, specs). Sessions can argue against formalized claims. This asymmetry is intentional: sessions are causal actors with argumentative standing; formalized nodes resolve disputes between themselves via `contradicts` + `supersedes`.
+
+**`surfaces-conflict` vs `opens-question`:** Use `surfaces-conflict` when the session identifies a specific logical tension between two named nodes. Use `opens-question` when the session notices something unresolved but cannot yet name the conflicting pair — or when the question is not primarily about a logical conflict. If you find yourself writing `opens-question` and then naming two nodes that logically exclude each other, switch to `surfaces-conflict`.
 
 | Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
 |---------|---------|--------------------|--------------------|-------------|------------|
@@ -591,10 +599,21 @@ All have source `node_type` matching `is_session: true` documents. Sessions are 
 | `creates` | `created-by` | session | any | N:M | A produced B as output. Replaces the deprecated `provenance-for`. |
 | `modifies` | `modified-by` | session | any | N:M | A changed B's content (without wholesale replacement). |
 | `revisits` | `revisited-by` | session | discovery, premise | N:M | A reconsidered the questions or decisions recorded in B without necessarily refuting them. |
-| `refutes` | `refuted-by` | session | session, discovery, premise | N:M | A actively argues against B. Stronger than `contradicts` because it is intentional. |
-| `opens-question` | `question-opened-by` | session | discovery | N:M | A surfaces a new open question recorded in B's `## Open Questions` section. |
+| `refutes` | `refuted-by` | session | session, discovery, premise, axiom, spec | N:M | A actively argues against B. Takes a position. Stronger than `surfaces-conflict` (which is neutral). Intentional and argumentative. |
+| `surfaces-conflict` | `conflict-surfaced-by` | session | any two formalized nodes (declare once per conflicting pair) | N:M | A observed a logical tension between two formalized nodes without taking a position. Weaker than `refutes`; stronger than `opens-question`. Use when the conflict is specific and nameable. The conflict becomes a formal `contradicts` edge only when a subsequent artifact declares it. |
+| `opens-question` | `question-opened-by` | session | discovery | N:M | A surfaces a new open question recorded in B's `## Open Questions` section. Use when the question is not primarily about a named logical conflict between two nodes. |
 | `closes-question` | `question-closed-by` | session | discovery | N:M | A resolves an open question previously recorded in B. |
 | `consumes` | `consumed-by` | session | any | N:M | A read or used B as input without deriving new claims from it. Distinct from `derives-from` (which carries intellectual lineage). |
+
+---
+
+### Reference edges
+
+Bibliographic pointers. Any node type — session or formalized — may originate these. They record *use* without implying derivation or causality.
+
+| Forward | Inverse | Source `node_type` | Target `node_type` | Cardinality | Definition |
+|---------|---------|--------------------|--------------------|-------------|------------|
+| `cites` | `cited-by` | any | any | N:M | A cites B as supporting a load-bearing claim. Removing the cite weakens the argument. Replaces the deprecated `references` and `contextualizes`. |
 
 ### Edges deprecated by this catalog
 
@@ -618,8 +637,9 @@ The following edges from previous versions of this constitution are no longer ca
 
 1. **Both sides must declare (between vault nodes).** A `## Connections` block on the source declares the forward edge; the target document declares the inverse. Both forms are in this catalog. Asymmetric declarations between vault nodes are bugs. **Exception:** edges into `.claude/skills/*.md` and `.claude/agents/*.md` are forward-only by design — those targets are not vault graph nodes, carry no `## Connections` block, and require no inverse. See Section 8 "Carve-out: edges into skill and agent files" for the formal statement.
 2. **Do not invent edges.** If a relationship does not fit, propose a new edge through a discovery document — do not coin one inline.
-3. **`contradicts` is special.** Both sides use the same name (it is symmetric). Both must still declare.
+3. **`contradicts` is special.** Both sides use the same name (it is symmetric). Both must still declare. Sessions never originate `contradicts` — use `surfaces-conflict` instead.
 4. **Sessions ship `## Connections` too.** Older sessions used `## Contradictions`, `## Files touched`, etc. — those are non-conformant and will be migrated.
+5. **Respect the category boundary.** Sessions originate only provenance or reference edges. Formalized nodes originate only epistemic or reference edges. A session that has intellectual content expresses it through the artifacts it creates, not by originating epistemic edges directly.
 
 ---
 
