@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: active
-version: 0.2.1
-last_updated: 2026-05-19
+version: 0.3.0
+last_updated: 2026-05-26
 schema_version: 1
 governs_pattern: .claude/skills/domainspec-subagents-strategy/**
 governs_check: [strategy_spec_schema_valid]
@@ -31,9 +31,10 @@ derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 8. [Mode Rules](#8-mode-rules)
 9. [Grading Rules](#9-grading-rules)
 10. [Spec, Validator, Registry, Telemetry (R25–R28)](#10-spec-validator-registry-telemetry)
-11. [Governance](#11-governance)
-12. [Known Open Questions](#12-known-open-questions)
-13. [Connections](#13-connections)
+11. [Cross-Cutting Discipline (R29–R31)](#11-cross-cutting-discipline-r29r31)
+12. [Governance](#12-governance)
+13. [Known Open Questions](#13-known-open-questions)
+14. [Connections](#14-connections)
 
 ---
 
@@ -261,6 +262,7 @@ The Dispatch record section of `domainspec-subagents-findings.md` MUST contain:
 - **Four-component grade** per R21 (with judgment markers per R22).
 - **Bootstrap override** — if used, reproduce `{reason, scope}` verbatim.
 - **Telemetry emission status** — emitted / failed-with-reason.
+- **Exit reason** — one of the R31 taxonomy values (`success | loop_cap_reached | validator_rejected_twice | dissent_irreconcilable | user_abort | unrecoverable_error`) plus 1–2 sentences of context.
 
 *Source:* P-SS-9, D-11.
 
@@ -293,15 +295,18 @@ The three writer agents: `domainspec-subagents-research-writer`, `domainspec-sub
 
 ## 8. Mode Rules
 
-### R19 — Each dispatch declares one mode
+### R19 — Each dispatch declares one mode; layers MAY declare their own mode (R30)
 
-Every dispatch declares exactly one of:
+Every dispatch declares exactly one **top-level** mode at the spec root:
 
 - `single` — one agent, one question.
 - `task-fan-out` — N agents, partitioned concerns, parallel.
 - `robot-talks` — N agents, same question, declared perspectives, tensions desired.
 - `sequential` — linear chain; agent B depends on agent A. (Layer-to-layer sequencing across the spec also counts as `sequential`; intra-layer parallelism is expressed via `layers[].parallel`.)
-- `mixed` — **RESERVED. Not usable in v0.2.0.** Reserved pending introduction of a `depends_on:` per-agent field that gives the spec arbitrary-DAG semantics. The R26 validator MUST reject any dispatch declaring `mode: mixed` until that schema extension lands. Tracked as `OQ-mixed-dag-schema` in §12.
+- `ping-pong` — two duo layers alternating sequentially over the full file set until edit-drift stops; see SKILL.md for the `iteration` block.
+- `pipeline` — heterogeneous per-layer modes (R30). The top-level mode is `pipeline` whenever any two layers carry distinct per-layer modes; composition is **linear** (layer N runs after layer N−1, no DAG).
+
+When the top-level mode is `pipeline`, each entry of `layers[]` MUST declare its own `mode:` from the same enum (excluding `pipeline` itself; layers do not recurse). The R26 validator checks each layer's mode well-formedness independently — there is no top-level DAG semantics; sequencing across layers is linear. This per-layer composability supersedes the former `mode: mixed` reservation; `OQ-mixed-dag-schema` is **closed by R30**.
 
 The mode is declared in the chat proposal and recorded in the R25 spec and the Dispatch record (R18).
 
@@ -354,10 +359,10 @@ This is a narrowly scoped extension of R5's writer pattern: the parent session i
 **Schema (top-level, required unless marked optional):**
 
 ```yaml
-spec_version: "0.2.0"
+spec_version: "0.3.0"
 dispatch_id: <YYYY-MM-DD-<slug>>
 dispatch_kind: standard | meta
-mode: single | task-fan-out | robot-talks | sequential   # mixed is RESERVED (R19)
+mode: single | task-fan-out | robot-talks | sequential | ping-pong | pipeline   # R19; pipeline = heterogeneous per-layer modes (R30)
 goal: <one sentence>
 context: <2-4 sentences>
 heuristic_row: <published id> | user-specified
@@ -371,6 +376,7 @@ working_folder: <path>                      # repo-relative
 layers:
   - layer_id: <stable id>
     role: investigate | evaluate | meta-evaluate | synthesize
+    mode: single | task-fan-out | robot-talks | sequential | ping-pong   # R30; REQUIRED when top-level mode == pipeline, OPTIONAL otherwise (defaults to top-level mode). MUST NOT be `pipeline` (layers do not recurse).
     n: <int >= 1>
     parallel: <bool>
     model: <model_id> | "parent"
@@ -467,7 +473,61 @@ Emission failures (filesystem, permissions) are logged and the dispatch proceeds
 
 ---
 
-## 11. Governance
+## 11. Cross-Cutting Discipline (R29–R31)
+
+These three axioms cut across mode, lifecycle, and grading. They were promoted from `research-constitution.md@v0.1.0` after running successfully as research-skill-local rules; they now apply to every dispatch under this base constitution. The research constitution retains R10 / R24–R26 / R21 as **inheritance markers** pointing here (see its Amendment log).
+
+### R29 — Anti-bias tension: angles MUST be pairwise tensioned, not merely non-overlapping
+
+For any layer with N ≥ 2 agents, the per-agent `angle`s MUST be **pairwise tensioned**, not merely non-overlapping. Pairwise tensioned means: for any two agents A and B in the same layer, there exists a question on which a competent observer could predict, in advance, that A and B would disagree.
+
+Tension axes include:
+
+- **Methodology** — empirical vs formal vs adversarial.
+- **Source corpora** — different literatures, different schools, different repositories.
+- **Attack vector** — different skeptic gates (precedent kill vs non-vacuity vs definitional soundness); different angles of refutation.
+- **Temporal / era priors** — pre-1990 vs post-2010 literature; classical vs contemporary framing.
+
+"Non-overlapping and jointly covering" — the R26 checklist item 3 framing — is necessary but insufficient: disjoint angles can both be biased toward the same conclusion. R29 strengthens the check to pairwise tension. The R26 validator MUST name the tension axis for each pair of sibling agents in a multi-agent layer; failure to name one yields `reject-with-fixes` with reason `false-consensus risk`.
+
+Discovery source: `vault/discovery/anti-bias-vector-composition/` (principle.md, literature.md, validator-check.md, examples.md). Cite there, do not duplicate the literature in this constitution.
+
+*Source:* P-SS-5 (locked contract before fan-out), P-SS-10 (independence component of the four-grade).
+
+### R30 — Per-layer mode composability (closes OQ-mixed-dag-schema)
+
+Each `layer` entry in the R25 spec MAY declare its own `mode:` field. The top-level `mode:` becomes `pipeline` when any two layers declare distinct modes. The R26 validator checks per-layer well-formedness independently (each layer's mode is validated in isolation against the same checklist that would apply to a single-mode dispatch of that shape).
+
+Composition is **linear**: layer N runs after layer N−1. There is no DAG and no `depends_on:` field on agents. The role-ordering invariant (synthesize never precedes evaluate; meta-evaluate never precedes evaluate) is inherited from R25 unchanged and enforced across layers regardless of per-layer mode.
+
+R30 supersedes the former `mode: mixed` reservation. `OQ-mixed-dag-schema` (§13) is **closed** — its v0.2.0 status as an unresolved open question is retired by this axiom.
+
+*Source:* P-SS-3 (independence requirement applies per-layer naturally), P-SS-9 (lifecycle is linear).
+
+### R31 — Typed `exit_reason` taxonomy at dispatch close
+
+Every dispatch terminates with exactly one `exit_reason` from the closed taxonomy:
+
+- **`success`** — `success_metric` was satisfied (when defined) OR the validator and all agents returned cleanly (when no metric was declared).
+- **`loop_cap_reached`** — `loop_cap` (R25 spec field) was exhausted without satisfying termination conditions.
+- **`validator_rejected_twice`** — R26 validator returned `reject-with-fixes` twice (the one-retry rule); escalated to user.
+- **`dissent_irreconcilable`** — agents could not converge after `loop_cap` passes; surviving dissent recorded rather than smoothed away.
+- **`user_abort`** — user said Abandon at any gate (R6a, R6b, or any post-confirm gate).
+- **`unrecoverable_error`** — technical failure (agent crashed, tooling failure, upstream-corpus unavailability).
+
+The `exit_reason` MUST be:
+
+1. **Reported to the user in chat at dispatch close**, accompanied by 1–2 sentences of context (what was attempted, what stopped it, what the user can do next). Silent exit is an R31 violation.
+2. **Recorded in the Dispatch record (R18)** as an additional field — see R18 amendment below.
+3. **Emitted in the R28 telemetry event** at dispatch close, JOIN-able with the dispatch-start telemetry on `dispatch_id`.
+
+The Dispatch record schema (R18) is amended to include `exit_reason` from this closed taxonomy as a required field. The R28 telemetry event gains an `exit_reason` field on the close-event; the dispatch-start event remains unchanged.
+
+*Source:* P-SS-9 (lifecycle observability), P-SS-10 (grading is post-hoc but exit category must be typed for retro-analysis).
+
+---
+
+## 12. Governance
 
 ### Adoption
 
@@ -506,19 +566,22 @@ Frontmatter declares `governs_check: [strategy_spec_schema_valid]`. The validato
 
 ---
 
-## 12. Known Open Questions
+## 13. Known Open Questions
 
-Items to resolve in v0.2.1 or as follow-up amendments:
+Items to resolve in v0.3.1 or as follow-up amendments:
 
-- **OQ-mixed-dag-schema** — `mode: mixed` is reserved (R19). Resolving requires a `depends_on:` per-agent field with DAG validation. Until then, multi-phase dispatches MUST decompose into sequential or fan-out steps.
 - **OQ-robot-talks-stage-a** — `mode: robot-talks` ordering with respect to [robot-talks-constitution.md](robot-talks-constitution.md) R2 Stage A is currently undefined: user-first scoping vs. spec-narrated-in-Step-1 needs explicit resolution.
 - **OQ-single-use-override-enforcement** — a machine-checkable counter for `bootstrap_override.scope` uses per amendment cycle (consuming R28 telemetry) is named but unimplemented.
 - **OQ-telemetry-consumer** — a consumer script reading `subagent-strategy.jsonl` and JOINing with R21 grades to produce per-cycle dashboards is not yet specified.
 - **OQ-non-claude-runtime-paths** — portable mapping for `vault/snapshots/dispatches/` and `internal_tools/vault_telemetry/` on non-Claude-Code runtimes is undefined; current paths assume Claude Code layout.
 
+### Resolved
+
+- **OQ-mixed-dag-schema** — **CLOSED by R30 (v0.3.0).** Per-layer mode composability supersedes the `mode: mixed` reservation. Multi-mode dispatches express their shape as `mode: pipeline` at the top level with each layer carrying its own mode; composition is linear (no DAG needed).
+
 ---
 
-## 13. Connections
+## 14. Connections
 
 | Document | Type | Description |
 |----------|------|-------------|
@@ -547,6 +610,7 @@ Items to resolve in v0.2.1 or as follow-up amendments:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3.0 | 2026-05-26 | **Cross-cutting discipline — new §11 (R29–R31).** Backported from `research-constitution.md@v0.1.0` after the three patterns proved out in the research skill. R29 (anti-bias tension: pairwise tensioned angles, not merely non-overlapping; names tension axes methodology / corpus / attack vector / era priors; validator MUST name the axis per pair or reject with `false-consensus risk`). R30 (per-layer mode composability: each `layers[]` entry MAY declare its own `mode:`; top-level `mode: pipeline` when heterogeneous; validator checks per-layer well-formedness independently; composition linear, no DAG). R31 (typed `exit_reason` taxonomy: `success | loop_cap_reached | validator_rejected_twice | dissent_irreconcilable | user_abort | unrecoverable_error`; reported in chat at close with 1–2 sentences; recorded in R18 Dispatch record; emitted in R28 telemetry close event). R19 extended with `pipeline` and `ping-pong` modes; the prior `mixed` reservation is retired. R25 spec schema bumped to `0.3.0`: per-layer `mode:` field added under `layers[]`. R18 Dispatch record amended to require `exit_reason`. R28 telemetry amended to emit a close-event with `exit_reason`. **OQ-mixed-dag-schema CLOSED** — moved from open questions to a resolved-by-R30 note in §13. Index gains "Cross-Cutting Discipline (R29–R31)" as §11; Governance becomes §12, Known Open Questions §13, Connections §14. |
 | 0.2.0 | 2026-05-16 | **Spec + validator + registry + telemetry — new §10.** Introduced R25 (content-addressed spec, written post-confirm at Step 2.5; `dispatch_kind: standard\|meta`; `model` union `<model_id>\|"parent"` restricted to synthesize layers), R26 (validator with trivial-dispatch carve-out; `bootstrap_override = {reason, scope}` + anti-abuse; one-retry then escalate), R27 (heuristic_row attribution + additive-amendment path), R28 (JSONL telemetry sink at `internal_tools/vault_telemetry/events/subagent-strategy.jsonl`; bootstrap behavior for first-cycle dispatches). R3 lifecycle gains Step 2.5. R4 / R5 / R6 reconciled with explicit non-conflict note (Wave-3 Constitutional-Purist surfaced and resolved the prior conflict that would have existed under pre-confirm spec write). `loop_cap: int (default 2, max 5)` is a typed top-level schema field; harness MUST refuse beyond cap. `mode: mixed` RESERVED pending DAG schema (R19). `delegate_synthesis` escape hatch explicitly removed; synthesize layers MUST use `model: "parent"`. R14 gets a parent-model exception. Added §12 Known Open Questions. Frontmatter: `version` 0.1.4→0.2.0 (also acknowledging v0.1.5 was applied in history without a frontmatter bump), `last_updated: 2026-05-16`, `schema_version: 1`, `governs_pattern`, `governs_check`. §13 Connections: added schema-amendment-discipline, governs-runtime-witness, telemetry sink path, spec paths, and v0.2.0 amendment log entry. |
 | 0.1.5 | 2026-05-03 | R15 + R3 step 7 + R24 revised — scope-routed discovery promotion. |
 | 0.1.4 | 2026-05-02 | R24 revised — strategist enacted by skill, not a subagent. |

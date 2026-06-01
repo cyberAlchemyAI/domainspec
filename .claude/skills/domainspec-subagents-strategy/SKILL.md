@@ -39,12 +39,12 @@ Because nothing persists before the user gate, R4 (proposal never persists) and 
 ### Schema
 
 ```yaml
-spec_version: "0.2.0"
+spec_version: "0.3.0"
 dispatch_id: <slug — UUIDv7 or YYYY-MM-DD-<topic>-<seq>>
 dispatch_kind: standard | meta            # meta = a dispatch that itself dispatches dispatches
 context: <2–4 sentences of inherited context>
 goal: <one sentence — the single thing this dispatch must answer>
-mode: single | task-fan-out | robot-talks | sequential | ping-pong     # R19. `mixed` is RESERVED.
+mode: single | task-fan-out | robot-talks | sequential | ping-pong | pipeline   # R19 + R30. `pipeline` = heterogeneous per-layer modes; composition is linear (no DAG).
 heuristic_row: single-lookup | flat-fanout | triangulation | adversarial-audit | parent-synthesis | meta-dispatch | ping-pong-duos
 loop_cap: <int, default 2, max 5>          # typed mechanical floor; harness MUST refuse loop N+1
 bootstrap_override:                          # optional; required object shape when present
@@ -53,6 +53,7 @@ bootstrap_override:                          # optional; required object shape w
 layers:
   - layer_id: <stable id, e.g. L1-investigate>
     role: investigate | evaluate | meta-evaluate | synthesize
+    mode: single | task-fan-out | robot-talks | sequential | ping-pong   # R30. REQUIRED when top-level mode == pipeline; OPTIONAL otherwise (defaults to top-level mode). MUST NOT be `pipeline` (layers do not recurse).
     n: <int >= 1>
     parallel: <bool>
     model: <default model id for this layer — string | "parent">
@@ -94,7 +95,7 @@ iteration:                                   # REQUIRED iff mode == ping-pong; a
     checklist: [<each item one sentence>]
 ```
 
-`mode: mixed` is a **reserved** value pending a `depends_on` field on agents (for arbitrary DAG semantics). The validator MUST reject any dispatch with `mode: mixed` until the schema gains DAG support. Tracked as **OQ-mixed-dag-schema**.
+**Per-layer mode composability (R30) supersedes the former `mode: mixed` reservation.** Heterogeneous dispatches now express their shape with top-level `mode: pipeline` and per-layer `mode:` fields. Composition is linear (layer N runs after layer N−1) — there is no DAG and no `depends_on:` field. The role-ordering invariant (synthesize never precedes evaluate; meta-evaluate never precedes evaluate) is enforced across layers regardless of per-layer mode. `OQ-mixed-dag-schema` is **closed**; see the resolved-OQs list below.
 
 ### Role ordering invariant
 
@@ -120,22 +121,23 @@ Model ids are free strings (the `model` field is a union: `string | "parent"`). 
 
 ---
 
-## Validator checklist (canonical, 9 items)
+## Validator checklist (canonical, 11 items)
 
 The Step 0.5 validator agent receives the **in-chat spec YAML** in its briefing (no file path — the spec has not been written yet) and returns one of: `accept` / `reject-with-fixes` / `abstain` / `accept-with-bootstrap-override`. Per R26: **one retry only**, then escalate to the user.
 
 1. `goal` is a single sentence and is load-bearing — cite the criterion that makes it so.
 2. Layers are well-typed; the role order invariant holds (no synthesize-before-evaluate, no meta-evaluate-before-evaluate); synthesize layers use `model: "parent"`.
-3. Per-agent angles are mutually non-overlapping AND jointly close to covering the goal (independence + coverage in one check).
+3. **Per-agent angles, in any layer with N ≥ 2, are pairwise TENSIONED — not merely non-overlapping (R29).** Pairwise tensioned means: for any two sibling agents A and B, the validator can name a question on which a competent observer would predict A and B to disagree. Allowed tension axes: **methodology** (empirical vs formal vs adversarial), **source corpora** (different literatures / schools / repositories), **attack vector** (different skeptic gates, different angles of refutation), **temporal / era priors** (pre-1990 vs post-2010; classical vs contemporary). Coverage of the goal across the layer is still required as the secondary check. Disjoint angles biased toward the same conclusion (no tension axis) MUST be rejected.
 4. Each agent has a non-empty `difficulty_justification` (R14); flag any opus pick without a model-specific reason.
 5. `loop_cap` is present and ≤ 5; `stop_conditions` declares at minimum: validator rejection, evaluator-irreconcilable contradiction, agent-count cap.
 6. Telemetry block names `subagent-strategy.dispatched` and includes `corpus_hash_at_emit` from the latest `vault/snapshots/*.json`.
-7. `mode: mixed` is rejected unconditionally until OQ-mixed-dag-schema is resolved.
+7. **`mode: pipeline` (R30) requires each `layers[]` entry to declare its own `mode:` field**; per-layer mode MUST NOT be `pipeline` (layers do not recurse); the validator iterates over `layers[]` and checks each layer's mode for well-formedness independently against this checklist as if that layer were a standalone single-mode dispatch. Cross-layer linearity is checked via the role-ordering invariant (item 2). If top-level mode is anything other than `pipeline`, per-layer `mode:` is optional and defaults to the top-level mode.
 8. `dispatch_kind: meta` dispatches set `parent_dispatch_id` and target the meta-dispatch path.
 9. If `bootstrap_override` is set, the object MUST include a non-empty `reason` and a valid `scope`; reject otherwise.
 10. If `mode: ping-pong`, the `iteration` block is present with `kind: ping-pong`, exactly two `duos` referencing `evaluate` layers in the spec, `consecutive_no_change_passes` is even and ≥ 2, `max_passes` is set and ≥ `consecutive_no_change_passes`, and `final_validator` declares `model`, `angle`, and a non-empty `checklist`. Reject if `mode: ping-pong` without the block, or if the block exists with `mode != ping-pong`.
+11. **Tension-axis naming (R29 enforcement).** For each pair of sibling agents in any layer with N ≥ 2, the validator MUST name the tension axis (methodology / corpus / attack vector / era priors — or one-line justification that the role pair is intrinsically tensioned, e.g. an `explorer` paired with a `skeptic`). If the validator cannot find a tension axis for some pair, return `reject-with-fixes` with reason `false-consensus risk` and list the offending pair(s). This check is the operational teeth of item 3.
 
-**Validator skip rule:** when `mode: single` AND `layers: 1` AND `n: 1` AND `bootstrap_override` is NOT set, the validator is skipped entirely. For every other shape, the validator runs.
+**Validator skip rule:** when `mode: single` AND `layers: 1` AND `n: 1` AND `bootstrap_override` is NOT set, the validator is skipped entirely. For every other shape — including any multi-layer dispatch and any dispatch with `mode: pipeline` — the validator runs and items 3 / 7 / 11 all apply.
 
 A `reject-with-fixes` return lists the failing checklist item(s); the parent revises the in-chat spec and re-validates **once**. A second reject escalates to the user (R26). The validator is itself a subagent dispatch — the one exception to "validator gates dispatch": it gates the *child* dispatches, not itself.
 
@@ -198,23 +200,50 @@ Present the findings file and ask whether to promote to a discovery. On confirm,
 
 ---
 
+## Exit reasons (R31)
+
+Every dispatch terminates with exactly one `exit_reason` from the closed taxonomy below. The exit reason MUST be reported in chat at dispatch close with 1–2 sentences of context, AND recorded in the Dispatch record (R18) inside `domainspec-subagents-findings.md`, AND emitted in the R28 telemetry close-event JOIN-able with the dispatch-start event on `dispatch_id`.
+
+| `exit_reason` | When to use |
+|---|---|
+| `success` | `success_metric` was satisfied (if defined) OR validator + all agents returned cleanly (if no metric was declared). |
+| `loop_cap_reached` | `loop_cap` was exhausted without satisfying termination conditions. |
+| `validator_rejected_twice` | The Step 0.5 validator returned `reject-with-fixes` twice (R26 one-retry rule); escalated to user. |
+| `dissent_irreconcilable` | Agents could not converge after `loop_cap` passes; surviving dissent recorded rather than smoothed away. |
+| `user_abort` | User said Abandon at any gate (R6a, R6b, or any post-confirm gate). |
+| `unrecoverable_error` | Technical failure — agent crashed, tooling failure, upstream-corpus unavailability. |
+
+**Where the exit_reason appears (mandatory triple):**
+
+1. **Chat close report to user** — 1–2 sentences of context. Silent exit is an R31 violation.
+2. **Dispatch record (R18)** in `domainspec-subagents-findings.md` — under a dedicated `Exit reason` field.
+3. **R28 telemetry close-event** — appended to `internal_tools/vault_telemetry/events/subagent-strategy.jsonl` with `exit_reason` field; JOIN-able with the start-event on `dispatch_id`.
+
+For `mode: single` dispatches that skip the two-file artifact set, the exit_reason still appears in the chat close report and in telemetry; the R18 carrier is omitted along with the rest of the findings file.
+
+---
+
 ## Verification before close (R11)
 - Read each child's actual return.
 - Confirm spec file exists at the Step 2.5 path and matches the telemetry payload's `spec_hash`.
 - Confirm telemetry line was appended (or that failure is logged).
 - Confirm both artifact files exist at `<working_folder>/` (skip for `mode: single`).
 - Confirm findings citations (R17) and Dispatch record completeness (R18, R21, R22).
+- Confirm the exit_reason (R31) appears in chat, in the Dispatch record, and in the R28 close-event telemetry.
 - Confirm the discovery-promotion gate was asked.
 
-## Known open questions (carried into v0.2.1)
-- **OQ-mixed-dag-schema** — `mode: mixed` blocked until a `depends_on` per-agent field is introduced.
+## Known open questions (carried into v0.3.1)
 - **OQ-robot-talks-stage-a** — `mode: robot-talks` may conflict with robot-talks-constitution R2 Stage A (user-first scope).
 - **OQ-single-use-override-enforcement** — `bootstrap_override` single-use-per-cycle is prose-disciplined; needs machine-checkable counter.
 - **OQ-telemetry-consumer** — sink emits JSONL but no consumer reads it; orphan-event risk.
 - **OQ-non-claude-runtime-paths** — `vault/snapshots/dispatches/` and `internal_tools/vault_telemetry/` are domainspec-local.
 
+### Resolved
+- **OQ-mixed-dag-schema** — **CLOSED in v0.3.0 by R30 (per-layer mode composability).** The former `mode: mixed` reservation is retired. Heterogeneous dispatches use top-level `mode: pipeline` and per-layer `mode:` fields; composition is linear (no DAG needed).
+
 ## References
-- **Rules:** vault/constitution/domainspec-subagents-strategy-constitution.md — R4/R5/R6/R11/R17 are non-negotiable. R25 (spec schema), R26 (validator one-retry), R27 (additive-amendment path), R28 (telemetry) are the v0.2.0 additions.
+- **Rules:** vault/constitution/domainspec-subagents-strategy-constitution.md — R4/R5/R6/R11/R17 are non-negotiable. R25 (spec schema), R26 (validator one-retry), R27 (additive-amendment path), R28 (telemetry) are the v0.2.0 additions. **R29 (anti-bias pairwise tension), R30 (per-layer mode composability — closes OQ-mixed-dag-schema), R31 (typed exit_reason taxonomy)** are the v0.3.0 cross-cutting additions, backported from research-constitution.
+- **Anti-bias discovery:** `vault/discovery/anti-bias-vector-composition/` — principle.md, literature.md, validator-check.md, examples.md. The full source for R29.
 - **Templates:** templates/domainspec-subagents-research.md, templates/domainspec-subagents-findings.md.
 - **Writer agents:** `domainspec-subagents-research-writer`, `domainspec-subagents-findings-writer`, `domainspec-discovery-writer`.
 - **Telemetry sink:** `internal_tools/vault_telemetry/events/subagent-strategy.jsonl`.
