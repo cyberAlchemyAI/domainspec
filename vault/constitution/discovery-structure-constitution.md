@@ -1,31 +1,38 @@
 ---
-tags: [vault, ontology, discovery]
+tags: [vault, ontology, discovery, placement, governance]
 node_type: constitution
 is_session: false
 layer: ontology
 nature: reference
 status: exploratory
-version: 0.1.1
-last_updated: 2026-05-16
+version: 0.2.0
+last_updated: 2026-05-26
 ---
 
-# Discovery Structure
+# Discovery Structure & Placement
 
-> Rules for how a discovery is recorded in `vault/discovery/`. A discovery is the durable record of a finding that emerged from investigation — its claim, the lenses that triangulate it, its open questions. Not raw notes (that is `sessions/`), not a testable hypothesis (that is `premise/`), not an adopted principle (that is `constitution/`).
+> Rules for how a discovery is recorded **and where it lives**. A discovery is the durable record of a finding that emerged from investigation — its claim, the lenses that triangulate it, its open questions. Not raw notes (that is `sessions/`), not a testable hypothesis (that is `premise/`), not an adopted principle (that is `constitution/`).
 
 ---
 
 ## Objective
 
-Discoveries are the vault's evidence-rich entry points. Each one captures *how a finding was reached* — independently visible angles (lenses) plus a synthesis README — so the finding can be examined, contested, or promoted later without re-running the investigation. This constitution defines the folder shape, the artifact contents, and the discipline that keeps discoveries from drifting into research dumps.
+Discoveries are the vault's evidence-rich entry points. Each one captures *how a finding was reached* — independently visible angles (lenses) plus a synthesis README — so the finding can be examined, contested, or promoted later without re-running the investigation.
 
-The structure is deliberately small. A discovery that grows past its caps is no longer a discovery — it is a research program and should fork.
+This constitution covers two related scopes:
+
+1. **Shape (§1–§8)** — the folder layout, README, lenses, and discipline that govern any discovery placed in `vault/discovery/`.
+2. **Placement (§9–§14)** — the rules for *where* a discovery or research artifact lives across the repository (vault vs apps vs proposals vs domain knowledge), how artifacts migrate when their trajectory clarifies, and which top-level directories are reserved for which trajectories.
+
+The shape rules are deliberately small: a discovery that grows past its caps is no longer a discovery — it is a research program and should fork. The placement rules are deliberately strict: an artifact's home is decided by *trajectory*, not by who happens to read it today.
 
 ---
 
 ## 1. Folder shape
 
-Every discovery lives at:
+> **Scope.** The shape rules in §1–§8 apply when a discovery is **placed in `vault/discovery/`**. For placement choice across the repository (vault vs apps vs proposals vs domain knowledge), see §9–§14. A discovery that lives elsewhere (e.g. inside an app's `features/<feature>/discovery/` or inside a pre-app proposal) inherits the spirit of §1–§8 but is governed primarily by §9–§14.
+
+Every discovery placed in the vault lives at:
 
 ```
 vault/discovery/<slug>/
@@ -41,6 +48,8 @@ vault/discovery/<slug>/
 - No other subfolders. Provenance beyond lenses (data files, full transcripts, large artifacts) lives outside the vault and is linked from the README.
 
 ## 2. What a discovery is
+
+> **Scope.** A discovery may also live at `apps/<app>/features/<feature>/discovery/` or `docs/proposals/<topic>/docs/discovery/` per §9. §1–§8 govern only the `vault/discovery/` form; the epistemic definition below applies everywhere.
 
 A discovery is:
 
@@ -126,6 +135,8 @@ A discovery does not promote itself. It surfaces *candidates*:
 
 Actually creating those files is a separate, deliberate act. The discovery folder is preserved as provenance and cited from the promoted artifact's frontmatter (`derives-from:`).
 
+> See §11 for graduation of state-3 discoveries into existing or new apps — a related but distinct promotion path.
+
 ## 7. Discipline
 
 - **One artifact per investigation.** Do not split a single coherent finding across multiple discoveries.
@@ -135,16 +146,137 @@ Actually creating those files is a separate, deliberate act. The discovery folde
 
 ## 8. Boundary
 
-This constitution governs the *shape* of a discovery — its folder, its README, its lenses. It does not govern:
+This constitution governs the *shape* of a discovery — its folder, its README, its lenses — and (in §9–§14) the *placement* of discovery and research artifacts across the repository. It does not govern:
 
 - The intellectual quality of the finding (that is the reviewer's judgment).
 - The choice of which lenses to dispatch (that is the investigator's judgment).
-- The promotion decision (that is governed by the relevant target stage's discipline).
+- The promotion decision into premise/constitution/conceptual (that is governed by the relevant target stage's discipline).
 
 If the shape rules conflict with the substance of an investigation, the substance wins and this constitution updates. Discoveries are first-class; the rules describing them are second-class.
+
+---
+
+## 9. Placement: Three Trajectory States
+
+Every discovery or research document classifies into exactly one of three states determined by **trajectory** — where the artifact is ultimately going, not who happens to read it today.
+
+| State | Definition | Home | Typical examples |
+|---|---|---|---|
+| **(1) Domain knowledge** | About a problem, concept, schema, or pattern. May or may not ever become software. Trajectory is permanent residence as knowledge. | `domain_knowledge/<area>/` for business concepts. `system_design_knowledge/discovery/<area>/` is **reserved** for genuinely cross-app architectural patterns demonstrably reused by 2+ unrelated apps. `system_design_knowledge/` is **NOT** a home for feature-specific work even if the feature spans sub-features inside one app. | Glossary of `<topic>`; metric definitions for `<area>`; envelope shape reused by 2+ unrelated apps. |
+| **(2) Discovery of an existing app** | An `apps/<app>/` already exists; this discovery feeds a feature inside that app. | `apps/<app>/features/<feature>/discovery/` (multi-file) or `apps/<app>/features/<feature>/<topic>.md` (single-file). | Discovery of `<feature>` inside `<app>`; research notes on an alternative implementation of `<feature>`. |
+| **(3) Pre-app discovery** | The work will become an app, but the `apps/<app>/` is not yet created. Parking lot. | `docs/proposals/<topic>/docs/discovery/` | Discovery materials for a proposed `<topic>` whose home app has not yet been built. |
+
+State boundaries are tested by asking: *what is this artifact's destination?* — not *who reads it today?*. Readership-based placement was considered and rejected because it conflates current consumers with eventual home: a discovery read today by two teams may still belong in one app's `features/` if that is where it will permanently live.
+
+## 10. Discovery vs Research as Epistemic Types
+
+Within any placement state, both `discovery/` and `research/` subfolders may exist. They are **epistemic types**, distinguished by `node_type` frontmatter — not by location:
+
+- **`research/`** — exploration of evidence. Lenses, experiments, notes, audits. May be wrong, may be superseded. `node_type: research`.
+- **`discovery/`** — consolidated conclusion citing research. Load-bearing for downstream decisions. `node_type: discovery`.
+
+The two subfolders **never nest into each other**. `discovery/research/` and `research/discovery/` are both prohibited (see §13). The relationship "this research fed this discovery" is encoded in the frontmatter `## Connections` block via edges (`cites`, `derives-from`, `synthesized-by`) — never via file path.
+
+Discovery and research can coexist in any of the three placement states. State determines *where* an artifact lives; epistemic type determines *what kind of artifact* it is.
+
+## 11. Promotion Mechanics (How State 3 Graduates)
+
+State (3) → State (2) graduation — a pre-app discovery becoming an in-app discovery once the app is created — is mechanically enforced via three layers.
+
+### Layer 1 — Mandatory frontmatter on state (3) artifacts
+
+Every discovery or research document in `docs/proposals/` must carry these fields:
+
+```yaml
+graduation_status: pending | graduated | abandoned
+graduation_target: apps/<app>/ | domain_knowledge/<area>/ | indeterminate
+graduation_trigger: "<condition that must be true to graduate>"
+graduation_target_date: YYYY-MM-DD   # optional
+graduated_to: <path>                  # filled only when graduation_status: graduated
+graduated_on: YYYY-MM-DD              # filled only when graduation_status: graduated
+```
+
+A discovery without `graduation_status` declared cannot legally reside in `docs/proposals/`. A pre-commit hook may enforce this; absent the hook, this is reviewer-enforced.
+
+### Layer 2 — ARCHITECTURE.md §1.0 Origin (required in every app)
+
+Every `apps/<app>/ARCHITECTURE.md` carries a `## 1.0 Origin` section declaring one of:
+
+```markdown
+## 1.0 Origin
+- Originating proposal: `docs/proposals/<topic>/` (graduated YYYY-MM-DD)
+```
+
+or:
+
+```markdown
+## 1.0 Origin
+- Origin: greenfield (no preceding proposal)
+```
+
+An app without §1.0 Origin is incomplete. An app citing a still-pending proposal is a contradiction the audit will flag.
+
+### Layer 3 — Periodic audit script
+
+A periodic audit (e.g. `scripts/audit_proposal_graduation.py`, documented here as the enforcement endpoint; implementation deferred) reports:
+
+- Proposals pending longer than N months without movement.
+- Apps missing §1.0 Origin.
+- `graduation_target` apps that exist without a backreference in the target app's §1.0.
+- Contradictions between a proposal's `graduation_status` and downstream citations.
+
+## 12. Decomposed Migration (1:1 vs 1:N)
+
+A proposal does not necessarily migrate as a single block when it graduates:
+
+- **1:1 graduation** — Proposal originates a single app. Discovery files migrate from `docs/proposals/<topic>/` into `apps/<app>/features/<feature>/discovery/` as a block. Git tracks the move; `graduated_to` is set on each moved file.
+- **1:N graduation** — Proposal originates multiple apps, or its content fans out across types. The proposal **decomposes** per content type: each piece migrates to its correct home per §9:
+  - App-bound parts move into the relevant `apps/<app>/features/<feature>/`.
+  - Business knowledge moves into `domain_knowledge/<area>/`.
+  - Genuinely cross-app architectural patterns move into `system_design_knowledge/discovery/<area>/`.
+  - Pieces destined for future apps **stay in `docs/proposals/<topic>/`** until each graduates separately.
+
+Each decomposed migration is a separate commit, each with its own `graduation_status: graduated` and `graduated_to` annotation. A single proposal can thus graduate in multiple waves over time.
+
+## 13. Subfolder Convention
+
+- Subfolder names are always plural: `discovery/`, `research/`. Never singular (`discovery_doc/`, `the_research/`).
+- Discovery and research **never nest into each other**. `discovery/research/` and `research/discovery/` are both prohibited. The relationship is encoded via edges, not paths (see §10).
+- A discovery topic that needs sub-grouping uses **topic subfolders**, not type subfolders. For example, `discovery/<topic>/` may contain a topic-specific `discovery.md` and supporting files; it does NOT contain `discovery/research/`.
+
+## 14. Reserved Homes
+
+| Path | What lives here | What does NOT live here |
+|---|---|---|
+| `vault/` | Constitutions, axioms, premises, ontology, sessions, conversations — governance and meta-knowledge. Vault discoveries follow §1–§8. | Feature specs, code-level discovery, app-bound artifacts. |
+| `domain_knowledge/` | Business-concept knowledge: dictionaries, registries, schema explanations that exist independent of any single app's implementation. | Implementation-bound vocabulary; app-specific contracts. |
+| `system_design_knowledge/discovery/` | **Reserved.** Cross-app architectural patterns demonstrably reused by 2+ unrelated apps (DI conventions, observability patterns, event-bus shapes). **Empty by default.** | Anything bound to a single app, anything feature-specific, anything where the second consumer is speculative. |
+| `docs/proposals/<topic>/` | State (3) parking lot. Discoveries and research for apps that don't exist yet. Every artifact carries `graduation_status` per §11. | Anything without `graduation_status` declared in frontmatter; anything for an app that already exists. |
+| `apps/<app>/features/<feature>/discovery/` | State (2) multi-file feature discovery. | Code (lives in `apps/<app>/src/`); cross-app shared knowledge; governance docs. |
+| `apps/<app>/features/<feature>/research/` | State (2) feature research notes. | Same as above. |
 
 ---
 
 ## Appendix — first instance
 
 The discovery `vault/discovery/graph-as-residue-attractor/` is the first artifact written under this constitution. If its shape violates these rules, the rules are wrong, not the discovery.
+
+---
+
+## Version History
+
+| Version | Date | Change |
+|---|---|---|
+| 0.1.0 | 2026-05-15 | Initial. Defined discovery shape (§1–§8): folder layout, README, lenses, promotion path, discipline, boundary. |
+| 0.1.1 | 2026-05-16 | Minor refinements to shape rules. |
+| 0.2.0 | 2026-05-26 | Added Placement portion (§9–§14): three trajectory states, promotion mechanics, decomposed migration, reserved homes. Title broadened to "Discovery Structure & Placement". Scope clarification added to §1 and §2. |
+
+---
+
+## Connections
+
+| Document | Type | Description |
+|---|---|---|
+| [[folder-structure-constitution]] | `references` | Placement (§9–§14) complements code folder rules; this constitution governs where discovery/research lives before and after entering an app. |
+| [[vault-folder-structure-constitution]] | `references` | Placement integrates with the vault's internal layout; §1–§8 are the discovery-shaped form of the broader vault folder discipline. |
+| [[domainspec-implementation-axioms]] (`.claude/skills/domainspec-implementation-axioms/SKILL.md`) | `derives-from` | AX-DS-2 (one vocabulary) and AX-DS-4 (decision space preserved) ground §9's trajectory-based placement and §14's reserved-home semantics. |

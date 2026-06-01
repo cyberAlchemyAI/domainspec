@@ -9,6 +9,8 @@ A discovery captures the problem space, design decisions, and enough detail for 
 
 If the output of this session is a list of tasks, you are writing an implementation plan, not a discovery.
 
+If the output is a corpus distillation, failure-mode taxonomy, or proposed revision to a constitution/premise/axiom, use `.claude/skills/custom/knowledge-discovery-writing.md` instead.
+
 ---
 
 ## Frontmatter Template
