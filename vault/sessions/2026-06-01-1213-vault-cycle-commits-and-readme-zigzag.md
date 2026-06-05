@@ -26,3 +26,9 @@ The session committed and pushed 12 thematically grouped commits closing the May
 ## Files touched
 
 - README.md
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `README.md` | `modifies` | Session applied 10 edits to the root README via a 3-agent zig-zag (research → propose → review), disambiguating spec-layer taxonomy from vault graph schema, adding a Vault & Governance section, and surfacing AGENTS / PRODUCT-COMPONENTS-IDEA / TOBANOV in Navigation. |
