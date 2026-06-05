@@ -1,0 +1,33 @@
+{
+  "run_id": "2026-05-27-domain-ontology-promotion",
+  "target": "docs/features/agent-execution-orchestrator/",
+  "preset": "standard",
+  "research": {
+    "mode": "no-research",
+    "confirmation_status": "not-required"
+  },
+  "command_dispatch": {
+    "tools_arcanum_present": false,
+    "command_files_present": true,
+    "status": "blocked"
+  },
+  "artifacts": {
+    "seed_proposal": "docs/features/agent-execution-orchestrator/development/refinement-runs/2026-05-27-domain-ontology-promotion/REFINE-SEED-PROPOSAL.md",
+    "goal_handoff": "docs/features/agent-execution-orchestrator/development/refinement-runs/2026-05-27-domain-ontology-promotion/GOAL-HANDOFF.md",
+    "run_manifest": "docs/features/agent-execution-orchestrator/development/refinement-runs/2026-05-27-domain-ontology-promotion/RUN-MANIFEST.md",
+    "result": "docs/features/agent-execution-orchestrator/development/refinement-runs/2026-05-27-domain-ontology-promotion/RESULT.md",
+    "discovery": "docs/features/agent-execution-orchestrator/discovery/ontology-real-world-validation-lifecycle.md"
+  },
+  "stages": [
+    {"name": "Context Builder evidence baseline", "command": "context-builder", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Invoke Define", "command": "invoke", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Interrogation refine-review", "command": "interrogation", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Research decision", "command": "refine", "status": "pass", "artifact": "docs/features/agent-execution-orchestrator/development/refinement-runs/2026-05-27-domain-ontology-promotion/REFINE-SEED-PROPOSAL.md"},
+    {"name": "Distill", "command": "distill", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Invoke Redefine / Design", "command": "invoke", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Interrogation refine-design-review", "command": "interrogation", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Distill Repair", "command": "distill", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Invoke Plan", "command": "invoke", "status": "block", "blocked_reason": "tools/arcanum executable missing"},
+    {"name": "Final Interrogation and Synthesis", "command": "interrogation/refine", "status": "flag", "artifact": "docs/features/agent-execution-orchestrator/development/refinement-runs/2026-05-27-domain-ontology-promotion/RESULT.md", "blocked_reason": "interrogation command-backed stage unavailable"}
+  ]
+}

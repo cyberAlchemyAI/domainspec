@@ -20,7 +20,7 @@ Plan-first execution manifest for transforming DomainSpec into a superset of Arc
 | Task ID               | Goal                                                                    | Complexity | Assigned Waves | Gate Status      | Status      |
 | --------------------- | ----------------------------------------------------------------------- | ---------- | -------------- | ---------------- | ----------- |
 | TASK-DSAS-001         | Create feature `SPEC.md` and candidate glossary for the superset model. | medium     | W0             | ready            | not-started |
-| TASK-DSAS-002         | Build non-mutating Arcanum capability inventory and ontology crosswalk. | medium     | W0             | ready-after-spec | not-started |
+| TASK-DSAS-002         | Build non-mutating Arcanum capability, template, and ontology crosswalk. | medium     | W0             | ready-after-spec | not-started |
 | TASK-DSAS-003         | Design runtime compatibility bridge and adapter inventory.              | medium     | W1             | blocked-on-L0    | not-started |
 | TASK-DSAS-004         | Add deterministic registry, relationship, and signal validation plan.   | medium     | W2             | blocked-on-W1    | not-started |
 | TASK-DSAS-005         | Prepare packaging and migration guide for consumer pilot.               | medium     | W3             | blocked-on-W2    | not-started |
@@ -46,7 +46,7 @@ If later waves mutate source code, add:
 | Task ID       | DomainSpec Sources                                            | Coverage IDs         | Architecture References                                                                                           | Implementation Directive                                                                                                                                       | Verification Evidence                                  |
 | ------------- | ------------------------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | TASK-DSAS-001 | `ARCHITECTURE.md`; DomainSpec taxonomy; Arcanum README        | D-001, D-002, R-001  | `ARCHITECTURE.md#capability-ontology-mapping`; `IMPLEMENTATION-LAYERING.md#layer-0---minimum-working-unit-poc`    | Author a `SPEC.md` that names capability-domain concepts, boundaries, rules, workflows, interfaces, and local vocabulary without promoting global definitions. | Reviewable `SPEC.md` and glossary candidates.          |
-| TASK-DSAS-002 | Arcanum registries; DomainSpec relationships                  | R-001, R-003, RK-001 | `ARCHITECTURE.md#view-3-low-level-components-view`; `ARCHITECTURE.md#dependency-and-interface-rules`              | Generate or draft a read-only inventory mapping sigils, spells, tiers, lifecycle owners, and runtime surfaces to DomainSpec candidate records.                 | Inventory report with unmapped gaps.                   |
+| TASK-DSAS-002 | Arcanum registries; Arcanum templates; DomainSpec templates; DomainSpec relationships | R-001, R-003, RK-001 | `ARCHITECTURE.md#view-3-low-level-components-view`; `ARCHITECTURE.md#dependency-and-interface-rules`; `TEMPLATE-MANAGEMENT-INVOKE.md` | Generate or draft a read-only inventory mapping sigils, spells, templates, tiers, lifecycle owners, and runtime surfaces to DomainSpec candidate records.        | Inventory report with unmapped gaps.                   |
 | TASK-DSAS-003 | Invoke contract; Arcanum command surface                      | D-002, R-002         | `ARCHITECTURE.md#view-6-dependency-interface-view`; `IMPLEMENTATION-LAYERING.md#layer-1-improvements-over-l0`     | Design adapter metadata and parity checks before replacing any command surface.                                                                                | Adapter inventory and command-resolution fixture plan. |
 | TASK-DSAS-004 | DomainSpec constitution; signal schema; Arcanum observability | R-004, RK-003        | `ARCHITECTURE.md#governance-and-validation-layer`; `IMPLEMENTATION-LAYERING.md#layer-2-improvements-over-layer-1` | Define deterministic validators for registry crosswalk, relationship examples, signal crosswalk, and lifecycle route ownership.                                | Validator design and sample pass/flag/block cases.     |
 | TASK-DSAS-005 | DomainSpec README; Arcanum install docs                       | RK-004               | `ARCHITECTURE.md#extension-points`; `IMPLEMENTATION-LAYERING.md#layer-3-improvements-over-layer-2`                | Create migration and packaging plan only after local validation evidence exists.                                                                               | Migration guide draft and pilot checklist.             |
@@ -59,7 +59,7 @@ Single-file mode is acceptable for the initial plan. Split into `work-pack/tasks
 
 | Wave | Objective                            | Entry Gate                                   | Exit Gate                                                | Status      | Evidence                                                        |
 | ---- | ------------------------------------ | -------------------------------------------- | -------------------------------------------------------- | ----------- | --------------------------------------------------------------- |
-| W0   | Prove semantic fit without mutation. | Architecture, layering, and work-pack exist. | `SPEC.md`, inventory crosswalk, and gap ledger reviewed. | in-progress | `ARCHITECTURE.md`, `IMPLEMENTATION-LAYERING.md`, `WORK-PACK.md` |
+| W0   | Prove semantic fit without mutation. | Architecture, layering, and work-pack exist. | `SPEC.md`, inventory/template crosswalk, and gap ledger reviewed. | in-progress | `ARCHITECTURE.md`, `IMPLEMENTATION-LAYERING.md`, `WORK-PACK.md`, `TEMPLATE-MANAGEMENT-INVOKE.md` |
 | W1   | Prove runtime compatibility bridge.  | W0 exit evidence accepted.                   | Representative command parity checks pass.               | not-started | pending                                                         |
 | W2   | Prove governance and observability.  | W1 parity evidence accepted.                 | Validators and signal crosswalk pass sample cases.       | not-started | pending                                                         |
 | W3   | Prove packaging and rollout.         | W2 governance evidence accepted.             | Consumer pilot install and readiness check pass.         | not-started | pending                                                         |
@@ -90,7 +90,7 @@ Single-file mode is acceptable for the initial plan. Split into `work-pack/tasks
 | SWU ID       | Parent Task   | Goal                                                                      | Dependencies                              | Write Scope                                                                   | Done Criteria                                                                | Acceptance Evidence       | Verification                      | Owner          |
 | ------------ | ------------- | ------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------- | --------------------------------- | -------------- |
 | SWU-DSAS-001 | TASK-DSAS-001 | Draft `SPEC.md` for the capability-domain superset.                       | Architecture approved enough to continue. | `implementation/domainspec/docs/features/domainspec-arcanum-superset/SPEC.md` | Concepts, rules, workflows, interfaces, and gaps are explicit.               | Reviewable feature spec.  | Markdown review and link check.   | local-fallback |
-| SWU-DSAS-002 | TASK-DSAS-002 | Draft Arcanum-to-DomainSpec ontology crosswalk.                           | `SPEC.md` exists.                         | New crosswalk doc in feature folder.                                          | Sigils, spells, tiers, lifecycle owners, and run evidence mapped or flagged. | Crosswalk report.         | Review unmapped entries.          | subagent       |
+| SWU-DSAS-002 | TASK-DSAS-002 | Draft Arcanum-to-DomainSpec ontology and template crosswalk.               | `SPEC.md` exists.                         | New crosswalk doc in feature folder.                                          | Sigils, spells, templates, tiers, lifecycle owners, and run evidence mapped or flagged. | Crosswalk report.         | Review unmapped entries.          | subagent       |
 | SWU-DSAS-003 | TASK-DSAS-003 | Define adapter inventory schema and parity target list.                   | W0 exit accepted.                         | Feature docs and future tooling plan only.                                    | Adapter states and parity checks are named.                                  | Adapter inventory design. | Review selected command fixtures. | subagent       |
 | SWU-DSAS-004 | TASK-DSAS-004 | Define validation rules for registry, relationship, and signal crosswalk. | W1 bridge design accepted.                | Feature docs and future tool specs.                                           | Pass/flag/block examples exist.                                              | Validation design report. | Review sample cases.              | subagent       |
 | SWU-DSAS-005 | TASK-DSAS-005 | Draft migration and pilot packaging guide.                                | W2 validation evidence accepted.          | Feature docs and packaging plan.                                              | Consumer pilot path and rollback policy are explicit.                        | Migration guide draft.    | Pilot checklist review.           | local-fallback |
@@ -125,28 +125,37 @@ Edge cases and failure modes:
 - If a concept cannot map to an existing DomainSpec type, record a candidate type or relationship gap.
 - If lifecycle authority is ambiguous, block runtime planning until routed.
 
-### TASK-DSAS-002 - Capability Inventory and Ontology Crosswalk
+### TASK-DSAS-002 - Capability, Template, and Ontology Crosswalk
 
-Purpose: prove that existing Arcanum artifacts can be indexed by DomainSpec without rewriting them.
+Purpose: prove that existing Arcanum artifacts and template families can be indexed by DomainSpec without rewriting them.
 
 Inputs:
 
 - `arcanum/registry/SIGILS.md`
 - `arcanum/registry/SPELLS.md`
+- `arcanum/spells/invoke/templates/`
+- representative Arcanum capability `templates/` folders
+- `implementation/domainspec/templates/`
 - representative `SKILL.md` and spell files
+- `TEMPLATE-MANAGEMENT-INVOKE.md`
 
 Outputs:
 
 - capability inventory snapshot
+- template inventory snapshot
 - ontology crosswalk
+- template-family crosswalk
 - unmapped gap ledger
+- duplicate-purpose template gap ledger
 
 Ordered rules:
 
 1. Read registry tables as source evidence.
-2. For each sigil/spell, assign candidate DomainSpec concept type, owner, tier, source path, and lifecycle status.
-3. Mark missing validation, missing observability, or unclear runtime adapter as gaps.
-4. Do not edit Arcanum sources.
+2. Read template folders as source evidence; do not infer authority from path order alone.
+3. For each sigil/spell, assign candidate DomainSpec concept type, owner, tier, source path, and lifecycle status.
+4. For each template family, assign owning system, intended artifact type, selection policy source, validation-example coverage, and promotion status.
+5. Mark missing validation, missing observability, unclear runtime adapter, unclear template authority, or duplicate template purpose as gaps.
+6. Do not edit Arcanum or DomainSpec template sources.
 
 ### TASK-DSAS-003 - Runtime Compatibility Bridge
 
@@ -223,7 +232,7 @@ Rules:
 | Blocker ID | Scope | Description                                                  | Owner           | Next Action                                        | Target Date |
 | ---------- | ----- | ------------------------------------------------------------ | --------------- | -------------------------------------------------- | ----------- |
 | B-001      | W0    | Approved feature `SPEC.md` does not yet exist.               | domainspec-core | Execute TASK-DSAS-001.                             | TBD         |
-| B-002      | W0    | Arcanum-to-DomainSpec ontology crosswalk does not yet exist. | domainspec-core | Execute TASK-DSAS-002 after `SPEC.md`.             | TBD         |
+| B-002      | W0    | Arcanum-to-DomainSpec ontology and template crosswalk does not yet exist. | domainspec-core | Execute TASK-DSAS-002 after `SPEC.md`.             | TBD         |
 | B-003      | W1    | First runtime parity target is undecided.                    | domainspec-core | Decide Codex vs GitHub Copilot vs Claude after W0. | TBD         |
 
 ## Notes

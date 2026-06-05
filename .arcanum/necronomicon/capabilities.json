@@ -1,0 +1,59 @@
+{
+  "version": "0.2.0",
+  "created_at": "2026-05-27T07:42:21Z",
+  "install_prefix": ".arcanum",
+  "runtime": "codex",
+  "command_surface": ".codex/commands",
+  "fallback_policy": "ask-before-add",
+  "selected_sigils": [
+    {"id": "dispatch-spec", "tier": "formulae", "command": "arcanum-sigil-dispatch-spec"},
+    {"id": "observability-setup", "tier": "formulae", "command": "arcanum-sigil-observability-setup"},
+    {"id": "codex-goal-profile", "tier": "transmutations", "command": "arcanum-sigil-codex-goal-profile"},
+    {"id": "context-builder", "tier": "transmutations", "command": "arcanum-sigil-context-builder"},
+    {"id": "feature-glossary", "tier": "transmutations", "command": "arcanum-sigil-feature-glossary"},
+    {"id": "implementation-layering", "tier": "transmutations", "command": "arcanum-sigil-implementation-layering"},
+    {"id": "architecture-pattern-inventory", "tier": "arcana", "command": "arcanum-sigil-architecture-pattern-inventory"},
+    {"id": "decision-gate", "tier": "arcana", "command": "arcanum-sigil-decision-gate"},
+    {"id": "definitions-governance", "tier": "arcana", "command": "arcanum-sigil-definitions-governance"},
+    {"id": "distill", "tier": "arcana", "command": "arcanum-sigil-distill"},
+    {"id": "experiment-harness", "tier": "arcana", "command": "arcanum-sigil-experiment-harness"},
+    {"id": "inventory", "tier": "arcana", "command": "arcanum-sigil-inventory"},
+    {"id": "invoke-example-runner", "tier": "arcana", "command": "arcanum-sigil-invoke-example-runner"},
+    {"id": "ontology-vault", "tier": "arcana", "command": "arcanum-sigil-ontology-vault"},
+    {"id": "refine", "tier": "arcana", "command": "arcanum-sigil-refine"},
+    {"id": "residuality-spec", "tier": "arcana", "command": "arcanum-sigil-residuality-spec"},
+    {"id": "robot-talks", "tier": "arcana", "command": "arcanum-sigil-robot-talks"},
+    {"id": "scope-interview", "tier": "arcana", "command": "arcanum-sigil-scope-interview"},
+    {"id": "sigil-development", "tier": "arcana", "command": "arcanum-sigil-sigil-development"},
+    {"id": "sigil-runtime-installer", "tier": "arcana", "command": "arcanum-sigil-sigil-runtime-installer"},
+    {"id": "signal-observer", "tier": "arcana", "command": "arcanum-sigil-signal-observer"},
+    {"id": "skill-decomposer", "tier": "arcana", "command": "arcanum-sigil-skill-decomposer"},
+    {"id": "skill-transcriptor", "tier": "arcana", "command": "arcanum-sigil-skill-transcriptor"},
+    {"id": "spellcraft", "tier": "arcana", "command": "arcanum-sigil-spellcraft"},
+    {"id": "structured-interview-kits", "tier": "arcana", "command": "arcanum-sigil-structured-interview-kits", "aliases": [{"name": "Interrogation", "slug": "interrogation", "command": "arcanum-sigil-interrogation"}]},
+    {"id": "task-session", "tier": "arcana", "command": "arcanum-sigil-task-session"},
+    {"id": "workflow-reflect", "tier": "arcana", "command": "arcanum-sigil-workflow-reflect"},
+    {"id": "x-ray", "tier": "arcana", "command": "arcanum-sigil-x-ray"}
+  ],
+  "selected_spells": [
+    {"id": "arcanum-bootstrap", "command": "arcanum-spell-arcanum-bootstrap"},
+    {"id": "discovery-to-inventory", "command": "arcanum-spell-discovery-to-inventory"},
+    {"id": "implementation-readiness", "command": "arcanum-spell-implementation-readiness"},
+    {"id": "invoke", "command": "arcanum-spell-invoke"},
+    {"id": "necronomicon", "command": "arcanum-spell-necronomicon"},
+    {"id": "observed-invocation-loop", "command": "arcanum-spell-observed-invocation-loop"},
+    {"id": "ontology-harness", "command": "arcanum-spell-ontology-harness"},
+    {"id": "repository-harness", "command": "arcanum-spell-repository-harness"},
+    {"id": "sigil-maintenance-loop", "command": "arcanum-spell-sigil-maintenance-loop"},
+    {"id": "whisper", "command": "arcanum-spell-whisper"}
+  ],
+  "harness_commands": [
+    {"id": "necronomicon", "command": "arcanum-necronomicon", "source": "spells/necronomicon/README.md"},
+    {"id": "ontology-harness", "command": "arcanum-ontology-harness", "source": "spells/ontology-harness/README.md"}
+  ],
+  "state_paths": {
+    "sessions": ".arcanum/necronomicon/sessions",
+    "capability_updates": ".arcanum/necronomicon/capability-updates",
+    "observability": ".arcanum/observability"
+  }
+}

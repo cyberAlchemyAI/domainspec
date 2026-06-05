@@ -1,0 +1,38 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".codex/hooks/arcanum-user-prompt-submit.sh",
+            "statusMessage": "Opening Arcanum observer envelope"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".codex/hooks/arcanum-post-tool-use.sh",
+            "statusMessage": "Recording Arcanum tool evidence"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".codex/hooks/arcanum-stop.sh",
+            "statusMessage": "Closing Arcanum observer envelope"
+          }
+        ]
+      }
+    ]
+  }
+}

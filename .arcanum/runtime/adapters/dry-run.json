@@ -1,0 +1,20 @@
+{
+  "adapter_id": "dry-run",
+  "runtime_kind": "dry-run",
+  "execution_mode": "simulated",
+  "state_model": "stateless",
+  "isolation_model": "filesystem-output-only",
+  "input_shape": "command-prompt",
+  "output_shape": "requested-output",
+  "failure_model": "passed|blocked|failed",
+  "capabilities": [
+    "validate command-surface adapter dispatch without external execution"
+  ],
+  "limitations": [
+    "does not prove model-backed execution"
+  ],
+  "validation_surface": [
+    "tools/arcanum --exec --adapter dry-run",
+    "requested output exists"
+  ]
+}
