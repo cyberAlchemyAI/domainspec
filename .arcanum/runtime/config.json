@@ -1,0 +1,15 @@
+{
+  "schema_version": "arcanum.runtime.config.v1",
+  "command_surface": "codex",
+  "default_adapter": "codex-exec",
+  "adapters": {
+    "codex-exec": {
+      "enabled": true,
+      "profile_path": ".arcanum/runtime/adapters/codex-exec.json"
+    },
+    "dry-run": {
+      "enabled": true,
+      "profile_path": ".arcanum/runtime/adapters/dry-run.json"
+    }
+  }
+}
