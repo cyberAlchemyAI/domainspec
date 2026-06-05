@@ -203,6 +203,7 @@ Per `ontology-conventions.md` §Applicability, discovery files omit `veracidade`
 | `vault/discovery/domainspec-vault-foundations/epistemic-chain.md` | `cites` | A-4 (folder-as-classifier rejected) is the principle the narrowed design honors by keeping `layer:` as a navigational cross-check, not a classification mechanism; OQ-6 of that discovery is upstream of OQ-3 here. |
 | `vault/discovery/graph-as-residue-attractor/README.md` | `cites` | The host-shape-witnesses-hosted-theorem framing motivated lens 02's maximal proposal; lens 07 §D explicitly drops this framing from the load-bearing justification, but the conceptual lineage is recorded. |
 | `vault/discovery/two-layer-platform-architecture/README.md` | `cites` | The schema/instance discipline at the infrastructure level (vault_common kernel vs subsystems) is the upstream theoretical move this discovery mirrors at the folder level. |
+| `vault/discovery/system-modeling-partition-architecture/discovery.md` | `derives` | The partition-architecture discovery extends this discovery's narrowed top-level schema/instance split (D-1) to a repo-level ownership axis, and honors A-4 (folder-as-classifier rejected); it explicitly does not re-propose the maximal recursion rejected here. |
 
 ---
 
