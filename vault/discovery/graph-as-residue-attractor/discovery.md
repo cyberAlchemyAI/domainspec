@@ -227,3 +227,4 @@ The convergence trigger (four independent conversations in the same hour across 
 | `vault/discovery/graph-as-residue-attractor/lenses/04-yoneda-lemma/findings.md` | `derives-from` | Yoneda load-bearing triage and embeddings-as-restricted-Yoneda bridge — informs C6, D-4. |
 | `vault/discovery/graph-as-residue-attractor/lenses/05-kauffman-precedent-check/findings.md` | `derives-from` | Adversarial precedent check; narrows novelty claim to three pieces — informs D-3, OQ-7. |
 | `vault/ontology-conventions.md` | `cites` | The 21-edge catalog, node-type vocabulary, and §6 Applicability rule (omit veracidade/convicção for discoveries) are load-bearing for D-5 and for the GKG description in C2. |
+| `vault/discovery/certification-on-the-wrong-object/discovery.md` | `derives` | Downstream diagnosis: consequence (d) sharpens this node's four predicted residues / "prediction not tested over time" flag into a missing-error-term claim over tower iteration. |
