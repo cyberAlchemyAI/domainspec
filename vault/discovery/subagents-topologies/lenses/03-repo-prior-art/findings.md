@@ -13,9 +13,25 @@ sources:
   - domainspec-theorem/research/audits/*/dispatch.yaml (15 files repo-wide)
   - domainspec-theorem/theorem/agents-research/ (ad-hoc channel)
 verification: [local-files-read]
+node_type: findings
+status: consolidated
+dispatch_status: backfilled-no-prompt-recoverable
+lens_order: first
+tags: [vault, discovery, multi-agent, subagent-topologies, drift-audit]
+is_session: false
+layer: ontology
+nature: reference
+version: 0.1.0
+last_updated: 2026-06-05
 ---
 
 # Lens 03 — Repo Prior-Art: Topologies Encoded vs. Topologies Lived
+
+## Objective
+
+Catalog what dispatch topologies this repo already encodes, and map the gap between the specified topology and lived practice.
+
+## Findings
 
 This lens does cartography. It catalogs the dispatch topologies this repo already
 specifies, then maps the gap between the spec and what actually landed on disk. The
@@ -25,7 +41,7 @@ deliberately *tensioned* against each other, not merely *non-overlapping*"; §"D
 from diversity"). This lens cites that as prior art; it does not re-derive it. The
 contribution here is the *taxonomy + drift map*.
 
-## A. Taxonomy of encoded topologies
+### A. Taxonomy of encoded topologies
 
 The repo encodes topology at two grain sizes: **top-level mode** (whole dispatch) and
 **per-layer mode** (R30 composability).
@@ -62,7 +78,7 @@ as success" (validator-check.md §Post-dispatch). The repo *already knows* that 
 diversity are not calibration; tension is. That is exactly the discovery's central claim,
 stated as prior art.
 
-## B. The drift: specified vs. lived (verified counts)
+### B. The drift: specified vs. lived (verified counts)
 
 I counted on disk. Where my counts differ from the brief's estimates, the verified
 numbers are below.
@@ -106,7 +122,7 @@ holds **32 folders** (e.g. `attacking-m2-conjecture`, `mackey-respin-council-202
 entirely outside R26 validation and R29 tension-naming. This is the largest live
 false-consensus surface in the repo: multi-agent work with no validator to fire Item 10.
 
-## C. Tension I carry (against Lens 02's ideal)
+### C. Tension I carry (against Lens 02's ideal)
 
 Lens 02 argues forced confrontation calibrates. The repo *agrees on paper* — the
 adversarial-audit shape (A.4) and Item 10 exist precisely to force it. My counter-load:
@@ -122,7 +138,7 @@ trigger*. The repo built the trigger and then, in the dominant lived path
 would pull it. Forced confrontation calibrates only when something forces it; here the
 forcing function is specified but unexercised at scale.
 
-## Boundary
+## Caveats
 
 This cartography establishes that the topologies exist (A) and that lived practice drifts
 from spec along five verified axes (B). It does **not** establish the discovery's central
@@ -134,3 +150,9 @@ unaddressed in the literature — that needs Lens 04's precedent check. Drift co
 snapshot at 2026-06-05 and will move as dispatches accrue. What this lens proves is
 narrower and load-bearing: the repo *already owns* the tension-not-diversity doctrine,
 and its own lived topologies repeatedly fail to exercise it.
+
+## Connections
+
+| Document | Type | Description |
+|---|---|---|
+| `../../research/research.md` | `synthesized-by` | This lens's topology taxonomy and drift audit are consolidated by the folder's cross-lens research synthesis. |

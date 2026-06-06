@@ -10,13 +10,29 @@ sources:
   - "Brown, G., Wyatt, J., Harris, R. & Yao, X. (2005). Diversity creation methods: a survey and categorisation. Information Fusion 6(1)."
   - "Thompson, A. (2014). Does diversity trump ability? An example of the misuse of mathematics. Notices of the AMS 61(9)."
 verification: [model-recall]
+node_type: findings
+status: consolidated
+dispatch_status: backfilled-no-prompt-recoverable
+lens_order: first
+tags: [vault, discovery, multi-agent, subagent-topologies, ensemble-error]
+is_session: false
+layer: ontology
+nature: explanatory
+version: 0.1.0
+last_updated: 2026-06-05
 ---
 
 # Lens 01 — Ensemble-formal: why tension, not count, cancels the bias term
 
+## Objective
+
+Establish that the ensemble-error formalism (Krogh–Vedelsby, bias–variance, Hong–Page) says what the central claim needs: the diversity/ambiguity term — disagreement on shared inputs along the solution-relevant axis — is what subtracts member error, so agent count and surface variety are orthogonal to calibration unless they raise on-axis tension.
+
+## Findings
+
 **Provenance note.** This lens is `model-recall`: the theorems below are standard and stated from training knowledge, with no paper fetched during production. The decompositions (Krogh–Vedelsby, bias–variance) are exact algebraic identities and are reliable; the Hong–Page material and its critiques are recalled and should be re-verified against the cited sources before being treated as load-bearing. **None of this math is the discovery's contribution** — the discovery borrows it. The contribution is the mapping from "diversity term" to "dispatch topology," which the other lenses and the README carry. This lens only establishes that the formalism *says what the central claim needs it to say*.
 
-## 1. The Krogh–Vedelsby identity: error = average error − ambiguity
+### 1. The Krogh–Vedelsby identity: error = average error − ambiguity
 
 Take an ensemble of members each producing an estimate \(V_i(x)\) for a target, combined by a (possibly weighted) average \(\bar V(x) = \sum_i w_i V_i(x)\). Krogh & Vedelsby (1995) prove an *exact* pointwise identity for squared error:
 
@@ -39,7 +55,7 @@ Two facts make it the spine of the central claim:
 
 This is the formal content of "surface diversity is orthogonal to calibration." Surface diversity that does not move \(V_i(x)\) apart on the same \(x\) leaves \(\bar A = 0\) and leaves the ensemble error pinned at the average member error.
 
-## 2. Bias–variance: averaging preserves the *shared* bias
+### 2. Bias–variance: averaging preserves the *shared* bias
 
 Krogh–Vedelsby measures spread around the ensemble's own mean. It does *not* tell you where that mean sits relative to truth. For that, decompose member error against the target. For estimators with a common expected value, the classical bias–variance decomposition (Geman, Bienenstock & Doursat, 1992) of the *ensemble* mean \(\bar V\) is:
 
@@ -61,7 +77,7 @@ Reading this term by term:
 
 So "more agents ≠ calibration" is not a heuristic; it is two distinct mathematical facts. Count attacks only the \(\sigma^2/n\) term. The shared-bias term and the correlated-variance floor \(\rho\sigma^2\) survive any \(n\). The only way to drain the floor is to *lower \(\rho\)* — to make members err in genuinely different directions — and the only way to attack the bias term is to make at least some members err in the direction *opposite* the shared bias. Both require disagreement along the axis where the bias actually lives.
 
-## 3. Diversity (any axis) vs tension (the bias-carrying axis)
+### 3. Diversity (any axis) vs tension (the bias-carrying axis)
 
 This is the sharp distinction the discovery needs, and the decompositions give it precisely.
 
@@ -70,7 +86,7 @@ This is the sharp distinction the discovery needs, and the decompositions give i
 
 In dispatch terms: agent count grows \(n\) (touches only \(\sigma^2/n\)); surface diversity grows off-axis spread (touches \(\bar A\) on irrelevant dimensions); **structural tension grows on-axis spread (touches \(\rho\) and bias where they live).** The decomposition makes count and surface diversity *provably orthogonal* to the bias term and to the correlated-variance floor. They are not harmful — they help the part of the error that was already going to wash out. They are simply not the load-bearing variable for calibration.
 
-## 4. Hong & Page (2004): diversity trumps ability — under conditions
+### 4. Hong & Page (2004): diversity trumps ability — under conditions
 
 Hong & Page's "diversity trumps ability" theorem states that a group of randomly selected problem-solvers can outperform a group of the individually-best solvers, *because* the best solvers tend to share heuristics and therefore get stuck at the same local optima, while a diverse group covers complementary parts of the search space. The mechanism is the same as the ambiguity term: complementarity (disagreement on the same problem) does work that individual ability cannot.
 
@@ -78,12 +94,20 @@ Crucially, the theorem's conditions encode *tension*, not mere variety. The resu
 
 **Honest caveats (model-recall, verify before load-bearing use).** The theorem has well-known critiques — most pointedly Thompson (2014), who argues the formal version smuggles its conclusion into its assumptions (the "diversity" and "ability" measures are defined so that the inequality is near-tautological, and the random-selection limit does heavy lifting). The defensible residue, which is what this lens relies on, is the *qualitative* and *conditional* claim: complementary, problem-relevant disagreement can beat aggregated individual skill — under conditions on relevance and competence. The discovery should cite Hong–Page for the *direction* of the effect and lean on Krogh–Vedelsby and bias–variance for the *exact* algebra, not the reverse.
 
-## 5. What the formalism gives — and what it does not
+### 5. What the formalism gives — and what it does not
 
 Subset discipline: the cited theorems give that **structured (on-axis) disagreement is necessary** to subtract member error and to lower the correlated-variance floor, and that **count and surface diversity cannot touch the shared-bias term**. That is exactly the central claim's "structural tension is load-bearing; count and surface diversity are orthogonal."
 
 They do **not** give that calibration is *guaranteed*. Krogh–Vedelsby guarantees only "no worse than average member." Nothing here proves the ensemble mean lands *on* the truth — only that on-axis tension is the channel through which it *could*. Calibration remains an empirical property of a particular dispatch, which the other lenses must establish; this lens establishes only that the formal machinery makes tension the right place to look.
 
-## Boundary
+## Caveats
+
+What this lens did NOT establish:
 
 This lens treats agents as *estimators to be averaged passively*. Its whole apparatus — \(\bar A\), \(\rho\sigma^2\), the bias term — assumes that disagreement, once present, is harvested by aggregation. That apparatus reaches its hard limit exactly at the **shared-bias / correlated-error floor**: averaging cannot remove a systematic error that every member commits, and it cannot *manufacture* the on-axis disagreement that would lower \(\rho\) — it can only exploit disagreement that the dispatch topology has already induced. Where the bias is correlated across all members (a prior they all inherit, a framing none of them question), \(\rho \to 1\) on the bias axis and passive averaging is powerless. That is precisely where **Lens 02 (adversarial-debate)** takes over: when error is systematic rather than spread, you cannot average it away — you must *force confrontation* to generate the on-axis disagreement that this lens can only assume into existence. Lens 01 says tension is the load-bearing variable; Lens 02 addresses how to *produce* tension when the ensemble would otherwise collapse to a correlated consensus.
+
+## Connections
+
+| Document | Type | Description |
+|---|---|---|
+| `../../research/research.md` | `synthesized-by` | This lens's ensemble-error conclusions are consolidated by the folder's cross-lens research synthesis. |

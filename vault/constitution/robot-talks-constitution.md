@@ -320,6 +320,7 @@ Robot-talks MUST always:
 | [discovery/robot-talks-definitions/robot-talks.md](../discovery/robot-talks-definitions/robot-talks.md) | `codifies` | The robot-talks discovery names this constitution as the enforceable rule set (PM-1 through PM-8 plus R1–R7) that codifies its consolidated premises. |
 | [../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md](../sessions/2026-05-03-0334-cross-boundary-rule-and-edges-hygiene-dispatch.md) | `modified-by` | The 2026-05-03 cross-boundary-rule + edges-hygiene session executed an in-content rename sweep (`subagents-*` → `domainspec-*`). |
 | `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L7 multi-agent-orchestration layer cites this constitution as the load-bearing rule set for adversarial-parallel multi-perspective investigation. |
+| [../discovery/subagents-topologies/discovery.md](../discovery/subagents-topologies/discovery.md) | `cited-by` | The subagent-topologies feature discovery cites this constitution as governing the robot-talks topology in its eight-topology taxonomy. |
 ---
 
 ## Version History

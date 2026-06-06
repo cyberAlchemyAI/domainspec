@@ -5,13 +5,29 @@ dispatched_by: subagent (lens-04)
 addresses: The central claim is near-fully owned by the sibling discovery anti-bias-vector-composition (which already says "tensioned not merely diverse" and cites Krogh-Vedelsby); the surviving contribution is at most a topology taxonomy, and three load-bearing failures (loaded question, variance, single synthesizer) bound it well below "finding."
 sources: [vault/discovery/anti-bias-vector-composition/principle.md, vault/discovery/anti-bias-vector-composition/validator-check.md, vault/discovery/anti-bias-vector-composition/literature.md, "Krogh & Vedelsby 1995 (model-recall)", "Hong & Page 2004 (model-recall)"]
 verification: [local-files-read, model-recall]
+node_type: findings
+status: consolidated
+dispatch_status: backfilled-no-prompt-recoverable
+lens_order: second
+tags: [vault, discovery, multi-agent, subagent-topologies, skeptic, scope-fence]
+is_session: false
+layer: ontology
+nature: explanatory
+version: 0.1.0
+last_updated: 2026-06-05
 ---
 
 # Lens 04 — Skeptic: precedent-kill + vacuity + boundary
 
+## Objective
+
+Attack the claim that *dispatch topology* (structural tension along the bias-carrying axis) is the load-bearing variable for calibration, and that count and surface diversity are orthogonal — running three attacks and forcing a verdict.
+
+## Findings
+
 My job is to attack the claim that *dispatch topology* (structural tension along the bias-carrying axis) is the load-bearing variable for calibration, and that count and surface diversity are orthogonal. I run three attacks and force a verdict.
 
-## Attack 1 — Precedent-kill (the fatal one is internal)
+### Attack 1 — Precedent-kill (the fatal one is internal)
 
 The claim is owned twice over.
 
@@ -28,7 +44,7 @@ So the precedent is not adjacent prior art the new discovery can cite and extend
 
 The only thing the new discovery adds over its sibling is **vocabulary**: it calls the tensioned-pairwise structure a "TOPOLOGY" and proposes a taxonomy of topologies. That is a renaming plus a classification, not a finding.
 
-## Attack 2 — Vacuity
+### Attack 2 — Vacuity
 
 "Topology determines calibration" is unfalsifiable *unless* tension is defined independently of its effect. If "tension" means "whatever structure produced calibration," the claim is circular and true-by-construction.
 
@@ -36,7 +52,7 @@ The sibling discovery's `validator-check.md` does give four *a priori* axes — 
 
 If instead `subagents-topologies` introduces "topology" as a fresh primitive *without* importing those axes, it relapses into circularity: a "tensioned topology" defined only as "the topology shape that calibrates" smuggles the conclusion. The discovery must show its taxonomy of topologies is classifiable on the spec *before* the dispatch returns. If it cannot, it is vacuous. I have seen no such pre-dispatch classifier that is not already the sibling's.
 
-## Attack 3 — Boundary (push hardest on the synthesizer)
+### Attack 3 — Boundary (push hardest on the synthesizer)
 
 The claim is over-scoped against three things topology-tensioning provably cannot fix:
 
@@ -46,10 +62,28 @@ The claim is over-scoped against three things topology-tensioning provably canno
 
 **(c) The single synthesizer (strongest).** A tensioned dispatch still routes all N outputs through *one* synthesizer that reads the disagreement and decides the final confidence. By construction (constitution §4: "single dispatched origin"; sibling principle.md §"Does not apply": *"Synthesizer layer. Single agent by construction; nothing to tension against."*) the synthesizer is a single point of bias the topology does not cancel. Topology can *surface* the disagreement; it cannot *force the synthesizer to read it without bias.* A biased synthesizer can observe a perfectly tensioned, dissent-rich layer and still collapse it to the strongest reading. So "calibration only when topology tensions" is incomplete: it is "calibration only when topology tensions *and* an unbiased synthesizer reads the tension." The second conjunct is single-agent, uncancellable by any topology, and the claim omits it. The discovery's own framing thus over-attributes calibration to topology and under-attributes it to the irreducible single-reader bottleneck.
 
-## Verdict
+### Verdict
 
 The central claim does **not** survive as a *finding*. It is a renaming ("topology") plus a taxonomy of a result this vault already published in `anti-bias-vector-composition` (2026-05-26), which itself disclaimed novelty against Krogh-Vedelsby and Hong-Page. Attack 1 is sufficient on its own; Attacks 2 and 3 show that even the renamed version is either vacuous (without the sibling's pre-dispatch axes) or over-scoped (count is load-bearing for variance; the synthesizer is an uncancellable single point of bias). Lens 01's "formal basis" is owned ensemble math; Lens 03's cartography is decoration over existing validator rules unless it produces a topology classifier that is checkable pre-dispatch and absent from the sibling.
 
+### Surviving contribution (post-attack)
+
+At most a *consolidation*, not a finding — the discovery may legitimately (a) name the pre-dispatch tension axes as a small typed *taxonomy of dispatch topologies* (a usable index over the sibling's R/G rules), and (b) record the boundary trio (loaded question, variance, single synthesizer) as the explicit scope-fence the sibling left implicit — provided it cites anti-bias-vector-composition as `supersedes`/`derives-from` and demotes its own headline from "finding" to "owned-prior-art consolidation into a topology taxonomy + scope-fence."
+
+## Caveats
+
+What this skeptic lens did NOT establish:
+
+- It did **not** independently test the drift counts or the calibration outcomes themselves; the attacks operate on the *claim structure* and on what the sibling node already states, not on a fresh measurement of dispatch behavior.
+- It **relied on model-recall** for the external citations (Krogh & Vedelsby 1995; Hong & Page 2004) — these were not re-fetched from source. The internal precedent-kill (Attack 1) rests on `local-files-read` of the sibling `anti-bias-vector-composition` files and is the load-bearing one; the external half is recall-grade.
+- It is a **single synthesizer's** adversarial read — by its own Attack 3(c) logic, this lens is itself a single-reader and carries the same uncancellable-single-reader caveat it raises against the discovery.
+
+The load-bearing self-check, preserved verbatim:
+
 **Collapse-test:** If `anti-bias-vector-composition/principle.md` already states "tensioned not merely diverse" and already cites Krogh-Vedelsby (1995) for the ensemble error-decomposition — it does, verified by local read — then the discovery's contribution collapses to zero unless it can name one calibration-relevant claim TRUE of "topologies" that is FALSE or absent in the sibling's tensioned-pairwise + four-axis validator. No such claim has been exhibited.
 
-**Surviving contribution (post-attack):** At most a *consolidation*, not a finding — the discovery may legitimately (a) name the pre-dispatch tension axes as a small typed *taxonomy of dispatch topologies* (a usable index over the sibling's R/G rules), and (b) record the boundary trio (loaded question, variance, single synthesizer) as the explicit scope-fence the sibling left implicit — provided it cites anti-bias-vector-composition as `supersedes`/`derives-from` and demotes its own headline from "finding" to "owned-prior-art consolidation into a topology taxonomy + scope-fence."
+## Connections
+
+| Document | Type | Description |
+|---|---|---|
+| `../../research/research.md` | `synthesized-by` | This skeptic lens's precedent-kill and scope-fence are consolidated by the folder's cross-lens research synthesis. |
