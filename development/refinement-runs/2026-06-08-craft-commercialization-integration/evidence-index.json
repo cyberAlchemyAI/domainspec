@@ -1,0 +1,50 @@
+{
+  "run_id": "2026-06-08-craft-commercialization-integration",
+  "target": "How arcanum/development/craft integrates with the commercialization plan",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "receipts_collected": 3
+  },
+  "artifacts": {
+    "seed_proposal": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "stage": "Distill / structural map",
+      "owner": "Craft Cartographer",
+      "agent_id": "a4f19a8a02840a7a3",
+      "path": "stages/subagent-craft-cartographer.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Design / link to plan",
+      "owner": "Commercialization Linker",
+      "agent_id": "ad41b074e48c04e07",
+      "path": "stages/subagent-commercialization-linker.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Interrogation / attack",
+      "owner": "Governance-Market Adversary",
+      "agent_id": "a1e2384f467516428",
+      "path": "stages/subagent-governance-market-adversary.md",
+      "verdict": "pass"
+    }
+  ],
+  "status": "flag",
+  "load_bearing_residue": "Craft today is free dev-infrastructure; every monetizable surface (hosted control plane, enforcement runtime, audit attestation, metering, role-delegation) is explicitly deferred. Craft is the R2 lever/surface but does not close R2 until the deferred automation ships as the paid meter.",
+  "named_external_gap": "AI-governance compliance forcing function (EU AI Act / NIST AI RMF) timeline + incumbent roadmaps — swing factor for market-vs-feature; not researched (local mode).",
+  "recommended_next_routes": [
+    "bounded-research (compliance forcing function + dev-governance incumbents) to resolve the named gap",
+    "decision-gate (commit Craft free/paid line + whether to fund the deferred automation as the paid meter)",
+    "task-session (dogfood free Craft ledger on the spec->test pipeline; generates promotion evidence + R1 governance-data asset)"
+  ]
+}

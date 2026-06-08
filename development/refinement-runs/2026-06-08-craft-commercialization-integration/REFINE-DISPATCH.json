@@ -1,0 +1,138 @@
+{
+  "dispatch_id": "2026-06-08-craft-commercialization-integration",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "how arcanum/development/craft/ integrates with commercialization",
+  "refinement_objective": "Place Craft in the free/paid boundary, decide whether it is the R2 governance-productization lever, and define its relationship to the CyberAlchemy promotion DAG, as a non-executed integration plan.",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "selected_overlays": [
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "Craft's position/coupling in the Arcanum stack vs promotion DAG / observability loop is the core uncertainty."
+    },
+    {
+      "id": "dialectic_for_tension",
+      "why": "Free adoption wedge vs paid governance moat is a genuine competing-principles clash for Craft."
+    },
+    {
+      "id": "tournament_for_alternatives",
+      "why": "Multiple placements (free ledger / paid automation tier / R2 vehicle / internal infra) compared on moat x WTP."
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "Prior commercialization RESULT (boundary, R1, R2) is load-bearing input, reused not re-derived."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Craft Cartographer",
+        "owns": "position-in-stack + coupling + separability + lifecycle readiness",
+        "receipt": "stages/subagent-craft-cartographer.md"
+      },
+      {
+        "role": "Commercialization Linker",
+        "owns": "free/paid placement + R2 verdict + promotion-DAG relationship + R1 relevance",
+        "receipt": "stages/subagent-commercialization-linker.md"
+      },
+      {
+        "role": "Governance-Market Adversary",
+        "owns": "attack Craft-as-paid-moat vs dev-governance incumbents",
+        "receipt": "stages/subagent-governance-market-adversary.md"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "n": 1,
+      "name": "Context Builder",
+      "owner": "refine+recon",
+      "status": "pass",
+      "evidence": "Craft recon + prior-run RESULT"
+    },
+    {
+      "n": 2,
+      "name": "Invoke Define",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "REFINE-SEED-PROPOSAL.md"
+    },
+    {
+      "n": 3,
+      "name": "Interrogation refine-review",
+      "owner": "Governance-Market Adversary (delegated)",
+      "status": "pass",
+      "evidence": "stages/subagent-governance-market-adversary.md"
+    },
+    {
+      "n": 4,
+      "name": "Research decision",
+      "owner": "refine",
+      "mode": "research-if-gap-appears",
+      "status": "flag",
+      "evidence": "named external gap recorded (compliance forcing function); not run (local)"
+    },
+    {
+      "n": 5,
+      "name": "Distill",
+      "owner": "Craft Cartographer (delegated)",
+      "status": "pass",
+      "evidence": "stages/subagent-craft-cartographer.md"
+    },
+    {
+      "n": 6,
+      "name": "Invoke Redefine/Design",
+      "owner": "Commercialization Linker (delegated)",
+      "status": "pass",
+      "evidence": "stages/subagent-commercialization-linker.md"
+    },
+    {
+      "n": 7,
+      "name": "Interrogation refine-design-review",
+      "owner": "refine cross-check",
+      "status": "flag",
+      "evidence": "monetizable surface entirely deferred"
+    },
+    {
+      "n": 8,
+      "name": "Distill Repair",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "residue: Craft today is free-infra; paid value is in unbuilt roadmap"
+    },
+    {
+      "n": 9,
+      "name": "Invoke Plan",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "RESULT.md integration plan"
+    },
+    {
+      "n": 10,
+      "name": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "RESULT.md"
+    }
+  ],
+  "gates": [
+    "native_receipts_present",
+    "research_decision_recorded",
+    "owner_boundary_preserved",
+    "residue_recorded",
+    "final_synthesis_from_artifacts"
+  ],
+  "observability_group": "2026-06-08-craft-commercialization-integration"
+}

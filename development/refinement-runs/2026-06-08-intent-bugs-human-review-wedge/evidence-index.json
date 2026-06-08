@@ -1,0 +1,51 @@
+{
+  "run_id": "2026-06-08-intent-bugs-human-review-wedge",
+  "target": "Commercialization addition: free Arcanum tools vs the intent-bug human-review problem",
+  "preset": "standard",
+  "research_mode": "bounded-research",
+  "research_confirmed": true,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "receipts_collected": 3,
+    "shape": "dialectic"
+  },
+  "artifacts": {
+    "seed_proposal": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "stage": "Distill / pipeline map",
+      "owner": "Free-Tool Cartographer",
+      "agent_id": "a475db0aa9aa4833d",
+      "path": "stages/cartographer-free-tool-map.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Design / thesis",
+      "owner": "Intent-Bug Proponent",
+      "agent_id": "ae3a4b9b0d4778514",
+      "path": "stages/proponent-thesis.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Interrogation / antithesis",
+      "owner": "Skeptic",
+      "agent_id": "ad90bc3586c81173e",
+      "path": "stages/skeptic-antithesis.md",
+      "verdict": "pass"
+    }
+  ],
+  "status": "flag",
+  "convergence": "Free tools do NOT reduce human intent review (it is irreducible, and LLM-authored specs can ratify a shared intent error). They RELOCATE it upstream (code-diff -> spec/definition, amortizable) and REFOCUS it into structured, mechanically-gated, auditable fidelity reports + first-class residue. The honest claim is 'intent review made cheaper, unskippable, and legible', not 'reduced' -- and that reframe is STRONGER commercially because legible+immutable intent-review trail IS the SOC2/ITGC paid-attestation value.",
+  "load_bearing_residue": "Design constraint (mandatory, not caveat): humans must own the spec/definition ground truth and the gates must ADD friction at intent-critical points, or circularity + automation-bias make escaped intent bugs WORSE. Measurement gap: no study shows these specific tools reduce escaped intent bugs (LLM oracle accuracy ~48-54%).",
+  "recommended_next_routes": [
+    "decision-gate (commit the 'relocate+legibilize, not reduce' framing + the human-owns-spec design constraint as a product requirement)",
+    "task-session (instrument escaped-intent-bug + review-time measurement on the spec->test pipeline to close the measurement gap)",
+    "refine (design the friction-at-intent-critical-points UX so tools counter automation bias rather than feed it)"
+  ]
+}

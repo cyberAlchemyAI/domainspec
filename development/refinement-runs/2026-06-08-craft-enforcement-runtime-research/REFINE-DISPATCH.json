@@ -1,0 +1,134 @@
+{
+  "dispatch_id": "2026-06-08-craft-enforcement-runtime-research",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Execute bounded research adding tandem, symphony, paperclip, sandcastle, Z7Lab/codex-sandbox, and in-house Jenkins-controlling-sandcastle as enforcement-runtime options.",
+  "refinement_objective": "Compare execution-sandbox/control options for Craft's enforcement chokepoint and resolve the compliance forcing-function gap, as a non-executed recommendation.",
+  "preset": "standard",
+  "research_mode": "bounded-research",
+  "research_confirmed": true,
+  "selected_overlays": [
+    {
+      "id": "tournament_for_alternatives",
+      "why": "Six execution-control options compared on common dimensions then pareto-ranked for fit."
+    },
+    {
+      "id": "protected_context_for_external_or_sensitive_evidence",
+      "why": "Evidence is external web/GitHub/regulatory sources; provenance and confidence flagged."
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "Prior craft run R-CRAFT-1/2 and the 5 paid-conditions are the load-bearing input."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Concrete-Repo Researcher",
+        "owns": "sandcastle + Z7Lab/codex-sandbox + Jenkins-control feasibility",
+        "receipt": "stages/research-concrete-repos.md"
+      },
+      {
+        "role": "Named-Product Researcher",
+        "owns": "tandem + symphony + paperclip disambiguation + capability",
+        "receipt": "stages/research-named-products.md"
+      },
+      {
+        "role": "Compliance Researcher",
+        "owns": "forcing-function + WTP + incumbent roadmaps",
+        "receipt": "stages/research-compliance.md"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "n": 1,
+      "name": "Context Builder",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "prior craft run RESULT + option list"
+    },
+    {
+      "n": 2,
+      "name": "Invoke Define",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "REFINE-SEED-PROPOSAL.md"
+    },
+    {
+      "n": 3,
+      "name": "Interrogation refine-review",
+      "owner": "Compliance Researcher (delegated)",
+      "status": "pass",
+      "evidence": "stages/research-compliance.md"
+    },
+    {
+      "n": 4,
+      "name": "Research decision",
+      "owner": "refine",
+      "mode": "bounded-research",
+      "status": "pass",
+      "evidence": "external pass executed (confirmed)"
+    },
+    {
+      "n": 5,
+      "name": "Distill",
+      "owner": "Concrete-Repo Researcher (delegated)",
+      "status": "pass",
+      "evidence": "stages/research-concrete-repos.md"
+    },
+    {
+      "n": 6,
+      "name": "Invoke Redefine/Design",
+      "owner": "Named-Product Researcher (delegated)",
+      "status": "pass",
+      "evidence": "stages/research-named-products.md"
+    },
+    {
+      "n": 7,
+      "name": "Interrogation refine-design-review",
+      "owner": "refine cross-check",
+      "status": "flag",
+      "evidence": "no option is a hardened sandbox out-of-box; isolation delegated"
+    },
+    {
+      "n": 8,
+      "name": "Distill Repair",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "paid moat gated on EMERGING forcing function + incumbent commoditization"
+    },
+    {
+      "n": 9,
+      "name": "Invoke Plan",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "RESULT.md recommended architecture"
+    },
+    {
+      "n": 10,
+      "name": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "RESULT.md"
+    }
+  ],
+  "gates": [
+    "native_receipts_present",
+    "research_confirmed",
+    "owner_boundary_preserved",
+    "residue_recorded",
+    "final_synthesis_from_artifacts"
+  ],
+  "observability_group": "2026-06-08-craft-enforcement-runtime-research"
+}

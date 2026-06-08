@@ -1,0 +1,138 @@
+{
+  "dispatch_id": "2026-06-08-intent-bugs-human-review-wedge",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Add to the commercialization how Arcanum free tools help solve the problem of intent bugs still needing human review.",
+  "refinement_objective": "Determine and honestly frame how the free tools address intent bugs vs the irreducible human-review need, as a commercialization narrative addition.",
+  "preset": "standard",
+  "research_mode": "bounded-research",
+  "research_confirmed": true,
+  "selected_overlays": [
+    {
+      "id": "dialectic_for_tension",
+      "why": "Core tension: do free tools REDUCE intent review or merely RELOCATE it? Thesis vs antithesis with convergence criteria.",
+      "roles": ["Proponent", "Skeptic"],
+      "convergence": "honest position both sides can accept"
+    },
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "Map the intent-bug -> human-review pipeline and each tool's intervention point.",
+      "artifact": "stages/cartographer pipeline map"
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "Prior runs (free wedge, Craft, enforcement/compliance) are load-bearing input."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Free-Tool Cartographer",
+        "owns": "pipeline map + per-tool intervention/eliminate-refocus-relocate",
+        "receipt": "stages/cartographer-free-tool-map.md"
+      },
+      {
+        "role": "Intent-Bug Proponent",
+        "owns": "thesis: tools reduce/refocus review (with external evidence)",
+        "receipt": "stages/proponent-thesis.md"
+      },
+      {
+        "role": "Skeptic",
+        "owns": "antithesis: review irreducible / relocated / circularity / automation bias",
+        "receipt": "stages/skeptic-antithesis.md"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "n": 1,
+      "name": "Context Builder",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "prior runs + free-tools list"
+    },
+    {
+      "n": 2,
+      "name": "Invoke Define",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "REFINE-SEED-PROPOSAL.md"
+    },
+    {
+      "n": 3,
+      "name": "Interrogation refine-review",
+      "owner": "Skeptic (delegated)",
+      "status": "pass",
+      "evidence": "stages/skeptic-antithesis.md"
+    },
+    {
+      "n": 4,
+      "name": "Research decision",
+      "owner": "refine",
+      "mode": "bounded-research",
+      "status": "pass",
+      "evidence": "external pass executed (confirmed)"
+    },
+    {
+      "n": 5,
+      "name": "Distill",
+      "owner": "Free-Tool Cartographer (delegated)",
+      "status": "pass",
+      "evidence": "stages/cartographer-free-tool-map.md"
+    },
+    {
+      "n": 6,
+      "name": "Invoke Redefine/Design",
+      "owner": "Intent-Bug Proponent (delegated)",
+      "status": "pass",
+      "evidence": "stages/proponent-thesis.md"
+    },
+    {
+      "n": 7,
+      "name": "Interrogation refine-design-review",
+      "owner": "refine convergence",
+      "status": "flag",
+      "evidence": "'reduce review' indefensible; reframe to relocate+legibilize"
+    },
+    {
+      "n": 8,
+      "name": "Distill Repair",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "circularity + automation-bias residue; human-owns-spec design constraint"
+    },
+    {
+      "n": 9,
+      "name": "Invoke Plan",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "RESULT.md narrative addition"
+    },
+    {
+      "n": 10,
+      "name": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "RESULT.md"
+    }
+  ],
+  "gates": [
+    "native_receipts_present",
+    "research_confirmed",
+    "dialectic_roles_and_convergence",
+    "owner_boundary_preserved",
+    "residue_recorded",
+    "final_synthesis_from_artifacts"
+  ],
+  "observability_group": "2026-06-08-intent-bugs-human-review-wedge"
+}

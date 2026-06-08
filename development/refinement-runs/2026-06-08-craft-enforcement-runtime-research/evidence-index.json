@@ -1,0 +1,53 @@
+{
+  "run_id": "2026-06-08-craft-enforcement-runtime-research",
+  "target": "Craft enforcement-runtime option comparison + compliance forcing-function resolution",
+  "preset": "standard",
+  "research_mode": "bounded-research",
+  "research_confirmed": true,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "receipts_collected": 3
+  },
+  "artifacts": {
+    "seed_proposal": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "stage": "Distill / concrete repos",
+      "owner": "Concrete-Repo Researcher",
+      "agent_id": "af5b88a498321708e",
+      "path": "stages/research-concrete-repos.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Design / named products",
+      "owner": "Named-Product Researcher",
+      "agent_id": "a5aa6e143a2d1dc9a",
+      "path": "stages/research-named-products.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Interrogation / compliance",
+      "owner": "Compliance Researcher",
+      "agent_id": "a02b12f28e9cd6fa3",
+      "path": "stages/research-compliance.md",
+      "verdict": "pass"
+    }
+  ],
+  "status": "flag",
+  "recommendation": {
+    "enforcement_runtime": "In-house Jenkins -> sandcastle as the enforcement chokepoint (MIT, full control, integrate-not-invent); sandcastle/Vercel-Firecracker or E2B for isolation; Craft ledger drives the gate. Tandem/Paperclip = control-plane design references (caveats: Tandem governance engine BUSL-1.1; Paperclip isolation unshipped). Symphony = orchestration layer above, not the runtime.",
+    "compliance": "Forcing function EMERGING not here; generic AI-dev governance is being commoditized by GitHub/Atlassian/Microsoft. Only defensible paid wedge = cross-tool, vendor-neutral, cryptographically immutable, auditor-acceptable attestation for heterogeneous shops; bind to regulated vertical (Golden Quill)."
+  },
+  "load_bearing_residue": "No option is a hardened sandbox out-of-box (isolation always delegated to Firecracker microVM providers). Paid moat is gated on an EMERGING SOC2/ITGC forcing function while incumbents commoditize single-vendor governance.",
+  "recommended_next_routes": [
+    "decision-gate (build-vs-buy enforcement runtime; commit Jenkins+sandcastle vs Paperclip/Tandem control plane)",
+    "task-session (spike: Jenkins input-step gate + sandcastle run, Craft ledger drives approve/block, emit signed attestation)",
+    "refine (design the vendor-neutral immutable attestation wedge as the paid moat)"
+  ]
+}
