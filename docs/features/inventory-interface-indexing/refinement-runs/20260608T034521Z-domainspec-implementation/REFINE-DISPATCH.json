@@ -1,0 +1,491 @@
+{
+  "dispatch_id": "refine-inventory-domainspec-implementation-20260608T034521Z",
+  "parent_dispatch_id": null,
+  "intent": {
+    "raw": "Refine doing Inventory interface and indexing inside DomainSpec implementation.",
+    "objective": "Create a validated Refine strategy for adapting the Arcanum Inventory interface/indexing MVP to the DomainSpec implementation repository before execution.",
+    "target_artifact": "/home/vrondelli/projects/domainspec-core/implementation/domainspec/docs/features/inventory-interface-indexing/refinement-runs/20260608T034521Z-domainspec-implementation/RESULT.md",
+    "arcanum_vocabulary": [
+      "inventory",
+      "refine",
+      "dispatch-spec",
+      "target inference",
+      "confirmation proposal",
+      "selector index",
+      "link index",
+      "authority boundary"
+    ],
+    "operator_sentence": "doing it inside domainspec implementation"
+  },
+  "mode": "sequence",
+  "route_menu": {
+    "context_hint": "The run is scoped to DomainSpec implementation as target while Arcanum Inventory remains the capability source.",
+    "items": [
+      {
+        "id": "route-domain-feature-pack",
+        "label": "DomainSpec feature pack",
+        "description": "Create/refine a target-local feature pack under docs/features/inventory-interface-indexing.",
+        "capability_ref": "refine",
+        "pattern": "sequential"
+      },
+      {
+        "id": "route-arcanum-only",
+        "label": "Arcanum-only continuation",
+        "description": "Keep all work inside Arcanum Inventory development pack.",
+        "capability_ref": "refine",
+        "pattern": "sequential"
+      },
+      {
+        "id": "route-direct-pilot",
+        "label": "Direct pilot mutation",
+        "description": "Skip refinement and create a DomainSpec implementation pilot slice immediately.",
+        "capability_ref": "task-session",
+        "pattern": "handoff"
+      }
+    ],
+    "selected_item_id": "route-domain-feature-pack"
+  },
+  "techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "route_menu",
+    "approval_checkpoint",
+    "x_ray",
+    "memory_loop",
+    "residue_ledger"
+  ],
+  "technique_overlays": [
+    {
+      "overlay_id": "baseline_sequence",
+      "trigger": "The target needs an ordered refinement path before implementation.",
+      "techniques": [
+        "sequence",
+        "frame_handoff",
+        "validation_loop",
+        "owner_boundary_check",
+        "observability_grouping"
+      ],
+      "applies_to_steps": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9",
+        "S10"
+      ],
+      "validation_expectation": "Every stage must produce an artifact path or blocked reason before execution can be called complete."
+    },
+    {
+      "overlay_id": "route_menu_for_ambiguity",
+      "trigger": "The user changed the pilot/integration target to DomainSpec implementation, creating route and output-home ambiguity.",
+      "techniques": [
+        "route_menu",
+        "one_or_more_option_set",
+        "approval_checkpoint"
+      ],
+      "applies_to_steps": [
+        "S1",
+        "S4",
+        "S10"
+      ],
+      "validation_expectation": "The selected route must preserve Arcanum as capability source and DomainSpec implementation as target."
+    },
+    {
+      "overlay_id": "xray_for_hidden_structure",
+      "trigger": "Inventory indexes and DomainSpec authority/template surfaces have hidden relationship structure.",
+      "techniques": [
+        "x_ray",
+        "component_descriptor",
+        "entity_component_reference"
+      ],
+      "applies_to_steps": [
+        "S1",
+        "S5",
+        "S6"
+      ],
+      "validation_expectation": "The final plan must distinguish interface, slice, index, authority, and projection layers."
+    },
+    {
+      "overlay_id": "memory_residue_for_context_recovery",
+      "trigger": "Prior Inventory and DomainSpec/Arcanum integration work materially affect target boundaries.",
+      "techniques": [
+        "memory_loop",
+        "residue_ledger",
+        "data_quality_deduplication"
+      ],
+      "applies_to_steps": [
+        "S1",
+        "S3",
+        "S7",
+        "S10"
+      ],
+      "validation_expectation": "Prior decisions and deferred work must be recorded rather than rediscovered or silently overridden."
+    }
+  ],
+  "subagent_strategy": {
+    "status": "none",
+    "trigger": "Standard proposal-stage refinement can proceed parent-owned after user confirmation.",
+    "explanation": "No subagents are required for the first run because the target is bounded and the current task is strategy proposal. Subagents can be reconsidered if the confirmed run expands into repository-wide DomainSpec indexing research.",
+    "context": [
+      "Arcanum Inventory active development pack",
+      "DomainSpec implementation feature and authority surfaces"
+    ],
+    "roles": [],
+    "parallelism": "none",
+    "join_policy": "none",
+    "authorization": "not_needed",
+    "permission_prompt": "Confirm to run the parent-owned refine route?",
+    "receipt_requirements": [
+      "stage_id",
+      "capability_ref",
+      "status",
+      "artifact_path_or_blocked_reason",
+      "validation"
+    ]
+  },
+  "steps": [
+    {
+      "step_id": "S1",
+      "name": "Context Builder evidence baseline",
+      "capability_ref": "context-builder",
+      "mode": "standard",
+      "pattern": "sequential",
+      "parallel": false,
+      "techniques": [
+        "frame_handoff",
+        "memory_loop",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "REFINE-SEED-PROPOSAL.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S1-context-builder.md"
+        }
+      ],
+      "join_policy": "none",
+      "stop_conditions": [
+        "block if DomainSpec implementation target cannot be read",
+        "block if Arcanum Inventory source pack is unavailable"
+      ]
+    },
+    {
+      "step_id": "S2",
+      "name": "Invoke Define",
+      "capability_ref": "invoke",
+      "mode": "define",
+      "pattern": "sequential",
+      "parallel": false,
+      "techniques": [
+        "sequence",
+        "artifact_contract_bridge"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S1-context-builder.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S2-invoke-define.md"
+        }
+      ],
+      "join_policy": "none"
+    },
+    {
+      "step_id": "S3",
+      "name": "Interrogation refine-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-review",
+      "pattern": "decision",
+      "parallel": false,
+      "techniques": [
+        "approval_checkpoint",
+        "residue_ledger"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S2-invoke-define.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S3-interrogation-review.md"
+        }
+      ],
+      "join_policy": "human_gate"
+    },
+    {
+      "step_id": "S4",
+      "name": "Research decision",
+      "capability_ref": "refine",
+      "mode": "research-if-gap-appears",
+      "pattern": "decision",
+      "parallel": false,
+      "techniques": [
+        "approval_checkpoint",
+        "protected_context_flag"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S3-interrogation-review.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/S4-research-decision.md"
+        }
+      ],
+      "join_policy": "human_gate",
+      "stop_conditions": [
+        "block external research unless explicitly authorized"
+      ]
+    },
+    {
+      "step_id": "S5",
+      "name": "Distill coherent unit",
+      "capability_ref": "distill",
+      "mode": "standard",
+      "pattern": "distill",
+      "parallel": false,
+      "techniques": [
+        "x_ray",
+        "minimum_component_catalog",
+        "data_quality_completeness"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S4-research-decision.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S5-distill.md"
+        }
+      ],
+      "join_policy": "none"
+    },
+    {
+      "step_id": "S6",
+      "name": "Invoke Redefine Design",
+      "capability_ref": "invoke",
+      "mode": "design",
+      "pattern": "sequential",
+      "parallel": false,
+      "techniques": [
+        "entity_component_reference",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S5-distill.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S6-invoke-design.md"
+        }
+      ],
+      "join_policy": "none"
+    },
+    {
+      "step_id": "S7",
+      "name": "Interrogation refine-design-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-design-review",
+      "pattern": "decision",
+      "parallel": false,
+      "techniques": [
+        "residue_ledger",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S6-invoke-design.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S7-design-review.md"
+        }
+      ],
+      "join_policy": "human_gate"
+    },
+    {
+      "step_id": "S8",
+      "name": "Distill Repair",
+      "capability_ref": "distill",
+      "mode": "validate",
+      "pattern": "distill",
+      "parallel": false,
+      "techniques": [
+        "validation_loop",
+        "data_quality_deduplication"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S7-design-review.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S8-distill-repair.md"
+        }
+      ],
+      "join_policy": "none"
+    },
+    {
+      "step_id": "S9",
+      "name": "Invoke Plan",
+      "capability_ref": "invoke",
+      "mode": "plan",
+      "pattern": "sequential",
+      "parallel": false,
+      "techniques": [
+        "sequence",
+        "validation_loop"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S8-distill-repair.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S9-invoke-plan.md"
+        }
+      ],
+      "join_policy": "none"
+    },
+    {
+      "step_id": "S10",
+      "name": "Final Interrogation and Refine synthesis",
+      "capability_ref": "refine",
+      "mode": "refine-final",
+      "pattern": "synthesis",
+      "parallel": false,
+      "techniques": [
+        "residue_ledger",
+        "observability_grouping",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S9-invoke-plan.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "RESULT.md"
+        }
+      ],
+      "join_policy": "human_gate"
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "G1-dispatch-schema",
+      "kind": "validation",
+      "owner": "dispatch-spec",
+      "condition": "REFINE-DISPATCH.json validates against formulae/dispatch-spec/dispatch.schema.json before execution.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "G2-user-confirmation",
+      "kind": "human_approval",
+      "owner": "operator",
+      "condition": "User confirms this strategy before runtime-backed stages run.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "G3-owner-boundary",
+      "kind": "policy",
+      "owner": "refine",
+      "condition": "Arcanum Inventory remains capability source; DomainSpec implementation remains target; generated Inventory read models do not become DomainSpec source authority.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "G4-pilot-mutation",
+      "kind": "decision",
+      "owner": "operator",
+      "condition": "Pilot slice mutation requires a separate target confirmation after plan stage.",
+      "on_fail": "ask"
+    }
+  ],
+  "observability": {
+    "dispatch_id_required": true,
+    "parent_dispatch_id": null,
+    "trace_events": [
+      "strategy_proposed",
+      "dispatch_validated",
+      "authorization_pending",
+      "stage_started",
+      "stage_completed_or_blocked",
+      "final_synthesis_ready"
+    ],
+    "signal_grouping": "refine-inventory-domainspec-implementation"
+  },
+  "boundary_evidence": {
+    "authority": {
+      "lifecycle": "Refine owns run artifacts and final synthesis; Task Session owns later execution.",
+      "execution": "No runtime-backed stages run until the operator confirms.",
+      "validation": "Dispatch Spec owns route-shape validation; Inventory validators own later index/link checks.",
+      "evidence": "Arcanum Inventory docs and DomainSpec implementation files are read-only evidence inputs.",
+      "promotion": "Inventory links remain read models and do not promote Definitions or Ontology relations."
+    },
+    "state_namespaces": [
+      {
+        "namespace": "arcanum-inventory-source",
+        "owner": "Arcanum Inventory",
+        "write_policy": "Read-only during this DomainSpec refinement proposal."
+      },
+      {
+        "namespace": "domainspec-implementation-target",
+        "owner": "DomainSpec implementation",
+        "write_policy": "Only target-local feature/refinement artifacts before explicit execution."
+      },
+      {
+        "namespace": "generated-inventory-read-models",
+        "owner": "Inventory",
+        "write_policy": "Planned only; pilot mutation requires separate confirmation."
+      }
+    ]
+  },
+  "promotion_guardrails": [
+    "Do not treat Inventory as DomainSpec template authority.",
+    "Do not treat Inventory links as Ontology Vault relations.",
+    "Do not run broad DomainSpec repository inventorization during the refine proposal.",
+    "Do not mutate pilot slices before target confirmation."
+  ]
+}
+
