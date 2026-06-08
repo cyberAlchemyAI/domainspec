@@ -1,0 +1,134 @@
+{
+  "dispatch_id": "2026-06-08-arcanum-open-core-monetization",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Add domainspec to arcanum without audits/validators; sell audits+validators; find other sellable products and the competitive advantage; attack the idea of selling audits+validators.",
+  "refinement_objective": "Produce a defensible open-core free/paid boundary and monetization plan, with an adversarial verdict on selling audits+validators, grounded in the actual code.",
+  "preset": "standard",
+  "research_mode": "bounded-research",
+  "research_confirmed": true,
+  "selected_overlays": [
+    {
+      "id": "dialectic_for_tension",
+      "why": "Owner's sell-validators idea vs. evidence is a genuine competing-principles clash; roles + residue ledger capture both sides."
+    },
+    {
+      "id": "tournament_for_alternatives",
+      "why": "Multiple plausible free/paid boundaries must be compared on moat x willingness-to-pay; pareto gate ranks them."
+    },
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "domainspec<->arcanum<->cyberAlchemy<->goldenquill layering is the core uncertainty for what enters Arcanum free."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Boundary Cartographer",
+        "owns": "layer dependency map + per-component separability + cut line",
+        "receipt": "stages/subagent-boundary-cartographer.md"
+      },
+      {
+        "role": "Market Adversary",
+        "owns": "adversarial test of both theses + external comparables",
+        "receipt": "stages/subagent-market-adversary.md"
+      },
+      {
+        "role": "Moat Appraiser",
+        "owns": "moat x WTP x time-to-replicate ranking + monetization sequence",
+        "receipt": "stages/subagent-moat-appraiser.md"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "n": 1,
+      "name": "Context Builder",
+      "owner": "refine+recon",
+      "status": "pass",
+      "evidence": "recon baseline (structural product map + sellable-surface map)"
+    },
+    {
+      "n": 2,
+      "name": "Invoke Define",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "REFINE-SEED-PROPOSAL.md"
+    },
+    {
+      "n": 3,
+      "name": "Interrogation refine-review",
+      "owner": "Market Adversary (delegated)",
+      "status": "pass",
+      "evidence": "stages/subagent-market-adversary.md"
+    },
+    {
+      "n": 4,
+      "name": "Research decision",
+      "owner": "refine",
+      "mode": "bounded-research",
+      "status": "pass",
+      "evidence": "8 comparables pass (confirmed)"
+    },
+    {
+      "n": 5,
+      "name": "Distill",
+      "owner": "Moat Appraiser (delegated)",
+      "status": "pass",
+      "evidence": "stages/subagent-moat-appraiser.md"
+    },
+    {
+      "n": 6,
+      "name": "Invoke Redefine/Design",
+      "owner": "Boundary Cartographer (delegated)",
+      "status": "pass",
+      "evidence": "stages/subagent-boundary-cartographer.md"
+    },
+    {
+      "n": 7,
+      "name": "Interrogation refine-design-review",
+      "owner": "refine synthesis cross-check",
+      "status": "flag",
+      "evidence": "engine-defensibility tension (R1)"
+    },
+    {
+      "n": 8,
+      "name": "Distill Repair",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "residue: spec->test engine is LLM-agent not deterministic compiler"
+    },
+    {
+      "n": 9,
+      "name": "Invoke Plan",
+      "owner": "refine",
+      "status": "pass",
+      "evidence": "RESULT.md plan section"
+    },
+    {
+      "n": 10,
+      "name": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "status": "flag",
+      "evidence": "RESULT.md"
+    }
+  ],
+  "gates": [
+    "native_receipts_present",
+    "research_confirmed",
+    "owner_boundary_preserved",
+    "residue_recorded",
+    "final_synthesis_from_artifacts"
+  ],
+  "observability_group": "2026-06-08-arcanum-open-core-monetization"
+}

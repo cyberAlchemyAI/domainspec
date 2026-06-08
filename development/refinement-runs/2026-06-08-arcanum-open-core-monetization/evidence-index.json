@@ -1,0 +1,49 @@
+{
+  "run_id": "2026-06-08-arcanum-open-core-monetization",
+  "target": "domainspec-core commercial portfolio / open-core boundary",
+  "preset": "standard",
+  "research_mode": "bounded-research",
+  "research_confirmed": true,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "receipts_collected": 3
+  },
+  "artifacts": {
+    "seed_proposal": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "stage": "Design / separability",
+      "owner": "Boundary Cartographer",
+      "agent_id": "a0be9a6fdaa990ffb",
+      "path": "stages/subagent-boundary-cartographer.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Interrogation / adversarial+research",
+      "owner": "Market Adversary",
+      "agent_id": "a9eb869c29b66fac2",
+      "path": "stages/subagent-market-adversary.md",
+      "verdict": "pass"
+    },
+    {
+      "stage": "Distill / ranking",
+      "owner": "Moat Appraiser",
+      "agent_id": "ab6cf0efd5cab02df",
+      "path": "stages/subagent-moat-appraiser.md",
+      "verdict": "pass"
+    }
+  ],
+  "status": "flag",
+  "load_bearing_residue": "Spec->test engine is an LLM-agent skill, not a deterministic compiler; defensibility requirement R1 must be resolved before anchoring the paid engine line.",
+  "recommended_next_routes": [
+    "decision-gate (free/paid boundary commit)",
+    "task-session (Lean validator -> attestation product spike)",
+    "refine (CyberAlchemy productization to escape consulting trap, R2)"
+  ]
+}
