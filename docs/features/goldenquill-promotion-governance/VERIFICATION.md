@@ -2,7 +2,7 @@
 feature: goldenquill-promotion-governance
 version: current
 status: pass
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: verification
 ---
 
@@ -12,8 +12,9 @@ docType: verification
 
 Status: `pass`
 
-This verification records the document-generation checks performed when the
-DomainSpec feature source of truth was created.
+This verification records the document refresh checks for the event-spine,
+adapter, DAG projection, outcome measurement, approved-reuse feedback cycle,
+analytics-method implementation definitions, and optimization-chain contracts.
 
 ## Coverage Checks
 
@@ -35,11 +36,21 @@ DomainSpec feature source of truth was created.
 | In-folder markdown anchors resolve | pass |
 | Pipeline signal JSONL remains parseable | pass |
 | Active docs avoid blocked external-method vocabulary | pass |
+| Grant-work adapter intake is specified through typed events | pass |
+| Event projection into DAG, lifecycle, KPI, candidates, and decisions is specified | pass |
+| Approved reuse packet feedback into future grant work is specified | pass |
+| Glossary, domain, states, operations, events, mappings, workflows, architecture, observability, and tests include the refreshed concepts | pass |
+| Analytics method registry defines action facts, KPI response windows, method specs, association outputs, and BI insight candidate profile | pass |
+| Analytics methods include maturity gates, formulas, failure guards, and L0 falsification fixture | pass |
+| Active docs reference analytics-method definitions from SPEC, domain, operations, mappings, observability, tests, glossary, and architecture | pass |
+| Optimization-chain artifact defines sentence forms, contract fields, catalog examples, and competitive-advantage language | pass |
+| Optimization-chain JSON Schema and Red Team review fixture are present and syntactically valid | pass |
+| Active docs reference optimization-chain definitions from SPEC, glossary, mappings, architecture, and verification | pass |
 
 ## Validation Surface
 
 Follow-up implementation validation should run from the GoldenQuill project once
-the L0 validator exists:
+the L0 event-spine and DAG projection validator exists:
 
 ```bash
 cd projects/goldenquill

@@ -1,0 +1,164 @@
+{
+  "mode": "refresh",
+  "phaseStatus": "pass",
+  "mutationMode": "proposal-only",
+  "sourceSignals": [
+    {
+      "id": "RS-001",
+      "source_path": "docs/features/goldenquill-promotion-governance/SPEC.md",
+      "signal_type": "artifact_drift",
+      "target_artifacts": [
+        "SPEC.md",
+        "architecture.md",
+        "workflows.md"
+      ],
+      "claim": "The current docs define an execution DAG but do not fully specify the ingestion boundary from live grant work into that DAG.",
+      "evidence": "Execution DAG nodes and edges exist, but adapter/event ingestion is not first-class.",
+      "confidence": "high",
+      "mutation_safety": "safe"
+    },
+    {
+      "id": "RS-002",
+      "source_path": "docs/paul_norton_memory_alignment_brief_2026-05-15.md",
+      "signal_type": "evidence_added",
+      "target_artifacts": [
+        "architecture.md",
+        "events.md",
+        "operations.md"
+      ],
+      "claim": "Existing strategy evidence names Reflection Packet, memory query, outcome weighting, CycleReceipt, and adapter-shaped surfaces.",
+      "evidence": "The strategy brief maps cross-cycle learning, memory query, Brain/JIT primitives, and first-90-day focus areas.",
+      "confidence": "high",
+      "mutation_safety": "safe"
+    },
+    {
+      "id": "RS-003",
+      "source_path": "pipeline/blueprint/v0.1/section_03_scout.md",
+      "signal_type": "status_changed",
+      "target_artifacts": [
+        "architecture.md",
+        "TEST-SPEC.md"
+      ],
+      "claim": "GoldenQuill already has adapter discipline in Scout and similar boundaries should be generalized for grant-work events.",
+      "evidence": "Scout channel and portal adapters use producer-specific ids and caps; this supports explicit adapter contracts.",
+      "confidence": "medium",
+      "mutation_safety": "needs_review"
+    },
+    {
+      "id": "RS-004",
+      "source_path": "docs/features/goldenquill-promotion-governance/workflows.md",
+      "signal_type": "route_changed",
+      "target_artifacts": [
+        "architecture.md",
+        "workflows.md",
+        "mappings.md"
+      ],
+      "claim": "Accumulated knowledge should return to grant work only after governance, privacy, and owner decision.",
+      "evidence": "Current workflow already separates candidate, governance projection, redaction/generalization, and owner decision.",
+      "confidence": "high",
+      "mutation_safety": "safe"
+    },
+    {
+      "id": "RS-005",
+      "source_path": "docs/features/goldenquill-promotion-governance/SPEC.md",
+      "signal_type": "evidence_added",
+      "target_artifacts": [
+        "observability.md",
+        "domain.md"
+      ],
+      "claim": "Outcome measurement must cover lifecycle, quality, strategy, cost, ROI, relationship, stewardship, and learning quality.",
+      "evidence": "The existing KPI catalog already includes these families but does not yet connect them to event/projector components.",
+      "confidence": "high",
+      "mutation_safety": "safe"
+    },
+    {
+      "id": "RS-006",
+      "source_path": "docs/features/goldenquill-promotion-governance/architecture.md",
+      "signal_type": "route_changed",
+      "target_artifacts": [
+        "architecture.md",
+        "TEST-SPEC.md"
+      ],
+      "claim": "The work should split into self-contained projects so event spine, adapters, metrics, knowledge feedback, governance, and UX can validate independently.",
+      "evidence": "The current first slice is fixture-only but bundles several concerns into one validator.",
+      "confidence": "high",
+      "mutation_safety": "safe"
+    },
+    {
+      "id": "RS-007",
+      "source_path": "docs/features/goldenquill-promotion-governance/development/refresh-runs/20260605T000000Z-grant-work-dag-cycle/REFRESH-PATCH-PROPOSAL.md",
+      "signal_type": "artifact_drift",
+      "target_artifacts": [
+        "SPEC.md",
+        "architecture.md",
+        "domain.md",
+        "events.md",
+        "operations.md",
+        "workflows.md",
+        "mappings.md",
+        "observability.md",
+        "TEST-SPEC.md"
+      ],
+      "claim": "The event-spine patch proposal introduces new concepts, operations, mappings, workflows, metrics, and fixtures that must be reflected in TOC and index surfaces.",
+      "evidence": "Patch Set J defines the required TOC and index updates.",
+      "confidence": "high",
+      "mutation_safety": "safe"
+    }
+  ],
+  "targetArtifacts": [
+    "SPEC.md",
+    "architecture.md",
+    "domain.md",
+    "events.md",
+    "operations.md",
+    "workflows.md",
+    "mappings.md",
+    "observability.md",
+    "TEST-SPEC.md"
+  ],
+  "deltaSummary": [
+    {
+      "class": "artifact_drift",
+      "count": 2,
+      "note": "Architecture ingestion boundary and TOC/index surfaces need proposal alignment."
+    },
+    {
+      "class": "evidence_added",
+      "count": 2
+    },
+    {
+      "class": "status_changed",
+      "count": 1
+    },
+    {
+      "class": "route_changed",
+      "count": 2
+    }
+  ],
+  "proposedChanges": [
+    "Add Grant Work Ingestion Contract to SPEC.md.",
+    "Add GrantWorkEvent, AdapterProducer, EventProjectionReceipt, and ApprovedReusePacket domain concepts.",
+    "Add event-to-DAG, outcome, KPI, approved reuse, and future context mappings.",
+    "Split workflow into GrantRunCaptureLoop, OutcomeMeasurementLoop, and KnowledgeFeedbackLoop.",
+    "Add component, adapter, and knowledge feedback charts.",
+    "Add event-spine fixture obligations to TEST-SPEC.md.",
+    "Update TOC/index surfaces in SPEC.md, architecture.md, domain.md, events.md, operations.md, workflows.md, mappings.md, observability.md, and TEST-SPEC.md."
+  ],
+  "appliedChanges": [],
+  "skippedChanges": [
+    "Canonical docs were not edited because mutation mode is proposal-only."
+  ],
+  "blockers": [
+    "Apply-approved mutation requires operator approval.",
+    "Runtime-backed Refine stages require confirmation.",
+    "tools/arcanum command resolution is unavailable in this worktree."
+  ],
+  "nextRoute": "task-session",
+  "validation": [
+    {
+      "kind": "review",
+      "result": "pass",
+      "detail": "Target artifact inventory resolved and proposed deltas map to RefreshSignals."
+    }
+  ]
+}

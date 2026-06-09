@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldenquill.local/schemas/goldenquill-promotion-governance/optimization-chain.schema.json",
+  "title": "GoldenQuill Promotion Governance Optimization Chain",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chain_id",
+    "chain_name",
+    "status",
+    "grant_node_refs",
+    "action_fact_refs",
+    "outcome_kpi_refs",
+    "response_window_refs",
+    "analytics_method_ref",
+    "association_refs",
+    "desired_bi_optimization",
+    "claim_label",
+    "confidence_class",
+    "expression_set",
+    "governance_route",
+    "approved_reuse_target",
+    "interpretation_limits",
+    "privacy_scope",
+    "example_fixture_refs"
+  ],
+  "properties": {
+    "chain_id": {
+      "type": "string",
+      "pattern": "^optchain\\.[a-z0-9][a-z0-9-]*$"
+    },
+    "chain_name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "validated",
+        "approved",
+        "rejected",
+        "retired",
+        "contradicted",
+        "residue"
+      ]
+    },
+    "grant_node_refs": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "action_fact_refs": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "outcome_kpi_refs": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "response_window_refs": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "analytics_method_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "association_refs": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "desired_bi_optimization": {
+      "type": "string",
+      "minLength": 3
+    },
+    "claim_label": {
+      "type": "string",
+      "enum": [
+        "descriptive_pattern",
+        "correlation_candidate",
+        "controlled_association",
+        "quasi_causal_candidate",
+        "decision_support_only",
+        "blocked_or_residue"
+      ]
+    },
+    "confidence_class": {
+      "type": "string",
+      "enum": [
+        "weak",
+        "moderate",
+        "strong",
+        "blocked"
+      ]
+    },
+    "expression_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plain_language",
+        "operator",
+        "executive",
+        "contract",
+        "causal_careful",
+        "dashboard_label",
+        "ontology"
+      ],
+      "properties": {
+        "plain_language": {
+          "$ref": "#/$defs/sentence"
+        },
+        "operator": {
+          "$ref": "#/$defs/sentence"
+        },
+        "executive": {
+          "$ref": "#/$defs/sentence"
+        },
+        "contract": {
+          "$ref": "#/$defs/sentence"
+        },
+        "causal_careful": {
+          "$ref": "#/$defs/sentence"
+        },
+        "dashboard_label": {
+          "$ref": "#/$defs/sentence"
+        },
+        "ontology": {
+          "$ref": "#/$defs/sentence"
+        }
+      }
+    },
+    "governance_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_profile",
+        "ontology_projection_required",
+        "privacy_gate_required",
+        "owner_decision_required",
+        "approved_reuse_packet_required"
+      ],
+      "properties": {
+        "candidate_profile": {
+          "type": "string",
+          "enum": [
+            "BIInsightCandidate"
+          ]
+        },
+        "ontology_projection_required": {
+          "type": "boolean",
+          "const": true
+        },
+        "privacy_gate_required": {
+          "type": "boolean"
+        },
+        "owner_decision_required": {
+          "type": "boolean",
+          "const": true
+        },
+        "approved_reuse_packet_required": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "approved_reuse_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "future_context_surfaces",
+        "allowed_use_requested",
+        "scope"
+      ],
+      "properties": {
+        "future_context_surfaces": {
+          "$ref": "#/$defs/non_empty_string_array"
+        },
+        "allowed_use_requested": {
+          "$ref": "#/$defs/non_empty_string_array"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "interpretation_limits": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "privacy_scope": {
+      "type": "string",
+      "enum": [
+        "org_scoped",
+        "workspace_safe_candidate",
+        "workspace_safe_approved",
+        "public_aggregate",
+        "blocked_private"
+      ]
+    },
+    "example_fixture_refs": {
+      "$ref": "#/$defs/non_empty_string_array"
+    }
+  },
+  "$defs": {
+    "sentence": {
+      "type": "string",
+      "minLength": 12
+    },
+    "non_empty_string_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

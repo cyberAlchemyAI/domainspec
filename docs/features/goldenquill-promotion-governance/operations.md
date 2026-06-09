@@ -2,11 +2,53 @@
 feature: goldenquill-promotion-governance
 version: current
 status: draft
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: operations
 ---
 
 # Operations: GoldenQuill Promotion Governance
+
+## AcceptGrantWorkEvent
+
+**Type:** Operation
+**Actor:** Adapter boundary, workflow component, source importer, or operator.
+**Triggers:** A grant-work adapter emits an event for validation and projection.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `event` | [GrantWorkEvent](domain.md#grantworkevent) | yes | Event to accept. |
+| `envelope` | [GrantWorkEventEnvelope](domain.md#grantworkeventenvelope) | yes | Producer, source, scope, and idempotency wrapper. |
+| `producer` | [AdapterProducer](domain.md#adapterproducer) | yes | Bounded adapter or component that emitted the event. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Producer identity is mandatory. | `event.envelope.producer != null` |
+| R2 | External or source-backed facts require `source_ref`. | `event.external_or_source_backed -> envelope.source_ref != null` |
+| R3 | Interpretation limits are mandatory. | `len(envelope.interpretation_limits) > 0` |
+| R4 | Idempotency key is mandatory. | `envelope.idempotency_key != ""` |
+| R5 | Replaying the same idempotency key with identical content is a no-op. | `same_key and same_hash -> no_op` |
+| R6 | Replaying the same idempotency key with different content blocks as contradiction/residue. | `same_key and different_hash -> block` |
+| R7 | Adapter producers cannot set approved uses. | `event.payload.approved_allowed_uses == null` |
+
+### Postconditions
+
+- Accepted event is available for projection.
+- Duplicate no-op replay is recorded without duplicate projection.
+- Duplicate conflict is blocked with residue.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Missing producer or idempotency key | Reject event. |
+| Missing required source reference | Reject event. |
+| Missing interpretation limits | Reject event. |
+| Adapter tries to set approved uses | Reject event. |
+| Duplicate idempotency key with changed content | Block as contradiction/residue. |
 
 ## RecordGrantRunEvent
 
@@ -47,6 +89,42 @@ docType: operations
 | Unknown node kind | Reject node and return validation failure. |
 | Unknown edge kind | Reject edge and return validation failure. |
 | Downstream step after blocked gate without reopen evidence | Reject traversal. |
+
+## ProjectEventToDag
+
+**Type:** Operation
+**Actor:** GoldenQuill event projector.
+**Triggers:** An accepted [GrantWorkEvent](domain.md#grantworkevent) can produce or update DAG nodes and edges.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `event` | [GrantWorkEvent](domain.md#grantworkevent) | yes | Accepted event. |
+| `run_id` | string | yes | Bounded run id. |
+| `projection_target` | string | yes | Node, edge, or traversal target. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Event must already be accepted. | `event.validation_state == checked` |
+| R2 | DAG projection must emit an [EventProjectionReceipt](domain.md#eventprojectionreceipt). | `projection -> receipt` |
+| R3 | Projected nodes and edges must satisfy [RecordGrantRunEvent](#recordgrantrunevent). | `projected_dag -> RecordGrantRunEvent.rules_pass` |
+| R4 | Projection cannot bypass blocked traversal. | `blocked_by_gate -> no downstream draft_or_delivery_without_reopen` |
+
+### Postconditions
+
+- DAG nodes and edges are created, updated, skipped, or blocked with a receipt.
+- The run DAG can explain which accepted event caused each projection.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Event not accepted | Reject projection. |
+| Missing projection receipt | Reject projection. |
+| Projected DAG violates traversal rules | Block projection. |
 
 ## RecordOutcomeEvent
 
@@ -133,6 +211,204 @@ docType: operations
 | Missing denominator definition for rate | Reject KPI. |
 | Missing source events | Reject KPI. |
 | KPI tries to approve or promote | Reject KPI and candidate path. |
+
+## ProjectEventToLifecycleAndKpi
+
+**Type:** Operation
+**Actor:** GoldenQuill event projector and metrics projection.
+**Triggers:** Accepted events contain outcome, cycle-cost, review, lifecycle, or metric payloads.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `event` | [GrantWorkEvent](domain.md#grantworkevent) | yes | Accepted event. |
+| `source_events` | [GrantOutcomeEvent](domain.md#grantoutcomeevent)[] | conditional | Outcome events projected from or referenced by the event. |
+| `metric_kind` | [GrantKpiKind](domain.md#grantkpikind) | conditional | KPI to compute when event supports metric projection. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Event must already be accepted. | `event.validation_state == checked` |
+| R2 | Outcome projection must satisfy [RecordOutcomeEvent](#recordoutcomeevent). | `outcome_projection -> RecordOutcomeEvent.rules_pass` |
+| R3 | KPI projection must satisfy [ComputeKpiObservation](#computekpiobservation). | `kpi_projection -> ComputeKpiObservation.rules_pass` |
+| R4 | Projection receipt is mandatory. | `projection -> EventProjectionReceipt` |
+
+### Postconditions
+
+- Lifecycle and KPI read models update only through source-backed projection.
+- Projection receipt names created, updated, skipped, or blocked refs.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Event not accepted | Reject projection. |
+| Outcome lacks source | Reject outcome projection. |
+| KPI lacks denominator semantics | Reject KPI projection. |
+
+## ProjectGrantActionFacts
+
+**Type:** Operation
+**Actor:** GoldenQuill BI projector.
+**Triggers:** Accepted grant-work events and DAG projection receipts are
+available for action-fact projection.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `events` | [GrantWorkEvent](domain.md#grantworkevent)[] | yes | Accepted events. |
+| `projection_receipts` | [EventProjectionReceipt](domain.md#eventprojectionreceipt)[] | yes | Projection receipts for lineage. |
+| `dag_refs` | string[] | conditional | DAG nodes/edges represented by the action fact. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Action facts must trace to accepted events and projection receipts. | `action_fact.event_ids != [] and action_fact.projection_receipt_ids != []` |
+| R2 | Source-backed action facts require source refs. | `action_fact.source_backed -> len(source_refs) > 0` |
+| R3 | Action facts cannot carry approved uses. | `action_fact.approved_allowed_uses == null` |
+| R4 | Backfill must preserve original occurrence time and capture time. | `backfill -> occurred_at != null and captured_at != null` |
+
+### Postconditions
+
+- [GrantActionFact](analytics-methods.md#grantactionfact) records exist or the
+  projection fails closed.
+- Facts are replay-friendly and point back to accepted events, DAG refs, and
+  projection receipts.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Missing event lineage | Reject action fact. |
+| Missing projection receipt | Reject action fact. |
+| Source-backed fact lacks source refs | Reject action fact. |
+| Approved-use field appears | Reject action fact. |
+
+## BuildKpiResponseWindow
+
+**Type:** Operation
+**Actor:** GoldenQuill BI projector.
+**Triggers:** Action facts and KPI observations are available for temporal
+analysis.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `anchor_action_refs` | [GrantActionFact](analytics-methods.md#grantactionfact)[] | yes | Prior actions being evaluated. |
+| `kpi_kind` | [GrantKpiKind](domain.md#grantkpikind) | yes | KPI measured. |
+| `baseline_ref` | string | yes | Baseline KPI, stage, outcome, or fact ref. |
+| `response_ref` | string | conditional | Later KPI, stage, outcome, or fact ref. |
+| `denominator_cohort` | string | yes | Cohort definition. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Anchor actions must occur before the response measurement. | `max(anchor.occurred_at) < response.measured_at` |
+| R2 | Pending outcomes are censored, not losses. | `pending -> window.status == censored` |
+| R3 | Rate and ratio windows require denominator cohort. | `metric.is_rate -> denominator_cohort != ""` |
+| R4 | Response windows cannot cross org scope without privacy approval. | `cross_org -> privacy_gate_ref != null` |
+
+### Postconditions
+
+- [KpiResponseWindow](analytics-methods.md#kpiresponsewindow) exists with
+  temporal, denominator, source, and interpretation boundaries.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Action occurs after response | Reject temporal leakage. |
+| Pending outcome treated as loss | Reject window. |
+| Missing denominator cohort | Reject window. |
+| Unsafe cross-org window | Block window. |
+
+## EvaluateActionKpiAssociation
+
+**Type:** Operation
+**Actor:** GoldenQuill analytics method runner.
+**Triggers:** A registered statistical method is requested for action/KPI
+analysis.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `method_spec` | [StatisticalMethodSpec](analytics-methods.md#statisticalmethodspec) | yes | Method contract. |
+| `action_pattern_ref` | string | yes | Action pattern or query ref. |
+| `kpi_windows` | [KpiResponseWindow](analytics-methods.md#kpiresponsewindow)[] | yes | Response windows. |
+| `segment` | string | conditional | Funder, program, org, stage, period, or cohort segment. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Method must be registered. | `method_spec.method_id in StatisticalMethodRegistry` |
+| R2 | Required fields must be present. | `method_spec.required_fields subset input.fields` |
+| R3 | Sample and segment gates must pass. | `sample_size >= minimum_observations and segments >= minimum_segments` |
+| R4 | Bias checks must pass or downgrade to residue. | `failed_bias_check -> claim_label == blocked_or_residue` |
+| R5 | Claim label must be allowed by method spec. | `claim_label in method_spec.allowed_claim_labels` |
+| R6 | Method output cannot approve reuse. | `association.approved_allowed_uses == null` |
+
+### Postconditions
+
+- [ActionKpiAssociation](analytics-methods.md#actionkpiassociation) exists with
+  sample, effect, claim label, bias notes, source refs, and interpretation
+  limits.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Unregistered method | Reject evaluation. |
+| Sample gate fails | Emit blocked association or residue. |
+| Temporal leakage detected | Reject evaluation. |
+| Claim overreaches method spec | Reject association. |
+| Output tries to approve reuse | Reject association. |
+
+## CreateBIInsightCandidate
+
+**Type:** Operation
+**Actor:** GoldenQuill candidate generator.
+**Triggers:** Valid [ActionKpiAssociation](analytics-methods.md#actionkpiassociation)
+evidence suggests reusable pipeline intelligence.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `association_refs` | [ActionKpiAssociation](analytics-methods.md#actionkpiassociation)[] | yes | Association evidence. |
+| `target_owner` | string | yes | Owner expected to decide reuse. |
+| `proposed_allowed_uses` | [AllowedUse](domain.md#alloweduse)[] | yes | Requested allowed uses. |
+| `contradiction_path` | string | yes | How future evidence can challenge the insight. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Association claim cannot be `blocked_or_residue`. | `all(claim_label != blocked_or_residue)` |
+| R2 | Candidate is a [PromotionCandidate](domain.md#promotioncandidate) profile. | `BIInsightCandidate extends PromotionCandidate` |
+| R3 | Candidate must preserve method id, claim label, confidence, privacy scope, and interpretation limits. | `required_profile_fields present` |
+| R4 | Candidate cannot contain approved uses. | `candidate.approved_allowed_uses == null` |
+
+### Postconditions
+
+- [BIInsightCandidate](analytics-methods.md#biinsightcandidate-profile) exists
+  as a governed [PromotionCandidate](domain.md#promotioncandidate) profile.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Blocked or residue association | Reject candidate. |
+| Missing method or claim label | Reject candidate. |
+| Missing contradiction path | Reject candidate. |
+| Approved-use field appears | Reject candidate. |
 
 ## CreatePromotionCandidate
 
@@ -290,3 +566,75 @@ docType: operations
 | Approved decision without approved allowed uses | Reject decision. |
 | Rejected/retired/contradicted decision with approved allowed uses | Reject decision. |
 | Missing decision source | Reject decision. |
+
+## PublishApprovedReusePacket
+
+**Type:** Operation
+**Actor:** GoldenQuill governance projection or owner-decision route.
+**Triggers:** An approved [OwnerDecision](domain.md#ownerdecision) exists.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `decision` | [OwnerDecision](domain.md#ownerdecision) | yes | Approved owner decision. |
+| `candidate` | [PromotionCandidate](domain.md#promotioncandidate) | yes | Candidate authorized by the decision. |
+| `approved_allowed_uses` | [AllowedUse](domain.md#alloweduse)[] | yes | Uses approved by the owner. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Decision must be approved. | `decision.decision == approved` |
+| R2 | Approved allowed uses are mandatory. | `len(decision.approved_allowed_uses) > 0` |
+| R3 | Reuse scope must not exceed owner approval or redaction status. | `packet.reuse_scope <= decision.approved_scope` |
+| R4 | Contradiction path is mandatory. | `packet.contradiction_path != ""` |
+
+### Postconditions
+
+- [ApprovedReusePacket](domain.md#approvedreusepacket) exists for future-context hydration.
+- Packet preserves decision source, approved uses, scope, conditions, and contradiction path.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Non-approved decision | Reject packet. |
+| Missing approved uses | Reject packet. |
+| Scope exceeds approval | Block packet. |
+
+## HydrateFutureGrantContext
+
+**Type:** Operation
+**Actor:** GoldenQuill future-run context builder or memory query surface.
+**Triggers:** Scout, Scribe, Judge, Logician, Funding Goal, or another future grant-work consumer requests approved learning.
+
+### Input
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `approved_reuse_packets` | [ApprovedReusePacket](domain.md#approvedreusepacket)[] | yes | Candidate approved knowledge packets. |
+| `consumer` | string | yes | Future grant-work consumer. |
+| `requested_use` | [AllowedUse](domain.md#alloweduse) | yes | Intended use in future context. |
+
+### Rules
+
+| ID | Rule | Formal |
+| --- | --- | --- |
+| R1 | Consumer may use only approved allowed uses. | `requested_use in packet.approved_allowed_uses` |
+| R2 | Consumer must respect reuse scope. | `consumer.scope <= packet.reuse_scope` |
+| R3 | Contradicted or retired packets cannot hydrate context. | `packet.status not in {contradicted, retired}` |
+| R4 | Hydration emits a projection receipt or audit record. | `hydrate -> receipt_or_audit_ref` |
+
+### Postconditions
+
+- Future grant work receives only approved, scoped learning.
+- Hydration can be audited back to owner decision and source evidence.
+
+### Error States
+
+| Condition | Result |
+| --- | --- |
+| Requested use not approved | Reject hydration. |
+| Scope violation | Reject hydration. |
+| Packet contradicted or retired | Reject hydration. |

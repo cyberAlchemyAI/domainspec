@@ -2,7 +2,7 @@
 feature: goldenquill-promotion-governance
 version: current
 status: complete
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: discovery
 sourcePacket:
   - projects/goldenquill/docs/strategy/goldenquill_promotion_governance_proposal_2026-06-01.md
@@ -11,6 +11,8 @@ sourcePacket:
   - projects/goldenquill/docs/strategy/goldenquill_ontology_dag_grant_research_synthesis_2026-06-01.md
   - projects/goldenquill/docs/decisions/goldenquill-promotion-mechanism-open-gaps.md
   - projects/goldenquill/docs/decisions/goldenquill-promotion-mechanism-interrogation.md
+  - docs/features/goldenquill-promotion-governance/development/refresh-runs/20260605T000000Z-grant-work-dag-cycle/REFRESH-REPORT.md
+  - docs/features/goldenquill-promotion-governance/development/refinement-runs/20260605T000000Z-grant-work-dag-cycle/REFINE-SEED-PROPOSAL.md
 ---
 
 # Discovery: GoldenQuill Promotion Governance
@@ -27,6 +29,17 @@ observations, creates promotion candidates from selected validated signals, and
 routes every candidate through an Ontology Vault governance layer before any
 approved reuse.
 
+Grant work feeds this feature through a bounded event spine. Adapter producers
+emit typed grant-work events with source, scope, idempotency, and interpretation
+limits. GoldenQuill accepts or rejects those events, projects accepted events
+into DAG, lifecycle, KPI, candidate, decision, or future-context read models,
+and records projection receipts for replay safety.
+
+Accumulated learning returns to future grant work only through approved reuse
+packets produced from owner-approved decisions. Future context hydration may
+consume only active packets whose approved allowed uses and scope match the
+requested grant-work use.
+
 The new source of truth for the feature is the DomainSpec artifact set in this
 folder. Earlier GoldenQuill proposal artifacts are migration evidence only.
 
@@ -40,6 +53,10 @@ folder. Earlier GoldenQuill proposal artifacts are migration evidence only.
 | KPI authority | Selected KPI observations may create candidates after validation; they never promote directly. |
 | Feedback generalization | Feedback is org-scoped by default and becomes workspace-safe only through redaction/generalization and owner approval. |
 | Stage-depth scoring | Use a global stage baseline with optional funder-family profile override. |
+| Grant-work adapter boundary | Adapters feed the DAG through typed `GrantWorkEvent` records, not direct DAG writes. |
+| Event projection authority | Accepted events project through receipts; adapter output alone is not DAG or promotion authority. |
+| Knowledge feedback path | Approved owner decisions publish `ApprovedReusePacket` records consumed by future grant-work context. |
+| Outcome measurement | Source-backed events feed lifecycle and KPI read models with denominator and interpretation limits. |
 
 ## Mandatory Execution DAG
 
@@ -102,6 +119,9 @@ review feedback != funding validation
 award notification != post-award performance
 proposal claim != source fact
 dashboard KPI != promotion authority
+adapter output != DAG authority until event validation passes
+event journal != approved reusable knowledge
+approved reuse != valid until owner decision records approved_allowed_uses
 ```
 
 ## KPI Families
@@ -131,6 +151,12 @@ Implementation-facing docs must use GoldenQuill-native terms:
 - redaction/generalization gate;
 - org-scoped feedback;
 - workspace-safe learning.
+- grant work event;
+- event envelope;
+- adapter producer;
+- event projection receipt;
+- approved reuse packet;
+- future grant context.
 
 ## Spec-Writing Instruction
 

@@ -2,7 +2,7 @@
 feature: goldenquill-promotion-governance
 version: current
 status: draft
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: states
 ---
 
@@ -174,3 +174,30 @@ stateDiagram-v2
 | ODS-I1 | Approved decisions require approved allowed uses. | `decision == approved -> len(approved_allowed_uses) > 0` |
 | ODS-I2 | Non-approved decisions must not grant approved allowed uses. | `decision != approved -> len(approved_allowed_uses) == 0` |
 | ODS-I3 | Every decision has decision source evidence. | `decision_source != null` |
+
+## ApprovedReusePacketState
+
+```mermaid
+stateDiagram-v2
+    [*] --> active : owner decision approved
+    active --> retired : owner retires or scope expires
+    active --> contradicted : counterevidence accepted
+    retired --> [*]
+    contradicted --> [*]
+```
+
+### Transition Table
+
+| From | Event | To | Guard | Effect |
+| --- | --- | --- | --- | --- |
+| `[*]` | [PublishApprovedReusePacket](operations.md#publishapprovedreusepacket) | `active` | Approved owner decision with approved allowed uses exists. | Packet can hydrate future grant context within scope. |
+| `active` | owner retires or scope expires | `retired` | Retirement source or expiry evidence exists. | Future hydration stops. |
+| `active` | counterevidence accepted | `contradicted` | Contradiction path source exists. | Future hydration stops and existing context receipts become review targets. |
+
+### Invariants
+
+| ID | Invariant | Formal |
+| --- | --- | --- |
+| ARP-I1 | Active packets require approved allowed uses. | `packet.status == active -> len(packet.approved_allowed_uses) > 0` |
+| ARP-I2 | Retired or contradicted packets cannot hydrate future grant context. | `packet.status in {retired,contradicted} -> no HydrateFutureGrantContext` |
+| ARP-I3 | Hydration use must be a subset of approved allowed uses. | `requested_use in packet.approved_allowed_uses` |

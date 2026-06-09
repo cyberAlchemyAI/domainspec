@@ -1,0 +1,63 @@
+{
+  "chain_id": "optchain.objection-risk-reduction",
+  "chain_name": "Objection Risk Reduction Insight",
+  "status": "candidate",
+  "grant_node_refs": [
+    "red_team_review",
+    "reviewer_objection_response"
+  ],
+  "action_fact_refs": [
+    "action_pattern.red_team_review.v1"
+  ],
+  "outcome_kpi_refs": [
+    "reviewer_objection_resolution_rate"
+  ],
+  "response_window_refs": [
+    "kpi_window.red_team_review.objection_resolution.30d"
+  ],
+  "analytics_method_ref": "method.descriptive_cohort.v1",
+  "association_refs": [
+    "association.red_team_review.objection_resolution.fixture_l0"
+  ],
+  "desired_bi_optimization": "Objection Risk Reduction Insight",
+  "claim_label": "descriptive_pattern",
+  "confidence_class": "weak",
+  "expression_set": {
+    "plain_language": "When Red Team review finds objections, we measure later objection resolution with descriptive cohorts so we can produce Objection Risk Reduction Insight.",
+    "operator": "For red_team_review, compare reviewer_objection_resolution_rate across response windows using method.descriptive_cohort.v1 and emit only descriptive_pattern unless stronger gates pass.",
+    "executive": "GoldenQuill's advantage is that proposal risk review becomes measurable learning, not just reviewer notes lost after submission.",
+    "contract": "OptimizationChainDefinition(optchain.objection-risk-reduction, red_team_review, reviewer_objection_resolution_rate, method.descriptive_cohort.v1, Objection Risk Reduction Insight, descriptive_pattern).",
+    "causal_careful": "This chain shows whether objection resolution improved after Red Team review in the observed cohort; it does not prove Red Team review caused improvement.",
+    "dashboard_label": "Objection Risk Reduction Insight: objection resolution after Red Team review, descriptive pattern.",
+    "ontology": "red_team_review -> measured_by -> reviewer_objection_resolution_rate_window -> evaluated_with -> method.descriptive_cohort.v1 -> proposes -> Objection Risk Reduction Insight."
+  },
+  "governance_route": {
+    "candidate_profile": "BIInsightCandidate",
+    "ontology_projection_required": true,
+    "privacy_gate_required": true,
+    "owner_decision_required": true,
+    "approved_reuse_packet_required": true
+  },
+  "approved_reuse_target": {
+    "future_context_surfaces": [
+      "future_red_team_prompting",
+      "judge_risk_review",
+      "operator_review_dashboard"
+    ],
+    "allowed_use_requested": [
+      "suggest_review_focus",
+      "summarize_objection_patterns"
+    ],
+    "scope": "workspace_safe_after_generalization"
+  },
+  "interpretation_limits": [
+    "Fixture-level descriptive evidence is not causal proof.",
+    "Reviewer objection resolution must preserve funder, program, and org-scope privacy.",
+    "Approved reuse requires owner decision before future grant context can act on the chain."
+  ],
+  "privacy_scope": "workspace_safe_candidate",
+  "example_fixture_refs": [
+    "analytics-methods.md#l0-required-fixture",
+    "examples/optimization-chain.red-team-review.json"
+  ]
+}

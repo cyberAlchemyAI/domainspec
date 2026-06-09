@@ -2,11 +2,70 @@
 feature: goldenquill-promotion-governance
 version: current
 status: draft
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: events
 ---
 
 # Events: GoldenQuill Promotion Governance
+
+## GrantWorkEventAccepted
+
+**Produced by:** [AcceptGrantWorkEvent](operations.md#acceptgrantworkevent)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `event` | [GrantWorkEvent](domain.md#grantworkevent) | Accepted event. |
+| `envelope` | [GrantWorkEventEnvelope](domain.md#grantworkeventenvelope) | Producer, source, scope, and idempotency wrapper. |
+| `producer` | [AdapterProducer](domain.md#adapterproducer) | Adapter or component that emitted the event. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| DAG projector | Projects accepted events into run nodes and edges. |
+| Lifecycle/KPI projector | Projects source-backed events into lifecycle and metric read models. |
+| Candidate builder | Consumes validated event projections, not raw adapter output. |
+
+## GrantWorkEventRejected
+
+**Produced by:** [AcceptGrantWorkEvent](operations.md#acceptgrantworkevent)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `event_id` | string | Rejected event id. |
+| `producer` | [AdapterProducer](domain.md#adapterproducer) | Producer that emitted the rejected event. |
+| `blocked_reason` | string | Missing source, missing idempotency, duplicate conflict, premature approved use, or other failure. |
+| `residue` | string[] | Deferred investigation notes. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| Adapter owner | Fixes producer or source issue. |
+| Observability | Counts producer and event-family rejection rates. |
+
+## DagProjectionUpdated
+
+**Produced by:** [ProjectEventToDag](operations.md#projecteventtodag)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `receipt` | [EventProjectionReceipt](domain.md#eventprojectionreceipt) | Projection receipt. |
+| `created_nodes` | [GrantRunNode](domain.md#grantrunnode)[] | Nodes created by projection. |
+| `created_edges` | [GrantRunEdge](domain.md#grantrunedge)[] | Edges created by projection. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| Grant DAG validator | Confirms traversal and gate legality. |
+| Audit trail | Links DAG changes back to accepted events. |
 
 ## GrantRunNodeRecorded
 
@@ -69,6 +128,25 @@ docType: events
 | Candidate generator | May create candidate after validation. |
 | Validator | Blocks denominatorless or source-less metrics. |
 
+## KpiProjectionUpdated
+
+**Produced by:** [ProjectEventToLifecycleAndKpi](operations.md#projecteventtolifecycleandkpi)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `receipt` | [EventProjectionReceipt](domain.md#eventprojectionreceipt) | Projection receipt. |
+| `lifecycle_refs` | string[] | Lifecycle states created or updated. |
+| `kpi_refs` | string[] | KPI observations created or updated. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| Dashboard read model | Displays bounded metric observations. |
+| Candidate generator | Uses validated KPI observations as candidate inputs. |
+
 ## PromotionCandidateCreated
 
 **Produced by:** [CreatePromotionCandidate](operations.md#createpromotioncandidate)
@@ -89,6 +167,24 @@ docType: events
 | --- | --- |
 | Governance validator | Checks evidence, owner, review gate, contradiction path, and privacy scope. |
 | Ontology Vault projection | Maps local candidate into governance-compatible shape. |
+
+## PromotionCandidateProjected
+
+**Produced by:** [ProjectEventToLifecycleAndKpi](operations.md#projecteventtolifecycleandkpi) or [CreatePromotionCandidate](operations.md#createpromotioncandidate)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `candidate` | [PromotionCandidate](domain.md#promotioncandidate) | Candidate produced from validated event, outcome, KPI, or evidence packet inputs. |
+| `projection_receipt` | [EventProjectionReceipt](domain.md#eventprojectionreceipt) | Event projection receipt when candidate came from an accepted event. |
+| `source_refs` | [SourceRef](domain.md#sourceref)[] | Source evidence refs. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| Governance validator | Checks owner, evidence, contradiction path, and privacy scope. |
 
 ## GovernanceProjectionValidated
 
@@ -130,3 +226,42 @@ docType: events
 | GoldenQuill runtime planning | Determines what later implementation routes may consume. |
 | Ontology Vault governance handoff | Receives approved/rejected/retired/contradicted result. |
 | Audit trail | Records authority boundary and approved uses. |
+
+## ApprovedReusePacketPublished
+
+**Produced by:** [PublishApprovedReusePacket](operations.md#publishapprovedreusepacket)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `packet` | [ApprovedReusePacket](domain.md#approvedreusepacket) | Approved reuse handoff. |
+| `decision` | [OwnerDecision](domain.md#ownerdecision) | Owner decision authorizing reuse. |
+| `approved_allowed_uses` | [AllowedUse](domain.md#alloweduse)[] | Uses approved by the owner. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| Future grant context hydrator | Feeds approved learning into future grant-work context. |
+| Memory query surface | Retrieves approved learning within scope. |
+| Audit trail | Links future use back to owner decision. |
+
+## FutureGrantContextHydrated
+
+**Produced by:** [HydrateFutureGrantContext](operations.md#hydratefuturegrantcontext)
+
+### Payload
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `consumer` | string | Future grant-work consumer. |
+| `packets` | [ApprovedReusePacket](domain.md#approvedreusepacket)[] | Packets used for hydration. |
+| `requested_use` | [AllowedUse](domain.md#alloweduse) | Use requested by consumer. |
+| `audit_ref` | string | Hydration audit reference. |
+
+### Consumed by
+
+| Consumer | Action |
+| --- | --- |
+| Scout, Scribe, Judge, Logician, Funding Goal, or memory query | Uses approved learning within allowed scope. |

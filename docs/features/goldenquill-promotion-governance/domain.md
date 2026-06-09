@@ -2,13 +2,68 @@
 feature: goldenquill-promotion-governance
 version: current
 status: draft
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: domain
 ---
 
 # Domain: GoldenQuill Promotion Governance
 
 ## Entities
+
+### GrantWorkEvent
+
+[GrantWorkEvent](#grantworkevent) is the accepted event record emitted by a
+bounded [AdapterProducer](#adapterproducer) and validated through
+[AcceptGrantWorkEvent](operations.md#acceptgrantworkevent).
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `event_id` | string | yes | Stable event identifier. |
+| `event_kind` | [GrantWorkEventKind](#grantworkeventkind) | yes | Event family. |
+| `envelope` | [GrantWorkEventEnvelope](#grantworkeventenvelope) | yes | Producer, scope, idempotency, source, and interpretation wrapper. |
+| `payload_ref` | string | conditional | Local artifact, fixture, source, or payload pointer. |
+| `payload` | object | conditional | Validated inline payload when no separate payload ref is used. |
+| `accepted_utc` | timestamp | yes | Time accepted by GoldenQuill. |
+| `validation_state` | [ValidationState](#validationstate) | yes | Candidate, checked, failed, waived, or contradicted. |
+
+Rule: [GrantWorkEvent](#grantworkevent) can project into DAG, lifecycle, KPI,
+candidate, decision, or future-context records, but it cannot approve reuse.
+
+### AdapterProducer
+
+[AdapterProducer](#adapterproducer) identifies the bounded producer that emitted
+a [GrantWorkEvent](#grantworkevent).
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `producer_id` | string | yes | Stable adapter or component id. |
+| `producer_kind` | [AdapterProducerKind](#adapterproducerkind) | yes | Producer family. |
+| `owner` | string | yes | Owning GoldenQuill component or operator surface. |
+| `source_surface` | string | yes | Portal, seat, uploader, report, reflection, memory, or backfill surface. |
+| `authority_limit` | string | yes | Statement of what the producer cannot approve or mutate. |
+
+Rule: [AdapterProducer](#adapterproducer) has observation authority only. It
+cannot set `approved_allowed_uses` or bypass event validation.
+
+### EventProjectionReceipt
+
+[EventProjectionReceipt](#eventprojectionreceipt) records what an accepted
+[GrantWorkEvent](#grantworkevent) created, updated, skipped, or blocked.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `receipt_id` | string | yes | Stable projection receipt id. |
+| `event_id` | [GrantWorkEvent](#grantworkevent) reference | yes | Event being projected. |
+| `projection_kind` | string | yes | `dag`, `lifecycle`, `kpi`, `candidate`, `owner_decision`, `approved_reuse`, or `future_context`. |
+| `created_refs` | string[] | no | Created node, edge, event, metric, candidate, packet, or context refs. |
+| `updated_refs` | string[] | no | Updated read-model or lifecycle refs. |
+| `skipped_reason` | string | no | Why replay or projection did not write. |
+| `blocked_reason` | string | no | Why projection failed closed. |
+| `idempotency_key` | string | yes | Replay key inherited from the event envelope. |
+| `validation_state` | [ValidationState](#validationstate) | yes | Projection result. |
+
+Rule: projection receipts make event replay and projection side effects
+auditable.
 
 ### GrantRunNode
 
@@ -95,6 +150,22 @@ Rule: selected [GrantKpiObservation](#grantkpiobservation) records may create
 [PromotionCandidate](#promotioncandidate) records only after validation. They
 cannot promote directly.
 
+### Analytics Method Domain Contracts
+
+Grant-action/KPI intelligence uses the concrete implementation definitions in
+[analytics-methods.md](analytics-methods.md). Those contracts define:
+
+| Contract | Domain Role | Authority Limit |
+| --- | --- | --- |
+| [GrantActionFact](analytics-methods.md#grantactionfact) | Analytics-ready action fact derived from accepted events, projection receipts, and DAG nodes. | Evidence feature only. |
+| [GrantLifecycleTransitionFact](analytics-methods.md#grantlifecycletransitionfact) | Historical lifecycle movement fact. | Stage evidence only. |
+| [GrantOutcomeFact](analytics-methods.md#grantoutcomefact) | Source-backed outcome fact for BI. | Outcome evidence only. |
+| [GrantCostFact](analytics-methods.md#grantcostfact) | Effort and spend fact linked to actions or DAG nodes. | Cost evidence only. |
+| [KpiResponseWindow](analytics-methods.md#kpiresponsewindow) | Temporal join from prior action to later KPI movement. | Measurement boundary only. |
+| [StatisticalMethodSpec](analytics-methods.md#statisticalmethodspec) | Method registry entry with maturity, sample, field, bias, and claim gates. | Method guardrail only. |
+| [ActionKpiAssociation](analytics-methods.md#actionkpiassociation) | Statistical output relating an action pattern to KPI movement. | Evidence only; cannot approve reuse. |
+| [BIInsightCandidate](analytics-methods.md#biinsightcandidate-profile) | [PromotionCandidate](#promotioncandidate) profile created from valid action/KPI association evidence. | Proposed uses only until owner decision. |
+
 ### PromotionCandidate
 
 [PromotionCandidate](#promotioncandidate) is the local grant-learning proposal
@@ -144,7 +215,49 @@ contradicted disposition of a [PromotionCandidate](#promotioncandidate).
 
 Rule: approved uses live here, not on raw evidence or candidates.
 
+### ApprovedReusePacket
+
+[ApprovedReusePacket](#approvedreusepacket) is the bounded handoff from an
+approved [OwnerDecision](#ownerdecision) back into future GoldenQuill grant
+work.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `packet_id` | string | yes | Stable approved reuse packet id. |
+| `decision_id` | [OwnerDecision](#ownerdecision) reference | yes | Owner decision authorizing reuse. |
+| `candidate_id` | [PromotionCandidate](#promotioncandidate) reference | yes | Candidate that was decided. |
+| `approved_allowed_uses` | [AllowedUse](#alloweduse)[] | yes | Uses approved by owner decision. |
+| `reuse_scope` | [OrgScope](#orgscope) | yes | Privacy and reuse scope. |
+| `status` | [ApprovedReusePacketStateValue](#approvedreusepacketstatevalue) | yes | Current packet state for future-context hydration. |
+| `consumer_refs` | string[] | no | Future Scout, Scribe, Judge, Logician, Funding Goal, memory query, or card/funder consumers. |
+| `source_refs` | [SourceRef](#sourceref)[] | yes | Decision and evidence refs supporting the packet. |
+| `conditions` | string[] | no | Conditions inherited from owner decision. |
+| `contradiction_path` | string | yes | How later evidence can challenge the packet. |
+
+Rule: future grant context may consume only approved allowed uses from an
+[ApprovedReusePacket](#approvedreusepacket).
+
 ## Value Objects
+
+### GrantWorkEventEnvelope
+
+[GrantWorkEventEnvelope](#grantworkeventenvelope) wraps every adapter-produced
+event before projection.
+
+| Field | Type | Constraint |
+| --- | --- | --- |
+| `producer` | [AdapterProducer](#adapterproducer) | Required. |
+| `run_id` | string | Required for bounded grant-run events. |
+| `org_scope` | [OrgScope](#orgscope) | Required. |
+| `source_ref` | [SourceRef](#sourceref) | Required for external or source-backed facts. |
+| `occurred_at` | timestamp | Required. |
+| `captured_at` | timestamp | Required. |
+| `idempotency_key` | string | Required. |
+| `interpretation_limits` | string[] | Required. |
+| `gate_refs` | string[] | Required when gates allowed, warned, or blocked the event. |
+
+Rule: the envelope preserves source truth and replay semantics before any DAG,
+KPI, candidate, or memory projection.
 
 ### MemoryEvidencePacketRef
 
@@ -184,6 +297,34 @@ Rule: [MemoryEvidencePacketRef](#memoryevidencepacketref) does not approve reuse
 | `score_map` | object | Optional stage-to-score map. |
 
 ## Enums
+
+### GrantWorkEventKind
+
+| Value | Description |
+| --- | --- |
+| `run_node_recorded` | Event can project into a [GrantRunNode](#grantrunnode). |
+| `run_edge_recorded` | Event can project into a [GrantRunEdge](#grantrunedge). |
+| `gate_result_recorded` | Event records a gate pass, warning, block, or waiver. |
+| `outcome_event_recorded` | Event can project into a [GrantOutcomeEvent](#grantoutcomeevent). |
+| `kpi_observation_recorded` | Event can project into a [GrantKpiObservation](#grantkpiobservation). |
+| `cycle_receipt_recorded` | Event references a WPFA/CycleReceipt cost or resource-use artifact. |
+| `reflection_packet_recorded` | Event references a Reflection Packet or learning-cycle artifact. |
+| `owner_decision_recorded` | Event records an owner decision source. |
+| `approved_reuse_available` | Event records an approved reuse packet becoming available to future grant work. |
+
+### AdapterProducerKind
+
+| Value | Description |
+| --- | --- |
+| `seat` | Scout, Scribe, Editor, Judge, Red Team, Logician, or other workflow seat. |
+| `portal` | Grants.gov, SAM.gov, foundation, or other portal source. |
+| `uploader` | Prepare-and-stage uploader adapter. |
+| `operator_upload` | Operator-supplied source or decision artifact. |
+| `outcome_source` | Email, agency notice, report, award, decline, closeout, or portal export source. |
+| `wpfa_cycle_accountant` | WPFA/CycleReceipt producer. |
+| `reflection_packet` | Reflection Packet producer or backfill source. |
+| `memory_query` | Memory query or approved retrieval surface. |
+| `legacy_backfill` | Batch importer for historical artifacts. |
 
 ### GrantRunNodeKind
 
@@ -328,6 +469,14 @@ Rule: [MemoryEvidencePacketRef](#memoryevidencepacketref) does not approve reuse
 | `rejected` | Rejected for reuse. |
 | `retired` | Retired as no longer active. |
 | `contradicted` | Contradicted by evidence. |
+
+### ApprovedReusePacketStateValue
+
+| Value | Description |
+| --- | --- |
+| `active` | Available for future-context hydration within approved scope and uses. |
+| `retired` | No longer available for future-context hydration. |
+| `contradicted` | Blocked by accepted counterevidence. |
 
 ### AllowedUse
 

@@ -14,6 +14,10 @@ authority. Any metric-derived learning must pass [CreatePromotionCandidate](oper
 [ValidatePromotionGovernance](operations.md#validatepromotiongovernance), and
 [RecordOwnerDecision](operations.md#recordownerdecision).
 
+Event-spine metrics are also observations. Event acceptance, projection
+latency, replay, conflict, and future-context hydration do not create approval
+authority.
+
 ## Domain Fidelity Metrics
 
 ### State Machine Monitors
@@ -29,13 +33,46 @@ authority. Any metric-derived learning must pass [CreatePromotionCandidate](oper
 
 | Operation | Invocation Metric | Rule Violation Metric | Important Rule |
 | --- | --- | --- | --- |
+| [AcceptGrantWorkEvent](operations.md#acceptgrantworkevent) | `gq.promotion_governance.accept_grant_work_event.invocation` | `gq.promotion_governance.rule_violation` with `operation=AcceptGrantWorkEvent` | Missing producer, source, idempotency key, interpretation limits, or adapter-set approved uses. |
+| [ProjectEventToDag](operations.md#projecteventtodag) | `gq.promotion_governance.project_event_to_dag.invocation` | `gq.promotion_governance.rule_violation` with `operation=ProjectEventToDag` | Event must be accepted and projection receipt must exist. |
 | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | `gq.promotion_governance.record_grant_run_event.invocation` | `gq.promotion_governance.rule_violation` with `operation=RecordGrantRunEvent` | Unknown node/edge kind or illegal blocked traversal. |
 | [RecordOutcomeEvent](operations.md#recordoutcomeevent) | `gq.promotion_governance.record_outcome_event.invocation` | `gq.promotion_governance.rule_violation` with `operation=RecordOutcomeEvent` | Missing source reference. |
+| [ProjectEventToLifecycleAndKpi](operations.md#projecteventtolifecycleandkpi) | `gq.promotion_governance.project_event_to_lifecycle_and_kpi.invocation` | `gq.promotion_governance.rule_violation` with `operation=ProjectEventToLifecycleAndKpi` | Outcome and KPI projections must preserve source and denominator semantics. |
 | [ComputeKpiObservation](operations.md#computekpiobservation) | `gq.promotion_governance.compute_kpi_observation.invocation` | `gq.promotion_governance.rule_violation` with `operation=ComputeKpiObservation` | Missing denominator definition. |
+| [ProjectGrantActionFacts](operations.md#projectgrantactionfacts) | `gq.promotion_governance.project_grant_action_facts.invocation` | `gq.promotion_governance.rule_violation` with `operation=ProjectGrantActionFacts` | Action facts must trace to accepted events and projection receipts. |
+| [BuildKpiResponseWindow](operations.md#buildkpiresponsewindow) | `gq.promotion_governance.build_kpi_response_window.invocation` | `gq.promotion_governance.rule_violation` with `operation=BuildKpiResponseWindow` | Response windows must block temporal leakage and preserve censoring. |
+| [EvaluateActionKpiAssociation](operations.md#evaluateactionkpiassociation) | `gq.promotion_governance.evaluate_action_kpi_association.invocation` | `gq.promotion_governance.rule_violation` with `operation=EvaluateActionKpiAssociation` | Method registry, sample, field, bias, and claim-label gates must pass. |
+| [CreateBIInsightCandidate](operations.md#createbiinsightcandidate) | `gq.promotion_governance.create_bi_insight_candidate.invocation` | `gq.promotion_governance.rule_violation` with `operation=CreateBIInsightCandidate` | BI candidates are PromotionCandidate profiles and cannot carry approved uses. |
 | [CreatePromotionCandidate](operations.md#createpromotioncandidate) | `gq.promotion_governance.create_promotion_candidate.invocation` | `gq.promotion_governance.rule_violation` with `operation=CreatePromotionCandidate` | Candidate includes approved uses or lacks contradiction path. |
 | [ValidatePromotionGovernance](operations.md#validatepromotiongovernance) | `gq.promotion_governance.validate_promotion_governance.invocation` | `gq.promotion_governance.rule_violation` with `operation=ValidatePromotionGovernance` | Missing evidence, review gate, contradiction path, or projection tries to mutate. |
 | [RedactionGeneralizationGate](operations.md#redactiongeneralizationgate) | `gq.promotion_governance.redaction_gate.invocation` | `gq.promotion_governance.rule_violation` with `operation=RedactionGeneralizationGate` | Workspace-safe reuse without privacy gate. |
 | [RecordOwnerDecision](operations.md#recordownerdecision) | `gq.promotion_governance.record_owner_decision.invocation` | `gq.promotion_governance.rule_violation` with `operation=RecordOwnerDecision` | Approved decision without approved uses or source. |
+| [PublishApprovedReusePacket](operations.md#publishapprovedreusepacket) | `gq.promotion_governance.publish_approved_reuse_packet.invocation` | `gq.promotion_governance.rule_violation` with `operation=PublishApprovedReusePacket` | Packet requires approved owner decision and approved uses. |
+| [HydrateFutureGrantContext](operations.md#hydratefuturegrantcontext) | `gq.promotion_governance.hydrate_future_grant_context.invocation` | `gq.promotion_governance.rule_violation` with `operation=HydrateFutureGrantContext` | Requested use and scope must match approved reuse packet. |
+
+### Event Spine Metrics
+
+| Metric | Instrument | Healthy Interpretation |
+| --- | --- | --- |
+| `gq.promotion_governance.event.accepted` | Counter | Accepted events by producer kind and event kind. |
+| `gq.promotion_governance.event.rejected` | Counter | Rejected events by producer kind, event kind, and blocked reason. |
+| `gq.promotion_governance.event.projection_latency_ms` | Histogram | Time from event acceptance to projection receipt. |
+| `gq.promotion_governance.event.idempotent_replay` | Counter | Duplicate idempotency key with identical content was safely skipped. |
+| `gq.promotion_governance.event.duplicate_conflict` | Counter | Duplicate idempotency key with changed content was blocked. |
+| `gq.promotion_governance.event.projection_receipt_completeness` | Gauge | Share of projections with created, skipped, or blocked refs recorded. |
+| `gq.promotion_governance.reuse.packet_published` | Counter | Approved reuse packets published after owner decision. |
+| `gq.promotion_governance.reuse.future_context_hydrated` | Counter | Future grant contexts hydrated from approved reuse packets. |
+
+### Analytics Method Metrics
+
+| Metric | Instrument | Healthy Interpretation |
+| --- | --- | --- |
+| `gq.promotion_governance.analytics.method_sample_gate_failed` | Counter | Method blocked because observation or segment count was too low. |
+| `gq.promotion_governance.analytics.temporal_leakage_blocked` | Counter | Action occurred after the KPI response measurement. |
+| `gq.promotion_governance.analytics.censoring_required` | Counter | Pending outcome was handled as censored rather than loss. |
+| `gq.promotion_governance.analytics.selection_bias_unchecked` | Counter | Association downgraded or blocked because treatment selection was not addressed. |
+| `gq.promotion_governance.analytics.multiple_comparison_residue` | Counter | Exploratory scan emitted residue rather than candidate. |
+| `gq.promotion_governance.analytics.aggregate_privacy_threshold_failed` | Counter | Aggregate was too small or scoped for safe reuse. |
 
 ## Business Effectiveness Metrics
 
@@ -113,8 +150,16 @@ authority. Any metric-derived learning must pass [CreatePromotionCandidate](oper
 | Alert | Condition | Severity |
 | --- | --- | --- |
 | `source_missing` | Outcome event lacks [SourceRef](domain.md#sourceref). | P0 |
+| `event_source_missing` | Source-backed [GrantWorkEvent](domain.md#grantworkevent) lacks required source ref. | P0 |
+| `event_duplicate_conflict` | Same idempotency key appears with different content. | P0 |
+| `event_projection_receipt_missing` | Event projection writes without [EventProjectionReceipt](domain.md#eventprojectionreceipt). | P0 |
 | `denominator_missing` | Rate/ratio KPI lacks denominator definition. | P0 |
+| `method_sample_gate_failed` | [StatisticalMethodSpec](analytics-methods.md#statisticalmethodspec) minimum observations or segments failed. | P1 |
+| `temporal_leakage_blocked` | [KpiResponseWindow](analytics-methods.md#kpiresponsewindow) anchor action is not prior to response. | P0 |
+| `aggregate_privacy_threshold_failed` | [BIInsightCandidate](analytics-methods.md#biinsightcandidate-profile) aggregate is too small or private for requested scope. | P0 |
 | `premature_approved_use` | [PromotionCandidate](domain.md#promotioncandidate) contains approved allowed uses. | P0 |
+| `adapter_approved_use_attempt` | [AdapterProducer](domain.md#adapterproducer) output tries to set approved uses. | P0 |
 | `privacy_gate_bypass` | Workspace-safe reuse requested from org-scoped feedback without generalization and approval. | P0 |
 | `projection_mutation_attempt` | [OntologyVaultProjection](mappings.md#ontologyvaultprojection) tries to mutate target artifact in L0. | P0 |
+| `future_context_scope_violation` | Future grant context requests a use or scope not approved by [ApprovedReusePacket](domain.md#approvedreusepacket). | P0 |
 | `dashboard_authority_drift` | Dashboard observation is treated as source truth or promotion authority. | P1 |

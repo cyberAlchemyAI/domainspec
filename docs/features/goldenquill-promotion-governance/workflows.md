@@ -2,7 +2,7 @@
 feature: goldenquill-promotion-governance
 version: current
 status: draft
-updatedAt: 2026-06-01
+updatedAt: 2026-06-08
 docType: workflows
 ---
 
@@ -12,15 +12,18 @@ docType: workflows
 
 **Type:** Workflow
 **Triggers:** A grant opportunity enters a bounded GoldenQuill run and later produces outcome evidence or KPI learning signals.
-**Orchestrates:** [RecordGrantRunEvent](operations.md#recordgrantrunevent), [RecordOutcomeEvent](operations.md#recordoutcomeevent), [ComputeKpiObservation](operations.md#computekpiobservation), [CreatePromotionCandidate](operations.md#createpromotioncandidate), [ValidatePromotionGovernance](operations.md#validatepromotiongovernance), [RedactionGeneralizationGate](operations.md#redactiongeneralizationgate), [RecordOwnerDecision](operations.md#recordownerdecision)
+**Orchestrates:** [AcceptGrantWorkEvent](operations.md#acceptgrantworkevent), [ProjectEventToDag](operations.md#projecteventtodag), [RecordGrantRunEvent](operations.md#recordgrantrunevent), [RecordOutcomeEvent](operations.md#recordoutcomeevent), [ProjectEventToLifecycleAndKpi](operations.md#projecteventtolifecycleandkpi), [ComputeKpiObservation](operations.md#computekpiobservation), [CreatePromotionCandidate](operations.md#createpromotioncandidate), [ValidatePromotionGovernance](operations.md#validatepromotiongovernance), [RedactionGeneralizationGate](operations.md#redactiongeneralizationgate), [RecordOwnerDecision](operations.md#recordownerdecision), [PublishApprovedReusePacket](operations.md#publishapprovedreusepacket), [HydrateFutureGrantContext](operations.md#hydratefuturegrantcontext)
 **Compensation Strategy:** fail closed, record residue, and preserve source evidence without promoting.
-**Idempotency:** conditional. Replaying the same source-backed event is safe only when `event_id` and `source_ref` match.
+**Idempotency:** event-envelope based. Replaying the same `idempotency_key` is a no-op only when the event content matches; changed content under the same key blocks as contradiction/residue.
 
 ### Steps
 
 ```mermaid
 graph TD
-    A[Create run_context] --> B[Attach project_context_reference and rfa_reference]
+    AA[Adapter emits typed event] --> AB[AcceptGrantWorkEvent]
+    AB --> AC[ProjectEventToDag]
+    AC --> A[Create run_context]
+    A --> B[Attach project_context_reference and rfa_reference]
     B --> C[Record scout_discovery_record]
     C --> D[Record scout_verification_record]
     D --> E{Operator review decision}
@@ -47,24 +50,29 @@ graph TD
     V -->|no| X[Ask owner decision]
     W --> X
     X --> Y[Record approved, rejected, retired, or contradicted decision]
+    Y --> AA2[Publish approved reuse packet when approved]
+    AA2 --> AB2[Hydrate future grant context]
 ```
 
 ### Step Table
 
 | # | Step | Actor | Operation | On Success | On Failure | Compensation |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Create run context | GoldenQuill | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Attach context references | Reject missing run id | Stop run |
-| 2 | Record discovery and verification | Scout | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Ask operator decision | Preserve residue | Stop pursuit |
-| 3 | Operator go/no-go | Operator | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Emit RFA dissection | Stop run | Preserve decision source |
-| 4 | Preflight and gate | Logician | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Draft may begin | Block traversal | Emit evidence gap |
-| 5 | Draft/review/score/map | Scribe, Editor, Judge | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Gate and signoff | Revise or block | Preserve revision edge |
-| 6 | Delivery | Operator | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Outcome tracking begins | No delivery | Keep run as paused or blocked |
-| 7 | Outcome event capture | GoldenQuill/operator | [RecordOutcomeEvent](operations.md#recordoutcomeevent) | Lifecycle projection | Reject source-less event | Preserve source gap |
-| 8 | KPI projection | Metrics | [ComputeKpiObservation](operations.md#computekpiobservation) | Candidate generation allowed | Reject denominatorless metric | Preserve metric gap |
-| 9 | Candidate creation | Validator/operator | [CreatePromotionCandidate](operations.md#createpromotioncandidate) | Governance projection | Reject unsafe candidate | Preserve residue |
-| 10 | Governance validation | Ontology Vault layer | [ValidatePromotionGovernance](operations.md#validatepromotiongovernance) | Privacy gate or owner decision | Candidate blocked/rejected | Preserve blockers |
-| 11 | Privacy gate | Privacy layer/operator | [RedactionGeneralizationGate](operations.md#redactiongeneralizationgate) | Owner decision may proceed | Candidate remains org-scoped | Preserve private residue |
-| 12 | Owner decision | Owner/operator | [RecordOwnerDecision](operations.md#recordownerdecision) | Approved/rejected/retired/contradicted | Decision rejected | Return to decision pending |
+| 1 | Accept grant-work event | Adapter boundary | [AcceptGrantWorkEvent](operations.md#acceptgrantworkevent) | Event ready for projection | Reject invalid event | Preserve event residue |
+| 2 | Project event to DAG | Event projector | [ProjectEventToDag](operations.md#projecteventtodag) | Create or update DAG nodes/edges | Block invalid projection | Preserve projection receipt |
+| 3 | Create run context | GoldenQuill | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Attach context references | Reject missing run id | Stop run |
+| 4 | Record discovery and verification | Scout | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Ask operator decision | Preserve residue | Stop pursuit |
+| 5 | Operator go/no-go | Operator | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Emit RFA dissection | Stop run | Preserve decision source |
+| 6 | Preflight and gate | Logician | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Draft may begin | Block traversal | Emit evidence gap |
+| 7 | Draft/review/score/map | Scribe, Editor, Judge | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Gate and signoff | Revise or block | Preserve revision edge |
+| 8 | Delivery | Operator | [RecordGrantRunEvent](operations.md#recordgrantrunevent) | Outcome tracking begins | No delivery | Keep run as paused or blocked |
+| 9 | Outcome/lifecycle/KPI projection | Metrics | [ProjectEventToLifecycleAndKpi](operations.md#projecteventtolifecycleandkpi) | Lifecycle/KPI projection | Reject source-less or denominatorless projection | Preserve projection receipt |
+| 10 | Candidate creation | Validator/operator | [CreatePromotionCandidate](operations.md#createpromotioncandidate) | Governance projection | Reject unsafe candidate | Preserve residue |
+| 11 | Governance validation | Ontology Vault layer | [ValidatePromotionGovernance](operations.md#validatepromotiongovernance) | Privacy gate or owner decision | Candidate blocked/rejected | Preserve blockers |
+| 12 | Privacy gate | Privacy layer/operator | [RedactionGeneralizationGate](operations.md#redactiongeneralizationgate) | Owner decision may proceed | Candidate remains org-scoped | Preserve private residue |
+| 13 | Owner decision | Owner/operator | [RecordOwnerDecision](operations.md#recordownerdecision) | Approved/rejected/retired/contradicted | Decision rejected | Return to decision pending |
+| 14 | Publish approved reuse | Governance route | [PublishApprovedReusePacket](operations.md#publishapprovedreusepacket) | Approved reuse available | Packet rejected | Preserve decision and residue |
+| 15 | Hydrate future context | Future run context builder | [HydrateFutureGrantContext](operations.md#hydratefuturegrantcontext) | Approved learning reaches future grant work | Scope or use rejected | Preserve audit record |
 
 ### Invariants
 
@@ -74,6 +82,63 @@ graph TD
 | W-I2 | No KPI creates approved reuse directly. | `KPI -> candidate_allowed and promotion_forbidden` |
 | W-I3 | No workspace-safe reuse from org-scoped feedback without privacy gate and owner decision. | `workspace_reuse -> generalized and owner_approved` |
 | W-I4 | No production mutation in L0. | `L0 -> no org_vault_write and no card_write and no dashboard_write` |
+| W-I5 | No adapter output becomes DAG authority before event acceptance and projection. | `adapter_output -> accepted_event -> projection_receipt -> DAG` |
+| W-I6 | Future grant context consumes only approved reuse packets. | `future_context -> ApprovedReusePacket.approved_allowed_uses` |
+
+## GrantRunCaptureLoop
+
+**Type:** Workflow
+**Triggers:** Scout, workflow seats, Uploader, Logician, operator surfaces, or backfill emit grant-run events.
+**Orchestrates:** [AcceptGrantWorkEvent](operations.md#acceptgrantworkevent), [ProjectEventToDag](operations.md#projecteventtodag), [RecordGrantRunEvent](operations.md#recordgrantrunevent)
+
+```mermaid
+graph LR
+    A[Adapter Producer] --> B[GrantWorkEventEnvelope]
+    B --> C[AcceptGrantWorkEvent]
+    C --> D[ProjectEventToDag]
+    D --> E[GrantRunNode or GrantRunEdge]
+    D --> F[EventProjectionReceipt]
+```
+
+Failure policy: invalid events are rejected before DAG projection. Duplicate
+idempotency keys with identical content are no-op replay; changed content under
+the same key blocks as contradiction or residue.
+
+## OutcomeMeasurementLoop
+
+**Type:** Workflow
+**Triggers:** Outcome source, CycleReceipt, Reflection Packet, portal export, report, or operator upload is accepted as a grant-work event.
+**Orchestrates:** [ProjectEventToLifecycleAndKpi](operations.md#projecteventtolifecycleandkpi), [RecordOutcomeEvent](operations.md#recordoutcomeevent), [ComputeKpiObservation](operations.md#computekpiobservation), [CreatePromotionCandidate](operations.md#createpromotioncandidate)
+
+```mermaid
+graph LR
+    A[Accepted GrantWorkEvent] --> B[Outcome Event]
+    A --> C[Lifecycle State]
+    A --> D[KPI Observation]
+    B --> E[Promotion Candidate]
+    D --> E
+```
+
+Failure policy: source-less outcomes, denominatorless KPIs, and KPI-only
+promotion attempts fail closed.
+
+## KnowledgeFeedbackLoop
+
+**Type:** Workflow
+**Triggers:** Candidate has enough evidence to enter governance and owner decision.
+**Orchestrates:** [ValidatePromotionGovernance](operations.md#validatepromotiongovernance), [RedactionGeneralizationGate](operations.md#redactiongeneralizationgate), [RecordOwnerDecision](operations.md#recordownerdecision), [PublishApprovedReusePacket](operations.md#publishapprovedreusepacket), [HydrateFutureGrantContext](operations.md#hydratefuturegrantcontext)
+
+```mermaid
+graph LR
+    A[Promotion Candidate] --> B[Governance Projection]
+    B --> C[Privacy Gate]
+    C --> D[Owner Decision]
+    D --> E[Approved Reuse Packet]
+    E --> F[Future Grant Context]
+```
+
+Failure policy: rejected, retired, contradicted, unredacted, or unapproved
+learning remains residue and cannot hydrate future grant context.
 
 ## PromotionAuthorityPolicy
 

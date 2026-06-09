@@ -1,0 +1,579 @@
+{
+  "dispatch_id": "refine-goldenquill-kpi-action-ontology-bi-20260608T123900Z",
+  "parent_dispatch_id": null,
+  "intent": {
+    "raw": "$refine how can we correlate KPI with grant actions to generate business intelligence; what statistical techniques can we use; clarify how grant run data becomes ontology intelligence over time.",
+    "objective": "Produce a strategy proposal for a governed KPI-action correlation and ontology-backed business intelligence refinement before mutating canonical artifacts.",
+    "target_artifact": "docs/features/goldenquill-promotion-governance",
+    "arcanum_vocabulary": [
+      "refine",
+      "dispatch-spec",
+      "event spine",
+      "KPI observation",
+      "ontology projection",
+      "approved reuse packet"
+    ],
+    "operator_sentence": "Refine the KPI-action correlation and ontology BI architecture for GoldenQuill."
+  },
+  "mode": "sequence",
+  "route_menu": {
+    "context_hint": "The target combines analytics method selection, event/DAG projection, ontology promotion, and future-pipeline intelligence.",
+    "items": [
+      {
+        "id": "event-fact-ontology-bridge",
+        "label": "Event fact ontology bridge",
+        "description": "Project accepted grant-work events into action facts, correlate them with KPI response windows, then promote only governed insight candidates.",
+        "capability_ref": "refine+invoke",
+        "pattern": "sequence"
+      },
+      {
+        "id": "dashboard-first-bi",
+        "label": "Dashboard-first BI",
+        "description": "Build dashboards over raw KPI aggregates first and infer ontology concepts later.",
+        "capability_ref": "invoke",
+        "pattern": "route"
+      },
+      {
+        "id": "causal-model-first",
+        "label": "Causal-model-first",
+        "description": "Start with causal inference contracts before enough event and KPI data quality exists.",
+        "capability_ref": "distill",
+        "pattern": "tournament"
+      }
+    ],
+    "selected_item_id": "event-fact-ontology-bridge"
+  },
+  "techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "x_ray",
+    "tournament",
+    "pareto_gate",
+    "toy_game",
+    "route_menu",
+    "approval_checkpoint",
+    "memory_loop",
+    "residue_ledger",
+    "protected_context_flag",
+    "minimum_component_catalog",
+    "data_quality_completeness",
+    "data_quality_deduplication"
+  ],
+  "technique_overlays": [
+    {
+      "overlay_id": "xray_for_hidden_structure",
+      "trigger": "The unclear part is the hidden path from grant actions to DAG, analytic facts, KPI response windows, ontology candidates, and future grant-work intelligence.",
+      "techniques": [
+        "x_ray",
+        "component_descriptor",
+        "entity_component_reference"
+      ],
+      "applies_to_steps": [
+        "s1-context-baseline",
+        "s2-invoke-define",
+        "s6-invoke-design"
+      ],
+      "validation_expectation": "The route must name action events, analytic projections, KPI windows, ontology candidate records, and approved feedback packets."
+    },
+    {
+      "overlay_id": "tournament_for_statistical_alternatives",
+      "trigger": "Several statistical methods are plausible but require different sample sizes, assumptions, and authority labels.",
+      "techniques": [
+        "tournament",
+        "pareto_gate",
+        "recomposition_proof"
+      ],
+      "applies_to_steps": [
+        "s5-distill",
+        "s6-invoke-design"
+      ],
+      "validation_expectation": "Rejected or deferred methods must be recorded with method assumptions, data maturity gates, and interpretation limits."
+    },
+    {
+      "overlay_id": "toy_game_for_low_cost_falsification",
+      "trigger": "Correlation claims need a tiny fixture that proves the system can distinguish association, confounding, and approved ontology knowledge.",
+      "techniques": [
+        "toy_game",
+        "validation_loop",
+        "assessment_failure_reference"
+      ],
+      "applies_to_steps": [
+        "s6-invoke-design",
+        "s8-distill-repair",
+        "s9-invoke-plan"
+      ],
+      "validation_expectation": "The plan must include a fixture with one apparent action-KPI relationship that is blocked or qualified by bias/confounding evidence."
+    },
+    {
+      "overlay_id": "memory_residue_for_context_recovery",
+      "trigger": "Approved BI findings should return through future grant-work context while rejected, low-confidence, or private findings remain residue.",
+      "techniques": [
+        "memory_loop",
+        "residue_ledger",
+        "data_quality_deduplication"
+      ],
+      "applies_to_steps": [
+        "s1-context-baseline",
+        "s7-interrogate-design",
+        "s10-final-synthesis"
+      ],
+      "validation_expectation": "The final synthesis must distinguish approved intelligence, candidate insight, low-confidence observation, and private residue."
+    },
+    {
+      "overlay_id": "protected_context_for_grant_evidence",
+      "trigger": "Grant actions and outcomes can contain org-scoped feedback, funder relationships, staff work patterns, and private application evidence.",
+      "techniques": [
+        "protected_context_flag",
+        "system_agnostic_standard",
+        "local_nuance_coordination"
+      ],
+      "applies_to_steps": [
+        "s2-invoke-define",
+        "s6-invoke-design",
+        "s9-invoke-plan"
+      ],
+      "validation_expectation": "Analytics and ontology mappings must preserve org scope, redaction/generalization, and owner-decision boundaries."
+    }
+  ],
+  "subagent_strategy": {
+    "status": "recommended",
+    "authorization": "requires_user_permission",
+    "trigger": "The target crosses analytics, grant operations, ontology governance, and implementation data contracts.",
+    "explanation": "Sibling role review would reduce method and authority blind spots before canonical mutation.",
+    "context": [
+      "docs/features/goldenquill-promotion-governance",
+      "pipeline/funding_lattice",
+      "pipeline/nervous_system",
+      "mycel-core"
+    ],
+    "roles": [
+      {
+        "role_id": "analytics-methods",
+        "purpose": "Evaluate statistical technique options, assumptions, sample-size gates, and interpretation limits.",
+        "owns": "statistical method findings and data maturity risks",
+        "applies_to_steps": [
+          "s5-distill",
+          "s6-invoke-design"
+        ]
+      },
+      {
+        "role_id": "grant-ops-data",
+        "purpose": "Map grant actions, lifecycle stages, outcome events, cycle costs, and KPI response windows.",
+        "owns": "grant-run data capture and feature projection findings",
+        "applies_to_steps": [
+          "s1-context-baseline",
+          "s2-invoke-define"
+        ]
+      },
+      {
+        "role_id": "ontology-governance",
+        "purpose": "Verify how analytic findings become ontology candidates without premature approved reuse.",
+        "owns": "ontology bridge, owner approval, privacy, and contradiction-path findings",
+        "applies_to_steps": [
+          "s7-interrogate-design",
+          "s10-final-synthesis"
+        ]
+      }
+    ],
+    "parallelism": "fanout",
+    "join_policy": "parent_synthesis",
+    "permission_prompt": "Confirm before running delegated subagents or runtime-backed Refine stages.",
+    "receipt_requirements": [
+      "role_id",
+      "agent_id",
+      "dispatch_id",
+      "step_id",
+      "capability_ref",
+      "status",
+      "spawn_status",
+      "join_status",
+      "close_status",
+      "observer_status",
+      "validation",
+      "source_paths_read",
+      "artifacts",
+      "findings",
+      "recommended_deltas",
+      "blockers",
+      "blocked_or_residue_items",
+      "residue",
+      "reroute",
+      "handoff_note"
+    ]
+  },
+  "steps": [
+    {
+      "step_id": "s1-context-baseline",
+      "name": "Context Builder evidence baseline",
+      "capability_ref": "context-builder",
+      "mode": "standard",
+      "pattern": "xray",
+      "techniques": [
+        "frame_handoff",
+        "x_ray",
+        "concrete_path_evidence"
+      ],
+      "inputs": [
+        {
+          "kind": "intent",
+          "ref": "intent.raw"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/01-context-baseline.md"
+        }
+      ],
+      "evidence_artifact": "stages/01-context-baseline.md",
+      "stop_conditions": [
+        "block if target inventory cannot resolve DAG, KPI, event, ontology, and reuse contracts"
+      ]
+    },
+    {
+      "step_id": "s2-invoke-define",
+      "name": "Invoke Define KPI-action intelligence concepts",
+      "capability_ref": "invoke",
+      "mode": "define",
+      "pattern": "sequential",
+      "techniques": [
+        "frame_handoff",
+        "minimum_component_catalog",
+        "protected_context_flag"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/01-context-baseline.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/02-define-kpi-action-bi.md"
+        }
+      ],
+      "stop_conditions": [
+        "block if concepts collapse correlation, causation, ontology candidate, and approved reuse"
+      ]
+    },
+    {
+      "step_id": "s3-interrogate-define",
+      "name": "Interrogation refine-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-review",
+      "pattern": "validation",
+      "techniques": [
+        "validation_loop",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/02-define-kpi-action-bi.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/03-define-review.md"
+        }
+      ],
+      "evidence_artifact": "stages/03-define-review.md",
+      "stop_conditions": [
+        "block if KPI correlation is treated as promotion authority"
+      ]
+    },
+    {
+      "step_id": "s4-research-decision",
+      "name": "Research decision",
+      "capability_ref": "refine",
+      "mode": "research-if-gap-appears",
+      "pattern": "decision",
+      "techniques": [
+        "route_menu",
+        "approval_checkpoint",
+        "protected_context_flag"
+      ],
+      "inputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/03-define-review.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/04-research-decision.md"
+        }
+      ],
+      "stop_conditions": [
+        "ask before external research if a named statistics or grant-analytics gap appears"
+      ]
+    },
+    {
+      "step_id": "s5-distill",
+      "name": "Distill statistical technique alternatives",
+      "capability_ref": "distill",
+      "mode": "standard",
+      "pattern": "tournament",
+      "techniques": [
+        "tournament",
+        "pareto_gate",
+        "recomposition_proof",
+        "residue_ledger"
+      ],
+      "roles": [
+        "descriptive-cohorts",
+        "survival-analysis",
+        "regression-and-hierarchical-models",
+        "quasi-causal-methods",
+        "sequence-mining",
+        "bayesian-updating"
+      ],
+      "join_policy": "pareto",
+      "convergence_criteria": [
+        "Preserve source truth and KPI denominator semantics",
+        "Label correlation, causal evidence, and candidate intelligence differently",
+        "Support small-sample fixture validation before production analytics",
+        "Allow ontology feedback only after governance and owner approval"
+      ],
+      "inputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/04-research-decision.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/05-distill-methods.md"
+        }
+      ],
+      "stop_conditions": [
+        "flag methods whose assumptions cannot be validated by current data"
+      ]
+    },
+    {
+      "step_id": "s6-invoke-design",
+      "name": "Invoke Design KPI-action ontology BI architecture",
+      "capability_ref": "invoke",
+      "mode": "design",
+      "pattern": "sequential",
+      "techniques": [
+        "x_ray",
+        "toy_game",
+        "artifact_contract_bridge",
+        "state_namespace_boundary"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/05-distill-methods.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/06-design-kpi-action-ontology-bi.md"
+        }
+      ],
+      "evidence_artifact": "stages/06-design-kpi-action-ontology-bi.md",
+      "stop_conditions": [
+        "block if design lacks action fact, KPI window, method registry, ontology bridge, or feedback-loop contracts"
+      ]
+    },
+    {
+      "step_id": "s7-interrogate-design",
+      "name": "Interrogation refine-design-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-design-review",
+      "pattern": "validation",
+      "techniques": [
+        "validation_loop",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/06-design-kpi-action-ontology-bi.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/07-design-review.md"
+        }
+      ],
+      "evidence_artifact": "stages/07-design-review.md",
+      "stop_conditions": [
+        "block if ontology candidates can bypass governance or privacy approval"
+      ]
+    },
+    {
+      "step_id": "s8-distill-repair",
+      "name": "Distill Repair",
+      "capability_ref": "distill",
+      "mode": "validate",
+      "pattern": "validation",
+      "techniques": [
+        "validation_loop",
+        "toy_game",
+        "data_quality_completeness"
+      ],
+      "inputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/07-design-review.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/08-repair.md"
+        }
+      ],
+      "evidence_artifact": "stages/08-repair.md",
+      "stop_conditions": [
+        "block unresolved statistical authority or ontology promotion errors before planning"
+      ]
+    },
+    {
+      "step_id": "s9-invoke-plan",
+      "name": "Invoke Plan BI project split",
+      "capability_ref": "invoke",
+      "mode": "plan",
+      "pattern": "sequential",
+      "techniques": [
+        "artifact_contract_bridge",
+        "minimum_component_catalog",
+        "toy_game"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/08-repair.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/09-plan-bi-project-split.md"
+        }
+      ],
+      "evidence_artifact": "stages/09-plan-bi-project-split.md",
+      "stop_conditions": [
+        "plan must split into self-contained development projects with statistical validation fixtures"
+      ]
+    },
+    {
+      "step_id": "s10-final-synthesis",
+      "name": "Final Interrogation and Refine synthesis",
+      "capability_ref": "interrogation",
+      "mode": "refine-final",
+      "pattern": "synthesis",
+      "techniques": [
+        "residue_ledger",
+        "observability_grouping",
+        "memory_loop"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/09-plan-bi-project-split.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "RESULT.md"
+        }
+      ],
+      "stop_conditions": [
+        "final synthesis must name next route and avoid applying canonical changes without approval"
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "g1-dispatch-validation",
+      "kind": "validation",
+      "owner": "dispatch-spec",
+      "condition": "REFINE-DISPATCH.json validates against dispatch.schema.yml and technique governance.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g2-user-permission",
+      "kind": "human_approval",
+      "owner": "operator",
+      "condition": "Runtime-backed stages and delegated subagents require explicit confirmation after the strategy proposal.",
+      "on_fail": "defer"
+    },
+    {
+      "gate_id": "g3-no-canonical-mutation",
+      "kind": "policy",
+      "owner": "refine",
+      "condition": "No canonical docs are mutated during strategy-proposal mode.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g4-statistical-authority-boundary",
+      "kind": "promotion_guardrail",
+      "owner": "goldenquill-promotion-governance",
+      "condition": "Correlation, model output, and KPI threshold cannot approve reusable ontology knowledge.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g5-protected-context",
+      "kind": "policy",
+      "owner": "GoldenQuill",
+      "condition": "Org-scoped grant feedback and action data remain private unless redacted/generalized and owner-approved.",
+      "on_fail": "block"
+    }
+  ],
+  "boundary_evidence": {
+    "authority": {
+      "lifecycle": "GoldenQuill owns grant workflow lifecycle; Refine owns only this strategy proposal.",
+      "execution": "Task Session owns future implementation execution from an approved work-pack.",
+      "validation": "dispatch-spec validates route shape; GoldenQuill validators validate event, DAG, KPI, method, ontology, and governance fixtures.",
+      "evidence": "GrantWorkEvent, EventProjectionReceipt, GrantOutcomeEvent, KPIObservation, and ApprovedReusePacket remain evidence handles.",
+      "memory": "Approved BI intelligence returns through approved reuse packets only.",
+      "promotion": "Ontology Vault layer and OwnerDecision own promotion authority and approved allowed uses."
+    },
+    "state_namespaces": [
+      {
+        "namespace": "target-local-refine-run",
+        "owner": "refine",
+        "write_policy": "write only generated proposal artifacts under the run folder before confirmation",
+        "root": "docs/features/goldenquill-promotion-governance/development/refinement-runs/20260608T123900Z-kpi-action-ontology-bi"
+      }
+    ],
+    "promotion_splits": [
+      {
+        "source": "ActionFact, KPIObservation, StatisticalFinding",
+        "target": "BIInsightCandidate and OwnerDecision",
+        "rule": "analytics may propose or qualify intelligence but never approve reuse",
+        "on_violation": "block"
+      }
+    ]
+  },
+  "promotion_guardrails": [
+    "No canonical SPEC, architecture, domain, workflow, event, mapping, operation, or test artifact is mutated in strategy-proposal mode.",
+    "No statistical method output creates approved allowed uses.",
+    "No ontology projection writes approved reusable knowledge without owner decision.",
+    "No future pipeline recommendation consumes private or low-confidence findings as approved intelligence."
+  ],
+  "observability": {
+    "dispatch_id_required": true,
+    "parent_dispatch_id": null,
+    "trace_events": [
+      "dispatch_validated",
+      "strategy_proposed",
+      "operator_permission_waiting"
+    ],
+    "signal_grouping": "dispatch_id"
+  }
+}

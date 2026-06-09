@@ -1,0 +1,553 @@
+{
+  "dispatch_id": "refine-goldenquill-grant-work-dag-cycle-20260605T000000Z",
+  "parent_dispatch_id": null,
+  "intent": {
+    "raw": "$refine what is missing for grant work feeding the DAG, adapter alternatives, knowledge feedback, outcome measurement, component charts, and split development projects; then invoke refresh the goldenquill-promotion-governance folder.",
+    "objective": "Produce a strategy proposal and proposal-only refresh plan that clarifies the grant-work DAG cycle before mutating canonical artifacts.",
+    "target_artifact": "docs/features/goldenquill-promotion-governance",
+    "arcanum_vocabulary": [
+      "refine",
+      "invoke refresh",
+      "dispatch-spec",
+      "event spine",
+      "adapter boundary",
+      "promotion governance"
+    ],
+    "operator_sentence": "Refine and refresh GoldenQuill promotion governance around the whole grant-work learning cycle."
+  },
+  "mode": "sequence",
+  "route_menu": {
+    "context_hint": "The target combines architecture gaps, refresh deltas, and project slicing; use the canonical Refine loop before execution.",
+    "items": [
+      {
+        "id": "event-first-refresh",
+        "label": "Event-first refresh",
+        "description": "Treat adapters as typed event producers and refresh the architecture around projection, metrics, and learning feedback.",
+        "capability_ref": "refine+invoke",
+        "pattern": "sequence"
+      },
+      {
+        "id": "direct-dag-writer",
+        "label": "Direct DAG writers",
+        "description": "Let each component write DAG nodes directly; keep simpler but accept tighter coupling.",
+        "capability_ref": "invoke",
+        "pattern": "route"
+      },
+      {
+        "id": "memory-first",
+        "label": "Memory-first learning",
+        "description": "Prioritize cross-cycle knowledge writes before DAG projection; likely unsafe for promotion governance.",
+        "capability_ref": "invoke",
+        "pattern": "route"
+      }
+    ],
+    "selected_item_id": "event-first-refresh"
+  },
+  "techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "x_ray",
+    "tournament",
+    "route_menu",
+    "approval_checkpoint",
+    "memory_loop",
+    "residue_ledger",
+    "protected_context_flag",
+    "authority_split_gate",
+    "artifact_contract_bridge",
+    "state_namespace_boundary",
+    "memory_promotion_split",
+    "minimum_component_catalog",
+    "data_quality_completeness"
+  ],
+  "technique_overlays": [
+    {
+      "overlay_id": "xray_for_hidden_structure",
+      "trigger": "The missing piece is the hidden cycle between grant work, DAG events, adapters, metrics, governance, and future grant work.",
+      "techniques": [
+        "x_ray",
+        "component_descriptor",
+        "entity_component_reference"
+      ],
+      "applies_to_steps": [
+        "s1-context-baseline",
+        "s2-invoke-define",
+        "s6-invoke-design"
+      ],
+      "validation_expectation": "The route must emit an architecture handle that names components, adapters, events, projectors, and feedback loops."
+    },
+    {
+      "overlay_id": "tournament_for_alternatives",
+      "trigger": "Adapter integration has multiple plausible shapes: event-first, direct writers, command API, batch import, or memory-first.",
+      "techniques": [
+        "tournament",
+        "pareto_gate",
+        "recomposition_proof"
+      ],
+      "applies_to_steps": [
+        "s5-distill",
+        "s6-invoke-design"
+      ],
+      "validation_expectation": "Rejected alternatives must be recorded with trade-offs, not erased."
+    },
+    {
+      "overlay_id": "memory_residue_for_context_recovery",
+      "trigger": "Existing GoldenQuill strategy evidence includes Reflection Packet, memory query, Brain/JIT research, CycleReceipt, and dormant cross-cycle learning.",
+      "techniques": [
+        "memory_loop",
+        "residue_ledger",
+        "data_quality_deduplication"
+      ],
+      "applies_to_steps": [
+        "s1-context-baseline",
+        "s4-research-decision",
+        "s10-final-synthesis"
+      ],
+      "validation_expectation": "Prior research is cited as source evidence and unresolved deployment constraints remain residue."
+    },
+    {
+      "overlay_id": "protected_context_for_grant_evidence",
+      "trigger": "Grant work contains org-scoped feedback, private source documents, portal exports, and operator decisions.",
+      "techniques": [
+        "protected_context_flag",
+        "system_agnostic_standard",
+        "local_nuance_coordination"
+      ],
+      "applies_to_steps": [
+        "s2-invoke-define",
+        "s6-invoke-design",
+        "s9-invoke-plan"
+      ],
+      "validation_expectation": "Event, adapter, and knowledge-feedback proposals must preserve org scope and owner approval boundaries."
+    }
+  ],
+  "subagent_strategy": {
+    "status": "recommended",
+    "authorization": "requires_user_permission",
+    "trigger": "The cycle crosses architecture, grant operations, metrics, privacy governance, and implementation slicing.",
+    "explanation": "Sibling role review would reduce blind spots before canonical mutation.",
+    "context": [
+      "docs/features/goldenquill-promotion-governance",
+      "docs/paul_norton_memory_alignment_brief_2026-05-15.md",
+      "pipeline/blueprint/v0.1"
+    ],
+    "roles": [
+      {
+        "role_id": "architecture-xray",
+        "purpose": "Map components, adapters, events, projectors, and feedback loops.",
+        "owns": "architecture structure findings and component-chart risks",
+        "applies_to_steps": [
+          "s1-context-baseline",
+          "s6-invoke-design"
+        ]
+      },
+      {
+        "role_id": "grant-ops-metrics",
+        "purpose": "Check grant lifecycle, outcome, cost, relationship, and stewardship measurement semantics.",
+        "owns": "grant operations and metrics findings",
+        "applies_to_steps": [
+          "s2-invoke-define",
+          "s6-invoke-design"
+        ]
+      },
+      {
+        "role_id": "governance-privacy",
+        "purpose": "Verify promotion authority, org scope, redaction/generalization, and owner-decision boundaries.",
+        "owns": "governance and privacy boundary findings",
+        "applies_to_steps": [
+          "s3-interrogate-define",
+          "s7-interrogate-design"
+        ]
+      }
+    ],
+    "parallelism": "fanout",
+    "join_policy": "parent_synthesis",
+    "permission_prompt": "Confirm before running delegated subagents or runtime-backed Refine stages.",
+    "receipt_requirements": [
+      "role_id",
+      "source_paths_read",
+      "findings",
+      "recommended_deltas",
+      "blocked_or_residue_items"
+    ]
+  },
+  "steps": [
+    {
+      "step_id": "s1-context-baseline",
+      "name": "Context Builder evidence baseline",
+      "capability_ref": "context-builder",
+      "mode": "standard",
+      "pattern": "xray",
+      "techniques": [
+        "frame_handoff",
+        "x_ray",
+        "concrete_path_evidence"
+      ],
+      "inputs": [
+        {
+          "kind": "intent",
+          "ref": "intent.raw"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/01-context-baseline.md"
+        }
+      ],
+      "evidence_artifact": "stages/01-context-baseline.md",
+      "stop_conditions": [
+        "block if target inventory cannot be resolved"
+      ]
+    },
+    {
+      "step_id": "s2-invoke-define",
+      "name": "Invoke Define missing cycle concepts",
+      "capability_ref": "invoke",
+      "mode": "define",
+      "pattern": "sequential",
+      "techniques": [
+        "frame_handoff",
+        "minimum_component_catalog",
+        "protected_context_flag"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/01-context-baseline.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/02-define-cycle-concepts.md"
+        }
+      ],
+      "stop_conditions": [
+        "block if concepts cannot preserve event, adapter, metric, and promotion boundaries"
+      ]
+    },
+    {
+      "step_id": "s3-interrogate-define",
+      "name": "Interrogation refine-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-review",
+      "pattern": "validation",
+      "techniques": [
+        "validation_loop",
+        "owner_boundary_check"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/02-define-cycle-concepts.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/03-define-review.md"
+        }
+      ],
+      "evidence_artifact": "stages/03-define-review.md",
+      "stop_conditions": [
+        "block if promotion authority is assigned to adapters, KPIs, or memory writes"
+      ]
+    },
+    {
+      "step_id": "s4-research-decision",
+      "name": "Research decision",
+      "capability_ref": "refine",
+      "mode": "research-if-gap-appears",
+      "pattern": "decision",
+      "techniques": [
+        "route_menu",
+        "approval_checkpoint",
+        "protected_context_flag"
+      ],
+      "inputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/03-define-review.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/04-research-decision.md"
+        }
+      ],
+      "stop_conditions": [
+        "ask before external research if a named external gap appears"
+      ]
+    },
+    {
+      "step_id": "s5-distill",
+      "name": "Distill architecture unit and alternatives",
+      "capability_ref": "distill",
+      "mode": "standard",
+      "pattern": "tournament",
+      "techniques": [
+        "tournament",
+        "pareto_gate",
+        "recomposition_proof",
+        "residue_ledger"
+      ],
+      "roles": [
+        "event-first",
+        "direct-dag-writer",
+        "command-api",
+        "batch-import",
+        "memory-first"
+      ],
+      "join_policy": "pareto",
+      "convergence_criteria": [
+        "Preserve source truth and replayability",
+        "Keep adapters out of promotion authority",
+        "Support fixture-only L0 and future production ingestion",
+        "Allow knowledge feedback into future grant work only after owner-approved governance"
+      ],
+      "inputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/04-research-decision.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/05-distill-alternatives.md"
+        }
+      ],
+      "stop_conditions": [
+        "flag rejected alternatives with rationale"
+      ]
+    },
+    {
+      "step_id": "s6-invoke-design",
+      "name": "Invoke Design full cycle architecture",
+      "capability_ref": "invoke",
+      "mode": "design",
+      "pattern": "sequential",
+      "techniques": [
+        "x_ray",
+        "artifact_contract_bridge",
+        "state_namespace_boundary",
+        "memory_promotion_split"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/05-distill-alternatives.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/06-design-cycle-architecture.md"
+        }
+      ],
+      "evidence_artifact": "stages/06-design-cycle-architecture.md",
+      "stop_conditions": [
+        "block if design lacks component chart, adapter chart, feedback chart, or project split"
+      ]
+    },
+    {
+      "step_id": "s7-interrogate-design",
+      "name": "Interrogation refine-design-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-design-review",
+      "pattern": "validation",
+      "techniques": [
+        "validation_loop",
+        "authority_split_gate"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/06-design-cycle-architecture.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/07-design-review.md"
+        }
+      ],
+      "evidence_artifact": "stages/07-design-review.md",
+      "stop_conditions": [
+        "block if event, adapter, metric, governance, and memory authorities are ambiguous"
+      ]
+    },
+    {
+      "step_id": "s8-distill-repair",
+      "name": "Distill Repair",
+      "capability_ref": "distill",
+      "mode": "validate",
+      "pattern": "validation",
+      "techniques": [
+        "validation_loop",
+        "data_quality_completeness"
+      ],
+      "inputs": [
+        {
+          "kind": "ledger",
+          "ref": "stages/07-design-review.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/08-repair.md"
+        }
+      ],
+      "evidence_artifact": "stages/08-repair.md",
+      "stop_conditions": [
+        "block unresolved authority errors before planning"
+      ]
+    },
+    {
+      "step_id": "s9-invoke-plan",
+      "name": "Invoke Plan project split",
+      "capability_ref": "invoke",
+      "mode": "plan",
+      "pattern": "sequential",
+      "techniques": [
+        "scu_swu_reduction",
+        "artifact_contract_bridge",
+        "minimum_component_catalog"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/08-repair.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/09-plan-project-split.md"
+        }
+      ],
+      "stop_conditions": [
+        "plan must split into self-contained development projects with validation evidence"
+      ]
+    },
+    {
+      "step_id": "s10-final-synthesis",
+      "name": "Final Interrogation and Refine synthesis",
+      "capability_ref": "interrogation+refine",
+      "mode": "refine-final",
+      "pattern": "synthesis",
+      "techniques": [
+        "residue_ledger",
+        "observability_grouping",
+        "memory_loop"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/09-plan-project-split.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "RESULT.md"
+        }
+      ],
+      "stop_conditions": [
+        "final synthesis must name next route and avoid applying refresh without approval"
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "g1-dispatch-validation",
+      "kind": "validation",
+      "owner": "dispatch-spec",
+      "condition": "REFINE-DISPATCH.json validates against dispatch.schema.yml and technique governance.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g2-user-permission",
+      "kind": "human_approval",
+      "owner": "operator",
+      "condition": "Runtime-backed stages and delegated subagents require explicit confirmation after the strategy proposal.",
+      "on_fail": "defer"
+    },
+    {
+      "gate_id": "g3-no-canonical-mutation",
+      "kind": "policy",
+      "owner": "invoke refresh",
+      "condition": "Refresh remains proposal-only until apply-approved is explicitly granted.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g4-authority-boundary",
+      "kind": "promotion_guardrail",
+      "owner": "goldenquill-promotion-governance",
+      "condition": "Adapters, events, DAG nodes, KPIs, and memory evidence cannot approve reusable knowledge.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g5-protected-context",
+      "kind": "policy",
+      "owner": "GoldenQuill",
+      "condition": "Org-scoped grant feedback must remain private unless redacted/generalized and owner-approved.",
+      "on_fail": "block"
+    }
+  ],
+  "boundary_evidence": {
+    "authority": {
+      "lifecycle": "GoldenQuill owns grant workflow lifecycle; Refine owns only this strategy proposal.",
+      "execution": "Task Session owns any future implementation execution from an approved work-pack.",
+      "validation": "dispatch-spec validates route shape; GoldenQuill validators validate event, DAG, KPI, and governance fixtures.",
+      "evidence": "GoldenQuill source refs, portal exports, cycle receipts, reflection packets, and refresh signals remain evidence handles.",
+      "memory": "GoldenQuill memory query and approved reuse packets consume owner-approved learning only.",
+      "promotion": "Ontology Vault layer and OwnerDecision own promotion authority and approved allowed uses."
+    },
+    "state_namespaces": [
+      {
+        "namespace": "target-local-refine-run",
+        "owner": "refine",
+        "write_policy": "write only generated proposal artifacts under the run folder before confirmation",
+        "root": "docs/features/goldenquill-promotion-governance/development/refinement-runs/20260605T000000Z-grant-work-dag-cycle"
+      },
+      {
+        "namespace": "proposal-only-refresh",
+        "owner": "invoke refresh",
+        "write_policy": "write refresh report and patch proposal only; no canonical target mutation",
+        "root": "docs/features/goldenquill-promotion-governance/development/refresh-runs/20260605T000000Z-grant-work-dag-cycle"
+      }
+    ],
+    "promotion_splits": [
+      {
+        "source": "GrantOutcomeEvent, GrantKpiObservation, MemoryEvidencePacketRef",
+        "target": "PromotionCandidate and OwnerDecision",
+        "rule": "source evidence may propose but never approve reuse",
+        "on_violation": "block"
+      }
+    ]
+  },
+  "promotion_guardrails": [
+    "No canonical SPEC, architecture, domain, workflow, event, mapping, operation, or test artifact is mutated in proposal-only mode.",
+    "No adapter is allowed to bypass typed event validation and write owner-approved learning directly.",
+    "No KPI threshold creates approved allowed uses.",
+    "No memory or knowledge write becomes workspace-safe without redaction/generalization and owner decision."
+  ],
+  "observability": {
+    "dispatch_id_required": true,
+    "parent_dispatch_id": null,
+    "trace_events": [
+      "dispatch_validated",
+      "strategy_proposed",
+      "refresh_report_emitted",
+      "operator_permission_waiting"
+    ],
+    "signal_grouping": "dispatch_id"
+  }
+}
