@@ -50,6 +50,7 @@ Read first:
    - task context pack preparation for implementation predictability -> `domainspec-context-builder <feature> [--task <TASK-ID|task-path>]`
    - full feature delivery -> `domainspec-pipeline <feature>`
    - feature glossary authoring/evolution -> `domainspec-feature-glossary <feature>`
+   - typed ontology-view authoring (the fourth sibling: typed nodes + typed edges with forbidden-edge guards) once a project carries the discovery / system-view / engineer-view triad (or a source corpus) AND has a decision inventory for verdicts to point at -> `ontology-view <project-or-corpus-path> [--mode draft|validate|review|publish]`. Do NOT route here when no view triad/corpus or no decision inventory exists; recommend writing the discovery siblings first.
    - command guidance -> `domainspec-help`
    - explicit stage intent -> the matching specialist command
 4. "spec / plan / implement <feature>" intent and no discovery exists for <feature>

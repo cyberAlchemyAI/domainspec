@@ -46,6 +46,7 @@ Ao buscar docs do vault por significado (princípio, axioma, convenção, premis
 - 🛠 USE skill: `/domainspec-spec-feature` — for the spec (only after a discovery exists).
 - 📖 READ: `.claude/skills/custom/code.md` — for the plan; catches layer-law violations and invented domain terms before implementation.
 - 🛠 USE skill: `.claude/skills/custom/domain-dictionary.md` if defining new business concepts or maintaining vocabulary.
+- 🛠 USE skill: `/ontology-view <project-or-corpus-path> [--mode draft|validate|review|publish]` — to author the **fourth sibling** ontology-view: the machine-checkable typed-node + typed-edge layer beneath discovery / system-view / engineer-view, where forbidden relationships are made *unconstructible* (typed so no catalog edge admits the endpoint pair) rather than merely asserted. When: a project already carries the view triad (or a source corpus rich enough to mine) AND has a decision inventory for verdicts to point at. It owns the schema; it re-decides nothing (every verdict points across to engineer-view).
 
 ### 4. Refactoring or Writing Code
 - ⚠️ If this is a NEW feature, confirm Step 3 (Specs/Planning) is done first.
