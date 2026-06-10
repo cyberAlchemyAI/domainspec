@@ -4,7 +4,7 @@ Per `vault/constitution/frontmatter-ownership-constitution.md`, this module
 owns the Pydantic models for every vault node type. Subsystems validate
 against these models — they do not extend them privately.
 
-The 16 canonical `node_type` values are sourced from
+The 17 canonical `node_type` values are sourced from
 `vault/ontology-conventions.md` (Appendix B, line 56 of the YAML schema
 block). Per OQ-A/OQ-B, the kernel hard-rejects unknown `node_type` values
 rather than silently falling back to the base `NodeFrontmatter`.
@@ -16,7 +16,7 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-# Canonical 16 node_type values — source of truth: vault/ontology-conventions.md.
+# Canonical 17 node_type values — source of truth: vault/ontology-conventions.md.
 # Order matches the conventions doc YAML enumeration.
 NodeType = Literal[
     "axiom",
@@ -35,6 +35,7 @@ NodeType = Literal[
     "subagents-research",
     "subagents-findings",
     "discussion",
+    "experiment",
 ]
 
 Status = Literal[
@@ -150,6 +151,16 @@ class DiscussionFrontmatter(NodeFrontmatter):
     node_type: Literal["discussion"] = "discussion"
 
 
+class ExperimentFrontmatter(NodeFrontmatter):
+    """Pre-registered, falsifiable experiment (see experiments/PROTOCOL.md).
+    Epistemically behaves like a premise: a falsifiable claim evidence updates.
+    Extra experiment-lifecycle fields (lifecycle, frozen_at, gates, …) are
+    carried by the model's extra='allow' config and validated by
+    experiments/tools/validate_proposal.py, not here."""
+
+    node_type: Literal["experiment"] = "experiment"
+
+
 class SessionFrontmatter(NodeFrontmatter):
     """Session-shaped node. `is_session: true` is the discriminator; the
     underlying `node_type` reflects what the session's output plays (per
@@ -192,10 +203,11 @@ _FRONTMATTER_BY_TYPE: dict[str, type[NodeFrontmatter]] = {
     "subagents-research": SubagentsResearchFrontmatter,
     "subagents-findings": SubagentsFindingsFrontmatter,
     "discussion": DiscussionFrontmatter,
+    "experiment": ExperimentFrontmatter,
 }
 
 
-# Public constant: the canonical 16-value set, as a frozenset for fast
+# Public constant: the canonical 17-value set, as a frozenset for fast
 # membership checks (e.g. `vault_ctl.validate` Tier-1 enum check).
 KNOWN_NODE_TYPES: frozenset[str] = frozenset(_FRONTMATTER_BY_TYPE.keys())
 
@@ -236,7 +248,7 @@ def validate_node(
 
     Raises:
         UnknownNodeTypeError: when `node_type` is missing or not one of the
-            16 canonical values from `ontology-conventions.md`. Per OQ-B,
+            17 canonical values from `ontology-conventions.md`. Per OQ-B,
             this is a hard reject (no silent fallback to base).
         pydantic.ValidationError: on schema violation of the dispatched
             subclass.

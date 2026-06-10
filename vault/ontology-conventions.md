@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: reference
 status: consolidated
-version: 2.3.0
-last_updated: 2026-05-25
+version: 2.4.0
+last_updated: 2026-06-09
 ---
 
 # Vault Conventions
@@ -53,7 +53,7 @@ For the philosophical foundations behind these choices, see `ontology-constituti
 ```yaml
 ---
 tags: [list of topical tags]           # Domain/topic labels only — see Tag System
-node_type: axiom | premise | constitution | discovery | implementation-plan | spec | audit | conceptual | test | backlog | readme | research | domainspec-subagents-strategy | subagents-research | subagents-findings | discussion
+node_type: axiom | premise | constitution | discovery | implementation-plan | spec | audit | conceptual | test | backlog | readme | research | domainspec-subagents-strategy | subagents-research | subagents-findings | discussion | experiment
 is_session: true | false               # Is this a conversation/session record?
 layer: ontology | architecture | market | domain | application  # Multi-value allowed
 nature: explanatory | procedural | reference | technical        # Multi-value allowed
@@ -120,7 +120,7 @@ These three labels often get confused because they all relate to "trust." But th
 
 Example: `system-axioms.md` is `node_type: axiom` (permanent role — it's a foundational claim), `status: consolidated` (maturity — it's been reviewed), `convicção: high` (bet — we are committed to it). If it were brand new, it would still be `node_type: axiom` but `status: draft`. The role doesn't change; the maturity does.
 
-The sixteen `node_type` values — `axiom`, `premise`, `constitution`, `discovery`, `implementation-plan`, `spec`, `audit`, `conceptual`, `test`, `backlog`, `readme`, `research`, `domainspec-subagents-strategy`, `subagents-research`, `subagents-findings`, `discussion` — each represent a distinct role with precise boundaries. For the full value definitions and differentiation criteria, see [Appendix B: Label Value Catalog](#appendix-b-label-value-catalog).
+The seventeen `node_type` values — `axiom`, `premise`, `constitution`, `discovery`, `implementation-plan`, `spec`, `audit`, `conceptual`, `test`, `backlog`, `readme`, `research`, `domainspec-subagents-strategy`, `subagents-research`, `subagents-findings`, `discussion`, `experiment` — each represent a distinct role with precise boundaries. For the full value definitions and differentiation criteria, see [Appendix B: Label Value Catalog](#appendix-b-label-value-catalog).
 
 > **The knowledge lifecycle flow:** Documents naturally progress through epistemic roles: `discovery` (exploring possibilities) → `implementation-plan` (prescribing execution) → `spec` (describing current behavior). An `audit` document evaluates a `spec` against reality and feeds back into the cycle by spawning new discoveries or plans.
 
@@ -485,6 +485,7 @@ The mental test for assigning `node_type`: *"If someone challenges this document
 | `subagents-research`  | Raw evidence produced by a domainspec-subagents-strategy dispatch. One file per child subagent, or a consolidated file. Always linked to its parent strategy via `derives-from`. | "It's the raw evidence produced by a domainspec-subagents-strategy dispatch — challenge by tracing back to the strategy's prompts and source data" | `domainspec-subagents-research.md` from a dispatch |
 | `subagents-findings`  | Synthesis of subagents-research nodes from a single dispatch. One file per dispatch. Cites every research file via `derives-from` and the parent strategy via `derives-from`. | "It's the synthesis of subagents-research nodes from a single dispatch — challenge a claim by tracing it back to the research it cites" | `domainspec-subagents-findings.md` from a dispatch |
 | `discussion`          | Multi-perspective debate log. Captures tensions; resolves to a discovery or remains open. See `vault/discovery/robot-talks-definitions/examples/robots-discussing.md` (this conversation).                                                                    | "It's multi-perspective debate — close it with a discovery or escalate"  | Robot-talks debate log capturing cross-layer tensions                       |
+| `experiment`          | Pre-registered, falsifiable experiment. A single hypothesis with numeric gates and falsifiers frozen *before* the run; results and adjudication live in sibling RUN/VERDICT files, never the proposal. Epistemically behaves like a `premise` (a claim evidence updates), but carries an immutable-once-frozen pre-registration contract enforced by `experiments/tools/validate_proposal.py`. Lives under `experiments/E<N>-<slug>/`. See the `experiments/PROTOCOL.md` scaffolded by `partition-scaffold`.                                                                    | "Run it against the frozen gates and read the verdict — don't edit the gate after the fact" | `experiments/E1-…/PROPOSAL.md`                                              |
 
 ### `layer` Values
 
@@ -649,7 +650,7 @@ Every vault document carries up to 7 classification labels. Each answers a diffe
 
 | Label | Question | What it captures | Independent of |
 |-------|----------|-----------------|----------------|
-| **`node_type`** | *What role does this document play?* | Kind of claim: axiom, premise, constitution, discovery, implementation-plan, spec, audit, conceptual, test, backlog, readme, research, domainspec-subagents-strategy, subagents-research, subagents-findings, discussion (16 values) | All others — an axiom can be about any layer, any nature, any status |
+| **`node_type`** | *What role does this document play?* | Kind of claim: axiom, premise, constitution, discovery, implementation-plan, spec, audit, conceptual, test, backlog, readme, research, domainspec-subagents-strategy, subagents-research, subagents-findings, discussion, experiment (17 values) | All others — an axiom can be about any layer, any nature, any status |
 | **`layer`** | *What part of the system does it concern?* | Topical scope: ontology, architecture, market, domain, application | `node_type` (a constitution can be about architecture or market), `nature` (scope ≠ format) |
 | **`nature`** | *What structural format does it use?* | Reading instruction: explanatory prose, step-by-step, lookup table, or schema | `node_type` (a constitution can be a checklist or a schema), `layer` (format ≠ scope) |
 | **`status`** | *How mature/trusted is it?* | Lifecycle position: draft → exploratory → active → consolidated → evergreen | `node_type` (an axiom starts as draft too), `nature` (format doesn't affect maturity) |

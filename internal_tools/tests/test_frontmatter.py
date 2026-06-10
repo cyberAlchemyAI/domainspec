@@ -1,6 +1,6 @@
 """Tests for vault_common.frontmatter.
 
-Covers OQ-A (16 NodeType values) and OQ-B (hard reject on unknown node_type).
+Covers OQ-A (17 NodeType values) and OQ-B (hard reject on unknown node_type).
 """
 
 from __future__ import annotations
@@ -16,22 +16,22 @@ from vault_common.frontmatter import (
 )
 
 
-# --- OQ-A: enum covers all 16 conventions values ----------------------------
+# --- OQ-A: enum covers all conventions values -------------------------------
 
 EXPECTED_NODE_TYPES = {
     "axiom", "premise", "constitution", "discovery", "implementation-plan",
     "spec", "audit", "conceptual", "test", "backlog", "readme", "research",
     "domainspec-subagents-strategy", "subagents-research",
-    "subagents-findings", "discussion",
+    "subagents-findings", "discussion", "experiment",
 }
 
 
-def test_known_node_types_covers_all_sixteen_conventions_values() -> None:
+def test_known_node_types_covers_all_conventions_values() -> None:
     assert KNOWN_NODE_TYPES == EXPECTED_NODE_TYPES
-    assert len(KNOWN_NODE_TYPES) == 16
+    assert len(KNOWN_NODE_TYPES) == 17
 
 
-def test_dispatch_table_covers_all_sixteen() -> None:
+def test_dispatch_table_covers_all_node_types() -> None:
     assert set(_FRONTMATTER_BY_TYPE.keys()) == EXPECTED_NODE_TYPES
 
 
