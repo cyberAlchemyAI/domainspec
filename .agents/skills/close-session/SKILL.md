@@ -19,9 +19,15 @@ description: Close a session and create a vault conversation node
 
 ---
 
-## Step 1 — Write Summary (do this yourself)
+## Step 1 — Write Summary, Next Steps, Open Questions (do this yourself)
 
-Write **2–4 sentences**: what the session set out to do, what was decided (and why), what was done. No sub-headings, no per-file detail. A reader should grasp the arc without access to the conversation.
+You hold the session context — write all three yourself; do **not** delegate them to the classifier (Step 2 does classification only).
+
+- **Summary** — **2–4 sentences**: what the session set out to do, what was decided (and why), what was done. No sub-headings, no per-file detail. A reader should grasp the arc without access to the conversation.
+- **Next Steps (recommendation)** — **1–5 bullets, priority-ordered**: the concrete recommended next actions, each a pointer (*what* + *where* — a file, command, skill, or decision owed). This is a recommendation, not a backlog dump — only steps that genuinely follow from this session. If none, write `- None.`
+- **Open Questions** — the questions this session **raised but did not settle**, one line each, pointing at the artifact that would answer each where possible. Forward-only: a later session may resolve them (and can wire `closes-question` back to this node). If none, write `- None.`
+
+Keep all three pointer-style and tight — they live under the body cap.
 
 ---
 
@@ -78,12 +84,20 @@ importance_rationale: "{sentence}"
 
 {Omit if none. One bullet per edge: "validates/contradicts/questions {node} — reason."}
 
+## Next Steps
+
+{1–5 priority-ordered bullets from Step 1, each a what+where pointer. "- None." if none.}
+
+## Open Questions
+
+{Questions raised but not settled, one line each, pointing at the resolving artifact where possible. "- None." if none.}
+
 ## Files touched
 
 {Flat bullet list of paths. No table, no descriptions.}
 ```
 
-> **Hard cap:** The body (below frontmatter, **excluding the `## Connections` block written in Step 4**) must not exceed **30 lines**. If it does, you are writing too much — cut.
+> **Hard cap:** The body (below frontmatter, **excluding the `## Connections` block written in Step 4**) must not exceed **40 lines**. Next Steps and Open Questions stay pointer-style — if the body runs over, you are writing too much; cut.
 
 ---
 
