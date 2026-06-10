@@ -1,0 +1,96 @@
+{
+  "$schema_note": "Canonical DomainSpec code ontology (L1) — the closed vocabulary of meta-types and typed relationships a feature concept-graph is built from. SINGLE SOURCE OF TRUTH: TAXONOMY.md and RELATIONSHIPS.md are human-readable views of this file; validate_ontology.py enforces it. Reconciled from the DomainSpec paper (§4) and the framework repo (TAXONOMY.md / RELATIONSHIPS.md) on 2026-06-09. Where they disagreed, the repo (what ships and is enforced) won; see provenance.",
+  "version": "1.0.0",
+  "provenance": {
+    "paper": "domainspec-paper.md §4 — 24 meta-types (13 backend + 11 UI), 26 edges (12 R_B + 8 R_U + 6 R_X). The paper gave NO signatures for the 8 intra-UI edges and had NO cross-feature family.",
+    "repo": "TAXONOMY.md (25 meta-types) + RELATIONSHIPS.md (29 edges). Strict superset of the paper: adds the Saga meta-type and the three cross-feature edges, and supplies the 8 intra-UI signatures the paper lacked.",
+    "reconciliation": "Adopt the repo superset as canonical (25 meta-types, 29 edges). Split the repo's '15 backend edges' into 12 true-backend + 3 cross-feature, making the edge-family partition honest (the paper's R = R_B + R_U + R_X could not express backend@A->backend@B edges). canonical_token uses the paper's CamelCase identifiers; display_name uses the repo's spaced/slashed form — this IS the token map the audit flagged as missing.",
+    "known_divergence": "As of 2026-06-09 the framework repo's l1-extractor agent and audit_richness.py were reconciled to 25/29 (the agent count line fixed; audit_richness gained the 3 cross-feature signatures and dropped the phantom Aggregate/Governance types). Remaining gaps are follow-ups, not count divergences: (a) no CI gate runs a signature validator over docs/features/*/_categorical/L1.json; (b) this bundle's validator reads a generic {nodes, edges, type} graph, whereas the extractor emits {objects, morphisms, rel_type} L1.json — an adapter is needed to type-check real extractions; (c) RELATIONSHIPS.md still presents 3 edge groups (15 backend) while this JSON splits the 4th family (R_CF) out. This bundle is self-contained and authoritative for a scaffolded project."
+  },
+  "meta_type_count": 25,
+  "edge_count": 29,
+  "partitions": {
+    "backend": "Server-side domain concepts (the L1 domain model).",
+    "ui": "Client-side concepts. Disjoint from backend (Property P2)."
+  },
+  "categories": {
+    "Structural": "what things are",
+    "Behavioral": "what happens",
+    "Governing": "what constrains",
+    "Connective": "what connects"
+  },
+  "meta_types": [
+    {"token": "Entity",         "display_name": "Entity",          "partition": "backend", "category": "Structural",  "definition": "Identity-bearing domain object with a lifecycle."},
+    {"token": "ValueObject",    "display_name": "Value Object",    "partition": "backend", "category": "Structural",  "definition": "Identity-less reusable concept (Money, Address)."},
+    {"token": "Enum",           "display_name": "Enum / Type",     "partition": "backend", "category": "Structural",  "definition": "Finite set of states or categories."},
+    {"token": "Operation",      "display_name": "Operation",       "partition": "backend", "category": "Behavioral",  "definition": "Business action that changes state (a mutation)."},
+    {"token": "Query",          "display_name": "Query",           "partition": "backend", "category": "Behavioral",  "definition": "Reads data without side effects."},
+    {"token": "Calculation",    "display_name": "Calculation",     "partition": "backend", "category": "Behavioral",  "definition": "Derives a value from inputs."},
+    {"token": "Rule",           "display_name": "Rule",            "partition": "backend", "category": "Governing",   "definition": "Business constraint or validation that gates actions."},
+    {"token": "Policy",         "display_name": "Policy",          "partition": "backend", "category": "Governing",   "definition": "Decision logic that selects behavior."},
+    {"token": "Workflow",       "display_name": "Workflow",        "partition": "backend", "category": "Connective",  "definition": "Multi-step orchestration of operations within a feature."},
+    {"token": "Saga",           "display_name": "Saga",            "partition": "backend", "category": "Connective",  "definition": "Cross-feature transactional orchestration. (Repo extension; not in the paper.)"},
+    {"token": "Interface",      "display_name": "Interface",       "partition": "backend", "category": "Connective",  "definition": "API boundary — REST, GraphQL, or module contract."},
+    {"token": "Event",          "display_name": "Event",           "partition": "backend", "category": "Connective",  "definition": "Notification that something happened in the domain."},
+    {"token": "Mapping",        "display_name": "Mapping",         "partition": "backend", "category": "Connective",  "definition": "Data transformation between shapes across a boundary."},
+    {"token": "StateMachine",   "display_name": "State Machine",   "partition": "backend", "category": "Connective",  "definition": "States + transitions + guards + effects governing an entity lifecycle."},
+    {"token": "Page",           "display_name": "Page",            "partition": "ui",      "category": "Structural",  "definition": "Routable URL view with layout and auth gate."},
+    {"token": "Layout",         "display_name": "Layout",          "partition": "ui",      "category": "Structural",  "definition": "Reusable page shell (sidebar, header, slot)."},
+    {"token": "Component",      "display_name": "Component",       "partition": "ui",      "category": "Structural",  "definition": "Composable UI building block with typed props."},
+    {"token": "ViewModel",      "display_name": "View Model",      "partition": "ui",      "category": "Behavioral",  "definition": "Shaped data optimized for rendering."},
+    {"token": "Hook",           "display_name": "Hook",            "partition": "ui",      "category": "Behavioral",  "definition": "Encapsulated reactive data/state logic."},
+    {"token": "Form",           "display_name": "Form",            "partition": "ui",      "category": "Behavioral",  "definition": "Schema-validated user input contract."},
+    {"token": "Action",         "display_name": "Action",         "partition": "ui",      "category": "Behavioral",  "definition": "User-triggered mutation or navigation."},
+    {"token": "Guard",          "display_name": "Guard",           "partition": "ui",      "category": "Governing",   "definition": "Client-side access gate (auth, permissions)."},
+    {"token": "Binding",        "display_name": "Binding",         "partition": "ui",      "category": "Connective",  "definition": "Named connection between a hook and an API endpoint."},
+    {"token": "Adapter",        "display_name": "Adapter",         "partition": "ui",      "category": "Connective",  "definition": "Data-shape transformation at the UI boundary."},
+    {"token": "StateIndicator", "display_name": "State Indicator", "partition": "ui",      "category": "Connective",  "definition": "Visual encoding of domain state (badge, icon, color)."}
+  ],
+  "edge_families": {
+    "R_B": "Backend — both endpoints are backend meta-types, within one feature.",
+    "R_CF": "Cross-feature — both endpoints are backend meta-types, across a feature/bounded-context boundary (source@A -> target@B). Not present in the paper; the honest 4th family.",
+    "R_U": "Intra-UI — both endpoints are UI meta-types.",
+    "R_X": "Cross-layer — source is a UI meta-type, target is a backend meta-type. Unidirectional UI -> backend (Property P3)."
+  },
+  "edges": [
+    {"token": "performs",        "family": "R_B",  "source": ["Entity"],        "target": ["Operation"],            "cardinality": "1:1", "semantics": "An entity initiates / is the actor of an operation."},
+    {"token": "produces",        "family": "R_B",  "source": ["Operation"],     "target": ["Event"],                "cardinality": "1:1", "semantics": "An operation emits an event upon completion."},
+    {"token": "enforces",        "family": "R_B",  "source": ["Rule"],          "target": ["Operation"],            "cardinality": "1:1", "semantics": "A rule constrains when an operation can execute."},
+    {"token": "calculates",      "family": "R_B",  "source": ["Calculation"],   "target": ["Operation"],            "cardinality": "1:1", "semantics": "A calculation derives values used by an operation."},
+    {"token": "transitions",     "family": "R_B",  "source": ["Event"],         "target": ["StateMachine"],         "cardinality": "1:1", "semantics": "An event triggers a state transition."},
+    {"token": "exposes",         "family": "R_B",  "source": ["Interface"],     "target": ["Operation", "Query"],   "cardinality": "1:1", "semantics": "An interface makes an operation or query accessible."},
+    {"token": "orchestrates",    "family": "R_B",  "source": ["Workflow"],      "target": ["Operation"],            "cardinality": "1:N", "semantics": "A workflow coordinates multiple operations."},
+    {"token": "applies",         "family": "R_B",  "source": ["Policy"],        "target": ["Operation"],            "cardinality": "1:1", "semantics": "A policy governs how an operation behaves."},
+    {"token": "maps",            "family": "R_B",  "source": ["Mapping"],       "target": ["Entity", "Interface"],  "cardinality": "1:1", "semantics": "A mapping transforms data between shapes."},
+    {"token": "contains",        "family": "R_B",  "source": ["Entity"],        "target": ["ValueObject"],          "cardinality": "1:1", "semantics": "An entity embeds a value object as a field."},
+    {"token": "queries",         "family": "R_B",  "source": ["Query"],         "target": ["Entity"],               "cardinality": "1:1", "semantics": "A query reads data from an entity."},
+    {"token": "emits",           "family": "R_B",  "source": ["Entity"],        "target": ["Event"],                "cardinality": "1:1", "semantics": "An entity is the source of a domain event."},
+
+    {"token": "produces-for",    "family": "R_CF", "source": ["Operation"],     "target": ["Entity"],               "cardinality": "1:1", "semantics": "An operation in feature A mutates/projects data into an entity owned by feature B."},
+    {"token": "triggers-cross",  "family": "R_CF", "source": ["Event"],         "target": ["Operation"],            "cardinality": "1:1", "semantics": "An event in feature A triggers an operation owned by feature B."},
+    {"token": "enforces-cross",  "family": "R_CF", "source": ["Rule"],          "target": ["Operation"],            "cardinality": "1:1", "semantics": "A rule in feature A constrains whether feature B can execute an operation."},
+
+    {"token": "renders",         "family": "R_U",  "source": ["Page"],          "target": ["Component"],            "cardinality": "1:N", "semantics": "A page renders components as interactive islands."},
+    {"token": "wraps",           "family": "R_U",  "source": ["Layout"],        "target": ["Page"],                 "cardinality": "1:N", "semantics": "A layout wraps pages, providing the visual shell."},
+    {"token": "composes",        "family": "R_U",  "source": ["Component"],     "target": ["Component"],            "cardinality": "1:N", "semantics": "A component includes child components."},
+    {"token": "consumes",        "family": "R_U",  "source": ["Component"],     "target": ["Hook"],                 "cardinality": "1:1", "semantics": "A component consumes a hook for data/state."},
+    {"token": "submits",         "family": "R_U",  "source": ["Form"],          "target": ["Action"],               "cardinality": "1:1", "semantics": "A form validates input then delegates to an action."},
+    {"token": "shapes",          "family": "R_U",  "source": ["Adapter"],       "target": ["ViewModel"],            "cardinality": "1:1", "semantics": "An adapter transforms API data into a view model."},
+    {"token": "protects",        "family": "R_U",  "source": ["Guard"],         "target": ["Page"],                 "cardinality": "1:1", "semantics": "A guard controls access to a page."},
+    {"token": "displays",        "family": "R_U",  "source": ["Component"],     "target": ["ViewModel"],            "cardinality": "1:1", "semantics": "A component renders data from a view model."},
+
+    {"token": "fetches",         "family": "R_X",  "source": ["Binding"],       "target": ["Query"],                "cardinality": "1:1", "semantics": "A binding fetches data from a backend query."},
+    {"token": "mutates",         "family": "R_X",  "source": ["Binding"],       "target": ["Operation"],            "cardinality": "1:1", "semantics": "A binding invokes a backend operation."},
+    {"token": "reflects",        "family": "R_X",  "source": ["StateIndicator"],"target": ["StateMachine"],         "cardinality": "1:1", "semantics": "A UI indicator mirrors a domain lifecycle state."},
+    {"token": "derives",         "family": "R_X",  "source": ["ViewModel"],     "target": ["Entity"],               "cardinality": "1:1", "semantics": "A view model is derived from entity fields."},
+    {"token": "contracts",       "family": "R_X",  "source": ["Form"],          "target": ["Interface"],            "cardinality": "1:1", "semantics": "A form schema aligns with an interface endpoint."},
+    {"token": "mirrors",         "family": "R_X",  "source": ["Guard"],         "target": ["Rule"],                 "cardinality": "1:1", "semantics": "A client-side guard mirrors a backend access rule."}
+  ],
+  "properties": [
+    {"id": "P1", "name": "Type safety", "statement": "Every edge instance (a, r, b) respects r's signature: type(a) in source-set, type(b) in target-set."},
+    {"id": "P2", "name": "Partition disjointness", "statement": "Backend and UI meta-types are disjoint; every meta-type belongs to exactly one partition."},
+    {"id": "P3", "name": "Cross-layer unidirectionality", "statement": "Every R_X edge has a UI source and a backend target. UI depends on backend, never the reverse."},
+    {"id": "P4", "name": "Cross-feature is backend-to-backend", "statement": "Every R_CF edge has a backend source and a backend target, crossing a feature boundary (source@A -> target@B)."},
+    {"id": "P5", "name": "Edge-family partition", "statement": "The edge set is the disjoint union R = R_B + R_CF + R_U + R_X; every edge belongs to exactly one family."}
+  ]
+}

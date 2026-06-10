@@ -1,0 +1,132 @@
+{
+  "$schema_note": "Partition tree for a new DomainSpec project. AUTHORITY: vault/discovery/system-modeling-partition-architecture/discovery.md (Revision 2026-06-09). If this file and that discovery disagree, the discovery wins and this file is wrong. Consumed by scaffold.py.",
+  "fields": {
+    "name": "folder name",
+    "owner": "shared (framework half) | per-project | mixed — navigational only; NOT enforced (gate-first, OQ-6).",
+    "mirrored": "true if this node is reproduced inside internal_tools/. The four mirrored:false top-level/knowledge nodes (arcanum, domainspec, system_design_knowledge, internal_tools) are exactly the shared layer a sub-project inherits from its parent.",
+    "modality": "true for sessions/experiments — a recording modality, not a subject partition; never promoted.",
+    "machinery": "if 'experiments', scaffold.py copies assets/experiments/{PROTOCOL.md, README.md, _TEMPLATE/, tools/} into this folder.",
+    "mirror_root": "true only for internal_tools — the node whose body is the mirror of the (mirrored:true) tree.",
+    "children": "nested partitions (only knowledge/ has them).",
+    "link_to_framework": "true only for domainspec/ — created as a symlink to the framework repo (idempotent; existing mount left alone) so vault/ ontology symlinks resolve through it.",
+    "subfolders": "list of project-local node-type folders to create as empty dirs + README stubs (vault/, domain_knowledge/).",
+    "symlinks": "list of {dest, src} — dest is relative to this node's folder, src is relative to domainspec/. Creates a relative symlink (top-level only) routed through the project's domainspec/ mount; skipped-with-warning if the source is missing. Used by vault/ for the read-only ontology canon.",
+    "seeds": "list of {dest, src} — copies the framework doc at domainspec/<src> in as an EDITABLE project-local starter (top-level only). Used by system_design_knowledge/ for project-specializable dev constitutions.",
+    "stub_files": "list of {dest, node_type, note} — named placeholder docs with valid frontmatter (e.g. discovery/_backlog.md as backlog; event-system-constitution.md as a constitution stub)."
+  },
+  "tree": [
+    {
+      "name": "arcanum",
+      "owner": "shared",
+      "mirrored": false,
+      "readme": "Executable projection of the method — skills, agents, workflows. Shared framework layer, conventionally carved out under `.claude/**`. Declarative method nodes link here via `operationalized-by` (forward-only)."
+    },
+    {
+      "name": "domainspec",
+      "owner": "shared",
+      "mirrored": false,
+      "link_to_framework": true,
+      "readme": "The DomainSpec framework. Created as a SYMLINK to the framework repo (local dev) so vault/ ontology symlinks resolve through it; convert to a real git submodule for portability. Read-only in-project (submodule-edit ban). Existing domainspec/ is left untouched (idempotent)."
+    },
+    {
+      "name": "schema",
+      "owner": "shared",
+      "mirrored": true,
+      "machinery": "code-ontology",
+      "readme": "Project-LOCAL schema-extension layer (R-6). The BASE ontology contract — the `node_type` set, edge catalog, frontmatter spec, and the `vault_common` validators — ships INSIDE the `domainspec/` submodule and is read-only. This `schema/` is where THIS project records local vocabulary/edge extensions layered over that base. It also carries `code-ontology/` — the canonical L1 code ontology (25 meta-types, 29 typed edges, machine-checkable via validate_ontology.py). A sub-project's own `schema/` extends the same base, inheriting the code ontology from the parent (not cloned)."
+    },
+    {
+      "name": "knowledge",
+      "owner": "mixed",
+      "mirrored": true,
+      "readme": "Subject-grouped knowledge graphs. Children are partitioned by SUBJECT; ownership (shared vs per-project) is a frontmatter property here, not the path axis (Revision 2026-06-09, R-1 — supersedes the discovery's original ownership-primary D-1).",
+      "children": [
+        {
+          "name": "system_design_knowledge",
+          "owner": "shared",
+          "mirrored": false,
+          "readme": "How the system is built — the reusable method. SEEDED with editable starter dev constitutions (development-practices, folder-structure, frontend, commit-message) COPIED from the framework so the project specializes them per-project; ontology lives in the sibling `vault/`, not here. `event-system` and `robot-talks` are stubs to author per project. (Structured like ../house_project's dev-knowledge; copy-vs-symlink split per the cross-repo-canonicalization constitution.)",
+          "seeds": [
+            {"dest": "development-practices-constitution.md", "src": "vault/constitution/development-practices-constitution.md"},
+            {"dest": "folder-structure-constitution.md",      "src": "vault/constitution/folder-structure-constitution.md"},
+            {"dest": "frontend-constitution.md",              "src": "vault/constitution/frontend-constitution.md"},
+            {"dest": "commit-message-constitution.md",        "src": "vault/constitution/commit-message-constitution.md"}
+          ],
+          "stub_files": [
+            {"dest": "event-system-constitution.md", "node_type": "constitution", "note": "STUB — author per project if the system is event-sourced. The framework's event-system-constitution is architecture-specific and intentionally NOT seeded."},
+            {"dest": "robot-talks-constitution.md", "node_type": "constitution", "note": "STUB — opt-in multi-agent investigation practice. Seed from the framework's robot-talks-constitution only if the project adopts it."}
+          ]
+        },
+        {
+          "name": "domain_knowledge",
+          "owner": "per-project",
+          "mirrored": true,
+          "readme": "The problem world — the project's OWN typed knowledge graph (its axioms, premises, conceptuals, discoveries, sessions). Authored by the domain expert; starts empty. The `domain_knowledge` of internal_tools is about the tooling's own domain.",
+          "subfolders": ["axiom", "premise", "conceptual", "discovery", "sessions"]
+        },
+        {
+          "name": "vault",
+          "owner": "per-project",
+          "mirrored": true,
+          "readme": "Knowledge ABOUT the ontology itself. The canonical ontology docs are SYMLINKED (read-only, single source) from the `domainspec/` submodule — no copies, no drift (your 'symlink the ontology documents' decision). The project authors its OWN axioms/premises/conceptuals/discoveries in the stub folders. Distinct from `schema/` (the enforced contract). Symlinks are top-level only; the internal_tools mirror inherits the ontology from its parent.",
+          "subfolders": ["axiom", "premise", "conceptual", "discovery", "constitution"],
+          "stub_files": [
+            {"dest": "discovery/_backlog.md", "node_type": "backlog", "note": "Discovery backlog. Frontmatter-only per convention (no ## Connections)."},
+            {"dest": "discovery/_meta-backlog.md", "node_type": "backlog", "note": "Meta-backlog. Frontmatter-only per convention."}
+          ],
+          "symlinks": [
+            {"dest": "ontology-conventions.md",        "src": "vault/ontology-conventions.md"},
+            {"dest": "confidence-levels.md",           "src": "vault/confidence-levels.md"},
+            {"dest": "foundational-knowledges.md",     "src": "vault/foundational-knowledges.md"},
+            {"dest": "ontology-architecture-draft.md", "src": "vault/ontology-architecture-draft.md"},
+            {"dest": "agent-navigation.md",            "src": "vault/agent-navigation.md"},
+            {"dest": "human-navigation.md",            "src": "vault/human-navigation.md"},
+            {"dest": "constitution/ontology-constitution.md",                          "src": "vault/constitution/ontology-constitution.md"},
+            {"dest": "constitution/vault-folder-structure-constitution.md",            "src": "vault/constitution/vault-folder-structure-constitution.md"},
+            {"dest": "constitution/discovery-structure-constitution.md",               "src": "vault/constitution/discovery-structure-constitution.md"},
+            {"dest": "constitution/schema-amendment-discipline-constitution.md",       "src": "vault/constitution/schema-amendment-discipline-constitution.md"},
+            {"dest": "constitution/frontmatter-ownership-constitution.md",             "src": "vault/constitution/frontmatter-ownership-constitution.md"},
+            {"dest": "constitution/edge-acyclicity-constitution.md",                   "src": "vault/constitution/edge-acyclicity-constitution.md"},
+            {"dest": "constitution/cross-repo-canonicalization-protocol-constitution.md", "src": "vault/constitution/cross-repo-canonicalization-protocol-constitution.md"},
+            {"dest": "constitution/governs-runtime-witness-constitution.md",           "src": "vault/constitution/governs-runtime-witness-constitution.md"},
+            {"dest": "constitution/domain-tagging-constitution.md",                    "src": "vault/constitution/domain-tagging-constitution.md"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "implementation",
+      "owner": "per-project",
+      "mirrored": true,
+      "readme": "The system as built — generated/derived code and artifacts. Each implementation node traces back to a knowledge node by `realized-by` (no orphan behavior). INTERIOR GOVERNED by `folder-structure-constitution.md` (v3.0.0): three-layer architecture `/infrastructure -> /domains -> /shared_services`, screaming architecture, layer purity, acyclic imports. This skill creates the slot; the constitution rules the inside (R-5)."
+    },
+    {
+      "name": "research",
+      "owner": "per-project",
+      "mirrored": true,
+      "readme": "Unresolved exploration — the BIRTHPLACE (R-4). A finding starts here; once it matures it routes to a `knowledge/` partition (system_design_knowledge | domain_knowledge | vault) OR to `implementation/`, lineage preserved by the `derives-from` back-anchor (horizontal routing, not `mv`). There is no separate `decisions/`, `findings/`, or `discoveries/` partition — those are node_types and states living within research/ and knowledge/, not folders."
+    },
+    {
+      "name": "sessions",
+      "owner": "per-project",
+      "mirrored": true,
+      "modality": true,
+      "readme": "Time-flat conversation records. A MODALITY, not a subject: `is_session: true`, forward-only edges, NEVER promoted. Flat single files; date-partition only if count exceeds ~1k."
+    },
+    {
+      "name": "experiments",
+      "owner": "per-project",
+      "mirrored": true,
+      "modality": true,
+      "machinery": "experiments",
+      "readme": "Pre-registered, falsifiable experiments (`node_type: experiment` — a RATIFIED vocabulary value, amendment 2026-06-09). A MODALITY. Each `E<N>-<slug>/` holds PROPOSAL.md (the immutable-once-frozen pre-registration), RUN-NN.md (append-only run log), and VERDICT.md (mechanical adjudication). Full rules in PROTOCOL.md; start from `_TEMPLATE/`."
+    },
+    {
+      "name": "internal_tools",
+      "owner": "per-project",
+      "mirrored": false,
+      "mirror_root": true,
+      "readme": "Buildable sub-system (platform tooling) modeled as a NESTED DomainSpec sub-project. Mirrors the per-project tree MINUS the shared framework layer it inherits from the parent — so it carries its own `schema/`, `knowledge/{domain_knowledge, vault}`, `implementation/`, `research/`, `sessions/`, `experiments/`, but NOT `arcanum/`, `domainspec/`, `system_design_knowledge/`, or a nested `internal_tools/`. This recursion is a SCOPED exception (Revision 2026-06-09, R-2); thin nodes are still never inflated to folders."
+    }
+  ]
+}

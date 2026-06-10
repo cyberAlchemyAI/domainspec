@@ -1,0 +1,46 @@
+#!/bin/sh
+# Enforce experiment pre-registration at commit time.
+#
+# Validates every staged experiments/*/PROPOSAL.md and, for frozen ones,
+# fails the commit if the immutable block drifted from its frozen_at commit.
+# Install: ln -sf ../../experiments/tools/hooks/pre-commit .git/hooks/pre-commit
+#
+# Bypass (use sparingly, e.g. an intentional supersede): git commit --no-verify
+
+repo_root=$(git rev-parse --show-toplevel) || exit 0
+validator="$repo_root/experiments/tools/validate_proposal.py"
+[ -f "$validator" ] || exit 0
+
+# Staged PROPOSAL.md files under experiments/ (added/copied/modified).
+proposals=$(git diff --cached --name-only --diff-filter=ACM \
+            -- 'experiments/*/PROPOSAL.md' 2>/dev/null)
+[ -n "$proposals" ] || exit 0
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "pre-commit: python3 not found; skipping proposal validation." >&2
+  exit 0
+fi
+
+# Resolve to absolute paths so the validator's repo-relative logic holds.
+set --
+for p in $proposals; do
+  set -- "$@" "$repo_root/$p"
+done
+
+echo "pre-commit: validating staged experiment proposals (--frozen)…"
+if python3 "$validator" --frozen "$@"; then
+  exit 0
+fi
+
+cat >&2 <<'MSG'
+
+pre-commit: BLOCKED — a staged PROPOSAL.md is invalid or a frozen proposal
+was modified since its frozen_at commit. Pre-registration must hold.
+
+  • Structural error  → fix the frontmatter and re-stage.
+  • Frozen drift      → revert the change, OR write a new proposal that sets
+                        superseded_by on the old one (never edit in place).
+  • Intentional       → re-run with: git commit --no-verify
+
+MSG
+exit 1
