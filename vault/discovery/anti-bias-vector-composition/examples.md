@@ -13,6 +13,14 @@ last_updated: 2026-05-26
 
 > Worked good/bad layer shapes for the `theorem-research` skill. Each example shows a candidate spec, classifies it under the validator rules in `validator-check.md`, and names the failure mode (or absence thereof). Use as a template library when authoring a new dispatch spec.
 
+## Objective
+
+Provide a template library of worked good/bad layer shapes — explorer (N=4), skeptic (N=3), mixed-with-dissent-surfacing, and the false-consensus anti-pattern — each shown as a candidate spec, classified under the `validator-check.md` rules, with its failure mode (or absence) named, so a spec author can copy a passing shape and a dispatch reviewer can recognize correlated unanimity.
+
+## Context
+
+The principle and validator state the rule abstractly; an author building a real dispatch spec, or a reviewer reading returned findings, needs concrete instances to pattern-match against. This document grounds the rules in spec-level YAML: which angle sets trip R1/R3/R4, which satisfy G1/G2, how the dissent-surfacing post-check turns flat consensus into surfaced disagreement, and why unanimous returns from a tensioned spec must be treated as a failure to apply the principle rather than as multiplicative evidence.
+
 ---
 
 ## Example 1 — Explorer layer (N = 4)

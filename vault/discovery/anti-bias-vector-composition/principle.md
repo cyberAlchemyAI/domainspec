@@ -13,6 +13,14 @@ last_updated: 2026-05-26
 
 > One of four files in this discovery: `principle.md` (this file) states the rule, `literature.md` records the prior art, `validator-check.md` operationalizes the rule for the `theorem-research` skill's spec lifecycle, `examples.md` shows worked good/bad layer shapes.
 
+## Objective
+
+State the anti-bias vector-composition principle: when N agents share a macro goal, their per-agent micro vectors (angle, methodology, prior, source corpus) must be deliberately *tensioned* into structural opposition so their bias terms cancel under composition — not merely made non-overlapping or "diverse" — and define where this constraint binds (layer-locally, on explorer/skeptic/evaluator layers of size N ≥ 2) within the `theorem-research` skill.
+
+## Context
+
+Multi-agent dispatches default to the regime where member errors are correlated — agents on the same corpus, prompted by the same operator over the same artifact — so ensemble averaging drops variance while reproducing bias at full strength, and the synthesizer reports a biased finding with falsely high confidence. Adding agents or surface diversity does not break that correlation. This document sits at the design layer of the dispatch machinery, naming the direction-condition (tensioned-pairwise) that must hold *in addition to* the existing partition condition (non-overlapping AND covering) before a dispatch spec is allowed to run.
+
 ---
 
 ## Statement of the principle
@@ -74,4 +82,6 @@ The principle is *additional* to the existing `domainspec-subagents-strategy` va
 | [examples.md](./examples.md) | `instances` | Worked good/bad layer shapes for explorer, skeptic, evaluator, plus the false-consensus anti-pattern. |
 | [../multi-agent-implementation-strategy/multi-agent-implementation-strategy.md](../multi-agent-implementation-strategy/multi-agent-implementation-strategy.md) | `cites` | The investigation-vs-implementation framing this discovery extends: tensioned-pairwise applies to investigation-shaped fan-out (where N agents read one artifact from N stances), which is precisely the shape `theorem-research` uses. |
 | [../robot-talks-definitions/robot-talks.md](../robot-talks-definitions/robot-talks.md) | `cites` | Robot-talks already enforces declared-perspective-per-turn (D-2) and tension-not-aggregation (D-3); this discovery generalizes the same discipline to non-discussion dispatch shapes where perspectives are angles, not turns. |
+| [tension-realization-at-close.md](./tension-realization-at-close.md) | `derives` | A `status: exploratory` proposal extending this principle to the *close* side: tension is checked at dispatch but never scored at close. Proposes typing convergence (genuine vs false-consensus) and a 3-touchpoint fix. Not built — proposal only. |
 | [../subagents-topologies/discovery.md](../subagents-topologies/discovery.md) | `cited-by` | The subagent-topologies feature discovery cites this principle as the design premise its research-dispatch refinement rests on (tension-not-diversity, cited not re-derived). |
+| `../subagent-pipeline-composition/discovery.md` | `cited-by` | The pipeline-composition discovery cites this principle to constrain how per-agent `angle`s within a wave are assigned (tension along the bias axis). |

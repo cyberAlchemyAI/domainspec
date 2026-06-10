@@ -13,6 +13,14 @@ last_updated: 2026-05-26
 
 > Annotated references for the principle stated in `principle.md`. Status field on each entry: `verified` (citation form is standard and the source is well-known enough to attest), `inferred` (the work exists and the framing is correct, but the exact title/year is reconstructed and should be checked against the original before citing in print).
 
+## Objective
+
+Ground the anti-bias vector-composition principle in its prior art — Mill and Hegel (collision of opinions / load-bearing antithesis), Kahneman-Klein and Tetlock (adversarial collaboration, opposed-prior pairing), Janis (groupthink as the negative case), Hong-Page and Krogh-Vedelsby and Dietterich (heuristic-diversity and ensemble-decomposition results), Irving-Christiano-Amodei (AI safety via debate) — each annotated with a `verified`/`inferred` reliability tag and a note on what it contributes to the principle.
+
+## Context
+
+The principle restates a discipline that recurs across philosophy, cognitive science, decision science, formal ensemble theory, and AI safety; it must therefore name that prior art rather than claim novelty. This document collects the lineage so a reader can verify the principle is well-grounded, and it follows the project's standing rule (`feedback_cite_dont_rediscover.md`) of citing prior art in the first section rather than as a footnote — the framework's contribution is the mechanical validator check, not first statement of tensioned-pairwise composition.
+
 ---
 
 ## Philosophy lineage

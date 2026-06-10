@@ -13,6 +13,14 @@ last_updated: 2026-05-26
 
 > Operational rules for the validator agent in the `theorem-research` skill's spec lifecycle. Runs against the `dispatch.yaml` of a dispatch *before* the dispatch is allowed to start, and again post-dispatch against the returned artifacts. This check is **additional** to the existing `domainspec-subagents-strategy` check ("angles non-overlapping AND covering" — see §Relationship to the existing validator below).
 
+## Objective
+
+Operationalize the anti-bias vector-composition principle as a mechanical validator check: a pre-dispatch checklist (subject-layer identification, axis classification, red-flag rules R1–R4, green-light rules G1–G2) that blocks an under-tensioned dispatch spec, plus a post-dispatch checklist (dissent-surfacing, tension-realization, auditor escalation) that flags when the specified tensioning was never exercised.
+
+## Context
+
+The principle in `principle.md` is a discipline; without a mechanical gate it is unenforced and a spec can pass the existing partition check (non-overlapping AND covering) while leaving the bias term uncancelled. This document defines the two enforcement points in the `theorem-research` spec lifecycle — strict pre-dispatch (failure blocks) and advisory post-dispatch (failure raises a red flag and is recorded) — and positions itself as the second stage that runs after the existing partition validator in the same pipeline.
+
 ---
 
 ## When the check runs
