@@ -45,7 +45,7 @@ If documentation drifts from the registry, downstream generation produces incohe
 ## Reference
 
 - **Framework root:** [`../README.md`](../README.md)
-- **Taxonomy:** [`../TAXONOMY.md`](../TAXONOMY.md) — 24 meta-concept types.
-- **Relationships:** [`../RELATIONSHIPS.md`](../RELATIONSHIPS.md) — 26 typed edge types.
+- **Taxonomy:** [`../TAXONOMY.md`](../TAXONOMY.md) — 25 meta-concept types.
+- **Relationships:** [`../RELATIONSHIPS.md`](../RELATIONSHIPS.md) — 29 typed edge types.
 - **Test pipeline rules:** [`../TEST-PIPELINE.md`](../TEST-PIPELINE.md)
 - **Templates:** [`../templates/`](../templates/)
