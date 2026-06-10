@@ -88,3 +88,5 @@ The substance is a taxonomy + drift audit + scope-fence over an owned principle.
 | `../../constitution/robot-talks-constitution.md` | `cites` | Governs the robot-talks topology in the taxonomy. |
 | `../subagents-strategy-refinement/principle.md` | `cites` | Prior refinement of the dispatch engine this one continues. |
 | `research/research-synthesis.md` | `cited-by` | The ≤500-word executive summary cites this discovery's decisions (D-1, D-2) and open questions (OQ-1…OQ-4). |
+| `../subagent-dispatch-observability/discovery.md` | `derives` | The observability discovery derives its "What's broken" from this folder's verified drifts (Drift 2/3/5) and is their operational answer. |
+| `../subagent-pipeline-composition/discovery.md` | `derives` | The pipeline-composition discovery derives its "What's broken" (Drift 3 vocabulary fragmentation, Drift 5 ungoverned channel) and its scope-fence caveat from this folder. |

@@ -99,3 +99,10 @@ Plus three patterns that proved out under research and were backported to the ba
 The base remains binding for any dispatch under `domainspec-subagents-strategy` directly; this refinement set binds for `category: documents` dispatches under the `research` skill. The conflict resolution clause in `research-constitution` §12 names the precedence rule explicitly.
 
 For the full inheritance / conflict / backport story, see [`relation-to-base.md`](./relation-to-base.md).
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `../subagent-dispatch-observability/discovery.md` | `cited-by` | The observability discovery reuses this refinement's role taxonomy, `layers[]` concept (log level 2), and typed `exit_reason`. |
+| `../subagent-pipeline-composition/discovery.md` | `refined-by` | The pipeline-composition discovery refines this refinement's role taxonomy — the per-agent role axis collapses into the wave's intent for homogeneous waves. |

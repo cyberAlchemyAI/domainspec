@@ -603,6 +603,8 @@ Items to resolve in v0.3.1 or as follow-up amendments:
 | [../discovery/data-contract-as-formal-artifact/README.md](../discovery/data-contract-as-formal-artifact/README.md) | `governs` | Dispatch `2026-05-18-data-contract-formal-artifact-01` (triangulation) ran under R15/R16/R17/R18/R21/R22/R23 and produced this discovery. |
 | `vault/foundational-knowledges.md` | `cited-by` | The foundational-knowledges L7 multi-agent-orchestration layer cites this constitution as the load-bearing rule set for subagent fan-out, synthesis, and lifecycle. |
 | `vault/premise/multi-agent-composition-premise.md` | `cited-by` | The multi-agent-composition premise cites this constitution as the operational expression of its condition (a) — governed dispatch. |
+| `vault/discovery/subagent-dispatch-observability/discovery.md` | `cited-by` | The observability discovery extends R28 single-level telemetry to a three-level (dispatch/layer/agent) model and reuses the R31 `exit_reason` enum. |
+| `vault/discovery/subagent-pipeline-composition/discovery.md` | `cited-by` | The pipeline-composition discovery proposes per-wave intent+mode (splitting R19), the parent-entry enforcement, and a role-collapse in R25 — all deferred to a future governed amendment. |
 
 ---
 

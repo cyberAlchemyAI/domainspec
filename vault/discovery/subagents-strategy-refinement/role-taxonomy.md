@@ -118,3 +118,4 @@ The 4-work + 1-meta count is presentational discipline, not a numerology prefere
 | [decisions-log.md](./decisions-log.md) | `sibling` | Chronological log of the design decisions, including role naming and 4+1 split. |
 | [../../constitution/research-constitution.md](../../constitution/research-constitution.md) | `codified-in` | R4–R8 (the four work-roles) and R26's validator gate (the meta-role). |
 | [../anti-bias-vector-composition/principle.md](../anti-bias-vector-composition/principle.md) | `consumed-by` | The tension check is enforced by the validator (meta-role) over angles assigned to work-roles. |
+| `../subagent-pipeline-composition/discovery.md` | `refined-by` | The pipeline-composition discovery collapses this per-agent role axis into the wave's intent (homogeneous waves), re-openable only for mixed-function waves. |

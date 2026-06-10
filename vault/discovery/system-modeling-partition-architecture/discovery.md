@@ -5,8 +5,8 @@ is_session: false
 layer: architecture, ontology
 nature: explanatory
 status: draft
-version: 0.1.0
-last_updated: 2026-06-02
+version: 0.2.0
+last_updated: 2026-06-09
 created_by: victorboscaro@gmail.com
 ---
 
@@ -126,11 +126,125 @@ Tentative, low conviction (this is a `draft` synthesis of one conversation, not 
 
 ---
 
+## Revision 2026-06-09 — Partition tree finalized for scaffolding
+
+When this design was operationalized into the `partition-scaffold` skill
+(`.claude/skills/partition-scaffold/`), the user settled the top-level shape. The decisions
+below **supersede the body's ownership-primary stance (D-1) and the migration discussion**;
+they are stated on their own merits, not derived from `folder-structure-fractal` (whose
+constraints the user has explicitly set aside for this tree). An earlier draft of this
+section justified R-1 by appeal to the knowledge-taxonomy repo "already organizing
+flat-by-subject" — that warrant was **false** (KT is flat-by-artifact-type:
+`discoveries/ decisions/ findings/ …`, with no `knowledge/` parent) and has been removed.
+R-1 stands on the premature-boundary argument below instead.
+
+- **R-1 — Subject is the top axis; ownership lives in frontmatter.** The top level groups
+  knowledge by subject under `knowledge/{system_design_knowledge, domain_knowledge, vault}`.
+  Ownership (shared vs per-project) is a frontmatter property, not the path's primary axis.
+  *Justification (honest version):* the factor-out seam D-1 wanted to encode in the path is
+  an **unproven bet** — the discovery itself concedes "premature externalization freezes a
+  moving target." Until the method stabilizes enough to externalize, keeping ownership cheap
+  to change (frontmatter) rather than expensive (path) is the disciplined choice; lift it to
+  the path *after* the seam is proven, not before. The shared half is still partly visible
+  as top-level siblings (`arcanum/`, `domainspec/`), so the boundary is deferred, not erased.
+- **R-2 — `internal_tools/` is a nested sub-project with a mirrored tree.** It receives a
+  full mirror of the per-project tree **minus the shared layer it inherits from the parent**
+  — excluded: `arcanum`, `domainspec`, `system_design_knowledge`, `internal_tools` itself —
+  so the mirror is `schema/`, `knowledge/{domain_knowledge, vault}`, `implementation/`,
+  `research/`, `sessions/`, `experiments/`. **Escape hatch for the unbounded-recursion
+  concern:** if `internal_tools/` grows too large to live as a nested sub-project, it is
+  promoted to its **own repository** (a referenced dependency), not deepened further. That
+  promotion boundary — "too big → new repo" — is the bound on the recursion; the criterion
+  itself (when is it "too big") is deferred. Recursion remains a scoped exception for a real
+  buildable sub-system; thin nodes (premises, axioms) are still never inflated to folders.
+- **R-3 — New partitions/modalities:** `domainspec/` (the framework exposed via a symlink shim,
+  submodule conversion deferred — shared, edit-ban applies); `vault/` (knowledge *about* the ontology); `schema/`
+  (see R-6); `experiments/` (pre-registered falsifiable `node_type: experiment` — a modality
+  like `sessions/`). `experiment` is now a **ratified** vocabulary value, not a local
+  extension (amendment `vault/amendments/2026-06-09-add-experiment-node-type.md`).
+- **R-4 — Research is the birthplace; promotion routes onward.** There are **no separate
+  top-level `decisions/`, `findings/`, or `discoveries/` partitions.** A finding starts in
+  `research/`; once it matures it routes to a `knowledge/` partition
+  (`system_design_knowledge`, `domain_knowledge`, or `vault`) **or** to `implementation/`,
+  with lineage preserved by the `derives-from` back-anchor (horizontal routing, not `mv` —
+  per the Migration model section above). Decisions/findings/discoveries are *node_types and
+  states within* `research/` and `knowledge/`, not folders of their own.
+- **R-5 — `implementation/` interior is governed by `folder-structure-constitution.md`
+  (v3.0.0).** "How implementation is done" is not an open question for this discovery: the
+  consolidated three-layer architecture (`/infrastructure → /domains → /shared_services`,
+  screaming architecture, layer purity, acyclic imports) already rules the inside of
+  `implementation/`. The scaffold creates the `implementation/` slot and points to that
+  constitution; it does not re-decide the interior.
+- **R-6 — `schema/` is the project-local schema-extension layer over the base in
+  `domainspec/`.** The base ontology contract (the `node_type` set, edge catalog, frontmatter
+  spec, and the `vault_common` validators) ships **inside the `domainspec/` submodule** and is
+  read-only in a consumer project. Top-level `schema/` is where *this* project records local
+  vocabulary/edge extensions layered on that base. (This is what `experiment` would be in a
+  consumer project; here, in the framework repo itself, it was ratified directly into the
+  base.) This also resolves the "two schema graphs" worry: `schema/` everywhere is the local
+  layer; the base is always in `domainspec/`.
+- **R-7 — Every new project must carry a root `README.md` stating its objective.** The
+  scaffold prompts the user for a one-sentence objective and writes it into the root README;
+  the first version may be a single sentence, expanded later. A project without a stated
+  objective is not scaffolded.
+- **R-8 — The tree is embodied as data.** Recorded in
+  `.claude/skills/partition-scaffold/partition-manifest.json` (per-folder roles in its
+  `readme` fields). If the manifest and this discovery drift, **this discovery is the
+  authority and the manifest is the bug.**
+- **R-9 — The canonical code ontology (L1) is scaffolded into `schema/code-ontology/`.** A
+  new project receives the closed L1 vocabulary — **25 meta-types, 29 typed edges in 4
+  families** (R_B backend / R_CF cross-feature / R_U intra-UI / R_X cross-layer), with
+  machine-checkable signatures and a stdlib validator (`validate_ontology.py` + tests). It is
+  reconciled from the DomainSpec paper §4 (24 meta-types / 26 edges) and the framework repo's
+  `TAXONOMY.md` + `RELATIONSHIPS.md` (25 / 29); the repo superset is canonical, and the repo's
+  conflated "backend" edge group is split into a true-backend family plus the **new R_CF
+  cross-feature family** so the partition is honest (the paper could not express
+  backend@A → backend@B edges). `code-ontology.json` is the source of truth; the markdown is a
+  view. It lives in **top-level `schema/` only** — `internal_tools` inherits it, not clones it
+  (R-6). *Residual (resolved this session):* the framework repo's own `domainspec-l1-extractor`
+  agent (both `.claude` and `.codex` mirrors) and `audit_richness.py` were reconciled from the
+  paper's stale "24/26" counts (and the two phantom meta-types) to the canonical 25/29 — the
+  `.codex` mirror was the last to be fixed. The scaffold bundle remains self-contained and does
+  not depend on them.
+- **R-10 — The `knowledge/` partitions are populated from the framework, not empty stubs.**
+  Reached via an assess→validate subagent pass (two assessors mapping `domainspec/vault` and
+  `house_project`'s dev-knowledge; two validators reconciling ownership + proving every
+  symlink/seed source exists and every relative-symlink depth resolves). The split:
+  - **`vault/` SYMLINKS the canonical ontology docs** (read-only, single source, zero drift)
+    from the `domainspec/` mount — the 6 loose ontology files + 9 ontology constitutions
+    (ontology, vault-folder-structure, discovery-structure, schema-amendment-discipline,
+    frontmatter-ownership, edge-acyclicity, cross-repo-canonicalization, governs-runtime-witness,
+    domain-tagging). The project authors its own `axiom/ premise/ conceptual/ discovery/` (stubs).
+  - **`system_design_knowledge/` SEEDS editable copies** of the project-specializable dev
+    constitutions (development-practices, folder-structure, frontend, commit-message);
+    `event-system`/`robot-talks` are stubs. **Copy, not symlink** — these are *meant* to diverge
+    per project (the inverse of the ontology docs). This split matches the
+    cross-repo-canonicalization constitution's own copy-vs-symlink rule.
+  - **`domain_knowledge/`** mirrors vault's node-type folders (`axiom/ premise/ conceptual/
+    discovery/ sessions/`), empty.
+  This is the operational form of your "symlink the ontology documents" decision: it RESOLVES
+  the R-6 tension (vault/ no longer duplicates the base — it *links* to it). The scaffold
+  creates `domainspec/` as a symlink to the framework (`link_to_framework`, idempotent — an
+  existing mount is left alone) so the relative symlinks resolve. Symlinks/seeds are top-level
+  only; the `internal_tools` mirror inherits the ontology from its parent. `convicção-bet-ledger`
+  is omitted by default (opt in with `bets/`). **Deviation from `house_project`:** it co-locates
+  ontology constitutions under `docs/vault/constitution/framework/`; our model routes them to the
+  dedicated `vault/` instead — cleaner ontology/dev separation.
+
+**Enforcement status unchanged.** Still `status: draft`, still gate-first (OQ-6). The
+scaffold *creates* the tree; it does not *enforce* placement — the `layer:` validator remains
+unwired, so the rules above are discipline, not guarantees. (The `node_type` validator *is*
+wired and now accepts `experiment` per R-3.) OQ-2 (where the framework/project seam is cut)
+is **deferred** under R-1, not resolved: the seam stays in frontmatter until the method is
+stable enough to externalize.
+
+---
+
 ## Connections
 
 | Document | Type | Description |
 |----------|------|-------------|
-| `vault/discovery/folder-structure-fractal/discovery.md` | `derives-from` | Extends D-1's narrowed top-level schema/instance split to a repo-level **ownership** axis, and honors A-4 (folder-as-classifier rejected — folders project one axis, not the whole schema). Does NOT re-propose the rejected maximal recursion. |
-| `vault/discovery/cross-tree-mirroring-for-llm-coercion/discovery.md` | `derives-from` | Extends the L₁↔L₂ mirror with an ownership-primary top-level axis and a promotion-vs-routing migration model; inherits the "navigational signal, not correctness guarantee" demotion. |
-| `vault/discovery/schema-of-schemas/discovery.md` | `derives-from` | Reuses the one-schema / two-gate / typed-residue (`open_questions`) / gate-first posture; this discovery adds the ownership organizing axis and the `system_design_knowledge` partition on top. |
+| `vault/discovery/folder-structure-fractal/discovery.md` | `derives-from` | Lineage only. This discovery retains the "folders project one axis, the rest is frontmatter" idea (A-4) but, per Revision 2026-06-09, **sets aside folder-structure-fractal's binding constraints** (ownership-primary framing and the recursion ban) on the user's explicit call. Not load-bearing for the current tree. |
+| `vault/discovery/cross-tree-mirroring-for-llm-coercion/discovery.md` | `derives-from` | Extends the L₁↔L₂ mirror with a **subject-primary** top-level axis and a promotion-vs-routing migration model; inherits the "navigational signal, not correctness guarantee" demotion. |
+| `vault/discovery/schema-of-schemas/discovery.md` | `derives-from` | Reuses the one-schema / two-gate / typed-residue (`open_questions`) / gate-first posture; this discovery adds the **subject** organizing axis, the `system_design_knowledge` partition, and (R-6) the project-local `schema/` layer over the submodule base. |
 | `vault/ontology-conventions.md` | `cites` | The `node_type` set, the edge catalog, the `is_session` + sessions forward-only-by-source carve-out, and the `operationalized-by` skill carve-out are reused unchanged as the substrate for sessions-as-modality and arcanum-as-executable. |
