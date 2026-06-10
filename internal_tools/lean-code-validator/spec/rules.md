@@ -7,7 +7,7 @@ nature: reference
 profile: paper-baseline
 status: draft
 version: 0.1.0
-last_updated: 2026-05-14
+last_updated: 2026-06-10
 ---
 
 # Rules: lean-code-validator
@@ -47,7 +47,9 @@ Every edge in `spec.edges` must respect σ for the spec's profile. This constrai
 
 **Enforced by:** [gradeP3Obligations](operations.md#gradep3obligations)
 
-For each declared [Concept](domain.md#concept), the minimum required σ-edges for its [Meta](domain.md#meta) must be present in `spec.edges`. One rule per meta-type (A6 resolution: per-meta-type granularity, not per-predicate-clause).
+For each declared [Concept](domain.md#concept), the minimum required σ-edges for its [Meta](domain.md#meta) must be present in `spec.edges`. **One rule per meta-type (A6 decided)** — granularity is per-meta-type, not per-meta×clause.
+
+Obligation edge directions are derived from the canonical σ-signature (D2 — canonical wins) and are σ-verified against `LeanCodeValidator/Sigma.lean`. The obligation *set* itself lives authoritatively in [queries.md](queries.md) (`obligationsForMeta`); it is not duplicated here. Mandatoriness of each obligation is a v3 inference (H2).
 
 **Formal:** `∀ c : Concept ∈ spec.conceptSpace, ∀ ob ∈ obligationsForMeta spec.profile c.meta, ∃ e : EdgeRow ∈ spec.edges, ob.satisfied e c`.
 
@@ -56,7 +58,7 @@ For each declared [Concept](domain.md#concept), the minimum required σ-edges fo
 | `warn` | At least one obligation is missing. (Table is our derivation, not a doc citation — see H2.) |
 | `pass` | All obligations satisfied. |
 
-> Persistent `warn` dismissals across multiple specs feed back into obligation-table softening for v4. The `warn`-not-`fail` posture is deliberate (D1).
+> Never `fail` — the `warn`-not-`fail` posture is deliberate (D1). Contested obligations (tagged PENDING EX1 in [queries.md](queries.md)) stay `warn`-only until experiment EX1 calibrates the table. Persistent `warn` dismissals across multiple specs feed back into obligation-table softening for v4.
 
 ---
 

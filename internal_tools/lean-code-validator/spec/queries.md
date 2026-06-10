@@ -7,7 +7,7 @@ nature: reference
 profile: paper-baseline
 status: draft
 version: 0.1.0
-last_updated: 2026-05-14
+last_updated: 2026-06-10
 ---
 
 # Queries: lean-code-validator
@@ -48,19 +48,47 @@ Returns the set of [EdgeType](domain.md#edgetype) values active under a given [P
 
 Returns the minimum-viable wiring obligations for a given meta-type under a given profile. An Obligation is a `(required EdgeType, direction)` pair — e.g., "every `Operation` must have at least one incoming `performs` edge from an `Entity`". Used by P3 ([gradeP3Obligations](operations.md#gradep3obligations)).
 
-> The obligation table is derived from σ, not cited directly in `domainspec-core`. It is a v3 interpretation — see H2 in [`HYPOTHESES.md`](../discovery/HYPOTHESES.md). Persistent dismissals across multiple specs calibrate this table for v4.
+> Edge directions are σ-verified against `LeanCodeValidator/Sigma.lean` (D2: canonical σ wins). Obligation *mandatoriness* — whether a σ-permitted edge is *required* ≥1 — is a v3 inference (H2), not stated in σ; items tagged PENDING EX1 are graded `warn`-only (D1) until EX1 calibrates them. Four backend rows (Event, Rule, Mapping, Interface) were corrected from reversed-direction drafts.
 
-**Representative obligations (non-exhaustive):** The full `def` in Lean covers all 25 canonical metas. Metas with no required wiring (e.g., `ValueObject`, `Enum`, UI leaf types) return an empty obligation list — they are checked but never fail P3. The table below shows the 7 metas that carry non-empty obligations.
+**Authoritative obligation table (σ-verified):** The full `def` in Lean covers all canonical metas. Metas with no required wiring (e.g., `Entity`, `Enum`, `ValueObject` non-obligations, UI leaf types) return an empty obligation list — they are checked but never fail P3. The tables below are split by layer.
 
-| Meta | Required edge | Direction | Note |
+**Backend metas** (apply in both profiles):
+
+| Meta | Obligation | Direction (relative to the meta) | Confidence/Status |
 |---|---|---|---|
-| `Operation` | `performs` | incoming from `Entity` | Entity must declare the operation. |
-| `Query` | `queries` | outgoing to `Entity` | Query must target a declared entity. |
-| `Event` | `emits` | incoming from `Operation` | Event must be emitted by some operation. |
-| `Rule` | `enforces` | incoming from `Operation` | Rule must be enforced by some operation. |
-| `Workflow` | `orchestrates` | outgoing to `Operation` | Workflow must call at least one operation. |
-| `Mapping` | `maps` | incoming from `Entity` or `Operation` | Mapping must be invoked. |
-| `Interface` | `exposes` | incoming from `Entity` or `Operation` | Interface must expose something. |
+| `Operation` | ≥1 `performs` from `Entity` | incoming | HIGH (σ-correct; both drafts agree) |
+| `Operation` | ≥1 `produces` to `Event` | outgoing | PENDING EX1 — void-operation question (σ permits the edge but does not mandate ≥1) |
+| `Query` | ≥1 `queries` to `Entity` | outgoing | HIGH |
+| `Calculation` | ≥1 `calculates` to `Operation` | outgoing | MEDIUM |
+| `Rule` | ≥1 `enforces` to `Operation` | outgoing | HIGH (corrected — was reversed) |
+| `Policy` | ≥1 `applies` to `Operation` | outgoing | MEDIUM |
+| `Workflow` | ≥1 `orchestrates` to `Operation` | outgoing | HIGH |
+| `Interface` | ≥1 `exposes` to `Operation` ∨ `Query` | outgoing | HIGH (corrected — was reversed) |
+| `Event` | ≥1 `produces` from `Operation` OR ≥1 `emits` from `Entity` | incoming | MEDIUM (corrected — was `emits` from Operation) |
+| `Mapping` | ≥1 `maps` to `Entity` ∨ `Interface` | outgoing | HIGH (corrected — was reversed) |
+| `StateMachine` | ≥1 `transitions` from `Event` | incoming | PENDING EX1 |
+| `ValueObject` | ≥1 `contains` from `Entity` | incoming | PENDING EX1 — likely too strict |
+| `Entity`, `Enum` | (no obligation) | — | — |
+
+**UI metas** (R_X-based obligations are σ-verified; R_U-based ones reference unsigned edges):
+
+| Meta | Obligation | Status |
+|---|---|---|
+| `Form` | ≥1 `contracts` to `Interface` (R_X) | UNTESTED — no UI spec exists yet |
+| `ViewModel` | ≥1 `derives` to `Entity` (R_X) | UNTESTED |
+| `Binding` | ≥1 `fetches` to `Query` OR ≥1 `mutates` to `Operation` (R_X) | UNTESTED |
+| `Guard` | ≥1 `mirrors` to `Rule` (R_X) | UNTESTED |
+| `StateIndicator` | ≥1 `reflects` to `StateMachine` (R_X) | UNTESTED |
+| `Page` | ≥1 outgoing R_U edge to `Layout`/`Component` | PENDING R_U σ-ratification (D12) — warn/informational only |
+| `Hook` | ≥1 outgoing R_U edge OR R_X edge to `Query` | PENDING R_U σ-ratification |
+| `Action` | ≥1 outgoing R_U edge to `Binding` | PENDING R_U σ-ratification |
+| `Adapter`, `Layout`, `Component` | (no obligation) | — |
+
+**Composition meta** (`compositionExtension` profile only):
+
+| Meta | Obligation | Status |
+|---|---|---|
+| `Saga` | ≥1 R_CF edge (`produces-for` ∨ `triggers-cross` ∨ `enforces-cross`) crossing ≥2 features | UNTESTED |
 
 ---
 

@@ -79,6 +79,17 @@ This document records resolved and unresolved multi-option decisions for v3, wit
 
 ---
 
+### D13 — P3 obligation table reconciliation: σ-directions canonical, mandatoriness deferred to EX1
+
+- **Status**: decided
+- **Owner**: tool maintainer
+- **Decision**: The authoritative `obligationsForMeta` table lives in `spec/queries.md`. Edge DIRECTIONS are taken mechanically from the canonical σ-signature (`Sigma.lean`); where the prior spec/queries.md draft disagreed (Event, Rule, Mapping, Interface — four reversed rows), it was corrected to match σ. Obligation MANDATORINESS (whether a σ-permitted edge is required ≥1) is a v3 inference (H2), NOT decided here — contested obligations are installed but graded `warn`-only (D1) and tagged PENDING EX1 until the experiment calibrates them.
+- **Alternatives considered**: adopt spec/queries.md as-is (rejected — 4 rows violate σ, contradicting D2); adopt research.md §2 wholesale including its mandatoriness assumptions (rejected — pre-locks the exact strictness EX1 is meant to calibrate); defer the whole table until EX1 (rejected — EX1 needs a σ-correct table to even run, else dismissals conflate "wrong direction" with "too strict").
+- **Rationale**: σ-direction is a fact (D2: canonical wins, internal disagreement is a v3 bug); mandatoriness is the open empirical question (H2). Separating them lets EX1 measure a clean signal.
+- **Commits us to**: spec/queries.md as the single source of the obligation set; the Lean `obligationsForMeta` def encoding σ-verified directions; `warn`-only grading for PENDING-EX1 rows until EX1 resolves H2.
+
+---
+
 ## Pending
 
 ### D8 — Output surface: Lean `#eval` only, or also JSON?

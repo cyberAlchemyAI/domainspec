@@ -158,5 +158,5 @@ These need decisions before the spec-writer stage can produce a clean SPEC.md.
 | A3 | Is `CliInterface` distinct from `LeanEvalInterface`, or is the CLI just `lake env lean --run`? | operator | Cleanest answer: `lake env lean --run` IS the CLI; `CliInterface` collapses into `LeanEvalInterface`. |
 | A4 | Is `JsonReportInterface` in scope for v3? | operator | Defer to PROJECT-DECISIONS. |
 | A5 | Does `FindingLifecycle` ship in v3, or wait for v4? | operator | Per-finding suppression is convenient but not core. |
-| A6 | Granularity of `P3ObligationRule[Meta]` — one rule per meta-type, or one per (meta-type × predicate-clause)? | tool maintainer | Affects how `rules.md` is structured. |
+| A6 | **RESOLVED: one rule per meta-type.** Granularity of `P3ObligationRule[Meta]` — one rule per meta-type, or one per (meta-type × predicate-clause)? | tool maintainer | Affects how `rules.md` is structured. Decided (D13 sprint): one `P3ObligationRule` per meta-type; multi-clause metas (e.g. `Operation`) list multiple obligations under one rule. Reversible if EX1 shows per-clause suppression is needed. |
 | A7 | What grade does v3 emit when a spec uses an `unsigned` R_U edge? `WARN` (current proposal) or `FAIL` (strict)? | tool maintainer | Drives how aggressively v3 surfaces the canonical R_U gap. |

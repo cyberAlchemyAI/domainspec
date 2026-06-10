@@ -7,7 +7,7 @@ nature: reference
 profile: paper-baseline
 status: draft
 version: 0.1.0
-last_updated: 2026-05-14
+last_updated: 2026-06-10
 ---
 
 # Operations: lean-code-validator
@@ -55,7 +55,7 @@ Evaluates predicate P1 (schema closure): every concept name appearing in `spec.e
 
 **Performs on:** [Spec](domain.md#spec) → [PredicateReport](domain.md#predicatereport)
 
-Evaluates predicate P3 (per-meta-type signature completeness): for each declared [Concept](domain.md#concept), checks that the minimum required σ-edges for its [Meta](domain.md#meta) are present in `spec.edges`. Obligations are looked up via [obligationsForMeta](queries.md#obligationsformeta). Produces one [Finding](domain.md#finding) per missing obligation. Grades `warn` for missing obligations (obligation table is our derivation, not a doc citation — see H2 in HYPOTHESES.md); `pass` if all obligations are met.
+Evaluates predicate P3 (per-meta-type signature completeness): for each declared [Concept](domain.md#concept), checks that the minimum required σ-edges for its [Meta](domain.md#meta) are present in `spec.edges`. Obligations are looked up via [obligationsForMeta](queries.md#obligationsformeta). Produces one [Finding](domain.md#finding) per missing obligation. Grades `warn` for missing obligations (never `fail` — per D1; the obligation table is our v3 inference, not a doc citation — see H2 in HYPOTHESES.md); `pass` if all obligations are met. Obligations tagged PENDING EX1 in [queries.md](queries.md) are emitted as `warn` findings whose dismissal rate during EX1 calibrates the table; directions are σ-verified (D2).
 
 **Enforces:** [P3ObligationRule](rules.md#p3obligationrule)
 **Queries:** [obligationsForMeta](queries.md#obligationsformeta)
