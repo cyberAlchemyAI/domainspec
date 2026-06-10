@@ -30,22 +30,29 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 # -----------------------------------------------------------------------------
-# Edge signatures from the DomainSpec paper (backend track only).
+# Edge signatures (backend track: the 12 R_B + 3 R_CF cross-feature edges).
 # (edge_type, allowed source meta-types, allowed target meta-types)
+# This is the backend-and-cross-feature subset of the canonical 29-edge code
+# ontology (see RELATIONSHIPS.md). The 8 intra-UI (R_U) and 6 cross-layer (R_X)
+# edges are intentionally NOT audited here — this script is backend-track only.
 # -----------------------------------------------------------------------------
 EDGE_SIGNATURES: list[tuple[str, set[str], set[str]]] = [
-    ("performs",     {"Entity"},                          {"Operation"}),
-    ("produces",     {"Operation"},                       {"Event"}),
-    ("enforces",     {"Rule"},                            {"Operation"}),
-    ("calculates",   {"Calculation"},                     {"Operation"}),
-    ("transitions",  {"Event"},                           {"StateMachine"}),
-    ("exposes",      {"Interface"},                       {"Operation", "Query"}),
-    ("orchestrates", {"Workflow"},                        {"Operation"}),
-    ("applies",      {"Policy"},                          {"Operation"}),
-    ("maps",         {"Mapping"},                         {"Entity", "Interface"}),
-    ("contains",     {"Entity"},                          {"ValueObject"}),
-    ("queries",      {"Query"},                           {"Entity"}),
-    ("emits",        {"Entity"},                          {"Event"}),
+    ("performs",       {"Entity"},                          {"Operation"}),
+    ("produces",       {"Operation"},                       {"Event"}),
+    ("enforces",       {"Rule"},                            {"Operation"}),
+    ("calculates",     {"Calculation"},                     {"Operation"}),
+    ("transitions",    {"Event"},                           {"StateMachine"}),
+    ("exposes",        {"Interface"},                       {"Operation", "Query"}),
+    ("orchestrates",   {"Workflow"},                        {"Operation"}),
+    ("applies",        {"Policy"},                          {"Operation"}),
+    ("maps",           {"Mapping"},                         {"Entity", "Interface"}),
+    ("contains",       {"Entity"},                          {"ValueObject"}),
+    ("queries",        {"Query"},                           {"Entity"}),
+    ("emits",          {"Entity"},                          {"Event"}),
+    # R_CF — cross-feature (backend@A -> backend@B):
+    ("produces-for",   {"Operation"},                       {"Entity"}),
+    ("triggers-cross", {"Event"},                           {"Operation"}),
+    ("enforces-cross", {"Rule"},                            {"Operation"}),
 ]
 
 # Bold-prefix conventions used by zagr-marketplace (and DomainSpec generally) to
@@ -134,8 +141,7 @@ META_REQUIREMENTS: dict[str, dict[str, list[str]]] = {
     "ValueObject":  {},
     "Enum":         {},
     "StateMachine": {},
-    "Aggregate":    {},  # treated like Entity for edge-requirement purposes
-    "Governance":   {},  # corpus seals, criteria seals, methodology notes
+    "Saga":         {},  # cross-feature orchestration; no minimum imposed here
 }
 
 
@@ -753,6 +759,10 @@ EDGE_HOME_FILE: dict[str, str] = {
     "contains":     "domain.md",
     "queries":      "queries.md",
     "emits":        "domain.md",
+    # R_CF — cross-feature (kept in sync with EDGE_SIGNATURES):
+    "produces-for":   "operations.md",
+    "triggers-cross": "events.md",
+    "enforces-cross": "operations.md",
 }
 
 

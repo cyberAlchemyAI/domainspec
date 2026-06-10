@@ -1,6 +1,6 @@
 # Relationship Types
 
-> The 29 typed edges that connect domain concepts into a navigable knowledge graph — 15 backend, 8 intra-UI, and 6 cross-layer.
+> The 29 typed edges that connect domain concepts into a navigable knowledge graph — 15 backend (12 within-feature `R_B` + 3 cross-feature `R_CF`), 8 intra-UI, and 6 cross-layer. The canonical machine schema (`schema/code-ontology/code-ontology.json` in a scaffolded project) treats those as 4 disjoint families: `R_B` (12) ⊎ `R_CF` (3) ⊎ `R_U` (8) ⊎ `R_X` (6).
 
 ## Overview
 

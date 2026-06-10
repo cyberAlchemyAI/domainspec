@@ -96,7 +96,7 @@ L8  Governance & institutions  ─  Application  (what)
 | Discipline | Contribution | Where it lives |
 |------------|--------------|----------------|
 | Category theory | Functor `Δ : L₁ → L₂` between domain and code categories | [.claude/agents/domainspec-l1-extractor.agent.md](../.claude/agents/domainspec-l1-extractor.agent.md), `domainspec-l2-extractor`, `domainspec-delta-extractor` |
-| Graph theory | Typed graph (24 node-types × 26 edge-types) | [TAXONOMY.md](../TAXONOMY.md), [RELATIONSHIPS.md](../RELATIONSHIPS.md), [.claude/skills/custom/edge-catalog.md](../.claude/skills/custom/edge-catalog.md) |
+| Graph theory | Typed graph (25 node-types × 29 edge-types) | [TAXONOMY.md](../TAXONOMY.md), [RELATIONSHIPS.md](../RELATIONSHIPS.md), [.claude/skills/custom/edge-catalog.md](../.claude/skills/custom/edge-catalog.md) |
 | Type theory / schema validation | Frontmatter + JSON schemas | [.claude/skills/custom/frontmatter.md](../.claude/skills/custom/frontmatter.md); `tools/check_*` |
 
 **Canonical anchors:** [vault/discovery/domainspec-types-and-edges-validation/](discovery/domainspec-types-and-edges-validation/), [vault/ontology-architecture-draft.md](ontology-architecture-draft.md)

@@ -21,7 +21,7 @@ DomainSpec's dual meta-models (business + operational) define these layers:
 | Layer                   | What It Governs                            | Enforcement Mechanism       | Fidelity                |
 | ----------------------- | ------------------------------------------ | --------------------------- | ----------------------- |
 | **L0 — Domain Reality** | The actual business                        | None (territory, not map)   | N/A                     |
-| **L1 — Ontology**       | 24 types, 26 edges, SPEC.md                | Manual + template structure | Medium                  |
+| **L1 — Ontology**       | 25 types, 29 edges, SPEC.md                | Manual + template structure | Medium                  |
 | **L2 — Software**       | Generated code                             | Tests derived from specs    | High                    |
 | **L3 — Governance**     | Rules in ARCHITECTURE.md, TAXONOMY.md      | Agent instructions (prose)  | Low                     |
 | **L4 — Epistemic**      | Axioms ("docs before code")                | **Not formalized**          | None                    |
@@ -69,9 +69,9 @@ The number of objects an average human can hold in working memory is 7 ± 2. Thi
 
 A controller must have at least as much variety (possible states) as the system it controls. Governance layers (L3–L7) must collectively model the variety of L0–L2. But each governance layer also _adds_ variety to the total system, requiring governance of the governance — the recursive trap.
 
-For a system with ~24 concept types and ~26 edge types:
+For a system with ~25 concept types and ~29 edge types:
 
-$$\log_2(50) \approx 6$$
+$$\log_2(54) \approx 6$$
 
 Six governance dimensions are theoretically sufficient. At 7, returns are already diminishing.
 

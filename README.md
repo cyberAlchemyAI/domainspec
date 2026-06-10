@@ -15,7 +15,7 @@ last_updated: 2026-06-01
 
 ## What is this?
 
-**DomainSpec** is a specification-first framework for autonomous software delivery. It provides two complementary ontologies — a **spec-layer taxonomy** (24 meta-types, 26 typed relationships) that classifies and connects concepts inside a feature spec, and a **vault graph schema** (22 forward edge types across 3 categories: epistemic, provenance, reference) that governs how knowledge artifacts relate across the project's knowledge graph — plus consistent templates and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step. The framework is **framework-generic by constitution** (see [folder-structure-constitution v3.0.0](vault/constitution/folder-structure-constitution.md)): library and framework choices belong in per-app sub-constitutions, not in the core. This repository is the framework itself — agents, skills, templates, the vault knowledge graph, governance assets, internal tooling, and the architecture pattern library — imported by consumer projects as a submodule.
+**DomainSpec** is a specification-first framework for autonomous software delivery. It provides two complementary ontologies — a **spec-layer taxonomy** (25 meta-types, 29 typed relationships) that classifies and connects concepts inside a feature spec, and a **vault graph schema** (22 forward edge types across 3 categories: epistemic, provenance, reference) that governs how knowledge artifacts relate across the project's knowledge graph — plus consistent templates and an agent-driven pipeline that turns domain documentation into formal specifications, derived tests, backend code, frontend UI, observability, infrastructure, and verification — in that order, with traceability at every step. The framework is **framework-generic by constitution** (see [folder-structure-constitution v3.0.0](vault/constitution/folder-structure-constitution.md)): library and framework choices belong in per-app sub-constitutions, not in the core. This repository is the framework itself — agents, skills, templates, the vault knowledge graph, governance assets, internal tooling, and the architecture pattern library — imported by consumer projects as a submodule.
 
 ## Business Context
 
@@ -47,8 +47,8 @@ Root-level orientation documents:
 - **[PHASED-PLAN.md](PHASED-PLAN.md)** — Phased rollout plan.
 - **[PRODUCT-COMPONENTS-IDEA.md](PRODUCT-COMPONENTS-IDEA.md)** — Working notes on candidate product components above the framework.
 - **[PROMPT-AEO-TEST-TAG-TASKS.md](PROMPT-AEO-TEST-TAG-TASKS.md)** — Prompt notes for AEO test-tag tasks.
-- **[RELATIONSHIPS.md](RELATIONSHIPS.md)** — 26 typed relationship catalog.
-- **[TAXONOMY.md](TAXONOMY.md)** — 24 meta-concept taxonomy.
+- **[RELATIONSHIPS.md](RELATIONSHIPS.md)** — 29 typed relationship catalog.
+- **[TAXONOMY.md](TAXONOMY.md)** — 25 meta-concept taxonomy.
 - **[TEST-PIPELINE.md](TEST-PIPELINE.md)** — Doc → test generation rules.
 - **[TOBANOV.md](TOBANOV.md)** — Working notes on the TOBANOV concept (cross-component invariants).
 - **[TUNING-LOOP.md](TUNING-LOOP.md)** — Tuning loop architecture.
@@ -85,7 +85,7 @@ DomainSpec runs on two ontologies. They serve different purposes and should not 
 
 | Ontology | Scope | Sizes | Source of truth |
 |---|---|---|---|
-| **Spec-layer taxonomy** | Inside a feature spec — classifies and connects domain concepts | 24 meta-types, 26 typed relationships | [TAXONOMY.md](TAXONOMY.md), [RELATIONSHIPS.md](RELATIONSHIPS.md) |
+| **Spec-layer taxonomy** | Inside a feature spec — classifies and connects domain concepts | 25 meta-types, 29 typed relationships | [TAXONOMY.md](TAXONOMY.md), [RELATIONSHIPS.md](RELATIONSHIPS.md) |
 | **Vault graph schema** | Across the project — governs how knowledge artifacts (axioms, premises, constitutions, discoveries, specs, sessions, audits, research) relate | 22 forward edge types in 3 categories (epistemic / provenance / reference) | [vault/ontology-conventions.md](vault/ontology-conventions.md) |
 
 The **vault** is the project's typed knowledge graph. It holds the long-lived "why" behind every framework decision: foundational axioms, working premises, enforceable constitutions, in-progress discoveries, and the session record that produced them. Four constitutions are particularly load-bearing for new readers:
@@ -353,7 +353,7 @@ timeline
 
 ## Stage 1 — Classify Concepts with the Taxonomy
 
-The first thing to understand is how DomainSpec's **spec-layer taxonomy** classifies domain knowledge inside a feature spec. Every concept in your feature spec belongs to exactly one of 24 meta-types — 13 for backend domain logic and 11 for UI presentation. (This is distinct from the vault graph schema described in the Vault & Governance section above, which governs knowledge artifacts across the project.)
+The first thing to understand is how DomainSpec's **spec-layer taxonomy** classifies domain knowledge inside a feature spec. Every concept in your feature spec belongs to exactly one of 25 meta-types — 14 for backend domain logic and 11 for UI presentation. (This is distinct from the vault graph schema described in the Vault & Governance section above, which governs knowledge artifacts across the project.)
 
 These categories reflect the fundamental questions every system must answer:
 
@@ -374,7 +374,7 @@ These categories reflect the fundamental questions every system must answer:
 
 ## Stage 2 — Connect Concepts with Relationships
 
-Once you have classified concepts, you connect them using the **spec-layer taxonomy's** 26 typed relationship edges — 12 for the backend domain graph, 8 for intra-UI navigation, and 6 for cross-layer traceability from screen to database. This forms a per-feature **knowledge graph** — from any concept, you can follow edges to understand everything it touches. (Note: the vault graph schema described in the Vault & Governance section has its own 22 edge types operating at the artifact level, not the concept level.)
+Once you have classified concepts, you connect them using the **spec-layer taxonomy's** 29 typed relationship edges — 15 for the backend domain graph (12 within-feature + 3 cross-feature), 8 for intra-UI navigation, and 6 for cross-layer traceability from screen to database. This forms a per-feature **knowledge graph** — from any concept, you can follow edges to understand everything it touches. (Note: the vault graph schema described in the Vault & Governance section has its own 22 edge types operating at the artifact level, not the concept level.)
 
 | Edge           | Connects                    | Answers                                           |
 | -------------- | --------------------------- | ------------------------------------------------- |
@@ -893,8 +893,8 @@ All templates live in [templates/](templates/):
 
 | File                                                 | Contents                                                                     |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [TAXONOMY.md](TAXONOMY.md)                           | Full 24-type reference (13 backend + 11 UI) with examples and disambiguation |
-| [RELATIONSHIPS.md](RELATIONSHIPS.md)                 | All 26 typed edge types (12 backend + 8 intra-UI + 6 cross-layer)            |
+| [TAXONOMY.md](TAXONOMY.md)                           | Full 25-type reference (14 backend + 11 UI) with examples and disambiguation |
+| [RELATIONSHIPS.md](RELATIONSHIPS.md)                 | All 29 typed edge types (15 backend + 8 intra-UI + 6 cross-layer)            |
 | [TEST-PIPELINE.md](TEST-PIPELINE.md)                 | Complete doc → test derivation rule set (14 backend + 6 UI E2E rules)        |
 | [ARCHITECTURE.md](ARCHITECTURE.md)                   | Framework architecture and design decisions                                  |
 | [OBSERVABILITY.md](OBSERVABILITY.md)                 | 16 metric derivation rules across 3 layers + Financial Integrity             |
@@ -925,7 +925,7 @@ Full analysis, gap inventory (G1–G16), health metrics (M-001–M-006), and 20 
 
 | Layer          | Status                | Key gap                                    |
 | -------------- | --------------------- | ------------------------------------------ |
-| L1 Ontology    | ✅ 24 types, 26 edges | No runtime code-to-doc binding             |
+| L1 Ontology    | ✅ 25 types, 29 edges | No runtime code-to-doc binding             |
 | L3 Governance  | ⚠️ Scattered          | No single constitution or derivation chain |
 | L4 Foundations | ⚠️ Implicit           | Axioms not formalized                      |
 | L5 Navigation  | ⚠️ File-based         | No queryable concept graph                 |

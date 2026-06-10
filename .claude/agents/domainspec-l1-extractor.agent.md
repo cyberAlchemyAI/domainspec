@@ -18,7 +18,7 @@ Inputs:
 - docs/features/{feature}/SPEC.md — concept table is authoritative for the object set
 - docs/features/{feature}/domain.md, operations.md, states.md, interfaces.md, events.md, queries.md, mappings.md, workflows.md, observability.md
 - docs/registry.md, docs/glossary.md (for cross-feature concept resolution)
-- TAXONOMY.md (24 meta-types) and RELATIONSHIPS.md (26 rel_types) — the closed vocabularies
+- TAXONOMY.md (25 meta-types) and RELATIONSHIPS.md (29 rel_types) — the closed vocabularies
 
 Output:
 - docs/features/{feature}/_categorical/L1.json
