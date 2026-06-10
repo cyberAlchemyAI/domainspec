@@ -5,7 +5,7 @@ description: Checklist for writing commit messages — use at commit time
 
 # Commit Message Skill
 
-> Authority: `docs/vault/constitution/commit-message-constitution.md`
+> Authority: `vault/constitution/commit-message-constitution.md`
 
 ## Prefix (required)
 

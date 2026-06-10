@@ -104,7 +104,9 @@ The catalog (`infrastructure/messaging/event_catalog.py`) is the central ontolog
 [ ] 3. Create a migration for the AlterField of event_type in
        migrations/infrastructure_database/
 
-[ ] 4. Add an entry to docs/vault/dictionary-events.md
+[ ] 4. Add an entry to the events dictionary (artifact not yet implemented;
+       canonical vocabulary currently lives in docs/registry.md + docs/glossary.md
+       + per-feature docs/features/*/SPEC.md)
        Required fields: prose description, emitted_from (relative path + function),
        triggered_by, aliases_conversation (if any), typed edges.
        event_catalog.py is the source of truth for structural metadata (tier,
@@ -422,13 +424,15 @@ The `entity_id` format depends on the entity type:
 
 ## Rule 14 — Every New Event Type Requires a `dictionary-events.md` Entry
 
-`event_catalog.py` registers structural metadata. `dictionary-events.md` is the
+`event_catalog.py` registers structural metadata. The events dictionary (artifact
+not yet implemented — see obligations below) is the
 semantic layer: it documents *why* the event exists, *what triggers it*, and *how
 it connects* to other business and system concepts via typed edges.
 
 **Obligations:**
 - A new event type **must not be merged** unless a corresponding entry exists in
-  `docs/vault/dictionary-events.md`.
+  the events dictionary (artifact not yet implemented; canonical vocabulary currently
+  lives in `docs/registry.md` + `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`).
 - The dict entry **must not duplicate** catalog fields (`tier`, `object_type`,
   `action`, `label`, `template`, `payload_schema`) — `event_catalog.py` is the
   authoritative source for those.
@@ -441,8 +445,10 @@ it connects* to other business and system concepts via typed edges.
   | `aliases_conversation` | Portuguese / colloquial names (if any) |
   | `edges` | Typed vault edges (`produced-by`, `transitions`, `compensates`, …) |
 
-- Entries for `tier: tech` events belong in `dictionary-events.md` under a **Tech
-  Events** section (not in `dictionary-sys.md`).
+- Entries for `tier: tech` events belong in the events dictionary under a **Tech
+  Events** section (not in the system dictionary). _(Both dictionary artifacts are
+  not yet implemented; canonical vocabulary currently lives in `docs/registry.md` +
+  `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`.)_
 
 > **Future automation:** once an extraction script for `dictionary-events.md` is
 > implemented, step 4 of the Rule 2 checklist will be auto-validated in CI (same
@@ -522,7 +528,7 @@ When reviewing a PR that emits events, verify:
 - [ ] `log_event_safe()` used in all production flows
 - [ ] For events with multiple entities: `EventLogEntities.bulk_create()` used (entity-level events never use `payload` lists)
 - [ ] `entity_id` uses deterministic hash (via `entity_identity.py`) for granular entities, not auto-increment PK
-- [ ] New event type has a corresponding entry in `docs/vault/dictionary-events.md` (Rule 14)
+- [ ] New event type has a corresponding entry in the events dictionary (Rule 14; artifact not yet implemented — canonical vocabulary currently in `docs/registry.md` + `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`)
 
 ---
 

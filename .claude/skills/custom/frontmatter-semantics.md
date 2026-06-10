@@ -6,7 +6,7 @@ description: Concise definition of every frontmatter tag and its allowed values 
 
 ## Objective
 
-Define what every frontmatter tag and value *means*, with just enough context to pick correctly. This is the layer between the cheatsheet (`frontmatter.md` — syntax + pickers) and the full treatise (`docs/vault/ontology-conventions.md` — rationale, math, edge catalog). Answers: "what does this tag/value actually claim about the document?"
+Define what every frontmatter tag and value *means*, with just enough context to pick correctly. This is the layer between the cheatsheet (`frontmatter.md` — syntax + pickers) and the full treatise (`vault/ontology-conventions.md` — rationale, math, edge catalog). Answers: "what does this tag/value actually claim about the document?"
 
 ---
 
@@ -143,5 +143,5 @@ Semantic-ish: `0.x.x` for pre-stable documents, bump minor for substantive edits
 ## See also
 
 - `.claude/skills/custom/frontmatter.md` — the cheatsheet (schema + pickers + `## Objective` rule)
-- `docs/vault/ontology-conventions.md` — full rationale, mathematical foundation, edge type catalog
-- `docs/vault/confidence-levels.md` — lifecycle promotion criteria
+- `vault/ontology-conventions.md` — full rationale, mathematical foundation, edge type catalog
+- `vault/confidence-levels.md` — lifecycle promotion criteria

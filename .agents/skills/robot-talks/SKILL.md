@@ -7,7 +7,7 @@ description: Run a multi-agent parallel investigation to identify cross-layer te
 
 Auditing tool for cross-layer tension discovery. Does NOT implement fixes.
 
-**Full rationale & templates:** `docs/vault/constitution/robot-talks-constitution.md`
+**Full rationale & templates:** `vault/constitution/robot-talks-constitution.md`
 
 ## Invocation Checklist (All must be YES)
 

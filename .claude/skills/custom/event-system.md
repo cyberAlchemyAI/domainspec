@@ -28,7 +28,7 @@ Never use direct ORM writes. `log_event_safe` handles idempotency, description, 
 1. Add value to `EventLog.EventType` enum (`models.py`), naming: `<domain>_<past_verb>`
 2. Add entry to `CATALOG` in `event_catalog.py` (label, tier, domain, business_weight, description_template, payload_schema)
 3. Create migration for AlterField
-4. Add entry to `docs/vault/dictionary-events.md`
+4. Record the event concept in canonical vocabulary (the events dictionary is not yet implemented — use `docs/registry.md`, `docs/glossary.md`, and the feature's `docs/features/*/SPEC.md`)
 5. Verify `pytest infrastructure/tests/` passes
 
 ## Stream Hierarchy
@@ -51,7 +51,7 @@ Each lifecycle gets its own `stream_id`. Link via `parent_event` FK.
 
 ## Escalation — When to Load the Constitution
 
-- If deciding between `EventLog` vs `EventLogEntities` for a new event → read §Rule 12 in `docs/vault/constitution/event-system-constitution.md`
+- If deciding between `EventLog` vs `EventLogEntities` for a new event → read §Rule 12 in `vault/constitution/event-system-constitution.md`
 - If registering a new `entity_type` → read §Rule 6 (Entity Type Registry) for the current registry table
 - If removing or deprecating an event type → read §Governance and Evolution
 - If changing a `payload_schema` (renaming/removing fields) → read §Rule 7 for breaking-change consequences

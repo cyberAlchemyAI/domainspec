@@ -40,7 +40,7 @@ domains/<name>/
 
 ## Escalation — When to Load the Constitution
 
-- If a file doesn't fit any layer or subfolder in the tables above → read §Rule 2 and §Rule 3 in `docs/vault/constitution/folder-structure-constitution.md`
+- If a file doesn't fit any layer or subfolder in the tables above → read §Rule 2 and §Rule 3 in `vault/constitution/folder-structure-constitution.md`
 - If wiring DI or creating a new composition root entry → read §Rule 4 (Dependency Injection)
 - If choosing between sync (contract injection) vs async (event-driven) for inter-domain communication → read §Rule 5
 - If creating a new domain from scratch → read the full constitution for visual structure examples

@@ -86,6 +86,6 @@ One section per area of change. Typical sections (use what applies):
 
 Before writing, anchor the discovery to existing vocabulary:
 
-- **New concepts**: check `docs/vault/dictionary-business.md` and `docs/vault/dictionary-sys.md` — do not invent a term that already exists
-- **Architecture rules**: check `docs/vault/constitution/` — a design that violates a constitution must be called out explicitly in the discovery, not silently ignored
+- **New concepts**: the domain dictionary is not yet implemented — check canonical vocabulary in `docs/registry.md`, `docs/glossary.md`, and `docs/features/*/SPEC.md` — do not invent a term that already exists
+- **Architecture rules**: check `vault/constitution/` — a design that violates a constitution must be called out explicitly in the discovery, not silently ignored
 - **Code reality**: use GitNexus (`gitnexus_query`) to verify that the "what stays" list is accurate — claimed scope boundaries that don't match the code are liabilities

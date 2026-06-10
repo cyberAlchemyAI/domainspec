@@ -12,7 +12,7 @@ description: Audit test coverage for uncommitted changes — finds missing, inco
 Before starting, read the project documents that inform the testing and architectural rules:
 
 1. **Constitutions**: Take a look at the relevant constitutions in `project_constitutions/` for the layer(s) affected by the changes — they define what MUST and MUST NOT be done in each layer.
-2. **Vault**: If the changes touch domain logic, consult `docs/vault/` to understand the business context of the involved entities. Use `derives-from` and `contextualizes` to navigate.
+2. **Vault**: If the changes touch domain logic, consult `vault/` to understand the business context of the involved entities. Use `derives-from` and `contextualizes` to navigate.
 3. **Specs**: If there is a related spec or implementation plan (in `specs/` or `docs/specs/`), read it to understand the original intent of what was implemented.
 
 ## Steps

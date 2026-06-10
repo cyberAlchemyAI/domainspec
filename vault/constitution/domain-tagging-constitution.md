@@ -149,8 +149,8 @@ it can be appended without breaking existing tags.
 A symbol can be tagged before a dictionary entry exists. The tag is the primary record — it establishes that a concept exists at a code location. The dictionary entry is the documentation that may follow.
 
 **When a dictionary entry exists**, the `Term` in the tag must match exactly:
-- `@biz` tags → `docs/vault/dictionary-business.md`
-- `@sys` tags → `docs/vault/dictionary-sys.md`
+- `@biz` tags → the canonical business vocabulary (dictionary artifact not yet implemented; canonical vocabulary currently lives in `docs/registry.md` + `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`)
+- `@sys` tags → the canonical system vocabulary (dictionary artifact not yet implemented; canonical vocabulary currently lives in `docs/registry.md` + `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`)
 
 **When no entry exists**, tag the code. The missing entry becomes a coverage gap surfaced by the pipeline's coverage report (see Rule 12). This is by design — it enables incremental rollout without blocking tagging on documentation.
 
@@ -490,9 +490,9 @@ When reviewing a PR that touches business-relevant code:
 |----------|------|-------------|
 | `specs/ontology/docs/domain-tagging/domain-tagging-discovery.md` | `derives-from` | The discovery that designed the tagging system — this constitution enforces it |
 | `specs/ontology/docs/data-foundations/discovery-extraction-pipeline.md` | `governs` | The pipeline implements automated enforcement of Rules 4, 5, 8, 9 |
-| `docs/vault/dictionary-business.md` | `governs` | Must follow Rule 8 (entry schema), Rule 7 (redundant edges), Rule 9 (H2/H3 structure), Rule 6 (edge vocabulary) |
-| `docs/vault/dictionary-sys.md` | `governs` | Same obligations as dictionary-business.md |
-| `docs/vault/constitution/development-practices-constitution.md` | `derives-from` | Amendment process and agent autonomy rules |
-| `docs/vault/ontology-conventions.md` | `aligns-with` | Frontmatter schema and classification system |
+| business dictionary (not yet implemented; canonical vocabulary currently in `docs/registry.md` + `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`) | `governs` | Must follow Rule 8 (entry schema), Rule 7 (redundant edges), Rule 9 (H2/H3 structure), Rule 6 (edge vocabulary) |
+| system dictionary (not yet implemented; canonical vocabulary currently in `docs/registry.md` + `docs/glossary.md` + per-feature `docs/features/*/SPEC.md`) | `governs` | Same obligations as the business dictionary |
+| `vault/constitution/development-practices-constitution.md` | `derives-from` | Amendment process and agent autonomy rules |
+| `vault/ontology-conventions.md` | `aligns-with` | Frontmatter schema and classification system |
 | `specs/ontology/discovery-vault-code-bridge.md` | `extends` | This constitution governs the code→domain side (Side B) of the vault-code bridge |
 | [[domainspec-axioms]] | `cited-by` | AX-DS-2 (one vocabulary across spec and code) cites this constitution as the declared `@biz` anchor contract; current enforcement gap is tracked as P-DS-13 in `domainspec-premises.md`. |

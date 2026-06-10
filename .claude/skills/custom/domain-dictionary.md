@@ -4,7 +4,7 @@ description: Schema and patterns for creating and updating dictionary entries
 
 # Domain Dictionary Skill
 
-> Authority: `docs/vault/constitution/domain-tagging-constitution.md`
+> Authority: `vault/constitution/domain-tagging-constitution.md`
 
 ## When to Use
 
@@ -17,9 +17,10 @@ description: Schema and patterns for creating and updating dictionary entries
 ## Dictionary Files
 
 Entries belong in:
-- `docs/vault/dictionary-business.md` — business domain concepts
-- `docs/vault/dictionary-sys.md` — system/infrastructure concepts
-- `docs/vault/dictionary-events.md` — events domain concepts
+> NOTE: The dictionary artifact (dictionary-business / dictionary-sys / dictionary-events) is not yet implemented. Until it exists, canonical vocabulary lives in `docs/registry.md`, `docs/glossary.md`, and per-feature `docs/features/*/SPEC.md`.
+- the business dictionary — business domain concepts
+- the system dictionary — system/infrastructure concepts
+- the events dictionary — events domain concepts
 
 ---
 

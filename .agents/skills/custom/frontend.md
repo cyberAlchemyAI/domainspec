@@ -30,7 +30,7 @@ description: Condensed frontend rules — React patterns, state management, muta
 
 ## Escalation — When to Load the Constitution
 
-- If you need to understand _why_ a rule exists (e.g., "why can't presenters fetch?") → read the Rationale under the relevant rule in `docs/vault/constitution/frontend-constitution.md`
+- If you need to understand _why_ a rule exists (e.g., "why can't presenters fetch?") → read the Rationale under the relevant rule in `vault/constitution/frontend-constitution.md`
 - If proposing to override or change a rule → read §Governance & Amendment for the approval process
 - If a pattern (P1-P5) doesn't fit a new page type → read the full Pattern section for exception guidance
 - If you need to amend or question a frontend rule → read the full constitution + its `grounded-in` axioms

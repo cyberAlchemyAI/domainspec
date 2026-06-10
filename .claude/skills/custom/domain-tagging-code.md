@@ -4,7 +4,7 @@ description: Checklist for adding @biz/@sys tags to code
 
 # Domain Tagging Code Skill
 
-> Authority: `docs/vault/constitution/domain-tagging-constitution.md`
+> Authority: `vault/constitution/domain-tagging-constitution.md`
 
 ## When to Tag
 
@@ -135,7 +135,7 @@ The scanner infers edges automatically when two anchors on the same term have co
 | `interface` | `operation` | interface **exposes** operation |
 | `mapping` | `entity` | mapping **maps** entity |
 
-> If you need to add a new edge verb, escalate to `docs/vault/constitution/domain-tagging-constitution.md` §Rule 6.
+> If you need to add a new edge verb, escalate to `vault/constitution/domain-tagging-constitution.md` §Rule 6.
 
 ---
 

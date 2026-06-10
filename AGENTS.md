@@ -36,7 +36,7 @@ Ao buscar docs do vault por significado (princípio, axioma, convenção, premis
 
 ### 2. Exploring or Understand the Vault
 
-- Check: `docs/vault/agent-navigation.md`
+- Check: `vault/agent-navigation.md`
 
 ### 2. Debugging / Investigating an Error
 
@@ -74,7 +74,7 @@ Ao buscar docs do vault por significado (princípio, axioma, convenção, premis
 ### 8. Creating or Updating a Backlog file
 
 - 📖 READ: `.Codex/skills/custom/backlog-pattern.md`
-- Backlogs live in `docs/vault/backlog/` and use `node_type: backlog`.
+- Backlogs live in `vault/discovery/_backlog.md` and `vault/discovery/_meta-backlog.md` and use `node_type: backlog`.
 
 ### 9. Creating or Updating a README inside `/specs/`
 
