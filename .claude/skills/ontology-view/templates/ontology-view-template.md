@@ -43,6 +43,15 @@ rule in the constitution applies to it unchanged.
 > `governance_status: project-local-overlay`. It is intentional and load-bearing (the overlay
 > status is this view's central governance claim, surfaced again in *Governance posture*), not
 > schema drift.
+>
+> **Provenance & mutation — derive-only.** This view is **reconciled from its source
+> [`discovery.md`](discovery.md)**, the **sole sanctioned mutation trigger** for it: do not hand-edit
+> this file. To change it, revise (or supersede) the discovery and re-run `/ontology-view <project>
+> --mode draft` (evolve), which reconciles this view against the discovery delta while **preserving
+> its authored typed nodes, edges, and forbidden-edge guards**. The `## Connections` block records the
+> `derives-from` edge and the discovery `version` last reconciled against — if the discovery's current
+> `version` is higher, this view is **STALE**. This is *reconcile-not-regenerate*, which is exactly why
+> no `generated_by` / `mutation_policy` frontmatter is carried.
 
 ---
 
@@ -357,6 +366,23 @@ nothing-decided-twice discipline: the stance is named here; the verdict lives in
 > EXAMPLE-REPLACE-ME: the worked example pointed each guard/edge to a specific engineer-view decision
 > row and pointed its whole coined-edge vocabulary at the (unwritten) project edge-amendments
 > discovery. Replace owners/rows with your project's.
+
+---
+
+## Connections
+
+<!-- The load-bearing provenance link. This view rides node_type:discovery, so it is a vault graph
+node and this edge is bidirectional (see .claude/skills/custom/edges.md). The discovery is the SOLE
+sanctioned mutation trigger — change the view by revising the discovery and re-running the skill in
+evolve mode, never by hand-editing this file. -->
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `discovery.md` | `derives-from` | Reconciled from this discovery — its sole sanctioned mutation trigger. Last reconciled against discovery `<vX.Y.Z>`. |
+| `system-view.md` | `cited-by` | system-view cites this typed layer for the terms it uses. (Forward `cites` on system-view.) |
+| `engineer-view.md` | `cited-by` | engineer-view cites this typed layer for the terms it uses. (Forward `cites` on engineer-view.) |
+
+> **Inverse is MANDATORY:** `discovery.md` carries the inverse `derives` row pointing back to this view (every edge between vault nodes is bidirectional). **Drift check:** the discovery `version` recorded above is the reconcile baseline — if the discovery's current `version` is higher, this view is STALE and must be re-reconciled in evolve mode (never hand-patched).
 
 ---
 
