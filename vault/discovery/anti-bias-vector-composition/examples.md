@@ -120,7 +120,7 @@ The hidden disagreement (s1 found a near-collision, s3 had a scope concern) surf
 
 ## Example 4 — Anti-pattern: false consensus
 
-**Scenario.** Five-agent evaluator layer dispatched on "is this PR description ready to ship?". All five return "yes, ship it". No dissent records. No pair-level differentiation noted.
+**Scenario.** Five-agent skeptic layer dispatched on "is this PR description ready to ship?" (each skeptic on a distinct gate). All five return "yes, ship it". No dissent records. No pair-level differentiation noted.
 
 **Correct response.** This is **not** a success. Five agents converging with zero dissent against a stated tensioned-pairwise spec means one of three things:
 
@@ -128,7 +128,7 @@ The hidden disagreement (s1 found a near-collision, s3 had a scope concern) surf
 2. The artifact is genuinely uncontroversial along all five tension axes.
 3. The agents are correlated through shared prompt / shared training distribution and the tensioning never engaged.
 
-The validator cannot distinguish (1)/(2)/(3) from output alone. Default action: treat as **failure to apply the principle** and either (a) re-dispatch the evaluator layer with one agent explicitly instructed to argue the opposite conclusion (debate-style fallback, per Irving-Christiano-Amodei), or (b) accept the consensus but record in the audit trail that the layer did not produce dissent, so future readers can weight the finding appropriately.
+The validator cannot distinguish (1)/(2)/(3) from output alone. Default action: treat as **failure to apply the principle** and either (a) re-dispatch the skeptic layer with one agent explicitly instructed to argue the opposite conclusion (debate-style fallback, per Irving-Christiano-Amodei), or (b) accept the consensus but record in the audit trail that the layer did not produce dissent, so future readers can weight the finding appropriately.
 
 The wrong response is to take the unanimous "yes, ship it" as five times more evidence than a single agent's "yes". Correlated unanimity is *not* multiplicative evidence. Treating it as such is the failure mode the principle exists to prevent.
 
@@ -136,7 +136,7 @@ The wrong response is to take the unanimous "yes, ship it" as five times more ev
 
 ## How to use these examples
 
-When authoring a new `theorem-research` spec, find the example whose layer shape matches yours (explorer / skeptic / evaluator / mixed) and use its "good" angles as a template. Replace the angle values with the ones appropriate to your macro goal, keep the axis classification, and run the spec past `validator-check.md`.
+When authoring a new `theorem-research` spec, find the example whose layer shape matches yours (explorer / skeptic / mixed) and use its "good" angles as a template. Replace the angle values with the ones appropriate to your macro goal, keep the axis classification, and run the spec past `validator-check.md`.
 
 When reviewing a returned dispatch and noticing unanimous findings, consult Example 4 before treating the unanimity as confirmation.
 

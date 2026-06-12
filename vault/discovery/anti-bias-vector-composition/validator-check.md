@@ -30,7 +30,7 @@ The validator runs the following over the `dispatch.yaml`. The spec is rejected 
 
 ### Step 1. Identify subject layers
 
-**Item 1.** Parse the spec's `layers` block. Identify all layers where `role ∈ {explorer, skeptic, evaluator}` and `agents.length ≥ 2`. These are the *subject layers* for this check. Layers with `role ∈ {synthesizer, writer, auditor}` are out of scope (single-agent by construction or single-check). Layers with `agents.length == 1` are out of scope (no pair to tension).
+**Item 1.** Parse the spec's `composition` block of layers. Identify all layers where `role ∈ {explorer, skeptic}` and `agents.length ≥ 2` (`N ≥ 2`). These are the *subject layers* for this check. Layers with `role ∈ {writer, auditor}` are out of scope (single-agent by construction or single-check). Layers with `N == 1` are out of scope (no pair to tension). (An `evaluator` role was retired 2026-06-11 — see [principle.md](./principle.md); criteria-scoring folds into `skeptic`.)
 
 **Item 2.** For each subject layer, parse the per-agent `angle` string. The `angle` is the field that names the agent's line of approach. (If a subject layer has agents without a stated `angle`, fail at this step — the principle cannot be checked on an unstated angle.)
 
