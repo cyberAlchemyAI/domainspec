@@ -1,0 +1,207 @@
+{
+  "dispatch_id": "2026-06-12-test-derivation-c2-cluster",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Run the test-derivation experiment; refine first, attack the design, find missing steps, then invoke a plan to run it.",
+  "refinement_objective": "Harden the C2 test-derivation experiment cluster (E1/E2/E3) into a runnable, validity-defensible, non-executed design with an explicit missing-steps ledger, AND design a path to a deterministic test-derivation engine (extraction G,Delta -> pure derivation T=delta(G,Delta)) so determinism is by-construction; ready for /invoke.",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "selected_overlays": [
+    {
+      "id": "dialectic_for_tension",
+      "why": "Core tension: E1 asserts deterministic derivation (Jaccard=1.0) but the derivation function is the LLM agent domainspec-test-designer. Experiment-as-designed (thesis) vs validity threats (antithesis), converging on a runnable hardened design.",
+      "roles": [
+        "Experiment Proponent (implicit in specs)",
+        "E1/E2/E3 Attackers"
+      ],
+      "convergence": "a design whose success criteria are testable under the real (LLM) derivation function, with named controls"
+    },
+    {
+      "id": "toy_game_for_low_cost_falsification",
+      "why": "Before committing to 10x3 runs + human tester + Stryker, run derivation 2-3x on ONE feature to falsify or support the determinism assumption cheaply.",
+      "artifact": "stages/toy-falsification-probe-design.md (probe is DESIGNED here, executed under /invoke plan)"
+    },
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "The real execution surface is hidden: derivation skill in implementation/domainspec, features+code+existing-tests in validation/poker-team, and zero measurement tooling. Map it.",
+      "artifact": "stages/cartographer-measurement-and-infra-map.md"
+    },
+    {
+      "id": "tournament_for_alternatives",
+      "why": "Operator-added engine track: compare candidate deterministic-derivation-engine architectures (pure compiler over formal docs; LLM-extract-then-deterministic-delta; constrained/seeded-LLM) against determinism guarantee, build cost, coverage fidelity, residual-LLM surface. Pick a winner + graft.",
+      "roles": ["Deterministic Engine Architect"],
+      "convergence": "one recommended engine architecture with explicit determinism boundary and what E1/E2/E3 then measure",
+      "artifact": "stages/architect-deterministic-engine.md"
+    }
+  ],
+  "rejected_overlays": [
+    {
+      "id": "route_menu_for_ambiguity",
+      "why_not": "Scope already fixed by operator: full C2 cluster E1+E2+E3 + engine track."
+    },
+    {
+      "id": "protected_context_for_external_or_sensitive_evidence",
+      "why_not": "No external/sensitive evidence; all local repo + known methodology."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "minimum_component_catalog",
+    "data_quality_completeness",
+    "residue_ledger"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "pending",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "E1 Determinism Attacker",
+        "owns": "Attack E1: LLM nondeterminism, the definition of 'same tests' (string vs obligation-set), required controls (temperature/model pin/frozen prompt+rules hash), whether Jaccard=1.0 is achievable or must be reframed, the bare-LLM control.",
+        "receipt": "stages/attacker-e1-determinism.md"
+      },
+      {
+        "role": "E2 Coverage Attacker",
+        "owns": "Attack E2: human-tester bias + blinding, the '7 features' reality (which actually have formal docs in poker-team), traceability measurement mechanics, count-superiority as a weak claim, categorization rubric for unique tests.",
+        "receipt": "stages/attacker-e2-coverage.md"
+      },
+      {
+        "role": "E3 Mutation Attacker",
+        "owns": "Attack E3: Stryker(TS) setup against poker-team backend, what 'derived test suite' means when derivation outputs a TEST-SPEC.md not runnable code (scaffold gap), existing-manual-baseline definition, mutant classification rubric, feasibility of survivors_critical=0.",
+        "receipt": "stages/attacker-e3-mutation.md"
+      },
+      {
+        "role": "Measurement & Infra Cartographer",
+        "owns": "Map cross-repo execution surface + the tooling that must be BUILT before any run: obligation-ID extractor, pairwise Jaccard, system_prompt_hash recipe, JSONL schema reuse from E6/E9, submodule discipline, run-metadata completeness.",
+        "receipt": "stages/cartographer-measurement-and-infra-map.md"
+      },
+      {
+        "role": "Deterministic Engine Architect",
+        "owns": "TARGET = FULLY deterministic engine (no LLM anywhere in the pipeline; formal docs become a machine-parseable schema). Design extraction AND derivation as deterministic: formal docs -> typed concept graph G + rule set Delta via a real grammar/parser -> pure function delta producing test obligations T. Tournament is over HOW to reach full determinism (grammar+IR design, schema formalization depth, parser strategy), not whether to keep an LLM. Specify: the machine-parseable doc schema required, the intermediate representation, the rule encoding in TEST-PIPELINE.md, and the MVP build boundary (smallest engine that derives valid obligations for one feature). State how E1 collapses (determinism is total/by-construction; the residual research claim becomes extraction-completeness: does the deterministic parser capture everything the formal docs encode). Confirm E2/E3 hold against engine output. Name the hardest formalization risk (what in the current free-text docs resists machine parsing).",
+        "receipt": "stages/architect-deterministic-engine.md"
+      }
+    ],
+    "context": "Each subagent reads its experiment spec + the generate-tests skill + TEST-PIPELINE.md + relevant poker-team feature docs. Read-only.",
+    "authorization_note": "Awaiting operator permission before spawning."
+  },
+  "stages": [
+    {
+      "step": 1,
+      "stage": "Context Builder baseline",
+      "owner": "refine",
+      "mode": "standard",
+      "inputs": [
+        "E1/E2/E3 specs",
+        "EXPERIMENTS.md",
+        "generate-tests skill",
+        "poker-team feature inventory"
+      ],
+      "output": "REFINE-SEED-PROPOSAL.md + recon in seed",
+      "receipt_kind": "context-pack",
+      "status": "pass"
+    },
+    {
+      "step": 2,
+      "stage": "Invoke Define",
+      "owner": "refine",
+      "mode": "define",
+      "output": "REFINE-SEED-PROPOSAL.md",
+      "receipt_kind": "invoke-artifact",
+      "status": "pass"
+    },
+    {
+      "step": 3,
+      "stage": "Interrogation refine-review",
+      "owner": "E1/E2/E3 Attackers + Cartographer + Engine Architect",
+      "mode": "refine-review",
+      "output": "stages/attacker-*.md + stages/architect-deterministic-engine.md",
+      "receipt_kind": "interrogation-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "stage": "Research decision",
+      "owner": "refine",
+      "mode": "research-if-gap-appears",
+      "output": "recorded in RESULT.md",
+      "receipt_kind": "decision",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "stage": "Distill",
+      "owner": "refine",
+      "mode": "standard",
+      "output": "RESULT.md threats->design distillation",
+      "receipt_kind": "distill-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "stage": "Invoke Redefine/Design",
+      "owner": "refine",
+      "mode": "design",
+      "output": "RESULT.md hardened design",
+      "receipt_kind": "invoke-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "stage": "Interrogation refine-design-review",
+      "owner": "refine",
+      "mode": "refine-design-review",
+      "output": "RESULT.md convergence",
+      "receipt_kind": "interrogation-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "stage": "Distill Repair",
+      "owner": "refine",
+      "mode": "validate",
+      "output": "RESULT.md residue ledger",
+      "receipt_kind": "distill-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "stage": "Invoke Plan",
+      "owner": "refine",
+      "mode": "plan",
+      "output": "RESULT.md runnable design -> handed to /invoke",
+      "receipt_kind": "invoke-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "stage": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "mode": "refine-final",
+      "output": "RESULT.md",
+      "receipt_kind": "synthesis",
+      "status": "pending"
+    }
+  ],
+  "gates": [
+    { "gate": "native_capability_handles", "status": "ok" },
+    { "gate": "stage_receipts", "status": "pending" },
+    { "gate": "research_confirmation", "status": "deferred" },
+    { "gate": "required_artifacts_exist", "status": "pending" },
+    { "gate": "owner_boundary_preserved", "status": "ok" },
+    { "gate": "final_synthesis_readiness", "status": "pending" }
+  ],
+  "observability": {
+    "group_by": "dispatch_id",
+    "events": [
+      "seed_written",
+      "dispatch_validated",
+      "strategy_previewed",
+      "permission_pending"
+    ]
+  },
+  "validation_status": "ready-pending-permission"
+}

@@ -1,0 +1,64 @@
+{
+  "run_id": "2026-06-12-test-derivation-c2-cluster",
+  "status": "flag",
+  "owner": "refine",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "count": 5,
+    "join_policy": "all-receipts-before-synthesis"
+  },
+  "artifacts": {
+    "seed": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "stage": "Interrogation refine-review",
+      "role": "E1 Determinism Attacker",
+      "artifact": "stages/attacker-e1-determinism.md",
+      "verdict": "flag"
+    },
+    {
+      "stage": "Interrogation refine-review",
+      "role": "E2 Coverage Attacker",
+      "artifact": "stages/attacker-e2-coverage.md",
+      "verdict": "flag"
+    },
+    {
+      "stage": "Interrogation refine-review",
+      "role": "E3 Mutation Attacker",
+      "artifact": "stages/attacker-e3-mutation.md",
+      "verdict": "flag"
+    },
+    {
+      "stage": "Interrogation refine-review",
+      "role": "Measurement and Infra Cartographer",
+      "artifact": "stages/cartographer-measurement-and-infra-map.md",
+      "verdict": "flag"
+    },
+    {
+      "stage": "Invoke Redefine/Design",
+      "role": "Deterministic Engine Architect",
+      "artifact": "stages/architect-deterministic-engine.md",
+      "verdict": "pass"
+    }
+  ],
+  "converged_blockers": [
+    "B1 determinism mislabelled",
+    "B2 unrunnable inputs / wrong feature locations",
+    "B3 contaminated baselines",
+    "B4 no executable derived tests + Stryker absent",
+    "B5 ill-defined success criteria"
+  ],
+  "recommended_next_routes": [
+    "invoke (mode: plan) consuming RESULT.md",
+    "task-session per build unit (later)"
+  ]
+}
