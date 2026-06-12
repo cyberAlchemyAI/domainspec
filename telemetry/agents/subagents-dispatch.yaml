@@ -1,0 +1,67 @@
+# subagents-dispatch.yaml — registry of subagent dispatches (one row per dispatch).
+# Written by the register-dispatch skill. `agents` and `anti_bias` are JSON columns.
+dispatches:
+  - dispatch_id: "2026-06-12-dispatch-ledger-fix-plan-assessment"
+    corpus: "internal_tools/subagents-dispatch-hooks"
+    topic_slug: "dispatch-ledger-fix-plan-assessment"
+    created: "2026-06-12T16:37:50.321Z"
+    status: "dispatched"
+    goal: "Adversarially assess the proposed schema-neutral fix plan for the subagents-dispatch logging stack (spawn-sidecar hook, structural validator, append-only extension, install re-run, deferred items) before implementation."
+    success_metric: {"type":"adversarial-audit"}
+    max_loops: 1
+    constraints: ["read-only assessment","self-contained per-agent context"]
+    anti_bias: {"axis":"critical lens (mechanism-correctness vs premise/simplicity vs governance-conformance)","pairs":["mechanism-critic ⟂ premise-critic","premise-critic ⟂ conformance-critic"]}
+    agents: [{"seq":"01","role":"skeptic","model":"parent","mode":"single","name":null,"target":"internal_tools/subagents-dispatch-hooks/* + ~/.claude hook registration","angle":"Hostile mechanism critic — will each fix actually work: hook event semantics, matcher coverage, Windows paths, fail-open holes, validator wiring"},{"seq":"02","role":"skeptic","model":"parent","mode":"single","name":null,"target":"the fix plan itself","angle":"Premise/simplicity critic — is each fix necessary now; is the schema-neutrality claim true or does any fix pre-decide v0.5.0 questions; over-engineering check"},{"seq":"03","role":"auditor","model":"parent","mode":"single","name":null,"target":"subagents-strategy-constitution-proposal.md + register-dispatch SKILL.md + repo conventions","angle":"Governance-conformance auditor — does the plan contradict the v0.5.0 proposal, the in-flight self-improvement dispatch, or repo conventions (frontmatter, telemetry layout)"}]
+  - close_of: "2026-06-12-dispatch-ledger-fix-plan-assessment"
+    closed: "2026-06-12T16:43:40.298Z"
+    exit_reason: "success — 3 critics converged: original 5-item plan rejected as over-eager; pre-commit gate vacuous (3/3), spawn-log sidecar deferred pending persistence-surface ruling + join-key redesign (2/3 + 1 conditional pass), validator XOR invariant valid only citing the closed self-improvement dispatch E1; 2 previously unknown live defects found (install.cjs cannot install PostToolUse hooks; installed enforce-hook matcher drifted, missing MultiEdit)"
+    agents_spawned: {"planned":3,"actual":3,"tree":{"mechanism-critic":1,"premise-critic":1,"conformance-auditor":1},"loops_used":1,"models":{"parent":3}}
+  - dispatch_id: "2026-06-12-constitution-v051-adversarial-assessment"
+    corpus: "research/subagents-strategy"
+    topic_slug: "constitution-v051-adversarial-assessment"
+    created: "2026-06-12T16:50:03.865Z"
+    status: "dispatched"
+    goal: "Find problems, inconsistencies, logic errors, and suboptimal decisions in subagents-strategy-constitution-proposal.md (v0.5.1, repo root)."
+    success_metric: {"type":"exploratory"}
+    max_loops: 1
+    anti_bias: {"axis":"governance minimalism vs auditability maximalism × methodology (formal vs empirical)","pairs":["Quine (lean) ⟂ Bell (safety)","Gödel (formal) ⟂ Abramsky (empirical)","Russell (false-positive killer) ⟂ Chalmers (false-negative hunter)"]}
+    agents: [{"seq":"01","layer":"L1","role":"explorer","model":"opus","mode":"task-fan-out","name":"Gödel, Kurt","target":"subagents-strategy-constitution-proposal.md","angle":"internal contradictions, cross-reference errors, schema-vs-prose mismatches (formal reading)"},{"seq":"02","layer":"L1","role":"explorer","model":"sonnet","mode":"task-fan-out","name":"Abramsky, Samson","target":"internal_tools/subagents-dispatch-hooks + telemetry/agents","angle":"empirical check against the actual tooling on disk — demands the machinery cannot honor"},{"seq":"03","layer":"L1","role":"explorer","model":"sonnet","mode":"task-fan-out","name":"Quine, Willard Van Orman","target":"subagents-strategy-constitution-proposal.md","angle":"remaining ceremony without value — suboptimal decisions by excess (lean prior)"},{"seq":"04","layer":"L1","role":"explorer","model":"sonnet","mode":"task-fan-out","name":"Bell, John S.","target":"subagents-strategy-constitution-proposal.md §7","angle":"cuts that destroyed needed safety/auditability (safety prior — direct tension with Quine)"},{"seq":"05","layer":"L2","role":"writer","model":"opus","mode":"single","name":"Noether, Emmy","target":"explorer outputs","angle":"cited synthesis — dedupe, severity-rank, claim ≤ proof"},{"seq":"06","layer":"L3","role":"skeptic","model":"opus","mode":"task-fan-out","name":"Russell, Bertrand","target":"synthesis draft","angle":"refute each finding against the literal text — false-positive killer"},{"seq":"07","layer":"L3","role":"skeptic","model":"opus","mode":"task-fan-out","name":"Chalmers, David","target":"synthesis draft","angle":"what the synthesis missed — false-negative hunter"}]
+  - dispatch_id: "2026-06-12-subagents-dispatch-hooks-readme-pattern-fix"
+    corpus: "internal_tools/subagents-dispatch-hooks"
+    topic_slug: "subagents-dispatch-hooks-readme-pattern-fix"
+    created: "2026-06-12T16:59:44.126Z"
+    status: "dispatched"
+    goal: "Restructure internal_tools/subagents-dispatch-hooks/README.md to conform to the repo readme-pattern skill (4 required sections, navigation-only, no actionable items) without losing or inventing technical truth."
+    max_loops: 1
+    anti_bias: {"axis":"pattern-strictness vs content-preservation","pairs":["F1-fixer (pattern-first) ⟂ R1-reviewer (truth-preservation-first)"]}
+    agents: [{"seq":"01","role":"writer","model":"parent","mode":"single","name":null,"target":"internal_tools/subagents-dispatch-hooks/README.md","angle":"Pattern-first rewrite: impose the 4-section structure and navigation-only rule; relocate or factualize anything actionable; keep frontmatter valid"},{"seq":"02","role":"auditor","model":"parent","mode":"single","name":null,"target":"rewritten README vs the tool's code files","angle":"Truth-preservation review: every claim in the new README must match the code on disk; flag lost load-bearing content and any remaining pattern violations"}]
+  - close_of: "2026-06-12-constitution-v051-adversarial-assessment"
+    closed: "2026-06-12T17:00:54.933Z"
+    exit_reason: "resolved — final_approver (parent) accepted the adjudicated synthesis; 2 CRITICAL, 14 MAJOR, 11 MINOR confirmed, 4 findings refuted in review"
+    agents_spawned: {"planned":7,"actual":7,"tree":{"investigate":4,"synthesize":1,"evaluate":2},"loops_used":1,"models":{"opus":4,"sonnet":3}}
+  - close_of: "2026-06-12-subagents-dispatch-hooks-readme-pattern-fix"
+    closed: "2026-06-12T17:05:39.949Z"
+    exit_reason: "success — fixer rewrote README to the 4-section readme-pattern (128 -> ~50 lines, mechanics delegated to owning source files, actionable caveat factualized); reviewer passed-with-nits (accuracy/loss/conformance all PASS); 4 minor findings fixed by parent: zero-deps statement restored, 'recorded elsewhere' dropped, install.cjs header comment MultiEdit drift, example ledger row added to SKILL.md"
+    agents_spawned: {"planned":2,"actual":2,"tree":{"writer":1,"auditor":1},"loops_used":1,"models":{"parent":2}}
+  - dispatch_id: "2026-06-12-close-session-node-curation"
+    corpus: "vault/sessions"
+    topic_slug: "close-session-node-curation"
+    created: "2026-06-12T17:14:12.820Z"
+    status: "dispatched"
+    goal: "Close the session: classify the session node frontmatter and bootstrap its forward-only Connections edges."
+    max_loops: 1
+    anti_bias: {"axis":"n/a — sequential single-role helpers (classifier then curator), no parallel siblings to tension","pairs":[]}
+    agents: [{"seq":"01","role":"agent","model":"sonnet","mode":"single","name":null,"target":"frontmatter.md + frontmatter-semantics.md + session summary","angle":"classify node_type/tags/layer/nature/importance per skill priority order"},{"seq":"02","role":"agent","model":"parent","mode":"single","name":null,"target":"new session node + edge-catalog skills","angle":"bootstrap forward-only Connections block, catalog edges only, no inverse rows"}]
+  - close_of: "2026-06-12-close-session-node-curation"
+    closed: "2026-06-12T17:17:52.893Z"
+    exit_reason: "success — classifier returned node_type audit / importance 8; session node written with Connections bootstrapped forward-only (5 catalog edges, no inverse rows, no NEEDS_HUMAN)"
+    agents_spawned: {"planned":2,"actual":2,"tree":{"classifier":1,"curator":1},"loops_used":1,"models":{"sonnet":1,"parent":1}}
+  - dispatch_id: "2026-06-12-port-skill-and-appender-to-v052"
+    corpus: "internal_tools/subagents-dispatch-hooks + .claude/skills/domainspec-subagents-strategy"
+    topic_slug: "port-skill-and-appender-to-v052"
+    created: "2026-06-12T17:29:49.035Z"
+    status: "dispatched"
+    goal: "Port the domainspec-subagents-strategy SKILL.md and the register-dispatch appender/skill to constitution v0.5.2 (groups/connections schema, two-append ledger, closed enums), adding an invoked_by (git/GitHub email) field to the dispatch row."
+    max_loops: 1
+    anti_bias: {"axis":"implementers split by artifact ownership; reviewers tensioned on attack vector (constitution-fidelity vs mechanical-executability)","pairs":["reviewer-fidelity ⟂ reviewer-mechanics"]}
+    agents: [{"seq":"01","role":"agent","model":"fable","mode":"task-fan-out","name":null,"target":".claude/skills/domainspec-subagents-strategy/SKILL.md","angle":"rewrite the strategy skill to operationalize v0.5.2 exactly (no invented machinery, claim<=proof)"},{"seq":"02","role":"agent","model":"fable","mode":"task-fan-out","name":null,"target":"internal_tools/subagents-dispatch-hooks/**","angle":"migrate appender + register-dispatch skill to the v0.5.2 row schema with invoked_by, grandfathering old rows, test battery green"},{"seq":"03","role":"skeptic","model":"fable","mode":"task-fan-out","name":null,"target":"both diffs","angle":"fidelity attack: any place where the artifact contradicts or silently extends the v0.5.2 constitution text"},{"seq":"04","role":"skeptic","model":"fable","mode":"task-fan-out","name":null,"target":"both diffs","angle":"mechanics attack: will the appender/hook/skill actually run — broken paths, schema mismatch between skill and appender, old-ledger rows failing the self-check"}]
