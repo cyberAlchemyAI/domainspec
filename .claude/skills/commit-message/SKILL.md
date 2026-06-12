@@ -1,11 +1,33 @@
 ---
 name: commit-message
-description: Checklist for writing commit messages — use at commit time
+description: Checklist for splitting changes into commit groups and writing commit messages — use at commit time
 ---
 
 # Commit Message Skill
 
 > Authority: `docs/vault/constitution/commit-message-constitution.md`
+
+## Grouping (before writing any message)
+
+When the pending changes span more than one logical concern, split them
+into **commit groups** — one commit per group. A single commit is fine
+when the changeset is genuinely one concern.
+
+1. **Choose one grouping rule** for the whole changeset. The agent
+   decides which rule fits; common rules (not exhaustive):
+   - *By concern* — each independent fix/feature/refactor is a group
+   - *By layer* — e.g. domain logic vs. interface vs. infrastructure
+   - *By feature/folder* — when changes touch unrelated features
+   - *Mechanical vs. behavioral* — renames/formatting apart from logic changes
+2. **Explain to the user, before committing:**
+   - The groups (which files/changes land in each)
+   - Which rule was chosen to form them
+   - Why that rule fits this changeset better than the alternatives
+3. **Then write one standard commit message per group**, following the
+   rest of this checklist (prefix, subject, body, files, tests, ref).
+
+A group must be self-contained: it should build and make sense on its
+own, without depending on changes left in a later group.
 
 ## Prefix (required)
 
