@@ -441,3 +441,35 @@ dispatches:
     invoked_by: "victorboscaro@gmail.com"
     exit_reason: "resolved"
     agents_spawned: {"total":3,"tree":{"evaluate":3,"helpers":0},"loops_used":1}
+  - dispatch_id: "2026-06-13-ledger-model-review"
+    schema_version: "0.5.2"
+    created: "2026-06-13T04:59:22.504Z"
+    invoked_by: "victorboscaro@gmail.com"
+    dispatch_type: "review"
+    goal: "Red-team o LEDGER-MODEL.md recem-escrito: duplicacao/contradicao com as fontes de verdade (SKILL.md, constituicao) e precisao tecnica + links que resolvem."
+    context: "LEDGER-MODEL.md e um doc de modelo do ledger de dispatch, dono do modelo mental e que deve apontar (nao duplicar) pro SKILL.md e pra constituicao. Dois reviewers atacam por vetores distintos antes de aceitar: duplicacao/contradicao com as fontes, e precisao+links."
+    max_loops: 1
+    final_approver: "parent"
+    working_folder: "internal_tools/subagents-dispatch-hooks/docs/"
+    groups: [{"group_id":"reviewers","role":"evaluate","n":2,"anti_bias":"vetor de review (duplicacao/contradicao-com-fontes vs precisao-tecnica/links)","agents":[{"agent_name":null,"role":"auditor","model":"claude-opus-4-8","token_budget":2500,"angle":"duplicacao/contradicao: o doc restata schema do SKILL.md ou contradiz a lei? atribui autoridade ao lugar certo?","initial_prompt":"Atacar duplicacao/contradicao do LEDGER-MODEL.md contra SKILL.md (schema) + constituicao (lei) + README. Achar restatement de schema que desincroniza, contradicoes de two-append/exit_reason/dispatch_type/principios, e atribuicao de autoridade errada."},{"agent_name":null,"role":"auditor","model":"claude-opus-4-8","token_budget":2500,"angle":"precisao tecnica + links: claims estruturais (arvore, L1/L2/L3, duas-especies, caminho do ledger, exit_reason) corretos? links relativos resolvem? frontmatter valido?","initial_prompt":"Atacar precisao factual e navegabilidade do LEDGER-MODEL.md: verificar claims estruturais contra SKILL.md + appender, conferir que cada link relativo resolve no disco, e validar o frontmatter."}]}]
+  - close_of: "2026-06-13-ledger-model-review"
+    closed: "2026-06-13T04:59:34.083Z"
+    invoked_by: "victorboscaro@gmail.com"
+    exit_reason: "resolved"
+    agents_spawned: {"total":2,"tree":{"evaluate":2,"helpers":0},"loops_used":1}
+  - dispatch_id: "2026-06-13-experiment-type-review"
+    schema_version: "0.5.2"
+    created: "2026-06-13T05:19:42.053Z"
+    invoked_by: "victorboscaro@gmail.com"
+    dispatch_type: "review"
+    goal: "Red-team a adicao do dispatch_type experiment (reservado/FORECAST) cross-repo: consistencia + reserved-not-LIVE, e coerencia do (role-set, grader) + edicoes aditivas sem overclaim."
+    context: "Agentes de edicao adicionaram experiment como dispatch_type reservado/FORECAST ao appender, SKILL.md, constituicao-proposal e tabela §3 do DISPATCH-COMPOSITION-MODEL.md (Arcanum). Antes de commit/push nos dois repos, dois reviewers atacam por vetores distintos."
+    max_loops: 1
+    final_approver: "parent"
+    working_folder: "internal_tools/subagents-dispatch-hooks/"
+    groups: [{"group_id":"reviewers","role":"evaluate","n":2,"anti_bias":"vetor de ataque (consistencia/reserved-status vs coerencia-cross-repo/aditivo/overclaim)","agents":[{"agent_name":null,"role":"auditor","model":"claude-opus-4-8","token_budget":2500,"angle":"consistencia + reserved-not-LIVE: experiment em DISPATCH_TYPES mas nao LIVE_TYPES; todas as ocorrencias do enum atualizadas; teste verde","initial_prompt":"Verificar que experiment esta reservado (nao LIVE) em appender/SKILL/constituicao/Arcanum, todas as ocorrencias do enum atualizadas, e rodar o test battery."},{"agent_name":null,"role":"auditor","model":"claude-opus-4-8","token_budget":2500,"angle":"coerencia (role-set, grader) cross-repo + edicoes aditivas (git diff) + sem overclaim + open question registrada","initial_prompt":"Verificar coerencia do (role-set, grader) entre domainspec e Arcanum, que as edicoes sao puramente aditivas (git diff), sem overclaim, e a open question tipo-vs-submodo registrada nos dois lados."}]}]
+  - close_of: "2026-06-13-experiment-type-review"
+    closed: "2026-06-13T05:19:55.920Z"
+    invoked_by: "victorboscaro@gmail.com"
+    exit_reason: "resolved"
+    agents_spawned: {"total":2,"tree":{"evaluate":2,"helpers":0},"loops_used":1}
