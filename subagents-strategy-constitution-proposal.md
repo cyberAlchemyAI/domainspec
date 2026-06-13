@@ -45,8 +45,9 @@ are validated by the human at the confirm gate.)
   Each dispatch contributes exactly **two appends**: the **dispatch row** (the spec, written
   at dispatch) and the **close row** (`close_of` + outcome, written at termination). There is
   no separate spec file and no separate event log.
-- **Claim ≤ proof:** four of the five `dispatch_type` values (`code | review | plan | suggestion`)
-  are reserved names — defined in §5 but not yet active; only `research` is LIVE.
+- **Claim ≤ proof:** three of the five `dispatch_type` values (`code | plan | suggestion`)
+  are reserved names — defined in §5 but not yet active; `research` and `review` are LIVE
+  (`review` populated 2026-06-12 by owner decision — see §5 `dispatch_type`).
 - **Companion documents:** a group running robot-talks binds `vault/constitution/robot-talks-constitution.md`;
   the pool of allowed `agent_name`s lives at `telemetry/agents/agent-pool.yaml` (245 names, each
   tagged with an ordered `role_fit` list drawn from explorer / skeptic / writer / auditor).
@@ -57,10 +58,20 @@ are validated by the human at the confirm gate.)
 
 ## 3. High-level idea
 
-A dispatch is a sequence of **groups**. **Groups run sequentially, in declared order;
-the agents inside a group always run in parallel** — each agent gets its own start, with
-its own briefing and its own context. Parallel means concurrent and independent, never
-shared. Anything that depends on a sibling's output belongs in a later group.
+A dispatch is a set of **groups** ordered by their connections. **Groups are scheduled by
+dependency: a group is READY when every group with a `sequential` or `zig-zag` edge into it
+has produced what it must respond to; all READY groups launch concurrently.** A zig-zag
+edge counts as a dependency in its `from`→`to` direction only — the `from` endpoint opens
+the exchange (A→B with A = `from`); the back-turns are intra-exchange, never readiness
+edges. `feedback`
+edges are back-edges and never count as dependencies (counting them would make every loop a
+deadlock). Groups with no incoming edges start together at dispatch; a sheet that declares
+no connections thereby declares its groups independent — if order matters, say so with an
+edge. Declared order is the deterministic tiebreak for narration and registration, not an
+execution constraint. **The agents inside a group always run in parallel** — each agent
+gets its own start, with its own briefing and its own context. Parallel means concurrent
+and independent, never shared. Anything that depends on a sibling's output belongs in a
+downstream group, joined by an edge.
 
 **Connections** say how groups relate beyond plain order: a group can simply send its
 output forward (`sequential`), two groups can exchange messages in bounded alternation
@@ -108,8 +119,14 @@ redesigning the framework itself — and is the only context in which dispatch l
 1. **Trigger.** Dispatch only when at least one holds: *synthesis* (3+ sources to combine), *context protection* (raw output ≫ what the parent needs), *isolation* (discardable exploration), *parallelism* (independent tasks). Otherwise work inline.
 2. **Human gate.** The strategist proposes the filled sheet in chat; the human confirms, revises, or abandons. Nothing dispatches — and no row is written — before the confirm. Confirmation is an explicit affirmative from the human in chat; silence or a question is not confirmation. The confirmed sheet is **frozen**: any strategist edit after confirm re-enters the gate.
 3. **Two appends, one place.** The strategist appends the **dispatch row** to `telemetry/agents/subagents-dispatch.yaml` at dispatch, and the **close row** (`close_of` carrying `exit_reason` + `agents_spawned`) at termination. Rows are **never edited in place** — the ledger is append-only, and the appender is the single, serializing write path. The outcome is additionally reported in chat (1–2 sentences) and in the findings document. No other persistence surface exists for dispatch metadata.
-4. **Execution shape.** Agents within a group run in parallel — each with its own start, briefing, and context; groups run sequentially in declared order. Dependent work goes in a later group. An agent error inside a group degrades to a **partial group result** that downstream groups and the `final_approver` must be told about; `exit_reason: error` is reserved for failures that leave the dispatch unable to produce its deliverable.
+4. **Execution shape.** Agents within a group run in parallel — each with its own start, briefing, and context. Groups are scheduled **by dependency**: a group is READY when every group with a `sequential` or `zig-zag` edge into it has produced what it must respond to (a zig-zag edge counts only in its `from`→`to` direction — the `from` endpoint opens the exchange); all READY groups launch concurrently; `feedback` edges never count as dependencies; a sheet with no connections declares its groups independent. Dependent work goes in a downstream group, joined by an edge. An agent error inside a group degrades to a **partial group result** that downstream groups and the `final_approver` must be told about; `exit_reason: error` is reserved for failures that leave the dispatch unable to produce its deliverable.
 5. **Anti-bias tension.** Any group with N ≥ 2 agents must be **pairwise tensioned**: for every pair, a competent observer could predict in advance a question on which they disagree. The group names the axis (`anti_bias`); each agent takes a position (`angle`). Non-overlapping is not enough. The check happens at the confirm gate: a sheet whose pairs have no predictable disagreement goes back for revision. The proposal must state, for each tensioned pair, the question on which the two are predicted to disagree.
+   **Decision rule (mechanical PASS/REJECT, applied at the confirm gate; semantics owned by `vault/discovery/anti-bias-vector-composition/validator-check.md` — note: that file's operational protocol predates v0.5.2 and speaks the removed schema (`dispatch.yaml`, `composition`/`layers[]`); tests 1–4 below are the v0.5.2 operationalization, and the vault file is pending realignment):**
+   1. **Axis test** — the **group-level `anti_bias`** names one of the four canonical axes (**methodology | source-corpus | attack-vector | temporal-prior**) or an explicitly declared composite of them. Anything outside this vocabulary → REJECT. The closure governs per-group `anti_bias` only — `anti_bias_global` is a free-text tension theme (§5) that the per-group axes specialize; it is never vocabulary-checked.
+   2. **Clone test** — any two `angle`s in the group share the same core noun phrase → REJECT.
+   3. **Spread test** — in an `investigate` group: all agents share one methodology, or all share one source corpus → REJECT (a pass requires at least two distinct axes represented across the group's angles). In an `evaluate` group: any two skeptics share the same attack gate → REJECT.
+   4. **Evidence test** — the sheet carries, for every pair, the written predicted-disagreement sentence ("a_i runs [X], a_j runs [Y] on the [axis] axis; a bias in a_i would be exposed by a_j"). Any pair missing its sentence → REJECT.
+   A sheet that passes all four tests PASSES — no residual judgment call. **Enforcement split:** the appender enforces the presence conditionals (group `anti_bias` at n ≥ 2; `anti_bias_global` when ≥ 2 groups have n ≥ 2 — both exit 2); tests 1–4 are checked on the sheet at the gate.
 6. **Synthesizer midfield.** Between explorers and reviewers there is always a synthesizer. Synthesizer ↔ reviewers iterate via zig-zag; synthesizer → explorers via **feedback**, which is **conditional** — it is instantiated only when there is a reviewer/auditor group *and* material may be missing, not auto-instantiated in every dispatch. Reviewers never review raw explorer output directly.
 7. **Aggregation is derived.** A group with `robot_talks: true` → `synthesize`; otherwise → `concat` (an `n = 1` group simply returns its single output). Aggregation is never a field. Zig-zag is inter-group exchange — it does not change either group's combination rule. *(Non-binding note: a bare `concat` is intermediate plumbing, never the dispatch's final deliverable — concatenated parallel outputs feed a downstream `synthesize` group or the `final_approver`, they are not handed back as the answer.)*
 8. **Trust-but-verify.** If a subagent wrote files or claimed a check passed, the parent inspects the actual diff / runs the actual check before treating it as done.
@@ -118,7 +135,7 @@ redesigning the framework itself — and is the only context in which dispatch l
 11. **Helper invocations are not dispatches.** A single agent spawned *by* a running agent, within its parent's scope, needs no row and no gate — it is reported post-hoc in the parent's `agents_spawned` report (chat + findings, not written to the ledger row). It escalates to a real dispatch if it fans out (2+) or outgrows the scope. Spawn count is unregulated; reporting is the brake. *(The exact helper-vs-dispatch boundary is provisional — an open question, not settled law.)*
 12. **Final approval.** Every dispatch names a `final_approver` holding the last approve/reject with a does-this-fit-the-whole mandate. There is exactly **one human gate** — the entry confirm of Principle 2. `final_approver` is `parent` (default) or a **dedicated approver agent**: the sole member of a `meta-evaluate` group that does no other work in the dispatch. An approver may **never** appear in any working group — self-approval is prohibited. The approver receives the full `working_folder` (for research n ≥ 2: both `research.md` and `findings.md`, so the Principle 9 citation check is actionable). If the approver's group never runs (early abort, upstream error), approval falls back to `parent`. When the approver is an agent, it *recommends* accept/reject; a reject is what may trigger a re-run within `max_loops`. The human never loses the power to abandon (`user_abort`), but there is **no second human gate at close** — the close is report-only plus the close row (Principle 3).
 13. **Meta and lineage.** A planning/framework dispatch is marked `meta`. `parent_dispatch_id` exists **only** on a dispatch spawned by a meta dispatch, pointing back to it. No other lineage fields exist. A meta dispatch may itself be planned by another meta dispatch (`meta: true` with non-null `parent_dispatch_id`); the chain stays finite and acyclic. A meta-planned child is a new sheet and re-enters the confirm gate — Principle 2 has no meta exception.
-14. **Robot-talks binding.** Any group with `robot_talks: true` additionally binds `vault/constitution/robot-talks-constitution.md` as versioned at dispatch time; that constitution wins conflicts **inside the discussion** — but where it would prescribe an additional human gate, this constitution's single-gate rule (Principle 12) governs. When a synthesizer sits downstream of a robot-talks reviewer group, it MUST receive each review agent's **initial** and **final** position (both present in `working_folder`), so premature-convergence / collapse is detectable.
+14. **Robot-talks binding.** Any group with `robot_talks: true` additionally binds `vault/constitution/robot-talks-constitution.md` as versioned at dispatch time; that constitution wins conflicts **inside the discussion** — but where it would prescribe an additional human gate, this constitution's single-gate rule (Principle 12) governs. When a synthesizer sits downstream of **any robot-talks group whose agents' positions feed it**, it MUST receive each of that group's agents' **initial** and **final** position (both present in `working_folder`), so premature-convergence / collapse is detectable. *(Scope generalized 2026-06-12 to cover the review type's attacker→synthesizer hop.)*
 
 ## 5. Parameter reference
 
@@ -142,10 +159,19 @@ strategist checks the ledger before assigning; if the slug repeats within a date
 its schema; pre-v0.5.2 rows are recognizable by this field's absence.
 **How:** the literal version of this constitution at dispatch time.
 
+#### `invoked_by` — O · A (tooling-provenance extension)
+**What:** the invoking user's git/GitHub email — provenance for who triggered the dispatch.
+**Why:** ties a row to the human behind the strategist session for later attribution; a
+tooling-level convenience, not a dispatch-design field.
+**How:** resolved by the appender from `git config user.email` when omitted; may be set
+explicitly. Recognized as a tooling-provenance extension — it carries no constitutional
+semantics and gates nothing.
+
 #### `dispatch_type` — R · A
 **What:** which typed strategy (role-set + evaluation criterion) the dispatch enacts.
 **Why:** fixes the agent-role vocabulary in one move.
-**Values:** `research | code | review | plan | suggestion`. Only `research` is LIVE; the other four are reserved names and **must not be dispatched until populated**.
+**Values:** `research | code | review | plan | suggestion`. Only `research` and `review` are LIVE; the other three are reserved names and **must not be dispatched until populated**.
+*(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded without a version bump because the row schema is unchanged — fold into the next versioned amendment. §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)*
 
 #### `goal` — R · **H**
 **What:** the human's general objective, one or two sentences. The strategist decomposes it
@@ -194,10 +220,14 @@ dispatch that wasn't planned by a meta dispatch.
 
 #### `anti_bias_global` — C · A (required when ≥ 2 groups have `n ≥ 2`; optional otherwise)
 **What:** the dispatch-wide tension theme that per-group `anti_bias` axes specialize.
+**Free-text** — not subject to the Principle 5 axis-vocabulary closure (that closure governs
+per-group `anti_bias` only).
 **Why:** keeps the tension design coherent across groups instead of N unrelated axes — required
 once two or more groups each fan out, where uncoordinated axes would drift.
+**Enforcement:** the conditional is appender-enforced (exit 2) since the 2026-06-12 in-place
+amendment (§9) — a record with ≥ 2 fan-out groups and no `anti_bias_global` is rejected.
 
-#### `working_folder` — C · A (required when `dispatch_type: research`)
+#### `working_folder` — C · A (required when `dispatch_type` is `research` or `review`)
 **What:** where the dispatch's outputs land — research + findings documents, a spec file,
 or the code itself, depending on what the dispatch produces. For `research`, this is always a
 docs path. For a research **n ≥ 2** dispatch the two files of Principle 9 are
@@ -208,7 +238,9 @@ synthesis); a research **n = 1** dispatch produces a single `<working_folder>/fi
 
 ### Level 2 — GROUP (`groups[]`)
 
-Groups run **sequentially in declared order**; the agents inside each run **in parallel**.
+Groups are scheduled **by dependency** (Principle 4): every group whose edge-predecessors
+are done launches, concurrently with other ready groups; the agents inside each run
+**in parallel**.
 
 #### `group_id` — R · A
 **What:** stable id, the target of `connections[]` references. E.g. `explorers`, `synthesizer`, `reviewers`.
@@ -253,8 +285,9 @@ present**; when `anti_bias_global` is absent, the group's `anti_bias` is stand-a
 (self-sufficient, references no global).
 **Why:** Principle 5 made mechanical — forces the strategist to *design* the disagreement
 instead of spawning N clones.
-**How:** name the axis and ideally the tensioned pairs. Typical axes: methodology, source
-corpus, attack vector, era prior.
+**How:** name the axis and ideally the tensioned pairs. The axis vocabulary is closed
+(Principle 5 decision rule, axis test): **methodology | source-corpus | attack-vector |
+temporal-prior**, or an explicitly declared composite of them.
 
 ### Level 3 — CONNECTION (`connections[]`)
 
@@ -270,7 +303,10 @@ Plain JSON objects: `{from, to, type, loop_cap?}`. Nothing else. (`loop_cap` onl
   information handoff.
 - `zig-zag` — bounded **message exchange** between two groups, alternating turns
   (A→B→A→…). The canonical use: synthesizer ↔ reviewers. Exchange only — it does not
-  change how either group aggregates its outputs. **Ordering:** a group's robot-talks
+  change how either group aggregates its outputs. **Opening turn:** the `from` endpoint
+  opens the exchange; for readiness scheduling (P4) the edge counts as a dependency only
+  in its `from`→`to` direction — the back-turns are intra-exchange, never readiness edges.
+  **Ordering:** a group's robot-talks
   discussion resolves completely before the group enters any zig-zag turn.
   **Convergence:** every reviewer-side turn carries the standing goal of hunting
   inconsistencies; a turn in which **no participating reviewer raises an inconsistency**
@@ -279,7 +315,10 @@ Plain JSON objects: `{from, to, type, loop_cap?}`. Nothing else. (`loop_cap` onl
 - `feedback` — a back-edge: a later group reaches back to an earlier one for more material.
   The canonical use: synthesizer → explorers. **Semantics:** the same agents are re-invoked;
   the requesting group's ask **is** the feedback prompt, and the parent session records it
-  verbatim in the close row (Principle 3).
+  verbatim in the close row (Principle 3). **Firing rule (under dependency scheduling, P4):**
+  a feedback edge fires as a re-invocation **event** — it fires when (and only when) the
+  requesting group emits its ask; it never counts as a dependency and never blocks any
+  group's launch (§3).
 
 **Canonical edge set (default for `dispatch_type: research`):** explorers → synthesizer
 (`sequential`) and synthesizer ↔ reviewers (`zig-zag`) are instantiated when the strategist
@@ -397,7 +436,7 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
 # rows are never edited in place (Principle 3).
 - dispatch_id: 2026-06-12-example-slug
   schema_version: "0.5.2"
-  dispatch_type: research             # research LIVE; code|review|plan|suggestion FORECAST
+  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); code|plan|suggestion FORECAST
   goal: >                             # HUMAN input — the general objective;
     One or two sentences.             # the strategist decomposes it below.
   context: >
@@ -410,7 +449,8 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
   anti_bias_global: novelty optimism vs precedent skepticism
   working_folder: docs/features/<feature>/research/<topic>/   # or a spec path, or code
 
-  groups:                             # groups run SEQUENTIALLY in declared order
+  groups:                             # scheduled by DEPENDENCY (P4): ready groups launch concurrently;
+                                      # declared order is narration tiebreak, not an execution constraint
     - group_id: explorers
       role: investigate
       n: 3                            # the 3 agents run IN PARALLEL, one message
@@ -554,3 +594,38 @@ claim scoped to structure (M13); appender named the single serializing write pat
 re-keyed by role-category with a `helpers` bucket (m7/N15); `context` made required (N12);
 robot-talks binding pinned under the single-gate rule (N14); wave5 precedent flagged as
 old-schema (m9).
+
+## 9. 2026-06-12 in-place owner amendments (scheduling + anti-bias decision rule)
+
+Owner decisions of the 2026-06-12 session (recorded in place, no version bump — the row
+schema is unchanged; fold into the next versioned amendment, per the `review`-promotion
+precedent in §5 `dispatch_type`):
+
+| Decision | Amendment |
+|---|---|
+| **D1 — dependency scheduling** | "Groups run sequentially in declared order" replaced everywhere (§3, P4, §5 Level 2, §6 skeleton) by dependency-based readiness: a group is READY when every group with a `sequential`/`zig-zag` edge into it has produced what it must respond to; all READY groups launch concurrently; `feedback` edges never count as dependencies; a connection-less sheet declares its groups independent; declared order is narration/registration tiebreak only. |
+| **D2 — anti_bias decision rule** | Principle 5 gains a four-test mechanical PASS/REJECT rule (axis vocabulary closed to the four canonical axes or a declared composite — **scoped to per-group `anti_bias` only**; `anti_bias_global` stays a free-text theme; clone test; spread test; pairwise predicted-disagreement evidence test), with semantics owned by `vault/discovery/anti-bias-vector-composition/validator-check.md` *(pending v0.5.2 realignment — its protocol still speaks the removed `dispatch.yaml`/`composition`/`layers[]` schema)*. **Enforcement split:** tests 1–4 are gate-checked on the sheet only (no executable enforcement); solely the `anti_bias_global` ≥ 2-fan-out-groups presence conditional moves from gate-only to **appender-enforced** (exit 2). |
+
+**Premise-debt re-confrontation** (per the §7 meta-clause): **P-SS-8 (spawn budget)** —
+AFFIRMED, carried open; D1/D2 add no spawn or cost machinery (concurrent launch changes
+wall-clock shape, not agent count or token spend). **P-SS-9 (linear lifecycle)** —
+AFFIRMED, carried open; D1 changes group *execution* scheduling (topology), not the
+propose → confirm → dispatch → close lifecycle, which stays linear. This affirmation relies
+on the lifecycle-vs-topology separation that P-SS-9's own discharge condition records as
+not yet made — an honest dependency, not a discharge. **NEW debt (opened by v0.5.1,
+narrowed by v0.5.2 — §7)** — AFFIRMED, carried open in full, both clauses: the spec-file,
+telemetry, and validator rules (R25–R28 in v0.3.0) remain removed and P-SS-9's artifact
+wording rests on Principle 9's research-only two-file clause; and (residual) the registry
+remains the only persistence surface for dispatch metadata.
+
+**LANDED 2026-06-12 (in place, no version bump — same precedent as the `review`-type
+population in §5):** `invoked_by` — the appender-resolved invoking-user email stamped on
+both rows — is now recognized in §5 (Level 1) as an OPTIONAL tooling-provenance extension
+(owner-directed 2026-06-12; source: register-dispatch SKILL). Fold into the next versioned
+amendment.
+
+**Related open proposal (not yet law):** depth-1 nested dispatch (a working agent granted
+the right to open ≤ 1 nested dispatch, capped at 2 nested dispatches per parent, nested
+dispatches may not nest further, delegated gate + mandatory registration via
+`parent_dispatch_id`). Pending a `dispatch_type: research` design dispatch before any
+amendment is drafted — Principle 13 and Principle 11 are the affected law.
