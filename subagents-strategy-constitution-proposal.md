@@ -45,7 +45,7 @@ are validated by the human at the confirm gate.)
   Each dispatch contributes exactly **two appends**: the **dispatch row** (the spec, written
   at dispatch) and the **close row** (`close_of` + outcome, written at termination). There is
   no separate spec file and no separate event log.
-- **Claim ≤ proof:** three of the five `dispatch_type` values (`code | plan | suggestion`)
+- **Claim ≤ proof:** four of the six `dispatch_type` values (`code | plan | suggestion | experiment`)
   are reserved names — defined in §5 but not yet active; `research` and `review` are LIVE
   (`review` populated 2026-06-12 by owner decision — see §5 `dispatch_type`).
 - **Companion documents:** a group running robot-talks binds `vault/constitution/robot-talks-constitution.md`;
@@ -170,8 +170,9 @@ semantics and gates nothing.
 #### `dispatch_type` — R · A
 **What:** which typed strategy (role-set + evaluation criterion) the dispatch enacts.
 **Why:** fixes the agent-role vocabulary in one move.
-**Values:** `research | code | review | plan | suggestion`. Only `research` and `review` are LIVE; the other three are reserved names and **must not be dispatched until populated**.
+**Values:** `research | code | review | plan | suggestion | experiment`. Only `research` and `review` are LIVE; the other four are reserved names and **must not be dispatched until populated**.
 *(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded without a version bump because the row schema is unchanged — fold into the next versioned amendment. §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)*
+*(`experiment` reserved/FORECAST (2026-06-12), not LIVE: the falsification strategy — run a probe against a pre-registered success/failure criterion. **Role-set:** designer (designs the probe + the failure/success criterion) · runner (executes the probe, produces raw result) · adjudicator (decides survived/falsified vs the pre-registered criterion) · skeptic (attacks validity: confounds, the test does not test the hypothesis). **Grader:** falsification against the pre-registered criterion + internal validity of the test + reproducibility — distinct from `research`, whose grader is coverage / claim ≤ proof. **Open question:** is `experiment` a peer `dispatch_type` or a sub-mode of `research`? (in Arcanum the evidence-harness is a sibling of the tower), and the `runner` role collides with the reserved `code` type (no execution substrate yet). Promotion gated by: a real experiment wanted-and-not-served + an execution substrate + resolving type-vs-sub-mode.)*
 
 #### `goal` — R · **H**
 **What:** the human's general objective, one or two sentences. The strategist decomposes it
@@ -436,7 +437,7 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
 # rows are never edited in place (Principle 3).
 - dispatch_id: 2026-06-12-example-slug
   schema_version: "0.5.2"
-  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); code|plan|suggestion FORECAST
+  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); code|plan|suggestion|experiment FORECAST
   goal: >                             # HUMAN input — the general objective;
     One or two sentences.             # the strategist decomposes it below.
   context: >

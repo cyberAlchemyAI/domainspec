@@ -13,7 +13,7 @@
  *
  *   DISPATCH ROW — keyed by `dispatch_id`. Required: dispatch_id,
  *     schema_version ("0.5.2" exactly), dispatch_type
- *     (research|code|review|plan|suggestion), goal, context, max_loops (1..5),
+ *     (research|code|review|plan|suggestion|experiment), goal, context, max_loops (1..5),
  *     final_approver, groups[] (each group: group_id, role
  *     investigate|evaluate|meta-evaluate|synthesize, agents[]; each agent:
  *     role explorer|skeptic|writer|auditor, model, token_budget,
@@ -93,8 +93,9 @@ const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 // ---------------------------------------------------------------- schema
 const SCHEMA_VERSION = '0.5.2';
-const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion'];
-// LIVE per constitution §5 (review populated 2026-06-12, owner decision); others FORECAST.
+const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment'];
+// LIVE per constitution §5 (review populated 2026-06-12, owner decision); others
+// FORECAST/reserved (code, plan, suggestion, experiment) — recorded but not yet dispatchable.
 const LIVE_TYPES = new Set(['research', 'review']);
 const GROUP_ROLES = ['investigate', 'evaluate', 'meta-evaluate', 'synthesize'];
 const AGENT_ROLES = ['explorer', 'skeptic', 'writer', 'auditor'];

@@ -1,6 +1,6 @@
 ---
 name: register-dispatch
-description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagents-dispatch.yaml — two appends per dispatch (dispatch row + close row), with each agent's angle and the anti_bias axis. Use whenever you dispatch one or more subagents (a research-skill run OR an ad-hoc Agent call); only `research` and `review` are LIVE — the other three dispatch_types are reserved names until populated. Trivial single lookups that spawn no subagent do not need registration. Single owner of the record/sheet fill mechanics — the form layer of the router → type-skill → form chain (field tables, enums, appender, close row).
+description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagents-dispatch.yaml — two appends per dispatch (dispatch row + close row), with each agent's angle and the anti_bias axis. Use whenever you dispatch one or more subagents (a research-skill run OR an ad-hoc Agent call); only `research` and `review` are LIVE — the other four dispatch_types are reserved names until populated. Trivial single lookups that spawn no subagent do not need registration. Single owner of the record/sheet fill mechanics — the form layer of the router → type-skill → form chain (field tables, enums, appender, close row).
 ---
 
 # register-dispatch
@@ -47,7 +47,7 @@ appender-enforced** since the 2026-06-12 in-place amendment (constitution §9).
 |-------|----------|----------------------|
 | `dispatch_id` | ✅ | Unique id, `YYYY-MM-DD-<slug>` (§5). Dedup key — re-registering the same id is a no-op. |
 | `schema_version` | ✅ | Must be **exactly** `"0.5.2"`. |
-| `dispatch_type` | ✅ | `research \| code \| review \| plan \| suggestion`. Only `research` and `review` are LIVE (review populated 2026-06-12, owner decision); the other three are reserved (FORECAST) — the appender notes this but records anyway; registering one signals an upstream constitution violation (§5: reserved types must not be dispatched until populated). |
+| `dispatch_type` | ✅ | `research \| code \| review \| plan \| suggestion \| experiment`. Only `research` and `review` are LIVE (review populated 2026-06-12, owner decision); the other four are reserved (FORECAST) — the appender notes this but records anyway; registering one signals an upstream constitution violation (§5: reserved types must not be dispatched until populated). `experiment` reserves the falsification strategy (role-set designer/runner/adjudicator/skeptic; grader = falsification against a pre-registered criterion + internal validity + reproducibility). |
 | `goal` | ✅ | Non-empty string — the human's objective, one or two sentences. |
 | `context` | ✅ | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5). |
 | `max_loops` | ✅ | Integer 1..5 — whole-sequence re-run ceiling. |

@@ -45,6 +45,7 @@ LIVE status is **declared by constitution §5** (promoting a reserved type goes 
 | `review` | LIVE (populated 2026-06-12, owner decision) | `.claude/skills/review/SKILL.md` — red-team judgment: attack lenses, severity taxonomy, verification discipline, change-request findings |
 | `plan` | RESERVED — must not be dispatched until populated | none |
 | `suggestion` | RESERVED — must not be dispatched until populated | none |
+| `experiment` | RESERVED — must not be dispatched until populated | none |
 
 ## Pointers (single owners)
 

@@ -16,7 +16,7 @@ This is the **mental model** of the dispatch ledger: what it is, how a row is sh
 that shape normalizes. It is *not* the field schema — the authoritative field-by-field reference
 is owned by [`register-dispatch/SKILL.md`](skills/register-dispatch/SKILL.md), and the field
 *semantics* (the law) are owned by the
-[subagents-strategy constitution](../../../vault/constitution/domainspec-subagents-strategy-constitution.md) §5.
+[subagents-strategy constitution, v0.5.2 proposal](../../../subagents-strategy-constitution-proposal.md) §5.
 This doc owns only the model and points to those for everything else.
 
 ## 1. What it is — and is not
@@ -47,7 +47,8 @@ The ledger is **append-only**: rows are never edited in place. Closing a dispatc
 `close_of` event, not a mutation of the original row — mechanically enforced by the
 [`enforce-append-only-dispatch`](hooks/enforce-append-only-dispatch.cjs) hook. The appender is
 **idempotent** on `dispatch_id` / `close_of`, and **grandfathers** rows written under older
-schemas (they are historical artifacts, never re-validated). Current schema: **v0.5.2**.
+schemas (they are historical artifacts, never re-validated). The current schema version is owned
+by [SKILL.md](skills/register-dispatch/SKILL.md) and the appender (v0.5.2 at time of writing).
 
 ## 3. The shape of a dispatch row — a tree in JSON columns
 
@@ -76,13 +77,12 @@ duplicated here on purpose.
 
 ## 4. The close row
 
-The second append carries the outcome, not the spec:
-
-- `close_of` — the `dispatch_id` being closed (dedup key);
-- `exit_reason` — closed vocabulary: `resolved | loop_ceiling_reached |
-  dissent_irreconcilable | user_abort | error`;
-- `agents_spawned` — `{ total, tree (by role-category), loops_used }`;
-- `feedback_prompts` — each `feedback`-edge ask, recorded **verbatim**.
+The second append carries the **outcome, not the spec**: `close_of` (which dispatch is closing),
+`exit_reason` (why it ended), `agents_spawned` (how many ran), and the optional verbatim
+`feedback_prompts`. The field rules — the `exit_reason` vocabulary, the `agents_spawned` shape,
+the precedence when several exit reasons apply — are owned by
+[`register-dispatch/SKILL.md`](skills/register-dispatch/SKILL.md)'s close-row table, not restated
+here (same point-don't-duplicate discipline as §3).
 
 ## 5. Denormalized today, normalizable to L1 / L2 / L3
 
@@ -133,10 +133,13 @@ the hook cannot derive. (See [README](README.md) "Business Context".)
 
 The ledger is the record; the rest of the subsystem is split by authority:
 
-**The law (in `vault/`):**
-- [subagents-strategy constitution](../../../vault/constitution/domainspec-subagents-strategy-constitution.md)
+**The law (currently the repo-root v0.5.2 proposal, pending vault promotion):**
+- [subagents-strategy constitution, v0.5.2 proposal](../../../subagents-strategy-constitution-proposal.md)
   — field semantics (§5), the `dispatch_type` vocabulary (`research`/`review` LIVE), Principles
-  P3 (two-append) / P9 (citation) / P11 (helper-not-dispatch) / P12 (no self-approval).
+  P3 (two-append) / P9 (citation) / P11 (helper-not-dispatch) / P12 (no self-approval). **Note:**
+  the *active* `vault/constitution/` file is still v0.3.0 (rules `R1..R31`, a different
+  vocabulary) and does **not** govern the v0.5.2 ledger — the v0.5.2 law lives in this repo-root
+  proposal until it is promoted into `vault/`.
 
 **The mechanism (here, in `internal_tools/subagents-dispatch-hooks/`):**
 - [README](README.md) — toolchain orientation.
