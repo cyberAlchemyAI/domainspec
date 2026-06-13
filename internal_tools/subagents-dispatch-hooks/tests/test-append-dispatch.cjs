@@ -107,6 +107,20 @@ function validClose(over) {
 }
 // Drop a key from a fresh valid record.
 function without(base, key) { const r = Object.assign({}, base); delete r[key]; return r; }
+// A record with TWO fan-out groups (explorers n=2 + reviewers n=2) — the
+// anti_bias_global conditional's trigger shape (constitution §9, D2).
+function twoFanout(over) {
+  const r = validDispatch(Object.assign({ dispatch_id: '2026-06-12-battery-two-fanout' }, over));
+  r.groups.push({
+    group_id: 'reviewers', role: 'evaluate', n: 2,
+    anti_bias: 'attack vector (precedent-kill vs non-vacuity)',
+    agents: [
+      { role: 'skeptic', model: 'claude-opus-4-8', token_budget: 1000, angle: 'precedent-kill gate', initial_prompt: 'Attack precedent.' },
+      { role: 'skeptic', model: 'claude-opus-4-8', token_budget: 1000, angle: 'non-vacuity gate', initial_prompt: 'Attack vacuity.' },
+    ],
+  });
+  return r;
+}
 
 // =====================================================================
 console.log('\n[1] valid full v0.5.2 row appends; emitted lines pass the self-check on a second append');
@@ -121,8 +135,12 @@ console.log('\n[1] valid full v0.5.2 row appends; emitted lines pass the self-ch
   check('1e created stamped by appender', /^    created: "\d{4}-\d{2}-\d{2}T/m.test(text), text);
   check('1f groups emitted as JSON column', /^    groups: \[\{"group_id":"explorers"/m.test(text), text);
   check('1g connections emitted as JSON column', /^    connections: \[\{"from":"explorers"/m.test(text), text);
-  check('1h newline inside initial_prompt is escaped (single physical line)',
-    text.split('\n').some((l) => l.includes('Second line proves stringify newline escaping')), text);
+  {
+    const marker = 'Second line proves stringify newline escaping';
+    const hits = text.split('\n').filter((l) => l.includes(marker));
+    check('1h newline inside initial_prompt is escaped (groups JSON column is ONE physical line)',
+      hits.length === 1 && hits[0].startsWith('    groups: '), text);
+  }
   // second append over the same ledger — the self-check must accept the emitted row
   const r2 = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-second' }));
   check('1i second append passes self-check over the first emitted row (exit 0)', r2.status === 0, r2.stderr || r2.stdout);
@@ -132,13 +150,23 @@ console.log('\n[1] valid full v0.5.2 row appends; emitted lines pass the self-ch
 console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
 {
   const root = freshRoot();
-  for (const f of ['dispatch_id', 'schema_version', 'dispatch_type', 'goal', 'context', 'max_loops', 'final_approver', 'groups']) {
-    expectReject(`2 missing ${f}`, root, without(validDispatch(), f));
+  const fieldPattern = {
+    dispatch_id: /dispatch_id is required/,
+    schema_version: /schema_version must be exactly "0\.5\.2"/,
+    dispatch_type: /dispatch_type must be one of/,
+    goal: /goal is required/,
+    context: /context is required/,
+    max_loops: /max_loops must be an integer in 1\.\.5/,
+    final_approver: /final_approver is required/,
+    groups: /groups is required/,
+  };
+  for (const f of Object.keys(fieldPattern)) {
+    expectReject(`2 missing ${f}`, root, without(validDispatch(), f), fieldPattern[f]);
   }
   // required fields inside group / agent
-  expectReject('2 group missing group_id', root, validDispatch({ groups: [{ role: 'synthesize', agents: [{ role: 'writer', model: 'm', token_budget: 1, initial_prompt: 'p' }] }] }));
-  expectReject('2 agent missing token_budget', root, validDispatch({ groups: [{ group_id: 'g', role: 'synthesize', agents: [{ role: 'writer', model: 'm', initial_prompt: 'p' }] }], connections: [] }));
-  expectReject('2 agent missing initial_prompt', root, validDispatch({ groups: [{ group_id: 'g', role: 'synthesize', agents: [{ role: 'writer', model: 'm', token_budget: 1 }] }], connections: [] }));
+  expectReject('2 group missing group_id', root, validDispatch({ groups: [{ role: 'synthesize', agents: [{ role: 'writer', model: 'm', token_budget: 1, initial_prompt: 'p' }] }] }), /group_id is required/);
+  expectReject('2 agent missing token_budget', root, validDispatch({ groups: [{ group_id: 'g', role: 'synthesize', agents: [{ role: 'writer', model: 'm', initial_prompt: 'p' }] }], connections: [] }), /token_budget is required/);
+  expectReject('2 agent missing initial_prompt', root, validDispatch({ groups: [{ group_id: 'g', role: 'synthesize', agents: [{ role: 'writer', model: 'm', token_budget: 1 }] }], connections: [] }), /initial_prompt is required/);
   check('2z ledger untouched by rejected records', readLedger(root) === '');
 }
 
@@ -162,16 +190,23 @@ console.log('\n[4] bad enum values rejected');
   expectReject('4d exit_reason "success"', root, validClose({ exit_reason: 'success' }), /exit_reason must be one of resolved/);
   expectReject('4e agents_spawned missing tree', root, validClose({ agents_spawned: { total: 3 } }), /agents_spawned\.tree/);
   expectReject('4f agents_spawned non-numeric total', root, validClose({ agents_spawned: { total: 'three', tree: {} } }), /agents_spawned\.total/);
+  expectReject('4g close row missing loops_used', root, validClose({ agents_spawned: { total: 3, tree: { investigate: 2, synthesize: 1, helpers: 0 } } }), /agents_spawned\.loops_used is required/);
+  expectReject('4h negative loops_used', root, validClose({ agents_spawned: { total: 3, tree: { investigate: 2, synthesize: 1, helpers: 0 }, loops_used: -1 } }), /agents_spawned\.loops_used is required and must be a non-negative integer/);
 }
 
-console.log('\n[5] removed v0.3.0 keys rejected with the removed-by-v0.5.2 message');
+console.log('\n[5] pre-v0.5.2 keys rejected with the right per-provenance message');
 {
   const root = freshRoot();
-  const removed = { status: 'dispatched', success_metric: { type: 'closure' }, constraints: ['x'],
-    anti_bias: { axis: 'x' }, agents: [{ role: 'explorer' }], corpus: 'research/audits',
-    topic_slug: 'slug', session: 's1', created: '2026-06-12T00:00:00Z' };
+  // keys in constitution §7's removed table — removed-by-v0.5.2 message
+  const removed = { success_metric: { type: 'closure' }, constraints: ['x'], created: '2026-06-12T00:00:00Z' };
   for (const [k, v] of Object.entries(removed)) {
     expectReject(`5 removed key ${k}`, root, validDispatch({ [k]: v }), new RegExp(`"${k}" was removed by schema v0\\.5\\.2`));
+  }
+  // old ledger-row-only keys (not in §7's table) — pre-v0.5.2-ledger-row message
+  const legacy = { status: 'dispatched', anti_bias: { axis: 'x' }, agents: [{ role: 'explorer' }],
+    corpus: 'research/audits', topic_slug: 'slug', session: 's1' };
+  for (const [k, v] of Object.entries(legacy)) {
+    expectReject(`5 legacy ledger key ${k}`, root, validDispatch({ [k]: v }), new RegExp(`"${k}" is a pre-v0\\.5\\.2 ledger-row key, not in the v0\\.5\\.2 schema`));
   }
 }
 
@@ -217,6 +252,13 @@ console.log('\n[10] working_folder rules');
   const root = freshRoot();
   expectReject('10a research without working_folder', root, without(validDispatch(), 'working_folder'), /working_folder is required when dispatch_type is "research"/);
   expectReject('10b working_folder under vault/', root, validDispatch({ working_folder: 'vault/discovery/x/' }), /must never point into vault\//);
+  // hardened vault guard (normalized): leading ./ or .\, case-insensitive, bare "vault"
+  expectReject('10d "./vault/x" rejected (leading ./ stripped)', root, validDispatch({ working_folder: './vault/x' }), /must never point into vault\//);
+  expectReject('10e "Vault/x" rejected (case-insensitive)', root, validDispatch({ working_folder: 'Vault/x' }), /must never point into vault\//);
+  expectReject('10f "vault\\x" rejected (backslash separator)', root, validDispatch({ working_folder: 'vault\\x' }), /must never point into vault\//);
+  expectReject('10g bare "vault" rejected', root, validDispatch({ working_folder: 'vault' }), /must never point into vault\//);
+  const rv = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-vaulted', working_folder: 'vaulted/x/' }));
+  check('10h "vaulted/x/" accepted — no vault-guard false positive', rv.status === 0, rv.stderr || rv.stdout);
   // a non-research type does not require working_folder (reserved-type note, still appends)
   const r = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-code', dispatch_type: 'code', working_folder: undefined }));
   check('10c non-research without working_folder appends (exit 0, FORECAST note)', r.status === 0 && /reserved \(FORECAST\) type/.test(r.stdout), r.stderr || r.stdout);
@@ -326,6 +368,34 @@ console.log('\n[15] corrupt ledger refused (exit 1)');
   fs.writeFileSync(file, 'dispatches:\n  - dispatch_id: "ok-row"\n    goal: not-valid-json\n');
   const r = run(root, validDispatch());
   check('15 structurally corrupt ledger refused with exit 1', r.status === 1 && /ledger structural check failed/.test(r.stderr), `exit=${r.status} stderr=${r.stderr.trim()}`);
+}
+
+console.log('\n[16] anti_bias_global conditional (>= 2 fan-out groups) enforced');
+{
+  const root = freshRoot();
+  expectReject('16a two fan-out groups without anti_bias_global', root,
+    without(twoFanout(), 'anti_bias_global'), /anti_bias_global is required when >= 2 groups have >= 2 agents/);
+  const r1 = run(root, twoFanout());
+  check('16b two fan-out groups with anti_bias_global appends (exit 0)', r1.status === 0, r1.stderr || r1.stdout);
+  const r2 = run(root, without(validDispatch({ dispatch_id: '2026-06-12-battery-one-fanout' }), 'anti_bias_global'));
+  check('16c one fan-out group without anti_bias_global appends (exit 0)', r2.status === 0, r2.stderr || r2.stdout);
+  // 16d: the conditional counts GROUPS WITH >= 2 AGENTS, not groups.length —
+  // one fan-out group + three singletons must not trigger it.
+  const manySingletons = without(validDispatch({ dispatch_id: '2026-06-12-battery-many-singletons' }), 'anti_bias_global');
+  for (const id of ['solo-a', 'solo-b', 'solo-c']) {
+    manySingletons.groups.push({ group_id: id, role: 'synthesize',
+      agents: [{ role: 'writer', model: 'm', token_budget: 1, initial_prompt: 'p' }] });
+  }
+  const r3 = run(root, manySingletons);
+  check('16d one fan-out + three singleton groups without anti_bias_global appends (exit 0)', r3.status === 0, r3.stderr || r3.stdout);
+  // 16e: a malformed sibling group must not crash or spuriously fire the conditional —
+  // expect a clean exit 2 on the agents-array error, with NO anti_bias_global error.
+  const malformedSibling = without(validDispatch({ dispatch_id: '2026-06-12-battery-malformed-sibling' }), 'anti_bias_global');
+  malformedSibling.groups.push({ group_id: 'broken', role: 'evaluate', agents: 'broken' });
+  const r4 = run(root, malformedSibling);
+  check('16e malformed sibling group: clean exit 2 on agents error, no spurious anti_bias_global error',
+    r4.status === 2 && /agents is required and must be a non-empty array/.test(r4.stderr) && !/anti_bias_global/.test(r4.stderr),
+    `exit=${r4.status}\nstderr=${r4.stderr.trim()}`);
 }
 
 // ---------------------------------------------------------------- summary

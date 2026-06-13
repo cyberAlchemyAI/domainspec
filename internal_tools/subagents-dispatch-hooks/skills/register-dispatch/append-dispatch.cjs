@@ -18,13 +18,23 @@
  *     investigate|evaluate|meta-evaluate|synthesize, agents[]; each agent:
  *     role explorer|skeptic|writer|auditor, model, token_budget,
  *     initial_prompt). Optional: meta (true), parent_dispatch_id,
- *     anti_bias_global, working_folder (REQUIRED for research; never vault/),
- *     invoked_by, connections[] ({from,to,type,loop_cap?}).
+ *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review; never vault/),
+ *     invoked_by (tooling extension, not in constitution §5),
+ *     connections[] ({from,to,type,loop_cap?}).
  *   CLOSE ROW — keyed by `close_of`. Required: exit_reason
  *     (resolved|loop_ceiling_reached|dissent_irreconcilable|user_abort|error)
- *     and agents_spawned ({total, tree, loops_used?}). Optional:
+ *     and agents_spawned ({total, tree, loops_used}). Optional:
  *     feedback_prompts[] (verbatim feedback-edge asks — Principle 3),
- *     invoked_by.
+ *     invoked_by (tooling extension, not in constitution §5).
+ *
+ * NOT ENFORCED here (deliberate — sheet-design rules owned by the strategist
+ * and the human confirm gate): dispatch_id YYYY-MM-DD-<slug> format; P12
+ * no-self-approval (final_approver never a working-group member); the
+ * layers>1 not-on-a-zig-zag/feedback-endpoint corollary; the semantic
+ * four-test anti-bias decision rule (constitution P5: axis vocabulary /
+ * clone / spread / evidence — gate-checked on the sheet). The anti_bias_global
+ * required-when->=2-groups-fan-out conditional IS enforced here (2026-06-12
+ * in-place amendment, constitution §9).
  *
  * `created`/`closed` are STAMPED by the appender (never supplied by the
  * caller). `invoked_by` is taken from the record when present, otherwise
@@ -34,11 +44,14 @@
  * VALIDATION SPLIT (grandfathering — constitution §2):
  *   - The INCOMING record is validated STRICTLY against the v0.5.2 schema
  *     before append: required fields, closed enums, conditional fields
- *     (working_folder on research; anti_bias/angle at n >= 2; n ==
+ *     (working_folder on research; anti_bias/angle at n >= 2;
+ *     anti_bias_global when >= 2 groups have >= 2 agents; n ==
  *     agents.length; loop_cap only on zig-zag/feedback; connection endpoints
- *     declared), and unknown-key rejection — including the keys the v0.5.2
- *     schema removed (status, success_metric, constraints, anti_bias,
- *     top-level agents, corpus, topic_slug, session, created). Exit 2.
+ *     declared), and unknown-key rejection — keys in constitution §7's removed
+ *     table (success_metric, constraints, created) get a removed-by-v0.5.2
+ *     error; old ledger-row-only keys (status, top-level anti_bias, top-level
+ *     agents, corpus, topic_slug, session) get a pre-v0.5.2-ledger-row error.
+ *     Exit 2.
  *   - The EXISTING ledger passes only the STRUCTURAL SELF-CHECK below
  *     (zero-dep, line-based — the file is machine-written in a known shape):
  *     every non-comment line is the `dispatches:` key, a `  - key: <json>`
@@ -81,6 +94,8 @@ const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 // ---------------------------------------------------------------- schema
 const SCHEMA_VERSION = '0.5.2';
 const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion'];
+// LIVE per constitution §5 (review populated 2026-06-12, owner decision); others FORECAST.
+const LIVE_TYPES = new Set(['research', 'review']);
 const GROUP_ROLES = ['investigate', 'evaluate', 'meta-evaluate', 'synthesize'];
 const AGENT_ROLES = ['explorer', 'skeptic', 'writer', 'auditor'];
 const CONNECTION_TYPES = ['sequential', 'zig-zag', 'feedback'];
@@ -98,11 +113,15 @@ const CLOSE_KEYS = new Set([
   'feedback_prompts', 'invoked_by',                              // optional
   'project_dir',                                                 // control key, not emitted
 ]);
-// v0.3.0 leftovers — rejected with an explicit removed-by-v0.5.2 message.
-// (`created`/`closed` are stamped by the appender, never caller-supplied.)
-const REMOVED_KEYS = new Set([
-  'status', 'success_metric', 'constraints', 'anti_bias', 'agents',
-  'corpus', 'topic_slug', 'session', 'created',
+// Keys in constitution §7's removed table — rejected with an explicit
+// removed-by-v0.5.2 message. (`created`/`closed` are stamped by the appender,
+// never caller-supplied.)
+const REMOVED_KEYS = new Set(['success_metric', 'constraints', 'created']);
+// Old ledger-row-only keys (pre-v0.5.2 ledger format; not in §7's removed
+// table — e.g. `anti_bias`/`agents` live at group level in v0.5.2, never top
+// level). Rejected with a pre-v0.5.2-ledger-row message.
+const LEGACY_LEDGER_KEYS = new Set([
+  'status', 'anti_bias', 'agents', 'corpus', 'topic_slug', 'session',
 ]);
 const GROUP_KEYS = new Set(['group_id', 'role', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias']);
 const AGENT_KEYS = new Set(['role', 'model', 'token_budget', 'initial_prompt', 'agent_name', 'angle']);
@@ -113,6 +132,7 @@ function validateDispatch(rec) {
   for (const k of Object.keys(rec)) {
     if (DISPATCH_KEYS.has(k)) continue;
     if (REMOVED_KEYS.has(k)) errs.push(`"${k}" was removed by schema v0.5.2 — drop it from the record`);
+    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.5.2 schema — drop it from the record`);
     else errs.push(`unknown key "${k}" on a dispatch record`);
   }
   if (!isNonEmptyStr(rec.dispatch_id)) errs.push('dispatch_id is required and must be a non-empty string');
@@ -128,12 +148,17 @@ function validateDispatch(rec) {
   if (rec.invoked_by !== undefined && !isNonEmptyStr(rec.invoked_by)) errs.push('invoked_by, when present, must be a non-empty string (email)');
   if (rec.project_dir !== undefined && !isNonEmptyStr(rec.project_dir)) errs.push('project_dir, when present, must be a non-empty string');
 
-  if (rec.dispatch_type === 'research' && rec.working_folder === undefined) {
-    errs.push('working_folder is required when dispatch_type is "research" (§5)');
+  if (LIVE_TYPES.has(rec.dispatch_type) && rec.working_folder === undefined) {
+    errs.push(`working_folder is required when dispatch_type is "${rec.dispatch_type}" (§5)`);
   }
   if (rec.working_folder !== undefined) {
     if (!isNonEmptyStr(rec.working_folder)) errs.push('working_folder must be a non-empty string');
-    else if (/^vault[\/\\]/.test(rec.working_folder)) errs.push(`working_folder must never point into vault/ (§5: "Never vault/**") — got ${J(rec.working_folder)}`);
+    else {
+      // Normalize before the vault guard: strip leading "./" / ".\", match
+      // case-insensitively, and reject bare "vault" as well as vault/ prefixes.
+      const wf = rec.working_folder.replace(/^\.[\/\\]+/, '');
+      if (/^vault([\/\\]|$)/i.test(wf)) errs.push(`working_folder must never point into vault/ (§5: "Never vault/**") — got ${J(rec.working_folder)}`);
+    }
   }
 
   const groupIds = new Set();
@@ -172,6 +197,10 @@ function validateDispatch(rec) {
         if (!fanout && a.angle !== undefined && !isNonEmptyStr(a.angle)) errs.push(`${aw}.angle, when present, must be a non-empty string`);
       });
     });
+    const fanoutGroups = rec.groups.filter((g) => isObj(g) && Array.isArray(g.agents) && g.agents.length >= 2).length;
+    if (fanoutGroups >= 2 && !isNonEmptyStr(rec.anti_bias_global)) {
+      errs.push(`anti_bias_global is required when >= 2 groups have >= 2 agents (${fanoutGroups} fan-out groups declared — §5 conditional, Principle 5)`);
+    }
   }
 
   if (rec.connections !== undefined) {
@@ -200,17 +229,18 @@ function validateClose(rec) {
   for (const k of Object.keys(rec)) {
     if (k === 'dispatch_id' || CLOSE_KEYS.has(k)) continue;
     if (REMOVED_KEYS.has(k)) errs.push(`"${k}" was removed by schema v0.5.2 — drop it from the record`);
+    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.5.2 schema — drop it from the record`);
     else errs.push(`unknown key "${k}" on a close record`);
   }
   if (!isNonEmptyStr(rec.close_of)) errs.push('close_of must be a non-empty string');
   if (!EXIT_REASONS.includes(rec.exit_reason)) errs.push(`exit_reason must be one of ${EXIT_REASONS.join(' | ')} (got ${J(rec.exit_reason)})`);
   const s = rec.agents_spawned;
   if (!isObj(s)) {
-    errs.push('agents_spawned is required and must be an object: {total, tree, loops_used?}');
+    errs.push('agents_spawned is required and must be an object: {total, tree, loops_used}');
   } else {
     if (typeof s.total !== 'number' || !Number.isFinite(s.total)) errs.push('agents_spawned.total must be a number');
     if (!isObj(s.tree)) errs.push('agents_spawned.tree must be an object (keyed by role-category, helpers in their own bucket — §5)');
-    if (s.loops_used !== undefined && !Number.isInteger(s.loops_used)) errs.push('agents_spawned.loops_used, when present, must be an integer');
+    if (!Number.isInteger(s.loops_used) || s.loops_used < 0) errs.push('agents_spawned.loops_used is required and must be a non-negative integer (§5: loop iterations used are a component of agents_spawned)');
   }
   if (rec.feedback_prompts !== undefined &&
       (!Array.isArray(rec.feedback_prompts) || rec.feedback_prompts.some((p) => !isStr(p)))) {
@@ -328,8 +358,8 @@ if (dispatchIds.has(rec.dispatch_id)) {
   process.exit(0);
 }
 
-if (rec.dispatch_type !== 'research') {
-  console.log(`note: dispatch_type "${rec.dispatch_type}" is a reserved (FORECAST) type — only "research" is LIVE under v0.5.2; recording anyway.`);
+if (!LIVE_TYPES.has(rec.dispatch_type)) {
+  console.log(`note: dispatch_type "${rec.dispatch_type}" is a reserved (FORECAST) type — only ${[...LIVE_TYPES].map(J).join(' and ')} are LIVE under v0.5.2; recording anyway.`);
 }
 
 const lines = [

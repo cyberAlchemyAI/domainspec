@@ -1,0 +1,60 @@
+---
+tags: [agents, dispatch, review, io-contracts, lei, vocabulario, system-view]
+node_type: audit
+is_session: false
+layer: architecture
+nature: technical
+status: active
+veracidade: high
+convicção: high
+version: 0.1.0
+last_updated: 2026-06-12
+created_by: l3b-lei (skeptic, dispatch 2026-06-12-agent-io-system-view)
+---
+
+# Review L3b — lei e vocabulário (system-view.md v0.3)
+
+Gate único: a view contra a lei (constituição v0.5.2 P1–P14/§5) e contra a discovery v1.0.0. Cinco perguntas do briefing: (a) contradição com P1–P14/§5 ou com a discovery; (b) emenda recomendada (P9, condensação, cheatsheet) tratada como vigente em algum trecho — sobrevivência dos marcadores inline repostos na L1; (c) redefinição de termo de propriedade alheia (ontology-view/constituição) com autoridade própria; (d) fidelidade do regime registro-vs-encaminhamento dos OPENs de owner após as mudanças de rows da L2 (20 rows); (e) caracterização do ERRATUM D2/A14 onde citado. Método: resolução manual de cada citação de princípio (P3, P4, P9, P10, P11, P12, P14, §5) contra o texto da constituição, e de cada claim de verdict/contagem/regime contra discovery §§1–7.
+
+## O que passou no gate (registrado antes das violações)
+
+- **(b) Marcadores de pendência sobreviveram à L2 — nenhuma emenda operada como vigente.** As quatro superfícies de risco estão todas marcadas: rota F* — "*(rota GO-condicional — pende emenda de uma linha em P9, §5.1; deviation declarada por dispatch até lá)*" (Camada 2 edge 4) e "*(pende emenda §5.1 — deviation declarada até lá)*" (Camada 2, parágrafo de fecho); condensação — "*(rota GO-condicional — pende emenda §5.2 ao skill; deviation declarada até lá; row dona: `stance:condensacao-carimbada`)*" (Camada 3); checklist — "*(no shape proposto; o regime do intervalo pré-emenda é stance aberta — `stance:regime-pre-emenda`)*" (Camada 3) + "como emenda candidata" (Camada 4); espelho/cheatsheet — "sanção confronta a frase final de P3 … fonte de verdade permanece a row" (Camada 2 e row 12). A Camada 4 carrega a regra de honestidade explícita ("GO-condicional nunca é apresentado como adquirido") e o framing "Promulgar pelas findings" está corretamente morto na tabela da Camada 4. ✓
+- **(c) Nenhuma definição com autoridade própria.** O bloco "Contexto de fontes" declara todo termo como USADO conforme discovery §2; as glosas da Camada 2 (envelope / corpo livre / linha estruturada de corpo) abrem com ponteiro "(vocabulário: discovery §2 e §4.1)"; `<label>` é apontado como sem definição nos três vocabulários (row 4), não definido. ✓ (exceção parcial: T4 abaixo.)
+- **(d) Regime registro-vs-encaminhamento fiel nas rows.** Exatamente as três rows dos OPENs 6.1–6.3 carregam o marcador `[registro + encaminhamento]`, cada uma com a condição externa correta: mecanização → "dono externo nomeado" (✓ findings §6.1 — único com dono), tiers → "aguarda consumidor não-circular", custo-dos-ids → "aguarda medição" (✓ discovery 6.3: "não prescreve quando nem por quem"). OQ-SV-3 reproduz fielmente a disjunção do preâmbulo do §6 ("a fonte só nomeia dono para um deles"). Contagem 14 + 6 = 20 rows confere; GO 10 / GO-condicional 3 / OPEN 3 / KILL 2 / LEI fora da contagem — tudo bate com discovery §4 e com o mapa §7 (LEI → sem row própria, respeitado). ✓ (exceção: T1 e T7 abaixo.)
+- **(e) ERRATUM A14 corretamente caracterizado em duas das três ocorrências.** Camada 4 ("a declaração de deviation mora no corpo do close … o 'campo de desvios da close row' não existe no schema vigente") e "What this view does not cover" reproduzem o erratum com exatidão contra o schema fechado da close row (`close_of, exit_reason, agents_spawned, feedback_prompts, invoked_by, project_dir, closed`). A terceira ocorrência é T2. ✓/✗
+
+## Violações (T1…)
+
+### T1 — [Mapa de stances / regra de row-com-split] A regra declarada para linhas com split (#9, #17) é violada pela própria tabela no caso #9. **ALTA**
+
+O preâmbulo do mapa promulga: "quando uma única linha da matriz carrega parte resolvida E parte aberta (**#9, #17**), **cada parte resolve numa row própria** e ambas as rows declaram o compartilhamento do handle — preservando 'um verdict, um status' por row". Para #17 a regra é cumprida (duas rows: `stance:re-ask-capeado` para a parte resolvida, `stance:mecanizacao-da-validacao` para a parte OPEN, ambas declarando o split). Para #9 existe **uma row só** — `stance:tiers-de-verificacao` — cuja célula de tensão carrega as DUAS partes ("Só o carimbo `not-re-reviewed` + cláusula de aceitação (**GO sem deviation**) versus a taxonomia completa de 4 tiers — **OPEN**"). Ou a row carrega dois verdicts/dois status (violando "um verdict, um status por row"), ou a metade GO do split (carimbo + cláusula — que a Camada 4 declara "GO desde já, sem deviation") fica **órfã de row dona**, violando a promessa de fechamento do próprio mapa ("toda aquisição GO, todo condicional e todo aberto têm exatamente uma row dona de registro") e contaminando a conferência aritmética que OQ-SV-1 delega ao engineer-view. **Fix:** ou (i) row irmã `stance:carimbo-not-re-reviewed` para a metade GO, com ambas declarando o split (espelhando exatamente o tratamento do #17), ou (ii) reescrever a regra de split para admitir explicitamente o caso "metade GO + metade OPEN na mesma row com dois registros declarados" — e então justificar por que #17 ganhou duas rows e #9 não.
+
+### T2 — [Camada 3, re-ask / gate (e)] O erratum A14 é atrelado à frase errada: a contabilidade do helper, que MORA na close row, é apresentada como morando só no corpo do close. **ALTA**
+
+A Camada 3 escreve: "re-tentativa única, **contabilizada como ajuda e relatada no close (no corpo do close — o campo de desvios da close row não existe, erratum A14)**". O erratum A14 governa exclusivamente as linhas `Deviation:`/`Accepted-unreviewed:` (discovery §6 ERRATUM); a **contabilidade** do helper tem casa própria e diferente: o bucket `helpers` de `agents_spawned` é campo **required da close row** (constituição §5 "Close of dispatch": `{total, tree: {…, helpers: 0}, loops_used}`) — e a discovery §7 (linha T3 da tabela) separa explicitamente as **duas casas distintas**: "o bucket `helpers` mora na close row … as linhas `Deviation:`/`Accepted-unreviewed:` (A14) moram no CORPO do close apenas". Ao colar o parêntese do A14 na frase que cobre a contabilização, a view colapsa as duas casas que a fonte distingue — o leitor conclui que o relato do helper inteiro vive fora da row, o que contradiz P3/§5 (a row é a casa queryable de `agents_spawned`). **Fix:** dividir a frase — "contabilizada no bucket `helpers` de `agents_spawned` (close row + relato, §5); a declaração de desvio acompanha no **corpo** do close (o campo de desvios da close row não existe — erratum A14)".
+
+### T3 — [Camada 3, re-ask / gate (a)] A leitura pendente-de-confirmação da letra de P11 é apresentada como assentada. **MÉDIA**
+
+A view afirma: "classificado como helper (P11): **sem row própria**, sem gate". A letra de P11 diz "not written to the ledger row"; a leitura "sem **dispatch row** própria" (que permite o bucket na close row) é, na discovery 4.4, uma leitura declaradamente provisória — "tensão interna da constituição, **leitura a confirmar na emenda** (achado D5 da trilha L2)". A view adota a leitura e suprime a marca de provisoriedade — o único ponto do documento em que uma interpretação pendente da lei é narrada como se fosse a letra. (A fronteira helper-vs-dispatch, distinta, está corretamente marcada provisória na row 8.) **Fix:** uma oração — "…sem row própria (leitura da letra de P11 a confirmar na emenda — discovery 4.4/D5), sem gate…".
+
+### T4 — [Camada 2 edge 2 + row 15 / gate (c)] "Montagem determinística … pelo registro do dispatch" substitui o termo da fonte ("pela sheet") por um termo de propriedade da constituição com outro referente. **MÉDIA**
+
+A discovery 4.7 (#1) fixa "montagem determinística **pela sheet**". A view escreve, duas vezes (edge 2: "montagem determinística e append-only pelo **registro do dispatch**"; row 15: "montagem determinística pelo **registro do dispatch**"). No vocabulário da constituição, "registro" é o ledger (`telemetry/agents/subagents-dispatch.yaml`, P3) — superfície de metadados, nunca de montagem de outputs (os outputs moram em `working_folder`, P9). Mesmo na leitura caridosa ("registro do dispatch" = a dispatch row, que carrega a sheet congelada), a view está cunhando um sinônimo próprio para um termo que pertence à constituição/ontology-view em vez de glosar com ponteiro — exatamente o que o bloco "Contexto de fontes" promete não fazer. **Fix:** restaurar "pela sheet (congelada na dispatch row)" nas duas ocorrências.
+
+### T5 — [Camada 1, fecho / gate (a)] "O relato de identidade exigido pelo ledger" superdimensiona a sanção do espelho. **BAIXA-MÉDIA**
+
+O espelho no frontmatter não é "exigido pelo ledger" por ninguém: é aquisição GO deste dispatch, lida como relato de P3 ("reportar o outcome in the findings document") e **defendida CONTRA** a frase final de P3 ("no other persistence surface") — discovery 4.7 (#14) e a própria row 12 da view o dizem com precisão. A frase da Camada 1 ("mais o relato de identidade exigido pelo ledger") atribui à lei uma exigência que a lei não faz — drift de uma palavra, mas no único lugar do documento em que o espelho aparece sem o confronto com P3 ao lado. **Fix:** "…mais o relato de identidade no próprio artefato (aquisição deste dispatch, lida contra P3 — `stance:espelho-no-frontmatter`)".
+
+### T6 — [Surface / gate (b), leve] A paráfrase de P9 ("citar a prova persistida que a sustenta") é mais larga que a letra vigente e antecipa a emenda 1. **BAIXA**
+
+P9 vigente fixa o par citável como "the collected returns (research) and the cited synthesis (findings)" — uma claim load-bearing cita **o collected return**. "Prova persistida" é precisamente a extensão que a emenda 1 pendente introduziria (seções F* append-only como conteúdo citável). A Camada 1 corrige ("cada claim load-bearing deve citar **o return coletado** que a sustenta (P9)") e a rota F* está corretamente marcada GO-condicional em toda parte — por isso BAIXA, não uma operação da emenda como vigente. Mas o Surface é a frase de maior altitude do documento e é onde o stakeholder lê a lei pela primeira vez. **Fix:** Surface — "…tem de citar o return coletado que a sustenta".
+
+### T7 — [Mapa de stances, preâmbulo / gate (d), leve] O rótulo "(OPENs de owner)" generaliza dono sobre os três OPENs que o próprio OQ-SV-3 diz não terem dono universal. **BAIXA**
+
+O preâmbulo do mapa: "quando o dono da RESOLUÇÃO é externo a esta cadeia de views (**OPENs de owner**), a row registra…". OQ-SV-3, três parágrafos abaixo, corrige: "a fonte **só nomeia dono para um deles**" (6.1); 6.2 aguarda consumidor, 6.3 aguarda medição — "disjunção, não dono universal". Os marcadores das rows estão certos (T não se aplica a eles); só o rótulo coletivo do preâmbulo contradiz a distinção que a view mesma faz. **Fix:** "(OPENs de fechamento externo)".
+
+## Veredito
+
+Nenhuma contradição direta com P1–P14/§5 que opere uma emenda como vigente ou re-decida propriedade alheia — os marcadores da L1 sobreviveram à L2 intactos e o regime registro-vs-encaminhamento está fiel nas rows. As duas violações ALTAS são de coerência interna com força de lei local: a regra de split que a view promulga e descumpre no #9 (T1), e a única caracterização errada do erratum A14, que colapsa as duas casas que a constituição §5 e a discovery §7 separam (T2). Sete itens, todos com fix de cirurgia local; nenhum exige reestruturar camada.
+
+Dissent: T4 admite leitura inocente — "registro do dispatch" como a dispatch row que carrega a sheet congelada é referencialmente correto, e um skeptic de altitude (não de vocabulário) o dispensaria como paráfrase; mantenho-o MÉDIA porque a view prometeu glosar-com-ponteiro, não cunhar sinônimos. E registro que um L3b estrito ao gate (a) literal (só contradição de lei) devolveria apenas T2/T3/T5 — T1 e T7 são lei local da própria view; quem pesar o gate de outro jeito reordena as severidades.

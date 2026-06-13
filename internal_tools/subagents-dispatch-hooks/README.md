@@ -19,7 +19,7 @@ A portable dispatch-governance toolchain: one skill (`register-dispatch`), three
 
 This repo runs multi-agent dispatches under a subagents-strategy constitution (schema v0.5.2): every dispatch contributes **two appends** — the dispatch row (the spec: `goal`, `context`, `groups` with per-agent `angle`/`model`/`token_budget`/`initial_prompt`, `connections`) at dispatch, and the close row (`close_of` + `exit_reason` + `agents_spawned`, optionally the verbatim `feedback_prompts`) at termination. Registration is a **skill the model invokes**, not an auto-logger, because a hook sees only the raw `Agent` call and cannot author `angle`/`anti_bias`/`goal`, and not every dispatch is a research dispatch with a roster to derive from. The reminder hook only nudges.
 
-The ledger is the **governance record** (who was dispatched, with what angle, tensioned how). It is distinct from the research skill's per-folder `dispatch.yaml` **rosters** and from `internal_tools/agents-telemetry/` (SQLite **usage measurement**) — the three coexist; do not conflate them. The ledger is currently untracked by git; whether it gets committed is an open decision.
+The ledger is the **governance record** (who was dispatched, with what angle, tensioned how). It is distinct from the research skill's per-folder `dispatch.yaml` **rosters** and from `internal_tools/agents-telemetry/` (SQLite **usage measurement**) — the three coexist; do not conflate them. Whether the ledger is committed to git is an open decision.
 
 Operational facts: population depends on the model actually invoking the skill — the reminder is a nudge, not enforcement. Install is per-user, so a teammate gets the behavior only after running [install.cjs](install.cjs) once (new repos on an already-installed machine are covered). Claude Code shows the hooks and asks the user to trust them on first run. The installer is Claude Code-specific; the appender itself is harness-neutral.
 
@@ -29,7 +29,7 @@ It mitigates three risks in multi-agent practice, while the human stays the gate
 
 - **Unrecorded or over-eager fan-outs** — the reminder hook nudges registration on every `Agent` call, and the `Workflow` tool is denied so dispatch goes through the governed path.
 - **In-place tampering of dispatch history** — the ledger is append-only, mechanically enforced by a hook; closing a dispatch is an appended `close_of` event, never an edit to the original row.
-- **Silent ledger corruption** — the appender structurally self-checks the ledger before every append and refuses (exit 1) if it is corrupt, so damage surfaces at the next write instead of accumulating. Incoming records are additionally validated strictly against the v0.5.2 schema (exit 2 on violation) — but **only the incoming record**: rows written under older schemas are grandfathered historical artifacts, never re-validated.
+- **Silent ledger corruption** — the appender structurally self-checks the ledger before every append and refuses (exit 1) if it is corrupt, so damage surfaces at the next write instead of accumulating. Incoming records are additionally validated strictly against the v0.5.2 schema (exit 2 on violation; since 2026-06-12 this includes the `anti_bias_global` conditional — required when ≥ 2 groups have ≥ 2 agents) — but **only the incoming record**: rows written under older schemas are grandfathered historical artifacts, never re-validated.
 
 ## 📁 Navigation
 

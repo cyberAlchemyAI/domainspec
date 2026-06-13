@@ -1,6 +1,6 @@
 ---
 name: register-dispatch
-description: Record a subagent dispatch as one row in <repo-root>/telemetry/agents/subagents-dispatch.yaml — one row per dispatch, with each agent's angle and the anti_bias axis. Use whenever you dispatch one or more subagents (a research-skill run OR an ad-hoc Agent call), since not every dispatch is a research dispatch. Trivial single lookups that spawn no subagent do not need registration.
+description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagents-dispatch.yaml — two appends per dispatch (dispatch row + close row), with each agent's angle and the anti_bias axis. Use whenever you dispatch one or more subagents (a research-skill run OR an ad-hoc Agent call); only `research` and `review` are LIVE — the other three dispatch_types are reserved names until populated. Trivial single lookups that spawn no subagent do not need registration. Single owner of the record/sheet fill mechanics — the form layer of the router → type-skill → form chain (field tables, enums, appender, close row).
 ---
 
 # register-dispatch
@@ -14,20 +14,32 @@ are never edited in place.
 ## When to use
 
 - After (or as) you dispatch subagents for any non-trivial task.
+- **Principle-2 gate:** append only after the human's explicit confirm of the sheet —
+  the gate is owned by the router (`domainspec-subagents-strategy`) / constitution P2;
+  never append before it.
 - Register **once per dispatch**, not once per agent or per group. A dispatch with three
   groups and six agents is **one** row; `groups` is a JSON column.
 - At termination, append the **close row** (see below). Both appends use the same appender.
 - Skip only for trivial inline work that spawns no subagent. A single helper invocation
-  inside a running agent's scope is not a dispatch (Principle 11) — it is reported in the
-  parent's `agents_spawned`, not registered.
+  is not a dispatch (P11, owned by the router) — do not register it; it is reported in
+  the parent's `agents_spawned`.
 
 ## The dispatch row (schema v0.5.2)
 
 The appender **validates the incoming record strictly** and rejects (exit 2) on any
-violation, listing every error. Unknown keys are rejected — including the pre-v0.5.2
-keys `status`, `success_metric`, `constraints`, `anti_bias` (top level), `agents`
-(top level), `corpus`, `topic_slug`, `session`, and `created`, which were **removed by
-schema v0.5.2** and get an explicit error saying so.
+schema violation, listing every error. Unknown keys are rejected — keys in constitution
+§7's removed table (`success_metric`, `constraints`, `created`) get an explicit
+**removed by schema v0.5.2** error; old ledger-row-only keys (`status`, `anti_bias`
+top level, `agents` top level, `corpus`, `topic_slug`, `session`) get a
+**pre-v0.5.2 ledger-row key, not in the v0.5.2 schema** error.
+
+**Not enforced by the appender** (sheet-design rules owned by the strategist and the
+human confirm gate): `final_approver` working-group membership (P12 no-self-approval),
+the `dispatch_id` `YYYY-MM-DD-<slug>` format, the `layers > 1`
+not-on-a-zig-zag/feedback-endpoint corollary, and the semantic four-test anti-bias
+decision rule (constitution P5: axis vocabulary / clone / spread / evidence — gate-checked
+on the sheet). The `anti_bias_global` required-when-≥ 2-groups-fan-out conditional **is
+appender-enforced** since the 2026-06-12 in-place amendment (constitution §9).
 
 ### Top level
 
@@ -35,17 +47,17 @@ schema v0.5.2** and get an explicit error saying so.
 |-------|----------|----------------------|
 | `dispatch_id` | ✅ | Unique id, `YYYY-MM-DD-<slug>` (§5). Dedup key — re-registering the same id is a no-op. |
 | `schema_version` | ✅ | Must be **exactly** `"0.5.2"`. |
-| `dispatch_type` | ✅ | `research \| code \| review \| plan \| suggestion`. Only `research` is LIVE; the other four are reserved (FORECAST) — the appender notes this but records anyway. |
+| `dispatch_type` | ✅ | `research \| code \| review \| plan \| suggestion`. Only `research` and `review` are LIVE (review populated 2026-06-12, owner decision); the other three are reserved (FORECAST) — the appender notes this but records anyway; registering one signals an upstream constitution violation (§5: reserved types must not be dispatched until populated). |
 | `goal` | ✅ | Non-empty string — the human's objective, one or two sentences. |
 | `context` | ✅ | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5). |
 | `max_loops` | ✅ | Integer 1..5 — whole-sequence re-run ceiling. |
-| `final_approver` | ✅ | Non-empty string: `parent` or the `agent_name` of a dedicated meta-evaluate approver (never a working-group member — Principle 12). |
+| `final_approver` | ✅ | Non-empty string: `parent` or the `agent_name` of a dedicated meta-evaluate approver (no self-approval — P12). |
 | `groups` | ✅ | **JSON column** — non-empty array of group objects (below). |
 | `meta` | – | If present, must be boolean `true` (planning/framework dispatches only). |
 | `parent_dispatch_id` | – | String (or null/omitted) — only on a dispatch planned by a meta dispatch. |
-| `anti_bias_global` | – | String — dispatch-wide tension theme (required by the constitution when ≥ 2 groups fan out; the appender does not enforce that conditional). |
-| `working_folder` | research: ✅ | Repo-relative path where outputs land. **Required when `dispatch_type` is `research`; must never start with `vault/`.** |
-| `invoked_by` | – | Email of the invoking human. If omitted, the appender resolves it from `git config user.email` (fail-soft: warning + `null`). |
+| `anti_bias_global` | ≥ 2 fan-out groups: ✅ | String — dispatch-wide tension theme. **Required when ≥ 2 groups have ≥ 2 agents — appender-enforced (exit 2)** since the 2026-06-12 in-place amendment (constitution §9). |
+| `working_folder` | LIVE types: ✅ | Repo-relative path where outputs land. **Required when `dispatch_type` is `research` or `review`; must never start with `vault/`.** |
+| `invoked_by` | – | Email of the invoking human. If omitted, the appender resolves it from `git config user.email` (fail-soft: warning + `null`). Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment. |
 | `connections` | – | **JSON column** — array of `{from, to, type, loop_cap?}` objects (below). |
 | `project_dir` | – | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Never emitted to the ledger. |
 | `created` | stamped | ISO timestamp **stamped by the appender** — supplying it is rejected (removed by v0.5.2). |
@@ -59,7 +71,7 @@ schema v0.5.2** and get an explicit error saying so.
 | `agents` | ✅ | Non-empty array of agent objects (below). They run in parallel. |
 | `n` | – | Integer ≥ 1; if present must equal `agents.length`. |
 | `robot_talks` | – | Boolean — agents discuss after their parallel runs (n ≥ 2 only meaningful). |
-| `layers` | – | Integer ≥ 1 — sequential invocations of this group. |
+| `layers` | – | Integer ≥ 1 — sequential invocations of this group. Unenforced: a group with `layers > 1` may not sit on a zig-zag/feedback endpoint (§5 layers corollary). |
 | `anti_bias` | n ≥ 2: ✅ | The group's named tension axis. **Required when the group has ≥ 2 agents** (Principle 5). |
 
 ### Each object in `groups[].agents`
@@ -85,7 +97,9 @@ Exactly `{from, to, type, loop_cap?}` — any other key is rejected.
 
 ## How to write the row
 
-The skill ships a deterministic appender; do **not** hand-edit the YAML.
+The skill ships a deterministic appender; do **not** hand-edit the YAML. To check the
+ledger (e.g. `dispatch_id` uniqueness), use the Read tool — the append-only hook blocks
+Bash access to the file, even read-only commands.
 
 1. Assemble the dispatch record as JSON (the fields above) — normally read straight off
    the confirmed dispatch sheet (goal, context, groups, connections, per-agent
@@ -144,13 +158,12 @@ The skill ships a deterministic appender; do **not** hand-edit the YAML.
       "role": "synthesize",
       "agents": [
         {"agent_name": null, "role": "writer", "model": "claude-opus-4-8", "token_budget": 3000,
-         "initial_prompt": "Draft findings.md from the explorers' returns: every load-bearing claim cites the collected return it rests on."}
+         "initial_prompt": "Draft findings.md from the explorers' returns: every load-bearing claim cites the collected return it rests on. Budget ~3000 tokens."}
       ]
     }
   ],
   "connections": [
-    {"from": "explorers", "to": "synthesizer", "type": "sequential"},
-    {"from": "synthesizer", "to": "explorers", "type": "feedback", "loop_cap": 1}
+    {"from": "explorers", "to": "synthesizer", "type": "sequential"}
   ]
 }
 ```
@@ -171,7 +184,7 @@ resulting ledger row looks like:
     anti_bias_global: "novelty optimism vs precedent skepticism"
     working_folder: "research/residue-precedent-sweep/"
     groups: [{"group_id":"explorers","role":"investigate","n":2,"anti_bias":"source corpus (formal-methods literature vs practitioner blogs)","agents":[…]}, …]
-    connections: [{"from":"explorers","to":"synthesizer","type":"sequential"},{"from":"synthesizer","to":"explorers","type":"feedback","loop_cap":1}]
+    connections: [{"from":"explorers","to":"synthesizer","type":"sequential"}]
 ```
 
 ## Closing a dispatch (the close row)
@@ -193,11 +206,12 @@ instead of `dispatch_id`:
 
 | Field | Required | Meaning / constraint |
 |-------|----------|----------------------|
-| `close_of` | ✅ | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. Warns (but still appends) if no matching dispatch row exists. |
-| `exit_reason` | ✅ | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: `user_abort` > `error` > `dissent_irreconcilable` > `loop_ceiling_reached` > `resolved` (§5). |
-| `agents_spawned` | ✅ | **JSON column** — object with numeric `total`, object `tree` (keyed by role-category, helpers in their own bucket), and optional integer `loops_used`. |
+| `close_of` | ✅ | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. Warns (but still appends) if no matching dispatch row exists — an orphan close row indicates a Principle-3 breach upstream (the dispatch row should have been written at dispatch). |
+| `exit_reason` | ✅ | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: §5. |
+| `agents_spawned` | ✅ | **JSON column** — object with numeric `total`, object `tree` (keyed by role-category, helpers in their own bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
 | `feedback_prompts` | – | **JSON column** — array of strings: each `feedback`-edge ask, recorded **verbatim** in the close row (Principle 3 / §5 `feedback` semantics). |
-| `invoked_by` | – | As on the dispatch row: record value, else `git config user.email`, else `null` with a warning. |
+| `invoked_by` | – | As on the dispatch row: record value, else `git config user.email`, else `null` with a warning. Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment. |
+| `project_dir` | – | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Accepted by the appender, never emitted to the ledger. |
 | `closed` | stamped | ISO timestamp **stamped by the appender** — supplying it is rejected. |
 
 A close record must **not** carry `dispatch_id`, a top-level `agents` array, or any
@@ -211,4 +225,5 @@ are **valid historical artifacts and are never re-validated** against the new
 schema. The appender's pre-append self-check over the existing ledger is
 **structure-only** (line shapes, JSON values, unique ids) so old rows keep
 passing forever. Strict v0.5.2 validation applies **only to the incoming
-record**, before append.
+record**, before append. The ledger file's own header comment is likewise
+historical — written once at creation, never edited; it may lag the current schema.
