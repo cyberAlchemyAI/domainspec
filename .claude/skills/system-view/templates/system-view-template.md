@@ -67,6 +67,16 @@ discovery-writing.md. NO motivation here. -->
 authors; state plainly that it names every load-bearing stance and decides none — each pointing to
 engineer-view — and redefines no term — each deferred to ontology-view.>
 
+### Executive gloss
+
+<!-- <=8 bullets, common language, problem -> choice -> why. Each bullet ANCHORED (an unanchored
+bullet fails the gate). ZERO verdicts. PROSE-VERDICT GUARD: a bullet's "why" says why the tension
+is LIVE, never why a side wins. Term/status translations marked "informal translation, not a
+definition". Must REPLACE or strictly EXTEND the Objective, never restate its thesis. Answers: what
+does this do · biggest open decision · what is given-and-fixed vs. not-yet-in-the-picture. -->
+
+- <FILL-IN: problem → choice → why-the-tension-is-live, anchored to a layer/stance below.>
+
 ---
 
 ## What <PROJECT> is (the surface)
@@ -94,11 +104,15 @@ do not define it — point to ontology-view if a definition is reached for.>
 ## <Layer 1 — the protagonist idea / first conceptual layer>
 
 <!-- Produced by Step 4. One conceptual layer at a time. Each layer-section carries its own
-alternative-framings table. Name (do not decide) any stance the layer rests on. -->
+alternative-framings table. Name (do not decide) any stance the layer rests on.
+PROSE-VERDICT GUARD: a "Why set aside" cell names the framing's DEFECT, never which alternative
+wins — a cell asserting a side is right/required/forbidden is a struck verdict. -->
 
-<FILL-IN: explain ONE conceptual layer of the shape. Where the layer rests on a load-bearing choice
-that could go another way, NAME the stance inline and point across — see the named-stance line
-pattern below. State the tension; state no verdict.>
+<FILL-IN: explain ONE conceptual layer of the shape. A load-bearing stance = a choice in the shape
+that could defensibly go another way, whose alternative would change the mechanics a reader must
+check. Where the layer rests on one, NAME the stance inline and point across — see the named-stance
+line pattern below. State the tension; state no verdict. (A choice already settled upstream is NOT
+a stance — note it in "What this view does not cover" with a settling-decision cite.)>
 
 > **Named-stance line (pattern — use inline wherever the shape rests on a choice):**
 > *The **<stance-slug>** stance — `<the tension, stated as "X versus Y — a real tension, not a
@@ -139,22 +153,23 @@ and an alternative-framings table. Add as many layer sections as the shape needs
 
 ## Given vs optimized — the layering that makes it a product
 
-<!-- Produced by Step 5. The discipline: separate what is FIXED-AND-OBEYED (you do not tune it)
-from what is OPTIMIZED-TOWARD (the response surface you shape) from what merely ACCUMULATES (it
-grows; not optimization). Domain equivalents are fine — keep the three-way separation. Name any
-stance inside; decide none. -->
+<!-- Produced by Step 5. CONTROL AXIS ONLY (fixed-and-obeyed vs. tuned), plus the existence
+partition. Separate what is FIXED-AND-OBEYED (you do not tune it) from what is OPTIMIZED-TOWARD
+(the response surface you shape) from what merely ACCUMULATES (it grows; not optimization). Domain
+equivalents are fine — keep the three-way separation. "Given" means the control axis, NEVER
+"exists today". A choice the discovery or an axiom ALREADY SETTLED is out of scope here — it does
+NOT belong in this section; note it in "What this view does not cover" with a cite to the settling
+decision. Name any live stance inside; decide none.
+DISAMBIGUATOR (given vs. settled-upstream): a GIVEN here is a *live shape element you don't tune*; a
+settled-upstream choice is one whose *tension is closed by a cited decision* — if it has a settling
+cite, it goes in the closing map, NOT here. -->
 
 The shape is built one conceptual layer at a time, and each layer has a different relationship to
 control:
 
 - **`<the fixed signature>` — GIVEN, fixed forever.** `<you do not optimize the shape of the job>`.
-- **`<the hard constraints>` — GIVEN by `<source>`, obeyed fail-closed.** `<binary; you optimize only
-  your ability to detect and satisfy them>`.
 - **`<the graded objectives>` — GIVEN, but you optimize your response toward them.** `<the response
   surface is shaped to score well>`.
-- **`<the guardposts / craft layer>` — refined only to a general level, NOT maximized toward a metric.**
-  `<a stance may live here — name it and point across, do not decide whether this layer is "optimized"
-  at all>`.
 - **`<the accumulating corpus>` — NOT optimization; it simply grows.** `<a stance may live here —
   e.g. whether accumulation is a defensible moat — name it and point across>`.
 
@@ -208,6 +223,13 @@ no terms. For the mechanics, descend to **`engineer-view.md`**, which refines th
 For term meaning, descend to **`ontology-view.md`**, which owns the typed terms used above (each
 term is USED here and DEFINED there).
 
+**Settled upstream (out of scope, not a stance):** choices the discovery or an axiom already
+settled are not stances and are not in the given-vs-optimized section — they are noted here, each
+with a cite to the *settling decision* (a `discovery#`/`axiom/` decision, never an open question),
+so a live tension cannot be hidden as "already settled".
+
+- `<settled choice>` — settled by `<discovery#... / axiom/...>`. `<one-line consequence for the shape>`.
+
 Each stance named in this document — `<list the stance slugs>` — has its single owning verdict over
 there. **Nothing is decided twice.**
 
@@ -244,6 +266,17 @@ NON-CONTIGUOUS numbering is ACCEPTABLE — do not renumber to fill gaps. -->
 
 ---
 
+## Maturity / known-limitations
+
+<!-- Produced by Step 7. Plain prose, with the PRACTICAL CONSEQUENCE of each limitation — not a
+status table (status is engineer-view's). What is shaky, partial, or not-yet-shaped, and what a
+reader should not lean on as a result. -->
+
+<FILL-IN: in plain prose, the limits of this view's confidence — what is provisional or thinly
+sourced — and the practical consequence of each (what not to rely on yet).>
+
+---
+
 ## Connections
 
 <!-- The load-bearing provenance link. This view rides node_type:discovery, so it is a vault graph
@@ -263,9 +296,7 @@ evolve mode, never by hand-editing this file. -->
 
 <!--
 REUSABILITY — STRIP-LIST (deny-list; must NOT survive into a real target's artifact):
-  CIC · CLC · TILTH-* · council · gq_kind · matrix-card · council-seat names
-  (Scout / Scribe / Editor / Judge / Red Team / Logician) · the six client identities ·
-  the eight capital logics · the Five Operating Laws · KFR · Match DB.
+  the GoldenQuill token list is enumerated in `../references/DECISIONS.md` (D2) — not inlined here.
 Every EXAMPLE-REPLACE-ME row above is a NEUTRAL placeholder — replace with your target's content.
 The worked reference instance is at
 C:\Users\victo\domainspec-core\projects\goldenquill\victor\system-view.md — generalize FROM it,
