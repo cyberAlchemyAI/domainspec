@@ -1,6 +1,6 @@
 ---
 name: domainspec-subagents-strategy
-description: Route any subagent dispatch — check the Principle-1 trigger, hold the human gate, enforce the universal invariants, then route by dispatch_type to the owning type skill (research and review are LIVE; code/plan/suggestion are reserved). The record/sheet form is owned by register-dispatch; field definitions by constitution §5. This skill defines no field and no type-specific judgment — it routes.
+description: Route any subagent dispatch — check the Principle-1 trigger, hold the human gate, enforce the universal invariants, then route by dispatch_type to the owning type skill (research, review, and experiment are LIVE; code/plan/suggestion are reserved). The record/sheet form is owned by register-dispatch; field definitions by constitution §5. This skill defines no field and no type-specific judgment — it routes.
 ---
 
 **Governing doc:** operationalizes `subagents-strategy-constitution-proposal.md` (repo root, v0.5.2-proposal). The live vault constitution is still v0.3.0; where the two conflict, v0.5.2 wins (owner decision 2026-06-12).
@@ -45,7 +45,7 @@ LIVE status is **declared by constitution §5** (promoting a reserved type goes 
 | `review` | LIVE (populated 2026-06-12, owner decision) | `.claude/skills/review/SKILL.md` — red-team judgment: attack lenses, severity taxonomy, verification discipline, change-request findings |
 | `plan` | RESERVED — must not be dispatched until populated | none |
 | `suggestion` | RESERVED — must not be dispatched until populated | none |
-| `experiment` | RESERVED — must not be dispatched until populated | none |
+| `experiment` | LIVE (populated 2026-06-14, owner decision) | `.claude/skills/experiment/SKILL.md` — falsification judgment: pre-registered criterion freeze, validity gates, SURVIVED/FALSIFIED/INVALID verdict |
 
 ## Pointers (single owners)
 

@@ -94,9 +94,9 @@ const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 // ---------------------------------------------------------------- schema
 const SCHEMA_VERSION = '0.5.2';
 const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment'];
-// LIVE per constitution §5 (review populated 2026-06-12, owner decision); others
-// FORECAST/reserved (code, plan, suggestion, experiment) — recorded but not yet dispatchable.
-const LIVE_TYPES = new Set(['research', 'review']);
+// LIVE per constitution §5 (review 2026-06-12; experiment 2026-06-14, owner decisions); others
+// FORECAST/reserved (code, plan, suggestion) — recorded but not yet dispatchable.
+const LIVE_TYPES = new Set(['research', 'review', 'experiment']);
 const GROUP_ROLES = ['investigate', 'evaluate', 'meta-evaluate', 'synthesize'];
 const AGENT_ROLES = ['explorer', 'skeptic', 'writer', 'auditor'];
 const CONNECTION_TYPES = ['sequential', 'zig-zag', 'feedback'];

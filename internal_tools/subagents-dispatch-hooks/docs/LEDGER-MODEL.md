@@ -135,7 +135,7 @@ The ledger is the record; the rest of the subsystem is split by authority:
 
 **The law (currently the repo-root v0.5.2 proposal, pending vault promotion):**
 - [subagents-strategy constitution, v0.5.2 proposal](../../../subagents-strategy-constitution-proposal.md)
-  — field semantics (§5), the `dispatch_type` vocabulary (`research`/`review` LIVE), Principles
+  — field semantics (§5), the `dispatch_type` vocabulary (`research`/`review`/`experiment` LIVE), Principles
   P3 (two-append) / P9 (citation) / P11 (helper-not-dispatch) / P12 (no self-approval). **Note:**
   the *active* `vault/constitution/` file is still v0.3.0 (rules `R1..R31`, a different
   vocabulary) and does **not** govern the v0.5.2 ledger — the v0.5.2 law lives in this repo-root
@@ -156,6 +156,7 @@ here):
   gate, routes by `dispatch_type`).
 - `research` — the LIVE type skill for `dispatch_type: research`.
 - `review` — the LIVE type skill for `dispatch_type: review`.
+- `experiment` — the LIVE type skill for `dispatch_type: experiment` (narrow recipe, 2026-06-14).
 - `register-dispatch` — the form/record skill (canonical source here; installed per-user to
   `~/.claude/skills/`).
 

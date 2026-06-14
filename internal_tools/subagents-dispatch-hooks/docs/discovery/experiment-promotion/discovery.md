@@ -44,8 +44,7 @@ e modelo ([LEDGER-MODEL.md:139](../../LEDGER-MODEL.md)) — mas como **nome FORE
 dispatchável. O gatilho concreto é que **já existe um experimento querido-e-não-servido**: o roster
 de formalização [`formalization/dispatch-formal-guarantees/dispatch.yaml`](../../../formalization/dispatch-formal-guarantees/dispatch.yaml)
 é experiment-shaped em tudo menos no nome (`success_metric` com `type`+`threshold` = critério
-pré-registrado; `novelty_is_success: false`; a moldura "sobrevive aos três portões OU é arquivado
-como typed-negative com seu collapse-test"), mas está sendo rodado pelo scaffold do skill `research`
+de sucesso/falha pré-registrado, e a sonda adjudicada contra ele), mas está sendo rodado pelo scaffold do skill `research`
 porque não há tipo `experiment` LIVE. Isso satisfaz o **portão 1** de promoção. Os outros dois
 portões (substrato de execução; peer-vs-sub-mode) ou são dissolvidos pelo recorte ou resolvidos aqui.
 
@@ -143,8 +142,10 @@ o escalar de critério vive como artefato de elicitação/design, nunca como col
   `experiment` de "reserved/FORECAST" para LIVE, no recorte estreito; registrar os vereditos dos
   três portões (§3.5), o mapa role→enum (§3.2) e a decisão critério-como-artefato (§3.3). Seguir o
   precedente de `review`: gravável sem version bump se o schema da row não muda (e não muda) —
-  fold na próxima emenda versionada, com re-confronto dos débitos §7 (AFFIRMED unchanged: nenhuma
-  máquina de spawn/custo nova, registry segue sendo a única superfície de persistência).
+  fold na próxima emenda versionada, com re-confronto dos débitos §7 (re-confronto adversarial de
+  2026-06-14: P-SS-8 e P-SS-9 AFFIRMED unchanged; o **NEW debt de persistência STRAINED** — o critério
+  pré-registrado é governance-grade mas vive off-registry no `working_folder`, descarregado por revisão
+  de premissa: o registry é a superfície única da metadata de *row-schema*. Ver constituição §7).
 - **`append-dispatch.cjs`:** adicionar `'experiment'` a `LIVE_TYPES`
   ([linha 99](../../skills/register-dispatch/append-dispatch.cjs)). Efeito colateral desejado: o
   `working_folder` passa a ser **required** para `experiment` (a checagem em

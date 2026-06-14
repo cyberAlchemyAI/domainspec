@@ -45,9 +45,9 @@ are validated by the human at the confirm gate.)
   Each dispatch contributes exactly **two appends**: the **dispatch row** (the spec, written
   at dispatch) and the **close row** (`close_of` + outcome, written at termination). There is
   no separate spec file and no separate event log.
-- **Claim ≤ proof:** four of the six `dispatch_type` values (`code | plan | suggestion | experiment`)
-  are reserved names — defined in §5 but not yet active; `research` and `review` are LIVE
-  (`review` populated 2026-06-12 by owner decision — see §5 `dispatch_type`).
+- **Claim ≤ proof:** three of the six `dispatch_type` values (`code | plan | suggestion`)
+  are reserved names — defined in §5 but not yet active; `research`, `review`, and `experiment`
+  are LIVE (`review` 2026-06-12, `experiment` 2026-06-14, by owner decision — see §5 `dispatch_type`).
 - **Companion documents:** a group running robot-talks binds `vault/constitution/robot-talks-constitution.md`;
   the pool of allowed `agent_name`s lives at `telemetry/agents/agent-pool.yaml` (245 names, each
   tagged with an ordered `role_fit` list drawn from explorer / skeptic / writer / auditor).
@@ -170,9 +170,9 @@ semantics and gates nothing.
 #### `dispatch_type` — R · A
 **What:** which typed strategy (role-set + evaluation criterion) the dispatch enacts.
 **Why:** fixes the agent-role vocabulary in one move.
-**Values:** `research | code | review | plan | suggestion | experiment`. Only `research` and `review` are LIVE; the other four are reserved names and **must not be dispatched until populated**.
+**Values:** `research | code | review | plan | suggestion | experiment`. `research`, `review`, and `experiment` are LIVE; the other three (`code`, `plan`, `suggestion`) are reserved names and **must not be dispatched until populated**.
 *(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded without a version bump because the row schema is unchanged — fold into the next versioned amendment. §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)*
-*(`experiment` reserved/FORECAST (2026-06-12), not LIVE: the falsification strategy — run a probe against a pre-registered success/failure criterion. **Role-set:** designer (designs the probe + the failure/success criterion) · runner (executes the probe, produces raw result) · adjudicator (decides survived/falsified vs the pre-registered criterion) · skeptic (attacks validity: confounds, the test does not test the hypothesis). **Grader:** falsification against the pre-registered criterion + internal validity of the test + reproducibility — distinct from `research`, whose grader is coverage / claim ≤ proof. **Open question:** is `experiment` a peer `dispatch_type` or a sub-mode of `research`? (in Arcanum the evidence-harness is a sibling of the tower), and the `runner` role collides with the reserved `code` type (no execution substrate yet). Promotion gated by: a real experiment wanted-and-not-served + an execution substrate + resolving type-vs-sub-mode.)*
+*(`experiment` populated 2026-06-14 by owner decision, **narrow recipe**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing enums (no new values): designer (`investigate`/`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`investigate`/`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`evaluate`/`auditor`, verdict against the criterion) · skeptic (`evaluate`/`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)*
 
 #### `goal` — R · **H**
 **What:** the human's general objective, one or two sentences. The strategist decomposes it
@@ -437,7 +437,7 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
 # rows are never edited in place (Principle 3).
 - dispatch_id: 2026-06-12-example-slug
   schema_version: "0.5.2"
-  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); code|plan|suggestion|experiment FORECAST
+  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); experiment LIVE (2026-06-14); code|plan|suggestion FORECAST
   goal: >                             # HUMAN input — the general objective;
     One or two sentences.             # the strategist decomposes it below.
   context: >
@@ -570,6 +570,27 @@ must re-list all open premise-outrunning debts and explicitly affirm or discharg
 
 No waiver is inherited silently; promoting any FORECAST `dispatch_type` to LIVE must
 re-confront all three debts.
+
+**`experiment` promotion (2026-06-14) — re-confrontation** (adversarial: proponent × skeptic):
+
+- **P-SS-8 (spawn / cost)** — **AFFIRMED open, unchanged.** The narrow recipe adds no spawn/cost
+  machinery; its roles map onto existing enums, the RESERVED code-execution runner pre-commits
+  nothing (no substrate exists), and reproducibility-by-re-adjudication is one more in-budget agent
+  inside the already-open count/recursion surface — logged as a future input to the
+  recursion-runaway OPEN QUESTION, not a change to it.
+- **P-SS-9 (linear lifecycle)** — **AFFIRMED open, unchanged.** The criterion-freeze is data-flow
+  topology (the `designer →sequential→ runner` edge) plus the existing P2 confirm-gate re-entry on
+  edit, not a new lifecycle phase; propose → confirm → dispatch → close stays linear.
+- **NEW debt (persistence)** — **STRAINED; discharged by premise revision.** `experiment` is the
+  first LIVE type whose verdict-defining datum — the pre-registered criterion — is *governance-grade*
+  (frozen at P2, immutable, re-gating on edit) yet persisted **off-registry**, in `working_folder`:
+  a close row's `FALSIFIED`/`SURVIVED` is uninterpretable and irreproducible from the ledger alone.
+  The premise is therefore **narrowed**: the registry is the sole persistence surface for *row-schema*
+  dispatch metadata; `experiment`'s pre-registered criterion is a governance-grade artifact persisted
+  in `working_folder` (located by the row's `working_folder` field), not the registry. A registry-side
+  pointer + content hash to the specific criterion artifact (restoring full ledger self-sufficiency
+  for re-adjudication) is recorded as an **OPEN** hardening option, deferred until `experiment` use
+  proves the gap bites.
 
 ## 8. v0.5.2 amendments (2026-06-12 adversarial assessment)
 
