@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.5.2-proposal
-last_updated: 2026-06-12
+version: 0.5.3-proposal
+last_updated: 2026-06-15
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
@@ -228,7 +228,7 @@ once two or more groups each fan out, where uncoordinated axes would drift.
 **Enforcement:** the conditional is appender-enforced (exit 2) since the 2026-06-12 in-place
 amendment (§9) — a record with ≥ 2 fan-out groups and no `anti_bias_global` is rejected.
 
-#### `working_folder` — C · A (required when `dispatch_type` is `research` or `review`)
+#### `working_folder` — C · A (required when `dispatch_type` is `research`, `review`, or `experiment`)
 **What:** where the dispatch's outputs land — research + findings documents, a spec file,
 or the code itself, depending on what the dispatch produces. For `research`, this is always a
 docs path. For a research **n ≥ 2** dispatch the two files of Principle 9 are
@@ -651,3 +651,27 @@ the right to open ≤ 1 nested dispatch, capped at 2 nested dispatches per paren
 dispatches may not nest further, delegated gate + mandatory registration via
 `parent_dispatch_id`). Pending a `dispatch_type: research` design dispatch before any
 amendment is drafted — Principle 13 and Principle 11 are the affected law.
+
+## 10. Amendment hygiene — version-bump + atomic promotion (LANDED 2026-06-15, v0.5.3)
+
+The §9 "in-place, no version bump" practice is the documented source of doc-vs-code drift:
+every "v0.5.2" reference became a target silently amended N times, and the 2026-06-14
+`experiment` promotion left the test battery red and §5's `working_folder` field stale (the
+C1 failure). Owner decision 2026-06-15 retires that practice for surface changes:
+
+1. **Version bump on surface change.** Any change to a field, an enum value, a principle, or
+   a `dispatch_type`'s LIVE/RESERVED status bumps the document `version`. In-place edits
+   without a bump are allowed only for typo/prose fixes that change no field, enum, or status.
+   (This is distinct from the wire `schema_version`, which bumps only when the *row schema*
+   changes — the row schema is unchanged at 0.5.2.)
+2. **Atomic promotion.** Promoting a `dispatch_type` (RESERVED → LIVE) or changing a field's
+   conditional must touch, in one change set: the **code** (appender enum/validation), the
+   **type SKILL**, this **constitution §5 field table**, the **test battery**, and the
+   **README** — verified by re-running `tests/test-append-dispatch.cjs` to green. A promotion
+   that updates fewer than all five surfaces is incomplete.
+3. **Both constitution copies move together.** The law is double-located (repo-root = live
+   law; `internal_tools/subagents-dispatch-hooks/constitution/` = migration source). Editing
+   one copy without the other is prohibited; a surface change lands in both, same change set.
+
+This clause is the **final amendment landed under the retired in-place practice**; it is
+itself versioned (→ v0.5.3-proposal) and applied to both copies per rule 3.

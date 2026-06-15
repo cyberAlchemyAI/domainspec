@@ -18,7 +18,7 @@
  *     investigate|evaluate|meta-evaluate|synthesize, agents[]; each agent:
  *     role explorer|skeptic|writer|auditor, model, token_budget,
  *     initial_prompt). Optional: meta (true), parent_dispatch_id,
- *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review; never vault/),
+ *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment; never vault/),
  *     invoked_by (tooling extension, not in constitution §5),
  *     connections[] ({from,to,type,loop_cap?}).
  *   CLOSE ROW — keyed by `close_of`. Required: exit_reason

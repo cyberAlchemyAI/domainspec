@@ -262,9 +262,10 @@ console.log('\n[10] working_folder rules');
   // a non-research type does not require working_folder (reserved-type note, still appends)
   const r = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-code', dispatch_type: 'code', working_folder: undefined }));
   check('10c non-research without working_folder appends (exit 0, FORECAST note)', r.status === 0 && /reserved \(FORECAST\) type/.test(r.stdout), r.stderr || r.stdout);
-  // experiment is a VALID reserved (FORECAST) type — accepted by the appender, not LIVE
-  const re = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-experiment', dispatch_type: 'experiment', working_folder: undefined }));
-  check('10i experiment is a valid reserved type — appends (exit 0, FORECAST note)', re.status === 0 && /reserved \(FORECAST\) type/.test(re.stdout), re.stderr || re.stdout);
+  // experiment is LIVE (2026-06-14) — requires working_folder like research/review, no FORECAST note
+  expectReject('10i experiment without working_folder rejected (LIVE type)', root, validDispatch({ dispatch_id: '2026-06-12-battery-exp-nf', dispatch_type: 'experiment', working_folder: undefined }), /working_folder is required when dispatch_type is "experiment"/);
+  const re = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-experiment', dispatch_type: 'experiment' }));
+  check('10i experiment with working_folder appends (exit 0, no FORECAST note)', re.status === 0 && !/reserved \(FORECAST\) type/.test(re.stdout), re.stderr || re.stdout);
 }
 
 console.log('\n[11] close rows');
