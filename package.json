@@ -15,6 +15,7 @@
     "code-tags:drift": "pnpm dlx tsx governance/tags/tools/compare-code-tag-drift.ts --input governance/tags/code-tags.json --mode strict --report governance/tags/CODE-TAG-DRIFT-REPORT.md",
     "code-tags:test": "pnpm dlx tsx --test governance/tags/tools/tests/*.test.ts",
     "check:code-tags": "pnpm run code-tags:extract && pnpm run code-tags:validate && pnpm run code-tags:composability && pnpm run code-tags:drift",
+    "governance:attenuation:audit": "pnpm dlx tsx tools/governance-attenuation-audit.ts",
     "dev": "pnpm -r --parallel dev",
     "dev:local": "pnpm -r --parallel dev",
     "dev:local:poker-docs": "KG_DOCS_IMPORT_PATH=$(pwd)/../../validation/poker-team/docs/features pnpm -r --parallel dev",

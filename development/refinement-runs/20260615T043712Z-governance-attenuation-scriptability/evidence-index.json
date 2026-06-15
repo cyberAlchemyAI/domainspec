@@ -1,0 +1,205 @@
+{
+  "run_id": "20260615T043712Z-governance-attenuation-scriptability",
+  "target": "implementation/domainspec/GOVERNANCE-ATTENUATION.md",
+  "status": "flag",
+  "preset": "standard",
+  "research_mode": "no-research",
+  "executed_goal": "SWU-GAS-001",
+  "artifacts": [
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/RUN-MANIFEST.md",
+      "owner": "refine",
+      "kind": "manifest",
+      "status": "present"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/REFINE-SEED-PROPOSAL.md",
+      "owner": "refine",
+      "kind": "seed",
+      "status": "present"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/REFINE-DISPATCH.json",
+      "owner": "dispatch-spec",
+      "kind": "dispatch",
+      "status": "validated-pass"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/RUNTIME-HANDOFF.md",
+      "owner": "refine",
+      "kind": "handoff",
+      "status": "executed"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/RESULT.md",
+      "owner": "refine",
+      "kind": "result",
+      "status": "flag"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/IMPLEMENTATION-LAYERING.md",
+      "owner": "invoke",
+      "kind": "implementation-layering",
+      "status": "present"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/WORK-PACK.md",
+      "owner": "invoke",
+      "kind": "work-pack",
+      "status": "executed-l0"
+    },
+    {
+      "path": "implementation/domainspec/development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/TASK-SESSION-REPORT.md",
+      "owner": "task-session",
+      "kind": "execution-report",
+      "status": "pass"
+    }
+  ],
+  "source_evidence": [
+    {
+      "path": "implementation/domainspec/GOVERNANCE-ATTENUATION.md",
+      "claim": "Target document argues for structural enforcement instead of adding governance instructions."
+    },
+    {
+      "path": "implementation/domainspec/GOVERNANCE-ATTENUATION-EXECUTION-BOARD.md",
+      "claim": "Execution board decomposes the attenuation response into waves for deterministic signals, telemetry, CI gates, observers, and pruning."
+    },
+    {
+      "path": "implementation/domainspec/tools/detect-signals.ts",
+      "claim": "Existing deterministic artifact-level signal detector; updated to use source-layout-aware defaults."
+    },
+    {
+      "path": "implementation/domainspec/tools/run-fast-observer.ts",
+      "claim": "Existing fast observer wrapper; updated to avoid installed-layout hardcoding and handle no-signal output."
+    },
+    {
+      "path": "implementation/domainspec/tools/build-telemetry-bundle.ts",
+      "claim": "Existing session telemetry bundle builder; updated to resolve DomainSpec-root-relative output paths."
+    },
+    {
+      "path": "implementation/domainspec/tools/run-async-observer.ts",
+      "claim": "Existing behavior-level async observer; updated to resolve DomainSpec-root-relative paths."
+    },
+    {
+      "path": "implementation/domainspec/tools/validate-signals.ts",
+      "claim": "Existing signal envelope and completeness validator; current ledger still blocks under this validator."
+    },
+    {
+      "path": "implementation/domainspec/tools/analyze-signals.ts",
+      "claim": "Existing signal threshold analyzer; updated to find source ledger and tolerate legacy records."
+    },
+    {
+      "path": "implementation/domainspec/tools/prune-governance.ts",
+      "claim": "Existing Via Negativa governance pruning script; updated to find source files and tolerate legacy records."
+    },
+    {
+      "path": "implementation/domainspec/tools/generate-meta-health.ts",
+      "claim": "Existing meta-health metric report generator; updated to resolve source-layout paths."
+    },
+    {
+      "path": "implementation/domainspec/tools/validate-governance-chain.ts",
+      "claim": "Existing axiom-constitution-gate validator; updated to find source-layout policy files."
+    },
+    {
+      "path": "implementation/domainspec/tools/lib/domainspec-paths.ts",
+      "claim": "New shared resolver for source checkout and installed bundle layouts."
+    },
+    {
+      "path": "implementation/domainspec/tools/governance-attenuation-audit.ts",
+      "claim": "New consolidated report-only audit command."
+    }
+  ],
+  "validation": [
+    {
+      "command": "python3 -m json.tool REFINE-DISPATCH.json && python3 -m json.tool evidence-index.json",
+      "status": "pass",
+      "interpretation": "JSON syntax check passed after final index update."
+    },
+    {
+      "command": "arcanum/formulae/dispatch-spec/scripts/validate-dispatch.py REFINE-DISPATCH.json",
+      "status": "pass",
+      "interpretation": "Dispatch validation returned VALIDATION=pass after receipt update."
+    },
+    {
+      "command": "pnpm dlx tsx implementation/domainspec/tools/validate-governance-chain.ts --json",
+      "status": "pass",
+      "interpretation": "Source-layout resolver finds governance policy files."
+    },
+    {
+      "command": "pnpm dlx tsx implementation/domainspec/tools/analyze-signals.ts --json --min 1",
+      "status": "pass",
+      "interpretation": "Analyzer reads source signal ledger and does not crash on legacy records."
+    },
+    {
+      "command": "pnpm dlx tsx implementation/domainspec/tools/detect-signals.ts --feature cross-feature --range HEAD~1..HEAD --dry-run",
+      "status": "pass",
+      "interpretation": "Detector runs from parent checkout."
+    },
+    {
+      "command": "pnpm dlx tsx implementation/domainspec/tools/run-fast-observer.ts --feature cross-feature --range HEAD~1..HEAD --output development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/stages/gas-fast-observer-signals.jsonl",
+      "status": "pass",
+      "interpretation": "Fast observer handles no detected signals without missing-file failure."
+    },
+    {
+      "command": "pnpm --dir implementation/domainspec run governance:attenuation:audit -- --output development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability/stages/governance-attenuation-audit.md",
+      "status": "expected-block",
+      "interpretation": "Audit command writes report and exits nonzero because current signal ledger envelope is invalid."
+    }
+  ],
+  "stages": [
+    {
+      "step_id": "s01-context-builder",
+      "status": "pass",
+      "artifact": "stages/S01-CONTEXT-BUILDER.md"
+    },
+    {
+      "step_id": "s02-invoke-define",
+      "status": "pass",
+      "artifact": "stages/S02-INVOKE-DEFINE.md"
+    },
+    {
+      "step_id": "s03-interrogation-refine-review",
+      "status": "pass",
+      "artifact": "stages/S03-INTERROGATION-REFINE-REVIEW.md"
+    },
+    {
+      "step_id": "s04-research-decision",
+      "status": "pass",
+      "artifact": "stages/S04-RESEARCH-DECISION.md"
+    },
+    {
+      "step_id": "s05-distill-scriptability",
+      "status": "pass",
+      "artifact": "stages/S05-DISTILL-SCRIPTABILITY.md"
+    },
+    {
+      "step_id": "s06-invoke-design",
+      "status": "pass",
+      "artifact": "stages/S06-INVOKE-DESIGN.md"
+    },
+    {
+      "step_id": "s07-interrogation-design-review",
+      "status": "pass",
+      "artifact": "stages/S07-INTERROGATION-DESIGN-REVIEW.md"
+    },
+    {
+      "step_id": "s08-distill-repair-probe",
+      "status": "pass",
+      "artifact": "stages/S08-DISTILL-REPAIR-PROBE.md"
+    },
+    {
+      "step_id": "s09-invoke-plan",
+      "status": "pass",
+      "artifact": "stages/S09-INVOKE-PLAN.md"
+    },
+    {
+      "step_id": "s10-final-synthesis",
+      "status": "flag",
+      "artifact": "stages/S10-FINAL-INTERROGATION-SYNTHESIS.md"
+    }
+  ],
+  "residue": [
+    "Current implementation/domainspec/docs/signals/pipeline-signals.jsonl fails strict signal validation.",
+    "Signal ledger migration or compatibility wrapping is required before the audit can become a blocking CI/pre-commit gate."
+  ]
+}

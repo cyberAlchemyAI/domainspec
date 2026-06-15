@@ -3,24 +3,33 @@
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import {
+  domainSpecRelative,
+  resolveDomainSpecPath,
+} from "./lib/domainspec-paths";
 
 const args = process.argv.slice(2);
-const sessionId = getArg("--session") || `session-${new Date().toISOString().replace(/[:.]/g, "-")}`;
+const sessionId =
+  getArg("--session") ||
+  `session-${new Date().toISOString().replace(/[:.]/g, "-")}`;
 const gitRange = getArg("--range") || "HEAD~1..HEAD";
 const logArg = getArg("--log");
 const outputArg =
   getArg("--output") || `docs/signals/telemetry/${sessionId}.json`;
 
-const outputPath = resolve(process.cwd(), outputArg);
-const logPath =
-  logArg || process.env.VSCODE_TARGET_SESSION_LOG || "";
+const outputPath = resolveDomainSpecPath(outputArg);
+const logPath = logArg || process.env.VSCODE_TARGET_SESSION_LOG || "";
 
-const changedFiles = splitLines(execOrEmpty(`git --no-pager diff --name-only ${gitRange}`));
+const changedFiles = splitLines(
+  execOrEmpty(`git --no-pager diff --name-only ${gitRange}`),
+);
 const diffSummary = execOrEmpty(`git --no-pager diff --stat ${gitRange}`);
 const diffPatch = execOrEmpty(`git --no-pager diff --unified=0 ${gitRange}`);
 
 const commandEvents = loadCommandEvents(logPath);
-const testEvents = commandEvents.filter((e) => /test|vitest|playwright|jest/i.test(e.message));
+const testEvents = commandEvents.filter((e) =>
+  /test|vitest|playwright|jest/i.test(e.message),
+);
 
 const payload = {
   sessionId,
@@ -34,16 +43,19 @@ const payload = {
   testEvents,
 };
 
-mkdirSync(resolve(process.cwd(), "docs/signals/telemetry"), { recursive: true });
+mkdirSync(resolveDomainSpecPath("docs/signals/telemetry"), { recursive: true });
 writeFileSync(outputPath, JSON.stringify(payload, null, 2) + "\n", "utf-8");
 console.log(`Telemetry bundle written: ${toRelative(outputPath)}`);
 
-function loadCommandEvents(path: string): Array<{ timestamp: string; message: string }> {
+function loadCommandEvents(
+  path: string,
+): Array<{ timestamp: string; message: string }> {
   if (!path || !existsSync(path)) {
     return [
       {
         timestamp: new Date().toISOString(),
-        message: "No session log found. Bundle includes git-derived telemetry only.",
+        message:
+          "No session log found. Bundle includes git-derived telemetry only.",
       },
     ];
   }
@@ -56,7 +68,9 @@ function loadCommandEvents(path: string): Array<{ timestamp: string; message: st
     .slice(-400);
 
   return lines.map((line) => {
-    const tsMatch = line.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?/);
+    const tsMatch = line.match(
+      /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?/,
+    );
     return {
       timestamp: tsMatch?.[0] || new Date().toISOString(),
       message: trimSize(line, 500),
@@ -71,7 +85,10 @@ function trimSize(value: string, max: number): string {
 
 function execOrEmpty(command: string): string {
   try {
-    return execSync(command, { encoding: "utf-8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+    return execSync(command, {
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "pipe"],
+    }).trim();
   } catch {
     return "";
   }
@@ -91,5 +108,5 @@ function getArg(name: string): string | undefined {
 }
 
 function toRelative(absPath: string): string {
-  return absPath.replace(`${process.cwd()}/`, "");
+  return domainSpecRelative(absPath);
 }

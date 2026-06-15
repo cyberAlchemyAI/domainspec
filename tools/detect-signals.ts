@@ -4,6 +4,12 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync, appendFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { resolve } from "node:path";
+import {
+  domainSpecRelative,
+  resolveDomainSpecPath,
+  resolveDomainSpecRoot,
+  workspaceRelative,
+} from "./lib/domainspec-paths";
 
 type Signal = {
   id: string;
@@ -25,8 +31,8 @@ const session =
   getArg("--session") || `detector-${new Date().toISOString().slice(0, 10)}`;
 const modeArg = getArg("--mode") || "audit";
 const sourceArg = getArg("--source") || "ci-detector";
-const output = resolve(
-  process.cwd(),
+const domainSpecRoot = resolveDomainSpecRoot();
+const output = resolveDomainSpecPath(
   getArg("--output") || "docs/signals/pipeline-signals.jsonl",
 );
 const dryRun = args.includes("--dry-run");
@@ -175,7 +181,12 @@ function detectScopeDrift(
     `backend/src/domain/${featureId}/`,
     `backend/src/use-cases/${featureId}/`,
     `apps/web/src/${featureId}/`,
+    `implementation/domainspec/docs/features/${featureId}/`,
+    `implementation/domainspec/backend/src/domain/${featureId}/`,
+    `implementation/domainspec/backend/src/use-cases/${featureId}/`,
+    `implementation/domainspec/apps/web/src/${featureId}/`,
     "domainspec/",
+    "implementation/domainspec/",
     ".github/",
     "docs/signals/",
   ];
@@ -234,7 +245,7 @@ function getChangedFiles(gitRange: string): string[] {
 
 function resolveFeatureSpec(featureId: string): string | null {
   const candidates = [
-    resolve(process.cwd(), `docs/features/${featureId}/SPEC.md`),
+    resolve(domainSpecRoot, `docs/features/${featureId}/SPEC.md`),
   ];
   for (const candidate of candidates) {
     if (existsSync(candidate)) return candidate;
@@ -244,8 +255,8 @@ function resolveFeatureSpec(featureId: string): string | null {
 
 function readCodeCorpus(): string {
   const roots = [
-    resolve(process.cwd(), "backend/src"),
-    resolve(process.cwd(), "apps/web/src"),
+    resolve(domainSpecRoot, "backend/src"),
+    resolve(domainSpecRoot, "apps/web/src"),
   ];
 
   let corpus = "";
@@ -259,7 +270,7 @@ function readCodeCorpus(): string {
 }
 
 function getDomainspecVersion(): string {
-  const changelog = resolve(process.cwd(), "domainspec/CHANGELOG.md");
+  const changelog = resolveDomainSpecPath("CHANGELOG.md");
   if (!existsSync(changelog)) return "unknown";
   const raw = readFileSync(changelog, "utf-8");
   const match = raw.match(/^##\s+\[([^\]]+)\]/m);
@@ -292,5 +303,8 @@ function getArg(name: string): string | undefined {
 }
 
 function toRelative(absPath: string): string {
-  return absPath.replace(`${process.cwd()}/`, "");
+  const rootRelative = domainSpecRelative(absPath);
+  return rootRelative.startsWith("..")
+    ? workspaceRelative(absPath)
+    : rootRelative;
 }

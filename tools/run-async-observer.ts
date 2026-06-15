@@ -2,7 +2,10 @@
 
 import { randomUUID } from "node:crypto";
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+  domainSpecRelative,
+  resolveDomainSpecPath,
+} from "./lib/domainspec-paths";
 
 type TelemetryBundle = {
   sessionId: string;
@@ -26,12 +29,10 @@ type Signal = {
 };
 
 const args = process.argv.slice(2);
-const bundlePath = resolve(
-  process.cwd(),
+const bundlePath = resolveDomainSpecPath(
   getArg("--bundle") || "docs/signals/telemetry/latest.json",
 );
-const outputPath = resolve(
-  process.cwd(),
+const outputPath = resolveDomainSpecPath(
   getArg("--output") || "docs/signals/pipeline-signals.jsonl",
 );
 const feature = getArg("--feature") || "cross-feature";
@@ -47,7 +48,8 @@ if (!existsSync(bundlePath)) {
 }
 
 const bundle = JSON.parse(readFileSync(bundlePath, "utf-8")) as TelemetryBundle;
-const session = bundle.sessionId || `async-observer-${new Date().toISOString().slice(0, 10)}`;
+const session =
+  bundle.sessionId || `async-observer-${new Date().toISOString().slice(0, 10)}`;
 const version = getDomainspecVersion();
 
 const events = bundle.orderedEvents || [];
@@ -55,7 +57,9 @@ const changedFiles = bundle.changedFiles || [];
 
 const signals: Signal[] = [];
 
-const hasFail = events.some((event) => /fail|error|exception/i.test(event.message));
+const hasFail = events.some((event) =>
+  /fail|error|exception/i.test(event.message),
+);
 const hasPass = events.some((event) => /pass|ok|success/i.test(event.message));
 if (hasFail && hasPass) {
   signals.push(
@@ -79,8 +83,12 @@ if (hasFail && hasPass) {
   );
 }
 
-const testFileChanges = changedFiles.filter((path) => /test|spec|\.e2e\./i.test(path));
-const nonTestChanges = changedFiles.filter((path) => !/test|spec|\.e2e\./i.test(path));
+const testFileChanges = changedFiles.filter((path) =>
+  /test|spec|\.e2e\./i.test(path),
+);
+const nonTestChanges = changedFiles.filter(
+  (path) => !/test|spec|\.e2e\./i.test(path),
+);
 if (testFileChanges.length > 0 && nonTestChanges.length > 0) {
   signals.push(
     buildSignal({
@@ -94,7 +102,8 @@ if (testFileChanges.length > 0 && nonTestChanges.length > 0) {
       data: {
         summary: "Tests and implementation changed together in same session",
         context: "Async observer telemetry analysis",
-        applicability: "Can indicate healthy reinforcement if changes were intentional",
+        applicability:
+          "Can indicate healthy reinforcement if changes were intentional",
       },
     }),
   );
@@ -112,10 +121,12 @@ if (docsOnly && testFileChanges.length > 0) {
       severity: "MEDIUM",
       category: "governance",
       data: {
-        description: "Scope drift: test changes detected during docs-only change set",
+        description:
+          "Scope drift: test changes detected during docs-only change set",
         shouldHaveBeenCaughtBy: "async-observer",
         skillFile: ".github/skills/domainspec-signal-observer/SKILL.md",
-        suggestedFix: "Reclassify scope or isolate test hardening into explicit execution plan",
+        suggestedFix:
+          "Reclassify scope or isolate test hardening into explicit execution plan",
         occurrences: testFileChanges.length,
       },
     }),
@@ -127,8 +138,14 @@ if (signals.length === 0) {
   process.exit(0);
 }
 
-appendFileSync(outputPath, signals.map((s) => JSON.stringify(s)).join("\n") + "\n", "utf-8");
-console.log(`Async observer appended ${signals.length} signal(s) from ${bundlePath}`);
+appendFileSync(
+  outputPath,
+  signals.map((s) => JSON.stringify(s)).join("\n") + "\n",
+  "utf-8",
+);
+console.log(
+  `Async observer appended ${signals.length} signal(s) from ${bundlePath}`,
+);
 
 function buildSignal(input: {
   session: string;
@@ -156,11 +173,15 @@ function buildSignal(input: {
 }
 
 function getDomainspecVersion(): string {
-  const changelog = resolve(process.cwd(), "domainspec/CHANGELOG.md");
+  const changelog = resolveDomainSpecPath("CHANGELOG.md");
   if (!existsSync(changelog)) return "unknown";
   const raw = readFileSync(changelog, "utf-8");
   const match = raw.match(/^##\s+\[([^\]]+)\]/m);
   return match?.[1] || "unknown";
+}
+
+function toRelative(absPath: string): string {
+  return domainSpecRelative(absPath);
 }
 
 function getArg(name: string): string | undefined {

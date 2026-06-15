@@ -1,30 +1,49 @@
 #!/usr/bin/env tsx
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolveDomainSpecPath } from "./lib/domainspec-paths";
 
 const args = process.argv.slice(2);
 const feature = getArg("--feature") || "cross-feature";
-const session = getArg("--session") || `fast-observer-${new Date().toISOString().slice(0, 10)}`;
+const session =
+  getArg("--session") ||
+  `fast-observer-${new Date().toISOString().slice(0, 10)}`;
 const range = getArg("--range") || "HEAD~1..HEAD";
 const mode = getArg("--mode") || "audit";
 const output = getArg("--output") || "docs/signals/pipeline-signals.jsonl";
+const outputPath = resolveDomainSpecPath(output);
 const strictSince =
-  getArg("--strict-since") || process.env.SIGNAL_STRICT_SINCE || "2026-04-18T19:31:00Z";
+  getArg("--strict-since") ||
+  process.env.SIGNAL_STRICT_SINCE ||
+  "2026-04-18T19:31:00Z";
 
-run(
-  `npx tsx domainspec/tools/detect-signals.ts --feature ${feature} --session ${session} --mode ${mode} --source fast-observer --range ${range} --output ${output}`,
-);
-run(
-  `npx tsx domainspec/tools/validate-signals.ts --input ${output} --strict-since ${strictSince}`,
-);
+runTsx(resolveDomainSpecPath("tools/detect-signals.ts"), [
+  "--feature",
+  feature,
+  "--session",
+  session,
+  "--mode",
+  mode,
+  "--source",
+  "fast-observer",
+  "--range",
+  range,
+  "--output",
+  outputPath,
+]);
 
-const outputPath = resolve(process.cwd(), output);
 if (!existsSync(outputPath)) {
   console.log("Fast observer completed with no signal file found.");
   process.exit(0);
 }
+
+runTsx(resolveDomainSpecPath("tools/validate-signals.ts"), [
+  "--input",
+  outputPath,
+  "--strict-since",
+  strictSince,
+]);
 
 const recent = readFileSync(outputPath, "utf-8")
   .split("\n")
@@ -57,15 +76,19 @@ const blockers = recent.filter(
 if (blockers.length > 0) {
   console.log("Fast observer found blocking governance gaps:");
   for (const blocker of blockers) {
-    console.log(`- ${blocker.severity}: ${blocker.data.description || "no description"}`);
+    console.log(
+      `- ${blocker.severity}: ${blocker.data.description || "no description"}`,
+    );
   }
   process.exit(1);
 }
 
 console.log(`Fast observer completed successfully for session ${session}`);
 
-function run(command: string): void {
-  execSync(command, { stdio: "inherit" });
+function runTsx(script: string, scriptArgs: string[]): void {
+  execFileSync("pnpm", ["dlx", "tsx", script, ...scriptArgs], {
+    stdio: "inherit",
+  });
 }
 
 function getArg(name: string): string | undefined {

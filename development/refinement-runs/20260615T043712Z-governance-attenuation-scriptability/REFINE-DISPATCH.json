@@ -1,0 +1,682 @@
+{
+  "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+  "intent": {
+    "raw": "[$refine] apply implementation/domainspec/GOVERNANCE-ATTENUATION.md and see which we can use a script to do instead of instructions",
+    "objective": "Refine the governance attenuation document into a non-executed scriptability design and plan that distinguishes existing scripts, next scripts, observer-only telemetry, and policy-only gates.",
+    "target_artifact": "implementation/domainspec/GOVERNANCE-ATTENUATION.md",
+    "operator_sentence": "apply GOVERNANCE-ATTENUATION.md and see which governance duties can use scripts instead of instructions",
+    "arcanum_vocabulary": [
+      "refine",
+      "dispatch-spec",
+      "context-builder",
+      "invoke",
+      "interrogation",
+      "distill"
+    ]
+  },
+  "mode": "sequence",
+  "route_menu": {
+    "context_hint": "The target already names structural enforcement as the remedy, so the selected route is a local scriptability refinement rather than external research or implementation.",
+    "items": [
+      {
+        "id": "scriptability-refinement",
+        "label": "Scriptability Refinement",
+        "description": "Inventory existing governance scripts, classify remaining instruction duties, and produce a non-executed plan.",
+        "capability_ref": "refine",
+        "pattern": "sequential"
+      },
+      {
+        "id": "direct-implementation",
+        "label": "Direct Implementation",
+        "description": "Patch scripts immediately. Rejected until the refine synthesis identifies the smallest safe unit.",
+        "capability_ref": "task-session",
+        "pattern": "route"
+      }
+    ],
+    "selected_item_id": "scriptability-refinement"
+  },
+  "techniques": [
+    "sequence",
+    "frame_handoff",
+    "handle_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "minimum_component_catalog",
+    "conditional_component",
+    "data_quality_completeness",
+    "x_ray",
+    "toy_game",
+    "concrete_path_evidence",
+    "state_namespace_boundary",
+    "approval_semantics_map"
+  ],
+  "technique_overlays": [
+    {
+      "overlay_id": "baseline_sequence",
+      "trigger": "The target is a bounded document-to-plan refinement with a canonical ten-stage loop.",
+      "techniques": [
+        "sequence",
+        "frame_handoff",
+        "handle_handoff",
+        "validation_loop",
+        "owner_boundary_check",
+        "observability_grouping",
+        "minimum_component_catalog",
+        "conditional_component",
+        "data_quality_completeness"
+      ],
+      "applies_to_steps": [
+        "s01-context-builder",
+        "s02-invoke-define",
+        "s03-interrogation-refine-review",
+        "s04-research-decision",
+        "s05-distill-scriptability",
+        "s06-invoke-design",
+        "s07-interrogation-design-review",
+        "s08-distill-repair-probe",
+        "s09-invoke-plan",
+        "s10-final-synthesis"
+      ],
+      "validation_expectation": "Every non-first step consumes prior stage evidence and every pass verdict must be backed by an artifact or explicit blocked reason."
+    },
+    {
+      "overlay_id": "xray_for_hidden_script_surface",
+      "trigger": "The main uncertainty is the hidden relation between prose governance duties and existing scripts scattered across tools, governance tags, and docs signal ledgers.",
+      "techniques": [
+        "x_ray",
+        "component_descriptor",
+        "entity_component_reference",
+        "concrete_path_evidence"
+      ],
+      "applies_to_steps": ["s01-context-builder", "s05-distill-scriptability"],
+      "validation_expectation": "The scriptability inventory must cite concrete paths and classify each duty by current script support."
+    },
+    {
+      "overlay_id": "toy_game_for_runner_and_schema_falsification",
+      "trigger": "Existing scripts should be probed cheaply before claiming they can replace instructions.",
+      "techniques": [
+        "toy_game",
+        "validation_loop",
+        "assessment_failure_reference"
+      ],
+      "applies_to_steps": ["s08-distill-repair-probe"],
+      "validation_expectation": "A small probe plan must name commands, expected evidence, and failure interpretation before any implementation task is recommended."
+    },
+    {
+      "overlay_id": "state_boundary_for_source_vs_installed_layout",
+      "trigger": "The umbrella checkout and installed DomainSpec layout use different path roots, and source evidence must not be mistaken for consumer-install behavior.",
+      "techniques": ["state_namespace_boundary", "approval_semantics_map"],
+      "applies_to_steps": [
+        "s01-context-builder",
+        "s09-invoke-plan",
+        "s10-final-synthesis"
+      ],
+      "validation_expectation": "The plan must distinguish source checkout paths from installed consumer paths and require approval before source or CI mutation."
+    }
+  ],
+  "subagent_strategy": {
+    "status": "none",
+    "trigger": "The scriptability inventory is local, bounded, and better served by direct path evidence than parallel role review.",
+    "explanation": "No subagents are needed for the initial refine route. If execution later mutates CI or cross-layout tooling, a separate task-session may add review roles.",
+    "context": [
+      "Target is a single governance document plus existing local scripts.",
+      "Runtime-backed stages still require operator confirmation before execution."
+    ],
+    "roles": [],
+    "parallelism": "none",
+    "join_policy": "none",
+    "authorization": "not_needed",
+    "permission_prompt": "No subagents proposed for this route.",
+    "receipt_requirements": []
+  },
+  "subagent_lifecycle": {
+    "status": "none",
+    "agents": []
+  },
+  "native_stage_receipts": [
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s01-context-builder",
+      "capability_ref": "context-builder",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S01-CONTEXT-BUILDER.md"],
+      "validation": ["selected evidence covers all obligations"],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "Legacy signal ledger shape remains invalid under current validator.",
+      "handoff_note": "Evidence baseline completed."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s02-invoke-define",
+      "capability_ref": "invoke",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S02-INVOKE-DEFINE.md"],
+      "validation": [
+        "goal has explicit scope, non-goals, and validation surface"
+      ],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "",
+      "handoff_note": "Scriptability goal defined."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s03-interrogation-refine-review",
+      "capability_ref": "interrogation",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S03-INTERROGATION-REFINE-REVIEW.md"],
+      "validation": ["review found no blocker for L0 execution unit"],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "Signal ledger migration remains future work.",
+      "handoff_note": "Unsafe substitutions ruled out."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s04-research-decision",
+      "capability_ref": "refine",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S04-RESEARCH-DECISION.md"],
+      "validation": ["research mode recorded as no-research"],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "",
+      "handoff_note": "No external research used."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s05-distill-scriptability",
+      "capability_ref": "distill",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S05-DISTILL-SCRIPTABILITY.md"],
+      "validation": ["SWU-GAS-001 selected as smallest coherent unit"],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "Ledger migration and CI wiring remain later units.",
+      "handoff_note": "Scriptability buckets distilled."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s06-invoke-design",
+      "capability_ref": "invoke",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S06-INVOKE-DESIGN.md"],
+      "validation": ["six design views covered"],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "",
+      "handoff_note": "Source-layout-safe audit design completed."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s07-interrogation-design-review",
+      "capability_ref": "interrogation",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": ["stages/S07-INTERROGATION-DESIGN-REVIEW.md"],
+      "validation": ["repair findings incorporated into execution scope"],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "",
+      "handoff_note": "Design review passed with repair requirements."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s08-distill-repair-probe",
+      "capability_ref": "distill",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": [
+        "stages/S08-DISTILL-REPAIR-PROBE.md",
+        "stages/governance-attenuation-audit.md",
+        "stages/governance-prune-report.md",
+        "stages/meta-health-report.md",
+        "stages/gas-test-telemetry.json"
+      ],
+      "validation": [
+        "runner probes either pass or block with intended audit evidence"
+      ],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "Signal-ledger-envelope remains block.",
+      "handoff_note": "Repair probes completed."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s09-invoke-plan",
+      "capability_ref": "invoke",
+      "receipt_kind": "native-stage",
+      "status": "pass",
+      "artifacts": [
+        "stages/S09-INVOKE-PLAN.md",
+        "IMPLEMENTATION-LAYERING.md",
+        "WORK-PACK.md",
+        "TASK-SESSION-REPORT.md"
+      ],
+      "validation": [
+        "work-pack maps executed SWU and deferred follow-up units"
+      ],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "SWU-GAS-002 signal ledger migration remains next.",
+      "handoff_note": "Plan and task-session report completed."
+    },
+    {
+      "dispatch_id": "20260615T043712Z-governance-attenuation-scriptability",
+      "step_id": "s10-final-synthesis",
+      "capability_ref": "interrogation",
+      "receipt_kind": "native-stage",
+      "status": "flag",
+      "artifacts": ["stages/S10-FINAL-INTERROGATION-SYNTHESIS.md", "RESULT.md"],
+      "validation": [
+        "produced goal executed",
+        "remaining signal ledger block recorded"
+      ],
+      "observer_status": "not_applicable",
+      "blockers": [],
+      "residue": "Signal-ledger-envelope block remains.",
+      "handoff_note": "Final synthesis is flag because the executed L0 goal exposed a real legacy signal ledger blocker."
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "s01-context-builder",
+      "name": "Context Builder evidence baseline",
+      "capability_ref": "context-builder",
+      "mode": "standard",
+      "pattern": "xray",
+      "techniques": [
+        "x_ray",
+        "component_descriptor",
+        "entity_component_reference",
+        "concrete_path_evidence"
+      ],
+      "inputs": [
+        {
+          "kind": "intent",
+          "ref": "operator intent and target artifact"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S01-CONTEXT-BUILDER.md"
+        }
+      ],
+      "evidence_artifact": "stages/S01-CONTEXT-BUILDER.md",
+      "stop_conditions": [
+        "Target document and script inventory are path-cited.",
+        "Source-vs-installed layout residue is recorded."
+      ]
+    },
+    {
+      "step_id": "s02-invoke-define",
+      "name": "Invoke Define",
+      "capability_ref": "invoke",
+      "mode": "define",
+      "pattern": "sequential",
+      "techniques": ["frame_handoff", "handle_handoff"],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "REFINE-SEED-PROPOSAL.md"
+        },
+        {
+          "kind": "artifact",
+          "ref": "stages/S01-CONTEXT-BUILDER.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S02-INVOKE-DEFINE.md"
+        }
+      ],
+      "stop_conditions": [
+        "Define artifact states the refinement problem without mutating implementation files."
+      ]
+    },
+    {
+      "step_id": "s03-interrogation-refine-review",
+      "name": "Interrogation refine-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-review",
+      "pattern": "validation",
+      "techniques": ["validation_loop", "assessment_failure_reference"],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S02-INVOKE-DEFINE.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S03-INTERROGATION-REFINE-REVIEW.md"
+        }
+      ],
+      "evidence_artifact": "stages/S03-INTERROGATION-REFINE-REVIEW.md",
+      "stop_conditions": [
+        "Critique flags unsafe script substitutions and missing evidence."
+      ]
+    },
+    {
+      "step_id": "s04-research-decision",
+      "name": "Research decision",
+      "capability_ref": "refine",
+      "mode": "no-research",
+      "pattern": "decision",
+      "techniques": ["approval_semantics_map"],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S03-INTERROGATION-REFINE-REVIEW.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/S04-RESEARCH-DECISION.md"
+        }
+      ],
+      "stop_conditions": [
+        "Research decision is recorded as no-research unless a named external gap appears and the operator confirms."
+      ]
+    },
+    {
+      "step_id": "s05-distill-scriptability",
+      "name": "Distill scriptability buckets",
+      "capability_ref": "distill",
+      "mode": "standard",
+      "pattern": "distill",
+      "techniques": [
+        "scu_swu_reduction",
+        "x_ray",
+        "component_descriptor",
+        "concrete_path_evidence"
+      ],
+      "inputs": [
+        {
+          "kind": "decision",
+          "ref": "stages/S04-RESEARCH-DECISION.md"
+        },
+        {
+          "kind": "artifact",
+          "ref": "stages/S01-CONTEXT-BUILDER.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S05-DISTILL-SCRIPTABILITY.md"
+        }
+      ],
+      "evidence_artifact": "stages/S05-DISTILL-SCRIPTABILITY.md",
+      "stop_conditions": [
+        "Every candidate is classified as script-now, script-next, observer-only, or policy-only."
+      ]
+    },
+    {
+      "step_id": "s06-invoke-design",
+      "name": "Invoke Redefine / Design",
+      "capability_ref": "invoke",
+      "mode": "design",
+      "pattern": "sequential",
+      "techniques": ["frame_handoff", "owner_boundary_check"],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S05-DISTILL-SCRIPTABILITY.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S06-INVOKE-DESIGN.md"
+        }
+      ],
+      "stop_conditions": [
+        "Design names the smallest coherent scriptability surface and leaves implementation to a later route."
+      ]
+    },
+    {
+      "step_id": "s07-interrogation-design-review",
+      "name": "Interrogation refine-design-review",
+      "capability_ref": "interrogation",
+      "mode": "refine-design-review",
+      "pattern": "validation",
+      "techniques": ["validation_loop", "assessment_failure_reference"],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S06-INVOKE-DESIGN.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S07-INTERROGATION-DESIGN-REVIEW.md"
+        }
+      ],
+      "evidence_artifact": "stages/S07-INTERROGATION-DESIGN-REVIEW.md",
+      "stop_conditions": [
+        "Review blocks designs that rely on instructions where scripts can enforce the same condition."
+      ]
+    },
+    {
+      "step_id": "s08-distill-repair-probe",
+      "name": "Distill Repair with low-cost script probe",
+      "capability_ref": "distill",
+      "mode": "validate",
+      "pattern": "toy_game",
+      "techniques": [
+        "toy_game",
+        "validation_loop",
+        "assessment_failure_reference"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S07-INTERROGATION-DESIGN-REVIEW.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S08-DISTILL-REPAIR-PROBE.md"
+        }
+      ],
+      "evidence_artifact": "stages/S08-DISTILL-REPAIR-PROBE.md",
+      "stop_conditions": [
+        "Probe plan records runner, path, and signal-schema failure interpretations."
+      ]
+    },
+    {
+      "step_id": "s09-invoke-plan",
+      "name": "Invoke Plan",
+      "capability_ref": "invoke",
+      "mode": "plan",
+      "pattern": "sequential",
+      "techniques": [
+        "frame_handoff",
+        "approval_semantics_map",
+        "state_namespace_boundary"
+      ],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S08-DISTILL-REPAIR-PROBE.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S09-INVOKE-PLAN.md"
+        }
+      ],
+      "stop_conditions": [
+        "Plan is non-executed and requires explicit approval for source, CI, or canonical governance changes."
+      ]
+    },
+    {
+      "step_id": "s10-final-synthesis",
+      "name": "Final Interrogation and Refine-owned synthesis",
+      "capability_ref": "interrogation",
+      "mode": "refine-final",
+      "pattern": "synthesis",
+      "techniques": ["observability_grouping", "data_quality_completeness"],
+      "inputs": [
+        {
+          "kind": "artifact",
+          "ref": "stages/S09-INVOKE-PLAN.md"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "artifact",
+          "ref": "RESULT.md"
+        }
+      ],
+      "stop_conditions": [
+        "Final result cites stage artifacts, scriptability buckets, and recommended next routes."
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "g01-dispatch-validation",
+      "kind": "validation",
+      "owner": "dispatch-spec",
+      "condition": "REFINE-DISPATCH.json validates before runtime-backed stage execution.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g02-owner-boundary",
+      "kind": "policy",
+      "owner": "refine",
+      "condition": "Refine may classify and plan but must not mutate governance scripts, source docs, CI, or canonical policy during this run.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g03-native-capability-receipts",
+      "kind": "validation",
+      "owner": "refine",
+      "condition": "Each runtime-backed stage must record a native stage receipt, explicit not_run state, or blocked reason before final synthesis.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g04-research-confirmation",
+      "kind": "human_approval",
+      "owner": "operator",
+      "condition": "External research remains disabled unless a named gap appears and the operator confirms bounded research.",
+      "on_fail": "ask"
+    },
+    {
+      "gate_id": "g05-required-artifacts",
+      "kind": "quality",
+      "owner": "refine",
+      "condition": "RUN-MANIFEST.md, evidence-index.json, seed, dispatch, handoff, result, and stage artifacts must exist or record blocked reasons.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g06-approval-before-mutation",
+      "kind": "human_approval",
+      "owner": "operator",
+      "condition": "Any implementation, CI, script, or governance source mutation is deferred to a future approved route.",
+      "on_fail": "block"
+    },
+    {
+      "gate_id": "g07-final-synthesis-readiness",
+      "kind": "quality",
+      "owner": "refine",
+      "condition": "Final synthesis must identify existing scripts, next script candidates, observer-only duties, policy-only gates, and next routes.",
+      "on_fail": "flag"
+    }
+  ],
+  "observability": {
+    "dispatch_id_required": true,
+    "parent_dispatch_id": null,
+    "trace_events": [
+      "seed_written",
+      "dispatch_validated",
+      "strategy_previewed",
+      "permission_pending",
+      "stage_receipt_recorded",
+      "final_synthesis_ready"
+    ],
+    "signal_grouping": "dispatch_id=20260615T043712Z-governance-attenuation-scriptability"
+  },
+  "boundary_evidence": {
+    "boundaries": [
+      {
+        "boundary_id": "b01-source-vs-installed-layout",
+        "kind": "state_write",
+        "from_owner": "refine",
+        "to_owner": "implementation/domainspec source checkout",
+        "applies_to_steps": [
+          "s01-context-builder",
+          "s09-invoke-plan",
+          "s10-final-synthesis"
+        ],
+        "contract": "Evidence may cite source checkout paths, but plan recommendations must distinguish them from installed consumer paths.",
+        "on_violation": "flag"
+      },
+      {
+        "boundary_id": "b02-no-canonical-mutation",
+        "kind": "human_approval",
+        "from_owner": "refine",
+        "to_owner": "operator",
+        "applies_to_steps": ["s06-invoke-design", "s09-invoke-plan"],
+        "contract": "Refine output is design and planning only. Script or governance source changes require a future approved task route.",
+        "on_violation": "block"
+      }
+    ],
+    "authority": {
+      "lifecycle": "refine",
+      "execution": "native runtime after operator confirmation",
+      "validation": "dispatch-spec and stage owners",
+      "evidence": "refine run folder",
+      "memory": "none",
+      "promotion": "operator-owned future route"
+    },
+    "receipts": [
+      {
+        "receipt_id": "r01-native-stage-receipt",
+        "producer": "stage capability or parent coordinator",
+        "required_fields": [
+          "dispatch_id",
+          "step_id",
+          "capability_ref",
+          "status",
+          "artifacts",
+          "validation",
+          "observer_status",
+          "blockers",
+          "residue",
+          "handoff_note"
+        ],
+        "on_missing": "block"
+      }
+    ],
+    "state_namespaces": [
+      {
+        "namespace": "implementation/domainspec source checkout",
+        "owner": "implementation/domainspec",
+        "write_policy": "During this Refine run, writes are limited to development/refinement-runs/20260615T043712Z-governance-attenuation-scriptability; GOV docs, tools, .github, and governance source changes are deferred."
+      }
+    ]
+  },
+  "promotion_guardrails": [
+    "This dispatch produces refinement evidence and a non-executed plan only.",
+    "Execution evidence from this route cannot become canonical governance policy without operator review.",
+    "Source checkout findings must not be assumed to represent installed consumer layout behavior without a path-resolution task."
+  ]
+}

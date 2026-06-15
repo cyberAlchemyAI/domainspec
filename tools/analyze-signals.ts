@@ -17,7 +17,7 @@
  */
 
 import { readFileSync, existsSync } from "fs";
-import { resolve } from "path";
+import { resolveDomainSpecPath } from "./lib/domainspec-paths";
 
 // --- Types ---
 
@@ -74,14 +74,19 @@ const sinceDate = sinceIdx >= 0 ? args[sinceIdx + 1] : null;
 const minIdx = args.indexOf("--min");
 const minSignals = minIdx >= 0 ? parseInt(args[minIdx + 1], 10) : 5;
 const jsonOutput = args.includes("--json");
+const signalsArg = getArg("--signals") || getArg("--input");
 
 // --- Load signals ---
 
-const signalsPath = resolve(process.cwd(), "docs/signals/pipeline-signals.jsonl");
+const signalsPath = resolveDomainSpecPath(
+  signalsArg || "docs/signals/pipeline-signals.jsonl",
+);
 
 if (!existsSync(signalsPath)) {
   if (jsonOutput) {
-    console.log(JSON.stringify({ error: "No signals file found", path: signalsPath }));
+    console.log(
+      JSON.stringify({ error: "No signals file found", path: signalsPath }),
+    );
   } else {
     console.log(`No signals file found at ${signalsPath}`);
   }
@@ -95,6 +100,9 @@ let signals: SignalEnvelope[] = [];
 for (const line of lines) {
   try {
     const parsed = JSON.parse(line) as SignalEnvelope;
+    if (!parsed.data || typeof parsed.data !== "object") {
+      parsed.data = {};
+    }
     if (sinceDate && parsed.timestamp < sinceDate) continue;
     signals.push(parsed);
   } catch {
@@ -105,10 +113,16 @@ for (const line of lines) {
 if (signals.length < minSignals) {
   if (jsonOutput) {
     console.log(
-      JSON.stringify({ status: "insufficient", count: signals.length, minimum: minSignals })
+      JSON.stringify({
+        status: "insufficient",
+        count: signals.length,
+        minimum: minSignals,
+      }),
     );
   } else {
-    console.log(`Insufficient signals: ${signals.length} (minimum: ${minSignals})`);
+    console.log(
+      `Insufficient signals: ${signals.length} (minimum: ${minSignals})`,
+    );
   }
   process.exit(0);
 }
@@ -131,7 +145,9 @@ const thresholds: ThresholdResult[] = [];
 
 // TH1: Same governance-gap description in 3+ signals
 const govGaps = signals.filter((s) => s.type === "governance-gap");
-const govGapGroups = groupBy(govGaps, (s) => String(s.data.shouldHaveBeenCaughtBy || "unknown"));
+const govGapGroups = groupBy(govGaps, (s) =>
+  String(s.data.shouldHaveBeenCaughtBy || "unknown"),
+);
 for (const [skill, group] of Object.entries(govGapGroups)) {
   if (group.length >= 3) {
     thresholds.push({
@@ -164,7 +180,9 @@ if (overheadSignals.length >= 3) {
 
 // TH3: Same spec-gap pattern in 2+ features
 const specGaps = signals.filter((s) => s.type === "spec-gap");
-const specGapByDetail = groupBy(specGaps, (s) => String(s.data.missingDetail || ""));
+const specGapByDetail = groupBy(specGaps, (s) =>
+  String(s.data.missingDetail || ""),
+);
 for (const [detail, group] of Object.entries(specGapByDetail)) {
   const features = uniqueFeatures(group);
   if (features.length >= 2) {
@@ -195,7 +213,9 @@ for (const [step, group] of Object.entries(reworkByStep)) {
 
 // TH5: 3+ proposals targeting same file
 const proposals = signals.filter((s) => s.type === "proposal");
-const proposalByFile = groupBy(proposals, (s) => String(s.data.targetFile || ""));
+const proposalByFile = groupBy(proposals, (s) =>
+  String(s.data.targetFile || ""),
+);
 for (const [file, group] of Object.entries(proposalByFile)) {
   if (group.length >= 3) {
     thresholds.push({
@@ -211,7 +231,9 @@ for (const [file, group] of Object.entries(proposalByFile)) {
 // TH6: alignment-gap count > 10 in last 5 runs
 const alignGaps = signals.filter((s) => s.type === "alignment-gap");
 const recentSessions = [...new Set(signals.map((s) => s.session))].slice(-5);
-const recentAlignGaps = alignGaps.filter((s) => recentSessions.includes(s.session));
+const recentAlignGaps = alignGaps.filter((s) =>
+  recentSessions.includes(s.session),
+);
 if (recentAlignGaps.length > 10) {
   thresholds.push({
     id: "TH6",
@@ -224,35 +246,41 @@ if (recentAlignGaps.length > 10) {
 
 // TH7: Any critical governance gap
 const criticalGaps = signals.filter(
-  (s) => s.type === "governance-gap" && s.severity === "CRITICAL"
+  (s) => s.type === "governance-gap" && s.severity === "CRITICAL",
 );
 if (criticalGaps.length > 0) {
   thresholds.push({
     id: "TH7",
     description: "Critical governance gap detected",
     met: true,
-    evidence: criticalGaps.map((s) => String(s.data.description || "")).join("; "),
+    evidence: criticalGaps
+      .map((s) => String(s.data.description || ""))
+      .join("; "),
     count: criticalGaps.length,
   });
 }
 
 // TH8: 3+ low-confidence decisions
 const lowConfDecisions = signals.filter(
-  (s) => s.type === "decision" && s.data.confidence === "low"
+  (s) => s.type === "decision" && s.data.confidence === "low",
 );
 if (lowConfDecisions.length >= 3) {
   thresholds.push({
     id: "TH8",
     description: "Decision uncertainty: 3+ low-confidence decisions",
     met: true,
-    evidence: lowConfDecisions.map((s) => String(s.data.description || "").substring(0, 50)).join("; "),
+    evidence: lowConfDecisions
+      .map((s) => String(s.data.description || "").substring(0, 50))
+      .join("; "),
     count: lowConfDecisions.length,
   });
 }
 
 // TH9: spec-compliance violation by same agent in 2+ signals
 const specCompliance = signals.filter((s) => s.type === "spec-compliance");
-const complianceByAgent = groupBy(specCompliance, (s) => String(s.data.agentName || ""));
+const complianceByAgent = groupBy(specCompliance, (s) =>
+  String(s.data.agentName || ""),
+);
 for (const [agent, group] of Object.entries(complianceByAgent)) {
   if (group.length >= 2) {
     thresholds.push({
@@ -267,10 +295,13 @@ for (const [agent, group] of Object.entries(complianceByAgent)) {
 
 // TH10: agent-cost premiumRequests > 50 in rolling 7 days
 const agentCosts = signals.filter((s) => s.type === "agent-cost");
-const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+const sevenDaysAgo = new Date(
+  Date.now() - 7 * 24 * 60 * 60 * 1000,
+).toISOString();
 const recentCosts = agentCosts.filter((s) => s.timestamp >= sevenDaysAgo);
 const totalPremiumRequests = recentCosts.reduce(
-  (sum, s) => sum + ((s.data.premiumRequests as number) || 0), 0
+  (sum, s) => sum + ((s.data.premiumRequests as number) || 0),
+  0,
 );
 if (totalPremiumRequests > 50) {
   thresholds.push({
@@ -284,7 +315,9 @@ if (totalPremiumRequests > 50) {
 
 // --- Compute aggregates ---
 
-const overheadRatios = overheadSignals.map((s) => s.data.overheadRatio as number).filter(Boolean);
+const overheadRatios = overheadSignals
+  .map((s) => s.data.overheadRatio as number)
+  .filter(Boolean);
 const avgOverheadRatio =
   overheadRatios.length > 0
     ? overheadRatios.reduce((a, b) => a + b, 0) / overheadRatios.length
@@ -292,21 +325,29 @@ const avgOverheadRatio =
 
 const stepVerdicts = signals.filter((s) => s.type === "step-verdict");
 const reworkCount = reworks.length;
-const reworkRate = stepVerdicts.length > 0 ? reworkCount / stepVerdicts.length : 0;
-const firstPassSteps = stepVerdicts.filter((s) => (s.data.retriesNeeded as number) === 0);
-const firstPassRate = stepVerdicts.length > 0 ? firstPassSteps.length / stepVerdicts.length : 0;
+const reworkRate =
+  stepVerdicts.length > 0 ? reworkCount / stepVerdicts.length : 0;
+const firstPassSteps = stepVerdicts.filter(
+  (s) => (s.data.retriesNeeded as number) === 0,
+);
+const firstPassRate =
+  stepVerdicts.length > 0 ? firstPassSteps.length / stepVerdicts.length : 0;
 const totalRuns = overheadSignals.length;
 
 // Agent cost aggregation
 const totalAgentCost = agentCosts.reduce(
-  (sum, s) => sum + ((s.data.premiumRequests as number) || 0), 0
+  (sum, s) => sum + ((s.data.premiumRequests as number) || 0),
+  0,
 );
 const totalAgentDuration = agentCosts.reduce(
-  (sum, s) => sum + ((s.data.durationSeconds as number) || 0), 0
+  (sum, s) => sum + ((s.data.durationSeconds as number) || 0),
+  0,
 );
-const agentSuccessRate = agentCosts.length > 0
-  ? agentCosts.filter((s) => s.data.success === true).length / agentCosts.length
-  : null;
+const agentSuccessRate =
+  agentCosts.length > 0
+    ? agentCosts.filter((s) => s.data.success === true).length /
+      agentCosts.length
+    : null;
 
 // --- Output ---
 
@@ -332,7 +373,10 @@ const result: AnalysisResult = {
       totalPremiumRequests: totalAgentCost,
       totalDurationSeconds: totalAgentDuration,
       agentRuns: agentCosts.length,
-      successRate: agentSuccessRate !== null ? Math.round(agentSuccessRate * 100) / 100 : null,
+      successRate:
+        agentSuccessRate !== null
+          ? Math.round(agentSuccessRate * 100) / 100
+          : null,
       last7dPremiumRequests: totalPremiumRequests,
     },
   },
@@ -344,11 +388,25 @@ if (jsonOutput) {
   console.log(`\n=== DomainSpec Signal Analysis ===\n`);
   console.log(`Signals analyzed: ${signals.length}`);
   console.log(`Date range: ${result.dateRange.from} → ${result.dateRange.to}`);
-  console.log(`\nBy type: ${Object.entries(byType).map(([k, v]) => `${k}(${v})`).join(", ")}`);
-  console.log(`By severity: ${Object.entries(bySeverity).map(([k, v]) => `${k}(${v})`).join(", ")}`);
-  console.log(`By feature: ${Object.entries(byFeature).map(([k, v]) => `${k}(${v})`).join(", ")}`);
+  console.log(
+    `\nBy type: ${Object.entries(byType)
+      .map(([k, v]) => `${k}(${v})`)
+      .join(", ")}`,
+  );
+  console.log(
+    `By severity: ${Object.entries(bySeverity)
+      .map(([k, v]) => `${k}(${v})`)
+      .join(", ")}`,
+  );
+  console.log(
+    `By feature: ${Object.entries(byFeature)
+      .map(([k, v]) => `${k}(${v})`)
+      .join(", ")}`,
+  );
   console.log(`\nAggregates:`);
-  console.log(`  Overhead ratio (avg): ${avgOverheadRatio?.toFixed(2) ?? "N/A"}`);
+  console.log(
+    `  Overhead ratio (avg): ${avgOverheadRatio?.toFixed(2) ?? "N/A"}`,
+  );
   console.log(`  Rework rate: ${(reworkRate * 100).toFixed(0)}%`);
   console.log(`  First-pass rate: ${(firstPassRate * 100).toFixed(0)}%`);
   console.log(`  Total runs: ${totalRuns}`);
@@ -357,7 +415,9 @@ if (jsonOutput) {
     console.log(`  Total premium requests: ${totalAgentCost}`);
     console.log(`  Last 7d premium requests: ${totalPremiumRequests}`);
     console.log(`  Agent runs: ${agentCosts.length}`);
-    console.log(`  Success rate: ${agentSuccessRate !== null ? (agentSuccessRate * 100).toFixed(0) + "%" : "N/A"}`);
+    console.log(
+      `  Success rate: ${agentSuccessRate !== null ? (agentSuccessRate * 100).toFixed(0) + "%" : "N/A"}`,
+    );
     console.log(`  Total duration: ${Math.round(totalAgentDuration / 60)}m`);
   }
   console.log(`\nThresholds triggered: ${triggeredThresholds.length}`);
@@ -366,7 +426,9 @@ if (jsonOutput) {
     console.log(`         Evidence: ${t.evidence}`);
   }
   if (triggeredThresholds.length > 0) {
-    console.log(`\n→ Agent reflection recommended. Run: domainspec-reflect --from-signals --all`);
+    console.log(
+      `\n→ Agent reflection recommended. Run: domainspec-reflect --from-signals --all`,
+    );
   } else {
     console.log(`\n→ No thresholds triggered. Signals accumulating normally.`);
   }
@@ -392,6 +454,12 @@ function uniqueFeatures(signals: SignalEnvelope[]): string[] {
 
 function uniqueSessions(signals: SignalEnvelope[]): string[] {
   return [...new Set(signals.map((s) => s.session))];
+}
+
+function getArg(name: string): string | undefined {
+  const idx = args.indexOf(name);
+  if (idx < 0) return undefined;
+  return args[idx + 1];
 }
 
 function avgIterations(reworkSignals: SignalEnvelope[]): string {

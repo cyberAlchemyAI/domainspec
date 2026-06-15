@@ -1,0 +1,16 @@
+{
+  "sessionId": "gas-test",
+  "createdAt": "2026-06-15T04:46:19.409Z",
+  "gitRange": "HEAD~1..HEAD",
+  "sourceLogPath": null,
+  "changedFiles": ["arcanum"],
+  "diffSummary": "arcanum | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "diffPatchSnippet": "Submodule arcanum 3793c23..b5adc72:\n  > docs(mogt): record calibration anchor decision\n  > docs: add development guide and research handoffs\n  > docs(craft): add handoff lifecycle evidence\n  > docs(craft): capture readiness index refinement\n  > feat(decision-gate): add explain context option\n  > feat(craft): add all-status pending contract",
+  "orderedEvents": [
+    {
+      "timestamp": "2026-06-15T04:46:19.408Z",
+      "message": "No session log found. Bundle includes git-derived telemetry only."
+    }
+  ],
+  "testEvents": []
+}

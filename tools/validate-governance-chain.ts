@@ -1,18 +1,23 @@
 #!/usr/bin/env tsx
 
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+  domainSpecRelative,
+  resolveDomainSpecPath,
+} from "./lib/domainspec-paths";
 
 const args = process.argv.slice(2);
 const jsonOutput = args.includes("--json");
 
-const axiomsPath = resolve(process.cwd(), "domainspec/AXIOMS.md");
-const constitutionPath = resolve(process.cwd(), "domainspec/CONSTITUTION.md");
+const axiomsPath = resolveDomainSpecPath(getArg("--axioms") || "AXIOMS.md");
+const constitutionPath = resolveDomainSpecPath(
+  getArg("--constitution") || "CONSTITUTION.md",
+);
 
 if (!existsSync(axiomsPath) || !existsSync(constitutionPath)) {
   const missing = [
-    !existsSync(axiomsPath) ? "domainspec/AXIOMS.md" : null,
-    !existsSync(constitutionPath) ? "domainspec/CONSTITUTION.md" : null,
+    !existsSync(axiomsPath) ? domainSpecRelative(axiomsPath) : null,
+    !existsSync(constitutionPath) ? domainSpecRelative(constitutionPath) : null,
   ].filter(Boolean);
   fail([`Missing required governance files: ${missing.join(", ")}`], 2);
 }
@@ -20,7 +25,9 @@ if (!existsSync(axiomsPath) || !existsSync(constitutionPath)) {
 const axiomsRaw = readFileSync(axiomsPath, "utf-8");
 const constitutionRaw = readFileSync(constitutionPath, "utf-8");
 
-const axiomIds = [...axiomsRaw.matchAll(/^##\s+Axiom\s+(A\d+)/gm)].map((m) => m[1] || "");
+const axiomIds = [...axiomsRaw.matchAll(/^##\s+Axiom\s+(A\d+)/gm)].map(
+  (m) => m[1] || "",
+);
 const rules = parseConstitutionRules(constitutionRaw);
 
 const errors: string[] = [];
@@ -52,7 +59,9 @@ for (const rule of rules) {
 
 for (const [axiom, count] of usage.entries()) {
   if (count === 0) {
-    errors.push(`Axiom ${axiom} is orphaned: referenced by zero constitution rules`);
+    errors.push(
+      `Axiom ${axiom} is orphaned: referenced by zero constitution rules`,
+    );
   }
 }
 
@@ -82,7 +91,9 @@ if (jsonOutput) {
 
 process.exit(errors.length > 0 ? 1 : 0);
 
-function parseConstitutionRules(raw: string): Array<{ id: string; axioms: string[]; gate: string }> {
+function parseConstitutionRules(
+  raw: string,
+): Array<{ id: string; axioms: string[]; gate: string }> {
   const lines = raw.split("\n");
   const rows: Array<{ id: string; axioms: string[]; gate: string }> = [];
 
@@ -116,4 +127,10 @@ function fail(errors: string[], code: number): never {
     for (const error of errors) console.log(`- ${error}`);
   }
   process.exit(code);
+}
+
+function getArg(name: string): string | undefined {
+  const idx = args.indexOf(name);
+  if (idx < 0) return undefined;
+  return args[idx + 1];
 }

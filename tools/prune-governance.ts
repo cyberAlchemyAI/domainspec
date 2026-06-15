@@ -1,14 +1,20 @@
 #!/usr/bin/env tsx
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+  domainSpecRelative,
+  resolveDomainSpecPath,
+} from "./lib/domainspec-paths";
 
 const args = process.argv.slice(2);
 const runsThreshold = Number(getArg("--runs") || 10);
-const signalsPath = resolve(process.cwd(), getArg("--signals") || "docs/signals/pipeline-signals.jsonl");
-const constitutionPath = resolve(process.cwd(), "domainspec/CONSTITUTION.md");
-const outputPath = resolve(
-  process.cwd(),
+const signalsPath = resolveDomainSpecPath(
+  getArg("--signals") || "docs/signals/pipeline-signals.jsonl",
+);
+const constitutionPath = resolveDomainSpecPath(
+  getArg("--constitution") || "CONSTITUTION.md",
+);
+const outputPath = resolveDomainSpecPath(
   getArg("--output") || "docs/signals/GOVERNANCE-PRUNE-REPORT.md",
 );
 
@@ -21,12 +27,16 @@ const rules = parseRules(readFileSync(constitutionPath, "utf-8"));
 const signals = readSignals(signalsPath);
 const sessions = [...new Set(signals.map((signal) => signal.session))];
 const sampledSessions = sessions.slice(-runsThreshold);
-const sampledSignals = signals.filter((signal) => sampledSessions.includes(signal.session));
+const sampledSignals = signals.filter((signal) =>
+  sampledSessions.includes(signal.session),
+);
 
 const ruleUsage = new Map<string, number>(rules.map((rule) => [rule.id, 0]));
 
 for (const signal of sampledSignals) {
-  const text = `${signal.type} ${signal.data.description || ""} ${signal.data.shouldHaveBeenCaughtBy || ""}`.toLowerCase();
+  const data = signal.data || {};
+  const text =
+    `${signal.type || ""} ${data.description || ""} ${data.shouldHaveBeenCaughtBy || ""}`.toLowerCase();
 
   for (const rule of rules) {
     if (ruleMatches(rule, text)) {
@@ -90,10 +100,21 @@ function readSignals(path: string): Array<{
         return null;
       }
     })
-    .filter(Boolean) as Array<{ session: string; type: string; data: Record<string, string> }>;
+    .filter(Boolean)
+    .map((signal) => ({
+      ...signal,
+      data: signal.data && typeof signal.data === "object" ? signal.data : {},
+    })) as Array<{
+    session: string;
+    type: string;
+    data: Record<string, string>;
+  }>;
 }
 
-function ruleMatches(rule: { id: string; statement: string }, text: string): boolean {
+function ruleMatches(
+  rule: { id: string; statement: string },
+  text: string,
+): boolean {
   const keywords: Record<string, string[]> = {
     C1: ["source", "authority", "domainspec"],
     C2: ["layer", "infrastructure", "adapter"],
@@ -156,8 +177,12 @@ function buildReport(input: {
   lines.push("");
   lines.push("## Policy");
   lines.push("");
-  lines.push("1. After 10 sessions with zero evidence, mark rule as review candidate.");
-  lines.push("2. After 20 sessions with zero evidence, remove unless catastrophic-risk guard applies.");
+  lines.push(
+    "1. After 10 sessions with zero evidence, mark rule as review candidate.",
+  );
+  lines.push(
+    "2. After 20 sessions with zero evidence, remove unless catastrophic-risk guard applies.",
+  );
   lines.push("3. Any removal requires explicit architecture approval.");
 
   return lines.join("\n") + "\n";
@@ -170,5 +195,5 @@ function getArg(name: string): string | undefined {
 }
 
 function toRelative(absPath: string): string {
-  return absPath.replace(`${process.cwd()}/`, "");
+  return domainSpecRelative(absPath);
 }
