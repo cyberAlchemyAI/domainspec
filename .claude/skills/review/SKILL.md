@@ -10,8 +10,8 @@ The LIVE type skill for `dispatch_type: review`, populated 2026-06-12 by owner d
 gate, lifecycle, exit_reason, invariants — lives in the **router**
 (`.claude/skills/domainspec-subagents-strategy/SKILL.md`). The record/sheet form lives in
 **register-dispatch**. Field definitions live in the **constitution** §5
-(`subagents-strategy-constitution-proposal.md`, repo root). This skill says only what a good
-**review** dispatch contains.
+(`internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`).
+This skill says only what a good **review** dispatch contains.
 
 **What review is:** a red team. The targets exist; the dispatch attacks them to surface
 flaws worth fixing. The deliverable is **verified change requests**, not verdicts on new
@@ -30,10 +30,10 @@ Review reuses the constitution's four agent roles (§5 Level 4) with red-team se
 | `explorer` | **attacker** — attacks the full target corpus from ONE declared attack lens | blind spots — one lens sees what another cannot | heavier for subtle lenses |
 | `skeptic` | **verifier** — refutes findings against the literal artifact; runs the actual check | false positives — plausible-but-wrong findings surviving | heavy |
 | `writer` | **synthesizer** — dedupes, severity-ranks, writes the cited change requests; conventionally a single writer (the §6 skeleton's `n: 1`) | "great attack, no record" | heavy |
-| `auditor` | **coverage auditor** (meta-evaluate, placed by its incoming edge, downstream of the verifiers) — did every target get attacked from every declared lens; were refuted findings dropped | "passed because nothing was attacked" | light |
+| `auditor` | **coverage auditor** (placed by its incoming edge, downstream of the verifiers) — did every target get attacked from every declared lens; were refuted findings dropped | "passed because nothing was attacked" | light |
 
-Group-role mapping is the constitution's: attacker↔`investigate`, verifier↔`evaluate`,
-synthesizer↔`synthesize`, coverage auditor↔`meta-evaluate`.
+A group's function is read off its agents' roles and its workflow position off its
+`connections`; there is no separate group-role enum.
 
 ## Attack lenses — the tension axes for review (P5 applied)
 
@@ -64,7 +64,7 @@ definition in Outputs).
 
 **Finding discipline:** every finding carries the file, quoted evidence, severity, and a
 one-line proposed fix. A finding the verifier refutes is **dropped**, not softened (P10 —
-claim ≤ proof; demote, never inflate). Every attacker return ends with a `Dissent:` line.
+claim ≤ proof; demote, never inflate).
 
 **Zero-findings red flag:** an attacker returning zero findings must state what it attacked
 and why the artifact survived each attempt. ALL attackers returning zero findings is a red
@@ -75,7 +75,7 @@ OPTIONAL (canonical-shape section). When **no coverage-auditor group is declared
 `final_approver` is `parent`, `parent` fires the flag** — `parent` is the strategist
 session, not a dedicated-approver agent bound by "no other work".
 
-## Canonical shape on the v0.5.2 chassis
+## Canonical shape on the v0.6.0 chassis
 
 ```
 attackers ──sequential──▶ synthesizer ◀──zig-zag──▶ verifiers
@@ -83,11 +83,12 @@ attackers ──sequential──▶ synthesizer ◀──zig-zag──▶ verifi
     └┄┄┄┄┄┄┄┄feedback┄┄┄┄┄┄┄┄┄┘   (conditional — P6)
 ```
 
-Attackers (`investigate`, n 2–4, `robot_talks` recommended) → synthesizer (1 `writer`) ↔
-verifiers (`skeptic`s) in zig-zag; the feedback back-edge only when there is a
+Attackers (a group of `explorer`s, n 2–4, `robot_talks` recommended) → synthesizer (1
+`writer`) ↔ verifiers (`skeptic`s) in zig-zag; the feedback back-edge only when there is a
 reviewer/auditor group AND material may be missing (P6). Zig-zag convergence is the
 constitution's rule: a verifier turn raising no objection terminates the exchange.
-An optional `meta-evaluate` coverage auditor is placed by its incoming edge, downstream of the verifiers (and is the natural dedicated
+An optional coverage-auditor group (its single agent's role is `auditor`) is placed by its
+incoming edge, downstream of the verifiers (and is the natural dedicated
 `final_approver` per P12).
 
 The attacker group runs `robot_talks`, so the synthesizer downstream of it MUST receive

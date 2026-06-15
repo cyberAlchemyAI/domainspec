@@ -5,7 +5,7 @@ is_session: false
 layer: ontology, application
 nature: procedural
 status: active
-version: 0.2.0
+version: 0.3.0
 last_updated: 2026-06-15
 ---
 
@@ -13,8 +13,7 @@ last_updated: 2026-06-15
 
 > Operational rules that enforce **Principle 5 (pairwise tension)** of the subagents-strategy
 > constitution (v0.5.2). They run at the **confirm gate** over the dispatch sheet — the
-> dispatch row's `groups` JSON column — *before* the dispatch is registered, and again
-> post-dispatch over the returned artifacts. This check is the **semantics owner** the
+> dispatch row's `groups` JSON column — *before* the dispatch is registered. This check is the **semantics owner** the
 > constitution's four-test rule (`proposal.md` §P5, lines 124–129) points at; it is
 > **additional** to the partition check ("angles non-overlapping AND covering" — see
 > §Relationship to the partition check below).
@@ -28,6 +27,17 @@ last_updated: 2026-06-15
 > `examples.md` and `literature.md` still carry old-schema worked shapes — pending the same
 > pass. `principle.md` is realigned alongside this file.
 
+> **v0.3.0 — post-dispatch realization removed (2026-06-15).** Anti-bias is now enforced
+> **only at initialization** (the pre-dispatch Tests 1–4 below). The former post-dispatch
+> "tension realization" checklist (Items 9–12) and the `Dissent:`-line / claim-ID contract it
+> rested on are **retired**: self-declared per-agent dissent proved forgeable and fragile, and
+> a flat parallel round cannot produce cross-citation by construction. The guarantee is that
+> agents are tensioned **by design**, checked at the confirm gate; substance is not policed
+> after the fact. The `Dissent:`-line element of the
+> `agents-input-output` discovery is thereby superseded (that discovery's broader I/O
+> contract — envelope, claim-IDs, anchors, verbatim, the P9 6-item checklist — stands); see
+> its v1.1.0 note.
+
 ---
 
 ## Where the check lives (enforcement split)
@@ -37,26 +47,21 @@ Principle 5 has two halves, enforced in two different places — do not conflate
 | Half | What | Enforced by | Failure mode |
 |------|------|-------------|--------------|
 | **Presence conditionals** | group `anti_bias` is present at `n ≥ 2`; `anti_bias_global` is present when ≥ 2 groups have `n ≥ 2` | **appender** (`append-dispatch.cjs`), mechanically, **exit 2** | record rejected at registration |
-| **Tests 1–4** (axis / clone / spread / evidence) | the substance — is the axis real, are the angles distinct, is genuine disagreement pre-registered | **the confirm gate** (router P5), by the strategist + human; **not executable** today | sheet sent back for revision |
-| **Tension realization** (post-dispatch) | did the predicted disagreements actually appear in the returns | **post-dispatch check** over `working_folder` + the `Dissent:` lines / claim-IDs | dispatch flagged INVALID → re-run, owner-gated |
+| **Tests 1–4** (axis / clone / spread / evidence) | the substance — is the axis real, are the angles distinct, is genuine disagreement pre-registered | **the `check-tension` gate** — two independent agents, before the human confirm | sheet returned to the strategist for revision |
 
 The appender guarantees the **fields exist**; it does not judge whether they are *meaningful*.
-That judgment is tests 1–4 (gate) and tension realization (post-dispatch). This file owns
-the latter two.
+That judgment is tests 1–4, checked at the confirm gate — this file owns it.
 
 ---
 
 ## When the check runs
 
-Two points in the dispatch lifecycle (constitution §3):
-
-1. **Pre-dispatch (strict), at the confirm gate.** After the strategist authors the sheet and
-   before the human's affirmative / before the dispatch row is appended. Failure blocks the
-   dispatch — the sheet must be revised and re-gated (P2).
-2. **Post-dispatch (strict-on-realization), before the `final_approver` accepts.** After all
-   agents return, before synthesis is accepted and the close row is appended. A predicted
-   disagreement that did not realize is not advisory — it makes the dispatch INVALID for the
-   purpose of anti-bias (see Tension realization below).
+**One** point in the dispatch lifecycle (constitution §3): **pre-dispatch (strict), at the
+confirm gate.** After the strategist authors the sheet and before the human's affirmative /
+before the dispatch row is appended. Failure blocks the dispatch — the sheet must be revised
+and re-gated (P2). There is **no post-dispatch anti-bias check**: the guarantee is that the
+agents are tensioned **by design at initialization**, not that disagreement is policed after
+the fact.
 
 ---
 
@@ -114,8 +119,9 @@ across the pair. The angles are not differentiated along any load-bearing axis.
 unordered pair `(a_i, a_j)` in a subject group, the sheet must carry a written sentence of the
 form: *"a_i runs [value_i], a_j runs [value_j] on the [axis] axis; a bias internal to a_i
 along this axis would be exposed by a_j."* Any pair missing its sentence → REJECT. These
-sentences are the **pre-registration** that the post-dispatch check measures against — they
-are not decoration; they are the prediction that makes disagreement falsifiable.
+sentences are not decoration — writing the predicted disagreement per pair is what forces the
+strategist to design genuine tension rather than assert it, and gives the tensioning reviewer
+something concrete to check.
 
 **Item 8. `anti_bias_global` coherence.** When ≥ 2 groups have `n ≥ 2`, the sheet carries a
 dispatch-wide `anti_bias_global` theme (appender-enforced presence). The gate additionally
@@ -123,47 +129,6 @@ checks that each subject group's `anti_bias` axis is a plausible **specializatio
 theme, not an unrelated axis — uncoordinated axes across groups drift (constitution §5).
 
 A sheet that passes Items 4–8 PASSES — no residual judgment call beyond the sentences.
-
----
-
-## Post-dispatch checklist — tension realization (how we check disagreement was *genuine*)
-
-Pre-registration (Item 7) states where the agents *should* disagree. This section checks they
-*did* — the only enforceable proxy for genuine disagreement. The guarantee is procedural and
-ex-post, not epistemic: a dispatch whose predicted disagreements did not realize is treated as
-**INVALID for anti-bias** (a failure to exercise the design), **never** as "consensus =
-truth".
-
-**Item 9. Tension-realization check (per pair).** For each pair `(a_i, a_j)` whose Item-7
-sentence was accepted, the pair is **realized** iff at least one of:
-- a_i's or a_j's **`Dissent:`** line cites a specific **claim-ID** of the other and
-  contradicts it (the `Dissent:` line and claim-IDs are the I/O contract from the
-  `agents-input-output` discovery — this is what makes the check mechanizable), **or**
-- the two returns contain a contradictory claim-pair on the **declared axis** (not on an
-  incidental point).
-
-A pair that was pre-registered as tensioned and shows **no** axis-aligned realized
-contradiction → fire the **unrealized-tension flag** for that pair.
-
-**Item 10. False-consensus red flag.** If a subject group of size `n ≥ 3` returns with **zero**
-`Dissent:` records and all findings reach the same conclusion, fire the false-consensus flag.
-Unanimity is sometimes the truth — but a group that *promised* tension and exercised none
-provides no load-bearing evidence of correctness. Treat as failure-to-tension, not success.
-
-**Item 11. Escalation.** If Item 9 fires for ≥ 1 pair, or Item 10 fires, the dispatch is
-**INVALID for anti-bias**. The `final_approver` must not close `resolved` on anti-bias
-grounds; the owner gates a re-run (`max_loops`) with revised axes/angles. Repeated unrealized
-tension across dispatches signals the axis taxonomy itself is misclassified — revise this
-file's taxonomy, not just the sheet.
-
-**Item 12. Honest ceiling (recorded, not a check).** Realized contradiction on the declared
-axis is the strongest *mechanizable* proxy, not a proof of genuine disagreement: agents on the
-same model can co-hallucinate agreement that survives Items 9–10. The residual mitigations are
-(a) a human spot-check on a sample of "realized" pairs, and (b) `robot_talks` collapse
-detection — when an attacker group runs `robot_talks: true`, the synthesizer receives each
-agent's **initial AND final** positions (constitution P14); positions that collapse to
-identical after agents see each other are a measurable consensus-collapse, distinct from
-independent agreement. This ceiling is the same one the constitution records at `proposal.md:384`.
 
 ---
 
@@ -187,8 +152,7 @@ partition first, then tension (this file). A sheet must pass both to be dispatch
 
 | Document | Type | Description |
 |----------|------|-------------|
-| [principle.md](./principle.md) | `derives-from` | The principle this validator operationalizes. Tests R (Items 4–6) enforce its negative form; tests G (Items 7–8) its positive form; the post-dispatch section (Items 9–12) is its falsifiability discipline. |
-| [literature.md](./literature.md) | `cites` | False-consensus (Item 10) is the Janis-groupthink failure mode; the dissent-realization check (Item 9) is the Kahneman-Klein adversarial-collaboration discipline. (Old-schema worked shapes pending realignment.) |
+| [principle.md](./principle.md) | `derives-from` | The principle this validator operationalizes. Tests R (Items 4–6) enforce its negative form; tests G (Items 7–8) its positive form. |
+| [literature.md](./literature.md) | `cites` | Adversarial-collaboration and groupthink lineage behind the tensioning requirement (Mill, Kahneman-Klein, Hong-Page). (Old-schema worked shapes pending realignment.) |
 | [examples.md](./examples.md) | `instances` | Worked good/bad group shapes that exercise these tests. (Pending v0.5.2 realignment.) |
 | `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` | `operationalized-by` ↔ | Constitution §P5 / lines 124–129 name this file as the semantics owner of the four-test rule; this file is the operational expansion. The constitution owns the enforcement split (appender vs gate). |
-| `internal_tools/subagents-dispatch-hooks/docs/discovery/agents-input-output/` | `cites` | The `Dissent:` line + claim-ID I/O contract that makes the Item-9 tension-realization check mechanizable. |

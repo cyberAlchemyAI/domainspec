@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: explanatory, technical
 status: active
-version: 1.0.0
-last_updated: 2026-06-12
+version: 1.1.0
+last_updated: 2026-06-15
 created_by: victorboscaro@gmail.com
 ---
 
@@ -17,6 +17,15 @@ created_by: victorboscaro@gmail.com
 Codificar como decisões de design os contratos de input/output por role (explorer, synthesizer, reviewer, final_approver) determinados pelo dispatch `2026-06-12-agent-io-contracts`, de modo que a checagem de citação P9 seja verificável contra artefato durável e a síntese não degrade entre agentes. O estado final é o conjunto de vereditos do findings carregado com sua contagem honesta — fixado onde GO, condicionado às emendas pendentes onde GO-condicional, aberto onde OPEN, lei referenciada onde LEI — e o checklist de aceitação de 6 itens como emenda candidata ao skill. Tudo pronto para virar emendas pontuais em `research/SKILL.md`, na constituição e no cheatsheet de frontmatter; o corpo epistêmico dos returns permanece livre — tipá-lo está morto por KILL unânime (findings §2 #6).
 
 > Esta discovery **codifica** o `research/findings.md` do dispatch `2026-06-12-agent-io-contracts` — ela não decide nada novo sobre os vereditos; suas únicas adições próprias são recomendações e registros marcados "desta discovery", todos revisáveis pela spec: housing e constatações de dependência (§6, §7), o regime pré-emenda do checklist (demovido a recomendação, §6 abertos), registros de lacuna/colisão para a spec (§5 declínios, §6), as marcas de blocker por emenda (§6), o mapa proposto verdict→status para o engineer-view (§7) e a nomeação da fronteira de tipos envelope / linha estruturada de corpo / schema do corpo (§2, §4.1 — nomeia o critério E3 que já venceu, não decide novo). Toda posição de design abaixo cita o findings (§/linha da matriz) ou o research (§E1/E2/E3) que a sustenta. GO-condicional permanece condicional; OPEN permanece aberto; LEI permanece lei referenciada, nunca aquisição; o dissenso vivo de E3 sobre IDs permanece declarado vivo.
+
+> **v1.1.0 — elemento `Dissent:` superseded (2026-06-15).** O pivot anti-viés *init-only*
+> aposentou a realização pós-dispatch e a linha `Dissent:` que a alimentava (ver
+> `vault/discovery/anti-bias-vector-composition/validator-check.md` v0.3.0). Logo a LEI da
+> linha `Dissent:` (§4.3) e o "Dissent final" do return do reviewer (§4.7) estão **mortos**.
+> **O resto desta discovery permanece vigente** — envelope, claim-IDs, âncoras,
+> verbatim/append-only e o checklist P9 de 6 itens são o contrato de I/O de research/review e
+> não foram afetados. É um supersede **parcial**, não aposentadoria da discovery. (`system-view.md`
+> e `engineer-view.md` espelham o mesmo elemento `Dissent:` — anotar na próxima passada.)
 
 ---
 
@@ -111,6 +120,10 @@ Headers/frontmatter estruturados; corpo do raciocínio livre. Base: canal existe
 Default canônico **`<label>#<n>`** (ex.: `E1#4`); o briefing pode sobrescrever o esquema **só com deviation declarada** (findings §3 arbitragem 4 A1). A disciplina de continuidade inter-turnos (contador contínuo, ID nunca reutilizado, `supersedes`) é texto de contrato — mora em findings §4 edge 4/A8 e edge 5, não aqui. **Definição provisória de `<label>` (desta discovery, a fechar na spec):** `<label>` é o identificador curto do agente no header do seu return em research.md, derivado pelo strategist na sheet (ex.: `E1`, `E2`, `F`, `R1`); não é `agent_name` (pool de nomes próprios, opcional/null) nem `group_id` — nenhum dos três vocabulários de referência (constituição §5, type skill, findings) o define como campo ou regra de derivação; a spec deve fixar a derivação canônica (proposta mínima: determinística de grupo + índice da row na sheet, independente de `agent_name`) e a unicidade entre grupos (ver §6, abertos). Base: E1 ev. 1 (emergiu 2x independentemente; a checagem P9 praticada os leu); consumidor (fechado pelo ramo honesto — trilha L2 do findings, O4): o briefing, não o checklist (findings §2 #2). **Dissenso de E3 R1 permanece vivo** ("granularidade além de seção é custo sem regra que a exija") e o custo permanece OPEN (§6.3 deste documento) — a decisão é de design declarada, não vitória sobre E3 (correção V1/I5 da trilha L1; findings §8).
 
 ### 4.3 Categoria LEI — referenciar e verificar, nunca re-adotar
+
+> **[Parcialmente superseded 2026-06-15]** A linha `Dissent:` foi aposentada com o pivot
+> init-only (validator-check v0.3.0) — a obrigação `Dissent:` abaixo **não vale mais**. Os
+> pares posição-inicial/final de P14 (robot-talks) **continuam vigentes**.
 
 Duas obrigações que o contrato carrega são lei vigente, não aquisição deste dispatch: a linha **`Dissent:`** final persistida (teorema por composição skill §Tension design ∘ verbatim — E1 ev. 4 testemunha violação, não lacuna; findings §2 #4) e os **pares posição-inicial/final por reviewer** (P14 literal; deltas genuínos do dispatch: localização no return e item de verificação — findings §2 #8). A terceira lei vigente — **verbatim** — não some da contagem: a linha LEI 2 conta vereditos de linha da matriz (#4 e #8), enquanto verbatim vive dentro do split do #11 e é contada lá (§4.7). O gate de witness não se aplica a LEI — o que ela testemunha é violação. Existe token sancionado para dissenso vazio (A10, findings §3 arbitragem 5) — a sintaxe literal mora no contrato do edge 2 (findings §4) e na futura emenda do skill, não aqui.
 

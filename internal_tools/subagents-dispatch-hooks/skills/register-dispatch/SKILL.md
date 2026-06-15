@@ -6,7 +6,7 @@ description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagent
 # register-dispatch
 
 Record **one row per dispatch** in the repo ledger `telemetry/agents/subagents-dispatch.yaml`,
-under the subagents-strategy constitution **schema v0.5.2**. A dispatch contributes exactly
+under the subagents-strategy constitution **schema v0.6.0**. A dispatch contributes exactly
 **two appends** (constitution Principle 3): the **dispatch row** (the spec, at dispatch) and
 the **close row** (`close_of` + outcome, at termination). The ledger is append-only — rows
 are never edited in place.
@@ -24,14 +24,15 @@ are never edited in place.
   is not a dispatch (P11, owned by the router) — do not register it; it is reported in
   the parent's `agents_spawned`.
 
-## The dispatch row (schema v0.5.2)
+## The dispatch row (schema v0.6.0)
 
 The appender **validates the incoming record strictly** and rejects (exit 2) on any
 schema violation, listing every error. Unknown keys are rejected — keys in constitution
 §7's removed table (`success_metric`, `constraints`, `created`) get an explicit
-**removed by schema v0.5.2** error; old ledger-row-only keys (`status`, `anti_bias`
-top level, `agents` top level, `corpus`, `topic_slug`, `session`) get a
-**pre-v0.5.2 ledger-row key, not in the v0.5.2 schema** error.
+**removed by schema v0.5.2** error (historical: those keys were removed at v0.5.2); old
+ledger-row-only keys (`status`, `anti_bias` top level, `agents` top level, `corpus`,
+`topic_slug`, `session`) get a **pre-v0.5.2 ledger-row key, not in the v0.6.0 schema**
+error.
 
 **Not enforced by the appender** (sheet-design rules owned by the strategist and the
 human confirm gate): `final_approver` working-group membership (P12 no-self-approval),
@@ -46,12 +47,12 @@ appender-enforced** since the 2026-06-12 in-place amendment (constitution §9).
 | Field | Required | Meaning / constraint |
 |-------|----------|----------------------|
 | `dispatch_id` | ✅ | Unique id, `YYYY-MM-DD-<slug>` (§5). Dedup key — re-registering the same id is a no-op. |
-| `schema_version` | ✅ | Must be **exactly** `"0.5.2"`. |
-| `dispatch_type` | ✅ | `research \| code \| review \| plan \| suggestion \| experiment`. `research`, `review`, and `experiment` are LIVE (review 2026-06-12; experiment 2026-06-14, narrow recipe — owner decisions); the other three (`code`, `plan`, `suggestion`) are reserved (FORECAST) — the appender notes this but records anyway; registering one signals an upstream constitution violation (§5: reserved types must not be dispatched until populated). `experiment` runs the falsification strategy (role-set designer/runner/adjudicator/skeptic; grader = falsification against a pre-registered criterion + internal validity + reproducibility; verdict SURVIVED/FALSIFIED/INVALID; the criterion is a `working_folder` artifact, never a column). |
+| `schema_version` | ✅ | Must be **exactly** `"0.6.0"`. |
+| `dispatch_type` | ✅ | `research \| code \| review \| plan \| suggestion \| experiment`. `research`, `review`, and `experiment` are LIVE (review 2026-06-12; experiment 2026-06-14, narrow recipe — owner decisions); the other three (`code`, `plan`, `suggestion`) are reserved (RESERVED) — the appender notes this but records anyway (its runtime note reads "is a RESERVED type ... LIVE under v0.6.0"); registering one signals an upstream constitution violation (§5: reserved types must not be dispatched until populated). `experiment` runs the falsification strategy (role-set designer/runner/adjudicator/skeptic; grader = falsification against a pre-registered criterion + internal validity + reproducibility; verdict SURVIVED/FALSIFIED/INVALID; the criterion is a `working_folder` artifact, never a column). |
 | `goal` | ✅ | Non-empty string — the human's objective, one or two sentences. |
 | `context` | ✅ | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5). |
 | `max_loops` | ✅ | Integer 1..5 — whole-sequence re-run ceiling. |
-| `final_approver` | ✅ | Non-empty string: `parent` or the `agent_name` of a dedicated meta-evaluate approver (no self-approval — P12). |
+| `final_approver` | ✅ | Non-empty string: `parent` or the `agent_name` of a dedicated approver agent (no self-approval — P12). |
 | `groups` | ✅ | **JSON column** — non-empty array of group objects (below). |
 | `meta` | – | If present, must be boolean `true` (planning/framework dispatches only). |
 | `parent_dispatch_id` | – | String (or null/omitted) — only on a dispatch planned by a meta dispatch. |
@@ -66,8 +67,7 @@ appender-enforced** since the 2026-06-12 in-place amendment (constitution §9).
 
 | Key | Required | Meaning / constraint |
 |-----|----------|----------------------|
-| `group_id` | ✅ | Stable id, unique among groups; the target of `connections` references. |
-| `role` | ✅ | `investigate \| evaluate \| meta-evaluate \| synthesize`. |
+| `group_id` | ✅ | Stable id, unique among groups; the target of `connections` references. A group has **no** `role` field — its function is read off its agents' roles, and its workflow position off its `connections`. |
 | `agents` | ✅ | Non-empty array of agent objects (below). They run in parallel. |
 | `n` | – | Integer ≥ 1; if present must equal `agents.length`. |
 | `robot_talks` | – | Boolean — agents discuss after their parallel runs (n ≥ 2 only meaningful). |
@@ -113,7 +113,7 @@ Bash access to the file, even read-only commands.
         "$CLAUDE_PROJECT_DIR/.register-dispatch.tmp.json"
    ```
    It creates `telemetry/agents/subagents-dispatch.yaml` (and its directories) with
-   a header if absent, validates the record against schema v0.5.2 (exit 2 with the
+   a header if absent, validates the record against schema v0.6.0 (exit 2 with the
    full error list on violation), appends one row, and is idempotent on
    `dispatch_id`. Before appending it structurally self-checks the existing ledger
    (line shapes, JSON values, unique ids) and refuses with exit 1 if the ledger is
@@ -129,7 +129,7 @@ Bash access to the file, even read-only commands.
 ```json
 {
   "dispatch_id": "2026-06-12-residue-precedent-sweep",
-  "schema_version": "0.5.2",
+  "schema_version": "0.6.0",
   "dispatch_type": "research",
   "goal": "Determine whether the residue-ledger pattern has prior art that constrains our naming.",
   "context": "The discovery names a residue ledger as novel. Before publishing we need to know if the pattern is already owned in the literature and under what name. Outputs feed the discovery's open-question section.",
@@ -141,7 +141,6 @@ Bash access to the file, even read-only commands.
   "groups": [
     {
       "group_id": "explorers",
-      "role": "investigate",
       "n": 2,
       "anti_bias": "source corpus (formal-methods literature vs practitioner blogs)",
       "agents": [
@@ -155,7 +154,6 @@ Bash access to the file, even read-only commands.
     },
     {
       "group_id": "synthesizer",
-      "role": "synthesize",
       "agents": [
         {"agent_name": null, "role": "writer", "model": "claude-opus-4-8", "token_budget": 3000,
          "initial_prompt": "Draft findings.md from the explorers' returns: every load-bearing claim cites the collected return it rests on. Budget ~3000 tokens."}
@@ -173,7 +171,7 @@ resulting ledger row looks like:
 
 ```yaml
   - dispatch_id: "2026-06-12-residue-precedent-sweep"
-    schema_version: "0.5.2"
+    schema_version: "0.6.0"
     created: "2026-06-12T18:00:00.000Z"
     invoked_by: "victorboscaro@gmail.com"
     dispatch_type: "research"
@@ -183,7 +181,7 @@ resulting ledger row looks like:
     final_approver: "parent"
     anti_bias_global: "novelty optimism vs precedent skepticism"
     working_folder: "research/residue-precedent-sweep/"
-    groups: [{"group_id":"explorers","role":"investigate","n":2,"anti_bias":"source corpus (formal-methods literature vs practitioner blogs)","agents":[…]}, …]
+    groups: [{"group_id":"explorers","n":2,"anti_bias":"source corpus (formal-methods literature vs practitioner blogs)","agents":[…]}, …]
     connections: [{"from":"explorers","to":"synthesizer","type":"sequential"}]
 ```
 
@@ -198,7 +196,7 @@ instead of `dispatch_id`:
 {
   "close_of": "2026-06-12-residue-precedent-sweep",
   "exit_reason": "resolved",
-  "agents_spawned": {"total": 3, "tree": {"investigate": 2, "synthesize": 1, "helpers": 0}, "loops_used": 1},
+  "agents_spawned": {"total": 3, "tree": {"explorer": 2, "writer": 1, "helpers": 0}, "loops_used": 1},
   "feedback_prompts": ["Explorers: the formal-methods return cites no post-2020 source — re-sweep 2020+ venues for the same pattern."],
   "invoked_by": "victorboscaro@gmail.com"
 }
@@ -208,7 +206,7 @@ instead of `dispatch_id`:
 |-------|----------|----------------------|
 | `close_of` | ✅ | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. Warns (but still appends) if no matching dispatch row exists — an orphan close row indicates a Principle-3 breach upstream (the dispatch row should have been written at dispatch). |
 | `exit_reason` | ✅ | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: §5. |
-| `agents_spawned` | ✅ | **JSON column** — object with numeric `total`, object `tree` (keyed by role-category, helpers in their own bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
+| `agents_spawned` | ✅ | **JSON column** — object with numeric `total`, object `tree` (keyed by **agent** role — `explorer \| skeptic \| writer \| auditor` — plus a `helpers` bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
 | `feedback_prompts` | – | **JSON column** — array of strings: each `feedback`-edge ask, recorded **verbatim** in the close row (Principle 3 / §5 `feedback` semantics). |
 | `invoked_by` | – | As on the dispatch row: record value, else `git config user.email`, else `null` with a warning. Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment. |
 | `project_dir` | – | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Accepted by the appender, never emitted to the ledger. |
@@ -224,6 +222,6 @@ Rows written under pre-v0.5.2 schemas (recognizable by the absence of
 are **valid historical artifacts and are never re-validated** against the new
 schema. The appender's pre-append self-check over the existing ledger is
 **structure-only** (line shapes, JSON values, unique ids) so old rows keep
-passing forever. Strict v0.5.2 validation applies **only to the incoming
+passing forever. Strict v0.6.0 validation applies **only to the incoming
 record**, before append. The ledger file's own header comment is likewise
 historical — written once at creation, never edited; it may lag the current schema.

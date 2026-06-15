@@ -55,7 +55,7 @@ const SKILL = 'register-dispatch';
 const SKILL_FILES = ['SKILL.md', 'append-dispatch.cjs'];
 // Chain skills: project-coupled, installed into the TARGET repo's .claude/skills
 // (not ~/.claude), with internal_tools/skills/<name>/ as the single source.
-const CHAIN_SKILLS = ['domainspec-subagents-strategy', 'research', 'review', 'experiment', 'robot-talks'];
+const CHAIN_SKILLS = ['domainspec-subagents-strategy', 'research', 'review', 'experiment', 'check-tension', 'robot-talks'];
 const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const projectSkillsDir = path.join(projectDir, '.claude', 'skills');
 // Copy every file in a source skill dir to its destination dir (skills carry

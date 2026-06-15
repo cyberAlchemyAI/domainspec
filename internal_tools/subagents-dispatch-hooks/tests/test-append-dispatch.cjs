@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /*
- * Test battery for append-dispatch.cjs (schema v0.5.2).
+ * Test battery for append-dispatch.cjs (schema v0.6.0 — group `role` removed, §11).
  *
  *   node internal_tools/subagents-dispatch-hooks/tests/test-append-dispatch.cjs
  *
@@ -63,9 +63,9 @@ function expectReject(name, root, record, pattern) {
 function validDispatch(over) {
   return Object.assign({
     dispatch_id: '2026-06-12-battery-main',
-    schema_version: '0.5.2',
+    schema_version: '0.6.0',
     dispatch_type: 'research',
-    goal: 'Prove the v0.5.2 appender end to end.',
+    goal: 'Prove the v0.6.0 appender end to end.',
     context: 'Synthetic record produced by the test battery. Runs against a temp ledger, never the real one.',
     max_loops: 2,
     final_approver: 'parent',
@@ -74,7 +74,7 @@ function validDispatch(over) {
     invoked_by: 'tester@example.com',
     groups: [
       {
-        group_id: 'explorers', role: 'investigate', n: 2,
+        group_id: 'explorers', n: 2,
         anti_bias: 'methodology (static reading vs dynamic probing)',
         agents: [
           { agent_name: 'Abramsky, Samson', role: 'explorer', model: 'claude-sonnet-4-6', token_budget: 800,
@@ -84,7 +84,7 @@ function validDispatch(over) {
         ],
       },
       {
-        group_id: 'synthesizer', role: 'synthesize',
+        group_id: 'synthesizer',
         agents: [
           { role: 'writer', model: 'claude-opus-4-8', token_budget: 4000, initial_prompt: 'Synthesize the explorers\' returns.' },
         ],
@@ -100,7 +100,7 @@ function validClose(over) {
   return Object.assign({
     close_of: '2026-06-12-battery-main',
     exit_reason: 'resolved',
-    agents_spawned: { total: 3, tree: { investigate: 2, synthesize: 1, helpers: 0 }, loops_used: 1 },
+    agents_spawned: { total: 3, tree: { explorer: 2, writer: 1, helpers: 0 }, loops_used: 1 },
     feedback_prompts: ['Verbatim feedback ask sent back to the explorers.'],
     invoked_by: 'tester@example.com',
   }, over);
@@ -112,8 +112,8 @@ function without(base, key) { const r = Object.assign({}, base); delete r[key]; 
 function twoFanout(over) {
   const r = validDispatch(Object.assign({ dispatch_id: '2026-06-12-battery-two-fanout' }, over));
   r.groups.push({
-    group_id: 'reviewers', role: 'evaluate', n: 2,
-    anti_bias: 'attack vector (precedent-kill vs non-vacuity)',
+    group_id: 'reviewers', n: 2,
+    anti_bias: 'attack-vector (precedent-kill vs non-vacuity)',
     agents: [
       { role: 'skeptic', model: 'claude-opus-4-8', token_budget: 1000, angle: 'precedent-kill gate', initial_prompt: 'Attack precedent.' },
       { role: 'skeptic', model: 'claude-opus-4-8', token_budget: 1000, angle: 'non-vacuity gate', initial_prompt: 'Attack vacuity.' },
@@ -130,7 +130,7 @@ console.log('\n[1] valid full v0.5.2 row appends; emitted lines pass the self-ch
   check('1a valid dispatch row appends (exit 0)', r1.status === 0, r1.stderr || r1.stdout);
   const text = readLedger(root);
   check('1b row start emitted', /^  - dispatch_id: "2026-06-12-battery-main"$/m.test(text), text);
-  check('1c schema_version block key', /^    schema_version: "0\.5\.2"$/m.test(text), text);
+  check('1c schema_version block key', /^    schema_version: "0\.6\.0"$/m.test(text), text);
   check('1d invoked_by taken from record', /^    invoked_by: "tester@example\.com"$/m.test(text), text);
   check('1e created stamped by appender', /^    created: "\d{4}-\d{2}-\d{2}T/m.test(text), text);
   check('1f groups emitted as JSON column', /^    groups: \[\{"group_id":"explorers"/m.test(text), text);
@@ -152,7 +152,7 @@ console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
   const root = freshRoot();
   const fieldPattern = {
     dispatch_id: /dispatch_id is required/,
-    schema_version: /schema_version must be exactly "0\.5\.2"/,
+    schema_version: /schema_version must be exactly "0\.6\.0"/,
     dispatch_type: /dispatch_type must be one of/,
     goal: /goal is required/,
     context: /context is required/,
@@ -164,17 +164,18 @@ console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
     expectReject(`2 missing ${f}`, root, without(validDispatch(), f), fieldPattern[f]);
   }
   // required fields inside group / agent
-  expectReject('2 group missing group_id', root, validDispatch({ groups: [{ role: 'synthesize', agents: [{ role: 'writer', model: 'm', token_budget: 1, initial_prompt: 'p' }] }] }), /group_id is required/);
-  expectReject('2 agent missing token_budget', root, validDispatch({ groups: [{ group_id: 'g', role: 'synthesize', agents: [{ role: 'writer', model: 'm', initial_prompt: 'p' }] }], connections: [] }), /token_budget is required/);
-  expectReject('2 agent missing initial_prompt', root, validDispatch({ groups: [{ group_id: 'g', role: 'synthesize', agents: [{ role: 'writer', model: 'm', token_budget: 1 }] }], connections: [] }), /initial_prompt is required/);
+  expectReject('2 group missing group_id', root, validDispatch({ groups: [{ agents: [{ role: 'writer', model: 'm', token_budget: 1, initial_prompt: 'p' }] }] }), /group_id is required/);
+  expectReject('2 agent missing token_budget', root, validDispatch({ groups: [{ group_id: 'g', agents: [{ role: 'writer', model: 'm', initial_prompt: 'p' }] }], connections: [] }), /token_budget is required/);
+  expectReject('2 agent missing initial_prompt', root, validDispatch({ groups: [{ group_id: 'g', agents: [{ role: 'writer', model: 'm', token_budget: 1 }] }], connections: [] }), /initial_prompt is required/);
   check('2z ledger untouched by rejected records', readLedger(root) === '');
 }
 
 console.log('\n[3] wrong schema_version rejected');
 {
   const root = freshRoot();
-  expectReject('3a schema_version "0.3.0"', root, validDispatch({ schema_version: '0.3.0' }), /schema_version must be exactly "0\.5\.2"/);
-  expectReject('3b schema_version 0.5.2 as number', root, validDispatch({ schema_version: 0.52 }), /schema_version/);
+  expectReject('3a schema_version "0.3.0"', root, validDispatch({ schema_version: '0.3.0' }), /schema_version must be exactly "0\.6\.0"/);
+  expectReject('3b schema_version 0.6.0 as number', root, validDispatch({ schema_version: 0.6 }), /schema_version/);
+  expectReject('3c old schema_version "0.5.2" now rejected', root, validDispatch({ schema_version: '0.5.2' }), /schema_version must be exactly "0\.6\.0"/);
 }
 
 console.log('\n[4] bad enum values rejected');
@@ -182,8 +183,8 @@ console.log('\n[4] bad enum values rejected');
   const root = freshRoot();
   expectReject('4a dispatch_type "audit"', root, validDispatch({ dispatch_type: 'audit' }), /dispatch_type must be one of/);
   const g = validDispatch();
-  g.groups[1].role = 'review';
-  expectReject('4b group role "review"', root, g, /role must be one of investigate/);
+  g.groups[1].role = 'synthesize';
+  expectReject('4b group `role` is now an unknown key (removed v0.6.0)', root, g, /unknown key "role"/);
   const a = validDispatch();
   a.groups[1].agents[0].role = 'reviewer';
   expectReject('4c agent role "reviewer"', root, a, /role must be one of explorer/);
@@ -261,11 +262,11 @@ console.log('\n[10] working_folder rules');
   check('10h "vaulted/x/" accepted — no vault-guard false positive', rv.status === 0, rv.stderr || rv.stdout);
   // a non-research type does not require working_folder (reserved-type note, still appends)
   const r = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-code', dispatch_type: 'code', working_folder: undefined }));
-  check('10c non-research without working_folder appends (exit 0, FORECAST note)', r.status === 0 && /reserved \(FORECAST\) type/.test(r.stdout), r.stderr || r.stdout);
+  check('10c non-research without working_folder appends (exit 0, RESERVED note)', r.status === 0 && /RESERVED type/.test(r.stdout), r.stderr || r.stdout);
   // experiment is LIVE (2026-06-14) — requires working_folder like research/review, no FORECAST note
   expectReject('10i experiment without working_folder rejected (LIVE type)', root, validDispatch({ dispatch_id: '2026-06-12-battery-exp-nf', dispatch_type: 'experiment', working_folder: undefined }), /working_folder is required when dispatch_type is "experiment"/);
   const re = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-experiment', dispatch_type: 'experiment' }));
-  check('10i experiment with working_folder appends (exit 0, no FORECAST note)', re.status === 0 && !/reserved \(FORECAST\) type/.test(re.stdout), re.stderr || re.stdout);
+  check('10i experiment with working_folder appends (exit 0, no RESERVED note)', re.status === 0 && !/RESERVED type/.test(re.stdout), re.stderr || re.stdout);
 }
 
 console.log('\n[11] close rows');
@@ -276,7 +277,7 @@ console.log('\n[11] close rows');
   check('11a valid close row appends (exit 0)', r1.status === 0, r1.stderr || r1.stdout);
   const text = readLedger(root);
   check('11b close row block keys emitted', /^  - close_of: "2026-06-12-battery-main"$/m.test(text) && /^    exit_reason: "resolved"$/m.test(text) && /^    closed: "\d{4}/m.test(text), text);
-  check('11c agents_spawned emitted as JSON column', /^    agents_spawned: \{"total":3,"tree":\{"investigate":2,"synthesize":1,"helpers":0\},"loops_used":1\}$/m.test(text), text);
+  check('11c agents_spawned emitted as JSON column', /^    agents_spawned: \{"total":3,"tree":\{"explorer":2,"writer":1,"helpers":0\},"loops_used":1\}$/m.test(text), text);
   check('11d feedback_prompts emitted as JSON column', /^    feedback_prompts: \["Verbatim feedback ask sent back to the explorers\."\]$/m.test(text), text);
   expectReject('11e close row with unknown key rejected', root, validClose({ close_of: '2026-06-12-battery-second', bogus: 1 }), /unknown key "bogus" on a close record/);
   expectReject('11f close row with dispatch_id rejected', root, Object.assign(validClose(), { dispatch_id: 'x' }), /must use close_of, not dispatch_id/);
@@ -387,7 +388,7 @@ console.log('\n[16] anti_bias_global conditional (>= 2 fan-out groups) enforced'
   // one fan-out group + three singletons must not trigger it.
   const manySingletons = without(validDispatch({ dispatch_id: '2026-06-12-battery-many-singletons' }), 'anti_bias_global');
   for (const id of ['solo-a', 'solo-b', 'solo-c']) {
-    manySingletons.groups.push({ group_id: id, role: 'synthesize',
+    manySingletons.groups.push({ group_id: id,
       agents: [{ role: 'writer', model: 'm', token_budget: 1, initial_prompt: 'p' }] });
   }
   const r3 = run(root, manySingletons);
@@ -395,7 +396,7 @@ console.log('\n[16] anti_bias_global conditional (>= 2 fan-out groups) enforced'
   // 16e: a malformed sibling group must not crash or spuriously fire the conditional —
   // expect a clean exit 2 on the agents-array error, with NO anti_bias_global error.
   const malformedSibling = without(validDispatch({ dispatch_id: '2026-06-12-battery-malformed-sibling' }), 'anti_bias_global');
-  malformedSibling.groups.push({ group_id: 'broken', role: 'evaluate', agents: 'broken' });
+  malformedSibling.groups.push({ group_id: 'broken', agents: 'broken' });
   const r4 = run(root, malformedSibling);
   check('16e malformed sibling group: clean exit 2 on agents error, no spurious anti_bias_global error',
     r4.status === 2 && /agents is required and must be a non-empty array/.test(r4.stderr) && !/anti_bias_global/.test(r4.stderr),

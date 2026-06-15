@@ -8,16 +8,16 @@
  * <record.json> is a UTF-8 JSON file (a file arg, not stdin, so shell encoding
  * — e.g. PowerShell's UTF-16 pipes — can't corrupt the payload).
  *
- * SCHEMA — subagents-strategy constitution v0.5.2. Two row kinds, both
- * appended by this script (Principle 3: two appends, one place):
+ * SCHEMA — subagents-strategy constitution v0.6.0 (row schema; group `role`
+ * removed at v0.6.0 — §11). Two row kinds, both appended by this script
+ * (Principle 3: two appends, one place):
  *
  *   DISPATCH ROW — keyed by `dispatch_id`. Required: dispatch_id,
- *     schema_version ("0.5.2" exactly), dispatch_type
+ *     schema_version ("0.6.0" exactly), dispatch_type
  *     (research|code|review|plan|suggestion|experiment), goal, context, max_loops (1..5),
- *     final_approver, groups[] (each group: group_id, role
- *     investigate|evaluate|meta-evaluate|synthesize, agents[]; each agent:
- *     role explorer|skeptic|writer|auditor, model, token_budget,
- *     initial_prompt). Optional: meta (true), parent_dispatch_id,
+ *     final_approver, groups[] (each group: group_id, agents[] — NO group
+ *     `role` field; each agent: role explorer|skeptic|writer|auditor, model,
+ *     token_budget, initial_prompt). Optional: meta (true), parent_dispatch_id,
  *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment; never vault/),
  *     invoked_by (tooling extension, not in constitution §5),
  *     connections[] ({from,to,type,loop_cap?}).
@@ -92,12 +92,13 @@ const isNonEmptyStr = (v) => isStr(v) && v.trim() !== '';
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 // ---------------------------------------------------------------- schema
-const SCHEMA_VERSION = '0.5.2';
+const SCHEMA_VERSION = '0.6.0';   // row schema: group `role` removed at v0.6.0 (constitution §11)
 const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment'];
 // LIVE per constitution §5 (review 2026-06-12; experiment 2026-06-14, owner decisions); others
-// FORECAST/reserved (code, plan, suggestion) — recorded but not yet dispatchable.
+// RESERVED (code, plan, suggestion) — recorded but not yet dispatchable.
 const LIVE_TYPES = new Set(['research', 'review', 'experiment']);
-const GROUP_ROLES = ['investigate', 'evaluate', 'meta-evaluate', 'synthesize'];
+// Group `role` was removed from the row schema at v0.6.0 (constitution §11 / CR-2): a group's
+// function is read off its agents' roles, its workflow position off its connections.
 const AGENT_ROLES = ['explorer', 'skeptic', 'writer', 'auditor'];
 const CONNECTION_TYPES = ['sequential', 'zig-zag', 'feedback'];
 const EXIT_REASONS = ['resolved', 'loop_ceiling_reached', 'dissent_irreconcilable', 'user_abort', 'error'];
@@ -124,7 +125,7 @@ const REMOVED_KEYS = new Set(['success_metric', 'constraints', 'created']);
 const LEGACY_LEDGER_KEYS = new Set([
   'status', 'anti_bias', 'agents', 'corpus', 'topic_slug', 'session',
 ]);
-const GROUP_KEYS = new Set(['group_id', 'role', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias']);
+const GROUP_KEYS = new Set(['group_id', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias']);
 const AGENT_KEYS = new Set(['role', 'model', 'token_budget', 'initial_prompt', 'agent_name', 'angle']);
 const CONN_KEYS = new Set(['from', 'to', 'type', 'loop_cap']);
 
@@ -173,7 +174,6 @@ function validateDispatch(rec) {
       if (!isNonEmptyStr(g.group_id)) errs.push(`${gw}.group_id is required and must be a non-empty string`);
       else if (groupIds.has(g.group_id)) errs.push(`${gw}.group_id ${J(g.group_id)} duplicates an earlier group — group ids must be unique`);
       else groupIds.add(g.group_id);
-      if (!GROUP_ROLES.includes(g.role)) errs.push(`${gw}.role must be one of ${GROUP_ROLES.join(' | ')} (got ${J(g.role)})`);
       const agents = Array.isArray(g.agents) && g.agents.length > 0 ? g.agents : null;
       if (!agents) errs.push(`${gw}.agents is required and must be a non-empty array`);
       if (g.n !== undefined) {
@@ -360,7 +360,7 @@ if (dispatchIds.has(rec.dispatch_id)) {
 }
 
 if (!LIVE_TYPES.has(rec.dispatch_type)) {
-  console.log(`note: dispatch_type "${rec.dispatch_type}" is a reserved (FORECAST) type — only ${[...LIVE_TYPES].map(J).join(' and ')} are LIVE under v0.5.2; recording anyway.`);
+  console.log(`note: dispatch_type "${rec.dispatch_type}" is a RESERVED type — only ${[...LIVE_TYPES].map(J).join(' and ')} are LIVE under v0.6.0; recording anyway.`);
 }
 
 const lines = [

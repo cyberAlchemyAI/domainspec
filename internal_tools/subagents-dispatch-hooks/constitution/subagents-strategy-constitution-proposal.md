@@ -5,7 +5,7 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.5.3-proposal
+version: 0.6.0-proposal
 last_updated: 2026-06-15
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
@@ -81,8 +81,10 @@ output forward (`sequential`), two groups can exchange messages in bounded alter
 `n ≥ 2`) has its agents come back after their parallel runs and **discuss** — each
 confronts the others' outputs along the declared tension — before the group returns.
 
-Here *explorers*, *synthesizer*, and *reviewers* are example `group_id` labels for the
-roles `investigate`, `synthesize`, and `evaluate` — not reserved keywords.
+Here *explorers*, *synthesizer*, and *reviewers* are example `group_id` labels — not
+reserved keywords. A group has no role field of its own (removed v0.6.0 — see §11): what
+kind of work a group does is carried by its agents' `role`s (`explorer` / `writer` /
+`skeptic` / `auditor`), and where it sits in the workflow is carried by its `connections`.
 
 The canonical shape: **explorers → synthesizer → reviewers.** Between explorers and
 reviewers there is **always a synthesizer** — it plays midfield: it drafts from the
@@ -124,7 +126,7 @@ redesigning the framework itself — and is the only context in which dispatch l
    **Decision rule (mechanical PASS/REJECT, applied at the confirm gate; semantics owned by `vault/discovery/anti-bias-vector-composition/validator-check.md` — note: that file's operational protocol predates v0.5.2 and speaks the removed schema (`dispatch.yaml`, `composition`/`layers[]`); tests 1–4 below are the v0.5.2 operationalization, and the vault file is pending realignment):**
    1. **Axis test** — the **group-level `anti_bias`** names one of the four canonical axes (**methodology | source-corpus | attack-vector | temporal-prior**) or an explicitly declared composite of them. Anything outside this vocabulary → REJECT. The closure governs per-group `anti_bias` only — `anti_bias_global` is a free-text tension theme (§5) that the per-group axes specialize; it is never vocabulary-checked.
    2. **Clone test** — any two `angle`s in the group share the same core noun phrase → REJECT.
-   3. **Spread test** — in an `investigate` group: all agents share one methodology, or all share one source corpus → REJECT (a pass requires at least two distinct axes represented across the group's angles). In an `evaluate` group: any two skeptics share the same attack gate → REJECT.
+   3. **Spread test** — in a group of `explorer`s (investigation work): all agents share one methodology, or all share one source corpus → REJECT (a pass requires at least two distinct axes represented across the group's angles). In a group of `skeptic`s (evaluation work): any two skeptics share the same attack gate → REJECT.
    4. **Evidence test** — the sheet carries, for every pair, the written predicted-disagreement sentence ("a_i runs [X], a_j runs [Y] on the [axis] axis; a bias in a_i would be exposed by a_j"). Any pair missing its sentence → REJECT.
    A sheet that passes all four tests PASSES — no residual judgment call. **Enforcement split:** the appender enforces the presence conditionals (group `anti_bias` at n ≥ 2; `anti_bias_global` when ≥ 2 groups have n ≥ 2 — both exit 2); tests 1–4 are checked on the sheet at the gate.
 6. **Synthesizer midfield.** Between explorers and reviewers there is always a synthesizer. Synthesizer ↔ reviewers iterate via zig-zag; synthesizer → explorers via **feedback**, which is **conditional** — it is instantiated only when there is a reviewer/auditor group *and* material may be missing, not auto-instantiated in every dispatch. Reviewers never review raw explorer output directly.
@@ -133,7 +135,7 @@ redesigning the framework itself — and is the only context in which dispatch l
 9. **Outputs.** For a `dispatch_type: research` dispatch, everything the dispatch produces lands in `working_folder`. The two-file rule applies only to a **research fan-out (n ≥ 2)**: the collected returns (research) and the cited synthesis (findings) — every load-bearing claim in the findings cites the collected return it rests on, and the `final_approver` checks this when recommending acceptance. A **research n = 1** dispatch produces a single file, `findings.md`.
 10. **Claim ≤ proof** in every artifact produced.
 11. **Helper invocations are not dispatches.** A single agent spawned *by* a running agent, within its parent's scope, needs no row and no gate — it is reported post-hoc in the parent's `agents_spawned` report (chat + findings, not written to the ledger row). It escalates to a real dispatch if it fans out (2+) or outgrows the scope. Spawn count is unregulated; reporting is the brake. *(The exact helper-vs-dispatch boundary is provisional — an open question, not settled law.)*
-12. **Final approval.** Every dispatch names a `final_approver` holding the last approve/reject with a does-this-fit-the-whole mandate. There is exactly **one human gate** — the entry confirm of Principle 2. `final_approver` is `parent` (default) or a **dedicated approver agent**: the sole member of a `meta-evaluate` group that does no other work in the dispatch. An approver may **never** appear in any working group — self-approval is prohibited. The approver receives the full `working_folder` (for research n ≥ 2: both `research.md` and `findings.md`, so the Principle 9 citation check is actionable). If the approver's group never runs (early abort, upstream error), approval falls back to `parent`. When the approver is an agent, it *recommends* accept/reject; a reject is what may trigger a re-run within `max_loops`. The human never loses the power to abandon (`user_abort`), but there is **no second human gate at close** — the close is report-only plus the close row (Principle 3).
+12. **Final approval.** Every dispatch names a `final_approver` holding the last approve/reject with a does-this-fit-the-whole mandate. There is exactly **one human gate** — the entry confirm of Principle 2. `final_approver` is `parent` (default) or a **dedicated approver agent**: the sole agent of a **dedicated approver group** (its agent's `role` is `auditor`) that does no other work in the dispatch. An approver may **never** appear in any working group — self-approval is prohibited. The approver receives the full `working_folder` (for research n ≥ 2: both `research.md` and `findings.md`, so the Principle 9 citation check is actionable). If the approver's group never runs (early abort, upstream error), approval falls back to `parent`. When the approver is an agent, it *recommends* accept/reject; a reject is what may trigger a re-run within `max_loops`. The human never loses the power to abandon (`user_abort`), but there is **no second human gate at close** — the close is report-only plus the close row (Principle 3).
 13. **Meta and lineage.** A planning/framework dispatch is marked `meta`. `parent_dispatch_id` exists **only** on a dispatch spawned by a meta dispatch, pointing back to it. No other lineage fields exist. A meta dispatch may itself be planned by another meta dispatch (`meta: true` with non-null `parent_dispatch_id`); the chain stays finite and acyclic. A meta-planned child is a new sheet and re-enters the confirm gate — Principle 2 has no meta exception.
 14. **Robot-talks binding.** Any group with `robot_talks: true` additionally binds `vault/constitution/robot-talks-constitution.md` as versioned at dispatch time; that constitution wins conflicts **inside the discussion** — but where it would prescribe an additional human gate, this constitution's single-gate rule (Principle 12) governs. When a synthesizer sits downstream of **any robot-talks group whose agents' positions feed it**, it MUST receive each of that group's agents' **initial** and **final** position (both present in `working_folder`), so premature-convergence / collapse is detectable. *(Scope generalized 2026-06-12 to cover the review type's attacker→synthesizer hop.)*
 
@@ -154,10 +156,13 @@ strategist checks the ledger before assigning; if the slug repeats within a date
 `-2`, `-3`, … — the id must be unique in the registry.
 
 #### `schema_version` — R · A
-**What:** the constitution schema this row conforms to, e.g. `"0.5.2"`.
+**What:** the **row-schema** version this row conforms to — currently `"0.6.0"` (the group
+`role` field was removed from the row schema at v0.6.0; rows written before carry `"0.5.2"`).
 **Why:** grandfathering (§2) and future migrations are mechanizable only if every row names
 its schema; pre-v0.5.2 rows are recognizable by this field's absence.
-**How:** the literal version of this constitution at dispatch time.
+**How:** the literal row-schema version in force at dispatch time (`"0.6.0"`). Note this is
+the **wire** schema_version, which tracks row-schema changes only — distinct from the
+document `version` (§10.1), which also bumps on prose/principle changes.
 
 #### `invoked_by` — O · A (tooling-provenance extension)
 **What:** the invoking user's git/GitHub email — provenance for who triggered the dispatch.
@@ -171,8 +176,10 @@ semantics and gates nothing.
 **What:** which typed strategy (role-set + evaluation criterion) the dispatch enacts.
 **Why:** fixes the agent-role vocabulary in one move.
 **Values:** `research | code | review | plan | suggestion | experiment`. `research`, `review`, and `experiment` are LIVE; the other three (`code`, `plan`, `suggestion`) are reserved names and **must not be dispatched until populated**.
-*(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded without a version bump because the row schema is unchanged — fold into the next versioned amendment. §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)*
-*(`experiment` populated 2026-06-14 by owner decision, **narrow recipe**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing enums (no new values): designer (`investigate`/`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`investigate`/`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`evaluate`/`auditor`, verdict against the criterion) · skeptic (`evaluate`/`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)*
+*(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded in-place under the now-retired no-bump practice (§10); a LIVE-status change today requires a document-`version` bump regardless of the row schema (§10.1) — folded into the v0.6.0 versioned amendment (§11). §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)*
+*(`experiment` populated 2026-06-14 by owner decision, **narrow recipe**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing **agent-role** enum (`explorer | skeptic | writer | auditor`; no new values): designer (`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`auditor`, verdict against the criterion) · skeptic (`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)*
+
+*(**Scope clarification — 2026-06-15, owner decision.** `experiment` is scoped to the **pre-registration (propose) phase**: the **designer** (`writer`) and **skeptic** (`skeptic`) produce a **frozen, validity-checked `criterion.md`** — the experiment proposal. **Running the probe and adjudicating survived-vs-falsified is a separate downstream step**, not this dispatch; the **runner** (`explorer`) and **adjudicator** (`auditor`) belong to that later run. Verdict timing follows: **INVALID** may be rendered at propose (the skeptic kills an unfalsifiable design before freeze); **SURVIVED / FALSIFIED** are rendered only at the run. A propose dispatch therefore closes `resolved` on an accepted frozen `criterion.md`, never on SURVIVED/FALSIFIED. Type skill `.claude/skills/experiment/SKILL.md` is the authority on the propose/run split.)*
 
 #### `goal` — R · **H**
 **What:** the human's general objective, one or two sentences. The strategist decomposes it
@@ -195,9 +202,10 @@ round; nothing else triggers it.
 #### `final_approver` — R · H/A
 **What:** who holds the last approve/reject gate.
 **Values:** `parent` (default — the strategist session, human behind it) or the
-`agent_name` of a **dedicated approver agent** — the sole member of a `meta-evaluate` group
-that does no other work in the dispatch. An approver may never appear in any working group
-(no self-approval — Principle 12). No other designation mechanism exists.
+`agent_name` of a **dedicated approver agent** — the sole agent of a **dedicated approver
+group** (its agent's `role` is `auditor`) that does no other work in the dispatch. An
+approver may never appear in any working group (no self-approval — Principle 12). No other
+designation mechanism exists.
 
 #### `meta` — O · A
 **What:** marks a dispatch whose object is dispatching itself — planning what to research,
@@ -245,13 +253,9 @@ are done launches, concurrently with other ready groups; the agents inside each 
 
 #### `group_id` — R · A
 **What:** stable id, the target of `connections[]` references. E.g. `explorers`, `synthesizer`, `reviewers`.
-
-#### `role` — R · A
-**What:** the group's function in the workflow.
-**Values:** `investigate | evaluate | meta-evaluate | synthesize`.
-**Why:** carries the canonical-shape rule (Principle 6): `investigate` (explorers) →
-`synthesize` (the midfield) → `evaluate` (reviewers), with `meta-evaluate` (audit) after
-evaluation when used.
+**Note:** a group has **no `role` field** (removed v0.6.0 — see §11). A group's function is
+read off its agents' `role`s and its place in the canonical shape (Principle 6) off its
+`connections`. The close-row tally (`agents_spawned`) keys directly by **agent** role.
 
 #### `n` — O · A (default 1)
 **What:** agent count in the group. (There is no cardinality field — `n` already answers it.)
@@ -422,11 +426,11 @@ chooses not to re-run is an abandonment → `user_abort`.
 close row, and reported in chat with 1–2 sentences of context and in the findings doc.
 
 #### `agents_spawned` — close row + reported · A
-**What:** total count + spawn tree keyed by **role-category**, with **helper invocations**
-(Principle 11) in their own bucket, + loop iterations used. E.g.
-`{total: 6, tree: {investigate: 3, synthesize: 1, evaluate: 2, helpers: 0}, loops_used: 1}`.
-**Agent-role ↔ group-role map:** `explorer ↔ investigate`, `skeptic ↔ evaluate`,
-`writer ↔ synthesize`, `auditor ↔ meta-evaluate`.
+**What:** total count + spawn tree keyed by **agent role** (`explorer | skeptic | writer | auditor`),
+with **helper invocations** (Principle 11) in their own bucket, + loop iterations used. E.g.
+`{total: 6, tree: {explorer: 3, writer: 1, skeptic: 2, helpers: 0}, loops_used: 1}`.
+(v0.6.0: keyed by **agent** role directly — the former agent-role↔group-role map is gone with
+the group `role` field, which removes the CR-2 bucketing ambiguity.)
 **Why:** spawn count is unregulated, so reporting is the entire accountability mechanism.
 
 ## 6. Skeleton YAML
@@ -436,8 +440,8 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
 # a close row ({close_of, exit_reason, agents_spawned}) is appended at termination.
 # rows are never edited in place (Principle 3).
 - dispatch_id: 2026-06-12-example-slug
-  schema_version: "0.5.2"
-  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); experiment LIVE (2026-06-14); code|plan|suggestion FORECAST
+  schema_version: "0.6.0"
+  dispatch_type: research             # research LIVE; review LIVE (2026-06-12); experiment LIVE (2026-06-14); code|plan|suggestion RESERVED
   goal: >                             # HUMAN input — the general objective;
     One or two sentences.             # the strategist decomposes it below.
   context: >
@@ -453,9 +457,9 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
   groups:                             # scheduled by DEPENDENCY (P4): ready groups launch concurrently;
                                       # declared order is narration tiebreak, not an execution constraint
     - group_id: explorers
-      role: investigate
       n: 3                            # the 3 agents run IN PARALLEL, one message
-      anti_bias: source corpus (Shannon vs resource-theory vs categorical)
+                                      # (no group `role` field — v0.6.0; function = agents' roles)
+      anti_bias: source-corpus (Shannon vs resource-theory vs categorical)
       agents:
         - agent_name: "Abramsky, Samson"
           role: explorer
@@ -469,8 +473,7 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
         # ... 2 more explorers, each with its own angle/initial_prompt
 
     - group_id: synthesizer           # the mandatory midfield (Principle 6)
-      role: synthesize
-      n: 1
+      n: 1                            # function read from its writer agent's role
       agents:
         - agent_name: "Noether, Emmy"
           role: writer
@@ -481,12 +484,11 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
             material and how to handle reviewer objections.
 
     - group_id: reviewers
-      role: evaluate
       n: 2
       robot_talks: true               # n>=2 only: agents discuss each other's outputs
                                       # before returning; aggregation becomes synthesize
       layers: 1                       # int: sequential invocations of this group
-      anti_bias: attack vector (precedent-kill vs non-vacuity)
+      anti_bias: attack-vector (precedent-kill vs non-vacuity)
       agents:
         - agent_name: "Russell, Bertrand"
           role: skeptic
@@ -509,7 +511,7 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
   # the same values are reported in chat + findings.
   # exit_reason  ∈ resolved | loop_ceiling_reached | dissent_irreconcilable | user_abort | error
   #   precedence: user_abort > error > dissent_irreconcilable > loop_ceiling_reached > resolved
-  # agents_spawned = total + spawn tree (keyed by role-category, helpers in their own bucket) + loops_used
+  # agents_spawned = total + spawn tree (keyed by AGENT role: explorer|skeptic|writer|auditor, helpers in their own bucket) + loops_used
 ```
 
 ## 7. Removed relative to v0.3.0 / v0.4.0-draft (for assessment)
@@ -528,6 +530,7 @@ close row, and reported in chat with 1–2 sentences of context and in the findi
 | `cardinality` | `n` already answers it. |
 | `aggregation` | Derived: robot-talks → synthesize, no robot-talks → concat (zig-zag is exchange, not aggregation). Never a field. |
 | Group-level `model` | Model is chosen per agent, by difficulty. |
+| Group-level `role` (`investigate`/`evaluate`/`meta-evaluate`/`synthesize`) | Redundant with the agent-level `role`: a group's function is read off its agents' roles and its workflow position off its `connections`; the close-row tally keys by **agent** role. (Removed v0.6.0 — it was the root cause of the CR-2 contradiction; see §11.) |
 | Nested `layers[]` objects | `layers` is now a plain int: number of sequential invocations of the group. |
 | Connection `carries`, `input_priority`, `gate`, edge submodes | Connections are exactly `{from, to, type, loop_cap?}`. |
 | `agent_id` | Replaced by `agent_name` from the allowed-names pool YAML. |
@@ -546,7 +549,7 @@ must re-list all open premise-outrunning debts and explicitly affirm or discharg
   the `recursion_budget` is **not** reintroduced; `agents_spawned` reporting is the
   count-side brake. The **cost** debt this premise carries — sharpened by the real
   incident (~1.67 billion tokens, July 2025) — is **only declaratively addressed** by the
-  per-agent **mandatory `token_budget`** (D6): every agent declares a cost target, but no
+  per-agent **mandatory `token_budget`** (M4): every agent declares a cost target, but no
   runtime component enforces it (v0.5.2 correction — the v0.5.1 "partially discharged"
   claim overstated; a declared target bounds nothing by itself). And even if enforced, that
   bound is per-agent only; **recursion-runaway**
@@ -565,10 +568,11 @@ must re-list all open premise-outrunning debts and explicitly affirm or discharg
   v0.5.1 aggravation — "the outcome is not persisted at all" — is **discharged by the
   v0.5.2 close row** (T1 decision, 2026-06-12 assessment): the registry now persists both
   the spec and the outcome. Residual debt: the registry is still the sole persistence
-  surface for dispatch metadata; discharge requires a premise revision acknowledging the
+  surface for *row-schema* dispatch metadata (narrowed by the `experiment` re-confrontation
+  below — CR-4 fix, v0.6.0); discharge requires a premise revision acknowledging the
   two-append registry as that surface.
 
-No waiver is inherited silently; promoting any FORECAST `dispatch_type` to LIVE must
+No waiver is inherited silently; promoting any RESERVED `dispatch_type` to LIVE must
 re-confront all three debts.
 
 **`experiment` promotion (2026-06-14) — re-confrontation** (adversarial: proponent × skeptic):
@@ -581,6 +585,10 @@ re-confront all three debts.
 - **P-SS-9 (linear lifecycle)** — **AFFIRMED open, unchanged.** The criterion-freeze is data-flow
   topology (the `designer →sequential→ runner` edge) plus the existing P2 confirm-gate re-entry on
   edit, not a new lifecycle phase; propose → confirm → dispatch → close stays linear.
+  *(Scope update 2026-06-15: with `experiment` scoped to the propose phase — the run separated
+  downstream (§5 note) — the freeze anchors to the **P2 confirm-gate**, not a `designer→runner` edge
+  (there is no runner in a propose dispatch); the lifecycle stays linear and the propose dispatch
+  closes on the accepted frozen `criterion.md`.)*
 - **NEW debt (persistence)** — **STRAINED; discharged by premise revision.** `experiment` is the
   first LIVE type whose verdict-defining datum — the pre-registered criterion — is *governance-grade*
   (frozen at P2, immutable, re-gating on edit) yet persisted **off-registry**, in `working_folder`:
@@ -591,6 +599,10 @@ re-confront all three debts.
   pointer + content hash to the specific criterion artifact (restoring full ledger self-sufficiency
   for re-adjudication) is recorded as an **OPEN** hardening option, deferred until `experiment` use
   proves the gap bites.
+  *(Scope update 2026-06-15: the `FALSIFIED`/`SURVIVED` close belongs to the **run** dispatch
+  (downstream); the **propose** dispatch closes `resolved` on an accepted frozen `criterion.md`. The
+  off-registry-criterion concern therefore attaches to the later run, and the deferred pointer+hash
+  hardening is precisely what would let that run re-adjudicate `SURVIVED`/`FALSIFIED` from the ledger.)*
 
 ## 8. v0.5.2 amendments (2026-06-12 adversarial assessment)
 
@@ -626,7 +638,7 @@ precedent in §5 `dispatch_type`):
 | Decision | Amendment |
 |---|---|
 | **D1 — dependency scheduling** | "Groups run sequentially in declared order" replaced everywhere (§3, P4, §5 Level 2, §6 skeleton) by dependency-based readiness: a group is READY when every group with a `sequential`/`zig-zag` edge into it has produced what it must respond to; all READY groups launch concurrently; `feedback` edges never count as dependencies; a connection-less sheet declares its groups independent; declared order is narration/registration tiebreak only. |
-| **D2 — anti_bias decision rule** | Principle 5 gains a four-test mechanical PASS/REJECT rule (axis vocabulary closed to the four canonical axes or a declared composite — **scoped to per-group `anti_bias` only**; `anti_bias_global` stays a free-text theme; clone test; spread test; pairwise predicted-disagreement evidence test), with semantics owned by `vault/discovery/anti-bias-vector-composition/validator-check.md` *(pending v0.5.2 realignment — its protocol still speaks the removed `dispatch.yaml`/`composition`/`layers[]` schema)*. **Enforcement split:** tests 1–4 are gate-checked on the sheet only (no executable enforcement); solely the `anti_bias_global` ≥ 2-fan-out-groups presence conditional moves from gate-only to **appender-enforced** (exit 2). |
+| **D2 — anti_bias decision rule** | Principle 5 gains a four-test mechanical PASS/REJECT rule (axis vocabulary closed to the four canonical axes or a declared composite — **scoped to per-group `anti_bias` only**; `anti_bias_global` stays a free-text theme; clone test; spread test; pairwise predicted-disagreement evidence test), with semantics owned by `vault/discovery/anti-bias-vector-composition/validator-check.md` *(pending v0.5.2 realignment — its protocol still speaks the removed `dispatch.yaml`/`composition`/`layers[]` schema)*. **Enforcement split:** tests 1–4 (the semantic axis/clone/spread/evidence checks) are gate-checked on the sheet only (no executable enforcement); the **presence** conditionals are **appender-enforced** (exit 2) — *both* the per-group `anti_bias` (required at n ≥ 2) *and* `anti_bias_global` (required when ≥ 2 groups have n ≥ 2), as `append-dispatch.cjs` actually does. (CR-1 fix, v0.6.0: the prior "solely `anti_bias_global`" wording contradicted P5 and the code.) |
 
 **Premise-debt re-confrontation** (per the §7 meta-clause): **P-SS-8 (spawn budget)** —
 AFFIRMED, carried open; D1/D2 add no spawn or cost machinery (concurrent launch changes
@@ -657,21 +669,58 @@ amendment is drafted — Principle 13 and Principle 11 are the affected law.
 The §9 "in-place, no version bump" practice is the documented source of doc-vs-code drift:
 every "v0.5.2" reference became a target silently amended N times, and the 2026-06-14
 `experiment` promotion left the test battery red and §5's `working_folder` field stale (the
-C1 failure). Owner decision 2026-06-15 retires that practice for surface changes:
+v0.5.3 stale-field failure — distinct from the §8 assessment finding C1). Owner decision
+2026-06-15 retires that practice for surface changes:
 
 1. **Version bump on surface change.** Any change to a field, an enum value, a principle, or
    a `dispatch_type`'s LIVE/RESERVED status bumps the document `version`. In-place edits
    without a bump are allowed only for typo/prose fixes that change no field, enum, or status.
    (This is distinct from the wire `schema_version`, which bumps only when the *row schema*
-   changes — the row schema is unchanged at 0.5.2.)
+   changes — at v0.6.0 the row schema **did** change, as the group `role` field was removed,
+   so `schema_version` advanced 0.5.2 → 0.6.0.)
 2. **Atomic promotion.** Promoting a `dispatch_type` (RESERVED → LIVE) or changing a field's
    conditional must touch, in one change set: the **code** (appender enum/validation), the
    **type SKILL**, this **constitution §5 field table**, the **test battery**, and the
    **README** — verified by re-running `tests/test-append-dispatch.cjs` to green. A promotion
    that updates fewer than all five surfaces is incomplete.
-3. **Both constitution copies move together.** The law is double-located (repo-root = live
-   law; `internal_tools/subagents-dispatch-hooks/constitution/` = migration source). Editing
-   one copy without the other is prohibited; a surface change lands in both, same change set.
+3. **Single-located law (consolidated v0.6.0).** The constitution lives in **exactly one**
+   place: `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`.
+   The former repo-root copy was **deleted at v0.6.0** — the double-located model was itself the
+   documented source of the doc-vs-doc drift this section exists to stop, so it is retired. There
+   is no migration-source / live-law split any more: the single file is both the live law and the
+   portable source. (The `internal_tools/subagents-dispatch-hooks/` tree remains the bundle copied
+   into consumer repos; the constitution simply travels inside it.) *(History: §10 originally
+   mandated two synchronized copies; v0.5.3 landed it in both, and v0.6.0 consolidated to one.)*
 
-This clause is the **final amendment landed under the retired in-place practice**; it is
-itself versioned (→ v0.5.3-proposal) and applied to both copies per rule 3.
+This §10 clause was the final amendment landed under the retired in-place practice (v0.5.3);
+§11 (v0.6.0) is the first amendment landed under the new version-bump regime.
+
+## 11. v0.6.0 amendments (2026-06-15 internal-consistency review)
+
+Source: `research/subagents-strategy/2026-06-15-constitution-v053-consistency-review/findings.md`
+(dispatch `2026-06-15-constitution-v053-consistency-review` — review type; 3 attackers
+robot_talks → synthesizer → 2 verifiers zig-zag; 1 CRITICAL / 2 MAJOR / 5 MINOR confirmed,
+4 candidate findings refuted in verification). Owner decision 2026-06-15: full structural fix.
+This is the first **versioned** amendment under §10.1; it is also the first **row-schema**
+change since 0.5.2, so the wire `schema_version` advances 0.5.2 → 0.6.0.
+
+| # | Decision | Amendment |
+|---|---|---|
+| **CR-1** (CRITICAL) | Enforcement contract had to be single-valued | §9 D2's "solely `anti_bias_global` is appender-enforced" was wrong (it contradicted P5 *and* `append-dispatch.cjs`, which rejects a missing per-group `anti_bias` at n ≥ 2 and a missing `anti_bias_global` at ≥ 2 fan-out groups). D2 rewritten to match P5 and the code: **both presence conditionals are appender-enforced; only the four semantic tests are gate-only.** |
+| **CR-2** (MAJOR) | Group `role` removed entirely | The group-level `role` field is **deleted** (Level 2 schema, P6 wording, §3, the experiment recipe, the `agents_spawned` map, the §6 skeleton). A group's function is now read off its agents' `role`s and its workflow position off its `connections`; the close-row tally keys directly by **agent** role. This dissolves the broken 1:1 `auditor ↔ meta-evaluate` map that the experiment recipe violated. Row-schema change → `schema_version` 0.6.0; `append-dispatch.cjs` + test battery updated in the same change set (§10.2). |
+| **CR-6** (MAJOR) | Dangling decision label | §7's `token_budget` reference "(D6)" repointed to "(M4)", the real decision id. |
+| **CR-4/5/8/9/12** (MINOR) | Drift cleanup | §7 "sole persistence surface" narrowed to "row-schema metadata"; "FORECAST" → "RESERVED" everywhere (skeleton + §7); §5 review-note version-axis clarified; §10's "C1 failure" renamed to disambiguate from §8's assessment finding C1; skeleton axis tokens hyphenated (`source-corpus`, `attack-vector`) to match the closed vocabulary. |
+| **§10.3** | Consolidate the law | Repo-root copy deleted; the constitution is now single-located in `internal_tools/subagents-dispatch-hooks/constitution/` (§10.3 rewritten). Active skill pointers repointed off "repo root". |
+
+Findings **refuted in verification** (recorded, not actioned — claim ≤ proof): the §10
+atomic-promotion rule is *not* retroactively self-violated (its amnesty scopes it
+prospectively); §8's "v0.5.2 amendments" heading is correctly scoped history; the "14 MAJOR"
+count is a non-exhaustive summary; the skeleton feedback edge is governed conditional by §3/§5.
+
+**Premise-debt re-confrontation** (per the §7 meta-clause; required because v0.6.0 changes the
+row schema): **P-SS-8 (spawn / cost)** — AFFIRMED, carried open; removing a field adds no spawn
+or cost machinery. **P-SS-9 (linear lifecycle)** — AFFIRMED, carried open; the change is to the
+group *schema*, not the propose → confirm → dispatch → close lifecycle. **NEW debt (persistence)**
+— AFFIRMED, carried open as narrowed by the `experiment` re-confrontation (§7); the registry
+remains the sole persistence surface for row-schema metadata. No debt is discharged or newly
+opened by v0.6.0.
