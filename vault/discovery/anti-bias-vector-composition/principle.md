@@ -1,17 +1,17 @@
 ---
-tags: [vault, discovery, multi-agent, bias, anti-bias, vector-composition, theorem-research]
+tags: [vault, discovery, multi-agent, bias, anti-bias, vector-composition, subagents-strategy]
 node_type: discovery
 is_session: false
 layer: ontology
 nature: explanatory
 status: active
-version: 0.1.0
-last_updated: 2026-05-26
+version: 0.2.0
+last_updated: 2026-06-15
 ---
 
 # Anti-Bias Vector Composition — Principle
 
-> One of four files in this discovery: `principle.md` (this file) states the rule, `literature.md` records the prior art, `validator-check.md` operationalizes the rule for the `theorem-research` skill's spec lifecycle, `examples.md` shows worked good/bad layer shapes.
+> One of four files in this discovery: `principle.md` (this file) states the rule, `literature.md` records the prior art, `validator-check.md` operationalizes the rule as **Principle 5 (pairwise tension)** of the subagents-strategy constitution (v0.5.2), `examples.md` shows worked good/bad group shapes.
 
 ---
 
@@ -47,22 +47,21 @@ This is the operational form of Mill's "collision of adverse opinions" (see `lit
 
 ---
 
-## Where this applies in the `theorem-research` skill
+## Where this applies in a subagents-strategy dispatch
 
-The skill organizes a dispatch into layers (explorer, skeptic, writer, auditor). The principle applies *layer-locally*: it constrains the choice of angles for the agents within a single layer of size N ≥ 2, not the relationship between layers.
+A dispatch (v0.5.2) is organized into **groups**, each with a group `role ∈ {investigate, evaluate, synthesize, meta-evaluate}` and agents with `role ∈ {explorer, skeptic, writer, auditor}`. The principle applies *group-locally*: it constrains the choice of `angle`s for the agents within a single **subject group** (`n ≥ 2`, role `investigate` or `evaluate`), not the relationship between groups. (The cross-group theme is `anti_bias_global`; the per-group axis is `anti_bias`.)
 
 **Applies:**
-- **Explorer layer.** N parallel agents gathering prior art / context. Angles must be tensioned along source corpus, methodology axis, or temporal prior. Bad: four LLM-paraphrase searches over arXiv with different keywords. Good: arXiv-categorical + physics-journals + dissent-corpus + backward-citation-tree.
-- **Skeptic layer.** N parallel agents attacking a claim. Angles must be tensioned along attack vector. Bad: three "find problems with the argument" agents. Good: precedent-attack (has this been done?) + vacuity-attack (does the claim reduce to a triviality?) + definitional-attack (do the terms hold under stress?).
+- **`investigate` group (explorers).** N parallel agents gathering prior art / context. Angles must be tensioned along source corpus, methodology, or temporal prior. Bad: four LLM-paraphrase searches over arXiv with different keywords. Good: arXiv-categorical + physics-journals + dissent-corpus + backward-citation-tree.
+- **`evaluate` group (skeptics).** N parallel agents attacking a claim. Angles must be tensioned along attack vector. Bad: three "find problems with the argument" agents. Good: precedent-attack (has this been done?) + vacuity-attack (does the claim reduce to a triviality?) + definitional-attack (do the terms hold under stress?).
 
-> An `evaluator` layer (N agents scoring an artifact against weighted criteria) was considered but **retired 2026-06-11**: 0 of 55 dispatches used it, and the 4-role set carries no `evaluator`. Criteria-scoring, when needed, is a `skeptic` with a stated gate. Removed from the subject-layer set in [validator-check.md](./validator-check.md).
+> An `evaluator` role (N agents scoring an artifact against weighted criteria) was considered but **retired 2026-06-11**: it is not in the four-role set. Criteria-scoring, when needed, is a `skeptic` with a stated gate. Out of the subject-group set in [validator-check.md](./validator-check.md).
 
 **Does not apply:**
-- **Synthesizer layer.** Single agent by construction; nothing to tension against.
-- **Writer layer.** Single agent by construction.
-- **Auditor layer.** Single check, run after the other layers; the auditor's role is to enforce this principle, not to be subject to it.
+- **`synthesize` group (writer).** Single agent by construction; nothing to tension against.
+- **`meta-evaluate` group (auditor).** Single check, run after the other groups; the auditor's role is to enforce this principle, not to be subject to it.
 
-The principle is *additional* to the existing `domainspec-subagents-strategy` validator check ("angles non-overlapping AND covering"). Non-overlapping-and-covering is a partition condition on the angle set; tensioned-pairwise is a *direction* condition on the partition. A layer can pass the partition check and fail the tension check; the validator must run both.
+The principle is *additional* to the existing `domainspec-subagents-strategy` partition check ("angles non-overlapping AND covering"). Non-overlapping-and-covering is a partition condition on the angle set; tensioned-pairwise is a *direction* condition on the partition. A group can pass the partition check and fail the tension check; the gate runs both.
 
 ---
 
@@ -71,7 +70,7 @@ The principle is *additional* to the existing `domainspec-subagents-strategy` va
 | Document | Type | Description |
 |----------|------|-------------|
 | [literature.md](./literature.md) | `derives-from` | Prior art for the principle: Mill on collision of opinions, Kahneman-Klein adversarial collaboration, Hong-Page diversity theorem, Krogh-Vedelsby ensemble decomposition, Irving-Christiano-Amodei AI safety via debate. |
-| [validator-check.md](./validator-check.md) | `operationalized-by` | The validator-agent checklist that enforces this principle on `theorem-research` dispatch specs before the spec is dispatched. |
+| [validator-check.md](./validator-check.md) | `operationalized-by` | The checklist that enforces this principle (constitution Principle 5) on the dispatch sheet at the confirm gate, and checks tension realization post-dispatch. |
 | [examples.md](./examples.md) | `instances` | Worked good/bad layer shapes for explorer, skeptic, plus the false-consensus anti-pattern. |
 | [../multi-agent-implementation-strategy/multi-agent-implementation-strategy.md](../multi-agent-implementation-strategy/multi-agent-implementation-strategy.md) | `cites` | The investigation-vs-implementation framing this discovery extends: tensioned-pairwise applies to investigation-shaped fan-out (where N agents read one artifact from N stances), which is precisely the shape `theorem-research` uses. |
 | [../robot-talks-definitions/robot-talks.md](../robot-talks-definitions/robot-talks.md) | `cites` | Robot-talks already enforces declared-perspective-per-turn (D-2) and tension-not-aggregation (D-3); this discovery generalizes the same discipline to non-discussion dispatch shapes where perspectives are angles, not turns. |
