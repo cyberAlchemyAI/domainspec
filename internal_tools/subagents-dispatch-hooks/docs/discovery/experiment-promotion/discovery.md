@@ -14,6 +14,18 @@ created_by: victorboscaro@gmail.com
 
 # Discovery — Promoção do `dispatch_type: experiment` (FORECAST → LIVE, recorte estreito)
 
+> **[Scope update — 2026-06-15, owner decision]** Este discovery descreve o modelo
+> **original de despacho único** (designer → runner → adjudicator + skeptic, com a aresta
+> `designer →sequential→ runner` e veredito SURVIVED/FALSIFIED renderizado no próprio
+> despacho). Por decisão do owner em 2026-06-15, o `dispatch_type: experiment` foi
+> **reescopado para a fase de PROPOSTA (pré-registro) apenas**: designer + skeptic produzem
+> um `criterion.md` congelado e validado; **rodar a sonda e adjudicar SURVIVED/FALSIFIED é um
+> passo downstream separado** (runner + adjudicator). O congelamento ancora no **gate P2**, não
+> na aresta designer→runner. A autoridade atual é a type skill
+> `.claude/skills/experiment/SKILL.md` e a nota de esclarecimento em
+> `constitution/subagents-strategy-constitution-proposal.md` §5 / §7 (2026-06-15). Leia as
+> seções §2.3, §3.2, §3.4 e §3.5 abaixo à luz dessa divisão propose/run.
+
 ## Objective
 
 Promover `experiment` de nome reservado (FORECAST) para `dispatch_type` **LIVE** na constituição

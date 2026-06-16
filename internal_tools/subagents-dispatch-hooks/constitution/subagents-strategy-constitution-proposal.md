@@ -5,7 +5,7 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.6.0-proposal
+version: 0.6.1-proposal
 last_updated: 2026-06-15
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
@@ -177,7 +177,7 @@ semantics and gates nothing.
 **Why:** fixes the agent-role vocabulary in one move.
 **Values:** `research | code | review | plan | suggestion | experiment`. `research`, `review`, and `experiment` are LIVE; the other three (`code`, `plan`, `suggestion`) are reserved names and **must not be dispatched until populated**.
 *(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded in-place under the now-retired no-bump practice (§10); a LIVE-status change today requires a document-`version` bump regardless of the row schema (§10.1) — folded into the v0.6.0 versioned amendment (§11). §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)*
-*(`experiment` populated 2026-06-14 by owner decision, **narrow recipe**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing **agent-role** enum (`explorer | skeptic | writer | auditor`; no new values): designer (`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`auditor`, verdict against the criterion) · skeptic (`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)*
+*(`experiment` populated 2026-06-14 by owner decision, **narrow recipe** — **[scope superseded 2026-06-15: this dispatch is propose-only; the runner/adjudicator roles and the SURVIVED/FALSIFIED adjudication described below moved to a separate downstream run — see the scope clarification note immediately after this paragraph]**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing **agent-role** enum (`explorer | skeptic | writer | auditor`; no new values): designer (`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`auditor`, verdict against the criterion) · skeptic (`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)*
 
 *(**Scope clarification — 2026-06-15, owner decision.** `experiment` is scoped to the **pre-registration (propose) phase**: the **designer** (`writer`) and **skeptic** (`skeptic`) produce a **frozen, validity-checked `criterion.md`** — the experiment proposal. **Running the probe and adjudicating survived-vs-falsified is a separate downstream step**, not this dispatch; the **runner** (`explorer`) and **adjudicator** (`auditor`) belong to that later run. Verdict timing follows: **INVALID** may be rendered at propose (the skeptic kills an unfalsifiable design before freeze); **SURVIVED / FALSIFIED** are rendered only at the run. A propose dispatch therefore closes `resolved` on an accepted frozen `criterion.md`, never on SURVIVED/FALSIFIED. Type skill `.claude/skills/experiment/SKILL.md` is the authority on the propose/run split.)*
 
@@ -583,8 +583,9 @@ re-confront all three debts.
   inside the already-open count/recursion surface — logged as a future input to the
   recursion-runaway OPEN QUESTION, not a change to it.
 - **P-SS-9 (linear lifecycle)** — **AFFIRMED open, unchanged.** The criterion-freeze is data-flow
-  topology (the `designer →sequential→ runner` edge) plus the existing P2 confirm-gate re-entry on
-  edit, not a new lifecycle phase; propose → confirm → dispatch → close stays linear.
+  topology (originally the `designer →sequential→ runner` edge — **superseded 2026-06-15**, see note
+  below) plus the existing P2 confirm-gate re-entry on edit, not a new lifecycle phase;
+  propose → confirm → dispatch → close stays linear.
   *(Scope update 2026-06-15: with `experiment` scoped to the propose phase — the run separated
   downstream (§5 note) — the freeze anchors to the **P2 confirm-gate**, not a `designer→runner` edge
   (there is no runner in a propose dispatch); the lifecycle stays linear and the propose dispatch
@@ -603,6 +604,33 @@ re-confront all three debts.
   (downstream); the **propose** dispatch closes `resolved` on an accepted frozen `criterion.md`. The
   off-registry-criterion concern therefore attaches to the later run, and the deferred pointer+hash
   hardening is precisely what would let that run re-adjudicate `SURVIVED`/`FALSIFIED` from the ledger.)*
+
+**propose/run re-scope (2026-06-15, owner decision) — re-confrontation.** The 2026-06-15 split
+(`experiment` dispatch = propose-only; the run + SURVIVED/FALSIFIED adjudication is a separate
+downstream dispatch) falsifies a premise the 2026-06-14 NEW-debt above rests on — that *this*
+dispatch closes on a SURVIVED/FALSIFIED row. Per §7's promotion rule (a change to the debts is
+re-confronted adversarially, proponent × skeptic), the three debts are re-confronted under the
+split; the adversarial source is the review dispatch
+`2026-06-15-experiment-propose-run-rescope-review` (3 tensioned attackers ⟂ verifier).
+
+- **P-SS-8 (spawn / cost)** — **AFFIRMED open, unchanged.** Splitting one dispatch into two adds no
+  spawn/cost machinery; the propose dispatch is *smaller* (designer + skeptic) and the run is a
+  separate future dispatch counted on its own.
+- **P-SS-9 (linear lifecycle)** — **AFFIRMED, strengthened.** Removing the in-dispatch runner makes
+  the freeze anchor cleanly to the P2 gate; both phases stay linear (propose → confirm → dispatch →
+  close; later, run → confirm → dispatch → close).
+- **NEW debt (persistence)** — **RELAXED at propose, re-attached to run.** The propose dispatch's
+  deliverable *is* the criterion artifact and it closes `resolved` on acceptance of that artifact —
+  there is no SURVIVED/FALSIFIED row to be "uninterpretable from the ledger", so the debt does not
+  bind the propose dispatch. It re-attaches to the **run** dispatch (whose close *does* carry
+  SURVIVED/FALSIFIED against an off-registry criterion); the deferred registry pointer + content
+  hash is the run's OPEN hardening, to land when the run phase is built.
+- **Process note (§10).** This re-scope touches no field, enum, row-schema, or code surface
+  (verified: the appender test battery asserts only `experiment`'s `working_folder` requirement —
+  nothing about outputs, verdict, or roles), so §10.2 five-surface atomic promotion does not fire;
+  it is an annotation-class change to an already-LIVE type under §10.1's typo/prose carve-out,
+  recorded as an owner decision. A document-`version` bump for the propose/run model is left to the
+  owner's call.
 
 ## 8. v0.5.2 amendments (2026-06-12 adversarial assessment)
 
@@ -724,3 +752,31 @@ group *schema*, not the propose → confirm → dispatch → close lifecycle. **
 — AFFIRMED, carried open as narrowed by the `experiment` re-confrontation (§7); the registry
 remains the sole persistence surface for row-schema metadata. No debt is discharged or newly
 opened by v0.6.0.
+
+## 12. v0.6.1 amendment (2026-06-15 — `experiment` propose/run re-scope)
+
+Source: the review dispatches `2026-06-15-experiment-skill-proposal-review` (the original
+knowledge-taxonomy-comparison proposal review) and `2026-06-15-experiment-propose-run-rescope-review`
+(3 tensioned attackers ⟂ verifier over this changeset;
+`research/subagents-strategy/2026-06-15-experiment-propose-run-rescope-review/findings.md`). Owner
+decision 2026-06-15: `experiment` is **re-scoped** to the pre-registration (propose) phase only.
+
+This re-scopes an **already-LIVE** type's lifecycle model; per §10.1 that is a principle change, so
+the document `version` bumps **0.6.0 → 0.6.1**. It touches **no** field, enum, row-schema, or code
+surface, so the wire `schema_version` stays `0.6.0` and §10.2's five-surface atomic promotion does
+**not** fire (verified: the appender test battery asserts only `experiment`'s `working_folder`
+requirement — nothing about outputs, verdict, or roles).
+
+| # | Decision | Amendment |
+|---|---|---|
+| **EX-1 — propose/run split** | `dispatch_type: experiment` is scoped to the **propose** phase: designer (`writer`) + skeptic (`skeptic`) produce a frozen, validity-checked `criterion.md`. **Running the probe + adjudicating SURVIVED/FALSIFIED is a separate downstream dispatch** (runner `explorer` + adjudicator `auditor`). INVALID may be rendered at propose; SURVIVED/FALSIFIED only at the run. The propose dispatch closes `resolved` on an accepted frozen `criterion.md`. Authority: type skill `.claude/skills/experiment/SKILL.md`. |
+| **EX-2 — §5 + P-SS-9 reconciliation** | The 2026-06-14 §5 `dispatch_type` note and the §7 P-SS-9 bullet carried the single-dispatch model present-tense; both are marked **scope-superseded 2026-06-15** in place (the freeze anchors to the **P2 gate**, not a `designer→runner` edge — there is no runner in a propose dispatch). |
+| **EX-3 — §7 debt re-confrontation** | A **propose/run re-confrontation** block was added to §7: P-SS-8 unchanged; P-SS-9 strengthened; the persistence NEW-debt **RELAXED at propose** (the criterion artifact *is* the deliverable; no SURVIVED/FALSIFIED row to be ledger-uninterpretable) and **re-attached to the run** (where the deferred pointer + content hash becomes relevant). |
+| **EX-4 — downstream reconciliation** | The router `dispatch_type` table (both skill copies) annotated "propose phase only"; `docs/discovery/experiment-promotion/discovery.md` carries a dated scope-update note flagging the split. |
+
+**Premise-debt re-confrontation:** performed in §7 (the "propose/run re-scope (2026-06-15) —
+re-confrontation" block); not duplicated here.
+
+**Open (owner / next):** the **run phase** is undesigned — whether it is a new mode of `experiment`,
+a use of the RESERVED `code` type once it lands, or a separate type, is the next design decision; the
+deferred registry pointer + content hash (§7) is the run's OPEN hardening.

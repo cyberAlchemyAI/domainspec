@@ -3,7 +3,7 @@ name: domainspec-subagents-strategy
 description: Route any subagent dispatch — check the Principle-1 trigger, hold the human gate, enforce the universal invariants, then route by dispatch_type to the owning type skill (research, review, and experiment are LIVE; code/plan/suggestion are reserved). The record/sheet form is owned by register-dispatch; field definitions by constitution §5. This skill defines no field and no type-specific judgment — it routes.
 ---
 
-**Governing doc:** operationalizes `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` (v0.6.0-proposal). The live vault constitution is still v0.3.0; where the two conflict, v0.6.0 wins (owner decision 2026-06-12; doc bumped to v0.6.0 on 2026-06-15 per §10). The wire `schema_version` is `"0.6.0"` (§10.1).
+**Governing doc:** operationalizes `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` (v0.6.1-proposal). The live vault constitution is still v0.3.0; where the two conflict, v0.6.x wins (owner decision 2026-06-12; doc bumped to v0.6.0 then v0.6.1 on 2026-06-15 per §10 / §12). The wire `schema_version` is `"0.6.0"` (§10.1; the v0.6.1 bump is the `experiment` propose/run re-scope, not a row-schema change).
 
 ## When to dispatch (P1) — and what is not a dispatch (P11)
 
@@ -45,7 +45,7 @@ LIVE status is **declared by constitution §5** (promoting a reserved type goes 
 | `review` | LIVE (populated 2026-06-12, owner decision) | `.claude/skills/review/SKILL.md` — red-team judgment: attack lenses, severity taxonomy, verification discipline, change-request findings |
 | `plan` | RESERVED — must not be dispatched until populated | none |
 | `suggestion` | RESERVED — must not be dispatched until populated | none |
-| `experiment` | LIVE (populated 2026-06-14, owner decision) | `.claude/skills/experiment/SKILL.md` — falsification judgment: pre-registered criterion freeze, validity gates, SURVIVED/FALSIFIED/INVALID verdict |
+| `experiment` | LIVE (populated 2026-06-14, owner decision) | `.claude/skills/experiment/SKILL.md` — falsification judgment: pre-registered criterion freeze, validity gates, SURVIVED/FALSIFIED/INVALID verdict (propose phase only — INVALID may be rendered here; SURVIVED/FALSIFIED rendered at the separate downstream run) |
 
 ## Pointers (single owners)
 
