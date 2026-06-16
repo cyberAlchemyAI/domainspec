@@ -50,3 +50,9 @@ This changes how we should talk about it. A harness is not only "where the agent
 - Compare `.claude/`, app-runtime chat dispatch, and future CLI/API modes against the same contract.
 - Revisit `vault/discovery/curator-pipeline-integration/discovery.md` with this definition in hand to restate the headless gap more precisely.
 - Link this discovery into any future `plan/harness/` work so the product meaning and the runtime meaning stop drifting apart.
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `vault/discovery/agent-context-boundary-rule/discovery.md` | `cited-by` | The agent-context boundary rule cites this discovery's "CLAUDE.md routing is best-effort; only hooks enforce" verdict as the force behind its enforced-floor / judgment-ceiling split. |

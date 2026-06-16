@@ -172,3 +172,9 @@ Provenance:
 - `vault/discovery/cross-repo-rollout/lenses/02-football-stats-investigation/findings.md`
 - `vault/discovery/cross-repo-rollout/lenses/03-maestro-trama-investigation/findings.md`
 - `vault/discovery/cross-repo-rollout/research/research.md` (post-hoc retrofit, 2026-05-17)
+
+## Connections
+
+| Document | Type | Description |
+|----------|------|-------------|
+| `vault/discovery/agent-context-boundary-rule/discovery.md` | `cited-by` | The agent-context boundary rule cites this discovery's canonicalization protocol as upstream of its cross-repo distribution open question (OQ-2). |

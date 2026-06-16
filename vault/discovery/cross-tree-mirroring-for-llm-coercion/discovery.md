@@ -236,6 +236,7 @@ The discovery deliberately does **not** make a strong LLM-coercion claim (D-4). 
 | `domainspec-theorem/docs/categorical-extraction-schema.md` | `cites` | JSON diagnostic shape for future T0' operationalization (lens 02 §6). |
 | (external) `maestro-trama/docs/repo-mirroring-problem.md` | `cites` | The brief that surfaced the problem; this discovery is the formal response. |
 | `vault/discovery/system-modeling-partition-architecture/discovery.md` | `derives` | The partition-architecture discovery extends this L₁↔L₂ mirror with an ownership-primary top-level axis and a promotion-vs-routing migration model; it inherits the "navigational signal, not correctness guarantee" demotion recorded here. |
+| `vault/discovery/agent-context-boundary-rule/discovery.md` | `cited-by` | The agent-context boundary rule applies this discovery's "structure is navigational signal, enforcement is the validator" demotion to the CLAUDE.md + MEMORY.md boundary object. |
 
 ---
 
