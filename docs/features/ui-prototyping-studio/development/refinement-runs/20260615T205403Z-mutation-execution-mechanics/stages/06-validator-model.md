@@ -145,6 +145,16 @@ querySelectorAll(Dom(currentHtml), task.target).length`. Pass iff `count === 1` 
   Honest-diff (F4) is a byproduct: the per-od-id before/after subtree pair this validator already
   computes _is_ the human-viewable diff for G8/DC5 — it falls out of validation, it is not a
   separate feature.
+- **CAVEAT (s8 TG-3 — UNSOUND for CSS-/style-driven change):** V2's od-id-subtree identity assumes
+  the realization lands **inside** the addressed element's markup. For CSS-driven properties (the
+  natural way to satisfy a sizing task like `button >= 44x44px`), the proposer edits an **un-anchored
+  `<style>` rule** and the button's subtree stays **byte-identical** — V2 then reports
+  `TARGET_UNCHANGED` and **false-rejects a legitimate, intent-realizing candidate**. This is the dual
+  of V3's old blind spot. The spike (RESIDUE-B) must decide between **R2-a** (V2 means only "addressed
+  markup differs"; CSS edits must be declared by the task and attributed to the od-id by R1's
+  whole-tree diff) and **R2-b** (extend the od-id subtree hash to include the **resolved style
+  declarations** applying to the element via a deterministic, layout-free cascade — stronger, but
+  pulls CSS-cascade into the pure lane). Not decided here.
 
 ### V3 — `no-out-of-scope-change` (scope-bounded)
 
@@ -154,11 +164,17 @@ querySelectorAll(Dom(currentHtml), task.target).length`. Pass iff `count === 1` 
   side-effects in `S`) may differ. Any element that changed without an owning task is an
   out-of-scope edit and is rejected. This is the deterministic scope fence B structurally lacks
   (s5 auditability B=2.5, fail-open) and the reason C can claim odid_stability 4 over B's 3.
-- **Deterministic check:** compute the **symmetric set-difference of `odIndex(currentHtml)` and
-  `odIndex(candidateHtml)`** plus the set of od-ids whose subtree hash changed. Call this
-  `ChangedSet`. Compute `TaskScope = ⋃ task.odId` (closure: a task's od-id and, for structural
-  tasks, its declared descendant allowance). Pass iff `ChangedSet ⊆ (TaskScope ∪ S)`. Any od-id in
-  `ChangedSet \ (TaskScope ∪ S)` is an out-of-scope change.
+- **Deterministic check (REVISED — s8 R1 / s7-B1):** compute the **canonical whole-document diff** of
+  `Dom(currentHtml)` vs `Dom(candidateHtml)` — every changed/added/removed node, **anchored or not**.
+  **Attribute** each changed node to its **nearest enclosing `data-od-id`** ancestor. `ChangedSet` =
+  the set of owning od-ids **plus a distinguished `⊥` (unattributed)** bucket for any change with no
+  enclosing od-id (e.g. `<head>`, `<style>`, top-level layout). Compute `TaskScope = ⋃ task.odId`
+  (closure: a task's od-id and, for structural tasks, its declared descendant allowance). Pass iff
+  `ChangedSet ⊆ (TaskScope ∪ S)` **and `⊥ ∉ ChangedSet`** — i.e. any changed node not dominated by a
+  `TaskScope` od-id (including all un-anchored markup) is out-of-scope. The `odIndex` is the
+  _attribution/display_ key; it is **NOT** the change-detection domain (s8 TG-1 proved the old
+  `odIndex`-only set-diff was blind to un-anchored edits — it admitted an adversarial `<style>`/`<h2>`
+  rewrite on a one-card prototype).
 - **Failure code:** `MUTATION_VALIDATOR_OUT_OF_SCOPE_CHANGE` (with `{offendingOdIds[]}`).
 - **Notes:** Required; **load-bearing and the s5/s2 crux** (`scope-bounded` is one of the two
   pivotal C-1 unknowns). **Strictly requires GAP-1** — without od-id threaded into `MutationTask`,
@@ -385,10 +401,13 @@ To be honest about the s5 "auditability C=4 not 5" gap, stated as a budget:
 
 ## 8. Residue / handoff
 
-- **The pivotal spike is V5 + V3 (= s5 condition C-1).** Stress-test whether the V5 structural proxy
-  and the V3 scope fence can be made deterministic and _non-trivially strong_ against the canonical
-  parse, on real comment workloads. If V5 must go soft, C still stands on the V1–V4/V6–V9 floor; if
-  V3 must go soft, C demotes to B per s5. This stage makes that test concrete — it does not run it.
+- **The pivotal spike is V5 + V3 (= s5 condition C-1), now expanded by s8 R1/R2.** Stress-test whether
+  (a) the V5 structural proxy and (b) the **V3 whole-tree scope fence with od-id attribution** (s8 R1,
+  not the old `odIndex`-only set-diff) can be made deterministic and _non-trivially strong_ against the
+  canonical parse, on real comment workloads — AND (c) decide the **V2 CSS-driven-change** question
+  (s8 R2-a vs R2-b), since the toy game (s8 TG-3) proved V2 false-rejects the idiomatic CSS way of
+  satisfying a sizing task. If V5 must go soft, C still stands on the V1–V4/V6–V9 floor; if V3 must go
+  soft, C demotes to B per s5. This stage makes that test concrete — it does not run it.
 - **Canonicalizer is now load-bearing and shared.** The single biggest source of _accidental_
   validator non-determinism is producer/validator canonicalizer drift (whitespace/attr-order noise
   reading as "changed"). Design must specify **one** canonicalizer used on both sides of the seam.

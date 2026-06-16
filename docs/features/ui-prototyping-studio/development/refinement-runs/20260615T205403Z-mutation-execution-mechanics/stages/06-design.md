@@ -189,6 +189,15 @@ line-diff or whole-file) is what makes the diff _anchor-stable_ (DC4) and surviv
 (D3b). RESIDUE-D: when `odId` is null (selector-only degrade), the fragment falls back to
 selector-matched subtree — lower fidelity, flagged in the fragment.
 
+**Coverage note (s8 R1 / s7-B1/D1):** fragments derived from `odIndex` inherit a coverage blind spot —
+un-anchored change (`<style>`, `<head>`, layout containers) produces **no fragment** and would be
+invisible at the diff gate. The repair is **not** to add an "unattributed" display bucket but to make
+V3's change-detection **whole-tree** (s8 R1): any change not dominated by a `TaskScope` od-id is a V3
+**reject**, so it never reaches the diff in the first place. D5's diff unit stays od-id-subtree for
+_display_; V3 (whole-tree) is what guarantees the displayed fragments are the _only_ changes. The s8
+toy game (Case 2-B) showed that without this, an adversarial `<h2>`/`<style>` edit was admitted and
+hidden from the human.
+
 ### 3.3 GAP-2 — bind the revision to its produced HTML
 
 ```ts
@@ -360,18 +369,18 @@ is the _recorded_ one.
 The set is **adopted verbatim** from s6 §3 (approach-independent there; load-bearing admission
 boundary here under C). Restated as the admission contract with required/soft criticality:
 
-| #   | Validator               | Rule (one line)                                                    | Failure code                                | Criticality (C)              |
-| --- | ----------------------- | ------------------------------------------------------------------ | ------------------------------------------- | ---------------------------- |
-| V1  | target-exists           | each task anchor resolves to exactly one element in currentHtml    | `MUTATION_VALIDATOR_TARGET_NOT_FOUND`       | required                     |
-| V2  | target-changed          | the addressed subtree actually differs current→candidate           | `MUTATION_VALIDATOR_TARGET_UNCHANGED`       | **required (load-bearing)**  |
-| V3  | no-out-of-scope-change  | `ChangedSet ⊆ (TaskScope ∪ S)` via odIndex symmetric set-diff      | `MUTATION_VALIDATOR_OUT_OF_SCOPE_CHANGE`    | **required (the C-1 crux)**  |
-| V4  | data-od-id-preserved    | dropped/appeared od-ids ⊆ owned removal/addition tasks             | `MUTATION_VALIDATOR_ODID_NOT_PRESERVED`     | required                     |
-| V5  | acceptanceText-proxy    | structural shadow keyed on changeType; intent never re-parsed (G7) | `MUTATION_VALIDATOR_ACCEPTANCE_PROXY_UNMET` | **soft / pivotal (C-1)**     |
-| V6  | well-formed-HTML        | parse + parse-reparse fixpoint                                     | `MUTATION_VALIDATOR_MALFORMED_HTML`         | required                     |
-| V7  | text-escaped/sanitized  | no _new_ injection vector vs current; escaped round-trip           | `MUTATION_VALIDATOR_UNSAFE_CONTENT`         | required                     |
-| V8  | idempotency (suite)     | double-run verdict-hash equality, clock-free                       | `MUTATION_VALIDATOR_NONDETERMINISTIC`       | required (self-check)        |
-| V9  | diff-bounded            | `changeMagnitude ≤ B(taskCount)`, fixed monotone bound             | `MUTATION_VALIDATOR_DIFF_OUT_OF_BOUNDS`     | required (runaway guard)     |
-| V9b | ops-vs-output-reconcile | opportunistic, A-subset only                                       | `MUTATION_VALIDATOR_OPS_OUTPUT_MISMATCH`    | optional (skipped if no ops) |
+| #   | Validator               | Rule (one line)                                                                                                                                     | Failure code                                | Criticality (C)              |
+| --- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------------------- |
+| V1  | target-exists           | each task anchor resolves to exactly one element in currentHtml                                                                                     | `MUTATION_VALIDATOR_TARGET_NOT_FOUND`       | required                     |
+| V2  | target-changed          | the addressed subtree actually differs current→candidate                                                                                            | `MUTATION_VALIDATOR_TARGET_UNCHANGED`       | **required (load-bearing)**  |
+| V3  | no-out-of-scope-change  | `ChangedSet ⊆ (TaskScope ∪ S)` via **whole-tree canonical diff, od-id-attributed; un-anchored change = reject** (s8 R1 — NOT odIndex-only set-diff) | `MUTATION_VALIDATOR_OUT_OF_SCOPE_CHANGE`    | **required (the C-1 crux)**  |
+| V4  | data-od-id-preserved    | dropped/appeared od-ids ⊆ owned removal/addition tasks                                                                                              | `MUTATION_VALIDATOR_ODID_NOT_PRESERVED`     | required                     |
+| V5  | acceptanceText-proxy    | structural shadow keyed on changeType; intent never re-parsed (G7)                                                                                  | `MUTATION_VALIDATOR_ACCEPTANCE_PROXY_UNMET` | **soft / pivotal (C-1)**     |
+| V6  | well-formed-HTML        | parse + parse-reparse fixpoint                                                                                                                      | `MUTATION_VALIDATOR_MALFORMED_HTML`         | required                     |
+| V7  | text-escaped/sanitized  | no _new_ injection vector vs current; escaped round-trip                                                                                            | `MUTATION_VALIDATOR_UNSAFE_CONTENT`         | required                     |
+| V8  | idempotency (suite)     | double-run verdict-hash equality, clock-free                                                                                                        | `MUTATION_VALIDATOR_NONDETERMINISTIC`       | required (self-check)        |
+| V9  | diff-bounded            | `changeMagnitude ≤ B(taskCount)`, fixed monotone bound                                                                                              | `MUTATION_VALIDATOR_DIFF_OUT_OF_BOUNDS`     | required (runaway guard)     |
+| V9b | ops-vs-output-reconcile | opportunistic, A-subset only                                                                                                                        | `MUTATION_VALIDATOR_OPS_OUTPUT_MISMATCH`    | optional (skipped if no ops) |
 
 **Composite admission rule (DECISION D14):** _all required validators pass ⇒ admit; any required
 fails ⇒ reject (fail-closed)._ Soft validators (V5, optional V3) emit warnings into provenance
@@ -464,6 +473,15 @@ Carried from s6 §6, owned here as the design's stated limit (guardian transpare
   precisely the 4-not-5 gap — it is priced, not eliminated. _If_ this gap is judged unacceptable
   (C-1 fires hard), the documented flip is to B (no determinism gain) or, on enumerable workloads,
   to A (5/5, via C-2) — both reachable from this machine (§4.6).
+- **NOT verified — the acceptanceText itself (intent-fidelity gap, s8 TG-2 / s7-B2):** **admit ≠
+  acceptance met.** The validator lane proves the change is anchored, in-scope (V3 whole-tree),
+  well-formed, safe, bounded, and that the change-type _structural shadow_ held (V5) — it does **not**
+  evaluate the acceptanceText's substance. For a quantitative criterion like `"button >= 44x44px"`
+  there is **no geometry/CSS-layout check in the pure lane** (layout is arguably non-deterministic and
+  out of scope): a `33px` button and a `48px` button yield the **same ADMIT verdict** (s8 Case 1-A).
+  The acceptanceText is judged **only by the human eye at the accept-diff gate**, never by the system.
+  This is the honest ceiling of "expressiveness bounded by what validators admit" — priced here, not
+  eliminated.
 
 ---
 
@@ -474,12 +492,16 @@ Carried from s6 §6, owned here as the design's stated limit (guardian transpare
 - **RESIDUE-A — recorder atomicity/compensation.** Upgrade `VARIANT_GENERATION_COUNT_MISMATCH` from
   detect-only to compensating rollback of the 4 writes (HTML + store triple). _Owner:_ recorder lane
   (`apply-approved-batch.ts` refactor). Adjacent to this design, not fully specified here (s6 §8).
-- **RESIDUE-B — the C-1 buildability spike (the gating next action).** Stress-test whether V5's
-  structural proxy and V3's scope fence can be made deterministic _and non-trivially strong_ against
-  the shared canonicalizer on real comment workloads. If V5 fails ⇒ V5 soft (C stands). If V3 fails
-  ⇒ C demotes to B (verdict flips). _Owner:_ a bounded local spike, with s4 GAP-R1 as the confirmed
-  external fallback if the spike stalls. **This is the single thing standing between "C designed"
-  and "C trusted."**
+- **RESIDUE-B — the C-1 buildability spike (the gating next action), expanded by s8.** Stress-test
+  whether (a) V5's structural proxy and (b) V3's **whole-tree, od-id-attributed scope fence** (s8 R1 —
+  NOT the old odIndex-only set-diff) can be made deterministic _and non-trivially strong_ against the
+  shared canonicalizer on real comment workloads, AND (c) **decide the V2 CSS-driven-change question**
+  (s8 R2-a "declare style allowance + attribute" vs R2-b "resolved-style hash in the cascade"), since
+  s8 TG-3 proved V2-as-written false-rejects the idiomatic CSS way of satisfying a sizing task. If V5
+  fails ⇒ V5 soft (C stands). If V3 fails ⇒ C demotes to B (verdict flips). _Owner:_ a bounded local
+  spike, with s4 GAP-R1 as the confirmed external fallback if the spike stalls. **This is the single
+  thing standing between "C designed" and "C trusted."** (Calibration of `B`/`S`/`k`/`c` — s7-B3 /
+  s8 TG-4 — must be reported by this spike; "fail-closed at an unknown threshold" is not auditable.)
 - **RESIDUE-C — the shared canonicalizer module.** Specify one `Dom`/`odIndex`/`canonicalizerVersion`
   module used on both sides of the seam (D3b); the dominant source of accidental non-determinism.
 - **RESIDUE-D — selector-only degrade fidelity.** When `odId` is null, V2/V3/V4 and `OdDiffFragment`
