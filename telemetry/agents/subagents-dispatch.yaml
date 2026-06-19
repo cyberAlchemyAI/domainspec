@@ -840,3 +840,36 @@ dispatches:
     exit_reason: "resolved"
     agents_spawned: {"total":2,"tree":{"explorer":0,"skeptic":0,"writer":0,"auditor":2,"helpers":0},"loops_used":1}
     feedback_prompts: ["Anchor audit: fix TO-VLAD over-attribution (Finding 1) and the nonexistent TO-VLAD1.md citation (Finding 2). Collapse audit: mark killer feature not-yet-constructible (CR-5) and reconcile smallest-unit vs sibling subset-rule gate (CR-1); convert pass|flag|block and register-dispatch claims to pointers to DCM (CR-2/CR-3); qualify per-boundary-residue-ledger EVIDENCE cell (CR-4)."]
+  - dispatch_id: "2026-06-18-residue-restructure-edit-map"
+    schema_version: "0.6.0"
+    created: "2026-06-18T15:03:55.612Z"
+    invoked_by: "victorboscaro@gmail.com"
+    dispatch_type: "research"
+    goal: "Map the exact edit points to restructure how the dispatch-pipeline documents are authored: add an Open Questions (residue) section to findings/discovery/views, add Objetivo+TL;DR to findings, and reduce research.md to pure per-agent appends."
+    context: "The user wants to better organize how research, findings, discovery and the three structural views are written, treating Open Questions as a residue ledger. Before editing, three parallel read-only recon agents mapped the precise file surfaces, mirror copies, and constitution touch-points for each document cluster. Outputs feed the in-chat plan and a saved planning artifact."
+    max_loops: 1
+    final_approver: "parent"
+    working_folder: "research/2026-06-18-residue-restructure-plan/"
+    groups: [{"group_id":"edit-mappers","n":3,"anti_bias":"document-cluster ownership — each agent owns a disjoint file set (findings/research vs discovery vs the three views) so coverage is exhaustive without overlap; a scope partition, not an adversarial tension","agents":[{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":6000,"angle":"owns the research+findings cluster (templates, writer agents, writing skills + mirrors, strategist SKILL, constitution R16/R23)","initial_prompt":"Read-only. Map exact edit points to: add Objetivo+TL;DR and an Open Questions section to domainspec-findings (template + findings-writer agent + writing skill mirrors + strategist SKILL + constitution R16/R23); and reduce domainspec-research to pure per-agent appends under BOTH readings (A: strip Context+Goal preamble, amend R23; B: keep preamble, minimal). Enumerate every mirror surface and flag divergence. Return a structured edit plan with surfaces inventory, per-file edits, constitution amendment text, and risks."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":6000,"angle":"owns the discovery cluster (discovery-writer agent, discovery-writing.md, knowledge-discovery-writing.md, mirrors)","initial_prompt":"Read-only. Map exact edits to make Open Questions a consistent mandatory top-level section in the discovery spec (today it is top-level in the writer agent but a buried optional subsection in discovery-writing.md). Cover both discovery variants and mirror copies; do not create any new template file. Wire the residue handoff to engineer-view OPEN/CRITICAL rows. Return surfaces inventory, current OQ state per file, per-file edits, and risks."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":6000,"angle":"owns the three structural views (system-view, engineer-view, ontology-view skills + templates)","initial_prompt":"Read-only. Report the current Open Questions state of system-view, engineer-view and ontology-view (skills + templates + mirrors) and map only what is missing to give each a consistent Open Questions section. Resolve the engineer-view redundancy question (Open Questions vs OPEN/CRITICAL decision rows). Return surfaces inventory, current state per view, minimal edits, a shared OQ shape, and risks."}]}]
+    connections: []
+  - close_of: "2026-06-18-residue-restructure-edit-map"
+    closed: "2026-06-18T15:04:08.873Z"
+    invoked_by: "victorboscaro@gmail.com"
+    exit_reason: "resolved"
+    agents_spawned: {"total":3,"tree":{"explorer":3,"skeptic":0,"writer":0,"auditor":0,"helpers":0},"loops_used":1}
+  - dispatch_id: "2026-06-18-anti-bias-skill-design"
+    schema_version: "0.6.0"
+    created: "2026-06-18T19:12:25.576Z"
+    invoked_by: "victorboscaro@gmail.com"
+    dispatch_type: "research"
+    goal: "Propose how a lean, self-contained anti-bias rubric artifact should be designed, given that check-tension currently points to a vault discovery for the rubric (a self-containment violation)."
+    context: "The owner wants the anti-bias rubric to stop living in a passive vault doc that a skill points at. Three tensioned agents were asked to propose the artifact: a condenser (densest inline rubric), an architect (ownership/dependency rewire), and a skeptic (attack the premise via create-skill Gate 0). Outputs feed the owner's decision on artifact type and the consolidation of the rubric's now-drifted copies."
+    max_loops: 1
+    final_approver: "parent"
+    working_folder: "research/2026-06-18-anti-bias-skill-design/"
+    groups: [{"group_id":"proposers","n":3,"anti_bias":"methodology (condensation vs architecture vs adversarial-attack)","agents":[{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":2500,"angle":"condenser — owns maximal density and self-containment; produces the irreducible inline rubric and the cut log","initial_prompt":"MINIMALIST/CONDENSER on a tensioned panel. Read create-skill, check-tension, validator-check, principle. Produce the tightest self-contained anti-bias rubric body + frontmatter + a cut log of what is justification (stays in discovery) vs operation (stays inline). Be ruthless about density."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":3000,"angle":"architect — owns ownership boundaries and dependency rewiring; produces the after-change ownership table and edge list","initial_prompt":"ARCHITECT on a tensioned panel. Read create-skill, both check-tension copies, validator-check, principle, the constitution; grep all references to validator-check/anti-bias. Produce an ownership table after the change, the full list of files/edges to rewire, physical location of the new artifact, and the open risk for the human."},{"agent_name":null,"role":"skeptic","model":"claude-opus-4-8","token_budget":3000,"angle":"skeptic — attacks the premise that a new skill is the right artifact; definitional/scope attack via create-skill Gate 0","initial_prompt":"SKEPTIC on a tensioned panel. The others assume a new skill is correct. Attack that premise: does agents-anti-bias pass create-skill Gate 0 (user-invocable verb-action) or is it passive lookup material? Is there a user-typed trigger? Where does single-source-of-truth actually sit given the rubric already has multiple copies? Commit to ONE recommendation and defend it."}]}]
+  - close_of: "2026-06-18-anti-bias-skill-design"
+    closed: "2026-06-18T19:12:49.700Z"
+    invoked_by: "victorboscaro@gmail.com"
+    exit_reason: "resolved"
+    agents_spawned: {"total":3,"tree":{"explorer":2,"skeptic":1,"helpers":0},"loops_used":1}
