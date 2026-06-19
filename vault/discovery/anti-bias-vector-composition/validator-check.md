@@ -5,18 +5,19 @@ is_session: false
 layer: ontology, application
 nature: procedural
 status: active
-version: 0.3.0
-last_updated: 2026-06-15
+version: 0.4.0
+last_updated: 2026-06-18
 ---
 
 # Anti-Bias Vector Composition — Validator Check
 
-> Operational rules that enforce **Principle 5 (pairwise tension)** of the subagents-strategy
-> constitution (v0.5.2). They run at the **confirm gate** over the dispatch sheet — the
-> dispatch row's `groups` JSON column — *before* the dispatch is registered. This check is the **semantics owner** the
-> constitution's four-test rule (`proposal.md` §P5, lines 124–129) points at; it is
-> **additional** to the partition check ("angles non-overlapping AND covering" — see
-> §Relationship to the partition check below).
+> The **rationale** behind **Principle 5 (pairwise tension)** of the subagents-strategy
+> constitution: *why* each tension test exists and *why* enforcement is split the way it is.
+> The **operational rubric itself** — the runnable tests applied at the confirm gate — is
+> **owned by the `check-tension` skill** (see §Operational ownership below). This file no
+> longer restates the runnable checklist; it explains it. The tension check is **additional**
+> to the partition check ("angles non-overlapping AND covering" — see §Relationship to the
+> partition check below).
 
 > **v0.2.0 realignment note.** This file previously spoke the pre-v0.5.2 schema
 > (`dispatch.yaml`, a `composition` block of **layers**, the retired `theorem-research`
@@ -38,6 +39,13 @@ last_updated: 2026-06-15
 > contract — envelope, claim-IDs, anchors, verbatim, the P9 6-item checklist — stands); see
 > its v1.1.0 note.
 
+> **v0.4.0 — operational ownership moved to the `check-tension` skill (2026-06-18).** The
+> runnable four-test + cross-group rubric previously spelled out here is now **owned inline by
+> the `check-tension` skill**, so that skill is self-contained and never points into the vault
+> to run. This file keeps only the *why* — the enforcement split, the per-test rationale, the
+> partition distinction, the lineage. Single operational source of truth = the skill; this
+> discovery is its rationale. The constitution names the skill as operational owner.
+
 ---
 
 ## Where the check lives (enforcement split)
@@ -50,7 +58,8 @@ Principle 5 has two halves, enforced in two different places — do not conflate
 | **Tests 1–4** (axis / clone / spread / evidence) | the substance — is the axis real, are the angles distinct, is genuine disagreement pre-registered | **the `check-tension` gate** — two independent agents, before the human confirm | sheet returned to the strategist for revision |
 
 The appender guarantees the **fields exist**; it does not judge whether they are *meaningful*.
-That judgment is tests 1–4, checked at the confirm gate — this file owns it.
+That judgment is the tension tests, checked at the confirm gate — the `check-tension` skill
+owns the runnable rubric; this file explains it.
 
 ---
 
@@ -65,70 +74,31 @@ the fact.
 
 ---
 
-## Pre-dispatch checklist (the four tests)
+## Operational ownership — the runnable tests live in the skill
 
-The validator runs the following over each **subject group**. A sheet is rejected if any
-**R** test fires; the **G** tests must pass for the sheet to be accepted. These are the
-operational form of the constitution's tests 1–4 (`proposal.md:124-129`).
+The runnable rubric — the closed axis vocabulary, the per-group tests (axis / clone / spread /
+evidence) and the cross-group coherence check, each with its REJECT rule — is **owned by the
+`check-tension` skill**, applied by its two independent agents at the confirm gate. This file
+does **not** restate those rules (that duplication is exactly what drifts); it records *why*
+each test earns its place:
 
-### Step 1. Identify subject groups
+- **Axis** — forces `anti_bias` to name a real tension dimension, not a vague label. Without a
+  named axis there is no direction along which a bias term can be cancelled
+  (`principle.md` §"Distinction from diversity").
+- **Clone** — kills angles that differ only in vocabulary. Two paraphrases of one approach
+  share one blind spot: diverse on the surface, untensioned underneath.
+- **Spread** — stops a whole group collapsing onto one methodology/corpus (explorers) or one
+  attack-vector (skeptics). A monoculture reproduces its bias at full strength under
+  averaging (`principle.md` §"Why this matters"; Krogh-Vedelsby).
+- **Evidence** (the predicted-disagreement sentence per pair) — the load-bearing one. Writing
+  *what bias in a_i would be exposed by a_j* is what forces the strategist to design genuine
+  tension rather than assert it, and gives the reviewer something concrete to check.
+- **Cross-group coherence** — keeps per-group axes as specializations of one dispatch-wide
+  theme, so multiple fanned-out groups do not drift apart (constitution §5).
 
-**Item 1.** Parse the sheet's `groups` array. A **subject group** is any group with
-`n ≥ 2` whose group `role ∈ {investigate, evaluate}` (its agents are `explorer`s or
-`skeptic`s). Groups with `role ∈ {synthesize, meta-evaluate}` are out of scope (single-agent
-by construction / single-check). Groups with `n == 1` are out of scope (no pair to tension).
-
-**Item 2.** For each subject group, read the per-agent **`angle`** and the group **`anti_bias`**.
-A subject group missing `anti_bias`, or any agent missing `angle`, fails here — but note this
-is *also* the appender's presence conditional (exit 2), so a well-formed sheet never reaches
-the gate with these absent. The gate's job starts at Item 3.
-
-### Step 2. Classify the axis
-
-**Item 3.** The group `anti_bias` names the tension axis; each `angle` is a position on it.
-The four canonical axes (constitution closed vocabulary):
-
-- **Methodology** — empirical / formal / adversarial / historical / computational.
-- **Source-corpus** — e.g. arXiv-categorical / physics-journals / dissent-or-critical-literature / textbook-canon / backward-citation-tree.
-- **Attack-vector** (skeptics) — precedent-attack / vacuity-attack / definitional-attack / scope-attack / counter-example-attack.
-- **Temporal-prior** — modern-only / historical-lineage / mixed-with-decade-bins.
-
-### Step 3. Red-flag tests (R — reject if fired)
-
-**Item 4. Axis test (constitution test 1).** The group `anti_bias` must name one of the four
-canonical axes, or an **explicitly declared composite** of them. Anything outside this
-vocabulary → REJECT. (Closure governs per-group `anti_bias` only — `anti_bias_global` is
-free-text and is never vocabulary-checked.)
-
-**Item 5. Clone test (constitution test 2).** Any two `angle`s in the group share the same
-core noun phrase → REJECT. Specific check: tokenize the angle strings, drop stopwords, and
-verify the remaining content words yield at least two distinct primary verbs *or* nouns
-across the pair. The angles are not differentiated along any load-bearing axis.
-
-**Item 6. Spread test (constitution test 3).**
-- In an `investigate` group: if all agents share one methodology, *or* all share one source
-  corpus → REJECT. A pass requires at least two distinct axes represented across the group's
-  angles. (Corpus monoculture defeats an explorer group; the corpus *is* its bias source.)
-- In an `evaluate` group: any two skeptics share the same attack-vector gate → REJECT. Three
-  "find problems with the argument" agents are one attack vector; precedent + vacuity +
-  definitional are three.
-
-### Step 4. Green-light tests (G — must pass)
-
-**Item 7. Evidence test (constitution test 4) — pairwise predicted disagreement.** For every
-unordered pair `(a_i, a_j)` in a subject group, the sheet must carry a written sentence of the
-form: *"a_i runs [value_i], a_j runs [value_j] on the [axis] axis; a bias internal to a_i
-along this axis would be exposed by a_j."* Any pair missing its sentence → REJECT. These
-sentences are not decoration — writing the predicted disagreement per pair is what forces the
-strategist to design genuine tension rather than assert it, and gives the tensioning reviewer
-something concrete to check.
-
-**Item 8. `anti_bias_global` coherence.** When ≥ 2 groups have `n ≥ 2`, the sheet carries a
-dispatch-wide `anti_bias_global` theme (appender-enforced presence). The gate additionally
-checks that each subject group's `anti_bias` axis is a plausible **specialization** of that
-theme, not an unrelated axis — uncoordinated axes across groups drift (constitution §5).
-
-A sheet that passes Items 4–8 PASSES — no residual judgment call beyond the sentences.
+The canonical axis vocabulary (methodology / source-corpus / attack-vector / temporal-prior)
+is constitutional (P5 closed vocabulary); the skill applies it. See `principle.md` for the
+vector-composition argument these tests operationalize.
 
 ---
 
@@ -155,4 +125,5 @@ partition first, then tension (this file). A sheet must pass both to be dispatch
 | [principle.md](./principle.md) | `derives-from` | The principle this validator operationalizes. Tests R (Items 4–6) enforce its negative form; tests G (Items 7–8) its positive form. |
 | [literature.md](./literature.md) | `cites` | Adversarial-collaboration and groupthink lineage behind the tensioning requirement (Mill, Kahneman-Klein, Hong-Page). (Old-schema worked shapes pending realignment.) |
 | [examples.md](./examples.md) | `instances` | Worked good/bad group shapes that exercise these tests. (Pending v0.5.2 realignment.) |
-| `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` | `operationalized-by` ↔ | Constitution §P5 / lines 124–129 name this file as the semantics owner of the four-test rule; this file is the operational expansion. The constitution owns the enforcement split (appender vs gate). |
+| `.claude/skills/check-tension/SKILL.md` | `operationalized-by` | The skill that **owns the runnable rubric** (axis vocabulary + four tests + cross-group coherence) and applies it at the confirm gate. This discovery is its rationale; the skill does not depend on this file to run. |
+| `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` | `operationalized-by` ↔ | Constitution §P5 names the `check-tension` skill as the operational owner of the four-test rule and this discovery as its rationale. The constitution owns the enforcement split (appender vs gate). |

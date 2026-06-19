@@ -5,8 +5,8 @@ is_session: false
 layer: ontology
 nature: explanatory
 status: active
-version: 0.2.0
-last_updated: 2026-06-15
+version: 0.2.1
+last_updated: 2026-06-18
 ---
 
 # Anti-Bias Vector Composition — Principle
@@ -70,7 +70,8 @@ The principle is *additional* to the existing `domainspec-subagents-strategy` pa
 | Document | Type | Description |
 |----------|------|-------------|
 | [literature.md](./literature.md) | `derives-from` | Prior art for the principle: Mill on collision of opinions, Kahneman-Klein adversarial collaboration, Hong-Page diversity theorem, Krogh-Vedelsby ensemble decomposition, Irving-Christiano-Amodei AI safety via debate. |
-| [validator-check.md](./validator-check.md) | `operationalized-by` | The checklist that enforces this principle (constitution Principle 5) on the dispatch sheet at the confirm gate. |
+| [validator-check.md](./validator-check.md) | `cites` | Records *why* each test exists (the rationale companion); the runnable rubric itself is owned by the `check-tension` skill. |
+| `.claude/skills/check-tension/SKILL.md` | `operationalized-by` | The skill that owns and applies the runnable four-test + cross-group rubric (constitution Principle 5) at the confirm gate. |
 | [examples.md](./examples.md) | `instances` | Worked good/bad layer shapes for explorer, skeptic, plus the false-consensus anti-pattern. |
 | [../multi-agent-implementation-strategy/multi-agent-implementation-strategy.md](../multi-agent-implementation-strategy/multi-agent-implementation-strategy.md) | `cites` | The investigation-vs-implementation framing this discovery extends: tensioned-pairwise applies to investigation-shaped fan-out (where N agents read one artifact from N stances), which is precisely the shape `theorem-research` uses. |
 | [../robot-talks-definitions/robot-talks.md](../robot-talks-definitions/robot-talks.md) | `cites` | Robot-talks already enforces declared-perspective-per-turn (D-2) and tension-not-aggregation (D-3); this discovery generalizes the same discipline to non-discussion dispatch shapes where perspectives are angles, not turns. |
