@@ -12,6 +12,8 @@ One dispatch → one findings file. If you are pulling from research across mult
 
 If you are simply rewriting a single child's output in nicer prose, you are writing nothing — go back and synthesize.
 
+There is **no template** to fill. Read the research and write the synthesis in whatever form serves it best.
+
 ---
 
 ## Frontmatter
@@ -28,7 +30,7 @@ Check `.claude/skills/custom/frontmatter.md`. For this node_type:
 
 Check `.claude/skills/custom/edges.md`. The expected edge pattern:
 
-- `derives-from` → every `subagents-research` file this synthesis stands on. **Every** child research file must be listed; if you ignored a child, say why in "Children excluded".
+- `derives-from` → every `subagents-research` file this synthesis stands on. **Every** child research file must be accounted for; if you ignored a child, say why.
 - `derives-from` → the `domainspec-subagents-strategy.md` that authorized the dispatch.
 - `contradicts` → any vault document the synthesis logically conflicts with (must be resolved before any downstream promotion).
 
@@ -36,85 +38,32 @@ Each research file declares the inverse `derives` toward this findings file in i
 
 ---
 
-## Mandatory Document Structure
+## Document Structure
 
-Sections must appear in this order. Do not skip or reorder.
+The only fixed structure is the opening, in this order:
 
-### Objective (≤3 sentences, required first)
+1. **Goal** — what the dispatch set out to achieve. One to two sentences.
+2. **TL;DR** — the synthesis answer in a few sentences: what the research adds up to. No build-up — the conclusion first.
+3. **Context** — where the need for the dispatch arose and what made a single inline investigation insufficient.
 
-What this dispatch was investigating and the form of the synthesis (e.g., "ranked options", "agreement matrix", "single recommendation"). No conclusions here.
+**Everything after the preamble is the writer's call.** Choose the sections that best convey *this* synthesis and drop what the material doesn't need. Useful candidates — not a required set:
 
-**Quality gate:** if the form of the synthesis is unclear, the dispatch had no decision criteria — flag it and stop.
+- **Agreements** — claims that multiple children's research independently supports (cite ≥2 children; qualify as `strong` / `majority` / `partial`).
+- **Disagreements** — where children diverge: the opposing positions with citations, and a recommendation (which side, escalate as `contradicts`, or re-dispatch).
+- **Open questions** — what this dispatch could not resolve, why, and a proposed next step.
+- **Recommended next action** — promote as a discovery (knowledge scope: `vault/discovery/<topic>-definitions/<slug>.md`; application scope: `docs/features/<feature>/discovery/<slug>.md`), re-dispatch with adjusted strategy, or hold.
 
----
-
-### 1. Dispatch Context
-
-Three required subsections:
-
-**Strategy reference** — link to the `domainspec-subagents-strategy.md` and date of dispatch.
-
-**Children included** — bullet list, one line per child research file with a link and a one-sentence description of what that child investigated.
-
-**Children excluded** — any child whose research was disregarded, with the reason. An empty subsection is allowed only if every child contributed.
-
----
-
-### 2. Agreements
-
-Claims that **multiple children's research independently supports**. Each agreement:
-
-- A one-sentence claim.
-- Citations to **at least two** child research files (`[research-A.md§Findings]`, `[research-B.md§Findings]`).
-- Strength qualifier: `strong` (every child agrees), `majority` (most agree), `partial` (some agree, others silent).
-
-A "claim" supported by only one child is not an agreement — put it in §3 or drop it.
-
----
-
-### 3. Disagreements
-
-Where children's research diverges. For each:
-
-- The point of disagreement, in one sentence.
-- The opposing positions, each with a citation to the child that took it.
-- A recommendation: which side to follow, or whether to escalate as `contradicts` against an existing vault document, or whether the disagreement is unresolvable from this dispatch and needs another one.
-
-A disagreement without a recommendation is a liability — the next reader will not know what to do.
-
----
-
-### 4. Open Questions
-
-What this dispatch could not resolve. Each item:
-
-- The question.
-- Why this dispatch couldn't answer it (missing inputs, out-of-scope children, etc.).
-- A proposed next step (another dispatch, a manual investigation, a discovery).
-
----
-
-### 5. Recommended Next Action
-
-One paragraph. Either:
-
-- "Promote agreements §X.Y as a discovery — knowledge scope: `vault/discovery/<topic>-definitions/<slug>.md`; application scope: `docs/features/<feature>/discovery/<slug>.md` (per R15 of domainspec-subagents-strategy-constitution)", or
-- "Re-dispatch with strategy adjusted as follows: …", or
-- "Hold — open questions block any decision until …"
-
-If you cannot recommend an action, the synthesis is incomplete.
+You may propose a structure you think fits the dispatch better.
 
 ---
 
 ## Quality Checks Before Finishing
 
-- [ ] Objective written before any other section
-- [ ] Every child research file is either in "Children included" or "Children excluded" — nothing dropped silently
-- [ ] Every Agreement cites ≥2 child research files
-- [ ] Every Disagreement has a recommendation
-- [ ] Every Open Question has a proposed next step
-- [ ] Recommended Next Action is concrete, not "discuss further"
-- [ ] No claim appears in this file that isn't traceable to either a child research file or an explicit synthesis the author owns
+- [ ] Goal, TL;DR, and Context open the document, in that order
+- [ ] Every child research file is accounted for — nothing dropped silently
+- [ ] Claims are grounded in the research, not introduced from nowhere
+- [ ] Where children disagree, the synthesis says what to do about it
+- [ ] The document synthesizes — it does not just paraphrase one child
 
 ---
 

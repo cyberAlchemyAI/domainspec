@@ -16,7 +16,7 @@
  *     schema_version ("0.6.0" exactly), dispatch_type
  *     (research|code|review|plan|suggestion|experiment), goal, context, max_loops (1..5),
  *     final_approver, groups[] (each group: group_id, agents[] — NO group
- *     `role` field; each agent: role explorer|skeptic|writer|auditor, model,
+ *     `role` field; each agent: role explorer|synthesizer|skeptic|writer|auditor, model,
  *     token_budget, initial_prompt). Optional: meta (true), parent_dispatch_id,
  *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment; never vault/),
  *     invoked_by (tooling extension, not in constitution §5),
@@ -99,7 +99,7 @@ const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'exp
 const LIVE_TYPES = new Set(['research', 'review', 'experiment']);
 // Group `role` was removed from the row schema at v0.6.0 (constitution §11 / CR-2): a group's
 // function is read off its agents' roles, its workflow position off its connections.
-const AGENT_ROLES = ['explorer', 'skeptic', 'writer', 'auditor'];
+const AGENT_ROLES = ['explorer', 'synthesizer', 'skeptic', 'writer', 'auditor'];
 const CONNECTION_TYPES = ['sequential', 'zig-zag', 'feedback'];
 const EXIT_REASONS = ['resolved', 'loop_ceiling_reached', 'dissent_irreconcilable', 'user_abort', 'error'];
 

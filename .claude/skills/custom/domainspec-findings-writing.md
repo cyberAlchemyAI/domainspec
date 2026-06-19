@@ -1,118 +1,67 @@
 ---
-description: How to write a subagents-findings document — synthesis across all subagents-research files from one dispatch.
+description: How to write a subagents-findings document — synthesis of the single subagents-research file from one dispatch.
 ---
 # Subagents Findings Writing
 
 ## Purpose
 
-A `subagents-findings` document is the **synthesis of one full dispatch**: it reconciles the `subagents-research` files produced by every child agent and turns them into claims the rest of the vault can build on.
+A `subagents-findings` document is the **synthesis of one full dispatch**, authored by the **writer** (pipeline stage 4): it reconciles the explorer returns transcribed in the single `research.md` — together with the synthesizer's reconciliation and the reviewers' attacks — and turns them into claims the rest of the vault can build on.
 
 One dispatch → one findings file. If you are pulling from research across multiple dispatches, you are writing a discovery, not findings.
 
-If you are simply rewriting a single child's output in nicer prose, you are writing nothing — go back and synthesize.
+If you are simply rewriting a single explorer's output in nicer prose, you are writing nothing — go back and synthesize.
+
+There is **no template** to fill. Read the research and write the synthesis in whatever form serves it best.
 
 ---
 
-## Frontmatter
+## Document Structure
 
-Check `.claude/skills/custom/frontmatter.md`. For this node_type:
+Fixed at the top and bottom; free in between.
 
-- `node_type: subagents-findings`
-- `is_session: false`
-- Omit `veracidade` and `convicção` — findings track which claims are supported and which are contested; per-claim confidence lives inline in the body. Promotion to `discovery` (or escalation as `contradicts`) is what turns a finding into a versioned claim.
+**Opening, in this order:**
 
----
+1. **Goal** — what the dispatch set out to achieve. One to two sentences.
+2. **TL;DR** — the synthesis answer in a few sentences: what the research adds up to. No build-up — the conclusion first.
+3. **Context** — where the need for the dispatch arose and what made a single inline investigation insufficient.
 
-## Edges
+**Closing — mandatory, the last section:**
 
-Check `.claude/skills/custom/edges.md`. The expected edge pattern:
+- **Open Questions** — the investigation residue: coverage gaps and sub-questions this dispatch could not resolve. One entry per question, each with a recommendation and a **named owner**; numbering need not be contiguous — never renumber; flag blockers inline.
 
-- `derives-from` → every `subagents-research` file this synthesis stands on. **Every** child research file must be listed; if you ignored a child, say why in "Children excluded".
-- `derives-from` → the `domainspec-subagents-strategy.md` that authorized the dispatch.
-- `contradicts` → any vault document the synthesis logically conflicts with (must be resolved before any downstream promotion).
+  ```
+  - **OQ-N** — <question>. Recommendation: <rec>. Owner: <named owner>.
+  - **OQ-N (BLOCKER)** — <blocker question>. Recommendation: <rec>. Owner: <named owner>.
+  ```
 
-Each research file declares the inverse `derives` toward this findings file in its own `## Connections` block.
+**Everything between the opening and Open Questions is the writer's call.** Choose the sections that best convey *this* synthesis and drop what the material doesn't need. Useful candidates — not a required set:
 
----
+- **Agreements** — claims that multiple explorers' research independently supports (cite ≥2 explorers; qualify as `strong` / `majority` / `partial`).
+- **Disagreements** — where explorers diverge: the opposing positions with citations, and a recommendation (which side, escalate as `contradicts`, or re-dispatch).
+- **Recommended next action** — promote as a discovery (knowledge scope: `vault/discovery/<topic>-definitions/<slug>.md`; application scope: `docs/features/<feature>/discovery/<slug>.md`), re-dispatch with adjusted strategy, or hold.
 
-## Mandatory Document Structure
-
-Sections must appear in this order. Do not skip or reorder.
-
-### Objective (≤3 sentences, required first)
-
-What this dispatch was investigating and the form of the synthesis (e.g., "ranked options", "agreement matrix", "single recommendation"). No conclusions here.
-
-**Quality gate:** if the form of the synthesis is unclear, the dispatch had no decision criteria — flag it and stop.
+You may propose a structure you think fits the dispatch better.
 
 ---
 
-### 1. Dispatch Context
+## Edges the generated `findings.md` must carry
 
-Three required subsections:
+In its `## Connections` block, the findings artifact must declare:
 
-**Strategy reference** — link to the `domainspec-subagents-strategy.md` and date of dispatch.
-
-**Children included** — bullet list, one line per child research file with a link and a one-sentence description of what that child investigated.
-
-**Children excluded** — any child whose research was disregarded, with the reason. An empty subsection is allowed only if every child contributed.
-
----
-
-### 2. Agreements
-
-Claims that **multiple children's research independently supports**. Each agreement:
-
-- A one-sentence claim.
-- Citations to **at least two** child research files (`[research-A.md§Findings]`, `[research-B.md§Findings]`).
-- Strength qualifier: `strong` (every child agrees), `majority` (most agree), `partial` (some agree, others silent).
-
-A "claim" supported by only one child is not an agreement — put it in §3 or drop it.
-
----
-
-### 3. Disagreements
-
-Where children's research diverges. For each:
-
-- The point of disagreement, in one sentence.
-- The opposing positions, each with a citation to the child that took it.
-- A recommendation: which side to follow, or whether to escalate as `contradicts` against an existing vault document, or whether the disagreement is unresolvable from this dispatch and needs another one.
-
-A disagreement without a recommendation is a liability — the next reader will not know what to do.
-
----
-
-### 4. Open Questions
-
-What this dispatch could not resolve. Each item:
-
-- The question.
-- Why this dispatch couldn't answer it (missing inputs, out-of-scope children, etc.).
-- A proposed next step (another dispatch, a manual investigation, a discovery).
-
----
-
-### 5. Recommended Next Action
-
-One paragraph. Either:
-- "Promote agreements §X.Y as a discovery — knowledge scope: `vault/discovery/<topic>-definitions/<slug>.md`; application scope: `docs/features/<feature>/discovery/<slug>.md` (per R15 of domainspec-subagents-strategy-constitution)", or
-- "Re-dispatch with strategy adjusted as follows: …", or
-- "Hold — open questions block any decision until …"
-
-If you cannot recommend an action, the synthesis is incomplete.
+- `derives-from` → the `research.md` it synthesizes (`./research.md`). This is the reciprocal of the `derives` edge the research file declares back toward it.
 
 ---
 
 ## Quality Checks Before Finishing
 
-- [ ] Objective written before any other section
-- [ ] Every child research file is either in "Children included" or "Children excluded" — nothing dropped silently
-- [ ] Every Agreement cites ≥2 child research files
-- [ ] Every Disagreement has a recommendation
-- [ ] Every Open Question has a proposed next step
-- [ ] Recommended Next Action is concrete, not "discuss further"
-- [ ] No claim appears in this file that isn't traceable to either a child research file or an explicit synthesis the author owns
+- [ ] Goal, TL;DR, and Context open the document, in that order
+- [ ] Open Questions closes the document — each with a recommendation and a named owner
+- [ ] File path is `<working_folder>/findings.md` (the root of the working folder), not under `vault/`
+- [ ] The `## Connections` block declares `derives-from` → the research file
+- [ ] Every `## Agent N` section of the research file is accounted for — nothing dropped silently
+- [ ] Claims are grounded in the research, not introduced from nowhere
+- [ ] Where explorers disagree, the synthesis says what to do about it
+- [ ] The document synthesizes — it does not just paraphrase one explorer
 
 ---
 
@@ -120,5 +69,5 @@ If you cannot recommend an action, the synthesis is incomplete.
 
 - Frontmatter cheatsheet: `.claude/skills/custom/frontmatter.md`
 - Edge catalog: `.claude/skills/custom/edges.md`
-- How to write the upstream child files: `.claude/skills/custom/domainspec-subagents-research-writing.md`
+- How to write the upstream research file: `.claude/skills/custom/domainspec-research-writing.md`
 - Node-type semantics: `.claude/skills/custom/frontmatter-semantics.md`

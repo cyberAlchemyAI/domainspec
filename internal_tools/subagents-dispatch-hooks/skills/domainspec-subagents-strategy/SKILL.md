@@ -3,8 +3,6 @@ name: domainspec-subagents-strategy
 description: Route any subagent dispatch — check the Principle-1 trigger, hold the human gate, enforce the universal invariants, then route by dispatch_type to the owning type skill (research, review, and experiment are LIVE; code/plan/suggestion are reserved). The record/sheet form is owned by register-dispatch; field definitions by constitution §5. This skill defines no field and no type-specific judgment — it routes.
 ---
 
-**Governing doc:** operationalizes `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` (v0.6.1-proposal). The live vault constitution is still v0.3.0; where the two conflict, v0.6.x wins (owner decision 2026-06-12; doc bumped to v0.6.0 then v0.6.1 on 2026-06-15 per §10 / §12). The wire `schema_version` is `"0.6.0"` (§10.1; the v0.6.1 bump is the `experiment` propose/run re-scope, not a row-schema change).
-
 ## When to dispatch (P1) — and what is not a dispatch (P11)
 
 Dispatch only when at least one trigger holds: **synthesis** (3+ sources to combine), **context protection** (raw output ≫ what the parent needs), **isolation** (discardable exploration), **parallelism** (independent tasks). Otherwise work inline.
@@ -49,8 +47,7 @@ LIVE status is **declared by constitution §5** (promoting a reserved type goes 
 
 ## Pointers (single owners)
 
-- **Form — record/sheet fill mechanics:** `register-dispatch` (repo: `internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`; deployed: `~/.claude/skills/register-dispatch/`) — field tables, enums, the appender, the close row, `invoked_by`.
-- **Definitions + skeleton:** constitution §5 (parameter reference) and §6 (annotated skeleton YAML).
-- **Agent names:** `telemetry/agents/agent-pool.yaml`.
+- **Form — record/sheet fill mechanics:** `register-dispatch` (`~/.claude/skills/register-dispatch/`) — field tables, enums, the appender, the close row, `invoked_by`.
+- **Agent names:** `~/agent-pool.yaml`.
 - **Anti-bias design:** `vault/discovery/anti-bias-vector-composition/` — reached via the type skill.
 - **Init-time tensioning gate:** `check-tension` (`.claude/skills/check-tension/SKILL.md`) — the two independent agents that verify Tests 1–4 before the human confirm; only "both PASS" reaches the human.

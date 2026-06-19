@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.6.1-proposal
-last_updated: 2026-06-15
+version: 0.6.3-proposal
+last_updated: 2026-06-18
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
@@ -50,7 +50,7 @@ are validated by the human at the confirm gate.)
   are LIVE (`review` 2026-06-12, `experiment` 2026-06-14, by owner decision — see §5 `dispatch_type`).
 - **Companion documents:** a group running robot-talks binds `vault/constitution/robot-talks-constitution.md`;
   the pool of allowed `agent_name`s lives at `telemetry/agents/agent-pool.yaml` (245 names, each
-  tagged with an ordered `role_fit` list drawn from explorer / skeptic / writer / auditor).
+  tagged with an ordered `role_fit` list drawn from explorer / synthesizer / skeptic / writer / auditor).
 - This proposal replaces both the live v0.3.0 and the v0.4.0 draft.
 - **Adoption / grandfathering:** rows and specs written under the old schemas remain valid
   historical artifacts and are never re-validated against this schema; dispatches from the
@@ -81,22 +81,33 @@ output forward (`sequential`), two groups can exchange messages in bounded alter
 `n ≥ 2`) has its agents come back after their parallel runs and **discuss** — each
 confronts the others' outputs along the declared tension — before the group returns.
 
-Here *explorers*, *synthesizer*, and *reviewers* are example `group_id` labels — not
-reserved keywords. A group has no role field of its own (removed v0.6.0 — see §11): what
-kind of work a group does is carried by its agents' `role`s (`explorer` / `writer` /
-`skeptic` / `auditor`), and where it sits in the workflow is carried by its `connections`.
+Here *explorers*, *synthesizer*, *reviewers*, *writer*, and *auditor* are example
+`group_id` labels — not reserved keywords. A group has no role field of its own (removed
+v0.6.0 — see §11): what kind of work a group does is carried by its agents' `role`s
+(`explorer` / `synthesizer` / `skeptic` / `writer` / `auditor`), and where it sits in the
+workflow is carried by its `connections`.
 
-The canonical shape: **explorers → synthesizer → reviewers.** Between explorers and
-reviewers there is **always a synthesizer** — it plays midfield: it drafts from the
-explorers' material and exchanges with the reviewers via **zig-zag**. The back-edge to the
+The canonical shape (sequential spine): **explorers → synthesizer → reviewers → writer →
+auditor.** Each is a distinct pipeline stage. Between explorers and reviewers there is
+**always a synthesizer** — it plays midfield: it **reconciles** the explorers' returns into
+a candidate picture and exchanges with the reviewers via **zig-zag**. The back-edge to the
 explorers (**feedback**) is **conditional**: it is instantiated only when there is a
-reviewer/auditor group *and* material may be missing — not auto-instantiated in every
-dispatch (shown dashed below).
+reviewer group *and* material may be missing — not auto-instantiated in every dispatch
+(shown dashed below). The **writer** is a separate downstream stage (no longer the
+synthesizer): it **persists `findings.md` only**, via `domainspec-findings-writing` (n:1).
+`research.md` is **not** a writer task — it is the verbatim transcript of the **explorer**
+returns, appended **mechanically by the strategist** via `domainspec-research-writing`. The
+**auditor** evaluates `findings.md` only and may **revise** it back to the writer (default
+one revision).
 
 ```
 explorers ──sequential──▶ synthesizer ◀──zig-zag──▶ reviewers
-     ▲                        │
-     └┄┄┄┄┄┄┄feedback┄┄┄┄┄┄┄┄┄┘   (conditional)
+     ▲                        │                          │
+     └┄┄┄┄┄┄┄feedback┄┄┄┄┄┄┄┄┄┘   (conditional)          │ sequential
+                                                         ▼  (after zig-zag converges)
+                                              writer ──sequential──▶ auditor
+                                                 ▲                       │
+                                                 └┄┄┄┄┄revision┄┄┄┄┄┄┄┄┄┄┘   (default 1)
 ```
 
 How a group's parallel outputs combine is **derived, not declared**: a group with
@@ -123,19 +134,19 @@ redesigning the framework itself — and is the only context in which dispatch l
 3. **Two appends, one place.** The strategist appends the **dispatch row** to `telemetry/agents/subagents-dispatch.yaml` at dispatch, and the **close row** (`close_of` carrying `exit_reason` + `agents_spawned`) at termination. Rows are **never edited in place** — the ledger is append-only, and the appender is the single, serializing write path. The outcome is additionally reported in chat (1–2 sentences) and in the findings document. No other persistence surface exists for dispatch metadata.
 4. **Execution shape.** Agents within a group run in parallel — each with its own start, briefing, and context. Groups are scheduled **by dependency**: a group is READY when every group with a `sequential` or `zig-zag` edge into it has produced what it must respond to (a zig-zag edge counts only in its `from`→`to` direction — the `from` endpoint opens the exchange); all READY groups launch concurrently; `feedback` edges never count as dependencies; a sheet with no connections declares its groups independent. Dependent work goes in a downstream group, joined by an edge. An agent error inside a group degrades to a **partial group result** that downstream groups and the `final_approver` must be told about; `exit_reason: error` is reserved for failures that leave the dispatch unable to produce its deliverable.
 5. **Anti-bias tension.** Any group with N ≥ 2 agents must be **pairwise tensioned**: for every pair, a competent observer could predict in advance a question on which they disagree. The group names the axis (`anti_bias`); each agent takes a position (`angle`). Non-overlapping is not enough. The check happens at the confirm gate: a sheet whose pairs have no predictable disagreement goes back for revision. The proposal must state, for each tensioned pair, the question on which the two are predicted to disagree.
-   **Decision rule (mechanical PASS/REJECT, applied at the confirm gate; semantics owned by `vault/discovery/anti-bias-vector-composition/validator-check.md` — note: that file's operational protocol predates v0.5.2 and speaks the removed schema (`dispatch.yaml`, `composition`/`layers[]`); tests 1–4 below are the v0.5.2 operationalization, and the vault file is pending realignment):**
+   **Decision rule (mechanical PASS/REJECT, applied at the confirm gate by the `check-tension` skill, which owns the runnable rubric; the four tests below are the canonical law it applies, and the rationale for each lives in `vault/discovery/anti-bias-vector-composition/`):**
    1. **Axis test** — the **group-level `anti_bias`** names one of the four canonical axes (**methodology | source-corpus | attack-vector | temporal-prior**) or an explicitly declared composite of them. Anything outside this vocabulary → REJECT. The closure governs per-group `anti_bias` only — `anti_bias_global` is a free-text tension theme (§5) that the per-group axes specialize; it is never vocabulary-checked.
    2. **Clone test** — any two `angle`s in the group share the same core noun phrase → REJECT.
    3. **Spread test** — in a group of `explorer`s (investigation work): all agents share one methodology, or all share one source corpus → REJECT (a pass requires at least two distinct axes represented across the group's angles). In a group of `skeptic`s (evaluation work): any two skeptics share the same attack gate → REJECT.
    4. **Evidence test** — the sheet carries, for every pair, the written predicted-disagreement sentence ("a_i runs [X], a_j runs [Y] on the [axis] axis; a bias in a_i would be exposed by a_j"). Any pair missing its sentence → REJECT.
    A sheet that passes all four tests PASSES — no residual judgment call. **Enforcement split:** the appender enforces the presence conditionals (group `anti_bias` at n ≥ 2; `anti_bias_global` when ≥ 2 groups have n ≥ 2 — both exit 2); tests 1–4 are checked on the sheet at the gate.
-6. **Synthesizer midfield.** Between explorers and reviewers there is always a synthesizer. Synthesizer ↔ reviewers iterate via zig-zag; synthesizer → explorers via **feedback**, which is **conditional** — it is instantiated only when there is a reviewer/auditor group *and* material may be missing, not auto-instantiated in every dispatch. Reviewers never review raw explorer output directly.
+6. **Synthesizer midfield; writer/auditor downstream.** The canonical research pipeline is the sequential spine **explorers → synthesizer → reviewers → writer → auditor**, five distinct stages. Between explorers and reviewers there is always a **synthesizer** — it *reconciles* the explorer returns into a candidate picture; it does **not** persist the deliverable files. Synthesizer ↔ reviewers iterate via **zig-zag**; synthesizer → explorers via **feedback**, which is **conditional** — it is instantiated only when there is a reviewer group *and* material may be missing, not auto-instantiated in every dispatch. Reviewers never review raw explorer output directly. The **writer** is stage 4 (n:1): once the synthesizer ↔ reviewers exchange converges, the writer *persists* **`findings.md` only** via `domainspec-findings-writing` — it is **no longer the synthesizer**, and it does **not** author `research.md` (the strategist appends that — see Principle 9). The **auditor** (stage 5) evaluates `findings.md` ONLY and owns the **revision** edge back to the writer (default one revision; more permitted). Conditional edges over the spine: `robot_talks` on explorers and/or reviewers; `zig-zag` synthesizer ⇄ reviewers; `feedback` synthesizer → explorers; `revision` auditor → writer (default 1).
 7. **Aggregation is derived.** A group with `robot_talks: true` → `synthesize`; otherwise → `concat` (an `n = 1` group simply returns its single output). Aggregation is never a field. Zig-zag is inter-group exchange — it does not change either group's combination rule. *(Non-binding note: a bare `concat` is intermediate plumbing, never the dispatch's final deliverable — concatenated parallel outputs feed a downstream `synthesize` group or the `final_approver`, they are not handed back as the answer.)*
 8. **Trust-but-verify.** If a subagent wrote files or claimed a check passed, the parent inspects the actual diff / runs the actual check before treating it as done.
-9. **Outputs.** For a `dispatch_type: research` dispatch, everything the dispatch produces lands in `working_folder`. The two-file rule applies only to a **research fan-out (n ≥ 2)**: the collected returns (research) and the cited synthesis (findings) — every load-bearing claim in the findings cites the collected return it rests on, and the `final_approver` checks this when recommending acceptance. A **research n = 1** dispatch produces a single file, `findings.md`.
+9. **Outputs.** For a `dispatch_type: research` dispatch, everything the dispatch produces lands in `working_folder`. `findings.md` is **authored by the writer stage** (stage 4) via `domainspec-findings-writing`; `research.md` (the verbatim explorer transcript) is **appended mechanically by the strategist** via `domainspec-research-writing` — neither the synthesizer nor the writer authors `research.md`. The two-file rule applies only to a **research fan-out (n ≥ 2)**: the collected returns (research) and the cited synthesis (findings) — every load-bearing claim in the findings cites the collected return it rests on, and the `final_approver` checks this when recommending acceptance. A **research n = 1** dispatch produces a single file, `findings.md`.
 10. **Claim ≤ proof** in every artifact produced.
 11. **Helper invocations are not dispatches.** A single agent spawned *by* a running agent, within its parent's scope, needs no row and no gate — it is reported post-hoc in the parent's `agents_spawned` report (chat + findings, not written to the ledger row). It escalates to a real dispatch if it fans out (2+) or outgrows the scope. Spawn count is unregulated; reporting is the brake. *(The exact helper-vs-dispatch boundary is provisional — an open question, not settled law.)*
-12. **Final approval.** Every dispatch names a `final_approver` holding the last approve/reject with a does-this-fit-the-whole mandate. There is exactly **one human gate** — the entry confirm of Principle 2. `final_approver` is `parent` (default) or a **dedicated approver agent**: the sole agent of a **dedicated approver group** (its agent's `role` is `auditor`) that does no other work in the dispatch. An approver may **never** appear in any working group — self-approval is prohibited. The approver receives the full `working_folder` (for research n ≥ 2: both `research.md` and `findings.md`, so the Principle 9 citation check is actionable). If the approver's group never runs (early abort, upstream error), approval falls back to `parent`. When the approver is an agent, it *recommends* accept/reject; a reject is what may trigger a re-run within `max_loops`. The human never loses the power to abandon (`user_abort`), but there is **no second human gate at close** — the close is report-only plus the close row (Principle 3).
+12. **Final approval.** Every dispatch names a `final_approver` holding the last approve/reject with a does-this-fit-the-whole mandate. There is exactly **one human gate** — the entry confirm of Principle 2. `final_approver` is `parent` (default) or a **dedicated approver agent**: the sole agent of a **dedicated approver group** (its agent's `role` is `auditor`) that does no other work in the dispatch. An approver may **never** appear in any working group — self-approval is prohibited. The auditor is the dedicated **final_approver** and evaluates **`findings.md` only**; it owns the **revision** edge back to the **writer** — it may return `findings.md` to the writer for revision (default one revision, may be more). The approver receives the full `working_folder` (for research n ≥ 2: both `research.md` and `findings.md`, so the Principle 9 citation check against `findings.md` is actionable). If the approver's group never runs (early abort, upstream error), approval falls back to `parent`. When the approver is an agent, it *recommends* accept/reject; a reject (or an exhausted revision allotment) is what may trigger a re-run within `max_loops`. The human never loses the power to abandon (`user_abort`), but there is **no second human gate at close** — the close is report-only plus the close row (Principle 3).
 13. **Meta and lineage.** A planning/framework dispatch is marked `meta`. `parent_dispatch_id` exists **only** on a dispatch spawned by a meta dispatch, pointing back to it. No other lineage fields exist. A meta dispatch may itself be planned by another meta dispatch (`meta: true` with non-null `parent_dispatch_id`); the chain stays finite and acyclic. A meta-planned child is a new sheet and re-enters the confirm gate — Principle 2 has no meta exception.
 14. **Robot-talks binding.** Any group with `robot_talks: true` additionally binds `vault/constitution/robot-talks-constitution.md` as versioned at dispatch time; that constitution wins conflicts **inside the discussion** — but where it would prescribe an additional human gate, this constitution's single-gate rule (Principle 12) governs. When a synthesizer sits downstream of **any robot-talks group whose agents' positions feed it**, it MUST receive each of that group's agents' **initial** and **final** position (both present in `working_folder`), so premature-convergence / collapse is detectable. *(Scope generalized 2026-06-12 to cover the review type's attacker→synthesizer hop.)*
 
@@ -317,19 +328,25 @@ Plain JSON objects: `{from, to, type, loop_cap?}`. Nothing else. (`loop_cap` onl
   inconsistencies; a turn in which **no participating reviewer raises an inconsistency**
   terminates the exchange as converged — the `loop_cap` is a ceiling for non-convergence,
   not a quota to be burned.
-- `feedback` — a back-edge: a later group reaches back to an earlier one for more material.
-  The canonical use: synthesizer → explorers. **Semantics:** the same agents are re-invoked;
+- `feedback` — a back-edge: a later group reaches back to an earlier one for more material
+  or rework. Canonical uses: synthesizer → explorers (pull more material) and auditor →
+  writer (the **revision** edge — return `findings.md` for revision, default `loop_cap: 1`).
+  **Semantics:** the same agents are re-invoked;
   the requesting group's ask **is** the feedback prompt, and the parent session records it
   verbatim in the close row (Principle 3). **Firing rule (under dependency scheduling, P4):**
   a feedback edge fires as a re-invocation **event** — it fires when (and only when) the
   requesting group emits its ask; it never counts as a dependency and never blocks any
   group's launch (§3).
 
-**Canonical edge set (default for `dispatch_type: research`):** explorers → synthesizer
-(`sequential`) and synthesizer ↔ reviewers (`zig-zag`) are instantiated when the strategist
-declares the canonical groups. The synthesizer → explorers (`feedback`) edge is **conditional**:
-it is instantiated only when there is a reviewer/auditor group *and* material may be missing —
-not auto-instantiated in every dispatch. The strategist may override any of these on the sheet.
+**Canonical edge set (default for `dispatch_type: research`):** the sequential spine
+explorers → synthesizer (`sequential`), synthesizer ↔ reviewers (`zig-zag`), reviewers →
+writer (`sequential`, after the zig-zag converges), and writer → auditor (`sequential`) are
+instantiated when the strategist declares the canonical groups. Two back-edges are
+**conditional**: synthesizer → explorers (`feedback`) is instantiated only when there is a
+reviewer group *and* material may be missing; auditor → writer (`feedback` — the **revision**
+edge, default `loop_cap: 1`) is instantiated when the auditor may return `findings.md` for
+revision. `robot_talks` may sit on explorers and/or reviewers. Not auto-instantiated in
+every dispatch. The strategist may override any of these on the sheet.
 
 #### `loop_cap` — C · H/A (only on `type ∈ {zig-zag, feedback}`; must be absent on `sequential`)
 **What:** local bound on the iterations of a `zig-zag` or `feedback` edge.
@@ -359,7 +376,17 @@ when set, e.g. `"Russell, Bertrand"`.
 
 #### `role` — R · A
 **What:** the agent's kind of worker. Vocabulary fixed by `dispatch_type`.
-**Values (research):** `explorer | skeptic | writer | auditor`.
+**Values (research):** `explorer | synthesizer | skeptic | writer | auditor` — five distinct
+pipeline stages (canonical spine **explorers → synthesizer → reviewers → writer → auditor**):
+- `explorer` — generates under one tensioned angle (group `n` 2–4).
+- `synthesizer` — reconciles the explorer returns into a candidate picture; exchanges with the reviewers (zig-zag) and may pull more from explorers (feedback). n:1. Does **not** persist files.
+- `skeptic` — the reviewers; each attacks one named gate.
+- `writer` — persists **`findings.md` only**, via `domainspec-findings-writing` (n:1). **No longer the synthesizer, and no longer the author of `research.md`.**
+- `auditor` — evaluates `findings.md` only; the dedicated `final_approver`; may return `findings.md` to the writer for revision (default one).
+
+`research.md` is appended by the **strategist** (the parent that owns the dispatch), not by
+any agent role: it is the verbatim **explorer** transcript, assembled per
+`domainspec-research-writing` — the same hand that appends the ledger rows.
 
 #### `angle` — C · A (required iff group `n ≥ 2`)
 **What:** this agent's position on the group's `anti_bias` axis, one sentence.
@@ -426,9 +453,9 @@ chooses not to re-run is an abandonment → `user_abort`.
 close row, and reported in chat with 1–2 sentences of context and in the findings doc.
 
 #### `agents_spawned` — close row + reported · A
-**What:** total count + spawn tree keyed by **agent role** (`explorer | skeptic | writer | auditor`),
+**What:** total count + spawn tree keyed by **agent role** (`explorer | synthesizer | skeptic | writer | auditor`),
 with **helper invocations** (Principle 11) in their own bucket, + loop iterations used. E.g.
-`{total: 6, tree: {explorer: 3, writer: 1, skeptic: 2, helpers: 0}, loops_used: 1}`.
+`{total: 8, tree: {explorer: 3, synthesizer: 1, skeptic: 2, writer: 1, auditor: 1, helpers: 0}, loops_used: 1}`.
 (v0.6.0: keyed by **agent** role directly — the former agent-role↔group-role map is gone with
 the group `role` field, which removes the CR-2 bucketing ambiguity.)
 **Why:** spawn count is unregulated, so reporting is the entire accountability mechanism.
@@ -473,15 +500,16 @@ the group `role` field, which removes the CR-2 bucketing ambiguity.)
         # ... 2 more explorers, each with its own angle/initial_prompt
 
     - group_id: synthesizer           # the mandatory midfield (Principle 6)
-      n: 1                            # function read from its writer agent's role
+      n: 1                            # function read from its synthesizer agent's role
       agents:
         - agent_name: "Noether, Emmy"
-          role: writer
-          model: claude-opus-4-8      # adversarial/synthesis work: heavier model
+          role: synthesizer           # reconciles explorer returns; does NOT persist files
+          model: claude-opus-4-8      # reconciliation work: heavier model
           token_budget: 4000          # REQUIRED per agent — set by difficulty
           initial_prompt: >
-            Briefing for the synthesis: what to draft from the explorers'
-            material and how to handle reviewer objections.
+            Briefing for the synthesis: what to reconcile from the explorers'
+            material into a candidate picture, and how to handle reviewer
+            objections over the zig-zag.
 
     - group_id: reviewers
       n: 2
@@ -501,17 +529,45 @@ the group `role` field, which removes the CR-2 bucketing ambiguity.)
           model: claude-opus-4-8
           token_budget: 3000          # REQUIRED per agent
 
+    - group_id: writer                # stage 4 — persists findings.md (Principle 9)
+      n: 1                            # function read from its writer agent's role
+      agents:
+        - agent_name: "Turing, Alan"
+          role: writer                # persists findings.md via domainspec-findings-writing
+          model: claude-opus-4-8                            # (research.md is the strategist's append)
+          token_budget: 5000          # REQUIRED per agent
+          initial_prompt: >
+            Persist findings.md (domainspec-findings-writing) from the converged
+            synthesizer picture; every load-bearing findings claim cites the explorer
+            return it rests on. research.md (the explorer transcript) is appended
+            separately by the strategist.
+
+    - group_id: auditor               # stage 5 — dedicated final_approver (Principle 12)
+      n: 1                            # function read from its auditor agent's role
+      agents:
+        - agent_name: "Goedel, Kurt"
+          role: auditor               # evaluates findings.md ONLY; owns revision→writer
+          model: claude-opus-4-8
+          token_budget: 3000          # REQUIRED per agent
+          initial_prompt: >
+            Evaluate findings.md only; recommend accept/reject and the
+            Principle 9 citation check. May return findings.md to the writer
+            for revision (default one).
+
   connections:                        # {from, to, type, loop_cap?} — nothing else
                                       # type: sequential | zig-zag | feedback
     - {from: explorers,   to: synthesizer, type: sequential}
     - {from: synthesizer, to: reviewers,   type: zig-zag,  loop_cap: 2}   # human may pin loop_cap
     - {from: synthesizer, to: explorers,   type: feedback, loop_cap: 1}
+    - {from: reviewers,   to: writer,      type: sequential}              # after zig-zag converges
+    - {from: writer,      to: auditor,     type: sequential}
+    - {from: auditor,     to: writer,      type: feedback, loop_cap: 1}   # revision (auditor→writer, default 1)
 
   # at termination a close row is appended: {close_of, exit_reason, agents_spawned};
   # the same values are reported in chat + findings.
   # exit_reason  ∈ resolved | loop_ceiling_reached | dissent_irreconcilable | user_abort | error
   #   precedence: user_abort > error > dissent_irreconcilable > loop_ceiling_reached > resolved
-  # agents_spawned = total + spawn tree (keyed by AGENT role: explorer|skeptic|writer|auditor, helpers in their own bucket) + loops_used
+  # agents_spawned = total + spawn tree (keyed by AGENT role: explorer|synthesizer|skeptic|writer|auditor, helpers in their own bucket) + loops_used
 ```
 
 ## 7. Removed relative to v0.3.0 / v0.4.0-draft (for assessment)
@@ -780,3 +836,60 @@ re-confrontation" block); not duplicated here.
 **Open (owner / next):** the **run phase** is undesigned — whether it is a new mode of `experiment`,
 a use of the RESERVED `code` type once it lands, or a separate type, is the next design decision; the
 deferred registry pointer + content hash (§7) is the run's OPEN hardening.
+
+## 13. v0.6.2 amendment (2026-06-18 — research five-role split + skill portability)
+
+Source: this session's rewrite of the `research` type skill for cross-repo portability, and the
+owner correction that the `synthesizer` and `writer` functions are **distinct roles at distinct
+pipeline stages**, not one conflated role. Owner decision 2026-06-18.
+
+This adds a value to the agent-`role` enum; per §10.1 an enum-value change bumps the **document**
+`version` **0.6.1 → 0.6.2**. It is **not** a row-schema (structural) change — no field is added or
+removed and the row shape is unchanged — so the wire `schema_version` **stays `0.6.0`** (precedent:
+the 2026-06-14 `experiment` LIVE promotion changed `LIVE_TYPES` in code without a wire bump). The
+appender already accepts `role: synthesizer` at `schema_version "0.6.0"`; the test battery is green
+(83 pass).
+
+| # | Decision | Amendment |
+|---|---|---|
+| **RS-1 — synthesizer/writer split** | The `synthesizer` (reconciles explorer returns into a candidate picture; mid-pipeline; zig-zags with reviewers; may feedback to explorers) and the `writer` (persists `research.md`+`findings.md` via the `domainspec-research-writing` / `domainspec-findings-writing` skills **[research.md ownership superseded 2026-06-18 by §14 RW-1: the writer persists `findings.md` only; the strategist appends `research.md`]**) are **separate agent roles at separate stages**. The research agent-`role` enum is therefore five: `explorer / synthesizer / skeptic / writer / auditor`. Authority: type skill `skills/research/SKILL.md`. |
+| **RS-2 — canonical pipeline** | The research canonical shape is the sequential spine `explorers → synthesizer → reviewers → writer → auditor`. Conditional edges: `robot_talks` on explorers and/or reviewers; `zig-zag` synthesizer⇄reviewers; `feedback` synthesizer→explorers; and a structural `revision` edge auditor→writer (modelled as a `feedback` edge, `loop_cap` default 1 — **no new `connections.type` enum value**). Reflected in §3, §5 (`role`, canonical edge set), §6 skeleton, P6, P9, P12. |
+| **RS-3 — auditor evaluates `findings.md` only** | The `auditor` (dedicated `final_approver`) evaluates `findings.md` only and owns the `revision` edge back to the `writer` (default one revision, may request more). P12 narrowed accordingly. |
+| **§10.2 five-surface check** | Synced in one change set: **code** (`append-dispatch.cjs` `AGENT_ROLES` += `synthesizer`), **type skill** (`research/SKILL.md` rewritten), **constitution §5** (`role` field table + §3/§6/P6/P9/P12), **tests** (+2 cases asserting `synthesizer` accepted and enumerated; 83 green), **README** (describes roles generically — no enumeration, no edit required). |
+
+**Skill-portability note (no law change).** The `research` type skill was rewritten to reference
+**only sibling skills** (`domainspec-subagents-strategy`, `check-tension`, `register-dispatch`,
+`robot-talks`, and the two writing skills) — no constitution section numbers, vault paths, or
+telemetry paths — so the bundle is runnable when copied to another repo. This is an authoring
+convention for the skill, not a constitutional rule; the constitution remains the dispute authority
+the skill points back to.
+
+**Premise-debt re-confrontation:** **P-SS-8 (spawn / cost)** — AFFIRMED, carried open; adding a role
+value adds no spawn or cost machinery. **P-SS-9 (linear lifecycle)** — AFFIRMED, carried open; the
+five-stage spine is still the propose → confirm → dispatch → close lifecycle, now with a named
+revision back-edge already governed as a conditional `feedback` edge by §3/§5. No debt discharged or
+newly opened.
+
+## 14. v0.6.3 amendment (2026-06-18 — research.md is the strategist's append, writer owns findings.md only)
+
+Source: owner decision 2026-06-18, same session. Refines the RS-1 split (§13): the
+`synthesizer`/`writer` separation stands, but the **writer's file ownership narrows to
+`findings.md` only**, and **`research.md` becomes a mechanical append owned by the
+strategist** (the parent that owns the dispatch), not by any agent role.
+
+Per §10.1 this is a **prose/semantics change, not an enum or row-schema change** — the
+five-role enum is untouched, no field is added or removed, and the wire `schema_version`
+**stays `0.6.0`**. The `append-dispatch.cjs` `AGENT_ROLES` set and the test battery are
+unaffected. It bumps the **document** `version` **0.6.2 → 0.6.3**.
+
+| # | Decision | Amendment |
+|---|---|---|
+| **RW-1 — research.md is explorer-only, strategist-appended** | `research.md` is the **verbatim transcript of the explorer returns only** (one `## Agent N` section per explorer), appended **mechanically by the strategist** per `domainspec-research-writing`. It is not authored by the `writer`, and synthesizer/reviewer output is not transcribed into it — those survive digested (and cited) in `findings.md`. Supersedes the part of **RS-1 (§13)** that assigned `research.md` to the writer. |
+| **RW-2 — writer owns findings.md only** | The `writer` (stage 4) persists **`findings.md` only**, via `domainspec-findings-writing`. The role is otherwise unchanged: n:1, downstream of the reviewers, subject to the auditor's `revision` edge. |
+| **RW-3 — file names and path** | The two outputs are `research.md` and `findings.md` at the **root of `working_folder`** (not `domainspec-research.md` / `domainspec-findings.md`, not a `working_folder/research/` subfolder). The writing skills are aligned to this naming. |
+| **§10.2 surface check** | **code** — unaffected (no enum change). **type skill** — `research/SKILL.md` (both the `internal_tools` master and the deployed `.claude` copy) updated and re-synced. **constitution** — §1, §4 (P6, P9), §5 (`role`), §6 skeleton edited in place + this §14. **writing skills** — `domainspec-research-writing` (explorer-only, strategist-appended) and `domainspec-findings-writing` (writer-authored) re-aligned, names/paths fixed. **register-dispatch** — pipeline note (writer persists findings.md; strategist appends research.md). **tests/README** — unaffected. |
+
+**Premise-debt re-confrontation:** **P-SS-8 (spawn / cost)** — AFFIRMED, carried open;
+moving an append from the writer to the strategist removes an agent task, adds no machinery.
+**P-SS-9 (linear lifecycle)** — AFFIRMED, carried open; the spine and lifecycle are
+unchanged. No debt discharged or newly opened.

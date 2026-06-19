@@ -8,26 +8,23 @@ status: active
 version: 0.1.1
 last_updated: 2026-05-02
 template_for: domainspec-subagents-findings.md
-implements: [R15, R16, R17, R18, R21, R22, R23 of domainspec-subagents-strategy-constitution.md]
 ---
 
 # Subagents-Findings — `<dispatch-slug>`
 
-> Preamble (Context + Goal, R23) followed by three fixed sections in this order: **Dispatch record** (metadata) → **Findings** (summary + implications) → **Analysis** (tensions + cross-cutting). Section order is mandatory per R16. Every load-bearing claim in Findings and Analysis MUST cite a passage in `domainspec-subagents-research.md` per R17.
->
-> **Constitution:** [domainspec-subagents-strategy-constitution.md](../constitution/domainspec-subagents-strategy-constitution.md).
+> Preamble (Context + Goal) followed by three fixed sections in this order: **Dispatch record** (metadata) → **Findings** (summary + implications) → **Analysis** (tensions + cross-cutting). Section order is mandatory. Every load-bearing claim in Findings and Analysis MUST cite a passage in `domainspec-subagents-research.md`.
 
 ---
 
 ## Context
 
-> Where the need for this dispatch arose: the situation, the upstream artifact or conversation, the question that surfaced. Required by R23.
+> Where the need for this dispatch arose: the situation, the upstream artifact or conversation, the question that surfaced.
 
 `<2–4 sentences. What was happening, what triggered the dispatch, why a single inline investigation was insufficient.>`
 
 ## Goal
 
-> What this dispatch is trying to achieve. Stated concretely enough that Coverage (R21) can be evaluated against it. Required by R23.
+> What this dispatch is trying to achieve. Stated concretely enough that Coverage can be evaluated against it.
 
 `<1–2 sentences. The outcome that, if produced, would mean the dispatch succeeded.>`
 
@@ -35,9 +32,9 @@ implements: [R15, R16, R17, R18, R21, R22, R23 of domainspec-subagents-strategy-
 
 ## Dispatch record
 
-> Implements R18 (schema) and R21 / R22 (grading). Missing any field violates R18.
+> The dispatch metadata and grading. Missing any field leaves the record incomplete.
 
-**Mode:** `<single | task-fan-out | robot-talks | sequential | mixed>` *(R19)*
+**Mode:** `<single | task-fan-out | robot-talks | sequential | mixed>`
 
 **Per-agent table:**
 
@@ -48,7 +45,7 @@ implements: [R15, R16, R17, R18, R21, R22, R23 of domainspec-subagents-strategy-
 
 **Sequencing:** `<linear chain | parallel set | DAG description>`
 
-**Recursion budget actually used:** depth = `<n>`, breadth = `<n>`, total agents = `<n>` *(defaults per R13: depth 2, breadth 5, total 10; overrides recorded here)*
+**Recursion budget actually used:** depth = `<n>`, breadth = `<n>`, total agents = `<n>` *(defaults: depth 2, breadth 5, total 10; overrides recorded here)*
 
 **Actual spend:**
 
@@ -58,7 +55,7 @@ implements: [R15, R16, R17, R18, R21, R22, R23 of domainspec-subagents-strategy-
 | `agent-2` |          |            |       |
 | **Sum**   |          |            |       |
 
-**Four-component grade** *(R21; judgments marked per R22):*
+**Four-component grade** *(judgments marked):*
 
 | Component        | Score (0–1) | Note |
 |------------------|-------------|------|
@@ -67,13 +64,13 @@ implements: [R15, R16, R17, R18, R21, R22, R23 of domainspec-subagents-strategy-
 | Fidelity         | `0.x` (judgment) | `<brief reason>` |
 | Cost discipline  | `0.x`            | declared budget vs actual: `<n / n>` |
 
-> **R22 reminder:** the aggregate of the four components is NOT a measurement. Three are judgments dressed in numbers for coordination ease; only cost is mechanical.
+> **Reminder:** the aggregate of the four components is NOT a measurement. Three are judgments dressed in numbers for coordination ease; only cost is mechanical.
 
 ---
 
 ## Findings
 
-> Scannable summary plus implications. Every load-bearing claim cites a passage in `domainspec-subagents-research.md` (R17).
+> Scannable summary plus implications. Every load-bearing claim cites a passage in `domainspec-subagents-research.md`.
 
 ### F1 — `<finding name>`
 
@@ -95,7 +92,7 @@ implements: [R15, R16, R17, R18, R21, R22, R23 of domainspec-subagents-strategy-
 
 ## Analysis
 
-> Tensions, contradictions, cross-cutting reasoning that explain the findings. Every claim cites passages in `domainspec-subagents-research.md` (R17).
+> Tensions, contradictions, cross-cutting reasoning that explain the findings. Every claim cites passages in `domainspec-subagents-research.md`.
 
 ### T1 — `<tension name>`
 

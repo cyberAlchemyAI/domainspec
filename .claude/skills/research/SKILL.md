@@ -3,179 +3,145 @@ name: research
 description: >
   Subagent dispatch for synthesis, adversarial check, multi-perspective audit, or
   precedent sweep — routed here from domainspec-subagents-strategy as the LIVE type
-  skill for `dispatch_type: research`. Defines research-type judgment only: roles as
-  epistemic functions, skeptic gates, the canonical shape, tension design, and the
-  findings verdict matrix. Trivial single lookups stay inline and never reach this skill.
+  skill for `dispatch_type: research`. Defines research-type judgment only: the five
+  roles, the skeptic gates, the canonical pipeline, tension design, and the findings
+  verdict matrix. Trivial single lookups stay inline and never reach this skill.
 ---
 
-# research — type skill for `dispatch_type: research`
+# research — the research-type dispatch
 
-**Purpose (read first).** Research is **not** novelty-hunting. Its job is to find what **already
-exists and can be used** — owned, citable results deployable as building material. A
-`build-from-owned` finding is a **first-class success**, not a kill; `novel-attempt`
-(precedent-clean) is one outcome among several, not the goal. (Normative orientation — what we
-value, not a measured frequency.) Finding an owner is a *win*: owned kills a novelty *claim*,
-never a *use*. The only failures are `no-witness` and `tautological`.
+A **research dispatch** answers a question by fanning it across agents — to combine many
+sources, attack a new claim, or sweep for prior art — when one sequential reader would
+trade depth for breadth or flood the parent with raw output. You arrive here after the
+router `domainspec-subagents-strategy` has checked the trigger, held the human gate, and
+routed by `dispatch_type: research`. This skill owns **research-type judgment only**:
+the roles, the gates, the pipeline, the tension axes, the verdict matrix. Every universal
+rule (lifecycle, human gate, final-approver invariant) defers to the router; every ledger
+field defers to `register-dispatch`. It produces two files in the dispatch's
+`working_folder`: `research.md` (verbatim **explorer** returns, appended by the strategist)
+and `findings.md` (cited synthesis, written by the writer).
 
-This is the **LIVE type skill** for `dispatch_type: research` — one of the LIVE types under
-constitution v0.6.0 (another is `dispatch_type: review` — `.claude/skills/review/SKILL.md`,
-populated 2026-06-12). Division of law:
+## Pipeline
 
-- **When/whether + universal law** (triggers, human gate, anti-bias principle, lifecycle,
-  `final_approver`, `exit_reason` vocabulary) — the router,
-  `.claude/skills/domainspec-subagents-strategy/SKILL.md`. Route back there; nothing here
-  overrides it.
-- **Record/sheet mechanics** (the two appends, the appender, validation) —
-  `register-dispatch` (`internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`).
-- **Field definitions** —
-  `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`
-  §5. This skill defines no field; it says which **values** a good research dispatch puts in them.
+The spine is **sequential** and fixed:
 
-## Roles as epistemic functions
+```
+explorers ──▶ synthesizer ──▶ reviewers ──▶ writer ──▶ auditor
+```
 
-Each role guards a distinct failure mode; no agent guards two.
+Each stage hands forward; four edges are **conditional**, declared per dispatch:
 
-| agent `role` | guards against | model guidance |
-|---|---|---|
-| `explorer` | monoculture — generation under **one tensioned angle** each | lighter — sweeps are mechanical |
-| `skeptic` | folklore / vacuity — attacks **one named gate** each | heavier — adversarial work is hard |
-| `writer` | "great research, no record" — the synthesizer, **conventionally a single writer (the §6 skeleton's `n: 1`)** | heavier for heavy synthesis |
-| `auditor` | "passed because nothing was checked" — meta-evaluates, **placed by its incoming edge, downstream of the reviewers**, owns the verdict matrix | mid — checking, not generating |
+| edge | type | when | effect |
+|---|---|---|---|
+| explorers, reviewers | `robot_talks` | the group must confront *each other*, not just report in parallel | intra-group discussion — owned by `robot-talks` |
+| synthesizer ⇄ reviewers | `zig-zag` | the synthesis must survive attack before it is written | synthesizer drafts → reviewers attack → synthesizer revises, up to the loop cap |
+| synthesizer → explorers | `feedback` | the synthesizer finds material missing | re-opens the explorers for more; never declared by default |
+| auditor → writer | `revision` | always — **default one** | auditor returns `findings.md` to the writer for rework; may request more than one |
 
-A group's function is read off its agents' roles, its workflow position off its `connections`.
+`robot_talks`, `zig-zag`, and the synthesizer→explorers `feedback` edge are optional. The
+auditor→writer revision is structural: plan for one revision, allow more.
 
-The model column is **guidance, not law**: `model` is chosen per agent by task difficulty
-(constitution §5) and the human validates it at the confirm gate.
+## Roles
 
-There is no `evaluator` role — criteria-scoring is a `skeptic` with a stated gate.
+Each role guards one failure mode and occupies one pipeline stage; no agent does two jobs.
+
+| `role` | stage | does | guards against | receives |
+|---|---|---|---|---|
+| `explorer` | 1 (n 2–4) | generates under **one tensioned angle** | monoculture | its angle prompt |
+| `synthesizer` | 2 (n 1) | reconciles explorer returns into a candidate picture; exchanges with reviewers; may pull more from explorers | "many returns, no coherent claim" | the collected explorer returns |
+| `skeptic` | 3 (reviewers) | attacks **one named gate** | folklore / vacuity | one gate + the synthesized picture |
+| `writer` | 4 (n 1) | persists **`findings.md` only** | "great research, no record" | the writing skill `domainspec-findings-writing` (→ `findings.md`) |
+| `auditor` | 5 (n 1) | evaluates **`findings.md` only**; approves or sends back for revision | "passed because nothing was checked" | `findings.md` + the dispatch `goal` |
+
+`research.md` is **not** a writer task. It is the verbatim transcript of the **explorer**
+returns, appended **mechanically by the strategist** (the parent that owns the dispatch)
+per `domainspec-research-writing` — the same hand that appends the ledger rows. The writer
+authors only the synthesis (`findings.md`). See **Outputs**.
+
+`model` is guidance, not law — chosen per agent by task difficulty, validated by the human
+at the confirm gate (the field is owned by `register-dispatch`). There is no `evaluator`
+role: criteria-scoring is a `skeptic` with a stated gate.
+
+The auditor is the dedicated `final_approver`: a single `auditor` agent, no other work,
+never in a working group, falling back to `parent` if its group never runs (the universal
+final-approver invariant — authority: `domainspec-subagents-strategy`).
 
 ## Skeptic gates
 
-One gate per skeptic, never two:
+A skeptic attacks exactly one gate:
 
-- **precedent** (ownership attribution — formerly `precedent-kill`) — is this already owned?
-  Find the owner, not just "something similar". **Finding an owner is NOT a kill** — owned math
-  kills a novelty *claim*, never a *use*. A found owner *labels* the candidate: `build-from-owned`
-  (owner exists but the repo does not yet deploy it — green light to build, cite honestly) or
-  `already-deployed`; an empty search certifies `precedent-clean` → `novel-attempt`. This gate
-  never emits a terminal KILL.
+- **precedent** — is this already owned? Find the actual owner. A found owner is a *positive*
+  result, not a kill: it labels the candidate `build-from-owned` (owner exists, repo does
+  not yet deploy it — cite and build) or `already-deployed`; an empty search certifies
+  `precedent-clean` → `novel-attempt`. **Precedent never emits a KILL.**
 - **non-vacuity** — build the smallest concrete witness by hand, or force a closed negative.
+  No witness → KILL.
 - **definitional-soundness** — does it collapse to something already named, re-skinned?
+  Tautological → KILL.
 
-A skeptic group is tensioned by construction when its gates differ; explorers need
-explicit axis spread (below). The terminal KILLs come only from `non-vacuity` (no-witness) and
-`definitional-soundness` (tautological) — never from `precedent`.
+Terminal KILLs come only from **non-vacuity** and **definitional-soundness**. A reviewer
+group is tensioned by construction when its gates differ.
 
-## Canonical shape on the v0.6.0 chassis
+## Tension design
 
-```
-explorers (a group of `explorer`s, n 2–4, pairwise tensioned)
-   │ sequential
-synthesizer (1 `writer`) ◀──zig-zag──▶ reviewers (`skeptic`s;
-   ▲                          │         robot_talks when the question
-   └┄┄┄┄ feedback (conditional) ┄┘       needs confrontation, not collection)
-```
+Every n ≥ 2 group must be pairwise tensioned. Classify each angle on the four axes:
 
-The feedback back-edge is instantiated only when there is a reviewer/auditor group AND
-material may be missing (Principle 6) — never by default. The older research pattern "writer drafts
-candidates before skeptics attack them" **is** this synthesizer-midfield: same flow,
-chassis names. The `auditor` sits in an optional group (its single agent's role is
-`auditor`) placed by its incoming edge, downstream of the reviewers — which also makes it
-the natural **dedicated `final_approver`** (Principle 12:
-sole member, no other work, never in a working group).
+- **methodology** — empirical / formal / adversarial / historical / computational
+- **source-corpus** — the body of evidence read
+- **attack-vector** — the skeptic gate
+- **temporal-prior** — modern-only / historical-lineage / mixed
 
-**Early stop:** a confirmed kill — no candidate survives its collapse-test (no-witness or
-tautological) — ends the dispatch early: bank the typed negative, then CLOSE `exit_reason:
-resolved` (a confirmed-kill early-stop is a successful close, not an error). **Being OWNED is
-NOT a confirmed kill and does not early-stop** — a found owner relabels the candidate
-`build-from-owned` and the dispatch continues to the witness/soundness gates; the lone exception
-is owned **and already deployed** in the repo, recorded as `already-deployed` provenance (still
-not a negative).
-Approval follows P12, it does not mint new semantics: if the dispatch declared a dedicated
-approver group (its single agent's role is `auditor`) and the early stop skips that group,
-approval falls back to `parent` (P12's group-never-runs fallback); if `final_approver` is `parent`, `parent`
-accepts directly. Either way the dispatch closes `resolved` once the negative is accepted.
+Design so that, for every explorer pair, "a_i runs [X], a_j runs [Y] on the [axis] axis; a
+bias in a_i would be exposed by a_j" holds, with ≥ 2 distinct axes across the group. The
+PASS/REJECT enforcement over these axes runs before the human confirm and is owned by
+`check-tension` — design the angles to pass it; do not restate its tests here.
 
 ## How to run
 
-Spawn each group's agents with the Agent tool — ALL agents of a group in ONE message, so
-they run in parallel. Each agent's `initial_prompt` is its launch prompt. Groups are
-scheduled **by dependency** (constitution P4, amended 2026-06-12): a group is READY when
-every group with a `sequential`/`zig-zag` edge into it has produced what it must respond
-to (zig-zag counts only in its `from`→`to` direction — the `from` endpoint opens the
-exchange); launch all READY groups concurrently (independent chains run side by side);
-`feedback` edges never count as dependencies; a sheet with no connections declares its
-groups independent. Declared order is narration tiebreak only.
+Spawn all agents of a group in **one message** so they run in parallel. A group is READY
+when every group with a `sequential`/`zig-zag` edge into it has produced what it must
+respond to; `feedback` and `revision` edges never gate readiness. Launch all READY groups
+concurrently. If an agent errors, degrade to a partial group result and inform every
+downstream group and the auditor.
 
-## Tension design (Principle 5, research-specific)
+**Early stop.** If no candidate survives its collapse-test (every candidate killed by
+non-vacuity or definitional-soundness), the writer records the typed negative in
+`findings.md` and the auditor approves it: a confirmed-kill close is a *successful*
+`resolved`, not an error. Being OWNED is not a kill and does not early-stop.
 
-Classify every angle along the four axes — **methodology** (empirical / formal /
-adversarial / historical / computational), **source-corpus**, **attack-vector** (the
-skeptic gate), **temporal-prior** (modern-only / historical-lineage / mixed).
+## Outputs
 
-Rules from `vault/discovery/anti-bias-vector-composition/validator-check.md` — codified
-since 2026-06-12 as the binding four-test PASS/REJECT decision rule in constitution
-Principle 5 (axis vocabulary / clone / spread / evidence; the axis vocabulary is closed
-to the four axes above or a declared composite):
+Both files land in `working_folder` (a repo-relative docs path, never under `vault/`; the
+field is owned by `register-dispatch`):
 
-- **Reject before proposing:** all angles in a group share the same core noun phrase; all
-  explorers share one methodology or one source corpus; all skeptics share one gate →
-  fix the sheet before it reaches the human gate.
-- **Green-light:** for every explorer pair you can write the sentence "a_i runs [X], a_j
-  runs [Y] on the [axis] axis; a bias in a_i would be exposed by a_j" — and at least two
-  distinct axes appear across the group.
+- **`research.md`** — verbatim **explorer** returns, appended by the **strategist** per
+  `domainspec-research-writing` (one `## Agent N` section per explorer, no editing). It is
+  not authored by the writer; synthesizer and reviewer output is not transcribed into it.
+  Omitted when there are no explorers (n = 1).
+- **`findings.md`** — cited synthesis, written by the **writer** per
+  `domainspec-findings-writing`: every load-bearing claim cites the explorer return it
+  rests on. Always produced. For n = 1, `findings.md` is the only output.
 
-## Outputs (Principle 9 applied)
+`findings.md` carries the **verdict matrix** — one row per candidate. The `owner` column is
+always filled (a citation, or `precedent-clean`); being owned never puts KILL in `verdict`:
 
-- **n ≥ 2:** `<working_folder>/research.md` (collected returns, verbatim) +
-  `<working_folder>/findings.md` (cited synthesis — every load-bearing claim cites the
-  collected return it rests on; the `final_approver` checks this).
-- **n = 1:** `<working_folder>/findings.md` only.
-- `working_folder`: a docs path (§5 `working_folder`).
-- The constitutional requirement is the FILES, not who writes them — the strategist may
-  write `findings.md` itself or delegate (no mandatory writer-agent machinery).
+| candidate | owner (precedent) | witnessed? (non-vacuity) | sound? (definitional) | verdict |
+|---|---|---|---|---|
 
-**Findings shape** — per candidate, a row in the verdict matrix. **Ownership is a label, not a
-verdict**: the `owner` column is always filled (a citation, or `precedent-clean`) and being owned
-never puts KILL in the verdict column:
-
-| candidate | owner (precedent) | witnessed? (non-vacuity) | sound? (definitional) | verdict | use-mode |
-|---|---|---|---|---|---|
-
-- **GO** — witnessed and sound. `use-mode` says how: `build-from-owned` (owned but unused — name
-  the owner + the artifact/job it builds; cite honestly, never claim novel), `already-deployed`
-  (owned and already wired — provenance only), or `novel-attempt` (precedent-clean — name the
-  claim, its anchor, and the first obligation a follow-up faces). An owned-but-unused result is a
-  GO, not a negative.
-- **KILL** — **only** no-witness (non-vacuity) or tautological (definitional collapse); banked as
-  a **typed negative**: what it would have contributed + the exact fact that zeroed it. **Owned is
-  not a KILL.** A clean KILL is a successful run.
-
-Close with the one-line answer to the dispatch `goal`. Per §5, `resolved` = the
-`final_approver` accepted; for research, acceptance includes the P9 citation check.
-
-## Standing rules
-
-1. **Claim ≤ proof** (P10, universal — see the router): for research, demote, never inflate.
-2. **Keystone claims carry their collapse-test inline** — the one fact that would zero them, same line.
-3. **Precedent-first** — no "novel" verdict ships before a `precedent` skeptic ran. But a found
-   owner is **not** a kill: it attributes ownership and relabels the candidate `build-from-owned`
-   (cite, deploy, never claim novel). Owned demotes only the novelty claim; the construction
-   survives, and every artifact touching an owned result must carry its owner label.
-4. **Read-only by default** — research agents write only into `working_folder`, never the source tree.
+A **KILL** (only no-witness or tautological) is banked as a typed negative: what it would
+have contributed + the exact fact that zeroed it. The auditor accepts `findings.md` only
+when the verdict matrix and the citation discipline hold; acceptance closes the dispatch
+`resolved` with a one-line answer to the `goal`.
 
 ## Names
 
-Draw `agent_name` from `telemetry/agents/agent-pool.yaml` (ordered `role_fit`).
-Prefer the primary `role_fit` entry and a `field` fit to the corpus. Never reuse a name
-within one dispatch — the skeptic/auditor prohibition is the hard case of it. Never
-invent a name outside the pool.
+Draw each `agent_name` from the project's agent-name pool, matching primary role-fit and a
+field fit to the corpus. **Never reuse a name within one dispatch** — distinct skeptics, and
+a skeptic distinct from the auditor that judges its work, is the load-bearing case. Never
+invent a name outside the pool; where no pool exists, name freely under the same no-reuse
+rule.
 
-## Profiles
+## Closing and recording
 
-Repo-specific profiles may specialize this skill — the domainspec-lean-formalization
-`research` skill (`domainspec-lean-formalization/.claude/skills/research/SKILL.md`,
-sibling repo; unverifiable from this repo) is the math profile (old pre-v0.5.x schema,
-pending realignment), as is
-`vault/constitution/research-constitution.md` here (cite as pending realignment; do not
-import its R-numbered machinery).
+Report `exit_reason` and `agents_spawned`, then append the close row. The two-append
+discipline, the row schema, and the appender are owned by `register-dispatch`.

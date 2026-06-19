@@ -78,7 +78,7 @@ appender-enforced** since the 2026-06-12 in-place amendment (constitution §9).
 
 | Key | Required | Meaning / constraint |
 |-----|----------|----------------------|
-| `role` | ✅ | `explorer \| skeptic \| writer \| auditor`. |
+| `role` | ✅ | `explorer \| synthesizer \| skeptic \| writer \| auditor`. Pipeline order: explorers gather → **synthesizer** reconciles their returns into a candidate picture (n:1, exchanges with reviewers, may pull more from explorers) → skeptics/reviewers attack → **writer** persists `findings.md` via the `domainspec-findings-writing` skill (n:1) → auditor. `research.md` (the verbatim explorer transcript) is **not** a writer task — the strategist appends it via `domainspec-research-writing`. |
 | `model` | ✅ | Non-empty string — concrete model id, picked by difficulty. |
 | `token_budget` | ✅ | Positive integer — declared output-length target; **no unlimited default** (§5). |
 | `initial_prompt` | ✅ | Non-empty string — the full briefing the agent receives at launch. Newlines are fine: JSON.stringify escapes them into the single-line JSON column. |
@@ -155,8 +155,8 @@ Bash access to the file, even read-only commands.
     {
       "group_id": "synthesizer",
       "agents": [
-        {"agent_name": null, "role": "writer", "model": "claude-opus-4-8", "token_budget": 3000,
-         "initial_prompt": "Draft findings.md from the explorers' returns: every load-bearing claim cites the collected return it rests on. Budget ~3000 tokens."}
+        {"agent_name": null, "role": "synthesizer", "model": "claude-opus-4-8", "token_budget": 3000,
+         "initial_prompt": "Reconcile the explorers' returns into a candidate picture: every load-bearing claim cites the collected return it rests on. Budget ~3000 tokens."}
       ]
     }
   ],
@@ -196,7 +196,7 @@ instead of `dispatch_id`:
 {
   "close_of": "2026-06-12-residue-precedent-sweep",
   "exit_reason": "resolved",
-  "agents_spawned": {"total": 3, "tree": {"explorer": 2, "writer": 1, "helpers": 0}, "loops_used": 1},
+  "agents_spawned": {"total": 3, "tree": {"explorer": 2, "synthesizer": 1, "helpers": 0}, "loops_used": 1},
   "feedback_prompts": ["Explorers: the formal-methods return cites no post-2020 source — re-sweep 2020+ venues for the same pattern."],
   "invoked_by": "victorboscaro@gmail.com"
 }
@@ -206,7 +206,7 @@ instead of `dispatch_id`:
 |-------|----------|----------------------|
 | `close_of` | ✅ | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. Warns (but still appends) if no matching dispatch row exists — an orphan close row indicates a Principle-3 breach upstream (the dispatch row should have been written at dispatch). |
 | `exit_reason` | ✅ | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: §5. |
-| `agents_spawned` | ✅ | **JSON column** — object with numeric `total`, object `tree` (keyed by **agent** role — `explorer \| skeptic \| writer \| auditor` — plus a `helpers` bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
+| `agents_spawned` | ✅ | **JSON column** — object with numeric `total`, object `tree` (keyed by **agent** role — `explorer \| synthesizer \| skeptic \| writer \| auditor` — plus a `helpers` bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
 | `feedback_prompts` | – | **JSON column** — array of strings: each `feedback`-edge ask, recorded **verbatim** in the close row (Principle 3 / §5 `feedback` semantics). |
 | `invoked_by` | – | As on the dispatch row: record value, else `git config user.email`, else `null` with a warning. Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment. |
 | `project_dir` | – | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Accepted by the appender, never emitted to the ledger. |

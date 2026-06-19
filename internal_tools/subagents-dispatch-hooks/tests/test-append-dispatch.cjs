@@ -188,6 +188,13 @@ console.log('\n[4] bad enum values rejected');
   const a = validDispatch();
   a.groups[1].agents[0].role = 'reviewer';
   expectReject('4c agent role "reviewer"', root, a, /role must be one of explorer/);
+  // the rejection message must enumerate the full v0.6.0 role vocab, incl. synthesizer
+  expectReject('4c2 role error lists synthesizer in the enum', root, a, /explorer \| synthesizer \| skeptic \| writer \| auditor/);
+  // synthesizer is a LIVE role (model change: writer split into synthesizer+writer) — must be accepted
+  const syn = validDispatch({ dispatch_id: '2026-06-12-battery-synthesizer-role' });
+  syn.groups[1].agents[0].role = 'synthesizer';
+  const rSyn = run(root, syn);
+  check('4c3 agent role "synthesizer" accepted (exit 0)', rSyn.status === 0, rSyn.stderr || rSyn.stdout);
   expectReject('4d exit_reason "success"', root, validClose({ exit_reason: 'success' }), /exit_reason must be one of resolved/);
   expectReject('4e agents_spawned missing tree', root, validClose({ agents_spawned: { total: 3 } }), /agents_spawned\.tree/);
   expectReject('4f agents_spawned non-numeric total', root, validClose({ agents_spawned: { total: 'three', tree: {} } }), /agents_spawned\.total/);
