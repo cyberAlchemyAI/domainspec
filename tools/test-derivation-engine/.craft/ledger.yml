@@ -86,6 +86,13 @@ contexts:
       P5 remaining is environment/human-blocked: E3 mutation needs Stryker + backend vitest
       (not installed here), E2 needs ≥3 non-author testers. Engine + runnable emit are
       complete; commit gated.
+      UPDATE 2026-06-21: E3 RAN FULL (financial-settlement pilot) — Stryker 9.6.1 + vitest 4.1.1,
+      160 mutants, 0 errors. derived 38.75% / pipeline-reference 58.75% / combined 65%. Honest
+      finding: emitter WINS where it has a value-asserting oracle (deal 100% vs 40%) but is
+      capped by the thin bodied subset — the property-only treatment of applyMakeupPolicy is the
+      single biggest score sink. KEY NEXT LEVER (P4): give the engine a value-asserting makeup
+      oracle. Results: docs/research/results/E3-results.md; data: docs/research/data/E3-run-2026-06-21.jsonl.
+      E2 still human-blocked. Commit gated.
     owned_artifacts:
       - ART-TDE-PACKAGE
       - ART-TDE-SPEC

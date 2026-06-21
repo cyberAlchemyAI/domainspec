@@ -1,0 +1,42 @@
+{
+  "run_id": "2026-06-21-e3-mutation-plan",
+  "status": "pass",
+  "owner": "refine",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "count": 2,
+    "join_policy": "all-receipts-before-synthesis"
+  },
+  "artifacts": {
+    "seed": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "role": "Env Cartographer + Stryker spike",
+      "artifact": "stages/env-cartographer-stryker-spike.md",
+      "verdict": "pass"
+    },
+    {
+      "role": "E3 Protocol Designer",
+      "artifact": "stages/e3-protocol-designer.md",
+      "verdict": "pass"
+    }
+  ],
+  "headline_findings": [
+    "Stryker v9 vitest-runner supports vitest 4.x (B-003 resolved); spike ran 100% on deal.service.ts",
+    "true clean-room manual control infeasible; honest claim = deterministic-emitter vs pipeline-reference",
+    "pilot-first (financial-settlement) then calibrate corpus gates; drop brittle gates",
+    "engine_commit is the pre-registration/reproducibility key"
+  ],
+  "recommended_next_routes": [
+    "task-session: E3 pilot (financial-settlement, derived + pipeline-reference arms)"
+  ]
+}

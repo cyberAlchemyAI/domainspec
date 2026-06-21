@@ -8,18 +8,18 @@ Each experiment has its own file under [`experiments/`](experiments/) with the f
 
 ## Experiment Index
 
-| ID  | Experiment                            | Paper Claim                               | Priority | Effort | Status       | File                                                 |
-| --- | ------------------------------------- | ----------------------------------------- | -------- | ------ | ------------ | ---------------------------------------------------- |
-| E1  | Derivation Determinism                | C2 — same spec → same tests               | P0       | Low    | not started  | [E1](experiments/E1-derivation-determinism.md)       |
-| E2  | Derivation vs Manual Coverage         | C2 — derived tests ≥ manual tests         | P0       | Medium | not started  | [E2](experiments/E2-derivation-vs-manual.md)         |
-| E3  | Mutation Testing Effectiveness        | C2 — derived tests catch real faults      | P0       | Medium | not started  | [E3](experiments/E3-mutation-testing.md)             |
-| E4  | Governance Attenuation Curve          | C3 — fidelity decreases with layer count  | P0       | High   | not started  | [E4](experiments/E4-governance-attenuation-curve.md) |
-| E5  | Observer-Executor Separation Impact   | C3 — intervention restores fidelity       | P1       | Medium | not started  | [E5](experiments/E5-observer-executor-separation.md) |
-| E6  | Vocabulary Sufficiency Across Domains | C2 — 24 types cover business domains      | P1       | High   | ✅ completed + analyzed | [E6](experiments/E6-vocabulary-sufficiency.md)       |
-| E7  | Signal Emission Rate Tracking         | C3/C4 — empirical attenuation measurement | P0       | Low    | not started  | [E7](experiments/E7-signal-emission-rate.md)         |
-| E8  | Meta-Health Convergence               | C4 — M-001 orphan rate trends toward 0    | P1       | Low    | not started  | [E8](experiments/E8-meta-health-convergence.md)      |
-| E9  | Cross-Feature Composition Stress      | §9.2 — composition gaps                   | P2       | High   | ✅ completed + analyzed (run-1 + run-2 + rerun) | [E9](experiments/E9-cross-feature-composition.md)    |
-| E10 | Developer Productivity Comparison     | §9.4(d) — DomainSpec vs freeform          | P2       | High   | not started  | [E10](experiments/E10-developer-productivity.md)     |
+| ID  | Experiment                            | Paper Claim                               | Priority | Effort | Status                                          | File                                                                        |
+| --- | ------------------------------------- | ----------------------------------------- | -------- | ------ | ----------------------------------------------- | --------------------------------------------------------------------------- |
+| E1  | Derivation Determinism                | C2 — same spec → same tests               | P0       | Low    | not started                                     | [E1](experiments/E1-derivation-determinism.md)                              |
+| E2  | Derivation vs Manual Coverage         | C2 — derived tests ≥ manual tests         | P0       | Medium | not started                                     | [E2](experiments/E2-derivation-vs-manual.md)                                |
+| E3  | Mutation Testing Effectiveness        | C2 — derived tests catch real faults      | P0       | Medium | ✅ pilot done (financial-settlement)            | [E3](experiments/E3-mutation-testing.md) · [results](results/E3-results.md) |
+| E4  | Governance Attenuation Curve          | C3 — fidelity decreases with layer count  | P0       | High   | not started                                     | [E4](experiments/E4-governance-attenuation-curve.md)                        |
+| E5  | Observer-Executor Separation Impact   | C3 — intervention restores fidelity       | P1       | Medium | not started                                     | [E5](experiments/E5-observer-executor-separation.md)                        |
+| E6  | Vocabulary Sufficiency Across Domains | C2 — 24 types cover business domains      | P1       | High   | ✅ completed + analyzed                         | [E6](experiments/E6-vocabulary-sufficiency.md)                              |
+| E7  | Signal Emission Rate Tracking         | C3/C4 — empirical attenuation measurement | P0       | Low    | not started                                     | [E7](experiments/E7-signal-emission-rate.md)                                |
+| E8  | Meta-Health Convergence               | C4 — M-001 orphan rate trends toward 0    | P1       | Low    | not started                                     | [E8](experiments/E8-meta-health-convergence.md)                             |
+| E9  | Cross-Feature Composition Stress      | §9.2 — composition gaps                   | P2       | High   | ✅ completed + analyzed (run-1 + run-2 + rerun) | [E9](experiments/E9-cross-feature-composition.md)                           |
+| E10 | Developer Productivity Comparison     | §9.4(d) — DomainSpec vs freeform          | P2       | High   | not started                                     | [E10](experiments/E10-developer-productivity.md)                            |
 
 ### Results & Data
 

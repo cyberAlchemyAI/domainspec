@@ -1,0 +1,179 @@
+{
+  "dispatch_id": "2026-06-21-e3-mutation-plan",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Refine a plan for doing E3 (mutation testing); allowed to install Stryker + vitest.",
+  "refinement_objective": "Produce a runnable non-executed E3 plan: install/wire Stryker on the pure src/domain slice, engine-derived __derived__ vs clean-room manual control, mutant rubric + metrics + pre-registration, cross-submodule discipline.",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "selected_overlays": [
+    {
+      "id": "toy_game_for_low_cost_falsification",
+      "why": "Spike Stryker + vitest-runner version compatibility (B-003) on one src/domain file before planning the full run.",
+      "artifact": "stages/env-cartographer-stryker-spike.md"
+    },
+    {
+      "id": "dialectic_for_tension",
+      "why": "Contamination: repo *.test.ts are pipeline-authored; what is a legitimate clean-room manual control vs the engine-derived arm?",
+      "roles": ["E3 Protocol Designer (control)", "skeptic lens within"],
+      "convergence": "an honest multi-arm comparison both sides accept"
+    },
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "Map the real poker-team backend test/build surface (vitest version/config, src/domain purity, existing tests).",
+      "artifact": "stages/env-cartographer-stryker-spike.md"
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "C2 RESULT §6/§7 + emit-tests/E3 architect receipt are load-bearing."
+    }
+  ],
+  "rejected_overlays": [
+    {
+      "id": "tournament_for_alternatives",
+      "why_not": "Not comparing N designs; one E3 protocol to harden."
+    },
+    {
+      "id": "protected_context_for_external_or_sensitive_evidence",
+      "why_not": "All local; the spike is a local install."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger",
+    "data_quality_completeness"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Env Cartographer + Stryker spike",
+        "owns": "xray poker-team backend (vitest version/config, package.json, src/domain purity/DB-freedom, existing test inventory); spike @stryker-mutator/core + vitest-runner compatibility on ONE domain file (toy_game, local install ok, not committed); report install plan + the pure mutable file set + spike verdict.",
+        "receipt": "stages/env-cartographer-stryker-spike.md"
+      },
+      {
+        "role": "E3 Protocol Designer",
+        "owns": "the contamination dialectic (engine-derived __derived__ vs clean-room manual vs pipeline-authored reference, labelled not conflated); mutant classification rubric + equivalent-mutant handling; metrics (mutation_score_derived/manual/combined) + JSONL schema (reuse E6/E9) + pre-registration against engine_commit; cross-submodule discipline.",
+        "receipt": "stages/e3-protocol-designer.md"
+      }
+    ],
+    "context": "Each reads: C2 RESULT §6/§7, emit-tests/E3 architect receipt, the engine package, poker-team backend src/domain + existing tests. Read-only except the spike's local (uncommitted) install.",
+    "authorization_note": "Operator confirmed; Stryker install permitted (local/uncommitted spike)."
+  },
+  "stages": [
+    {
+      "step": 1,
+      "stage": "Context Builder baseline",
+      "owner": "refine",
+      "mode": "standard",
+      "output": "REFINE-SEED-PROPOSAL.md",
+      "receipt_kind": "context-pack",
+      "status": "pass"
+    },
+    {
+      "step": 2,
+      "stage": "Invoke Define",
+      "owner": "refine",
+      "mode": "define",
+      "output": "REFINE-SEED-PROPOSAL.md",
+      "receipt_kind": "invoke-artifact",
+      "status": "pass"
+    },
+    {
+      "step": 3,
+      "stage": "Interrogation refine-review",
+      "owner": "2 subagents",
+      "mode": "refine-review",
+      "output": "stages/*.md",
+      "receipt_kind": "interrogation-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "stage": "Research decision",
+      "owner": "refine",
+      "mode": "research-if-gap-appears",
+      "output": "recorded in RESULT.md",
+      "receipt_kind": "decision",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "stage": "Distill",
+      "owner": "refine",
+      "mode": "standard",
+      "output": "RESULT.md",
+      "receipt_kind": "distill-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "stage": "Invoke Redefine/Design",
+      "owner": "subagents",
+      "mode": "design",
+      "output": "stages/*.md",
+      "receipt_kind": "invoke-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "stage": "Interrogation refine-design-review",
+      "owner": "refine",
+      "mode": "refine-design-review",
+      "output": "RESULT.md",
+      "receipt_kind": "interrogation-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "stage": "Distill Repair",
+      "owner": "refine",
+      "mode": "validate",
+      "output": "RESULT.md residue",
+      "receipt_kind": "distill-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "stage": "Invoke Plan",
+      "owner": "refine",
+      "mode": "plan",
+      "output": "RESULT.md non-executed E3 plan",
+      "receipt_kind": "invoke-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "stage": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "mode": "refine-final",
+      "output": "RESULT.md",
+      "receipt_kind": "synthesis",
+      "status": "pending"
+    }
+  ],
+  "gates": [
+    { "gate": "native_capability_handles", "status": "ok" },
+    { "gate": "stage_receipts", "status": "pending" },
+    { "gate": "research_confirmation", "status": "deferred" },
+    { "gate": "required_artifacts_exist", "status": "pending" },
+    { "gate": "owner_boundary_preserved", "status": "ok" },
+    { "gate": "final_synthesis_readiness", "status": "pending" }
+  ],
+  "observability": {
+    "group_by": "dispatch_id",
+    "events": [
+      "seed_written",
+      "dispatch_validated",
+      "strategy_approved",
+      "subagents_pending"
+    ]
+  },
+  "validation_status": "approved-executing"
+}
