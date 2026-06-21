@@ -1,0 +1,424 @@
+{
+  "feature": "financial-settlement",
+  "prefix": "FS",
+  "format_version": 1,
+  "entries": [
+    {
+      "key": "05503a8a94aad6abb2a631e3b10d4e943ca57df0",
+      "id": "FS-CALC-001",
+      "rule_type": "calculation",
+      "anchor": "operations.md#GenerateSettlement:calculation:2"
+    },
+    {
+      "key": "35eb18914fd1ca34eff21bfb6a5bf219a5e5fd43",
+      "id": "FS-CALC-002",
+      "rule_type": "calculation",
+      "anchor": "operations.md#GenerateSettlement:calculation:2"
+    },
+    {
+      "key": "6eb2cdb8b63e9a183631c386a2fd5f737ce205fd",
+      "id": "FS-CALC-003",
+      "rule_type": "calculation",
+      "anchor": "operations.md#GenerateSettlement:calculation:0"
+    },
+    {
+      "key": "8cb87e0bb85110970143ca4518690418deb99580",
+      "id": "FS-CALC-004",
+      "rule_type": "calculation",
+      "anchor": "operations.md#GenerateSettlement:calculation:1"
+    },
+    {
+      "key": "eb6f8f4dd46beef525a8ec652c0eeb7a065992c9",
+      "id": "FS-CALC-005",
+      "rule_type": "calculation",
+      "anchor": "operations.md#GenerateSettlement:calculation:3"
+    },
+    {
+      "key": "596d6f2a21b45e165dc1b56eaadf132a9ace823f",
+      "id": "FS-ERR-001",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#GenerateSettlement:errorstate:2"
+    },
+    {
+      "key": "6c58601337f351802726cad8e8816ecbc773c660",
+      "id": "FS-ERR-002",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#GenerateSettlement:errorstate:1"
+    },
+    {
+      "key": "825f3028a0f73ec773e9bf98f01363de629d85d5",
+      "id": "FS-ERR-003",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#GenerateSettlement:errorstate:0"
+    },
+    {
+      "key": "4e5bce9b97ac3b3a23d2dc7693d2315e5bfbc53b",
+      "id": "FS-EVT-001",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#PayoutCreated"
+    },
+    {
+      "key": "8d97a0037c38588bd9dc7256159cbc96a02d9e3f",
+      "id": "FS-EVT-002",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#SettlementGenerated"
+    },
+    {
+      "key": "a220651842238e61e1a91bb5250eccf4096a78d0",
+      "id": "FS-EVT-003",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#SettlementGenerated:consumer:0"
+    },
+    {
+      "key": "e43d04343f282c25ef68430214f9586131238e9b",
+      "id": "FS-EVT-004",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#PayoutCreated:consumer:0"
+    },
+    {
+      "key": "30a3257c8f1f169a269fd2091fa67e720442117b",
+      "id": "FS-IF-001",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#POST /settlements:response:0"
+    },
+    {
+      "key": "57999404b137eceba67cc07f4e4b25f4f74c1c65",
+      "id": "FS-IF-002",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#POST /settlements:response:3"
+    },
+    {
+      "key": "72fca8a9b38190cf921b256e35c871c95200a912",
+      "id": "FS-IF-003",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#POST /settlements:response:2"
+    },
+    {
+      "key": "879db1fd107ba811422485ed57ec51b8c374fdc6",
+      "id": "FS-IF-004",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#GET /settlements/preview:response:4"
+    },
+    {
+      "key": "919def7a60d9c94074dff50e4eaba448348deb74",
+      "id": "FS-IF-005",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#GET /settlements/preview:response:3"
+    },
+    {
+      "key": "a79e77a0fc23f53f387121a437bd9a7b3477baef",
+      "id": "FS-IF-006",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#GET /settlements/preview:response:2"
+    },
+    {
+      "key": "d00a1434abd93ff3b7026101ff00365f7a8f577b",
+      "id": "FS-IF-007",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#GET /settlements/preview:response:5"
+    },
+    {
+      "key": "d4a3c1f0216abb3aa213a2a25c50796acd913d06",
+      "id": "FS-IF-008",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#POST /settlements:response:1"
+    },
+    {
+      "key": "e83e019356c11772e5f82bb44b7bb0180eb93ee5",
+      "id": "FS-IF-009",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#GET /settlements/preview:response:0"
+    },
+    {
+      "key": "e8b173ec07a7e5379609258443b1d79c4054676a",
+      "id": "FS-IF-010",
+      "rule_type": "contract",
+      "anchor": "interfaces.md#GET /settlements/preview:response:1"
+    },
+    {
+      "key": "b8be943633f3c7e74160094dbcf11bd261c2ed6e",
+      "id": "FS-INV-001",
+      "rule_type": "invariant",
+      "anchor": "states.md#SettlementExecutionState:invariant:1"
+    },
+    {
+      "key": "d564ed0a777a80252517a340708e0694f74d030c",
+      "id": "FS-INV-002",
+      "rule_type": "invariant",
+      "anchor": "states.md#SettlementExecutionState:invariant:1"
+    },
+    {
+      "key": "894ad530108e862f451cce569594d160f177612b",
+      "id": "FS-MAP-001",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#SettlementResultToResponse"
+    },
+    {
+      "key": "e747ab61fd982dbf2cf2a8ab668add2e65301f62",
+      "id": "FS-MAP-002",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#SettlementRequestToInput"
+    },
+    {
+      "key": "94c269afe18b988494ce2d339a15f27a4ee4faff",
+      "id": "FS-NF-001",
+      "rule_type": "needs-formal",
+      "anchor": "states.md#SettlementExecutionState:invariant:0"
+    },
+    {
+      "key": "5684ed00e38f2431fc352a1da91c7ba21c52708b",
+      "id": "FS-POST-001",
+      "rule_type": "postcondition",
+      "anchor": "operations.md#GenerateSettlement:postcondition:3"
+    },
+    {
+      "key": "5a31788cd850a7518d3fb7348cfe5110e9d73912",
+      "id": "FS-POST-002",
+      "rule_type": "postcondition",
+      "anchor": "operations.md#GenerateSettlement:postcondition:2"
+    },
+    {
+      "key": "9ac781e36041bdbb4496d3f4a216f50f95c3bc7e",
+      "id": "FS-POST-003",
+      "rule_type": "postcondition",
+      "anchor": "operations.md#GenerateSettlement:postcondition:1"
+    },
+    {
+      "key": "ec5e92536d7405c804100bf18f011c487545083c",
+      "id": "FS-POST-004",
+      "rule_type": "postcondition",
+      "anchor": "operations.md#GenerateSettlement:postcondition:0"
+    },
+    {
+      "key": "0411cf5aaa1428d57d07e93344d4251755d5b56b",
+      "id": "FS-QRY-001",
+      "rule_type": "query-behavior",
+      "anchor": "queries.md#GetSettlementPreview"
+    },
+    {
+      "key": "39148629f60319db246f200bb592f3e4c30f4c00",
+      "id": "FS-RULE-001",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:0"
+    },
+    {
+      "key": "5253b0f38b8b03460dc9fa6aa1c5b045c42db2fd",
+      "id": "FS-RULE-002",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:2"
+    },
+    {
+      "key": "53acb8c5afb1c425add77212bbaecdd12eeb2118",
+      "id": "FS-RULE-003",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:3"
+    },
+    {
+      "key": "6f952f4d10286a96969d2afcd3a10ae1ca9a4cc2",
+      "id": "FS-RULE-004",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:2"
+    },
+    {
+      "key": "8709b66510525b4a620e7717e697c54401752ee6",
+      "id": "FS-RULE-005",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:1"
+    },
+    {
+      "key": "8d751f3f98b28b43ccd201d708ab09a262e6e0b6",
+      "id": "FS-RULE-006",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:2"
+    },
+    {
+      "key": "8f5bc6fed97753e53bf3e233963e51bd508eeac5",
+      "id": "FS-RULE-007",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:0"
+    },
+    {
+      "key": "96c5873385eb2718ac74f8b95c5d6f5c3a5f80bf",
+      "id": "FS-RULE-008",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:1"
+    },
+    {
+      "key": "9c8b1f9f0f827a42dc07b7a6efc917e7d4218e10",
+      "id": "FS-RULE-009",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:4"
+    },
+    {
+      "key": "a323ca00ce2ed351c92c39c8cd94dfd127394fc3",
+      "id": "FS-RULE-010",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:3"
+    },
+    {
+      "key": "e137e69121e5b5adac10b8f407e07c2489dd7eda",
+      "id": "FS-RULE-011",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:4"
+    },
+    {
+      "key": "f36feba9a2577bbc6cde75d7e5c49f86f154f217",
+      "id": "FS-RULE-012",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:1"
+    },
+    {
+      "key": "fbc9d87561944039a46128807331d43174167dcf",
+      "id": "FS-RULE-013",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#GenerateSettlement:rule:2"
+    },
+    {
+      "key": "0ee36a27f9d300b843ed4d3fb586d3ddca58b4fd",
+      "id": "FS-TR-001",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:SIDE_EFFECTS_PERSISTED:GenerateSettlement"
+    },
+    {
+      "key": "416e9559748b48c22ea8a156d39843b21f0d9efb",
+      "id": "FS-TR-002",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:COMPLETED:GenerateSettlement"
+    },
+    {
+      "key": "564884a14e9edc70e25ad9d657fc379d25d255c7",
+      "id": "FS-TR-003",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:COMPUTED:PayoutCreated or no-payout"
+    },
+    {
+      "key": "5e464341ccbfd89ab8b2a5c3662c7c1b7f16728d",
+      "id": "FS-TR-004",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:VALIDATED:PayoutCreated or no-payout"
+    },
+    {
+      "key": "63739b2fc7b1e9fd1d305479f9f55f6db676d223",
+      "id": "FS-TR-005",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:COMPUTED:GenerateSettlement"
+    },
+    {
+      "key": "7facbe81bea60bd2e4769152313bcb6462736987",
+      "id": "FS-TR-006",
+      "rule_type": "valid-transition",
+      "anchor": "states.md#SettlementExecutionState:transition:0"
+    },
+    {
+      "key": "a4946c90579eae1937e3a0404e8b59ebfabc4c25",
+      "id": "FS-TR-007",
+      "rule_type": "valid-transition",
+      "anchor": "states.md#SettlementExecutionState:transition:1"
+    },
+    {
+      "key": "b1d7d600034dd1e4f1292beecfa7188f20159131",
+      "id": "FS-TR-008",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:COMPLETED:SettlementGenerated"
+    },
+    {
+      "key": "b58f256653fe71f8dbb20127bdec7677d42e40c1",
+      "id": "FS-TR-009",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:SIDE_EFFECTS_PERSISTED:SettlementGenerated"
+    },
+    {
+      "key": "cc14d5df810a2da133ce93cc52f1dc5d03032210",
+      "id": "FS-TR-010",
+      "rule_type": "valid-transition",
+      "anchor": "states.md#SettlementExecutionState:transition:2"
+    },
+    {
+      "key": "d52c16530c6e9cb7f9b342c6cce09183f91c19e1",
+      "id": "FS-TR-011",
+      "rule_type": "valid-transition",
+      "anchor": "states.md#SettlementExecutionState:transition:3"
+    },
+    {
+      "key": "de239b75db1416f711eb604cc19eb9537a76816c",
+      "id": "FS-TR-012",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:COMPLETED:PayoutCreated or no-payout"
+    },
+    {
+      "key": "e42d39f932358dd1720d5f9d7b5296bfc5664307",
+      "id": "FS-TR-013",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#SettlementExecutionState:invalid:VALIDATED:SettlementGenerated"
+    },
+    {
+      "key": "06cf24533b793098f98aaa73a28a7e40bc60a232",
+      "id": "FS-WF-001",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:4"
+    },
+    {
+      "key": "0d8d7eb40aa2b09bdd99ff2b35de1909ed227e54",
+      "id": "FS-WF-002",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:3"
+    },
+    {
+      "key": "2b076f266dcb4d8f12f6b4e67f06ba8a9bccd906",
+      "id": "FS-WF-003",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:0"
+    },
+    {
+      "key": "480a5040ec3a6b73cc66f3ca8b487b0ea37fc790",
+      "id": "FS-WF-004",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:2"
+    },
+    {
+      "key": "67121923851c375724b7a4dde42bc8c42b5593ed",
+      "id": "FS-WF-005",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:2"
+    },
+    {
+      "key": "853613b724e6cfa5bf23a0f8089343868df317c8",
+      "id": "FS-WF-006",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:3"
+    },
+    {
+      "key": "dc04e66be3af93c0c88e7f4b6d98435900550fec",
+      "id": "FS-WF-007",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:1"
+    },
+    {
+      "key": "eb6243ab64fbb24003090c324c1a4887f6bab3c3",
+      "id": "FS-WF-008",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:0"
+    },
+    {
+      "key": "ed9c15e5f2eb79dfb34a2901cdc8355cd873b3e7",
+      "id": "FS-WF-009",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#SettlementWorkflow:step:1"
+    }
+  ],
+  "next": {
+    "QRY": 2,
+    "CALC": 6,
+    "WF": 10,
+    "TR": 14,
+    "IF": 11,
+    "RULE": 14,
+    "EVT": 5,
+    "POST": 5,
+    "ERR": 4,
+    "MAP": 3,
+    "NF": 2,
+    "INV": 3
+  },
+  "tombstones": []
+}

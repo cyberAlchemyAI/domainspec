@@ -1,0 +1,129 @@
+{
+  "dispatch_id": "2026-06-21-llm-replacement-plan",
+  "schema_version": "0.6.0",
+  "operator_intent": "a plan so we can have a full replacement",
+  "refinement_objective": "Non-executed implementation plan to make the deterministic engine the backend-domain TEST-SPEC generator, replacing the LLM for that slice; UI/E2E + scaffolding stay with the LLM.",
+  "scope_decision": "full-backend-domain-test-spec (operator-confirmed 2026-06-21; literal full-LLM replacement rejected as theory-bounded infeasible)",
+  "preset": "standard",
+  "research_mode": "no-research",
+  "overlays": [
+    {
+      "id": "route_menu_for_ambiguity",
+      "why": "the 'full' scope was ambiguous and load-bearing; resolved by operator route choice before planning; a second route-menu remains inside the plan for the format-contract decision (byte-compatible vs engine-native)."
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "the prior architecture-review RESULT (C1-C4, G1-G4) and E3 numbers are the direct inputs; the plan must thread them, not re-derive them."
+    },
+    {
+      "id": "baseline_sequence",
+      "why": "ordinary canonical refinement spine: sequence, frame_handoff, validation_loop, owner_boundary_check, observability_grouping."
+    }
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "stage": "context-builder",
+      "owner": "refine",
+      "mode": "inline",
+      "status": "pass",
+      "note": "evidence baseline = engine src + LLM skill/agent + TEST-PIPELINE.md + prior RESULT, all read."
+    },
+    {
+      "n": 2,
+      "stage": "invoke-define",
+      "owner": "refine",
+      "mode": "define",
+      "output": "folded into seed",
+      "status": "pass"
+    },
+    {
+      "n": 3,
+      "stage": "interrogation-refine-review",
+      "owner": "interrogation",
+      "mode": "refine-review",
+      "status": "planned"
+    },
+    {
+      "n": 4,
+      "stage": "research-decision",
+      "owner": "refine",
+      "mode": "no-research",
+      "status": "pass"
+    },
+    {
+      "n": 5,
+      "stage": "distill",
+      "owner": "distill",
+      "mode": "standard",
+      "status": "planned"
+    },
+    {
+      "n": 6,
+      "stage": "invoke-design",
+      "owner": "refine",
+      "mode": "design",
+      "output": "contract-diff + coexistence contract",
+      "status": "planned"
+    },
+    {
+      "n": 7,
+      "stage": "interrogation-refine-design-review",
+      "owner": "interrogation",
+      "mode": "refine-design-review",
+      "subagent": "design-lens",
+      "status": "planned"
+    },
+    {
+      "n": 8,
+      "stage": "distill-repair",
+      "owner": "distill",
+      "mode": "validate",
+      "status": "planned"
+    },
+    {
+      "n": 9,
+      "stage": "invoke-plan",
+      "owner": "refine",
+      "mode": "plan",
+      "output": "layered work-pack (non-executed)",
+      "status": "planned"
+    },
+    {
+      "n": 10,
+      "stage": "final-interrogation-synthesis",
+      "owner": "interrogation+refine",
+      "mode": "refine-final",
+      "subagent": "claim-skeptic",
+      "output": "RESULT.md",
+      "status": "planned"
+    }
+  ],
+  "subagent_strategy": {
+    "status": "recommended",
+    "roles": [
+      {
+        "role": "design-lens",
+        "owns": "stage 7 design critique — is the contract-diff + coexistence contract sound, is the format decision real",
+        "join": "return-findings"
+      },
+      {
+        "role": "claim-skeptic",
+        "owns": "stage 10 — claim<=proof on the plan; flag any step that re-promises full-LLM replacement or unproven capability",
+        "join": "return-findings"
+      }
+    ],
+    "tension_axis": "design-lens optimizes for a clean drop-in contract; claim-skeptic attacks scope creep and overpromise — predicted disagreement on how much the engine output must match the LLM TEST-SPEC.md format.",
+    "authorization": "pending-operator"
+  },
+  "gates": [
+    "scope confirmed before planning (done)",
+    "no engine/skill code mutated in this run",
+    "plan is non-executed and layered",
+    "every plan capability traces to a prior finding (C1-C4/G1-G4) or the confirmed scope",
+    "claim<=proof: no step re-promises UI/E2E or full-LLM replacement",
+    "final synthesis from stage artifacts, not the route proposal"
+  ],
+  "observability": { "group": "2026-06-21-llm-replacement-plan" },
+  "final_approver": "parent"
+}

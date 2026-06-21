@@ -3,12 +3,29 @@
 
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { parse } from "./grammar/index.js";
 import { derive } from "./rules/index.js";
-import { emitSpec } from "./emit/spec.js";
+import {
+  emitEngineRegionBody,
+  emitSpec,
+  emitTestSpecDocument,
+} from "./emit/spec.js";
 import { emitTests, emitHybridTests } from "./emit/tests.js";
 import { loadBindings } from "./bindings/index.js";
+import {
+  CANONICAL_DOCS,
+  computeProvenance,
+  extractEngineRegion,
+} from "./provenance/index.js";
+import {
+  allocateIds,
+  detectIdDrift,
+  loadIdMap,
+  writeIdMap,
+} from "./identity/human-id.js";
+import { containmentError } from "./paths/containment.js";
 import {
   deriveDescriptor,
   engineSemanticSet,
@@ -18,6 +35,35 @@ import {
 import { runNegativeControl } from "./roundtrip/negative-control.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/** Best-effort engine commit (provenance only; volatile, kept OUT of the drift region). */
+function engineCommit(): string {
+  try {
+    return execSync("git rev-parse --short HEAD", {
+      cwd: __dirname,
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+      .toString()
+      .trim();
+  } catch {
+    return "unknown";
+  }
+}
+
+/** Feature name from a resolved feature dir (its basename). */
+function featureNameOf(featureDir: string): string {
+  return featureDir.split("/").filter(Boolean).pop() ?? "feature";
+}
+
+/** Canonical docs actually present in a feature dir (for the completeness gate). */
+function presentDocsIn(featureDir: string): string[] {
+  return CANONICAL_DOCS.filter((d) => existsSync(join(featureDir, d)));
+}
+
+/** Committed id-map sidecar path (parallels bindings/). */
+function idMapPathFor(feature: string): string {
+  return join(pkgRoot(), "id-maps", `${feature}.idmap.json`);
+}
 
 /** Resolve a poker-team feature dir relative to this package. */
 function featureDirFor(feature: string): string {
@@ -130,16 +176,145 @@ function resolveTarget(arg: string): string {
   return featureDirFor(arg);
 }
 
-function runDerive(arg: string | undefined): number {
+function runDerive(
+  arg: string | undefined,
+  flags: ReadonlySet<string>,
+): number {
   if (!arg) {
     console.error("derive: requires a feature name or directory argument");
     return 1;
   }
-  const { graph, violations } = parse(resolveTarget(arg));
-  for (const v of violations) console.error(`violation: ${v}`);
+  const featureDir = resolveTarget(arg);
+  const feature = featureNameOf(featureDir);
+  const { graph, violations } = parse(featureDir);
+
+  // Fail-closed on the WRITE path (G4, SWU-3): never emit a spec from non-canonical
+  // input — only `lint`/`roundtrip` may report-and-continue.
+  if (violations.length > 0) {
+    console.error(
+      `derive: ${violations.length} parser violation(s) — refusing to emit (fail-closed):`,
+    );
+    for (const v of violations) console.error(`  - ${v}`);
+    return 4;
+  }
+
   const obligations = derive(graph);
-  console.log(emitSpec(obligations));
+
+  if (!flags.has("--out")) {
+    // Legacy stdout table (no file, no id allocation).
+    console.log(emitSpec(obligations));
+    return 0;
+  }
+
+  // --out: allocate stable human ids (Option C / D1) + write the full document
+  // side-by-side as TEST-SPEC.engine.md (never overwrites the LLM TEST-SPEC.md).
+  const outPath = join(featureDir, "TEST-SPEC.engine.md");
+  const contain = containmentError(outPath, featureDir);
+  if (contain) {
+    console.error(`derive: ${contain}`);
+    return 6;
+  }
+
+  const idMapPath = idMapPathFor(feature);
+  const prevMap = loadIdMap(idMapPath, feature);
+  const alloc = allocateIds(obligations, prevMap);
+
+  const provenance = computeProvenance(featureDir, engineCommit());
+  const presentDocs = presentDocsIn(featureDir);
+  const doc = emitTestSpecDocument({
+    feature,
+    obligations,
+    idByKey: alloc.idByKey,
+    provenance,
+    presentDocs,
+  });
+
+  mkdirSync(dirname(outPath), { recursive: true });
+  mkdirSync(dirname(idMapPath), { recursive: true });
+  writeIdMap(idMapPath, alloc.map);
+  writeFileSync(outPath, doc, "utf8");
+
+  console.error(`=== derive: ${feature} ===`);
+  console.error(`Wrote spec:  ${outPath}`);
+  console.error(`Wrote idmap: ${idMapPath}`);
+  console.error(
+    `Obligations: ${obligations.length}  (ids allocated: ${alloc.allocated.length}, tombstoned: ${alloc.tombstoned.length})`,
+  );
   return 0;
+}
+
+/**
+ * Drift `check` (G2 part 2 / D1). Read-only: re-derive and FAIL-CLOSED on
+ *   1. parser violations,
+ *   2. unmapped sha1 (new obligation; the committed id-map is stale),
+ *   3. dangling id (committed id whose key no longer derives),
+ *   4. stale committed TEST-SPEC (the engine region != freshly rendered).
+ * Distinct from `roundtrip` (which compares vs the human catalogue, not staleness).
+ */
+function runCheck(arg: string | undefined): number {
+  if (!arg) {
+    console.error("check: requires a feature name or directory argument");
+    return 1;
+  }
+  const featureDir = resolveTarget(arg);
+  const feature = featureNameOf(featureDir);
+  const { graph, violations } = parse(featureDir);
+
+  console.log(`=== Drift Check: ${feature} ===`);
+  let failed = false;
+
+  if (violations.length > 0) {
+    failed = true;
+    console.log(`Parser violations: ${violations.length}`);
+    for (const v of violations) console.log(`  - ${v}`);
+  }
+
+  const obligations = derive(graph);
+  const idMapPath = idMapPathFor(feature);
+  const committedMap = existsSync(idMapPath)
+    ? loadIdMap(idMapPath, feature)
+    : null;
+
+  if (!committedMap) {
+    failed = true;
+    console.log(`id-map: MISSING (${idMapPath}) — run \`derive --out\` first`);
+  } else {
+    const drift = detectIdDrift(obligations, committedMap);
+    console.log(
+      `id-map unmapped (new obligation, no id): ${drift.unmapped.length}`,
+    );
+    console.log(
+      `id-map dangling (id, key gone):          ${drift.dangling.length}`,
+    );
+    for (const d of drift.dangling) console.log(`  ~ ${d}`);
+    if (!drift.ok) failed = true;
+  }
+
+  // Stale committed TEST-SPEC: compare the fenced engine region only (provenance,
+  // with the volatile engine_commit, sits outside the region and is ignored).
+  const specPath = join(featureDir, "TEST-SPEC.engine.md");
+  if (!existsSync(specPath)) {
+    failed = true;
+    console.log("TEST-SPEC.engine.md: MISSING — run `derive --out` first");
+  } else if (committedMap) {
+    const alloc = allocateIds(obligations, committedMap);
+    const freshRegion = emitEngineRegionBody(
+      obligations,
+      alloc.idByKey,
+      presentDocsIn(featureDir),
+    );
+    const committedRegion = extractEngineRegion(readFileSync(specPath, "utf8"));
+    const stale =
+      committedRegion === null || committedRegion.trim() !== freshRegion.trim();
+    console.log(
+      `committed spec region: ${stale ? "STALE (docs changed since last derive)" : "fresh"}`,
+    );
+    if (stale) failed = true;
+  }
+
+  console.log("");
+  console.log(`VERDICT: ${failed ? "DRIFT (re-run derive --out)" : "FRESH"}`);
+  return failed ? 7 : 0;
 }
 
 /** Engine package root (…/tools/test-derivation-engine). */
@@ -177,6 +352,13 @@ function runEmitTests(arg: string | undefined): number {
   const bindings = loadBindings(bindingsPath);
   const { file, report } = emitHybridTests(obligations, bindings, graph);
   const outPath = join(repoRoot(), bindings.emit_dir, bindings.test_file);
+  // Containment guard (G3, SWU-4): emit-tests is the live write path — a crafted
+  // binding `emit_dir` must not escape the repo or write into public arcanum.
+  const contain = containmentError(outPath, repoRoot());
+  if (contain) {
+    console.error(`emit-tests: ${contain}`);
+    return 6;
+  }
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, file, "utf8");
 
@@ -229,7 +411,11 @@ function runLint(arg: string | undefined): number {
 }
 
 function main(): void {
-  const [, , command, arg] = process.argv;
+  const argv = process.argv.slice(2);
+  const command = argv[0];
+  const rest = argv.slice(1);
+  const arg = rest.find((a) => !a.startsWith("--"));
+  const flags = new Set(rest.filter((a) => a.startsWith("--")));
   switch (command) {
     case "roundtrip":
       process.exit(runRoundtrip(arg ?? "financial-settlement"));
@@ -238,7 +424,10 @@ function main(): void {
       process.exit(runSelfCheck(arg ?? "financial-settlement"));
       break;
     case "derive":
-      process.exit(runDerive(arg));
+      process.exit(runDerive(arg, flags));
+      break;
+    case "check":
+      process.exit(runCheck(arg));
       break;
     case "emit-tests":
       process.exit(runEmitTests(arg));
@@ -248,7 +437,7 @@ function main(): void {
       break;
     default:
       console.error(
-        `unknown command: ${command ?? "(none)"} — expected roundtrip | self-check | derive | emit-tests | lint`,
+        `unknown command: ${command ?? "(none)"} — expected roundtrip | self-check | derive [--out] | check | emit-tests | lint`,
       );
       process.exit(1);
   }

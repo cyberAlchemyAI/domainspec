@@ -1,0 +1,93 @@
+{
+  "run_id": "2026-06-21-llm-replacement-plan",
+  "sigil": "refine",
+  "status": "complete",
+  "verdict": "flag",
+  "target": "implementation/domainspec/development/deterministic-test-derivation-engine/ (LLM-replacement task)",
+  "scope": "backend-domain TEST-SPEC only (operator-confirmed; UI/E2E + scaffolding stay with LLM)",
+  "research_mode": "no-research",
+  "subagent_strategy": "recommended (executed)",
+  "artifacts": {
+    "seed": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stages": [
+    {
+      "stage": "design-contract-diff",
+      "verdict": "draft",
+      "artifact": "stages/stage-06-design-contract-diff.md"
+    },
+    {
+      "stage": "plan-workpack",
+      "verdict": "draft",
+      "artifact": "stages/stage-09-plan-workpack.md"
+    },
+    {
+      "stage": "interrogation-design-lens",
+      "verdict": "flag",
+      "artifact": "stages/stage-07-interrogation-design-lens.md"
+    },
+    {
+      "stage": "interrogation-claim-skeptic",
+      "verdict": "flag",
+      "artifact": "stages/stage-10-interrogation-claim-skeptic.md"
+    }
+  ],
+  "tension": {
+    "axis": "obligation identity / output format",
+    "design_lens": "Option A (byte-compatible, stable human IDs + allocation map)",
+    "claim_skeptic": "Option A revokes the no-persisted-state determinism invariant (real-blocker)",
+    "adjudication": "Option C (sha1 core source-of-truth + committed human-ID projection map, gated by the drift check)"
+  },
+  "required_deltas": [
+    {
+      "id": 1,
+      "delta": "add drift `check` SWU (G2 part 2)",
+      "severity": "blocker"
+    },
+    {
+      "id": 2,
+      "delta": "reframe format decision as determinism-property change + move pre-L0; present Option C",
+      "severity": "blocker"
+    },
+    {
+      "id": 3,
+      "delta": "coexistence merge as contract + fail-closed boundary check",
+      "severity": "major"
+    },
+    {
+      "id": 4,
+      "delta": "relabel SWU-13 migration 'proof' -> human-adjudicated diff",
+      "severity": "major"
+    },
+    {
+      "id": 5,
+      "delta": "fix contract-diff over-count: domain-model/traceability are L3-gated",
+      "severity": "major"
+    },
+    {
+      "id": 6,
+      "delta": "emit-tests containment non-optional + needs-harness tier is L2 + self-derive path-arg",
+      "severity": "minor"
+    }
+  ],
+  "held_up": [
+    "scope-qualified throughout (C1/C2 remediation holds)",
+    "SWU-14 closes C4",
+    "SWU-3/4 target G4/G3 correctly",
+    "L0-L4 ordering correct, L3 MVP-optional"
+  ],
+  "cross_checked_against": [
+    "tools/test-derivation-engine/src/cli.ts",
+    "tools/test-derivation-engine/src/grammar/index.ts",
+    "tools/test-derivation-engine/src/emit/spec.ts",
+    "tools/test-derivation-engine/src/keys/index.ts",
+    ".claude/skills/domainspec-generate-tests/SKILL.md",
+    "docs/features/agent-execution-orchestrator/TEST-SPEC.md"
+  ],
+  "committed": false,
+  "commit_gate": "operator-approval-pending"
+}
