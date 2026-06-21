@@ -20,7 +20,10 @@ export type NodeType =
   | "WorkflowStep"
   | "Query"
   | "Mapping"
-  | "ErrorState";
+  | "ErrorState"
+  | "DomainField" // L3: domain.md value-object / entity field
+  | "Enum" // L3: domain.md enum vocabulary
+  | "PolicyDecision"; // L3: rules.md decision-table row
 
 export type EdgeType =
   | "on" // Transition --on--> Event
@@ -73,6 +76,9 @@ export type RuleType =
   | "query-behavior"
   | "mapping-row"
   | "error-obligation"
+  | "domain-field" // L3: domain.md field schema/constraint
+  | "domain-enum" // L3: domain.md enum vocabulary
+  | "policy-decision" // L3: rules.md decision-table row
   | "needs-formal";
 
 export interface Obligation {

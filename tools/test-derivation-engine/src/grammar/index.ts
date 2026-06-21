@@ -718,6 +718,193 @@ function parseMappings(ctx: ParseContext, lines: string[]): void {
   flush();
 }
 
+/**
+ * domain.md -> DomainField nodes (value-object / entity fields) + Enum nodes.
+ * Sections: `## Value Objects` / `## Entities` / `## Aggregates` carry `### <Name>`
+ * with a `| Field | Type | Constraint |` table; `## Enums` carry `### <Name>` with a
+ * `| Value | ... |` table. Unrecognized tables are skipped (honest non-derivation,
+ * not a violation).
+ */
+function parseDomain(ctx: ParseContext, lines: string[]): void {
+  let section: "fields" | "enums" | null = null;
+  let current: string | null = null;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line === undefined) continue;
+    const h2 = line.match(/^##\s+(?!#)(.+)$/);
+    const h3 = line.match(/^###\s+(.+)$/);
+    if (h2) {
+      const title = cleanHeading(h2[1]).toLowerCase();
+      section = /enum/.test(title)
+        ? "enums"
+        : /value object|entit|aggregate|model/.test(title)
+          ? "fields"
+          : null;
+      current = null;
+      continue;
+    }
+    if (h3) {
+      current = cleanHeading(h3[1]);
+      continue;
+    }
+    if (!current || !section || !isTableLine(line)) continue;
+
+    const { table, next } = readTable(lines, i);
+    i = next - 1;
+
+    if (section === "fields" && headerHas(table.header, ["Field", "Type"])) {
+      const ci = {
+        field: colIndex(table.header, "Field"),
+        type: colIndex(table.header, "Type"),
+        constraint: colIndex(table.header, "Constraint"),
+      };
+      for (const row of table.rows) {
+        const field = unfence(row.cells[ci.field] ?? "");
+        if (field === "") continue;
+        const anchor = `${ctx.file}#${current}:field:${row.rowIndex}`;
+        ctx.nodes.push({
+          id: anchor,
+          type: "DomainField",
+          source_anchor: anchor,
+          fields: fieldsRecord({
+            entity: current,
+            field,
+            ftype: unfence(row.cells[ci.type] ?? ""),
+            constraint:
+              ci.constraint >= 0 ? unfence(row.cells[ci.constraint] ?? "") : "",
+          }),
+        });
+      }
+    } else if (
+      section === "enums" &&
+      (headerHas(table.header, ["Value"]) ||
+        (table.header[0]?.toLowerCase().trim() ?? "") === "value")
+    ) {
+      const vi = Math.max(colIndex(table.header, "Value"), 0);
+      const values = table.rows
+        .map((r) => unfence(r.cells[vi] ?? ""))
+        .filter((v) => v !== "");
+      if (values.length === 0) continue;
+      const anchor = `${ctx.file}#${current}:enum`;
+      ctx.nodes.push({
+        id: anchor,
+        type: "Enum",
+        source_anchor: anchor,
+        fields: fieldsRecord({ name: current, values: values.join(",") }),
+      });
+    }
+  }
+}
+
+/**
+ * rules.md -> reuses Transition + Invariant nodes (so the existing δ classifies them)
+ * and adds PolicyDecision nodes. Each `## <RuleName>` group may carry:
+ *   `### Transition Table`  -> Transition nodes (entity = rule name)
+ *   `### Invariants` / `### Constraints` -> Invariant nodes {id, formal}
+ *   `### Decision Table`     -> PolicyDecision nodes {group, condition, behavior}
+ */
+function parseRules(ctx: ParseContext, lines: string[]): void {
+  let group: string | null = null;
+  let sub: "transitions" | "invariants" | "decision" | null = null;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line === undefined) continue;
+    const h2 = line.match(/^##\s+(?!#)(.+)$/);
+    const h3 = line.match(/^###\s+(.+)$/);
+    if (h2) {
+      group = cleanHeading(h2[1]);
+      sub = null;
+      continue;
+    }
+    if (h3) {
+      const title = cleanHeading(h3[1]).toLowerCase();
+      sub = title.startsWith("transition")
+        ? "transitions"
+        : title.startsWith("invariant") || title.startsWith("constraint")
+          ? "invariants"
+          : title.startsWith("decision")
+            ? "decision"
+            : null;
+      continue;
+    }
+    if (!group || !sub || !isTableLine(line)) continue;
+
+    const { table, next } = readTable(lines, i);
+    i = next - 1;
+
+    if (
+      sub === "transitions" &&
+      headerHas(table.header, ["From", "Event", "To"])
+    ) {
+      const ci = {
+        from: colIndex(table.header, "From"),
+        event: colIndex(table.header, "Event"),
+        to: colIndex(table.header, "To"),
+      };
+      for (const row of table.rows) {
+        const anchor = `${ctx.file}#${group}:transition:${row.rowIndex}`;
+        ctx.nodes.push({
+          id: anchor,
+          type: "Transition",
+          source_anchor: anchor,
+          fields: fieldsRecord({
+            entity: group,
+            from: unfence(row.cells[ci.from] ?? ""),
+            event: unfence(row.cells[ci.event] ?? ""),
+            to: unfence(row.cells[ci.to] ?? ""),
+          }),
+        });
+      }
+    } else if (sub === "invariants" && headerHas(table.header, ["Formal"])) {
+      const ci = {
+        id: colIndex(table.header, "ID"),
+        formal: colIndex(table.header, "Formal"),
+      };
+      for (const row of table.rows) {
+        const id =
+          ci.id >= 0
+            ? unfence(row.cells[ci.id] ?? "")
+            : `${group}-${row.rowIndex}`;
+        const anchor = `${ctx.file}#${group}:invariant:${id}`;
+        ctx.nodes.push({
+          id: anchor,
+          type: "Invariant",
+          source_anchor: anchor,
+          fields: fieldsRecord({
+            id,
+            formal: unfence(row.cells[ci.formal] ?? ""),
+          }),
+        });
+      }
+    } else if (sub === "decision" && headerHas(table.header, ["Condition"])) {
+      const ci = {
+        condition: colIndex(table.header, "Condition"),
+        behavior: Math.max(
+          colIndex(table.header, "Selected Behavior"),
+          colIndex(table.header, "Behavior"),
+          colIndex(table.header, "Outcome"),
+        ),
+      };
+      for (const row of table.rows) {
+        const anchor = `${ctx.file}#${group}:decision:${row.rowIndex}`;
+        ctx.nodes.push({
+          id: anchor,
+          type: "PolicyDecision",
+          source_anchor: anchor,
+          fields: fieldsRecord({
+            group,
+            condition: unfence(row.cells[ci.condition] ?? ""),
+            behavior:
+              ci.behavior >= 0 ? unfence(row.cells[ci.behavior] ?? "") : "",
+          }),
+        });
+      }
+    }
+  }
+}
+
 // --- Public parse --------------------------------------------------------------
 
 /**
@@ -740,6 +927,8 @@ export function parse(featureDir: string): ParseResult {
     { file: "workflows.md", fn: parseWorkflows },
     { file: "queries.md", fn: parseQueries },
     { file: "mappings.md", fn: parseMappings },
+    { file: "domain.md", fn: parseDomain },
+    { file: "rules.md", fn: parseRules },
   ];
 
   for (const { file, fn } of aspects) {

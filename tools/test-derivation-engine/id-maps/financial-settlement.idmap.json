@@ -34,6 +34,78 @@
       "anchor": "operations.md#GenerateSettlement:calculation:3"
     },
     {
+      "key": "034abae7b41f51bfd9645315f3a0a71621b744f2",
+      "id": "FS-DOM-001",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:1"
+    },
+    {
+      "key": "091b46eca94b6129ca85d19069a1b65af8f07fc6",
+      "id": "FS-DOM-002",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:6"
+    },
+    {
+      "key": "1954c405fc6635e937f6eacb2cdbd680eac23a4c",
+      "id": "FS-DOM-003",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:2"
+    },
+    {
+      "key": "55d5be30be8f1c5b058bfde75426883adb18a2b9",
+      "id": "FS-DOM-004",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:7"
+    },
+    {
+      "key": "82028c981342ae3d06dcfa1ad1ca22ffbaf229ff",
+      "id": "FS-DOM-005",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:3"
+    },
+    {
+      "key": "86c0f75096ad9f3d5af7587ee1ec6152fca9e7fe",
+      "id": "FS-DOM-006",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:10"
+    },
+    {
+      "key": "8a70834707577613233600b2fbc574f5940e93eb",
+      "id": "FS-DOM-007",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:4"
+    },
+    {
+      "key": "a0c30fe24c7475cc9f5ddcdaef401885aee5024e",
+      "id": "FS-DOM-008",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:0"
+    },
+    {
+      "key": "a7330941df210c120d61f4ffa26133af42559f71",
+      "id": "FS-DOM-009",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:5"
+    },
+    {
+      "key": "d71b606be186151b033517abbb4a9a4955a136f5",
+      "id": "FS-DOM-010",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:9"
+    },
+    {
+      "key": "df09b7602b46bdd7c8dff6119b537a60955ad819",
+      "id": "FS-DOM-011",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SettlementResult:field:8"
+    },
+    {
+      "key": "d233f5aa81a3dce7316c0ba0faf76613827f4a0f",
+      "id": "FS-ENUM-001",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#SettlementTransactionType:enum"
+    },
+    {
       "key": "596d6f2a21b45e165dc1b56eaadf132a9ace823f",
       "id": "FS-ERR-001",
       "rule_type": "error-obligation",
@@ -418,7 +490,9 @@
     "ERR": 4,
     "MAP": 3,
     "NF": 2,
-    "INV": 3
+    "INV": 3,
+    "DOM": 12,
+    "ENUM": 2
   },
   "tombstones": []
 }

@@ -56,6 +56,9 @@ const TIER_OF: Record<RuleType, Tier> = {
   "query-behavior": "derivable-needs-harness",
   "mapping-row": "derivable-needs-harness",
   "error-obligation": "derivable-needs-harness",
+  "domain-field": "derivable-needs-harness", // needs an instance/fixture to check
+  "domain-enum": "derivable-needs-harness", // needs the impl symbol to compare
+  "policy-decision": "derivable-needs-harness",
   "needs-formal": "needs-formal",
 };
 

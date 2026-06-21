@@ -39,9 +39,14 @@ Feature inputs (UI — when --ui or --all):
    - If this command mutates `docs/features/{feature}/` or feature implementation assets, require planner preflight gate.
    - Lazy backfill: if medium/high scope and `WORK-PACK.md` is missing, create it from `domainspec/templates/work-pack.md` before mutation.
    - If planner gate is not PASS, return BLOCK and request planner preflight refresh.
-1. Read domainspec/CHANGELOG.md and extract current-framework constraints.
-2. Extract transitions, invalid transitions, invariants, rules, calculations, postconditions, event obligations, and capability acceptance intent.
-3. Create docs/features/{feature}/TEST-SPEC.md with traceable source references.
+1. BACKEND-DOMAIN block is ENGINE-GENERATED (deterministic; the LLM never authors it). Run:
+     node tools/test-derivation-engine/dist/cli.js derive {feature} --out
+   This writes the fenced ENGINE-REGION of docs/features/{feature}/TEST-SPEC.engine.md
+   (source completeness gate, coverage summary, harness/formal tier split, backend
+   obligations with stable IDs, needs_formal/needs-harness gaps) + the committed id-map.
+   Do NOT edit inside the fence. Read domainspec/CHANGELOG.md for framework context only.
+2. (Backend transitions / invalid-transitions / invariants / rules / calculations / postconditions / events / domain-model / policy-decisions are derived by the engine in step 1 — do not re-author them. Capability/story acceptance narrative stays LLM-authored, outside the fence.)
+3. Keep the LLM-authored TEST-SPEC.md (capability/story narrative) OUTSIDE the engine fence; reference engine obligation IDs read-only; never redefine a backend obligation.
 4. If --ui or --all is passed and UI-SPEC.md exists:
    a. Read docs/UI-ARCHITECTURE.md for route conventions and breakpoints.
    b. Read docs/features/{feature}/UI-SPEC.md for pages, forms, states, components.
@@ -62,6 +67,11 @@ Feature inputs (UI — when --ui or --all):
      - {feature}.states.spec.ts
      - {feature}.responsive.spec.ts
 6. Report missing formal sections that block complete derivation.
+7. Verify the merge boundary fail-closed:
+     node tools/test-derivation-engine/dist/cli.js check {feature}
+   FRESH = engine region matches the docs AND no LLM/UI row redefined a backend engine ID. On DRIFT, re-run step 1 / fix the LLM block; never hand-edit the fence.
+
+SCOPE: the engine replaces the BACKEND-DOMAIN test-spec slice only; UI/E2E (Playwright) + scaffolding remain LLM-authored. This is not a full LLM replacement.
 </process>
 
 <playwright-scaffold-template>

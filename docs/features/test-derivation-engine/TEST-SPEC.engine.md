@@ -3,7 +3,7 @@
 <!-- ENGINE-PROVENANCE
 format_version: 1
 feature: test-derivation-engine
-engine_commit: b7b5d4a
+engine_commit: 53d8f08
 inputs:
   interfaces.md: sha256:3f6ae1d4bf4f2bbc54eb70c03e55e94c9c1ac0ab0556f196120f67349ee8825c
   operations.md: sha256:d1bdc7cafcf858792dc8a02e50c7d2d48fab4ce002acee407354fc3e88b95ea1

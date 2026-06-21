@@ -1,0 +1,1598 @@
+{
+  "feature": "agent-execution-orchestrator",
+  "prefix": "AEO",
+  "format_version": 1,
+  "entries": [
+    {
+      "key": "001694eb53517fa170e482b7649e6fab09e75bf3",
+      "id": "AEO-CALC-001",
+      "rule_type": "calculation",
+      "anchor": "operations.md#ExecutePipelineRoute:calculation:1"
+    },
+    {
+      "key": "1cc8ce750fdf318fde9aa722a6dfbcbea5d7e49c",
+      "id": "AEO-CALC-002",
+      "rule_type": "calculation",
+      "anchor": "operations.md#ExecutePipelineRoute:calculation:0"
+    },
+    {
+      "key": "46cc9ed51bfd5c250bf7cda16fbc115dda367e70",
+      "id": "AEO-CALC-003",
+      "rule_type": "calculation",
+      "anchor": "operations.md#ExecutePipelineRoute:calculation:2"
+    },
+    {
+      "key": "0032df7e3d09498d346e6e98789ada5eff6015e3",
+      "id": "AEO-DOM-001",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:2"
+    },
+    {
+      "key": "03f1a6623662726d7a9d384855295e3981378d1c",
+      "id": "AEO-DOM-002",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:0"
+    },
+    {
+      "key": "0dd8defe24617b8c15d2315aa3c049b61eae4104",
+      "id": "AEO-DOM-003",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:5"
+    },
+    {
+      "key": "0eac6de4eb490eae75d70c5427e67c6fd555281d",
+      "id": "AEO-DOM-004",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageContract:field:5"
+    },
+    {
+      "key": "0f2cfc83d2d6fde1fcacda27bc2406642f49fd71",
+      "id": "AEO-DOM-005",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:8"
+    },
+    {
+      "key": "10b79dcb9efdae0756762d83637d2d80ca71993c",
+      "id": "AEO-DOM-006",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionPipeline:field:3"
+    },
+    {
+      "key": "1148a456476e39d0a7919a64cfaf6ff149978f1b",
+      "id": "AEO-DOM-007",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:3"
+    },
+    {
+      "key": "21a7e8cd24290cd832adc951b349d01ef7e9c54c",
+      "id": "AEO-DOM-008",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:0"
+    },
+    {
+      "key": "23cbecf3612490d49c4d4b6ae170037c7a33b1c3",
+      "id": "AEO-DOM-009",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:1"
+    },
+    {
+      "key": "25c57adf02211f1252b3d03a64ad54d56f546a7f",
+      "id": "AEO-DOM-010",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionPipeline:field:4"
+    },
+    {
+      "key": "27dd46def58f6374f6475e149868879d253edb73",
+      "id": "AEO-DOM-011",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionPipeline:field:5"
+    },
+    {
+      "key": "2978e9394a492b54779476b321765ce1ec4f94a8",
+      "id": "AEO-DOM-012",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionPipeline:field:2"
+    },
+    {
+      "key": "2a74568392a6060baf7c8271af700beda6cc0534",
+      "id": "AEO-DOM-013",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:2"
+    },
+    {
+      "key": "2a912e3bfae0c73dce2f876313fdb66321bfd066",
+      "id": "AEO-DOM-014",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:1"
+    },
+    {
+      "key": "2b3b3476e4eefba9f9342b860d282c8ff6315c78",
+      "id": "AEO-DOM-015",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:10"
+    },
+    {
+      "key": "2c787fc025dd8e0a17fe5a6e6d574106a59ca15c",
+      "id": "AEO-DOM-016",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:4"
+    },
+    {
+      "key": "2d86a61b2e14ca17ee1369e376a1b1d8f23f0dd0",
+      "id": "AEO-DOM-017",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:4"
+    },
+    {
+      "key": "38ec9ee92385125dc780e8661d40a12712d26fa6",
+      "id": "AEO-DOM-018",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SandboxLease:field:1"
+    },
+    {
+      "key": "3ac4840657220b99a2d49ab604bae2acfce57de9",
+      "id": "AEO-DOM-019",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:8"
+    },
+    {
+      "key": "42ad333a54c3fc84ce662407c334e880d4f55c32",
+      "id": "AEO-DOM-020",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:1"
+    },
+    {
+      "key": "5448c00129193ebc7d8dba6f1f1785a6919789d1",
+      "id": "AEO-DOM-021",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:4"
+    },
+    {
+      "key": "5cfc3c88097d75cf38a592730d979a74c1774c9e",
+      "id": "AEO-DOM-022",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:6"
+    },
+    {
+      "key": "5e8fed13d7ceb150d0519f88480eb410c948e66e",
+      "id": "AEO-DOM-023",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:6"
+    },
+    {
+      "key": "5eef63fe85e60b5ad0ac0c7ccf57e04e846ea5d9",
+      "id": "AEO-DOM-024",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageContract:field:3"
+    },
+    {
+      "key": "655ab37b8c453b3ae213242634d884389f8bb5f4",
+      "id": "AEO-DOM-025",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:7"
+    },
+    {
+      "key": "65ccfcea6c329fef7e97f940555ed49a21b7d74d",
+      "id": "AEO-DOM-026",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#WorktreeLease:field:3"
+    },
+    {
+      "key": "6ded98eb8f61a57360be8b72f1011094e216b163",
+      "id": "AEO-DOM-027",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionPipeline:field:0"
+    },
+    {
+      "key": "6e66ecaf70706628b0869c34841d430850c753a6",
+      "id": "AEO-DOM-028",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:11"
+    },
+    {
+      "key": "6f0617d128905e513246b044657b6716c228f7f4",
+      "id": "AEO-DOM-029",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:6"
+    },
+    {
+      "key": "732ff928a7e8892823cae13fb101b5487ba30b88",
+      "id": "AEO-DOM-030",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:15"
+    },
+    {
+      "key": "743c20c6f3c74bbff6df5b58390f2caede1abdc5",
+      "id": "AEO-DOM-031",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:9"
+    },
+    {
+      "key": "75b565f6dc5b19da20f57fc5917b160c2449ea90",
+      "id": "AEO-DOM-032",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#WorktreeLease:field:2"
+    },
+    {
+      "key": "761b77aa62c87dc446508531df26d13f31ff06d6",
+      "id": "AEO-DOM-033",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:4"
+    },
+    {
+      "key": "77051313ce16ed8cf8eca285a0b0f71ee4d25a54",
+      "id": "AEO-DOM-034",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:2"
+    },
+    {
+      "key": "778b17d129fb62e368fb71ac04b2f5b004739f6a",
+      "id": "AEO-DOM-035",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:1"
+    },
+    {
+      "key": "7b01c859aad79b03ae8385c3e39082c12f7bd008",
+      "id": "AEO-DOM-036",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:3"
+    },
+    {
+      "key": "7c4b51cbf7d0931b9e05ab5b5ba6e72af121b209",
+      "id": "AEO-DOM-037",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SandboxLease:field:0"
+    },
+    {
+      "key": "7fc634b1f1013e9d973e516e75728cef9e5c130c",
+      "id": "AEO-DOM-038",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:3"
+    },
+    {
+      "key": "8086aed0b80b7d03faca1fff528861605f93825d",
+      "id": "AEO-DOM-039",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:0"
+    },
+    {
+      "key": "8135b304429fb91b16c54f15116fafff998e3cf2",
+      "id": "AEO-DOM-040",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:7"
+    },
+    {
+      "key": "822aaddd36af86c860eab927df43378827e6b6fa",
+      "id": "AEO-DOM-041",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SandboxLease:field:2"
+    },
+    {
+      "key": "8349fceaa89704b27fbc0f39e1ebeca6f3155286",
+      "id": "AEO-DOM-042",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageContract:field:1"
+    },
+    {
+      "key": "8858f49d60cf35d148edf3c725e279fcc5b052f5",
+      "id": "AEO-DOM-043",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:3"
+    },
+    {
+      "key": "8ab49fe0201ffc5e536ba4dd2fa597f903a57e1e",
+      "id": "AEO-DOM-044",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:1"
+    },
+    {
+      "key": "8ab854fd4d610b734ef8ab7db77a7d68791f1759",
+      "id": "AEO-DOM-045",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageContract:field:4"
+    },
+    {
+      "key": "8ae46fda6901ea88a26d74315edb93754b70295c",
+      "id": "AEO-DOM-046",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:6"
+    },
+    {
+      "key": "8cfe81f0621033bc6b741f37ba00fce1acf77469",
+      "id": "AEO-DOM-047",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SandboxLease:field:3"
+    },
+    {
+      "key": "99e8ebe6b4b9fcf628fe6b239d09aaea20266a78",
+      "id": "AEO-DOM-048",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageContract:field:2"
+    },
+    {
+      "key": "9b9d1b2ce8b53ad3d43e89312ac4c023469a9b51",
+      "id": "AEO-DOM-049",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:7"
+    },
+    {
+      "key": "ac7a771633afcaa42c263bd7cf341081b3255e20",
+      "id": "AEO-DOM-050",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:5"
+    },
+    {
+      "key": "b757707fb5153928b9cd83f3d27cf43c5d2c98e7",
+      "id": "AEO-DOM-051",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:5"
+    },
+    {
+      "key": "b9a7c92f45a0b9c3b90c4fc5f1e11cf81423e7b5",
+      "id": "AEO-DOM-052",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:7"
+    },
+    {
+      "key": "c17a85846f9157944bdf30f6f15f22e8c5dee75e",
+      "id": "AEO-DOM-053",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#PipelineRouteTemplate:field:3"
+    },
+    {
+      "key": "cf78e7a0d1d312412c3fe4d73f2e4a2e0f4118bc",
+      "id": "AEO-DOM-054",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#WorktreeLease:field:0"
+    },
+    {
+      "key": "cf974508c74dc71865f858821afd4b80714b5d81",
+      "id": "AEO-DOM-055",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:13"
+    },
+    {
+      "key": "d6d5f649b432006703e7935bffaf312f653638df",
+      "id": "AEO-DOM-056",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageContract:field:0"
+    },
+    {
+      "key": "d7873119095de12dfed640645d0ec676a606577f",
+      "id": "AEO-DOM-057",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:8"
+    },
+    {
+      "key": "dc9f37ae5d28e8929c81a5d1500c7ec8dc22f887",
+      "id": "AEO-DOM-058",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:2"
+    },
+    {
+      "key": "e1f33f122a06b03c93170702e00d37d53d47ec79",
+      "id": "AEO-DOM-059",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:6"
+    },
+    {
+      "key": "e59a3edd44ae3fb9d96a2554a5f9ac4817344afa",
+      "id": "AEO-DOM-060",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionPipeline:field:1"
+    },
+    {
+      "key": "e5f62471bfdc31fbed1fdb8836a98175ee6dfdb2",
+      "id": "AEO-DOM-061",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:5"
+    },
+    {
+      "key": "e9407e72dc654f83a9ab871d006b45e426f0b989",
+      "id": "AEO-DOM-062",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:5"
+    },
+    {
+      "key": "e9b02ec76dbcccb337a5cee41879bb8c916e6d4a",
+      "id": "AEO-DOM-063",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#WorktreeLease:field:1"
+    },
+    {
+      "key": "e9dfca1b6de6319504683e5b54c58f1dce5bb8a9",
+      "id": "AEO-DOM-064",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SandboxLease:field:4"
+    },
+    {
+      "key": "eb5c45df55c6f4874e14ce91a573fdc7c435ce49",
+      "id": "AEO-DOM-065",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:4"
+    },
+    {
+      "key": "ee417d9212a3750582115b7e45a02a743d2e43da",
+      "id": "AEO-DOM-066",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#StageExecution:field:0"
+    },
+    {
+      "key": "efda17ac8e6dc72bb25d3299e3043e92fc5fd931",
+      "id": "AEO-DOM-067",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#WorktreeLease:field:4"
+    },
+    {
+      "key": "f206e5129d6e87f5b16f39fbc280765d69a31e9d",
+      "id": "AEO-DOM-068",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:12"
+    },
+    {
+      "key": "f5483482273013a6009dc49a3f812563bf83a47c",
+      "id": "AEO-DOM-069",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#SessionSnapshot:field:2"
+    },
+    {
+      "key": "f7f8107031cddaa728aa1431e225366a34f7bc42",
+      "id": "AEO-DOM-070",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#TelemetryEnvelope:field:0"
+    },
+    {
+      "key": "f9263df24f0a528aaf21b237b5851b7c8d458721",
+      "id": "AEO-DOM-071",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ExecutionRun:field:14"
+    },
+    {
+      "key": "076021cddf463da91613305a76c3a77b43d25ef6",
+      "id": "AEO-ENUM-001",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#RunState:enum"
+    },
+    {
+      "key": "627a5a39f25224fe76b87b3d5ebb1cb3992e614d",
+      "id": "AEO-ENUM-002",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#BranchStrategy:enum"
+    },
+    {
+      "key": "763cacd7d1a66c2e9b96f9aa9914a0d9b256b879",
+      "id": "AEO-ENUM-003",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#StageType:enum"
+    },
+    {
+      "key": "78af99e9539dc0af1b7e08838563c5d53fb65606",
+      "id": "AEO-ENUM-004",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#GovernanceSignalType:enum"
+    },
+    {
+      "key": "7ad041361f7058bd874132b51efe41fd4cb7ca3d",
+      "id": "AEO-ENUM-005",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#TerminalOutcome:enum"
+    },
+    {
+      "key": "a56cbbc02ca47d96add6fc6ee3f823106ef28184",
+      "id": "AEO-ENUM-006",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#StageIsolationMode:enum"
+    },
+    {
+      "key": "c00f8fafca7d7eba643e37371ef1104324f2f7aa",
+      "id": "AEO-ENUM-007",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#ProviderAdapter:enum"
+    },
+    {
+      "key": "0012cf5051d2b0c9ed909af12dc59f53ca21e25f",
+      "id": "AEO-ERR-001",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:1"
+    },
+    {
+      "key": "0f240bffac6841445f2485dfcca77b34ee765dde",
+      "id": "AEO-ERR-002",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:7"
+    },
+    {
+      "key": "27a5ad16ba77ce5842a3179671b327d4f86b4e58",
+      "id": "AEO-ERR-003",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:4"
+    },
+    {
+      "key": "34d86af6a5c6549ae4a2d1b91b75a35f8ab3c266",
+      "id": "AEO-ERR-004",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#CancelSupersededRun:errorstate:1"
+    },
+    {
+      "key": "4029112ef9a563cacc2bceb8a54ae54a5008f7cb",
+      "id": "AEO-ERR-005",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:6"
+    },
+    {
+      "key": "5439e240d30625a757a6c79f5f47d0188883b89c",
+      "id": "AEO-ERR-006",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:0"
+    },
+    {
+      "key": "5dd0c169d74c781d921b8db83ff74a765fbaed79",
+      "id": "AEO-ERR-007",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ResumeExecutionRun:errorstate:1"
+    },
+    {
+      "key": "641233e4f7a4d493c1b4d9f4a8d7f914b6428606",
+      "id": "AEO-ERR-008",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:3"
+    },
+    {
+      "key": "6cdd9cd4d71e73e5d5f245b1421358d4a722c086",
+      "id": "AEO-ERR-009",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#EmitGovernanceSignals:errorstate:0"
+    },
+    {
+      "key": "7780ca1075ee056785fa67d56e6fd819948bb374",
+      "id": "AEO-ERR-010",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:2"
+    },
+    {
+      "key": "858f7921fbb626aabbcefd249c5cd454cbfdc53e",
+      "id": "AEO-ERR-011",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:2"
+    },
+    {
+      "key": "8e83401cd2733e09b58873eb016f13f1723fbaea",
+      "id": "AEO-ERR-012",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:4"
+    },
+    {
+      "key": "a3d4007076bc652a84fb9fd56bdf55af3914e113",
+      "id": "AEO-ERR-013",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:6"
+    },
+    {
+      "key": "b8d9f6b2d93228e0319c60bbaf25af15c136595f",
+      "id": "AEO-ERR-014",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ResumeExecutionRun:errorstate:0"
+    },
+    {
+      "key": "bbdbf6c08ec9abbdba6cdadbe096809df6fcd027",
+      "id": "AEO-ERR-015",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:5"
+    },
+    {
+      "key": "bdc701219e091259f51fea08f9dcb52e71620163",
+      "id": "AEO-ERR-016",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:8"
+    },
+    {
+      "key": "c22d7eb78ff8f37828152cdeacac0282b49e2355",
+      "id": "AEO-ERR-017",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:5"
+    },
+    {
+      "key": "c4a08c88832a5e0aceeeb3350d42ffbb75879068",
+      "id": "AEO-ERR-018",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#CancelSupersededRun:errorstate:0"
+    },
+    {
+      "key": "d4c80f9656b075e173a325a4ea8fc642c4d96045",
+      "id": "AEO-ERR-019",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#EmitGovernanceSignals:errorstate:1"
+    },
+    {
+      "key": "e471fe3f8fe5f36818ef8a63998c79ec0243e2b0",
+      "id": "AEO-ERR-020",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#ExecutePipelineRoute:errorstate:0"
+    },
+    {
+      "key": "eb09c1c6b916a0f7165cfa79c5e09b96395c8d4a",
+      "id": "AEO-ERR-021",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:1"
+    },
+    {
+      "key": "ecf1733138adf84f8ed1dbf50405d7dd8909db37",
+      "id": "AEO-ERR-022",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#AssemblePipelineRoute:errorstate:3"
+    },
+    {
+      "key": "426a4bb7530b1610875497090ba2143908b511cf",
+      "id": "AEO-INV-001",
+      "rule_type": "invariant",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-3"
+    },
+    {
+      "key": "6654772e6c1cb1436d4bb82df60d1c7a0d7abc9a",
+      "id": "AEO-INV-002",
+      "rule_type": "invariant",
+      "anchor": "rules.md#PromptArtifactSchemaRequired:invariant:P-PA-1"
+    },
+    {
+      "key": "926c44e2a014f2753e8f1d60b5a06fc4e370b235",
+      "id": "AEO-INV-003",
+      "rule_type": "invariant",
+      "anchor": "rules.md#RunStateMachine:invariant:I-SM-2"
+    },
+    {
+      "key": "00cc02ddac8e0ca046178d1a9fc8cea63528d154",
+      "id": "AEO-NF-001",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:2"
+    },
+    {
+      "key": "00e4ebf75c0bab0fc18075f4b6f7959abbbff8c5",
+      "id": "AEO-NF-002",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EmitGovernanceSignals:rule:1"
+    },
+    {
+      "key": "06b25df7d27e56c3eddc38cbf1a805df257ccf5b",
+      "id": "AEO-NF-003",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageSelectionContract:invariant:SSC-1"
+    },
+    {
+      "key": "0f482681782de73845b7001a2db46f19c1864f00",
+      "id": "AEO-NF-004",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageRunTopology:invariant:T-RT-4"
+    },
+    {
+      "key": "1023f6dfa448e05e2b3817a3b7e2a147e0d0aa87",
+      "id": "AEO-NF-005",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageSelectionContract:invariant:SSC-3"
+    },
+    {
+      "key": "1c1266e4f7783bb46c137f605aaed3372f002858",
+      "id": "AEO-NF-006",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#BranchStrategyPolicy:invariant:P-BS-2"
+    },
+    {
+      "key": "25a4c6bc638374773a03d01108bc0a3d3abe40db",
+      "id": "AEO-NF-007",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#BranchStrategyPolicy:invariant:P-BS-1"
+    },
+    {
+      "key": "27529db3571f94469457847cb4ecd950d6a52a76",
+      "id": "AEO-NF-008",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:6"
+    },
+    {
+      "key": "28de7f97a715bd3f623a3e0d2e43fd6d4745af01",
+      "id": "AEO-NF-009",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:1"
+    },
+    {
+      "key": "319445e0376426bce65441562790c31d52565d23",
+      "id": "AEO-NF-010",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EmitGovernanceSignals:rule:0"
+    },
+    {
+      "key": "3e0bd5b907d91bf5bce74599c4525acb9bf5125d",
+      "id": "AEO-NF-011",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:8"
+    },
+    {
+      "key": "44e96e5bbccbfca001de943fb3d13a1996cb059f",
+      "id": "AEO-NF-012",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#RunStateMachine:invariant:I-SM-1"
+    },
+    {
+      "key": "5262200173032b0704a53d313a726eddef47f786",
+      "id": "AEO-NF-013",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#RunStateMachine:invariant:I-SM-3"
+    },
+    {
+      "key": "5337fd0fc073bba56e0d76d5a994736f24c2431f",
+      "id": "AEO-NF-014",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:7"
+    },
+    {
+      "key": "566f02ccbbfab559c31431fa5d34c389a17b8b80",
+      "id": "AEO-NF-015",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:9"
+    },
+    {
+      "key": "57cdd691c1f2adb4f98dc943255bafa16c2219f2",
+      "id": "AEO-NF-016",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:10"
+    },
+    {
+      "key": "61d687ac2ab3b22ee60249160efad0daa7ab3813",
+      "id": "AEO-NF-017",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:3"
+    },
+    {
+      "key": "677f4c38b75de149c9f647f40207aa9e7e8bf870",
+      "id": "AEO-NF-018",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EmitGovernanceSignals:rule:2"
+    },
+    {
+      "key": "72c30f6a94715297364dd9443e0fe06b7629f82a",
+      "id": "AEO-NF-019",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-1"
+    },
+    {
+      "key": "734431cc8f2b59ce64130a73e5d71a9e9923ea64",
+      "id": "AEO-NF-020",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:4"
+    },
+    {
+      "key": "78e812fac89d829e4911bdbf93dc218d25600ce4",
+      "id": "AEO-NF-021",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptArtifactSchemaRequired:invariant:P-PA-2"
+    },
+    {
+      "key": "7a3072eaf0bcfb158df2e4d93b96677e381b64a8",
+      "id": "AEO-NF-022",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:0"
+    },
+    {
+      "key": "7aeeb0ae9a645107d6cc33cac3aaa8cf7b7d2c1b",
+      "id": "AEO-NF-023",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:4"
+    },
+    {
+      "key": "7c2cc540262bc638e492f8582a168a5b550fa2e8",
+      "id": "AEO-NF-024",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-2"
+    },
+    {
+      "key": "80b324323917e04a0a026e82f4a8c8ccbcecd509",
+      "id": "AEO-NF-025",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:0"
+    },
+    {
+      "key": "87ec417dc94b9025626740033067ed526146ddb1",
+      "id": "AEO-NF-026",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-7"
+    },
+    {
+      "key": "88cae893f3ebdc9b76113cdb9d3d91df367e87f7",
+      "id": "AEO-NF-027",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-6"
+    },
+    {
+      "key": "983f6cb4c47249889686eb86aa04ab7c1eee3210",
+      "id": "AEO-NF-028",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageRunTopology:invariant:T-RT-3"
+    },
+    {
+      "key": "9b97bc4fe48643eb280f2e96437448e06d1dd4e1",
+      "id": "AEO-NF-029",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#RunStateMachine:invariant:I-SM-4"
+    },
+    {
+      "key": "9dab7139d6324d2cca0f19f6e70c802c45118941",
+      "id": "AEO-NF-030",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageRunTopology:invariant:T-RT-2"
+    },
+    {
+      "key": "b664805bf1f5fdc546e3ec44be863485255171b7",
+      "id": "AEO-NF-031",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResumeExecutionRun:rule:0"
+    },
+    {
+      "key": "c103e4185415f281fb79e1efba75dd0b99e33377",
+      "id": "AEO-NF-032",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#CancelSupersededRun:rule:2"
+    },
+    {
+      "key": "c79f14f5d0718b73b2571c62139643c50dcb3144",
+      "id": "AEO-NF-033",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptArtifactSchemaRequired:invariant:P-PA-3"
+    },
+    {
+      "key": "c98ac5a35e14d5d426c6a2762514c06195351c55",
+      "id": "AEO-NF-034",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:7"
+    },
+    {
+      "key": "d80149a552d392cb37241aa9369e7258f8b906b6",
+      "id": "AEO-NF-035",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:3"
+    },
+    {
+      "key": "d881824993b8f3dac93c2b4c6cbd1732c5245e4a",
+      "id": "AEO-NF-036",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageRunTopology:invariant:T-RT-1"
+    },
+    {
+      "key": "e23aa1850e20d80c671bfd1c93421feb63cede5f",
+      "id": "AEO-NF-037",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:5"
+    },
+    {
+      "key": "e71692ec9c68144478b9fe9fdb450adbff723325",
+      "id": "AEO-NF-038",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#StageSelectionContract:invariant:SSC-2"
+    },
+    {
+      "key": "ed0e6881d8644308c74b61212b867cac5a331c9f",
+      "id": "AEO-NF-039",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:2"
+    },
+    {
+      "key": "ef521795deeaf8c6d79329bbd0f2cdfc04324c26",
+      "id": "AEO-NF-040",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:1"
+    },
+    {
+      "key": "efa191fdb12f8dc8312ab4d1691d7ce3b21fd458",
+      "id": "AEO-NF-041",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#CancelSupersededRun:rule:1"
+    },
+    {
+      "key": "f53bd20a5f3681e082ca8aaf9b4affaf21ad3e3b",
+      "id": "AEO-NF-042",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#AssemblePipelineRoute:rule:5"
+    },
+    {
+      "key": "fa13df9fa00a5ff1ab52e473f8511eccc25fd660",
+      "id": "AEO-NF-043",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-5"
+    },
+    {
+      "key": "fb2fd4d720934429dadc482896152b8b15ab7340",
+      "id": "AEO-NF-044",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#CancelSupersededRun:rule:0"
+    },
+    {
+      "key": "fda15563e73c7953762cf3c9615496e46be250d4",
+      "id": "AEO-NF-045",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResumeExecutionRun:rule:1"
+    },
+    {
+      "key": "fe0890f7293382ffce3051777855eff2962e380f",
+      "id": "AEO-NF-046",
+      "rule_type": "needs-formal",
+      "anchor": "rules.md#PromptBuildStepContract:invariant:P-PB-4"
+    },
+    {
+      "key": "fe84accd2e81f60806dd11250129b74b95f45a05",
+      "id": "AEO-NF-047",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResumeExecutionRun:rule:2"
+    },
+    {
+      "key": "15b7271b9da4dae3a53f7e24edb79ea11c49738a",
+      "id": "AEO-POL-001",
+      "rule_type": "policy-decision",
+      "anchor": "rules.md#BranchStrategyPolicy:decision:1"
+    },
+    {
+      "key": "2fceab7ab16534f4567c3e53ffaabc3157ac1f9e",
+      "id": "AEO-POL-002",
+      "rule_type": "policy-decision",
+      "anchor": "rules.md#CancellationPolicy:decision:0"
+    },
+    {
+      "key": "5c63194937cdb2e286c647fc7db8473740dc89ec",
+      "id": "AEO-POL-003",
+      "rule_type": "policy-decision",
+      "anchor": "rules.md#CancellationPolicy:decision:1"
+    },
+    {
+      "key": "974112c2a9972512b5f266290b0fc206a2e22cfc",
+      "id": "AEO-POL-004",
+      "rule_type": "policy-decision",
+      "anchor": "rules.md#CancellationPolicy:decision:2"
+    },
+    {
+      "key": "aaf9696e6d545dc7bd59a67e826191b732ff0803",
+      "id": "AEO-POL-005",
+      "rule_type": "policy-decision",
+      "anchor": "rules.md#BranchStrategyPolicy:decision:2"
+    },
+    {
+      "key": "d22e7af8d022f5a749d682d2a2e1d081f86a3ffa",
+      "id": "AEO-POL-006",
+      "rule_type": "policy-decision",
+      "anchor": "rules.md#BranchStrategyPolicy:decision:0"
+    },
+    {
+      "key": "f0cae14ecf7b0b6b9bbf22469f824dd6c2e94c4e",
+      "id": "AEO-RULE-001",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:6"
+    },
+    {
+      "key": "f47bd7e3e223cf1a1fbcd9a883c373b74fd5ebb7",
+      "id": "AEO-RULE-002",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#ExecutePipelineRoute:rule:6"
+    },
+    {
+      "key": "0153c33c9a4bf8084e90125f4a466b360ab32acb",
+      "id": "AEO-TR-001",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:stage-completed"
+    },
+    {
+      "key": "03a17206d54483c8bb19c46028ddb23577ce730c",
+      "id": "AEO-TR-002",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:resume-succeeded"
+    },
+    {
+      "key": "04b0644e5737b2624a3591c4d25e9d5441151d7e",
+      "id": "AEO-TR-003",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:retry-started"
+    },
+    {
+      "key": "0501aae0d6e2ae19bcaf6e3997161dbaf7992f07",
+      "id": "AEO-TR-004",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:superseded"
+    },
+    {
+      "key": "0df5f21dbc2e30cbfccd5708b85dfb0444606c57",
+      "id": "AEO-TR-005",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:run-completed"
+    },
+    {
+      "key": "148e7b3036ac2a5bf3b860ee586dd758cdb80714",
+      "id": "AEO-TR-006",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:run-completed"
+    },
+    {
+      "key": "157d7fab7f8af247467915ed7a98e94c2b953728",
+      "id": "AEO-TR-007",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:retry-started"
+    },
+    {
+      "key": "1d01b6e57f2a61487365661d9319133efb627833",
+      "id": "AEO-TR-008",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:0"
+    },
+    {
+      "key": "1fbee142b60db72fbf847421c8f719832280f07a",
+      "id": "AEO-TR-009",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:resume-requested"
+    },
+    {
+      "key": "20465868b723cab5929ea4f50531babd4f7ad1d3",
+      "id": "AEO-TR-010",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:2"
+    },
+    {
+      "key": "2b72a2f42cef5c4516794c2b70a5a6f71b722eed",
+      "id": "AEO-TR-011",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:resume-requested"
+    },
+    {
+      "key": "2c3309a85b964bc55495cf2700b7506a49a8443b",
+      "id": "AEO-TR-012",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:retry-requested"
+    },
+    {
+      "key": "2d2d3bdb6cbd13aba686d97a7ddce3b6fa7bb96c",
+      "id": "AEO-TR-013",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:run-started"
+    },
+    {
+      "key": "326aa2b02021aad14b8c1d27a402a45ea5d6bcae",
+      "id": "AEO-TR-014",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:stage-completed"
+    },
+    {
+      "key": "3381f3a778d3d0ad7c30ea943eff03e73f9827de",
+      "id": "AEO-TR-015",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:resume-succeeded"
+    },
+    {
+      "key": "3554db5861dcd5ab1445ba6629d46e87d2937b58",
+      "id": "AEO-TR-016",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:stage-completed"
+    },
+    {
+      "key": "355f1f9d7eb4b86ef7c7fdf3a964b0f9cec88891",
+      "id": "AEO-TR-017",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:resume-succeeded"
+    },
+    {
+      "key": "3be342d3000985d144c815e1b72b562a944b6426",
+      "id": "AEO-TR-018",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:running:run-started"
+    },
+    {
+      "key": "3fc47c06aaccad2470ae5e09c8c9cc7217430386",
+      "id": "AEO-TR-019",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:resume-requested"
+    },
+    {
+      "key": "42e575130755ae422fc95bf6954fcdac07810622",
+      "id": "AEO-TR-020",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:stage-blocked"
+    },
+    {
+      "key": "460134aeacfffdd8e1925ab17d30c808cd8624e4",
+      "id": "AEO-TR-021",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:resume-requested"
+    },
+    {
+      "key": "466ecc8451a6e7d54e373ab1e8c82ab2d4087868",
+      "id": "AEO-TR-022",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:running:retry-exhausted"
+    },
+    {
+      "key": "494a838bba9422a7bac82cd40cccf26614f84807",
+      "id": "AEO-TR-023",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:stage-completed"
+    },
+    {
+      "key": "4f1dedc180101d7b3597aa953d69bab650cb6c7c",
+      "id": "AEO-TR-024",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:stage-failed"
+    },
+    {
+      "key": "5399e5deb87a898976c304ac33ba4fac55d4c1e9",
+      "id": "AEO-TR-025",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:run-started"
+    },
+    {
+      "key": "552e527ae3410a45c059ba5a4c8c1acfe4b2d45c",
+      "id": "AEO-TR-026",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:5"
+    },
+    {
+      "key": "55e534ac1d26d5a8531d714bef522e72b964aec8",
+      "id": "AEO-TR-027",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:resume-requested"
+    },
+    {
+      "key": "5d0a6d65190b678ce0de3fce9ba8491e76688193",
+      "id": "AEO-TR-028",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:retry-started"
+    },
+    {
+      "key": "60d9298ba04a70bc1f0d6a6ab9c86ce57f1cd6b5",
+      "id": "AEO-TR-029",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:superseded"
+    },
+    {
+      "key": "635f854f3c5cbc56a71efeb31410519483b852c8",
+      "id": "AEO-TR-030",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:3"
+    },
+    {
+      "key": "63ec933ca3d550184fa64689c6d76452130ce672",
+      "id": "AEO-TR-031",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:resume-requested"
+    },
+    {
+      "key": "64fea911a28fdf8eb85df40054c8f4bea8d7f54a",
+      "id": "AEO-TR-032",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:resume-requested"
+    },
+    {
+      "key": "6fad5296fd15e2962e79b0ec5c65a8b7d0d3708b",
+      "id": "AEO-TR-033",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:retry-started"
+    },
+    {
+      "key": "7230ceb68eafea8378c55a207a1e8bd985cc739d",
+      "id": "AEO-TR-034",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:6"
+    },
+    {
+      "key": "731707bcfd25cb472a99b9d95ce4e8c432620667",
+      "id": "AEO-TR-035",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:running:resume-succeeded"
+    },
+    {
+      "key": "75800c23dd50e3f957ccdad8622e912528e403fb",
+      "id": "AEO-TR-036",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:retry-requested"
+    },
+    {
+      "key": "769b1544c75c3e781d1634b480207214f682caa7",
+      "id": "AEO-TR-037",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:1"
+    },
+    {
+      "key": "7b83350d8293cd34fe519f80294e240345e19be2",
+      "id": "AEO-TR-038",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:stage-blocked"
+    },
+    {
+      "key": "7d12cc6fac4d095ce2c7b1934740f442889f1ee7",
+      "id": "AEO-TR-039",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:run-started"
+    },
+    {
+      "key": "7d81f001b6b74792b3b05c3685b745c043b52041",
+      "id": "AEO-TR-040",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:run-started"
+    },
+    {
+      "key": "821babad1478dd800df652b52cf792c79f12593a",
+      "id": "AEO-TR-041",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:run-started"
+    },
+    {
+      "key": "879ee447cc691de9d2b85bc6eb13f4c2cb2d63ba",
+      "id": "AEO-TR-042",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:retry-exhausted"
+    },
+    {
+      "key": "88a03f19db53a70650a96f87b067ca1c73bbb7d5",
+      "id": "AEO-TR-043",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:superseded"
+    },
+    {
+      "key": "8a37cee7e75fb372a0b8a8f8a18d4ca714225902",
+      "id": "AEO-TR-044",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:run-completed"
+    },
+    {
+      "key": "8ba4266205c5b4a9408f6d54ffbf53269cceeeb8",
+      "id": "AEO-TR-045",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:stage-blocked"
+    },
+    {
+      "key": "8e2582d12a2312afd76f42ceefcdabe2357a3b31",
+      "id": "AEO-TR-046",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:superseded"
+    },
+    {
+      "key": "928f5db45014420217c9bfb8f76451628f871b05",
+      "id": "AEO-TR-047",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:blocked:superseded"
+    },
+    {
+      "key": "936a792e6dff62638933089bc4e0b33a6be49fe0",
+      "id": "AEO-TR-048",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:retry-exhausted"
+    },
+    {
+      "key": "93cae8a4325bdb3f9fa87419b68fc81a79190660",
+      "id": "AEO-TR-049",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:4"
+    },
+    {
+      "key": "9799af87f3e729faba6ed549b303a8b55e0967e0",
+      "id": "AEO-TR-050",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:retry-requested"
+    },
+    {
+      "key": "99dacfb26dc3f496ee4bf9c656d36a29ec891319",
+      "id": "AEO-TR-051",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:8"
+    },
+    {
+      "key": "9a1db81a265f1102d26c4d1d5bc95f97deb1704e",
+      "id": "AEO-TR-052",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:run-completed"
+    },
+    {
+      "key": "9ed5653403c9264367705639c97ffbcde1560a4e",
+      "id": "AEO-TR-053",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:10"
+    },
+    {
+      "key": "a1770ea7ca58bcd7b3e86ee1c5e976a6b636b34d",
+      "id": "AEO-TR-054",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:stage-failed"
+    },
+    {
+      "key": "a20525e84bcbc165d8384aed70ee9223caa7b06a",
+      "id": "AEO-TR-055",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:stage-blocked"
+    },
+    {
+      "key": "a7c8c460cd44da57c01bec34b51b74026761fe06",
+      "id": "AEO-TR-056",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:running:retry-started"
+    },
+    {
+      "key": "b29bd51f65d3bbb8af246d5b7caa68954109e67d",
+      "id": "AEO-TR-057",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:stage-failed"
+    },
+    {
+      "key": "b3009d48282399ad9a0dbfdbd34b74f89b9deefc",
+      "id": "AEO-TR-058",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:stage-failed"
+    },
+    {
+      "key": "b7065e532639a5a7563580546f3fcdbdc6eefae4",
+      "id": "AEO-TR-059",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:retry-started"
+    },
+    {
+      "key": "b831d0af952cf9539e1956389cf607edff07d604",
+      "id": "AEO-TR-060",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:stage-completed"
+    },
+    {
+      "key": "bc046fc6f9a194884a4dc7a10781ceb0d6e4b775",
+      "id": "AEO-TR-061",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:retry-exhausted"
+    },
+    {
+      "key": "c614e8c297e41526b9b77bf3a707eeacfa011209",
+      "id": "AEO-TR-062",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:resume-succeeded"
+    },
+    {
+      "key": "c86fcd872a628d0cf47f64fe86121d9df462c1f8",
+      "id": "AEO-TR-063",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:retry-requested"
+    },
+    {
+      "key": "c8ae659adcf96f15087fd50ac92d5c02faac1e2b",
+      "id": "AEO-TR-064",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:retry-started"
+    },
+    {
+      "key": "cb9ff3abea4311ea2cf160dd041ef3f16d30f8c0",
+      "id": "AEO-TR-065",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:resume-succeeded"
+    },
+    {
+      "key": "cc3ac231078a03a29b6cc4226fcfa6b058a9d050",
+      "id": "AEO-TR-066",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:stage-failed"
+    },
+    {
+      "key": "ced51b6b8e8cced9426ccff9d9fce0a0f5642c53",
+      "id": "AEO-TR-067",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:retry-requested"
+    },
+    {
+      "key": "d02a5ad16bf14d919898249e8f181b8dc111a836",
+      "id": "AEO-TR-068",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:7"
+    },
+    {
+      "key": "d132c99c2b16cccddd544cea61649afb7169686a",
+      "id": "AEO-TR-069",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:stage-completed"
+    },
+    {
+      "key": "d27b50047da1233aaa7c54e46f9c0ec9acc95acb",
+      "id": "AEO-TR-070",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:retry-requested"
+    },
+    {
+      "key": "d333af2b26c10592eb6b52ddb27a566883c34760",
+      "id": "AEO-TR-071",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:resume-succeeded"
+    },
+    {
+      "key": "d49ae80dbdf80be44629998f18a132aedf75cf1b",
+      "id": "AEO-TR-072",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:retry-exhausted"
+    },
+    {
+      "key": "d4fbff1afabd67c5249c3c958caebf6edabf88f6",
+      "id": "AEO-TR-073",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:stage-blocked"
+    },
+    {
+      "key": "d5c20fa0bc0694a3954c96affa9b41f4b7458714",
+      "id": "AEO-TR-074",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:stage-blocked"
+    },
+    {
+      "key": "dabbb4ca2c25d1fce1b72bf4e3a3e1f17ad8b146",
+      "id": "AEO-TR-075",
+      "rule_type": "valid-transition",
+      "anchor": "rules.md#RunStateMachine:transition:9"
+    },
+    {
+      "key": "dbfa161d5c3d3bfe2d198460d0ae7fe476cb92bb",
+      "id": "AEO-TR-076",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:run-completed"
+    },
+    {
+      "key": "ddaa1e91f66e73cdcc255195818bb4c2e0944023",
+      "id": "AEO-TR-077",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:stage-failed"
+    },
+    {
+      "key": "e1ff456830fffcf39b32827e308ff4b7cb326042",
+      "id": "AEO-TR-078",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:stage-blocked"
+    },
+    {
+      "key": "e2c2a281d179576e3af405c9ecde0529b2126a31",
+      "id": "AEO-TR-079",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:resuming:retry-exhausted"
+    },
+    {
+      "key": "e30fb0ff7f51003c829f1c3d1fa9417285ad2455",
+      "id": "AEO-TR-080",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:superseded"
+    },
+    {
+      "key": "e884fce97b38610f5ba5ab2788d72b39d48dae7a",
+      "id": "AEO-TR-081",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:retry-requested"
+    },
+    {
+      "key": "e959857c71491825961c8fb9f2b2b4162f6a5cbe",
+      "id": "AEO-TR-082",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:run-completed"
+    },
+    {
+      "key": "ec8ca1a3221bda73d9fc5b7982a43e10efad4fa5",
+      "id": "AEO-TR-083",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:completed:superseded"
+    },
+    {
+      "key": "f317ebe128ef85184c758bd521121c09fedf70cb",
+      "id": "AEO-TR-084",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:waiting-retry:stage-failed"
+    },
+    {
+      "key": "f36f392ddb5bdbc1c1783f7696eb1d3f6bd4b659",
+      "id": "AEO-TR-085",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:canceled:stage-completed"
+    },
+    {
+      "key": "f4656875ceb9d1f6c86c3e60d4a52699c4490a92",
+      "id": "AEO-TR-086",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:run-started"
+    },
+    {
+      "key": "f76e433741ab32faa6829fd7554e9eed22a132ef",
+      "id": "AEO-TR-087",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:queued:run-completed"
+    },
+    {
+      "key": "fa2e0118d84d38452c05dcdda4b51202afae7cf6",
+      "id": "AEO-TR-088",
+      "rule_type": "invalid-transition",
+      "anchor": "states.md#RunStateMachine:invalid:failed:retry-exhausted"
+    },
+    {
+      "key": "04c4303777f8926049b99ffa755723de2c127dc4",
+      "id": "AEO-WF-001",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:2"
+    },
+    {
+      "key": "114b31e520b75822fffdac096dbe7501bccb761b",
+      "id": "AEO-WF-002",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#LatestRunWinsRecoveryWorkflow:step:4"
+    },
+    {
+      "key": "203b0ee6617c965ff6c348291e2941b1b3ad8396",
+      "id": "AEO-WF-003",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#LatestRunWinsRecoveryWorkflow:step:1"
+    },
+    {
+      "key": "2b815dfed1d365bd38558f1da5e5c12432b57f7c",
+      "id": "AEO-WF-004",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:4"
+    },
+    {
+      "key": "394752651f487ec13c93dbf330520ddcc1b32aa5",
+      "id": "AEO-WF-005",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:7"
+    },
+    {
+      "key": "3e4c27b5eab7cf17a4c8779a9f19906c05694eb6",
+      "id": "AEO-WF-006",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#LatestRunWinsRecoveryWorkflow:step:2"
+    },
+    {
+      "key": "66edefd841936a10a3ce53c10dc01d0eb729ff1f",
+      "id": "AEO-WF-007",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:6"
+    },
+    {
+      "key": "95e112196a49526e8706e0ee7b9fa07353ec9d58",
+      "id": "AEO-WF-008",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#LatestRunWinsRecoveryWorkflow:step:0"
+    },
+    {
+      "key": "aad4d7abc7a3991f9425080b53cfa4c2f90e6be9",
+      "id": "AEO-WF-009",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:5"
+    },
+    {
+      "key": "ac217c50298ebbcffda27da30cd6d01a0d2d3404",
+      "id": "AEO-WF-010",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:0"
+    },
+    {
+      "key": "d81fb3d060bc14a307dbefb76e4b7ad7cfbfdf6d",
+      "id": "AEO-WF-011",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#LatestRunWinsRecoveryWorkflow:step:3"
+    },
+    {
+      "key": "dd747d93e7e155b9350d97b901ffa26b43df141f",
+      "id": "AEO-WF-012",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:0"
+    },
+    {
+      "key": "edcb350c207e535477c35ca0e89e5432d1ae2fb5",
+      "id": "AEO-WF-013",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:3"
+    },
+    {
+      "key": "fb0b4d906617536000390dd723063ee7654c346a",
+      "id": "AEO-WF-014",
+      "rule_type": "workflow-step",
+      "anchor": "workflows.md#FeatureLifecyclePipelineWorkflow:step:1"
+    }
+  ],
+  "next": {
+    "ERR": 23,
+    "CALC": 4,
+    "DOM": 72,
+    "NF": 48,
+    "TR": 89,
+    "WF": 15,
+    "ENUM": 8,
+    "POL": 7,
+    "INV": 4,
+    "RULE": 3
+  },
+  "tombstones": []
+}

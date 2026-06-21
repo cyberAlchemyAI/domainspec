@@ -314,6 +314,11 @@ describe("round-trip: engine ⊇ committed (normalized semantic identity, 7 docs
         "post",
         "event",
         "calc",
+        // L3: domain.md + rules.md widen the engine's owned surface beyond the
+        // operation-class oracle, so these classes are legitimate extras too.
+        "domain-field",
+        "domain-enum",
+        "policy-decision",
       ]).toContain(p);
     }
   });

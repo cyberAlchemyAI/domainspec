@@ -25,6 +25,9 @@ const CLASS_OF: Record<RuleType, string> = {
   "query-behavior": "QRY",
   "mapping-row": "MAP",
   "error-obligation": "ERR",
+  "domain-field": "DOM",
+  "domain-enum": "ENUM",
+  "policy-decision": "POL",
   "needs-formal": "NF",
 };
 

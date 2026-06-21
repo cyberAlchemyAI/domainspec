@@ -303,13 +303,30 @@ function runCheck(arg: string | undefined): number {
       alloc.idByKey,
       presentDocsIn(featureDir),
     );
-    const committedRegion = extractEngineRegion(readFileSync(specPath, "utf8"));
+    const fullText = readFileSync(specPath, "utf8");
+    const committedRegion = extractEngineRegion(fullText);
     const stale =
       committedRegion === null || committedRegion.trim() !== freshRegion.trim();
     console.log(
       `committed spec region: ${stale ? "STALE (docs changed since last derive)" : "fresh"}`,
     );
     if (stale) failed = true;
+
+    // Fail-closed merge boundary (Delta 3): the engine owns the fenced region; the
+    // LLM may author UI/E2E/scaffolding OUTSIDE it but MUST NOT redefine a backend
+    // engine obligation. Any `| <PREFIX>-<CLASS>-NNN |` row outside the fence is an
+    // LLM fabrication on the engine's derivable surface -> reject.
+    const outside =
+      committedRegion === null
+        ? fullText
+        : fullText.replace(committedRegion, "");
+    const idRow = new RegExp(
+      `\\|\\s*${committedMap.prefix}-[A-Z]+-\\d+\\s*\\|`,
+    );
+    const overlap = outside.split(/\r?\n/).filter((l) => idRow.test(l));
+    console.log(`LLM/engine boundary overlap rows: ${overlap.length}`);
+    for (const l of overlap.slice(0, 5)) console.log(`  ! ${l.trim()}`);
+    if (overlap.length > 0) failed = true;
   }
 
   console.log("");
