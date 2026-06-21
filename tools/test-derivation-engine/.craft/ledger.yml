@@ -1,0 +1,375 @@
+ledger_id: test-derivation-engine.craft
+schema_ref: ../../../.claude/skills/craft/templates/ledger.schema.yml
+schema_version: 0.2.0
+status: candidate-local
+source_of_truth: tools/test-derivation-engine/.craft/ledger.yml
+human_view: tools/test-derivation-engine/CRAFT.md
+
+indexes:
+  by_id:
+    CTX-TDE-ROOT: contexts[0]
+    DEC-TDE-HOME-001: decisions[0]
+    DEC-TDE-LANG-001: decisions[1]
+    DEC-TDE-INPUT-SCOPE-001: decisions[2]
+    DEC-TDE-SEMANTIC-RIGOR-001: decisions[3]
+    ENA-TDE-L0-PASS-001: typed_items[0]
+    BLK-TDE-AUTH-CONVENTION-001: typed_items[1]
+    GATE-TDE-CORPUS-GENERALIZATION-001: typed_items[2]
+    BLK-TDE-COMMIT-DISCIPLINE-001: typed_items[3]
+    GAP-TDE-EMITTESTS-BODIES-001: gaps[0]
+    GAP-TDE-POSTCONDITION-IDS-001: gaps[1]
+    ART-TDE-PACKAGE: artifacts[0]
+    ART-TDE-SPEC: artifacts[1]
+    ART-TDE-ARCH: artifacts[2]
+    ART-TDE-GLOSSARY: artifacts[3]
+    ART-TDE-WORKPACK: artifacts[4]
+    ART-TDE-L0-REPORT: artifacts[5]
+    ART-TDE-REFINE-RESULT: artifacts[6]
+    ART-TDE-CRAFT-LEDGER: artifacts[7]
+    ART-TDE-CRAFT-VIEW: artifacts[8]
+  open_decisions:
+    - DEC-TDE-SEMANTIC-RIGOR-001
+  blocking_decisions: []
+  active_blockers:
+    - BLK-TDE-AUTH-CONVENTION-001
+    - BLK-TDE-COMMIT-DISCIPLINE-001
+  active_gaps:
+    - GAP-TDE-EMITTESTS-BODIES-001
+    - GAP-TDE-POSTCONDITION-IDS-001
+  next_moves:
+    - context_id: CTX-TDE-ROOT
+      next_move: >
+        Commit the engine package + design docs under submodule discipline
+        (BLK-TDE-COMMIT-DISCIPLINE-001), then generalize semantic-id bridging so
+        auth-access-control round-trips (BLK-TDE-AUTH-CONVENTION-001) toward the
+        corpus-generalization gate (GATE-TDE-CORPUS-GENERALIZATION-001).
+  artifacts_by_path:
+    tools/test-derivation-engine/: ART-TDE-PACKAGE
+    development/deterministic-test-derivation-engine/SPEC.md: ART-TDE-SPEC
+    development/deterministic-test-derivation-engine/ARCHITECTURE.md: ART-TDE-ARCH
+    development/deterministic-test-derivation-engine/GLOSSARY.md: ART-TDE-GLOSSARY
+    development/deterministic-test-derivation-engine/WORK-PACK.md: ART-TDE-WORKPACK
+    development/deterministic-test-derivation-engine/L0-ROUNDTRIP-REPORT.md: ART-TDE-L0-REPORT
+    tools/test-derivation-engine/.craft/ledger.yml: ART-TDE-CRAFT-LEDGER
+    tools/test-derivation-engine/CRAFT.md: ART-TDE-CRAFT-VIEW
+
+contexts:
+  - context_id: CTX-TDE-ROOT
+    parent_id: root
+    title: Deterministic Test-Derivation Engine
+    purpose: >
+      Build a fully deterministic, no-LLM engine that compiles a feature's
+      canonical Markdown docs into byte-stable test obligations (parse -> typed
+      graph G -> pure delta -> content-addressed obligation_key -> emit), making
+      DomainSpec paper claim C2 (determinism) true by construction and yielding a
+      shippable product that replaces the LLM-backed domainspec-generate-tests.
+    stage: implement
+    gate: flag
+    next_move: >
+      Commit under submodule discipline, then generalize semantic-id bridging for
+      auth-access-control toward corpus generalization.
+    owned_artifacts:
+      - ART-TDE-PACKAGE
+      - ART-TDE-SPEC
+      - ART-TDE-ARCH
+      - ART-TDE-GLOSSARY
+      - ART-TDE-WORKPACK
+      - ART-TDE-L0-REPORT
+      - ART-TDE-REFINE-RESULT
+      - ART-TDE-CRAFT-LEDGER
+      - ART-TDE-CRAFT-VIEW
+    notes: >
+      Root context created by /craft start. Scope = tools/test-derivation-engine/.craft.
+      L0 falsification gate PASSES for financial-settlement (round-trip missing=0,
+      byte-stable, 33/33 tests, tsc 0). L1 partial: emit_tests + linter done, 2nd
+      feature parses but auth round-trip FAILs on oracle-convention drift.
+
+descriptions:
+  - description_id: DESC-TDE-001
+    context_id: CTX-TDE-ROOT
+    description: >
+      Status as of 2026-06-15. The engine (TypeScript, tools/test-derivation-engine)
+      parses the 7 financial-settlement aspect docs into a typed concept graph,
+      applies pure delta rules with EXACT cardinalities, stamps content-addressed
+      obligation_keys, and emits TEST-SPEC + runnable vitest. L0 gate: financial
+      round-trip reproduces 100% of committed obligations (missing=0) with 16
+      legitimate completeness extras, byte-identical across runs. Auth-access-control
+      parses (108 obligations, 0 violations) but its round-trip FAILs (30 missing /
+      25 extra) due to a different oracle dialect, not delta defects.
+    status: active
+    evidence: ART-TDE-L0-REPORT
+
+definitions:
+  - definition_id: DEF-TDE-ENGINE-001
+    scope_id: CTX-TDE-ROOT
+    term: deterministic test-derivation engine
+    statement: >
+      A pure, no-LLM, no-network pipeline (parse -> G -> delta -> obligation_key ->
+      emit) that compiles canonical feature docs into byte-stable test obligations,
+      so determinism is true by construction rather than measured on a stochastic
+      generator.
+    status: candidate
+    evidence: ART-TDE-SPEC
+  - definition_id: DEF-TDE-OBLIGATION-KEY-001
+    scope_id: CTX-TDE-ROOT
+    term: obligation_key
+    statement: >
+      sha1(source_anchor | rule_type | canonical_params) — a content-addressed,
+      order-invariant, byte-stable identifier for a derived obligation. Gives
+      cross-run determinism structurally and dissolves the original E1 "Jaccard over
+      hand-numbered IDs" problem.
+    status: candidate
+    evidence: ART-TDE-GLOSSARY
+  - definition_id: DEF-TDE-SEMANTIC-ROUNDTRIP-001
+    scope_id: CTX-TDE-ROOT
+    term: semantic round-trip identity
+    statement: >
+      A normalized identity (`normRuleType:tokens`) that BOTH the engine output and
+      the committed TEST-SPEC map into, since their raw ID schemes differ. The L0
+      gate asks "did the engine cover every source obligation the human catalogued?"
+      (engine-set superset of committed-set) at this level, not per-micro-case.
+    status: candidate
+    evidence: ART-TDE-L0-REPORT
+  - definition_id: DEF-TDE-NEEDS-FORMAL-001
+    scope_id: CTX-TDE-ROOT
+    term: needs_formal
+    statement: >
+      The deterministic escape hatch: a Formal cell that is prose the sub-grammar
+      cannot classify is flagged needs_formal (counted, surfaced by the linter),
+      never guessed. Keeps the engine deterministic about what it cannot formalize.
+    status: candidate
+    evidence: ART-TDE-L0-REPORT
+
+typed_items:
+  - item_id: ENA-TDE-L0-PASS-001
+    kind: enabler
+    base_type: validation_enabler
+    context_type: tde.l0_falsification_pass
+    primary_lane: validator
+    secondary_lanes:
+      - architecture
+    source_id: CTX-TDE-ROOT
+    target_id: CTX-TDE-ROOT
+    status: active
+    refinement_status: refined
+    default_role: validation_reviewer
+    delegation_route: task-session
+    closure_condition: >
+      financial-settlement round-trip stays PASS (missing=0) and byte-stable as the
+      engine evolves; it is the proof input for the C2 determinism-by-construction
+      claim.
+    evidence: ART-TDE-L0-REPORT
+    decision_ref: DEC-TDE-INPUT-SCOPE-001
+    reason: The passing L0 gate over the full 7-doc input is the load-bearing evidence the engine works.
+  - item_id: BLK-TDE-AUTH-CONVENTION-001
+    kind: blocker
+    base_type: design_blocker
+    context_type: tde.oracle_convention_drift
+    primary_lane: architecture
+    secondary_lanes:
+      - validator
+    source_id: CTX-TDE-ROOT
+    target_id: CTX-TDE-ROOT
+    status: active
+    refinement_status: refined
+    default_role: engine_owner
+    delegation_route: task-session
+    closure_condition: >
+      auth-access-control round-trip reaches missing=0 (or documented-irreducible)
+      after generalizing semantic-id bridging to handle its dialect (op-qualified
+      ids, entity-name drift Session vs SessionLifecycle, row-id-keyed transitions,
+      dedicated Error-state category, consumer-bucketed events) WITHOUT hardcoding.
+    evidence: ART-TDE-L0-REPORT
+    decision_ref: none
+    reason: Generalization across a 2nd feature is required before "deterministic derivation works across the corpus" can be claimed; delta logic is sound, identity bridging is not yet general.
+  - item_id: GATE-TDE-CORPUS-GENERALIZATION-001
+    kind: gate
+    base_type: readiness_gate
+    context_type: tde.corpus_generalization
+    primary_lane: validator
+    secondary_lanes:
+      - architecture
+    source_id: CTX-TDE-ROOT
+    target_id: CTX-TDE-ROOT
+    status: active
+    refinement_status: refined
+    default_role: validation_reviewer
+    delegation_route: experiment-harness
+    closure_condition: >
+      The engine round-trips (missing=0 or documented-irreducible) across a declared
+      set of >=N poker-team features, not just financial-settlement, before the
+      "deterministic derivation" claim generalizes from one feature to the corpus.
+    evidence: ART-TDE-WORKPACK
+    decision_ref: none
+    reason: One passing feature proves feasibility; the C2 claim needs corpus-level evidence (ties to experiments E1a/E2/E3).
+  - item_id: BLK-TDE-COMMIT-DISCIPLINE-001
+    kind: blocker
+    base_type: governance_blocker
+    context_type: tde.submodule_commit_discipline
+    primary_lane: governance
+    secondary_lanes:
+      - operator
+    source_id: CTX-TDE-ROOT
+    target_id: CTX-TDE-ROOT
+    status: active
+    refinement_status: refined
+    default_role: operator
+    requires_human: true
+    delegation_route: task-session
+    closure_condition: >
+      Engine package + design docs committed in implementation/domainspec; the
+      earlier submodule commit pushed and the parent gitlink bumped after
+      `make bump-check` (submodule-first, parent-last). Pushing is operator-gated.
+    evidence: ART-TDE-PACKAGE
+    decision_ref: none
+    reason: Multiple turns of work are uncommitted; submodule discipline requires push-before-parent-bump, an operator-gated outward action.
+
+gaps:
+  - gap_id: GAP-TDE-EMITTESTS-BODIES-001
+    context_id: CTX-TDE-ROOT
+    summary: >
+      emit_tests renders one runnable `it.todo`/failing case per obligation_key but
+      the test BODIES are stubs (expect.fail). Real assertion bodies are needed
+      before the emitted suite can drive E3 mutation testing.
+    severity: medium
+    treatment: defer
+    owner_route: task-session
+    evidence: ART-TDE-L0-REPORT
+  - gap_id: GAP-TDE-POSTCONDITION-IDS-001
+    context_id: CTX-TDE-ROOT
+    summary: >
+      Committed TEST-SPEC PC/WF/QT/MT rows carry no surviving source id, so the
+      round-trip bridges them at owning-concept-bucket level, not per-row. Gate
+      verifies "covered this operation/workflow" not "covered each specific row".
+      Per-row rigor needs the oracle to embed P-/WF-/QT-/MT-ids (upstream authoring fix).
+    severity: low
+    treatment: accept
+    owner_route: domainspec-spec-feature
+    evidence: ART-TDE-L0-REPORT
+
+decisions:
+  - decision_id: DEC-TDE-HOME-001
+    scope_id: CTX-TDE-ROOT
+    question: Where should the TypeScript engine live?
+    description: The architecture proposed internal_tools/ but that is a Python tree.
+    impact: Affects toolchain, GitNexus indexing, and cross-submodule discipline.
+    decision_type: structural
+    blocking: false
+    status: closed
+    selected_option: tools/test-derivation-engine/
+    rationale: >
+      Matches the existing TS-tooling convention (tools/ holds analyze-signals.ts,
+      validate-*.ts, lib/, fixtures/); native TS+vitest; minimal setup.
+    evidence: ART-TDE-ARCH
+    links:
+      - label: resolved via task-session decision-gate
+        target: ART-TDE-ARCH
+        kind: evidence
+  - decision_id: DEC-TDE-LANG-001
+    scope_id: CTX-TDE-ROOT
+    question: Engine implementation language?
+    description: TypeScript vs Python.
+    impact: Determines whether emit_tests output is native to the Stryker/vitest E3 target.
+    decision_type: structural
+    blocking: false
+    status: closed
+    selected_option: TypeScript
+    rationale: Native runnable vitest emission for the E3 mutation target; matches poker-team backend.
+    evidence: ART-TDE-ARCH
+    links: []
+  - decision_id: DEC-TDE-INPUT-SCOPE-001
+    scope_id: CTX-TDE-ROOT
+    question: Should the engine parse 4 aspect docs or all 7 source docs?
+    description: >
+      L0 round-trip first FAILED because the committed spec derives from 7 docs
+      (adds workflows/queries/mappings) but the engine parsed only the 4 the
+      architect scoped.
+    impact: Determines whether the engine can reproduce the full human spec (gate PASS).
+    decision_type: scope
+    blocking: false
+    status: closed
+    selected_option: Extend to all 7 docs
+    rationale: >
+      The engine is not a true deterministic replacement until it covers the same
+      sources the human derivation used; extending made the gate PASS (missing=0).
+    evidence: ART-TDE-L0-REPORT
+    links:
+      - label: corrected the architect 4-aspect assumption
+        target: ART-TDE-ARCH
+        kind: related
+  - decision_id: DEC-TDE-SEMANTIC-RIGOR-001
+    scope_id: CTX-TDE-ROOT
+    question: >
+      Should the round-trip gate verify per-row obligation identity, or is
+      owning-concept-bucket bridging acceptable for PC/WF/QT/MT rows?
+    description: >
+      Committed PC/WF/QT/MT rows lack surviving source ids, so the gate currently
+      compares at concept-bucket level. Per-row rigor would need an upstream oracle
+      authoring change (embed ids).
+    impact: Determines the strength of the C2 evidence the gate produces.
+    decision_type: methodology
+    blocking: false
+    status: open
+    selected_option: none
+    rationale: none
+    evidence: ART-TDE-L0-REPORT
+    links:
+      - label: gap detailing the limitation
+        target: GAP-TDE-POSTCONDITION-IDS-001
+        kind: related
+
+artifacts:
+  - artifact_id: ART-TDE-PACKAGE
+    owner_context_id: CTX-TDE-ROOT
+    path: tools/test-derivation-engine/
+    artifact_type: code-package
+    status: active
+    notes: TypeScript engine (grammar/ir/rules/keys/emit/roundtrip + cli + tests). tsc 0, 33/33 tests. Uncommitted.
+  - artifact_id: ART-TDE-SPEC
+    owner_context_id: CTX-TDE-ROOT
+    path: development/deterministic-test-derivation-engine/SPEC.md
+    artifact_type: module-spec
+    status: active
+    notes: Define-mode spec (mission, capability map, concept model). Uncommitted.
+  - artifact_id: ART-TDE-ARCH
+    owner_context_id: CTX-TDE-ROOT
+    path: development/deterministic-test-derivation-engine/ARCHITECTURE.md
+    artifact_type: architecture
+    status: active
+    notes: Design-mode six-view architecture + decision log (D-001..D-004). Uncommitted.
+  - artifact_id: ART-TDE-GLOSSARY
+    owner_context_id: CTX-TDE-ROOT
+    path: development/deterministic-test-derivation-engine/GLOSSARY.md
+    artifact_type: glossary
+    status: active
+    notes: 13-term glossary; determinism-vs-completeness distinction. Uncommitted.
+  - artifact_id: ART-TDE-WORKPACK
+    owner_context_id: CTX-TDE-ROOT
+    path: development/deterministic-test-derivation-engine/WORK-PACK.md
+    artifact_type: work-pack
+    status: active
+    notes: Engine work-pack; SWU-ENG-000..007. L0 complete, L1 partial. Uncommitted.
+  - artifact_id: ART-TDE-L0-REPORT
+    owner_context_id: CTX-TDE-ROOT
+    path: development/deterministic-test-derivation-engine/L0-ROUNDTRIP-REPORT.md
+    artifact_type: validation-report
+    status: pass
+    notes: Round-trip evidence — financial PASS (missing=0), auth FAIL (convention drift). Uncommitted.
+  - artifact_id: ART-TDE-REFINE-RESULT
+    owner_context_id: CTX-TDE-ROOT
+    path: development/refinement-runs/2026-06-12-test-derivation-c2-cluster/RESULT.md
+    artifact_type: refine-result
+    status: pass
+    notes: Refine result that produced the engine pivot + two-track plan. Committed (89ae887).
+  - artifact_id: ART-TDE-CRAFT-LEDGER
+    owner_context_id: CTX-TDE-ROOT
+    path: tools/test-derivation-engine/.craft/ledger.yml
+    artifact_type: ledger-source
+    status: active
+    notes: Craft source of truth for the engine project.
+  - artifact_id: ART-TDE-CRAFT-VIEW
+    owner_context_id: CTX-TDE-ROOT
+    path: tools/test-derivation-engine/CRAFT.md
+    artifact_type: human-view
+    status: active
+    notes: Human-readable view of the ledger; not source of truth.
