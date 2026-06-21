@@ -1,0 +1,78 @@
+{
+  "feature": "financial-settlement",
+  "$comment": "Obligation->impl binding sidecar. Declares WHICH pure function (and its arg shape) an obligation's assertion targets — NEVER the expected answer. Expected values are computed by the engine from the Formal AST, not stored here, so generation stays pure (no oracle in the data). Modules are import paths RELATIVE TO `emit_dir`. An obligation with no pure target is omitted -> emitted as it.skip + coverage_gap.",
+  "emit_dir": "validation/poker-team/backend/src/domain/__derived__",
+  "test_file": "financial-settlement.derived.test.ts",
+  "bindings": [
+    {
+      "match": { "rule_type": "calculation", "id": "C3" },
+      "module": "../deal/deal.service",
+      "symbol": "getDealSplit",
+      "strategy": "ast-eval",
+      "kind": "ternary-deal-split",
+      "result_field": "player",
+      "$comment": "C3 `playerShare = limit >= NL100 ? 0.5 : 0.4`. The engine evals the ternary branch literals from the Formal AST and asserts getDealSplit(<limit>).player === <literal>. The limit inputs (NL100 / NL10) come from the threshold token in the AST, not from running the impl."
+    },
+    {
+      "match": { "rule_type": "rule-validation", "id": "R3" },
+      "module": "../settlement/settlement.service",
+      "symbol": "filterRecordsByPeriod",
+      "strategy": "ast-eval",
+      "kind": "range-date-filter",
+      "args": ["records", "startDate", "endDate"],
+      "$comment": "R3 `startDate <= stats.date <= endDate`. RANGE -> 4 boundary cases. The engine places a record date ON / ±1 day OFF each inclusive bound and asserts inclusion/exclusion via the returned length. Kills <=->< and >=->> mutants on the boundary."
+    },
+    {
+      "match": { "rule_type": "rule-validation", "id": "R4" },
+      "module": "../settlement/settlement.service",
+      "symbol": "decideSettlementSideEffects",
+      "strategy": "ast-eval",
+      "kind": "count-cap-makeup",
+      "tx_type": "MAKEUP_APPLIED",
+      "decision_field": "shouldCreateMakeupAppliedEvent",
+      "$comment": "R4 `count(tx[type=MAKEUP_APPLIED,date=endDate]) <= 1`. COUNT_CAP -> first-allowed (no existing tx -> may create) vs duplicate-capped (an existing tx on endDate -> must NOT re-create). Asserts the pure decision flag; never re-implements dedup."
+    },
+    {
+      "match": { "rule_type": "rule-validation", "id": "R5" },
+      "module": "../settlement/settlement.service",
+      "symbol": "decideSettlementSideEffects",
+      "strategy": "ast-eval",
+      "kind": "count-cap-payout",
+      "tx_type": "PAYOUT",
+      "decision_field": "shouldCreatePayoutEvent",
+      "$comment": "R5 `count(tx[type=PAYOUT,date=endDate]) <= 1`. COUNT_CAP, same shape as R4 over the PAYOUT decision flag."
+    },
+    {
+      "match": {
+        "rule_type": "needs-formal",
+        "id": "I1",
+        "base_rule_type": "invariant"
+      },
+      "module": "../makeup/makeup-policy.service",
+      "symbol": "applyMakeupPolicy",
+      "strategy": "property",
+      "kind": "non-negative-newdebt",
+      "result_field": "newDebt",
+      "$comment": "I1 `newMakeup >= 0`. A universally-quantified non-negativity property over a seeded input generator: for all generated inputs, applyMakeupPolicy(input).newDebt >= 0. Uses a pure seeded LCG generator (no fast-check dep). Catches CLASS faults that drive debt negative; it is honest about being weaker than a value oracle."
+    }
+  ],
+  "coverage_gaps": {
+    "$comment": "Obligation classes with NO pure, non-circular target. Emitted as it.skip + a coverage_gap annotation; counted and reported, NEVER faked. The makeup-policy core arithmetic (C4) is the most fault-rich code but its only honest oracle is a human-written fixture — auto-deriving it would re-implement the policy in the test (a self-fulfilling oracle).",
+    "reasons": {
+      "C1": "needs-fixture-oracle: sum(relevantRecords.profit) aggregate; expected value would re-implement the reduce.",
+      "C2": "needs-fixture-oracle: sum(relevantRecords.rakeback) aggregate; same as C1.",
+      "C4": "needs-fixture-oracle: applyMakeupPolicy(...) bare call; the oracle IS the impl, faking = self-fulfilling.",
+      "R1": "needs-fixture-oracle: exists(Player.id == playerId) needs a player/repo fixture universe, not in the pure domain slice.",
+      "R2": "out-of-pure-slice: required-fields presence is validated in the use-case / route layer, not a pure domain fn.",
+      "I2": "needs-fixture-oracle: per-type idempotency over a transaction store; needs a fixture universe.",
+      "P1": "out-of-pure-slice: result-shape integration guarantee returned by the use-case orchestrator.",
+      "P2": "out-of-pure-slice: player-makeup write is a side effect across aggregates.",
+      "P3": "side-effectful: the create-tx half is a side effect; the pure decision half is already covered by R4.",
+      "P4": "side-effectful: the create-tx / emit half is a side effect; the pure decision half is already covered by R5.",
+      "transitions": "out-of-pure-slice: the state machine lives in use-cases/services, not a pure domain fn.",
+      "contracts": "out-of-pure-slice: Fastify HTTP routes, outside src/domain/**.",
+      "events": "out-of-pure-slice: event emission is a side effect.",
+      "workflow/query/mapping/error": "out-of-pure-slice: orchestration / DTO mapping / error routing, not pure domain."
+    }
+  }
+}

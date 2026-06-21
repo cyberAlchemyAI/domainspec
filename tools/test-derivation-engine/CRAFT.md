@@ -15,11 +15,12 @@ Build a fully deterministic, no-LLM engine that compiles a feature's canonical M
 
 ## Quick links
 
-- **Next move:** Commit the engine + design docs under submodule discipline (`BLK-TDE-COMMIT-DISCIPLINE-001`), then generalize semantic-id bridging so auth-access-control round-trips (`BLK-TDE-AUTH-CONVENTION-001`) toward the corpus-generalization gate (`GATE-TDE-CORPUS-GENERALIZATION-001`).
-- **Active blockers:** `BLK-TDE-AUTH-CONVENTION-001`, `BLK-TDE-COMMIT-DISCIPLINE-001`
-- **Open decisions:** `DEC-TDE-SEMANTIC-RIGOR-001`
-- **Active gaps:** `GAP-TDE-EMITTESTS-BODIES-001`, `GAP-TDE-POSTCONDITION-IDS-001`
+- **Next move (P1):** `task-session` honesty foundation — add the negative-control gate (INV-3) + split WF/QT/MT bucketing to per-row identity (INV-1) so the round-trip is provably falsifiable BEFORE generalizing bridging (`BLK-TDE-GATE-HONESTY-001`). Then P2 general bridging + **new δ rules** for error/consumer-event obligations (`BLK-TDE-AUTH-CONVENTION-001`). Plan: [2026-06-21 refine RESULT](../../development/refinement-runs/2026-06-21-c2-engine-to-evidence/RESULT.md).
+- **Active blockers:** `BLK-TDE-GATE-HONESTY-001` (honesty foundation, P1), `BLK-TDE-AUTH-CONVENTION-001` (bridging + new δ, P2)
+- **Open decisions:** none (`DEC-TDE-SEMANTIC-RIGOR-001` closed → SPLIT)
+- **Active gaps:** `GAP-TDE-EMITTESTS-BODIES-001`, `GAP-TDE-POSTCONDITION-IDS-001` (bumped low→medium)
 - **Readiness gate:** `GATE-TDE-CORPUS-GENERALIZATION-001`
+- **Resolved:** `BLK-TDE-COMMIT-DISCIPLINE-001` ✅ (committed `ff1eba0` + pushed; parent bumped `af15e4d`)
 
 ## Current state
 
@@ -27,12 +28,14 @@ L0 falsification gate **PASSES** for `financial-settlement`: round-trip reproduc
 
 ## Decisions
 
-| ID                           | Question                                 | Status   | Selected                        | Evidence                                                                                   |
-| ---------------------------- | ---------------------------------------- | -------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
-| `DEC-TDE-HOME-001`           | Where should the engine live?            | closed   | `tools/test-derivation-engine/` | [ARCH](../../development/deterministic-test-derivation-engine/ARCHITECTURE.md)             |
-| `DEC-TDE-LANG-001`           | Implementation language?                 | closed   | TypeScript                      | [ARCH](../../development/deterministic-test-derivation-engine/ARCHITECTURE.md)             |
-| `DEC-TDE-INPUT-SCOPE-001`    | 4 docs or all 7?                         | closed   | Extend to all 7                 | [L0-REPORT](../../development/deterministic-test-derivation-engine/L0-ROUNDTRIP-REPORT.md) |
-| `DEC-TDE-SEMANTIC-RIGOR-001` | Per-row vs concept-bucket gate identity? | **open** | —                               | ties to `GAP-TDE-POSTCONDITION-IDS-001`                                                    |
+| ID                           | Question                                 | Status | Selected                                                                            | Evidence                                                                                          |
+| ---------------------------- | ---------------------------------------- | ------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `DEC-TDE-HOME-001`           | Where should the engine live?            | closed | `tools/test-derivation-engine/`                                                     | [ARCH](../../development/deterministic-test-derivation-engine/ARCHITECTURE.md)                    |
+| `DEC-TDE-LANG-001`           | Implementation language?                 | closed | TypeScript                                                                          | [ARCH](../../development/deterministic-test-derivation-engine/ARCHITECTURE.md)                    |
+| `DEC-TDE-INPUT-SCOPE-001`    | 4 docs or all 7?                         | closed | Extend to all 7                                                                     | [L0-REPORT](../../development/deterministic-test-derivation-engine/L0-ROUNDTRIP-REPORT.md)        |
+| `DEC-TDE-SEMANTIC-RIGOR-001` | Per-row vs concept-bucket gate identity? | closed | **SPLIT** — accept op-bucket for postconditions; reject concept-bucket for WF/QT/MT | [2026-06-21 refine](../../development/refinement-runs/2026-06-21-c2-engine-to-evidence/RESULT.md) |
+
+> **Refine 2026-06-21:** the passing oracle dialect (`rv-ct`) is the corpus _minority_ (2/7); the failing `column-typed` dialect is the _majority_ (5/7). The financial PASS is partly concept-presence-only (non-injective WF/QT/MT folds), and ~12+ auth misses are _genuine δ gaps_ (error/consumer-event obligations), not just convention drift — hence the P1 honesty-first ordering.
 
 ## Blockers · enablers · gate
 

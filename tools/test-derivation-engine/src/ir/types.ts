@@ -19,7 +19,8 @@ export type NodeType =
   | "Workflow"
   | "WorkflowStep"
   | "Query"
-  | "Mapping";
+  | "Mapping"
+  | "ErrorState";
 
 export type EdgeType =
   | "on" // Transition --on--> Event
@@ -71,6 +72,7 @@ export type RuleType =
   | "workflow-step"
   | "query-behavior"
   | "mapping-row"
+  | "error-obligation"
   | "needs-formal";
 
 export interface Obligation {

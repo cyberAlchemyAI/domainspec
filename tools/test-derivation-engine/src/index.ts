@@ -39,14 +39,18 @@ export type { Obligation } from "./ir/types.js";
 export { obligationKey } from "./keys/index.js";
 export {
   compareRoundTrip,
+  deriveDescriptor,
   engineSemanticId,
   engineSemanticSet,
+  isIrreducibleMiss,
   parseCommittedSemantic,
   parseCommittedSpec2,
   semanticRoundTrip,
 } from "./roundtrip/index.js";
 export type {
+  ClassifiedMiss,
   CommittedDialect,
   CommittedSpec,
+  DialectDescriptor,
   SemanticOptions,
 } from "./roundtrip/index.js";

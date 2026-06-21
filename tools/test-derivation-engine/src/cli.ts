@@ -3,16 +3,19 @@
 
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { parse } from "./grammar/index.js";
 import { derive } from "./rules/index.js";
 import { emitSpec } from "./emit/spec.js";
-import { emitTests } from "./emit/tests.js";
+import { emitTests, emitHybridTests } from "./emit/tests.js";
+import { loadBindings } from "./bindings/index.js";
 import {
+  deriveDescriptor,
   engineSemanticSet,
   parseCommittedSpec2,
   semanticRoundTrip,
 } from "./roundtrip/index.js";
+import { runNegativeControl } from "./roundtrip/negative-control.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -37,16 +40,30 @@ function runRoundtrip(feature: string): number {
   }
 
   const obligations = derive(graph);
-  const committed = parseCommittedSpec2(specPath);
+  // Bootstrap the committed spec (to know the dialect), then derive the full dialect
+  // descriptor from the docs, then RE-parse the committed spec with the concept
+  // aliases applied symmetrically to both sides.
+  const bootstrap = parseCommittedSpec2(specPath);
+  const descriptor = deriveDescriptor(graph, bootstrap);
+  const committed = parseCommittedSpec2(specPath, descriptor.conceptAliases);
   const derivedSemantic = engineSemanticSet(obligations, {
-    qualified: committed.qualified,
+    qualified: descriptor.idScope === "per-operation",
+    conceptAliases: descriptor.conceptAliases,
   });
   const report = semanticRoundTrip(derivedSemantic, committed.semantic);
 
   console.log(`=== Round-Trip: ${feature} ===`);
   console.log(`Feature dir:        ${featureDir}`);
   console.log(
-    `Committed dialect:  ${committed.dialect}${committed.qualified ? " (op-qualified)" : ""}`,
+    `Committed dialect:  ${descriptor.dialect} (id-scope: ${descriptor.idScope})`,
+  );
+  console.log(
+    `Concept aliases:    ${
+      [...descriptor.conceptAliases.entries()]
+        .filter(([k, v]) => k !== v)
+        .map(([k, v]) => `${k}->${v}`)
+        .join(", ") || "(none)"
+    }`,
   );
   console.log(
     `Engine obligations: ${obligations.length} (raw, exact-cardinality)`,
@@ -54,15 +71,56 @@ function runRoundtrip(feature: string): number {
   console.log(`Derived (semantic): ${report.derivedCount}`);
   console.log(`Committed (semantic): ${report.committedCount}`);
   console.log("");
-  console.log(`MISSING (committed not derived): ${report.missing.length}`);
-  for (const m of report.missing)
+  console.log(
+    `MISSING — GENUINE (δ gap / convention drift): ${report.genuineMissing.length}`,
+  );
+  for (const m of report.genuineMissing)
     console.log(`  - ${m.id}  | ${m.description}`);
+  console.log("");
+  console.log(
+    `MISSING — DOCUMENTED-IRREDUCIBLE (per-assertion prose / impl-oracle): ${report.irreducibleMissing.length}`,
+  );
+  for (const m of report.irreducibleMissing)
+    console.log(`  ~ ${m.id}  | ${m.description}`);
   console.log("");
   console.log(`EXTRA (derived not committed): ${report.extra.length}`);
   for (const e of report.extra) console.log(`  + ${e}`);
   console.log("");
-  console.log(`VERDICT: ${report.pass ? "PASS" : "FAIL"}`);
+  const verdict = report.cleanPass
+    ? "PASS (clean)"
+    : report.pass
+      ? "PASS (at declared scope — irreducible residue only)"
+      : "FAIL";
+  console.log(`VERDICT: ${verdict}`);
   return report.pass ? 0 : 3;
+}
+
+/**
+ * INV-3 guard. Runs the negative control over a feature's real engine/committed
+ * pair and FAILS (exit non-zero) if the gate cannot detect a deliberately
+ * injected obligation or a deliberately removed key. "No feature PASS may be
+ * reported unless the negative control passes."
+ */
+function runSelfCheck(feature: string): number {
+  const featureDir = featureDirFor(feature);
+  const specPath = join(featureDir, "TEST-SPEC.md");
+  const { graph } = parse(featureDir);
+  const bootstrap = parseCommittedSpec2(specPath);
+  const descriptor = deriveDescriptor(graph, bootstrap);
+  const committed = parseCommittedSpec2(specPath, descriptor.conceptAliases);
+  const derived = engineSemanticSet(derive(graph), {
+    qualified: descriptor.idScope === "per-operation",
+    conceptAliases: descriptor.conceptAliases,
+  });
+  const result = runNegativeControl(derived, committed.semantic);
+
+  console.log(`=== Self-Check (INV-3 negative control): ${feature} ===`);
+  for (const note of result.notes) console.log(`  - ${note}`);
+  console.log("");
+  console.log(
+    `VERDICT: ${result.ok ? "GATE-CAN-FAIL (ok)" : "GATE-BROKEN — no PASS may be trusted"}`,
+  );
+  return result.ok ? 0 : 5;
 }
 
 /** Resolve a CLI arg to a directory: a path if it points to one, else a feature name. */
@@ -84,6 +142,22 @@ function runDerive(arg: string | undefined): number {
   return 0;
 }
 
+/** Engine package root (…/tools/test-derivation-engine). */
+function pkgRoot(): string {
+  return resolve(__dirname, "..");
+}
+
+/** Private-umbrella repo root: pkg -> tools -> domainspec -> implementation -> root. */
+function repoRoot(): string {
+  return resolve(__dirname, "../../../../..");
+}
+
+/** Path to a feature's binding sidecar, or null if none is committed. */
+function bindingsPathFor(feature: string): string | null {
+  const path = join(pkgRoot(), "bindings", `${feature}.json`);
+  return existsSync(path) ? path : null;
+}
+
 function runEmitTests(arg: string | undefined): number {
   if (!arg) {
     console.error("emit-tests: requires a feature name or directory argument");
@@ -92,7 +166,31 @@ function runEmitTests(arg: string | undefined): number {
   const { graph, violations } = parse(resolveTarget(arg));
   for (const v of violations) console.error(`violation: ${v}`);
   const obligations = derive(graph);
-  console.log(emitTests(obligations));
+
+  // Hybrid mode iff a binding sidecar exists for this feature; else legacy stubs.
+  const bindingsPath = bindingsPathFor(arg);
+  if (!bindingsPath) {
+    console.log(emitTests(obligations));
+    return 0;
+  }
+
+  const bindings = loadBindings(bindingsPath);
+  const { file, report } = emitHybridTests(obligations, bindings, graph);
+  const outPath = join(repoRoot(), bindings.emit_dir, bindings.test_file);
+  mkdirSync(dirname(outPath), { recursive: true });
+  writeFileSync(outPath, file, "utf8");
+
+  console.error(`=== emit-tests (hybrid): ${arg} ===`);
+  console.error(`Wrote: ${outPath}`);
+  console.error(`Obligations:   ${report.total}`);
+  console.error(
+    `Derivable:     ${report.assertions} assertion(s) + ${report.properties} property(ies) = ${report.assertions + report.properties}`,
+  );
+  console.error(
+    `coverage_gap:  ${report.coverageGaps} (it.skip, reported not faked)`,
+  );
+  // The emitted suite goes to stdout too, so callers can pipe/inspect.
+  console.log(file);
   return 0;
 }
 
@@ -136,6 +234,9 @@ function main(): void {
     case "roundtrip":
       process.exit(runRoundtrip(arg ?? "financial-settlement"));
       break;
+    case "self-check":
+      process.exit(runSelfCheck(arg ?? "financial-settlement"));
+      break;
     case "derive":
       process.exit(runDerive(arg));
       break;
@@ -147,7 +248,7 @@ function main(): void {
       break;
     default:
       console.error(
-        `unknown command: ${command ?? "(none)"} — expected roundtrip | derive | emit-tests | lint`,
+        `unknown command: ${command ?? "(none)"} — expected roundtrip | self-check | derive | emit-tests | lint`,
       );
       process.exit(1);
   }

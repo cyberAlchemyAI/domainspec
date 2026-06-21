@@ -1,28 +1,76 @@
-// Stage D (part 3) — emit_tests: render runnable vitest mapped 1:1 to obligation_keys.
-// Removes E3's "spec is a doc, not code" implementer confound. SWU-ENG-007 (L1).
+// Stage D (part 3) / P4 — emit_tests: render REAL runnable vitest, 1:1 with
+// obligation_keys. Hybrid (tournament winner, emit-tests-e3-architect.md):
 //
-// Each obligation becomes exactly one `it.todo(...)` case. `it.todo` is chosen so the
-// emitted file is BOTH syntactically valid TS *and* runnable as-is (todos report as
-// pending, not failing) — the implementer fills each body by replacing `it.todo` with
-// `it`. The 1:1 obligation_key↔test mapping is preserved in a leading comment per case.
+//   * assertion-from-Formal (AST-eval) for the deterministically-evaluable subset
+//     — ternary calc (deal split), RANGE boundary cases, COUNT_CAP at cap/cap+1.
+//     EXPECTED values come from the Formal AST, NEVER from running the impl.
+//   * property-based (pure seeded generator, no new dep) for invariants expressible
+//     as a universally-quantified property (e.g. `newMakeup >= 0`).
+//   * it.skip + a `coverage_gap` annotation for everything that needs a human
+//     oracle (exists(), aggregate/makeup math, transitions, contracts, events,
+//     workflows). Counted + reported, NEVER faked.
+//
+// Two modes:
+//   - WITHOUT a BindingSet: legacy stub mode — one `it.todo` per obligation (kept
+//     so callers that do not pass bindings get the old behavior).
+//   - WITH a BindingSet: hybrid mode — real assertions where a binding + an
+//     evaluable Formal AST exist, honest it.skip coverage_gap everywhere else.
+//
+// Generation is PURE/total: same (obligations, bindings) -> byte-identical file.
+// `running` the emitted test executes the impl; that is fine. The engine never
+// reads the impl to AUTHOR an assertion (that would be golden-trace, disqualified).
 
-import type { Obligation } from "../ir/types.js";
+import type { ConceptGraph, Obligation } from "../ir/types.js";
+import type { Binding, BindingSet } from "../bindings/index.js";
+import { bindingFor } from "../bindings/index.js";
+import { parseFormal } from "../formal/ast.js";
+
+/**
+ * Resolve the Formal/Formula text for an obligation. Prefer the verbatim
+ * `formal` carried in canonical_params (rule-validation/invariant); fall back to
+ * the source node's `formal`/`formula` cell (calculation drops it from params so
+ * the key stays stable). This is the SPEC text, used only as an AST source — it
+ * is never an oracle for the expected value.
+ */
+function resolveFormal(
+  o: Obligation,
+  formalByAnchor: ReadonlyMap<string, string>,
+): string {
+  const fromParam = o.canonical_params.formal;
+  if (typeof fromParam === "string" && fromParam !== "") return fromParam;
+  return formalByAnchor.get(o.source_anchor) ?? "";
+}
+
+/** Index source nodes' formal/formula cells by source_anchor (pure). */
+function buildFormalIndex(graph: ConceptGraph): Map<string, string> {
+  const idx = new Map<string, string>();
+  for (const n of graph.nodes) {
+    const f = n.fields.formal ?? n.fields.formula;
+    if (typeof f === "string" && f !== "") idx.set(n.source_anchor, f);
+  }
+  return idx;
+}
 
 /** Escape a string for safe embedding inside a JS line comment. */
 function commentSafe(s: string): string {
   return s.replace(/\r?\n/g, " ").replace(/\*\//g, "* /");
 }
 
-/** Render obligations as a runnable vitest file (1 `it.todo` per obligation_key). */
-export function emitTests(obligations: readonly Obligation[]): string {
-  const ordered = [...obligations].sort((a, b) =>
+function sortObligations(obligations: readonly Obligation[]): Obligation[] {
+  return [...obligations].sort((a, b) =>
     a.obligation_key < b.obligation_key
       ? -1
       : a.obligation_key > b.obligation_key
         ? 1
         : 0,
   );
-  const cases = ordered.map(
+}
+
+// --- Legacy stub mode (no bindings) -------------------------------------------
+
+/** Render obligations as a runnable vitest file (1 `it.todo` per obligation_key). */
+export function emitTests(obligations: readonly Obligation[]): string {
+  const cases = sortObligations(obligations).map(
     (o) =>
       `  // obligation_key: ${o.obligation_key}\n` +
       `  // source: ${commentSafe(o.source_anchor)}\n` +
@@ -38,4 +86,275 @@ export function emitTests(obligations: readonly Obligation[]): string {
     `});`,
     ``,
   ].join("\n");
+}
+
+// --- Hybrid mode (with bindings) ----------------------------------------------
+
+export interface HybridReport {
+  readonly total: number;
+  readonly assertions: number; // real it(...) bodies
+  readonly properties: number; // seeded property bodies
+  readonly coverageGaps: number; // it.skip(...) honest holes
+}
+
+export interface HybridResult {
+  readonly file: string;
+  readonly report: HybridReport;
+}
+
+const p = (s: string): string => JSON.stringify(s);
+
+/** A test title for an obligation, stable and unique by key prefix. */
+function title(o: Obligation): string {
+  return `${o.rule_type}:${o.obligation_key.slice(0, 8)} ${o.description}`;
+}
+
+/** A `coverage_gap` it.skip case. Honest hole, counted, never faked. */
+function emitSkip(o: Obligation, reason: string): string {
+  return [
+    `  // obligation_key: ${o.obligation_key}`,
+    `  // source: ${commentSafe(o.source_anchor)}`,
+    `  // coverage_gap: ${reason}`,
+    `  it.skip(${p(title(o))});`,
+  ].join("\n");
+}
+
+function paramStr(o: Obligation, key: string): string {
+  const v = o.canonical_params[key];
+  return v == null ? "" : String(v);
+}
+
+/**
+ * Try to emit a REAL `it(...)` body for an obligation+binding by evaluating the
+ * Formal AST. Returns null when the AST is not in the evaluable grammar (caller
+ * falls back to a coverage_gap skip). Pure: expected values are read from the AST.
+ */
+function emitAstEval(o: Obligation, b: Binding, formal: string): string | null {
+  const ast = parseFormal(formal);
+  const head = [
+    `  // obligation_key: ${o.obligation_key}`,
+    `  // source: ${commentSafe(o.source_anchor)}`,
+    `  // binding: ${b.symbol}() [${b.kind}] — expected derived from Formal AST, not from impl`,
+  ];
+
+  if (b.kind === "ternary-deal-split" && ast.kind === "ternary") {
+    const branch = paramStr(o, "branch"); // true-branch | false-branch
+    const isTrue = branch === "true-branch";
+    const expected = isTrue ? ast.thenLit.value : ast.elseLit.value;
+    // Pick an input limit that lands on the chosen branch given the op+threshold.
+    // threshold raw is e.g. "NL100" -> the boundary; below it is threshold-90.
+    const thr = ast.threshold.value;
+    const onBoundary = `NL${thr}`; // satisfies `>= threshold` (and `> ` only if strict-safe)
+    const below = `NL${Math.max(0, thr - 90)}`;
+    // For `>=`, the boundary value is true; for `>`, use threshold+1 for true.
+    const trueInput =
+      ast.op === ">" ? `NL${thr + 10}` : ast.op === "<" ? below : onBoundary;
+    const falseInput =
+      ast.op === ">" || ast.op === ">=" ? below : `NL${thr + 10}`;
+    const input = isTrue ? trueInput : falseInput;
+    const field = b.result_field ?? "player";
+    return [
+      ...head,
+      `  it(${p(title(o))}, () => {`,
+      `    // ${branch}: limit ${input} ${ast.op} ${ast.threshold.raw} -> ${field} === ${expected}`,
+      `    expect(${b.symbol}(${p(input)}).${field}).toBe(${expected});`,
+      `  });`,
+    ].join("\n");
+  }
+
+  if (b.kind === "range-date-filter" && ast.kind === "range") {
+    const caseName = paramStr(o, "case");
+    const start = "2026-01-01";
+    const end = "2026-01-31";
+    const dayBeforeStart = "2025-12-31";
+    const dayAfterEnd = "2026-02-01";
+    const lowerInclusive = ast.lowerOp === "<="; // start <= x
+    const upperInclusive = ast.upperOp === "<="; // x <= end
+    let recDate: string;
+    let expectLen: number;
+    switch (caseName) {
+      case "lower-inclusive":
+        recDate = start;
+        expectLen = lowerInclusive ? 1 : 0;
+        break;
+      case "upper-inclusive":
+        recDate = end;
+        expectLen = upperInclusive ? 1 : 0;
+        break;
+      case "below":
+        recDate = dayBeforeStart;
+        expectLen = 0;
+        break;
+      case "above":
+        recDate = dayAfterEnd;
+        expectLen = 0;
+        break;
+      default:
+        return null;
+    }
+    return [
+      ...head,
+      `  it(${p(title(o))}, () => {`,
+      `    // ${caseName}: record date ${recDate} vs [${start} ${ast.lowerOp} date ${ast.upperOp} ${end}]`,
+      `    const records = [{ date: ${p(recDate)}, profit: 1, rakeback: 0 }];`,
+      `    expect(${b.symbol}(records, ${p(start)}, ${p(end)})).toHaveLength(${expectLen});`,
+      `  });`,
+    ].join("\n");
+  }
+
+  if (b.kind === "count-cap-makeup" || b.kind === "count-cap-payout") {
+    if (ast.kind !== "count-cap") return null;
+    const caseName = paramStr(o, "case"); // first-allowed | duplicate-capped
+    const txType = b.tx_type ?? "";
+    const field = b.decision_field ?? "";
+    const endDate = "2026-01-31";
+    const amountField =
+      b.kind === "count-cap-makeup" ? "totalAppliedMakeup" : "totalPayout";
+    // first-allowed: no existing tx on endDate -> flag true (cap not yet reached).
+    // duplicate-capped: an existing tx of this type on endDate -> flag false.
+    const existing =
+      caseName === "duplicate-capped"
+        ? `[{ type: ${p(txType)}, date: ${p(endDate)} }]`
+        : `[]`;
+    const expected = caseName === "duplicate-capped" ? "false" : "true";
+    return [
+      ...head,
+      `  it(${p(title(o))}, () => {`,
+      `    // ${caseName}: cap ${ast.op} ${ast.cap} on ${txType} for endDate ${endDate}`,
+      `    const decision = ${b.symbol}({`,
+      `      existingTransactions: ${existing},`,
+      `      periodEnd: ${p(endDate)},`,
+      `      ${amountField}: 100,`,
+      `      ${b.kind === "count-cap-makeup" ? "totalPayout" : "totalAppliedMakeup"}: 0,`,
+      `    });`,
+      `    expect(decision.${field}).toBe(${expected});`,
+      `  });`,
+    ].join("\n");
+  }
+
+  return null;
+}
+
+/** Emit a seeded property body (pure generator, no fast-check dep). */
+function emitProperty(o: Obligation, b: Binding): string | null {
+  if (b.kind !== "non-negative-newdebt") return null;
+  const field = b.result_field ?? "newDebt";
+  return [
+    `  // obligation_key: ${o.obligation_key}`,
+    `  // source: ${commentSafe(o.source_anchor)}`,
+    `  // binding: ${b.symbol}() [property] — seeded generator (no fast-check dep)`,
+    `  it(${p(title(o))}, () => {`,
+    `    // property: for all generated inputs, ${b.symbol}(input).${field} >= 0`,
+    `    let seed = 0x9e3779b9; // fixed seed -> deterministic generation & kill set`,
+    `    const next = () => {`,
+    `      // LCG (Numerical Recipes): pure, reproducible.`,
+    `      seed = (seed * 1664525 + 1013904223) >>> 0;`,
+    `      return seed / 0xffffffff;`,
+    `    };`,
+    `    const span = (n: number) => Math.round((next() - 0.5) * 2 * n);`,
+    `    for (let i = 0; i < 200; i += 1) {`,
+    `      const result = ${b.symbol}({`,
+    `        previousDebt: span(10000),`,
+    `        totalProfit: span(10000),`,
+    `        totalRakeback: span(10000),`,
+    `        dealPlayerShare: next(),`,
+    `      });`,
+    `      expect(result.${field}).toBeGreaterThanOrEqual(0);`,
+    `    }`,
+    `  });`,
+  ].join("\n");
+}
+
+/** Map a coverage-gap obligation to a short reason tag. */
+function gapReason(o: Obligation): string {
+  const rt = o.rule_type;
+  if (rt === "needs-formal") return "needs-fixture-oracle (unparseable Formal)";
+  if (rt === "valid-transition" || rt === "invalid-transition")
+    return "out-of-pure-slice (state machine in use-cases)";
+  if (rt === "contract") return "out-of-pure-slice (HTTP route)";
+  if (rt === "event-obligation") return "out-of-pure-slice (side effect)";
+  if (rt === "postcondition")
+    return "side-effectful (pure half covered by R4/R5)";
+  if (rt === "workflow-step" || rt === "query-behavior" || rt === "mapping-row")
+    return "out-of-pure-slice (orchestration / mapping)";
+  if (rt === "error-obligation") return "out-of-pure-slice (error routing)";
+  if (rt === "invariant" || rt === "rule-validation")
+    return "needs-fixture-oracle (no pure target / fixture universe)";
+  if (rt === "calculation")
+    return "needs-fixture-oracle (aggregate / bare call)";
+  return "no-pure-target";
+}
+
+/**
+ * Hybrid emit. Pure/total over (obligations, bindings) — byte-identical output
+ * for identical inputs. Returns the file text plus the derivable-vs-gap counts.
+ */
+export function emitHybridTests(
+  obligations: readonly Obligation[],
+  bindings: BindingSet,
+  graph: ConceptGraph,
+): HybridResult {
+  const ordered = sortObligations(obligations);
+  const formalByAnchor = buildFormalIndex(graph);
+  const modules = new Map<string, Set<string>>();
+  const bodies: string[] = [];
+  let assertions = 0;
+  let properties = 0;
+  let coverageGaps = 0;
+
+  for (const o of ordered) {
+    const b = bindingFor(o, bindings);
+    if (b) {
+      const body =
+        b.strategy === "ast-eval"
+          ? emitAstEval(o, b, resolveFormal(o, formalByAnchor))
+          : emitProperty(o, b);
+      if (body) {
+        (
+          modules.get(b.module) ??
+          modules.set(b.module, new Set()).get(b.module)!
+        ).add(b.symbol);
+        bodies.push(body);
+        if (b.strategy === "property") properties += 1;
+        else assertions += 1;
+        continue;
+      }
+    }
+    bodies.push(emitSkip(o, gapReason(o)));
+    coverageGaps += 1;
+  }
+
+  const imports = [...modules.entries()]
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(
+      ([mod, syms]) =>
+        `import { ${[...syms].sort().join(", ")} } from ${p(mod)};`,
+    );
+
+  const file = [
+    `// AUTO-GENERATED by the deterministic test-derivation engine (hybrid emit_tests).`,
+    `// Do not edit by hand. 1:1 with obligation_keys. Generation is pure/deterministic:`,
+    `// same (spec + bindings) -> byte-identical file. Real assertions where the Formal`,
+    `// AST is evaluable and a binding names a pure fn; honest it.skip coverage_gap`,
+    `// everywhere a human oracle is required (never faked).`,
+    `//`,
+    `// derivable: ${assertions} assertion(s) + ${properties} property(ies); coverage_gap: ${coverageGaps}.`,
+    `import { describe, it, expect } from "vitest";`,
+    ...imports,
+    ``,
+    `describe(${p(`derived obligations: ${bindings.feature}`)}, () => {`,
+    bodies.join("\n\n"),
+    `});`,
+    ``,
+  ].join("\n");
+
+  return {
+    file,
+    report: {
+      total: ordered.length,
+      assertions,
+      properties,
+      coverageGaps,
+    },
+  };
 }

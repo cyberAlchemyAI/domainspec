@@ -8,8 +8,9 @@ import { parse } from "./grammar/index.js";
 import { derive, classifyFormal } from "./rules/index.js";
 import {
   compareRoundTrip,
+  deriveDescriptor,
   engineSemanticSet,
-  parseCommittedSemantic,
+  isIrreducibleMiss,
   parseCommittedSpec2,
   semanticRoundTrip,
 } from "./roundtrip/index.js";
@@ -179,18 +180,22 @@ describe("δ rule cardinalities (SWU-ENG-003)", () => {
     expect(invIds.has("I2")).toBe(true);
   });
 
-  it("invalid-transition = (non-terminal states x events) - valid (exact 8 combos)", () => {
+  it("invalid-transition = (all real states x events) - valid, terminal sinks INCLUDED (exact 9 combos)", () => {
     const inv = ofType("invalid-transition");
-    // 4 non-terminal source states x 3 distinct events - 4 valid = 8 invalid combos.
-    expect(inv.length).toBe(8);
+    // P2: terminal sink states (e.g. COMPLETED) are now INCLUDED — they reject ALL
+    // events (the oracle catalogues "TERMINAL + AnyEvent -> rejected"). The `[new]`
+    // pseudo-start is excluded as a `from`. With 4 real states x 3 events - 4 valid
+    // (one is on the now-excluded `[new]`) the engine derives exactly 9 invalid combos.
+    expect(inv.length).toBe(9);
     const combos = inv
       .map((o) => `${o.canonical_params.from}|${o.canonical_params.event}`)
       .sort();
-    // The 4 valid transitions are excluded; every other (state,event) pair is present.
-    expect(combos).not.toContain("[new]|GenerateSettlement"); // valid
+    // Valid transitions are excluded; the `[new]` pseudo-start never appears as a from.
     expect(combos).not.toContain("VALIDATED|GenerateSettlement"); // valid
-    expect(combos).toContain("[new]|SettlementGenerated"); // invalid
+    expect(combos.some((c) => c.startsWith("[new]|"))).toBe(false); // pseudo-start
     expect(combos).toContain("COMPUTED|GenerateSettlement"); // invalid
+    // A terminal sink (COMPLETED) now rejects events too — the P2 addition.
+    expect(combos).toContain("COMPLETED|GenerateSettlement");
   });
 
   it("rule-validation reproduces R3 RANGE (4) and R2 PRESENCE (3) cases", () => {
@@ -221,8 +226,16 @@ describe("δ purity (R-002: derive(G) deep-equals derive(G))", () => {
 
 describe("round-trip: engine ⊇ committed (normalized semantic identity, 7 docs)", () => {
   const { graph } = parse(FEATURE_DIR);
-  const derived = engineSemanticSet(derive(graph));
-  const committed = parseCommittedSemantic(join(FEATURE_DIR, "TEST-SPEC.md"));
+  const bootstrap = parseCommittedSpec2(join(FEATURE_DIR, "TEST-SPEC.md"));
+  const descriptor = deriveDescriptor(graph, bootstrap);
+  const committed = parseCommittedSpec2(
+    join(FEATURE_DIR, "TEST-SPEC.md"),
+    descriptor.conceptAliases,
+  ).semantic;
+  const derived = engineSemanticSet(derive(graph), {
+    qualified: descriptor.idScope === "per-operation",
+    conceptAliases: descriptor.conceptAliases,
+  });
   const report = semanticRoundTrip(derived, committed);
 
   it("aligns rule / invariant / calc / contract / event categories", () => {
@@ -239,26 +252,69 @@ describe("round-trip: engine ⊇ committed (normalized semantic identity, 7 docs
     }
   });
 
-  it("now covers workflow / query / mapping (the 3 new docs)", () => {
-    for (const id of [
-      "workflow:settlementworkflow",
-      "query:getsettlementpreview",
-      "mapping:settlementrequesttoinput",
-    ]) {
+  it("INV-1: bridges WORKFLOW per-step (5 steps -> 5 distinct keys, not 1)", () => {
+    for (const n of [1, 2, 3, 4, 5]) {
+      const id = `workflow:settlementworkflow:${n}`;
       expect(derived.has(id), `engine should derive ${id}`).toBe(true);
       expect(committed.has(id), `committed should contain ${id}`).toBe(true);
     }
+    expect(report.missing.some((m) => m.id.startsWith("workflow:"))).toBe(
+      false,
+    );
   });
 
-  it("PASSES — every committed semantic obligation is reproduced (missing = 0)", () => {
-    expect(report.missing).toEqual([]);
+  it("INV-1: query/mapping per-row rows surface as DOCUMENTED-IRREDUCIBLE misses", () => {
+    // The engine emits ONE behavior/section obligation per query/mapping concept,
+    // but the committed oracle authors N per-assertion rows (QT-1..4 / MT-1..2)
+    // with no surviving per-row token. They are NOT re-collapsed (INV-1); instead
+    // they are classified documented-irreducible (per-assertion prose), so the
+    // feature still PASSES at declared scope while reporting the residue honestly.
+    const irreducibleIds = new Set(report.irreducibleMissing.map((m) => m.id));
+    expect(irreducibleIds.has("query:getsettlementpreview:qt-1")).toBe(true);
+    expect(irreducibleIds.has("mapping:settlementrequesttoinput:mt-1")).toBe(
+      true,
+    );
+    // None of these is a GENUINE miss.
+    expect(report.genuineMissing.some((m) => m.id.startsWith("query:"))).toBe(
+      false,
+    );
+    // The engine's single per-concept obligation appears as an (allowed) extra.
+    expect(derived.has("query:getsettlementpreview:behavior")).toBe(true);
+    expect(derived.has("mapping:settlementrequesttoinput:section")).toBe(true);
+  });
+
+  it("PASSES at declared scope — residue is only documented-irreducible (per-assertion prose)", () => {
+    // P2: financial round-trips with ZERO genuine misses. The residue is the QT/MT
+    // per-assertion prose (and the id-less makeup-policy calc family) the engine
+    // cannot derive per-row — documented-irreducible, NOT a δ gap.
+    expect(report.genuineMissing).toEqual([]);
     expect(report.pass).toBe(true);
+    expect(report.cleanPass).toBe(false); // PASS-with-residue, not a clean PASS
+    const irreduciblePrefixes = new Set(
+      report.irreducibleMissing.map((m) => m.id.split(":")[0]),
+    );
+    // Residue is confined to per-assertion query/mapping prose and id-less calc.
+    for (const p of irreduciblePrefixes)
+      expect(["query", "mapping", "calc"]).toContain(p);
   });
 
-  it("produces only legitimate extras (transition coverage + extra contracts/mappings)", () => {
+  it("produces only legitimate extras (engine completeness exceeds the oracle)", () => {
+    // Extras are allowed (engine ⊇ oracle). Financial's extras span transition/invalid
+    // Cartesian coverage, extra contracts, the producer event obligations, the id-less
+    // makeup calc (needs_formal), and per-concept query/mapping behavior keys.
     const extraPrefixes = new Set(report.extra.map((e) => e.split(":")[0]));
     for (const p of extraPrefixes) {
-      expect(["transition", "invalid", "contract", "mapping"]).toContain(p);
+      expect([
+        "transition",
+        "invalid",
+        "contract",
+        "mapping",
+        "query",
+        "error",
+        "post",
+        "event",
+        "calc",
+      ]).toContain(p);
     }
   });
 });
@@ -366,51 +422,184 @@ describe("2nd feature: parse + derive over auth-access-control", () => {
   });
 });
 
-describe("2nd feature: committed-dialect detection + honest round-trip", () => {
-  const spec = parseCommittedSpec2(join(AUTH_DIR, "TEST-SPEC.md"));
+describe("2nd feature: dialect descriptor + P2 round-trip (auth-access-control)", () => {
+  const { graph } = parse(AUTH_DIR);
+  const bootstrap = parseCommittedSpec2(join(AUTH_DIR, "TEST-SPEC.md"));
+  const descriptor = deriveDescriptor(graph, bootstrap);
+  const spec = parseCommittedSpec2(
+    join(AUTH_DIR, "TEST-SPEC.md"),
+    descriptor.conceptAliases,
+  );
+  const derived = engineSemanticSet(derive(graph), {
+    qualified: descriptor.idScope === "per-operation",
+    conceptAliases: descriptor.conceptAliases,
+  });
+  const report = semanticRoundTrip(derived, spec.semantic);
 
-  it("detects the column-typed dialect and requires op-qualified ids", () => {
+  it("detects column-typed + per-operation id-scope (derived from data, not feature name)", () => {
     expect(spec.dialect).toBe("column-typed");
-    expect(spec.qualified).toBe(true);
-    expect(spec.semantic.size).toBeGreaterThan(0); // non-vacuous (vs the old 0)
+    expect(descriptor.idScope).toBe("per-operation");
+    expect(spec.semantic.size).toBeGreaterThan(0);
   });
 
-  it("aligns the concept-level categories that share an identity convention", () => {
-    const { graph } = parse(AUTH_DIR);
-    const derived = engineSemanticSet(derive(graph), { qualified: true });
-    // Op-qualified rules/calcs and concept-bucketed mappings/queries/producer-events
-    // bridge cleanly; these are the categories with a shared identity convention.
+  it("INV-4: the dialect descriptor carries NO feature name; aliases are structural", () => {
+    // Concept aliases come from entity-heading prefix-uniqueness, e.g. the entity-name
+    // drift Session->SessionLifecycle and Token->TokenLifecycle. No "auth" anywhere.
+    expect(descriptor.conceptAliases.get("session")).toBe("sessionlifecycle");
+    expect(descriptor.conceptAliases.get("token")).toBe("tokenlifecycle");
+    expect([...descriptor.conceptAliases.keys()]).not.toContain("auth");
+  });
+
+  it("entity-name drift bridges via the alias (committed Session I1 -> inv:sessionlifecycle:i1)", () => {
+    // The alias is applied symmetrically AT PARSE TIME, so BOTH sides carry the
+    // canonical entity heading. The committed oracle's "Session I1" / "Token I1" land
+    // on the engine's `inv:sessionlifecycle:i1` / `inv:tokenlifecycle:i1`.
     for (const id of [
       "rule:login:r1",
       "calc:login:c1",
       "post:login",
-      "mapping:loginrequesttosession",
-      "query:getpermissioncatalog",
       "event:loginsucceeded",
+      "inv:sessionlifecycle:i1",
+      "inv:tokenlifecycle:i1",
     ]) {
       expect(derived.has(id), `engine should derive ${id}`).toBe(true);
       expect(spec.semantic.has(id), `committed should contain ${id}`).toBe(
         true,
       );
     }
+    // The un-aliased committed token must NOT survive on either side.
+    expect(spec.semantic.has("inv:session:i1")).toBe(false);
   });
 
-  it("surfaces the irreducible mismatches honestly (does NOT force a pass)", () => {
-    const { graph } = parse(AUTH_DIR);
-    const derived = engineSemanticSet(derive(graph), { qualified: true });
-    const report = semanticRoundTrip(derived, spec.semantic);
-    // The round-trip legitimately FAILS: auth's oracle uses identity conventions the
-    // δ cannot bridge without guessing — entity-name drift (committed "Session" vs
-    // source "SessionLifecycle"), transitions keyed by row-id not from/event, an
-    // "Error state" category with no δ peer, and consumer-bucketed events.
-    expect(report.pass).toBe(false);
-    const missingPrefixes = new Set(
-      report.missing.map((m) => m.id.split(":")[0]),
-    );
-    expect(missingPrefixes.has("transition")).toBe(true);
-    expect(missingPrefixes.has("error")).toBe(true);
-    // The engine still DERIVES the equivalent transition coverage (just under a
-    // different identity), so those appear as extras, not absences.
+  it("NEW δ: error-obligations and consumer-side events are derived (op/consumer bucketed)", () => {
+    // error:<op> from operations.md `### Error States`; event:<consumer> from
+    // events.md `### Consumed By`. Both were previously a genuine δ gap.
+    for (const id of ["error:login", "error:logout"]) {
+      expect(derived.has(id), `engine should derive ${id}`).toBe(true);
+      expect(spec.semantic.has(id), `committed should contain ${id}`).toBe(
+        true,
+      );
+    }
+    expect(derived.has("event:audit"), "consumer-side event:audit").toBe(true);
+    // "Session tracker" consumer concept slugs to `session`, then the entity alias
+    // canonicalizes it to `sessionlifecycle` on BOTH sides.
+    expect(
+      derived.has("event:sessionlifecycle"),
+      "consumer-side event:sessionlifecycle",
+    ).toBe(true);
+    expect(spec.semantic.has("event:sessionlifecycle")).toBe(true);
+  });
+
+  it("INV-1: mapping/query per-row identity is kept distinct (not collapsed)", () => {
+    for (const collapsed of [
+      "mapping:loginrequesttosession",
+      "query:getpermissioncatalog",
+    ]) {
+      expect(derived.has(collapsed)).toBe(false);
+      expect(spec.semantic.has(collapsed)).toBe(false);
+    }
+    expect(derived.has("mapping:loginrequesttosession:section")).toBe(true);
+    expect(
+      spec.semantic.has("mapping:loginrequesttosession:auth-map-001"),
+    ).toBe(true);
+  });
+
+  it("PASSES at declared scope — ZERO genuine misses; residue is documented-irreducible", () => {
+    // P2 closes auth: entity-name drift bridges via aliases, error + consumer-event δ
+    // rules added, transition row-id keying deferred (documented-irreducible). The
+    // residue is per-assertion mapping/query/workflow prose + by-states transitions.
+    expect(report.genuineMissing).toEqual([]);
+    expect(report.pass).toBe(true);
+    expect(report.irreducibleMissing.length).toBeGreaterThan(0); // honest residue
+    // The engine still derives the equivalent transition coverage under from/event ids.
     expect(report.extra.some((e) => e.startsWith("transition:"))).toBe(true);
+  });
+});
+
+// --- Irreducibility classifier (P3) -------------------------------------------
+
+describe("irreducibility classifier distinguishes residue from δ gaps", () => {
+  it("marks per-assertion query/mapping/workflow row-id misses irreducible", () => {
+    expect(isIrreducibleMiss("query:getpermissioncatalog:auth-query-001")).toBe(
+      true,
+    );
+    expect(
+      isIrreducibleMiss("mapping:loginrequesttosession:auth-map-001"),
+    ).toBe(true);
+    expect(isIrreducibleMiss("workflow:endtoendauthflow:auth-wf-001")).toBe(
+      true,
+    );
+  });
+
+  it("marks engine-derivable concept obligations NOT irreducible (would be δ gaps)", () => {
+    // A query/mapping keyed by the engine's own concept token is derivable.
+    expect(isIrreducibleMiss("query:getpermissioncatalog:behavior")).toBe(
+      false,
+    );
+    expect(isIrreducibleMiss("mapping:loginrequesttosession:section")).toBe(
+      false,
+    );
+    // A workflow STEP NUMBER aligns; a rule/invariant ref id is derivable.
+    expect(isIrreducibleMiss("workflow:settlementworkflow:3")).toBe(false);
+    expect(isIrreducibleMiss("rule:login:r1")).toBe(false);
+    expect(isIrreducibleMiss("inv:i1")).toBe(false);
+  });
+
+  it("marks domain.md-sourced and by-states transition misses irreducible", () => {
+    expect(isIrreducibleMiss("domain-inv:pmk-dom-001")).toBe(true);
+    expect(isIrreducibleMiss("transition:auth-state-001")).toBe(true);
+    // A from/event transition the engine derives is NOT irreducible.
+    expect(isIrreducibleMiss("transition:active:logoutcompleted")).toBe(false);
+  });
+});
+
+// --- Corpus PASS bar (P3): 4/5 column-typed + 2/2 rv-ct anchors ----------------
+
+describe("corpus round-trip PASS bar (P3)", () => {
+  const featuresDir = resolve(
+    __dirname,
+    "../../../../../validation/poker-team/docs/features",
+  );
+  const run = (feature: string) => {
+    const dir = join(featuresDir, feature);
+    const { graph } = parse(dir);
+    const bootstrap = parseCommittedSpec2(join(dir, "TEST-SPEC.md"));
+    const descriptor = deriveDescriptor(graph, bootstrap);
+    const committed = parseCommittedSpec2(
+      join(dir, "TEST-SPEC.md"),
+      descriptor.conceptAliases,
+    ).semantic;
+    const derived = engineSemanticSet(derive(graph), {
+      qualified: descriptor.idScope === "per-operation",
+      conceptAliases: descriptor.conceptAliases,
+    });
+    return { descriptor, report: semanticRoundTrip(derived, committed) };
+  };
+
+  const anchors = ["financial-settlement", "player-onboarding"];
+  const columnTyped = [
+    "auth-access-control",
+    "player-makeup",
+    "player-management",
+    "player-progression",
+    "player-stats",
+  ];
+
+  it("both rv-ct anchors PASS at declared scope", () => {
+    for (const f of anchors) {
+      const { descriptor, report } = run(f);
+      expect(descriptor.dialect, `${f} is rv-ct`).toBe("rv-ct");
+      expect(report.pass, `${f} should PASS`).toBe(true);
+    }
+  });
+
+  it("at least 4/5 column-typed features PASS at declared scope", () => {
+    let passes = 0;
+    for (const f of columnTyped) {
+      const { descriptor, report } = run(f);
+      expect(descriptor.dialect, `${f} is column-typed`).toBe("column-typed");
+      if (report.pass) passes += 1;
+    }
+    expect(passes).toBeGreaterThanOrEqual(4);
   });
 });

@@ -244,7 +244,12 @@ function parseStates(ctx: ParseContext, lines: string[]): void {
 /** operations.md -> Operation / Rule / Calculation / Postcondition nodes. */
 function parseOperations(ctx: ParseContext, lines: string[]): void {
   let currentOp: string | null = null;
-  let section: "rules" | "calculations" | "postconditions" | null = null;
+  let section:
+    | "rules"
+    | "calculations"
+    | "postconditions"
+    | "errorstates"
+    | null = null;
 
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
@@ -278,7 +283,10 @@ function parseOperations(ctx: ParseContext, lines: string[]): void {
           ? "calculations"
           : title.startsWith("postcondition")
             ? "postconditions"
-            : null;
+            : title.startsWith("error state") ||
+                title.startsWith("error states")
+              ? "errorstates"
+              : null;
       continue;
     }
     if (!currentOp || !section || !isTableLine(line)) continue;
@@ -337,6 +345,34 @@ function parseOperations(ctx: ParseContext, lines: string[]): void {
             id,
             text: row.cells[ci.text] ?? "",
             formula: unfence(row.cells[ci.formula] ?? ""),
+          }),
+        });
+      }
+    } else if (section === "errorstates") {
+      // Error States table: `| Condition | Result |`. One ErrorState node per row.
+      // The deriver emits one error-obligation per (operation × condition row): the
+      // documented mapping from a failure condition to its error result/code. This
+      // is read verbatim from the table — never inferred from prose.
+      if (!headerHas(table.header, ["Condition", "Result"])) {
+        ctx.violations.push(
+          `${ctx.file}:${i + 1}: non-canonical Error States table for ${currentOp}; expected Condition|Result`,
+        );
+        continue;
+      }
+      const ci = {
+        condition: colIndex(table.header, "Condition"),
+        result: colIndex(table.header, "Result"),
+      };
+      for (const row of table.rows) {
+        const anchor = `${ctx.file}#${currentOp}:errorstate:${row.rowIndex}`;
+        ctx.nodes.push({
+          id: anchor,
+          type: "ErrorState",
+          source_anchor: anchor,
+          fields: fieldsRecord({
+            op: currentOp,
+            condition: row.cells[ci.condition] ?? "",
+            result: unfence(row.cells[ci.result] ?? ""),
           }),
         });
       }
