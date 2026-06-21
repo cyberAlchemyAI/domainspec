@@ -873,3 +873,39 @@ dispatches:
     invoked_by: "victorboscaro@gmail.com"
     exit_reason: "resolved"
     agents_spawned: {"total":3,"tree":{"explorer":2,"skeptic":1,"helpers":0},"loops_used":1}
+  - dispatch_id: "2026-06-21-entropy-symmetry"
+    schema_version: "0.6.0"
+    created: "2026-06-21T19:57:02.144Z"
+    invoked_by: "victorboscaro@gmail.com"
+    dispatch_type: "research"
+    goal: "Testar falsificavelmente se 'reduzir entropia descritiva sujeito a preservar cobertura' e uma propriedade fundamental unica que unifica clareza cognitiva, qualidade de schema, custo em tokens (energia) e entropia do modelo."
+    context: "O operador sentiu uma simetria: reduzir entropia em quatro niveis distintos traria clareza/performance/boas decisoes. O risco e que 'entropia' esteja sendo usada em 4 sentidos diferentes unidos so por analogia verbal. O dispatch testa a simetria como hipotese falsificavel, com angulos confirmador e refutador separados mais dois corpora internos disjuntos. Saida: findings exploratorios, sem promover discovery."
+    max_loops: 1
+    final_approver: "parent"
+    anti_bias_global: "confirmation bias: simetria sedutora (confirmador) vs caca a contraexemplos e divergencia entre niveis (refutador)"
+    working_folder: "docs/research/entropy-symmetry/"
+    groups: [{"group_id":"explorers","n":4,"anti_bias":"confirmar-vs-refutar (attack-vector + methodology) cruzado com corpora disjuntos (web-formal / web-counterexamples / domainspec / Arcanum)","agents":[{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":900,"angle":"confirmador: modelos formais que unificam (MDL, free-energy, information bottleneck, rate-distortion, Landauer) - busca suporte","initial_prompt":"Encontrar os frameworks formais mais fortes em que 'minimizar funcional de descricao/incerteza sujeito a preservar cobertura/fidelidade' e o principio unificador. Para cada: o funcional exato, a restricao que impede colapso a zero (a 'cobertura'), e quais dos 4 niveis ele realmente cobre vs analogia. Sinalizar honestamente onde dois niveis se ligam so por analogia."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":900,"angle":"refutador: MaxEnt (Jaynes), expressividade/underfitting, entropy bonus em RL, edge-of-chaos, temperatura->0, energia!=entropia - busca quebra","initial_prompt":"Tentar quebrar a hipotese. Caca a contraexemplos: principio de maxima entropia (sinal oposto), regularizacao que ADICIONA entropia, mode collapse a temperatura 0, bonus de entropia em RL, computacao otima em entropia intermediaria, e o erro de categoria tokens=energia=entropia. O kill mais forte: uma intervencao que empurra entropia para baixo num nivel e para o lado errado em outro nivel. Veredito: FALSE / PARTIAL / sobrevive."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":900,"angle":"interno-domainspec: onde o repo ja codifica reduzir-graus-de-liberdade-sujeito-a-cobertura (ontology-view unconstructible, check-tension, decision inventory, context-builder, residue ledger)","initial_prompt":"Catalogar onde o repo domainspec ja codifica 'reduzir entropia descritiva sujeito a cobertura' sob nomes proprios (unconstructible, bijective, deterministic, residue). Tambem encontrar >=2 lugares onde o repo DELIBERADAMENTE preserva entropia/expressividade (residue ledger, OPEN status, premissas) - a restricao de cobertura na pratica."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":900,"angle":"interno-Arcanum: vocabulario paralelo (Via Negativa, complexidade-so-sob-tensao, confidence levels, contexto deterministico, marginal-utility stop rule) - corpus independente","initial_prompt":"Catalogar o vocabulario paralelo do Arcanum para a mesma intuicao (Via Negativa, 'nao recompensa complexidade por elegancia', confidence levels, ontologia como contexto deterministico). Critico: encontrar onde o Arcanum explicitamente preserva abertura / recusa formalizar prematuramente - o freio sobre a reducao de entropia. Confirmar ou negar a versao HEDGED (nao a forte)."}]}]
+    connections: []
+  - close_of: "2026-06-21-entropy-symmetry"
+    closed: "2026-06-21T20:00:24.218Z"
+    invoked_by: "victorboscaro@gmail.com"
+    exit_reason: "resolved"
+    agents_spawned: {"total":4,"tree":{"explorer":4,"skeptic":0,"writer":0,"auditor":0,"helpers":0},"loops_used":1}
+  - dispatch_id: "2026-06-21-entropy-lean-precedent"
+    schema_version: "0.6.0"
+    created: "2026-06-21T20:35:36.199Z"
+    invoked_by: "victorboscaro@gmail.com"
+    dispatch_type: "research"
+    goal: "Determinar se a 'Correcao 2' (cognicao/schema/modelo como o mesmo objeto -logP+custo; MDL=free-energy=cross-entropy; cobertura = I(T;Y) do Information Bottleneck) ja existe no repo ../domainspec-lean-formalization, e em que nivel: prosa / tipado / provado."
+    context: "Sweep de precedente sobre um repo irmao de formalizacao em Lean (category theory). A pergunta e se a unificacao informacional ja foi formalizada la. Tensao confirmar-vs-cetico para separar 'objeto formalizado' de 'nome citado em markdown'. Saida: resposta ao operador + possivel secao de prior-art no findings existente."
+    max_loops: 1
+    final_approver: "parent"
+    anti_bias_global: "confirmation bias: lente confirmadora (achar o mapeamento) vs lente cetica de codigo-fonte (esta tipado/provado, ou so prosa?) cruzada com particao de corpus disjunta"
+    working_folder: "docs/research/entropy-symmetry/"
+    groups: [{"group_id":"lean-explorers","n":3,"anti_bias":"attack-vector (confirmar mapeamento vs ceticismo de formalizacao) cruzado com source-corpus (docs-thermo / docs-mappings / lean-source)","agents":[{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":700,"angle":"lente termodinamica/free-energy: THERMODYNAMICS.md, EPISTEMIC-POSITION, free-energy/entropy/surprise; o -logP e funcional formal ou metafora?","initial_prompt":"Buscar se o repo contem a unificacao cognicao/schema/modelo como -logP+custo via free-energy/entropia. Classificar cada hit P(prosa)/T(tipado)/PR(provado). Separar funcional informacional real de metafora termodinamica."},{"agent_name":null,"role":"explorer","model":"claude-opus-4-8","token_budget":800,"angle":"lente confirmadora info-theory: NOVEL-MAPPINGS, LEAN-TAXONOMY, GLOSSARY; MDL, mutual information, information bottleneck, rate-distortion, cross-entropy mapeados a constructos categoricos? Foco no termo de cobertura I(T;Y).","initial_prompt":"Achar onde MDL/free-energy/cross-entropy/IB ja vivem no repo e se sao mapeados a constructos DomainSpec/categoricos. Critico: existe objeto formal no papel do I(T;Y) (preservar cobertura ao comprimir) sob qualquer nome?"},{"agent_name":null,"role":"skeptic","model":"claude-opus-4-8","token_budget":700,"angle":"lente cetica de codigo-fonte: prevenir falso-positivo; mapear os .lean reais, grep no source, OPEN-SORRIES/BACKLOG; provado / tipado-com-sorry / so-prosa / ausente?","initial_prompt":"Prevenir falso-positivo 'ja esta la'. Mapear .lean reais, grep no source por prob/info-theory, checar OPEN-SORRIES e BACKLOG. Veredito (a)provado/(b)tipado-sem-prova/(c)so-prosa/(d)ausente. Um paragrafo em markdown nao e formalizacao."}]}]
+    connections: []
+  - close_of: "2026-06-21-entropy-lean-precedent"
+    closed: "2026-06-21T20:43:33.811Z"
+    invoked_by: "victorboscaro@gmail.com"
+    exit_reason: "resolved"
+    agents_spawned: {"total":3,"tree":{"explorer":2,"skeptic":1,"writer":0,"auditor":0,"helpers":0},"loops_used":1}
