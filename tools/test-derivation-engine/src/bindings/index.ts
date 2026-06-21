@@ -8,7 +8,24 @@
 import { readFileSync } from "node:fs";
 import type { Obligation } from "../ir/types.js";
 
-export type BindingStrategy = "ast-eval" | "property";
+export type BindingStrategy = "ast-eval" | "property" | "closed-form";
+
+/**
+ * A fixture env for a closed-form binding. `vars`/`collections` feed the pure
+ * evaluator (the engine derives EXPECTED from the SPEC Formal over THIS env, it
+ * never reads the impl). `call_arg` is the literal JS argument object passed to
+ * the bound fn at runtime — its fields MUST mirror the env so the spec-evaluated
+ * EXPECTED and the impl-under-test see the same inputs. This is fixture INPUT,
+ * never the expected OUTPUT (no oracle in the data — generation stays pure).
+ */
+export interface ClosedFormFixture {
+  readonly vars?: Readonly<Record<string, number | string>>;
+  readonly collections?: Readonly<
+    Record<string, readonly Readonly<Record<string, number>>[]>
+  >;
+  /** Literal argument object (JSON) the emitted test passes to `symbol(...)`. */
+  readonly call_arg: unknown;
+}
 
 export interface Binding {
   readonly match: Readonly<Record<string, string>>;
@@ -20,6 +37,8 @@ export interface Binding {
   readonly decision_field?: string;
   readonly tx_type?: string;
   readonly args?: readonly string[];
+  /** For `closed-form` bindings: the fixture env + the literal call argument. */
+  readonly fixture?: ClosedFormFixture;
 }
 
 export interface BindingSet {

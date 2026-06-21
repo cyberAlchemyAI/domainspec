@@ -43,6 +43,59 @@
       "$comment": "R5 `count(tx[type=PAYOUT,date=endDate]) <= 1`. COUNT_CAP, same shape as R4 over the PAYOUT decision flag."
     },
     {
+      "match": { "rule_type": "calculation", "id": "C1" },
+      "module": "../settlement/settlement.service",
+      "symbol": "computeSettlement",
+      "strategy": "closed-form",
+      "kind": "fold-sum-profit",
+      "result_field": "totalProfit",
+      "fixture": {
+        "collections": {
+          "relevantRecords": [
+            { "profit": 120, "rakeback": 30 },
+            { "profit": 80, "rakeback": 10 }
+          ]
+        },
+        "call_arg": {
+          "records": [
+            { "date": "2026-01-10", "profit": 120, "rakeback": 30 },
+            { "date": "2026-01-20", "profit": 80, "rakeback": 10 }
+          ],
+          "currentLimit": "NL100",
+          "previousMakeup": 0,
+          "periodStart": "2026-01-01",
+          "periodEnd": "2026-01-31"
+        }
+      },
+      "$comment": "C1 `sum(relevantRecords.profit)`. Engine folds the SPEC sum over the fixture's relevantRecords (120+80=200) and asserts computeSettlement(input).totalProfit === 200. EXPECTED is derived from the Formal AST, never from running the impl; the call_arg mirrors the fixture so impl + spec see identical inputs."
+    },
+    {
+      "match": { "rule_type": "calculation", "id": "C4" },
+      "module": "../settlement/settlement.service",
+      "symbol": "computeSettlement",
+      "strategy": "closed-form",
+      "kind": "piecewise-makeup-newdebt",
+      "result_field": "newMakeup",
+      "fixture": {
+        "vars": {
+          "previousDebt": 300,
+          "totalProfit": 200,
+          "totalRakeback": 40
+        },
+        "call_arg": {
+          "records": [
+            { "date": "2026-01-10", "profit": 120, "rakeback": 30 },
+            { "date": "2026-01-20", "profit": 80, "rakeback": 10 }
+          ],
+          "currentLimit": "NL100",
+          "previousMakeup": 300,
+          "periodStart": "2026-01-01",
+          "periodEnd": "2026-01-31"
+        }
+      },
+      "$comment": "C4 `newMakeup = max(0, previousDebt - totalProfit - totalRakeback)` (closed form authored in operations.md C4 from the DOCUMENTED makeup-policy semantics: workflows.md DefaultMakeupPolicy decision table + I1 floor — NOT transcribed from the impl). Engine evals the SPEC piecewise over the fixture (max(0, 300-200-40)=60) and asserts computeSettlement(input).newMakeup === 60. previousDebt mirrors previousMakeup=300; totalProfit/totalRakeback equal the period sums (120+80, 30+10)."
+    },
+    {
       "match": {
         "rule_type": "needs-formal",
         "id": "I1",
@@ -59,9 +112,9 @@
   "coverage_gaps": {
     "$comment": "Obligation classes with NO pure, non-circular target. Emitted as it.skip + a coverage_gap annotation; counted and reported, NEVER faked. The makeup-policy core arithmetic (C4) is the most fault-rich code but its only honest oracle is a human-written fixture — auto-deriving it would re-implement the policy in the test (a self-fulfilling oracle).",
     "reasons": {
-      "C1": "needs-fixture-oracle: sum(relevantRecords.profit) aggregate; expected value would re-implement the reduce.",
-      "C2": "needs-fixture-oracle: sum(relevantRecords.rakeback) aggregate; same as C1.",
-      "C4": "needs-fixture-oracle: applyMakeupPolicy(...) bare call; the oracle IS the impl, faking = self-fulfilling.",
+      "C1": "L1: now a closed-form `sum(relevantRecords.profit)` fold -> derived value assertion (see bindings[] C1), no longer a gap.",
+      "C2": "needs-fixture-oracle: sum(relevantRecords.rakeback) aggregate; same closed-form shape as C1 but no binding authored yet -> stays a coverage_gap.",
+      "C4": "L1: operations.md C4 is now an authored closed-form `max(0, previousDebt - totalProfit - totalRakeback)` (provenance: documented makeup-policy semantics, NOT the impl) -> derived value assertion (see bindings[] C4).",
       "R1": "needs-fixture-oracle: exists(Player.id == playerId) needs a player/repo fixture universe, not in the pure domain slice.",
       "R2": "out-of-pure-slice: required-fields presence is validated in the use-case / route layer, not a pure domain fn.",
       "I2": "needs-fixture-oracle: per-type idempotency over a transaction store; needs a fixture universe.",

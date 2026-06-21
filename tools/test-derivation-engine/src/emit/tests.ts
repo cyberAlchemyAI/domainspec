@@ -24,6 +24,8 @@ import type { ConceptGraph, Obligation } from "../ir/types.js";
 import type { Binding, BindingSet } from "../bindings/index.js";
 import { bindingFor } from "../bindings/index.js";
 import { parseFormal } from "../formal/ast.js";
+import { evalArith } from "../formal/eval.js";
+import type { EvalEnv } from "../formal/eval.js";
 
 /**
  * Resolve the Formal/Formula text for an obligation. Prefer the verbatim
@@ -235,6 +237,66 @@ function emitAstEval(o: Obligation, b: Binding, formal: string): string | null {
   return null;
 }
 
+/**
+ * SWU-COB-004 — emit a REAL value assertion for a CLOSED-FORM obligation
+ * (Fold / Piecewise / ArithExpr). The engine parses the SPEC Formal cell, then
+ * evaluates it with the binding's fixture env to get EXPECTED — exactly the same
+ * "read the spec, not the impl" contract as the ternary. Returns null when the
+ * Formal is not closed-form-derivable (unparsed) or the evaluation is partial
+ * (div-by-zero / empty-fold / unresolved var) — the caller then co-emits a
+ * coverage_gap (the L0 honesty guard carries forward to anything that falls back).
+ */
+function emitClosedForm(
+  o: Obligation,
+  b: Binding,
+  formal: string,
+): string | null {
+  if (b.fixture == null) return null;
+  const ast = parseFormal(formal);
+  if (
+    ast.kind !== "fold" &&
+    ast.kind !== "arith" &&
+    ast.kind !== "num" &&
+    ast.kind !== "var" &&
+    ast.kind !== "piecewise"
+  ) {
+    return null; // not a closed form -> fall back to coverage_gap
+  }
+  if (ast.kind === "piecewise") return null; // reserved; no authored piecewise yet
+  const env: EvalEnv = {
+    vars: b.fixture.vars ?? {},
+    collections: b.fixture.collections ?? {},
+  };
+  const expected = evalArith(ast, env);
+  if (expected == null) return null; // partial eval -> coverage_gap (totality)
+  const field = b.result_field ?? "";
+  const accessor = field === "" ? "" : `.${field}`;
+  const arg = JSON.stringify(b.fixture.call_arg);
+  return [
+    `  // obligation_key: ${o.obligation_key}`,
+    `  // source: ${commentSafe(o.source_anchor)}`,
+    `  // binding: ${b.symbol}() [closed-form] — EXPECTED ${expected} derived from Formal AST over the fixture env, not from impl`,
+    `  it(${p(title(o))}, () => {`,
+    `    // closed-form: ${commentSafe(formal)} over the fixture -> ${expected}`,
+    `    expect(${b.symbol}(${arg})${accessor}).toBe(${expected});`,
+    `  });`,
+  ].join("\n");
+}
+
+/**
+ * A property FULLY satisfies an obligation only when the Formal cell IS itself
+ * the relation being asserted (a real spec-stated property, e.g. an `invariant`
+ * whose Formal is exactly `newMakeup >= 0`). When the property is bound to an
+ * obligation that merely STANDS IN for an unauthored exact value — a
+ * `needs-formal` obligation (UNCLASSIFIED prose / bare-call) — the property is an
+ * honest FLOOR, not coverage: the value-gap is still open. In that case the
+ * emitter co-emits the property AND a counted `coverage_gap: needs-formal-value`
+ * (see findings §LIVE FINDING — "sound-but-weak must never replace honest").
+ */
+function propertyStandsInForMissingValue(o: Obligation): boolean {
+  return o.rule_type === "needs-formal";
+}
+
 /** Emit a seeded property body (pure generator, no fast-check dep). */
 function emitProperty(o: Obligation, b: Binding): string | null {
   if (b.kind !== "non-negative-newdebt") return null;
@@ -308,15 +370,27 @@ export function emitHybridTests(
       const body =
         b.strategy === "ast-eval"
           ? emitAstEval(o, b, resolveFormal(o, formalByAnchor))
-          : emitProperty(o, b);
+          : b.strategy === "closed-form"
+            ? emitClosedForm(o, b, resolveFormal(o, formalByAnchor))
+            : emitProperty(o, b);
       if (body) {
         (
           modules.get(b.module) ??
           modules.set(b.module, new Set()).get(b.module)!
         ).add(b.symbol);
         bodies.push(body);
-        if (b.strategy === "property") properties += 1;
-        else assertions += 1;
+        if (b.strategy === "property") {
+          properties += 1;
+          // L0 honesty guard: a property bound to a `needs-formal` obligation is a
+          // FLOOR for an unauthored exact value, not full coverage. Co-emit the
+          // property AND a counted value-gap so the property can NEVER zero the
+          // honest gap (findings §LIVE FINDING). A property may fully satisfy an
+          // obligation only when its Formal cell IS the relation (not a stand-in).
+          if (propertyStandsInForMissingValue(o)) {
+            bodies.push(emitSkip(o, "needs-formal-value"));
+            coverageGaps += 1;
+          }
+        } else assertions += 1;
         continue;
       }
     }

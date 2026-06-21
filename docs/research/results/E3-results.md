@@ -59,3 +59,26 @@
 - Brittle pre-data gates (`survivors_critical=0`, `≥70%`) remain **dropped** — descriptive only, per plan. Corpus gates to be set from this pilot's distribution, pre-registered before a corpus run.
 - **Pilot → corpus** requires: (a) a value-asserting makeup oracle (P4 engine work — biggest lever), (b) committing the `__derived__` suite so `engine_commit` is a real pre-registration anchor, (c) 2-rater survivor classification (human) for κ.
 - Recommended next: widen the bodied subset (P4), then re-run + extend to the corpus.
+
+---
+
+## L2 re-run (2026-06-21) — after closed-form C4 + honesty fix
+
+After the computational-obligation plan (honesty co-emit fix; FoldAst/PiecewiseAst/ArithExpr closed-form derivation; `applyMakeupPolicy` authored closed-form in operations.md C4 from documented semantics, NOT the impl):
+
+| Arm / file               | before | after      | delta                   |
+| ------------------------ | ------ | ---------- | ----------------------- |
+| **derived (aggregate)**  | 38.75% | **54.37%** | **+15.6 pts**           |
+| makeup-policy.service.ts | 17.2%  | **36.56%** | **+19.4 pts (doubled)** |
+| deal.service.ts          | 100%   | 100%       | —                       |
+| settlement.service.ts    | 63.2%  | 75.44%     | +12                     |
+
+**Correctness check (load-bearing):** the regenerated `__derived__` suite (C1 `totalProfit==200`, C4 `newMakeup==60`) **passes 13/13 against the real unmutated code** — no spec/impl mismatch. The C4 value assertion killed exactly the debt-arithmetic mutants the prior property-only stub left alive (`min→max`, `debt-applied → debt+applied`, apply-guard flips).
+
+**Verdict:** the 38.75% gap was **structural-but-unwritten-spec, not impl divergence** — confirmed. Closing the closed form caught the derived arm up by ~16 pts.
+
+**Honest caveats:**
+
+- The C4 closed form `max(0, prevDebt − profit − rakeback)` is an **under-model**: it agrees with the impl's clamped sequential application _on the chosen fixture_ (inputs stay where flat subtraction == sequential apply), but would diverge if profit alone overshot the debt with leftover, or on negative inputs. A fully faithful closed form needs the piecewise sequential form. The assertion is sound for its fixture; the formula is not the complete policy.
+- Residual makeup survivors are a _separate_ unwritten-spec gap (payout-share value assertions on `remainingProfit/remainingRakeback`; uncovered `validateMakeupPolicyShape`) — not impl divergence.
+- The L0 honesty fix is in effect: financial-settlement coverage_gap count 56 → 57 (the I1 value-gap is now co-emitted and counted, not zeroed by the property).
