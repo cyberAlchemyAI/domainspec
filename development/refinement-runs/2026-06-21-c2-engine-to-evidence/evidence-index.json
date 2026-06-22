@@ -1,0 +1,60 @@
+{
+  "run_id": "2026-06-21-c2-engine-to-evidence",
+  "status": "flag",
+  "owner": "refine",
+  "preset": "full",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "count": 4,
+    "join_policy": "all-receipts-before-synthesis",
+    "pairwise_tension": "Engine Generalization Architect <-> Falsification Skeptic"
+  },
+  "artifacts": {
+    "seed": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stage_receipts": [
+    {
+      "role": "Engine Generalization Architect",
+      "artifact": "stages/architect-engine-generalization.md",
+      "verdict": "pass"
+    },
+    {
+      "role": "Falsification Skeptic",
+      "artifact": "stages/skeptic-falsification.md",
+      "verdict": "flag"
+    },
+    {
+      "role": "emit_tests E3 Architect",
+      "artifact": "stages/emit-tests-e3-architect.md",
+      "verdict": "pass"
+    },
+    {
+      "role": "Experiments Cartographer",
+      "artifact": "stages/experiments-cartographer.md",
+      "verdict": "pass"
+    }
+  ],
+  "headline_findings": [
+    "engine passes the MINORITY oracle dialect (rv-ct 2/7); fails the MAJORITY (column-typed 5/7)",
+    "round-trip WF/QT/MT bucketing is non-injective; financial PASS partly concept-presence-only",
+    "~12+ auth misses are genuine delta gaps (error obligations, consumer events), not just convention drift",
+    "honesty invariants INV-1..5 + negative-control gate required before any PASS counts as C2 evidence"
+  ],
+  "plan_phases": [
+    "P1 honesty foundation",
+    "P2 general bridging + new delta",
+    "P3 corpus gate",
+    "P4 emit_tests bodies",
+    "P5 experiments E1a/E3/E2"
+  ],
+  "recommended_next_routes": [
+    "task-session P1 (negative control + WF/QT/MT injectivity)"
+  ]
+}

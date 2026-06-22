@@ -1,0 +1,126 @@
+{
+  "dispatch_id": "2026-06-21-test-engine-architecture-review",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Refine the test-engine lifecycle architecture; review for gaps across the 4 models + the LLM-replacement task.",
+  "refinement_objective": "Severity-ranked gap ledger (real-vs-noise) + consistency check vs real code/SPEC/E3 + refined architecture deltas, non-executed.",
+  "preset": "standard",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "selected_overlays": [
+    {
+      "id": "dialectic_for_tension",
+      "why": "gap-maximalism vs proportionality+match-reality; the skeptic keeps the gap ledger honest",
+      "roles": ["reviewers", "consistency+over-build skeptic"],
+      "convergence": "real gaps separated from noise, agreed"
+    },
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "the architecture IS the structure; check each model complete + the four cohere",
+      "artifact": "stages/*.md"
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "SPEC/tower/E3/plans are the consistency baseline"
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Formal-model reviewer",
+        "owns": "gaps in the function model, determinism, decidability/needs_formal, formalization-levels, spec-formalization-metric; what the formal model OMITS (Reason-B harness/effect obligations, state-machine semantics)",
+        "receipt": "stages/formal-model.md"
+      },
+      {
+        "role": "Architectural+lifecycle reviewer",
+        "owns": "components/contracts/CLI, error-handling/versioning/observability, gaps-report capability, cross-submodule emit, end-to-end lifecycle completeness",
+        "receipt": "stages/architectural-lifecycle.md"
+      },
+      {
+        "role": "DomainSpec+LLM-replacement reviewer",
+        "owns": "pipeline-swap task definition, owner boundaries, non-backend features (UI/E2E), migration/back-compat, the authoring feedback loop",
+        "receipt": "stages/domainspec-llm-replacement.md"
+      },
+      {
+        "role": "Consistency+over-build skeptic",
+        "owns": "does the architecture match the real code+SPEC+E3 numbers; any claim>proof (P10); over-built/speculative models; which gaps are noise",
+        "receipt": "stages/consistency-skeptic.md"
+      }
+    ],
+    "pairwise_tension": "gap-maximalism (3 reviewers) vs proportionality+match-reality (skeptic)"
+  },
+  "stages": [
+    {
+      "step": 1,
+      "stage": "Context Builder baseline",
+      "owner": "refine",
+      "status": "pass"
+    },
+    {
+      "step": 2,
+      "stage": "Invoke Define",
+      "owner": "refine",
+      "status": "pass"
+    },
+    {
+      "step": 3,
+      "stage": "Interrogation refine-review",
+      "owner": "4 subagents",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "stage": "Research decision",
+      "owner": "refine",
+      "status": "pending"
+    },
+    { "step": 5, "stage": "Distill", "owner": "refine", "status": "pending" },
+    {
+      "step": 6,
+      "stage": "Invoke Redefine/Design",
+      "owner": "refine",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "stage": "Interrogation refine-design-review",
+      "owner": "refine",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "stage": "Distill Repair",
+      "owner": "refine",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "stage": "Invoke Plan",
+      "owner": "refine",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "stage": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "status": "pending"
+    }
+  ],
+  "gates": [
+    { "gate": "stage_receipts", "status": "pending" },
+    { "gate": "owner_boundary_preserved", "status": "ok" },
+    { "gate": "final_synthesis_readiness", "status": "pending" }
+  ],
+  "observability": { "group_by": "dispatch_id" },
+  "validation_status": "approved-executing"
+}

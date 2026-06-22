@@ -30,6 +30,7 @@ Reference documents:
 - **[ARCHITECTURE-FOUNDATIONS.md](ARCHITECTURE-FOUNDATIONS.md)** — Foundational architecture principles.
 - **[LAYERING-REFERENCE.md](LAYERING-REFERENCE.md)** — Layer definitions and placement rules.
 - **[DEPENDENCY-RULES.md](DEPENDENCY-RULES.md)** — Allowed/forbidden dependency directions across layers.
+- **[SQL-PERSISTENCE.md](SQL-PERSISTENCE.md)** — PostgreSQL persistence and Drizzle Kit migration obligations.
 - **[TESTING-ALIGNMENT.md](TESTING-ALIGNMENT.md)** — How each concept type maps to test obligations.
 - **[OBSERVABILITY-ALIGNMENT.md](OBSERVABILITY-ALIGNMENT.md)** — How each concept type maps to observability signals.
 

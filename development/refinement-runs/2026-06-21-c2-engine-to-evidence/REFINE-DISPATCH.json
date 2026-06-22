@@ -1,0 +1,194 @@
+{
+  "dispatch_id": "2026-06-21-c2-engine-to-evidence",
+  "schema_ref": "formulae/dispatch-spec/dispatch.schema.yml",
+  "operator_intent": "Refine everything so we can get the test-derivation engine working — whole C2 program (engine completion + E1a/E2/E3 experiments to publishable evidence).",
+  "refinement_objective": "Refine the non-executed path from current state (L0 PASS, L1 partial, auth round-trip fails) to a generally-working engine across the poker-team corpus AND publishable C2 evidence, resolving the bridging-vs-falsification tension and closing 4 open Craft-ledger items.",
+  "preset": "full",
+  "research_mode": "research-if-gap-appears",
+  "research_confirmed": false,
+  "selected_overlays": [
+    {
+      "id": "dialectic_for_tension",
+      "why": "Central tension: generalize semantic-id bridging until round-trips pass vs keep the round-trip an honest falsification (not teaching-to-the-test). Architect vs Skeptic with convergence on a rule for honest PASS.",
+      "roles": ["Engine Generalization Architect", "Falsification Skeptic"],
+      "convergence": "a stated line between general derivation and gate-tuned-to-oracle, both sides accept"
+    },
+    {
+      "id": "tournament_for_alternatives",
+      "why": "Two open design forks: (a) close auth = generalize engine bridging vs canonicalize oracle vs hybrid; (b) emit_tests bodies = assertion-from-Formal vs property-based vs golden-trace vs spec-level mutation. Score, don't guess.",
+      "convergence": "one recommended approach per fork + MVP boundary",
+      "artifact": "stages/architect-* + stages/emit-tests-e3-architect.md"
+    },
+    {
+      "id": "xray_for_hidden_structure",
+      "why": "Map auth vs financial oracle dialects across the 7-feature corpus to find GENERAL bridging rules instead of per-feature special-casing.",
+      "artifact": "stages/architect-engine-generalization.md"
+    },
+    {
+      "id": "memory_residue_for_context_recovery",
+      "why": "Prior 2026-06-12 refine run, Craft ledger, and L0-ROUNDTRIP-REPORT are load-bearing input."
+    }
+  ],
+  "rejected_overlays": [
+    {
+      "id": "route_menu_for_ambiguity",
+      "why_not": "Scope fixed by operator: whole C2 program."
+    },
+    {
+      "id": "protected_context_for_external_or_sensitive_evidence",
+      "why_not": "All evidence local."
+    }
+  ],
+  "baseline_techniques": [
+    "sequence",
+    "frame_handoff",
+    "validation_loop",
+    "owner_boundary_check",
+    "observability_grouping",
+    "residue_ledger",
+    "minimum_component_catalog"
+  ],
+  "subagent_strategy": {
+    "status": "required",
+    "authorization": "approved",
+    "join_policy": "all-receipts-before-synthesis",
+    "roles": [
+      {
+        "role": "Engine Generalization Architect",
+        "owns": "Design GENERAL semantic-id bridging across oracle dialects (auth: op-qualified ids, entity-name drift, row-id-keyed transitions, Error-state category, consumer-bucketed events) without hardcoding; corpus-generalization strategy (which N features, pass definition). X-ray auth vs financial dialects for the general rules.",
+        "receipt": "stages/architect-engine-generalization.md",
+        "bias": "make it general and working"
+      },
+      {
+        "role": "Falsification Skeptic",
+        "owns": "Attack teaching-to-the-test: is concept-bucket bridging too weak; where is the line between general derivation and gate-tuned-to-oracle; what invariant keeps a round-trip PASS honest; should some 'misses' stay misses. Adversary of the Architect.",
+        "receipt": "stages/skeptic-falsification.md",
+        "bias": "protect the falsification / the science"
+      },
+      {
+        "role": "emit_tests / E3 Architect",
+        "owns": "The runnable-test-body problem: how emit_tests produces REAL assertions (not expect.fail) so E3 mutation runs on src/domain/**. Tournament over assertion-from-Formal vs property-based vs golden-trace vs spec-level mutation; Stryker reframe; what is deterministically derivable vs needs the impl contract.",
+        "receipt": "stages/emit-tests-e3-architect.md",
+        "bias": "make E3 actually runnable"
+      },
+      {
+        "role": "Experiments Cartographer",
+        "owns": "Reframe E1a/E2/E3 now that the engine exists: E1a parser/extraction-completeness over the corpus; E2 blinded coverage (engine vs human, non-author testers); E3 mutation on engine-emitted tests. Map measurement tooling reuse from the 2026-06-12 ledger; pre-registration discipline.",
+        "receipt": "stages/experiments-cartographer.md",
+        "bias": "publishable evidence discipline"
+      }
+    ],
+    "context": "Each reads: engine src + L0-ROUNDTRIP-REPORT + Craft ledger + the 2026-06-12 RESULT.md + E1/E2/E3 specs + relevant poker-team feature docs. Read-only.",
+    "pairwise_tension": "Engine Generalization Architect <-> Falsification Skeptic is the genuine adversarial axis (generalize-to-pass vs protect-falsification)."
+  },
+  "stages": [
+    {
+      "step": 1,
+      "stage": "Context Builder baseline",
+      "owner": "refine",
+      "mode": "standard",
+      "output": "REFINE-SEED-PROPOSAL.md + recon",
+      "receipt_kind": "context-pack",
+      "status": "pass"
+    },
+    {
+      "step": 2,
+      "stage": "Invoke Define",
+      "owner": "refine",
+      "mode": "define",
+      "output": "REFINE-SEED-PROPOSAL.md",
+      "receipt_kind": "invoke-artifact",
+      "status": "pass"
+    },
+    {
+      "step": 3,
+      "stage": "Interrogation refine-review",
+      "owner": "4 subagents",
+      "mode": "refine-review",
+      "output": "stages/*.md",
+      "receipt_kind": "interrogation-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "stage": "Research decision",
+      "owner": "refine",
+      "mode": "research-if-gap-appears",
+      "output": "recorded in RESULT.md",
+      "receipt_kind": "decision",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "stage": "Distill",
+      "owner": "refine",
+      "mode": "standard",
+      "output": "RESULT.md convergence",
+      "receipt_kind": "distill-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "stage": "Invoke Redefine/Design",
+      "owner": "Architects",
+      "mode": "design",
+      "output": "stages/architect-*.md",
+      "receipt_kind": "invoke-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "stage": "Interrogation refine-design-review",
+      "owner": "refine convergence",
+      "mode": "refine-design-review",
+      "output": "RESULT.md",
+      "receipt_kind": "interrogation-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "stage": "Distill Repair",
+      "owner": "refine",
+      "mode": "validate",
+      "output": "RESULT.md residue ledger",
+      "receipt_kind": "distill-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "stage": "Invoke Plan",
+      "owner": "refine",
+      "mode": "plan",
+      "output": "RESULT.md non-executed plan",
+      "receipt_kind": "invoke-artifact",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "stage": "Final Interrogation + Synthesis",
+      "owner": "refine",
+      "mode": "refine-final",
+      "output": "RESULT.md",
+      "receipt_kind": "synthesis",
+      "status": "pending"
+    }
+  ],
+  "gates": [
+    { "gate": "native_capability_handles", "status": "ok" },
+    { "gate": "stage_receipts", "status": "pending" },
+    { "gate": "research_confirmation", "status": "deferred" },
+    { "gate": "required_artifacts_exist", "status": "pending" },
+    { "gate": "owner_boundary_preserved", "status": "ok" },
+    { "gate": "final_synthesis_readiness", "status": "pending" }
+  ],
+  "observability": {
+    "group_by": "dispatch_id",
+    "events": [
+      "seed_written",
+      "dispatch_validated",
+      "strategy_approved",
+      "subagents_pending"
+    ]
+  },
+  "validation_status": "approved-executing"
+}

@@ -15,6 +15,7 @@
 | Principles and layer model baseline                  | `pattern-library/ARCHITECTURE-FOUNDATIONS.md` |
 | Detailed layer responsibilities and folder blueprint | `pattern-library/LAYERING-REFERENCE.md`       |
 | Dependency constraints and import-boundary checks    | `pattern-library/DEPENDENCY-RULES.md`         |
+| SQL/PostgreSQL persistence and migration obligations | `pattern-library/SQL-PERSISTENCE.md`          |
 | Backend concept implementation guidance              | `pattern-library/concepts/backend/`           |
 | UI concept implementation guidance                   | `pattern-library/concepts/ui/`                |
 | Relationship cards and context packs                 | `ARCHITECTURE-PATTERN-LIBRARY.md`             |

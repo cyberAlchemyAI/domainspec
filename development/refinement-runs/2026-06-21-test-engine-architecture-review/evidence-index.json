@@ -1,0 +1,79 @@
+{
+  "run_id": "2026-06-21-test-engine-architecture-review",
+  "sigil": "refine",
+  "status": "complete",
+  "verdict": "flag",
+  "target": "implementation/domainspec/development/deterministic-test-derivation-engine/LIFECYCLE-ARCHITECTURE.md",
+  "research_mode": "no-research",
+  "subagent_strategy": "required",
+  "artifacts": {
+    "seed": "REFINE-SEED-PROPOSAL.md",
+    "dispatch": "REFINE-DISPATCH.json",
+    "runtime_handoff": "RUNTIME-HANDOFF.md",
+    "result": "RESULT.md",
+    "manifest": "RUN-MANIFEST.md"
+  },
+  "stages": [
+    {
+      "stage": "interrogation-formal",
+      "lens": "formal-model",
+      "verdict": "flag",
+      "artifact": "stages/stage-07-interrogation-formal.md"
+    },
+    {
+      "stage": "interrogation-architectural",
+      "lens": "architectural-lifecycle",
+      "verdict": "flag",
+      "artifact": "stages/stage-07-interrogation-architectural.md"
+    },
+    {
+      "stage": "interrogation-domainspec",
+      "lens": "domainspec-llm-replacement",
+      "verdict": "flag",
+      "artifact": "stages/stage-07-interrogation-domainspec.md"
+    },
+    {
+      "stage": "interrogation-skeptic",
+      "lens": "consistency-skeptic",
+      "verdict": "flag",
+      "artifact": "stages/stage-10-interrogation-skeptic.md"
+    }
+  ],
+  "gaps": {
+    "claim_over_proof": [
+      "C1-replace-present-tense",
+      "C2-replace-partial-backend-only",
+      "C3-corpus-6of7-unrecorded",
+      "C4-fixpoint-never-run"
+    ],
+    "engine_real": [
+      "G1-harness-tier-missing",
+      "G2-no-provenance-no-drift",
+      "G3-emit_dir-containment",
+      "G4-fail-closed-write-path"
+    ],
+    "minor": [
+      "INV-1-restate",
+      "INV-3-cardinality-bound",
+      "metric-define",
+      "delta-no-authoritative-doc",
+      "feedback-loop-aspirational",
+      "contract-diff-subtask"
+    ],
+    "noise_delete": ["formalization-levels-lattice"],
+    "noise_defer": [
+      "gaps-report-cli",
+      "telemetry",
+      "speculative-versioning",
+      "smt-advisory"
+    ]
+  },
+  "cross_checked_against": [
+    "implementation/domainspec/tools/test-derivation-engine/src/",
+    "implementation/domainspec/docs/features/test-derivation-engine/SPEC.md",
+    "implementation/domainspec/docs/research/results/E3-results.md",
+    "research/smt-fol-test-derivation/DISTILLED-KNOWLEDGE.md"
+  ],
+  "committed": false,
+  "commit_gate": "operator-approval-pending"
+}
