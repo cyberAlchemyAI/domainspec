@@ -840,15 +840,15 @@ export async function installUiPrototypingStudioApiMocks(
         revisionHeadId: session.revisionHeadId,
         baseline: session.baseline,
         variantCount: session.variantCount,
-        storyRefs: ["docs/features/ui-prototyping-studio/STORIES.md"],
+        storyRefs: ["ui-prototyping-studio:STORIES.md"],
         requirementRefs: [
-          "docs/features/ui-prototyping-studio/SPEC.md#functional-requirements-mvp",
+          "ui-prototyping-studio:SPEC.md#functional-requirements-mvp",
         ],
         acceptanceRefs: [
-          "docs/features/ui-prototyping-studio/SPEC.md#acceptance-criteria-mvp",
+          "ui-prototyping-studio:SPEC.md#acceptance-criteria-mvp",
         ],
-        uiSpecRef: "docs/features/ui-prototyping-studio/UI-SPEC.md",
-        testSpecRef: "docs/features/ui-prototyping-studio/TEST-SPEC.md",
+        uiSpecRef: "ui-prototyping-studio:UI-SPEC.md",
+        testSpecRef: "ui-prototyping-studio:TEST-SPEC.md",
       };
       handoffBySession.set(sessionId, bundle);
 

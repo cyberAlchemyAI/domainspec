@@ -414,17 +414,9 @@ test("UPS-API-007 UPS-API-008 ui-prototyping-studio apply and handoff endpoints 
     uiSpecRef: string;
     testSpecRef: string;
   };
-  assert.deepEqual(handoffBody.storyRefs, [
-    "docs/features/ui-prototyping-studio/STORIES.md",
-  ]);
-  assert.equal(
-    handoffBody.uiSpecRef,
-    "docs/features/ui-prototyping-studio/UI-SPEC.md",
-  );
-  assert.equal(
-    handoffBody.testSpecRef,
-    "docs/features/ui-prototyping-studio/TEST-SPEC.md",
-  );
+  assert.deepEqual(handoffBody.storyRefs, ["ui-prototyping-studio:STORIES.md"]);
+  assert.equal(handoffBody.uiSpecRef, "ui-prototyping-studio:UI-SPEC.md");
+  assert.equal(handoffBody.testSpecRef, "ui-prototyping-studio:TEST-SPEC.md");
   assert.equal(handoffBody.requirementRefs.length, 1);
   assert.equal(handoffBody.acceptanceRefs.length, 1);
 });

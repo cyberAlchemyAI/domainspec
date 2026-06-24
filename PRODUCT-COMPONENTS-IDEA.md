@@ -26,7 +26,7 @@ The hardest part is building good documentation — not because writing is hard,
 
 ---
 
-*This document is a root-level inventory of product directions already latent in DomainSpec. It is not a commitment to build all of them. It is a map of surfaces, wedges, and source artifacts that can be promoted into specs, experiments, work-packs, or commercial packaging.*
+_This document is a root-level inventory of product directions already latent in DomainSpec. It is not a commitment to build all of them. It is a map of surfaces, wedges, and source artifacts that can be promoted into specs, experiments, work-packs, or commercial packaging._
 
 ## Central Thesis
 
@@ -59,49 +59,49 @@ Taxonomy and edges are not features of any single product line — they are the 
 
 ### Structural invariants
 
-| Invariant | Rationale | Complies today | Gaps |
-|---|---|---|---|
-| **Every artifact is a typed vault node** — `node_type`, `layer`, `nature`, `status`, `created_by` required | Untyped files cannot participate in retrieval, gates, or drift computation; the schema is the join key across all components | Vault Platform SDK, RAG Engine, Formal Readiness Gates, Knowledge Calibration Workbench | DomainSpec CLI (command outputs not yet node-typed), Governed UI Lab (UI variants not modeled as nodes), Agent Fleet Telemetry |
-| **Every relationship is a typed, directed edge** — no implicit `[[reference]]` or bare file link | Untyped references are semantically opaque; typed edges (`derives_from`, `implements`, `validates`, `contradicts`, `promotes_to`) are queryable and gate-checkable | Vault Platform SDK, Knowledge Graph IDE, Faithful RAG Engine (graph retrieval layer) | SpecOps Console (reads gate verdicts but does not yet emit edges), Harness Cockpit (UI renders graph but does not produce it), Copilot/Skills Pack |
-| **Provenance is mandatory** — every artifact links to the session, decision, or discovery that created it | Without origin trace, drift is unattributable; "why was this created" must be answerable from the artifact itself, not from memory | Session Memory / Decision Receipts, Vault Platform SDK (frontmatter + events) | Governed UI Lab (variants lack discovery links), Agentic Runtime (execution artifacts not provenance-stamped), DomainSpec CLI |
-| **Layer is declared, not inferred** — every artifact carries an explicit `layer` value | Cross-layer gates (Gate 0 → Gate 1 → validator) require knowing which layer an artifact lives in; inference creates ambiguity at promotion boundaries | Vault Platform SDK, Code Traceability Monitor (governance tags) | Agent Execution Orchestrator (task outputs not layer-tagged), Harness Cockpit |
+| Invariant                                                                                                  | Rationale                                                                                                                                                          | Complies today                                                                          | Gaps                                                                                                                                               |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Every artifact is a typed vault node** — `node_type`, `layer`, `nature`, `status`, `created_by` required | Untyped files cannot participate in retrieval, gates, or drift computation; the schema is the join key across all components                                       | Vault Platform SDK, RAG Engine, Formal Readiness Gates, Knowledge Calibration Workbench | DomainSpec CLI (command outputs not yet node-typed), Governed UI Lab (UI variants not modeled as nodes), Agent Fleet Telemetry                     |
+| **Every relationship is a typed, directed edge** — no implicit `[[reference]]` or bare file link           | Untyped references are semantically opaque; typed edges (`derives_from`, `implements`, `validates`, `contradicts`, `promotes_to`) are queryable and gate-checkable | Vault Platform SDK, Knowledge Graph IDE, Faithful RAG Engine (graph retrieval layer)    | SpecOps Console (reads gate verdicts but does not yet emit edges), Harness Cockpit (UI renders graph but does not produce it), Copilot/Skills Pack |
+| **Provenance is mandatory** — every artifact links to the session, decision, or discovery that created it  | Without origin trace, drift is unattributable; "why was this created" must be answerable from the artifact itself, not from memory                                 | Session Memory / Decision Receipts, Vault Platform SDK (frontmatter + events)           | Governed UI Lab (variants lack discovery links), Agentic Runtime (execution artifacts not provenance-stamped), DomainSpec CLI                      |
+| **Layer is declared, not inferred** — every artifact carries an explicit `layer` value                     | Cross-layer gates (Gate 0 → Gate 1 → validator) require knowing which layer an artifact lives in; inference creates ambiguity at promotion boundaries              | Vault Platform SDK, Code Traceability Monitor (governance tags)                         | Agent Execution Orchestrator (task outputs not layer-tagged), Harness Cockpit                                                                      |
 
 ### Behavioral invariants
 
-| Invariant | Rationale | Complies today | Gaps |
-|---|---|---|---|
-| **Every component participates in the drift loop** — it either emits a drift signal or acts on one; no component is drift-blind | DomainSpec's core claim is that all drift is detectable; a component that neither produces nor consumes a drift signal is outside the knowledge loop and cannot be corrected automatically | Vault Telemetry, Code Traceability Monitor, Formal Readiness Gates, Knowledge Calibration Workbench | Governed UI Lab, Copilot/Skills Pack, DomainSpec CLI (doctor command reads drift, but the CLI itself doesn't emit it) |
-| **Every signal is action-bearing** — owner + action + evidence required; inert dashboards and global scores are prohibited | Signals without actions create alert fatigue and false confidence; the product rule at the bottom of this document exists precisely for this reason | Knowledge Calibration Workbench (calibration queue), Formal Readiness Gates (PASS/FLAG/BLOCK verdict with explanation) | Agent Fleet Telemetry (risk: becomes a metrics wall), Harness Cockpit (metrics panels must route to task queue, not terminate as graphs) |
-| **No locally-scoped taxonomy divergence** — a component cannot define local terminology that contradicts the shared vocabulary | The taxonomy is the shared language between humans and agents; local overrides fragment it silently, making routing and retrieval unreliable | SpecOps Console (validates terminology), Formal Readiness Gates (L1 richness check) | Skills Pack (skill names and parameters are not yet governed against the taxonomy), Agentic Runtime (prompt vocabulary not yet gate-checked) |
+| Invariant                                                                                                                       | Rationale                                                                                                                                                                                  | Complies today                                                                                                         | Gaps                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Every component participates in the drift loop** — it either emits a drift signal or acts on one; no component is drift-blind | DomainSpec's core claim is that all drift is detectable; a component that neither produces nor consumes a drift signal is outside the knowledge loop and cannot be corrected automatically | Vault Telemetry, Code Traceability Monitor, Formal Readiness Gates, Knowledge Calibration Workbench                    | Governed UI Lab, Copilot/Skills Pack, DomainSpec CLI (doctor command reads drift, but the CLI itself doesn't emit it)                        |
+| **Every signal is action-bearing** — owner + action + evidence required; inert dashboards and global scores are prohibited      | Signals without actions create alert fatigue and false confidence; the product rule at the bottom of this document exists precisely for this reason                                        | Knowledge Calibration Workbench (calibration queue), Formal Readiness Gates (PASS/FLAG/BLOCK verdict with explanation) | Agent Fleet Telemetry (risk: becomes a metrics wall), Harness Cockpit (metrics panels must route to task queue, not terminate as graphs)     |
+| **No locally-scoped taxonomy divergence** — a component cannot define local terminology that contradicts the shared vocabulary  | The taxonomy is the shared language between humans and agents; local overrides fragment it silently, making routing and retrieval unreliable                                               | SpecOps Console (validates terminology), Formal Readiness Gates (L1 richness check)                                    | Skills Pack (skill names and parameters are not yet governed against the taxonomy), Agentic Runtime (prompt vocabulary not yet gate-checked) |
 
 ### Process invariants
 
-| Invariant | Rationale | Complies today | Gaps |
-|---|---|---|---|
+| Invariant                                                                                                                                          | Rationale                                                                                                                                                             | Complies today                                                         | Gaps                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Promotion between layers requires a gate** — knowledge → spec, spec → code, code → observability each have an explicit gate; no silent promotion | Silent promotions are the mechanism by which incoherent knowledge becomes scaled defects; gates are not optional checkpoints, they are the promotion mechanism itself | Formal Readiness Gates (Gate 0/1), Tower Explorer, Lean Code Validator | DomainSpec CLI (`pipeline` command promotes artifacts but gate integration is not yet product-grade), Governed UI Lab (variant → baseline promotion needs gate) |
-| **Every session contributes back to knowledge** — close-session provenance must produce a vault node, not just a file | Sessions are the primary site of new knowledge formation; without capture, insights decay in conversation history and cannot be retrieved, cited, or gate-checked | Session Memory / Decision Receipts (close-session protocol) | Agentic Runtime (agent runs produce no session node), Agent Fleet Telemetry (run telemetry not linked to vault provenance) |
+| **Every session contributes back to knowledge** — close-session provenance must produce a vault node, not just a file                              | Sessions are the primary site of new knowledge formation; without capture, insights decay in conversation history and cannot be retrieved, cited, or gate-checked     | Session Memory / Decision Receipts (close-session protocol)            | Agentic Runtime (agent runs produce no session node), Agent Fleet Telemetry (run telemetry not linked to vault provenance)                                      |
 
 ---
 
 ## Product Lines
 
-| Product line | Product idea | Best current source | Current maturity |
-|---|---|---|---|
-| **Vault Platform SDK** | **Knowledge substrate: Kernel, CLI, telemetry, retrieval, convergence runner, snapshots, events, edge/frontmatter validators** | **[internal_tools/README.md](internal_tools/README.md), [vault/discovery/two-layer-platform-architecture/discovery.md](vault/discovery/two-layer-platform-architecture/discovery.md)** | **internal platform** |
-| **Faithful RAG Engine** | **Multi-substrate retrieval over docs, code, Lean, sessions, runtime with `ContextBundle`, `RetrievalTrace`, `DefectResidue`** | **[vault/discovery/two-layer-retrieval/discovery.md](vault/discovery/two-layer-retrieval/discovery.md), [internal_tools/graph_retrieval/features/two-layer-retrieval/spec/SPEC.md](internal_tools/graph_retrieval/features/two-layer-retrieval/spec/SPEC.md)** | **discovery + prototype** |
-| **Knowledge Calibration Workbench** | **Calibrate divergence between `C_head`, `C_spec`, `C_system` through elicitation, behavioral evidence, action queues** | **[vault/discovery/knowledge-calibration-geometry/discovery.md](vault/discovery/knowledge-calibration-geometry/discovery.md)** | **early discovery, spec-seed ready** |
-| Knowledge Graph IDE | Interactive graph navigation across domain model, specs, relationships, code, runtime, and decisions | [docs/features/knowledge-graph-visualization/SPEC.md](docs/features/knowledge-graph-visualization/SPEC.md), [plan/harness/HAR-01-domain-graph-chain-explorer.md](plan/harness/HAR-01-domain-graph-chain-explorer.md) | feature spec + backend/frontend route |
-| Formal Readiness Gates | Gate 0/1/Lean-backed validation of knowledge richness, cross-layer provenance, promotion integrity | [vault/discovery/reflection-tower-structural-gate/README.md](vault/discovery/reflection-tower-structural-gate/README.md), [internal_tools/tower_explorer/README.md](internal_tools/tower_explorer/README.md), [internal_tools/categorical_tooling_guard/README.md](internal_tools/categorical_tooling_guard/README.md), [internal_tools/lean-code-validator/README.md](internal_tools/lean-code-validator/README.md) | runnable internal tools |
-| SpecOps Console | Operator surface over vault, knowledge validation, drift, Tower, code tags, readiness, governance signals | [internal_tools/README.md](internal_tools/README.md), [plan/governance/GOVERNANCE-PRODUCT-OVERVIEW.md](plan/governance/GOVERNANCE-PRODUCT-OVERVIEW.md) | internal tools exist; product surface missing |
-| Harness Cockpit | Human execution cockpit: domain graph, role workspaces, task board, metrics, decision queue | [plan/harness/HARNESS-PRODUCT-OVERVIEW.md](plan/harness/HARNESS-PRODUCT-OVERVIEW.md) | planned product layer |
-| DomainSpec CLI | `domainspec init`, `doctor`, `drift`, `sync`, `pipeline`, `verify` as lightweight surface | [README.md](README.md), [TOBANOV.md](TOBANOV.md), [plan/infra/INF-05-codex-runtime-distribution.md](plan/infra/INF-05-codex-runtime-distribution.md) | product translation / packaging gap |
-| Agentic Runtime | Prompt-to-pipeline orchestrator, execution lifecycle, adapters, telemetry, governed retries/resume/cancel | [plan/agentic/AGENTIC-PRODUCT-OVERVIEW.md](plan/agentic/AGENTIC-PRODUCT-OVERVIEW.md), [docs/features/agent-execution-orchestrator/SPEC.md](docs/features/agent-execution-orchestrator/SPEC.md) | spec + partial backend |
-| Copilot / Skills Pack | Reusable agent and skill distribution for consumer repos | [copilot/README.md](copilot/README.md), [copilot/INSTALL.md](copilot/INSTALL.md) | real distribution surface |
-| Code Traceability Monitor | Code tags, drift reports, composability reports, continuous knowledge-to-code trace validation | [governance/tags/README.md](governance/tags/README.md) | governance tool surface |
-| Capability OS / Arcanum Superset | Model Arcanum sigils/capabilities as governed DomainSpec concepts with compatibility adapters | [docs/features/domainspec-arcanum-superset/ARCHITECTURE.md](docs/features/domainspec-arcanum-superset/ARCHITECTURE.md) | architecture/work-pack |
-| Governed UI Lab | UI prototyping studio: variants, baselines, mutation batches, lineage, proof-gated promotion | [docs/features/ui-prototyping-studio/PRODUCT-VIEW.md](docs/features/ui-prototyping-studio/PRODUCT-VIEW.md), [docs/features/ui-prototyping-studio/SPEC.md](docs/features/ui-prototyping-studio/SPEC.md) | feature spec + backend/frontend route |
-| Agent Fleet Telemetry | Local and org-level telemetry for agent runs, skills, costs, stuck states, mutation proposals | [internal_tools/agents-telemetry/README.md](internal_tools/agents-telemetry/README.md), [plan/infra/INF-02-agent-telemetry-saturn.md](plan/infra/INF-02-agent-telemetry-saturn.md) | internal design/prototype |
-| Session Memory / Decision Receipts | Close-session, should-close-session, signpost capture, provenance, audit trails | [vault/discovery/close-session-redesign/discovery.md](vault/discovery/close-session-redesign/discovery.md), [vault/discovery/should-close-session-design/discovery.md](vault/discovery/should-close-session-design/discovery.md) | discovery/proposal |
+| Product line                        | Product idea                                                                                                                   | Best current source                                                                                                                                                                                                                                                                                                                                                                                                  | Current maturity                              |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| **Vault Platform SDK**              | **Knowledge substrate: Kernel, CLI, telemetry, retrieval, convergence runner, snapshots, events, edge/frontmatter validators** | **[internal_tools/README.md](internal_tools/README.md), [vault/discovery/two-layer-platform-architecture/discovery.md](vault/discovery/two-layer-platform-architecture/discovery.md)**                                                                                                                                                                                                                               | **internal platform**                         |
+| **Faithful RAG Engine**             | **Multi-substrate retrieval over docs, code, Lean, sessions, runtime with `ContextBundle`, `RetrievalTrace`, `DefectResidue`** | **[vault/discovery/two-layer-retrieval/discovery.md](vault/discovery/two-layer-retrieval/discovery.md), [internal_tools/graph_retrieval/features/two-layer-retrieval/spec/SPEC.md](internal_tools/graph_retrieval/features/two-layer-retrieval/spec/SPEC.md)**                                                                                                                                                       | **discovery + prototype**                     |
+| **Knowledge Calibration Workbench** | **Calibrate divergence between `C_head`, `C_spec`, `C_system` through elicitation, behavioral evidence, action queues**        | **[vault/discovery/knowledge-calibration-geometry/discovery.md](vault/discovery/knowledge-calibration-geometry/discovery.md)**                                                                                                                                                                                                                                                                                       | **early discovery, spec-seed ready**          |
+| Knowledge Graph IDE                 | Interactive graph navigation across domain model, specs, relationships, code, runtime, and decisions                           | [docs/features/knowledge-graph-visualization/SPEC.md](docs/features/knowledge-graph-visualization/SPEC.md), [plan/harness/HAR-01-domain-graph-chain-explorer.md](plan/harness/HAR-01-domain-graph-chain-explorer.md)                                                                                                                                                                                                 | feature spec + backend/frontend route         |
+| Formal Readiness Gates              | Gate 0/1/Lean-backed validation of knowledge richness, cross-layer provenance, promotion integrity                             | [vault/discovery/reflection-tower-structural-gate/README.md](vault/discovery/reflection-tower-structural-gate/README.md), [internal_tools/tower_explorer/README.md](internal_tools/tower_explorer/README.md), [internal_tools/categorical_tooling_guard/README.md](internal_tools/categorical_tooling_guard/README.md), [internal_tools/lean-code-validator/README.md](internal_tools/lean-code-validator/README.md) | runnable internal tools                       |
+| SpecOps Console                     | Operator surface over vault, knowledge validation, drift, Tower, code tags, readiness, governance signals                      | [internal_tools/README.md](internal_tools/README.md), [plan/governance/GOVERNANCE-PRODUCT-OVERVIEW.md](plan/governance/GOVERNANCE-PRODUCT-OVERVIEW.md)                                                                                                                                                                                                                                                               | internal tools exist; product surface missing |
+| Harness Cockpit                     | Human execution cockpit: domain graph, role workspaces, task board, metrics, decision queue                                    | [plan/harness/HARNESS-PRODUCT-OVERVIEW.md](plan/harness/HARNESS-PRODUCT-OVERVIEW.md)                                                                                                                                                                                                                                                                                                                                 | planned product layer                         |
+| DomainSpec CLI                      | `domainspec init`, `doctor`, `drift`, `sync`, `pipeline`, `verify` as lightweight surface                                      | [README.md](README.md), [TOBANOV.md](TOBANOV.md), [plan/infra/INF-05-codex-runtime-distribution.md](plan/infra/INF-05-codex-runtime-distribution.md)                                                                                                                                                                                                                                                                 | product translation / packaging gap           |
+| Agentic Runtime                     | Prompt-to-pipeline orchestrator, execution lifecycle, adapters, telemetry, governed retries/resume/cancel                      | [plan/agentic/AGENTIC-PRODUCT-OVERVIEW.md](plan/agentic/AGENTIC-PRODUCT-OVERVIEW.md), [docs/features/agent-execution-orchestrator/SPEC.md](docs/features/agent-execution-orchestrator/SPEC.md)                                                                                                                                                                                                                       | spec + partial backend                        |
+| Copilot / Skills Pack               | Reusable agent and skill distribution for consumer repos                                                                       | [copilot/README.md](copilot/README.md), [copilot/INSTALL.md](copilot/INSTALL.md)                                                                                                                                                                                                                                                                                                                                     | real distribution surface                     |
+| Code Traceability Monitor           | Code tags, drift reports, composability reports, continuous knowledge-to-code trace validation                                 | [governance/tags/README.md](governance/tags/README.md)                                                                                                                                                                                                                                                                                                                                                               | governance tool surface                       |
+| Capability OS / Arcanum Superset    | Model Arcanum sigils/capabilities as governed DomainSpec concepts with compatibility adapters                                  | [docs/features/domainspec-arcanum-superset/ARCHITECTURE.md](docs/features/domainspec-arcanum-superset/ARCHITECTURE.md)                                                                                                                                                                                                                                                                                               | architecture/work-pack                        |
+| Governed UI Lab                     | UI prototyping studio: variants, baselines, mutation batches, lineage, proof-gated promotion                                   | [ui-prototyping-studio:PRODUCT-VIEW.md](ui-prototyping-studio:PRODUCT-VIEW.md), [ui-prototyping-studio:SPEC.md](ui-prototyping-studio:SPEC.md)                                                                                                                                                                                                                                                                       | feature spec + backend/frontend route         |
+| Agent Fleet Telemetry               | Local and org-level telemetry for agent runs, skills, costs, stuck states, mutation proposals                                  | [internal_tools/agents-telemetry/README.md](internal_tools/agents-telemetry/README.md), [plan/infra/INF-02-agent-telemetry-saturn.md](plan/infra/INF-02-agent-telemetry-saturn.md)                                                                                                                                                                                                                                   | internal design/prototype                     |
+| Session Memory / Decision Receipts  | Close-session, should-close-session, signpost capture, provenance, audit trails                                                | [vault/discovery/close-session-redesign/discovery.md](vault/discovery/close-session-redesign/discovery.md), [vault/discovery/should-close-session-design/discovery.md](vault/discovery/should-close-session-design/discovery.md)                                                                                                                                                                                     | discovery/proposal                            |
 
 ## Near-Term Wedges
 
@@ -207,9 +207,9 @@ Most tangible user-facing wedge: product/design teams generate and compare UI va
 
 Sources:
 
-- [docs/features/ui-prototyping-studio/PRODUCT-VIEW.md](docs/features/ui-prototyping-studio/PRODUCT-VIEW.md)
-- [docs/features/ui-prototyping-studio/SPEC.md](docs/features/ui-prototyping-studio/SPEC.md)
-- [docs/features/ui-prototyping-studio/ARCHITECTURE.md](docs/features/ui-prototyping-studio/ARCHITECTURE.md)
+- [ui-prototyping-studio:PRODUCT-VIEW.md](ui-prototyping-studio:PRODUCT-VIEW.md)
+- [ui-prototyping-studio:SPEC.md](ui-prototyping-studio:SPEC.md)
+- [ui-prototyping-studio:ARCHITECTURE.md](ui-prototyping-studio:ARCHITECTURE.md)
 - [backend/src/modules/ui-prototyping-studio/index.ts](backend/src/modules/ui-prototyping-studio/index.ts)
 - [apps/web/src/App.tsx](apps/web/src/App.tsx)
 
@@ -246,17 +246,17 @@ Main gap:
 
 ### Existing surfaces
 
-| Surface | What it is | Product possibility |
-|---|---|---|
-| [.claude/README.md](.claude/README.md) | Current Claude Code harness with hooks, agents, skills, and enforcement behavior | portable harness contract and local operator runtime |
-| [copilot/README.md](copilot/README.md) | Public agent + skill pack for consumer repos | installable DomainSpec Copilot Pack |
-| [.agents/skills/](.agents/skills/) | Codex/runtime skill corpus, including DomainSpec, GSD, GitNexus, robot-talks, custom skills | cross-runtime skill registry |
-| [.codex/agents/](.codex/agents/) | Codex-shaped agent definitions | runtime adapter inventory |
-| [.github/agents/](.github/agents/) and [.github/skills/](.github/skills/) | GitHub Copilot / GSD-installed agent and skill surface | GitHub-native distribution |
-| [docs/features/domainspec-arcanum-superset/ARCHITECTURE.md](docs/features/domainspec-arcanum-superset/ARCHITECTURE.md) | DomainSpec as superset substrate for Arcanum capabilities | capability OS with compatibility adapters |
-| [vault/discovery/agent-skill-categorization/README.md](vault/discovery/agent-skill-categorization/README.md) | Role/tool-surface taxonomy discovery for agents/skills | governed agent marketplace and routing analytics |
-| [vault/discovery/robot-talks-definitions/README.md](vault/discovery/robot-talks-definitions/README.md) | Multi-agent investigation mode | decision room / adversarial review product |
-| [.agents/skills/robot-talks/SKILL.md](.agents/skills/robot-talks/SKILL.md) | Operational robot-talks skill | repeatable investigation workflow |
+| Surface                                                                                                                | What it is                                                                                  | Product possibility                                  |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [.claude/README.md](.claude/README.md)                                                                                 | Current Claude Code harness with hooks, agents, skills, and enforcement behavior            | portable harness contract and local operator runtime |
+| [copilot/README.md](copilot/README.md)                                                                                 | Public agent + skill pack for consumer repos                                                | installable DomainSpec Copilot Pack                  |
+| [.agents/skills/](.agents/skills/)                                                                                     | Codex/runtime skill corpus, including DomainSpec, GSD, GitNexus, robot-talks, custom skills | cross-runtime skill registry                         |
+| [.codex/agents/](.codex/agents/)                                                                                       | Codex-shaped agent definitions                                                              | runtime adapter inventory                            |
+| [.github/agents/](.github/agents/) and [.github/skills/](.github/skills/)                                              | GitHub Copilot / GSD-installed agent and skill surface                                      | GitHub-native distribution                           |
+| [docs/features/domainspec-arcanum-superset/ARCHITECTURE.md](docs/features/domainspec-arcanum-superset/ARCHITECTURE.md) | DomainSpec as superset substrate for Arcanum capabilities                                   | capability OS with compatibility adapters            |
+| [vault/discovery/agent-skill-categorization/README.md](vault/discovery/agent-skill-categorization/README.md)           | Role/tool-surface taxonomy discovery for agents/skills                                      | governed agent marketplace and routing analytics     |
+| [vault/discovery/robot-talks-definitions/README.md](vault/discovery/robot-talks-definitions/README.md)                 | Multi-agent investigation mode                                                              | decision room / adversarial review product           |
+| [.agents/skills/robot-talks/SKILL.md](.agents/skills/robot-talks/SKILL.md)                                             | Operational robot-talks skill                                                               | repeatable investigation workflow                    |
 
 ### Product ideas
 
@@ -279,15 +279,15 @@ Key sources:
 
 ### What exists
 
-| Area | Evidence | Product reading |
-|---|---|---|
-| Two-layer retrieval discovery | [vault/discovery/two-layer-retrieval/discovery.md](vault/discovery/two-layer-retrieval/discovery.md) | semantic context OS across docs, code, theorem, sessions, runtime |
-| Graph retrieval prototype | [internal_tools/graph_retrieval/](internal_tools/graph_retrieval/) | typed-edge + embedding retrieval prototype |
-| NetworkX corpus | [internal_tools/graph_retrieval/networkx_corpus.py](internal_tools/graph_retrieval/networkx_corpus.py) | current graph-backed corpus adapter |
-| Retriever | [internal_tools/graph_retrieval/retriever.py](internal_tools/graph_retrieval/retriever.py) | classify -> candidates -> projection -> score -> top-k |
-| Embedder protocol | [internal_tools/vault_common/embedder.py](internal_tools/vault_common/embedder.py) | provider-agnostic embedding interface |
-| Sentence transformer adapter | [internal_tools/vault_common/embedders/sentence_transformer.py](internal_tools/vault_common/embedders/sentence_transformer.py) | local embedding implementation |
-| Semantic RAG session | [vault/sessions/2026-05-25-0913-semantic-rag-discovery-review.md](vault/sessions/2026-05-25-0913-semantic-rag-discovery-review.md) | recent review tightening falsifiable target |
+| Area                          | Evidence                                                                                                                           | Product reading                                                   |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Two-layer retrieval discovery | [vault/discovery/two-layer-retrieval/discovery.md](vault/discovery/two-layer-retrieval/discovery.md)                               | semantic context OS across docs, code, theorem, sessions, runtime |
+| Graph retrieval prototype     | [internal_tools/graph_retrieval/](internal_tools/graph_retrieval/)                                                                 | typed-edge + embedding retrieval prototype                        |
+| NetworkX corpus               | [internal_tools/graph_retrieval/networkx_corpus.py](internal_tools/graph_retrieval/networkx_corpus.py)                             | current graph-backed corpus adapter                               |
+| Retriever                     | [internal_tools/graph_retrieval/retriever.py](internal_tools/graph_retrieval/retriever.py)                                         | classify -> candidates -> projection -> score -> top-k            |
+| Embedder protocol             | [internal_tools/vault_common/embedder.py](internal_tools/vault_common/embedder.py)                                                 | provider-agnostic embedding interface                             |
+| Sentence transformer adapter  | [internal_tools/vault_common/embedders/sentence_transformer.py](internal_tools/vault_common/embedders/sentence_transformer.py)     | local embedding implementation                                    |
+| Semantic RAG session          | [vault/sessions/2026-05-25-0913-semantic-rag-discovery-review.md](vault/sessions/2026-05-25-0913-semantic-rag-discovery-review.md) | recent review tightening falsifiable target                       |
 
 ### MCP status
 
@@ -303,18 +303,18 @@ Product idea:
 
 ## Internal Tools and Gates
 
-| Tool | Path | Product idea |
-|---|---|---|
-| Vault kernel | [internal_tools/vault_common/](internal_tools/vault_common/) | shared SDK for frontmatter, edges, walker, SQLite, events, embeddings |
-| Vault CLI | [internal_tools/vault_ctl/cli.py](internal_tools/vault_ctl/cli.py) | `domainspec doctor` / `vault validate` product core |
-| Vault telemetry | [internal_tools/vault_telemetry/cli.py](internal_tools/vault_telemetry/cli.py) | residue metrics, bets, dispatch reports, tuning signals |
-| Convergence runner | [internal_tools/convergence_runner/cli.py](internal_tools/convergence_runner/cli.py) | repeatable multi-agent experiment runner |
-| Agents telemetry | [internal_tools/agents-telemetry/README.md](internal_tools/agents-telemetry/README.md) | agent fleet observability |
-| Categorical tooling guard | [internal_tools/categorical_tooling_guard/README.md](internal_tools/categorical_tooling_guard/README.md) | PASS/FLAG/BLOCK gate over L1 richness |
-| Tower Explorer | [internal_tools/tower_explorer/README.md](internal_tools/tower_explorer/README.md) | Gate 0 origin/provenance structural checker |
-| Lean code validator | [internal_tools/lean-code-validator/README.md](internal_tools/lean-code-validator/README.md) | formal/spec validation surface |
-| Audit richness parser | [scripts/audit_richness.py](scripts/audit_richness.py) | parser authority for markdown spec richness |
-| Governance code tags | [governance/tags/README.md](governance/tags/README.md) | spec-to-code traceability and drift reports |
+| Tool                      | Path                                                                                                     | Product idea                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Vault kernel              | [internal_tools/vault_common/](internal_tools/vault_common/)                                             | shared SDK for frontmatter, edges, walker, SQLite, events, embeddings |
+| Vault CLI                 | [internal_tools/vault_ctl/cli.py](internal_tools/vault_ctl/cli.py)                                       | `domainspec doctor` / `vault validate` product core                   |
+| Vault telemetry           | [internal_tools/vault_telemetry/cli.py](internal_tools/vault_telemetry/cli.py)                           | residue metrics, bets, dispatch reports, tuning signals               |
+| Convergence runner        | [internal_tools/convergence_runner/cli.py](internal_tools/convergence_runner/cli.py)                     | repeatable multi-agent experiment runner                              |
+| Agents telemetry          | [internal_tools/agents-telemetry/README.md](internal_tools/agents-telemetry/README.md)                   | agent fleet observability                                             |
+| Categorical tooling guard | [internal_tools/categorical_tooling_guard/README.md](internal_tools/categorical_tooling_guard/README.md) | PASS/FLAG/BLOCK gate over L1 richness                                 |
+| Tower Explorer            | [internal_tools/tower_explorer/README.md](internal_tools/tower_explorer/README.md)                       | Gate 0 origin/provenance structural checker                           |
+| Lean code validator       | [internal_tools/lean-code-validator/README.md](internal_tools/lean-code-validator/README.md)             | formal/spec validation surface                                        |
+| Audit richness parser     | [scripts/audit_richness.py](scripts/audit_richness.py)                                                   | parser authority for markdown spec richness                           |
+| Governance code tags      | [governance/tags/README.md](governance/tags/README.md)                                                   | spec-to-code traceability and drift reports                           |
 
 Product synthesis:
 
@@ -323,15 +323,15 @@ Product synthesis:
 
 ## Product Evidence Already In Code
 
-| Surface | Evidence |
-|---|---|
-| Knowledge Graph backend | [backend/src/modules/knowledge-graph/index.ts](backend/src/modules/knowledge-graph/index.ts) |
-| UI Prototyping Studio backend | [backend/src/modules/ui-prototyping-studio/index.ts](backend/src/modules/ui-prototyping-studio/index.ts) |
+| Surface                              | Evidence                                                                                                               |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Knowledge Graph backend              | [backend/src/modules/knowledge-graph/index.ts](backend/src/modules/knowledge-graph/index.ts)                           |
+| UI Prototyping Studio backend        | [backend/src/modules/ui-prototyping-studio/index.ts](backend/src/modules/ui-prototyping-studio/index.ts)               |
 | Agent Execution Orchestrator backend | [backend/src/modules/agent-execution-orchestrator/index.ts](backend/src/modules/agent-execution-orchestrator/index.ts) |
-| Web app routes | [apps/web/src/App.tsx](apps/web/src/App.tsx) |
-| Knowledge graph feature spec | [docs/features/knowledge-graph-visualization/SPEC.md](docs/features/knowledge-graph-visualization/SPEC.md) |
-| UI prototyping feature spec | [docs/features/ui-prototyping-studio/SPEC.md](docs/features/ui-prototyping-studio/SPEC.md) |
-| Agent execution feature spec | [docs/features/agent-execution-orchestrator/SPEC.md](docs/features/agent-execution-orchestrator/SPEC.md) |
+| Web app routes                       | [apps/web/src/App.tsx](apps/web/src/App.tsx)                                                                           |
+| Knowledge graph feature spec         | [docs/features/knowledge-graph-visualization/SPEC.md](docs/features/knowledge-graph-visualization/SPEC.md)             |
+| UI prototyping feature spec          | [ui-prototyping-studio:SPEC.md](ui-prototyping-studio:SPEC.md)                                                         |
+| Agent execution feature spec         | [docs/features/agent-execution-orchestrator/SPEC.md](docs/features/agent-execution-orchestrator/SPEC.md)               |
 
 ## Discovery and Research Index
 
@@ -362,9 +362,9 @@ Product synthesis:
 - [docs/features/knowledge-graph-visualization/SPEC.md](docs/features/knowledge-graph-visualization/SPEC.md)
 - [docs/features/knowledge-graph-visualization/WORK-PACK.md](docs/features/knowledge-graph-visualization/WORK-PACK.md)
 - [docs/features/tower-explorer/spec.md](docs/features/tower-explorer/spec.md)
-- [docs/features/ui-prototyping-studio/PRODUCT-VIEW.md](docs/features/ui-prototyping-studio/PRODUCT-VIEW.md)
-- [docs/features/ui-prototyping-studio/SPEC.md](docs/features/ui-prototyping-studio/SPEC.md)
-- [docs/features/ui-prototyping-studio/WORK-PACK.md](docs/features/ui-prototyping-studio/WORK-PACK.md)
+- [ui-prototyping-studio:PRODUCT-VIEW.md](ui-prototyping-studio:PRODUCT-VIEW.md)
+- [ui-prototyping-studio:SPEC.md](ui-prototyping-studio:SPEC.md)
+- [ui-prototyping-studio:WORK-PACK.md](ui-prototyping-studio:WORK-PACK.md)
 
 ### Research / experiments
 
@@ -384,16 +384,16 @@ Product synthesis:
 
 ## Cross-Cutting Gaps
 
-| Gap | Why it matters | Candidate next move |
-|---|---|---|
-| Packaging | Repo still speaks in submodules, skills, and markdown; users need commands and guided flows | define CLI command contracts and installer boundaries |
-| Runtime portability | Claude, Copilot, Codex, GitHub, and future API modes are adjacent but not unified | write runtime adapter contract and inventory current surfaces |
-| MCP productization | MCP is referenced, but first-party DomainSpec MCP server is not present | design read-only MCP bridge for vault, retrieval, gates, and telemetry |
-| RAG evaluation | Two-layer RAG is compelling but needs hard negatives and golden traces | build semantic retrieval eval harness |
-| Harness MVP scope | Harness is broad; MVP must not become "whole platform UI" | start with graph explorer + role view + calibration/action queue |
-| Metrics actionability | Dashboards can become empty | require every signal to route to owner/action/evidence |
-| Commercial wedge | CLI, Harness, RAG, UI Lab, and agent telemetry all compete | score wedges by demo speed, pain intensity, implementation cost, and moat |
-| Proof evidence | "Spec-derived quality" needs short repeatable demos | maintain canonical examples like payment-processing and user-account |
+| Gap                   | Why it matters                                                                              | Candidate next move                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Packaging             | Repo still speaks in submodules, skills, and markdown; users need commands and guided flows | define CLI command contracts and installer boundaries                     |
+| Runtime portability   | Claude, Copilot, Codex, GitHub, and future API modes are adjacent but not unified           | write runtime adapter contract and inventory current surfaces             |
+| MCP productization    | MCP is referenced, but first-party DomainSpec MCP server is not present                     | design read-only MCP bridge for vault, retrieval, gates, and telemetry    |
+| RAG evaluation        | Two-layer RAG is compelling but needs hard negatives and golden traces                      | build semantic retrieval eval harness                                     |
+| Harness MVP scope     | Harness is broad; MVP must not become "whole platform UI"                                   | start with graph explorer + role view + calibration/action queue          |
+| Metrics actionability | Dashboards can become empty                                                                 | require every signal to route to owner/action/evidence                    |
+| Commercial wedge      | CLI, Harness, RAG, UI Lab, and agent telemetry all compete                                  | score wedges by demo speed, pain intensity, implementation cost, and moat |
+| Proof evidence        | "Spec-derived quality" needs short repeatable demos                                         | maintain canonical examples like payment-processing and user-account      |
 
 ## Suggested Priority Stack
 
@@ -415,4 +415,3 @@ Do not promote an idea because it is conceptually elegant. Promote it when it ha
 - a narrow first experiment;
 - a source-of-truth link;
 - a way to detect failure or drift.
-
