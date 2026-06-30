@@ -37,7 +37,8 @@ For the non-negotiable commitments that these premises build upon, see `ontology
 7. [P-ONT-7 — Density over granularity in the current phase](#p-ont-7--density-over-granularity-in-the-current-phase)
 8. [P-ONT-8 — Sessions that generate higher-level documents must be kept forever](#p-ont-8--sessions-that-generate-higher-level-documents-must-be-kept-forever)
 9. [P-ONT-9 — The classification system must adapt as the vault grows](#p-ont-9--the-classification-system-must-adapt-as-the-vault-grows)
-10. [Connections](#connections)
+10. [P-ONT-10 — Reduce entropy to the constrained optimum, not to zero](#p-ont-10--reduce-entropy-to-the-constrained-optimum-not-to-zero)
+11. [Connections](#connections)
 
 ---
 
@@ -194,6 +195,22 @@ When the distribution changes (the vault grows, the mix of document types shifts
 
 ---
 
+## P-ONT-10 — Reduce entropy to the constrained optimum, not to zero
+
+`convicção: medium` · `veracidade: low`
+
+AX-ONT-1 sets the *direction* — drive retrieval entropy down. This premise sets the *stopping point*. Every reduction has a cost: each new label, edge, or document split costs author effort, token budget, and schema churn. The right target is therefore not `H(D|Q) = 0` but the **constrained optimum** — keep reducing only while the marginal entropy a move removes is worth more than the marginal cost it adds. Stated as a rule: *remove every degree of freedom that coverage does not require — and not one more.*
+
+This **completes** AX-ONT-1 rather than competing with it: zero is the ideal limit; this premise says when to stop approaching it. The brake is already partly built — AX-ONT-2's label-admission test (`ΔH`) rejects redundant labels, and P-ONT-7's "granularity on demand" stops splitting early. P-ONT-10 names the general principle those are instances of.
+
+**How to test:** Find a real case where a move that *lowered* retrieval entropy (a new label, a finer split) net-harmed the vault — more maintenance cost or reference churn than the retrieval gain was worth. One such case confirms the optimum sits below full resolution. The inverse failure — refinement that should have stopped earlier but didn't — is what the entropy-symmetry finding (`docs/research/entropy-symmetry/findings.md`) calls "over-refining past saturation reduces fidelity."
+
+**Risk if wrong:** If the cost of reducing entropy is genuinely negligible in this vault, the constrained optimum coincides with zero and this premise is noise — drop it and follow AX-ONT-1 unbounded.
+
+**Derives from:** AX-ONT-1 (minimize retrieval entropy — this premise bounds how far)
+
+---
+
 ## Derivation Hierarchy
 
 ```
@@ -201,6 +218,7 @@ AX-ONT-1 (minimize retrieval entropy)
 ├── P-ONT-2 (linear status hierarchy)
 ├── P-ONT-4 (sessions use same labels)
 ├── P-ONT-9 (classification adapts to growth)
+├── P-ONT-10 (constrained optimum — how far to minimize)
 ├── AX-ONT-2 (orthogonal labels)
 │   ├── P-ONT-1 (7 labels are sufficient)
 │   ├── P-ONT-3 (two confidence dimensions)
