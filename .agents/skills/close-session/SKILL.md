@@ -5,7 +5,7 @@ description: Close a session and create a vault conversation node
 
 # Close Session Workflow
 
-> **Operational sources of truth:** `.Codex/skills/custom/frontmatter.md` + `.Codex/skills/custom/frontmatter-semantics.md` (classification), `.Codex/skills/custom/edges.md` + `.Codex/skills/custom/edge-catalog.md` (graph wiring).
+> **Classification source of truth:** `docs/vault/ontology-conventions.md`.
 
 ---
 
@@ -13,40 +13,35 @@ description: Close a session and create a vault conversation node
 
 **Create a node if any is true:** vault doc changed/created/deleted, domain code changed, architectural decision made, tests added/modified, contradiction found/resolved.
 
-**Skip if:** no vault/code changes AND purely Q&A with no decisions. Say _"Q&A-only session. No vault node created."_ and stop.
+**Skip if:** no vault/code changes AND purely Q&A with no decisions. Say *"Q&A-only session. No vault node created."* and stop.
 
-**Scratchpad:** Check `Codex/current_conversations/` for a session file. If found, use it as primary input and delete it after saving the node.
+**Scratchpad:** Check `claude/current_conversations/` for a session file. If found, use it as primary input and delete it after saving the node.
 
 ---
 
 ## Step 1 — Write Summary (do this yourself)
 
-Write **2–4 sentences**: what the session set out to do, what was decided (and why), what was done. No sub-headings, no per-file detail. A reader should grasp the arc without access to the conversation.
+Write up to **10 sentences**: what the session set out to do, what was decided (and why), what was done. No sub-headings, no per-file detail. A reader should grasp the arc without access to the conversation. Also draft the **Forward** lines yourself (Step 3). The discriminating test is a judgment — never delegated to Sonnet.
 
 ---
 
 ## Step 2 — Delegate classification to Sonnet
 
-Spawn an Agent (model: sonnet) with your summary + list of files touched. **Brief it to load these skills as its source of truth before classifying**
+Spawn an Agent (model: sonnet) with your summary + list of files touched. It returns:
 
-- `.Codex/skills/custom/frontmatter.md` — required fields per `node_type` and the `node_type` priority order.
-- `.Codex/skills/custom/frontmatter-semantics.md` — definitions and allowed values for every frontmatter tag (`layer`, `nature`, `tags`, `veracidade`, `convicção`, etc.).
-
-It returns:
-
-1. **node_type** — first match wins per the priority order in `frontmatter.md` (typically: constitution → premise → conceptual → test → discovery → implementation-plan → audit → spec fallback). If `frontmatter.md` defines a different order, follow `frontmatter.md`.
-2. **tags, layer, nature** — per `frontmatter-semantics.md`. Use only values listed there.
+1. **node_type** (first match wins): constitution → premise → conceptual → test → discovery → implementation-plan → audit → spec (fallback).
+2. **tags, layer, nature** per `ontology-conventions.md`.
 3. **expected_importance** (0–10) + **importance_rationale** (one sentence).
-4. **Contradictions** — only if a vault node was validated, contradicted, or questioned. One short prose bullet per finding (e.g. "validates `path/to/node.md` — reason"). This is human-readable narrative; the formal edge wiring is done in Step 4 by the curator. Omit section if none.
+4. **Contradictions** — only if a vault node was validated, contradicted, or questioned. One bullet per edge. Omit section if none.
 5. **Files touched** — flat list of paths, no descriptions. Git has the detail.
 
-If a skill is missing or unreadable, the classifier should HALT and report. The skills are the operational references; the constitution is what they codify.
+Sonnet returns the above only — it never writes the `## Forward` block (that block is yours, Step 1).
 
 ---
 
 ## Step 3 — Assemble the node
 
-File: `vault/sessions/YYYY-MM-DD-HHMM-{short-slug}.md`
+File: `docs/vault/conversations/YYYY-MM-DD-HHMM-{short-slug}.md`
 
 ```markdown
 ---
@@ -72,44 +67,48 @@ importance_rationale: "{sentence}"
 
 ## Summary
 
-{2–4 sentences from Step 1}
+{max 10 sentences from Step 1}
 
 ## Contradictions
 
 {Omit if none. One bullet per edge: "validates/contradicts/questions {node} — reason."}
+
+## Open questions
+
+{A claim the session did NOT decide — a question or conjecture, never a task. Node-less only: a question naming a vault/spec node is a `questions {node}` Contradictions edge, not an Open question. Omit if nothing is genuinely undecided.}
+
+## Next steps
+
+{A decided action, method known — only labor remains. Imperative, priority-ordered, what+where. A step worth standing tracking is promoted to the backlog and linked via `promoted_candidates`; the line here is then a pointer. Omit if the arc is closed.}
+
+## Recommendation
+
+{Your call: of the items above, the keystone and how the next session should attack it. Recommend a direction, never assert the outcome; name the licensing fact — a validated node, a landed test, a resolved contradiction — or self-label a hunch. References only items above. Omit on routine sessions; never a placeholder.}
 
 ## Files touched
 
 {Flat bullet list of paths. No table, no descriptions.}
 ```
 
-> **Hard cap:** The body (below frontmatter, **excluding the `## Connections` block written in Step 4**) must not exceed **30 lines**. If it does, you are writing too much — cut.
+### Forward registers
+
+Apply these while drafting (Step 1) and assembling (Step 3) the three forward sections.
+
+- Three distinct registers, written by you. **Open questions** are undecided (resolved, never "done"); **Next steps** are decided labor; **Recommendation** ranks across them and asserts nothing new. If a line fits two, apply the discriminating test — can it be done? does it claim a truth? — and move it.
+- **Open questions are node-less only.** A question naming a vault/spec node is a `questions {node}` edge → `## Contradictions`, not Open questions (else the two double-record). Mechanical test: if the target can be written as an existing file path, it is a Contradictions edge; otherwise an Open question.
+- **Next steps defer to the backlog.** A step worth standing tracking is promoted to the backlog and linked via `promoted_candidates`; the Next-steps line is then only a pointer. To promote: append it to `docs/vault/backlog/{topic}.md` per `.claude/skills/custom/backlog-pattern.md`, then list that path. Not promoting? Keep it body-only and leave `promoted_candidates: []`.
+- **Recommendation obeys the subset rule.** Recommend a direction, never assert the outcome; name the licensing fact (validated node, landed test, resolved contradiction) or self-label a hunch. It references only items in the sections above.
+- Omit, don't pad. No open business → omit the empty sections entirely. Absence is the signal.
+
+> **Hard cap:** The body (below frontmatter) must not exceed **200 lines**. If it does, you are writing too much — cut. The three forward sections count inside the 200 and are the lowest-priority — if over cap, trim them first, then omit them.
 
 ---
 
-## Step 4 — Bootstrap edges via domainspec-vault-metadata-curator
+## Step 4 — Review (two Sonnet agents)
 
-The session node's outbound edges must be wired into the graph **forward-only from the session**. Do NOT write the `## Connections` block yourself — delegate to the agent that owns the edge catalog.
+Before the node is final, spawn **two Agents (model: sonnet)** in parallel, each given the assembled node + the list of files touched. They review independently:
 
-> **Session edge rule (canonical doctrine: `vault/ontology-conventions.md` §8):**
-> _Edges originating from a session node (`is_session: true`) are forward-only by source: they live on the session's `## Connections` block, but no inverse row is written on the target document. The auditor skips bidirectionality checks for edges whose source has `is_session: true`._
+1. **Classification & frontmatter** — node_type, tags, layer, nature, importance, and any edges match `ontology-conventions.md`; frontmatter is well-formed; the body is within the 200-line cap.
+2. **Body discipline** — the three forward registers obey the discriminating test and subset rule; Open questions are node-less; Next steps defer to the backlog; Recommendation references only items above and names a license or self-labels a hunch; no narration.
 
-Spawn the `domainspec-vault-metadata-curator` agent in **`bootstrap <session-file-path>`** mode. Brief it with:
-
-- **Session file path** (the file you just wrote in Step 3). The session has `is_session: true` in its frontmatter — the curator MUST recognize this and apply the forward-only rule (no inverse rows on targets).
-- **Per-file edge intent** for every entry in "Files touched" — pick exactly one per file, derived from what actually happened in the session:
-  - `creates` — new file produced this session (did not exist before).
-  - `modifies` — edited a pre-existing file (any kind of edit, including added sections).
-  - `consumes` — read or used as input without deriving new claims from it.
-  - `revisits` — reconsidered the questions/decisions in the file without refuting them.
-  - `closes-question` — resolved a `## Open Questions` item in a discovery.
-  - `validates` / `contradicts` / `refutes` — for any file already named in the prose `## Contradictions` section, use the matching catalog edge.
-- **Instruction**: do NOT use `AskUserQuestion` for anything covered by this brief. Only halt and ask if a target file's `node_type` makes the inferred edge illegal per the legality matrix in `.Codex/skills/custom/edge-catalog.md`, or if a target path does not exist on disk.
-
-The curator will:
-
-- Write the `## Connections` block on the session file using catalog edges only.
-- **NOT** write any inverse row on any target file. Because the session source has `is_session: true`, edges are forward-only by source per `vault/ontology-conventions.md` §8 — target documents are not modified, and no `## Connections` block is added to a target that lacks one.
-- Refuse to invent edges; flag illegal cases as `NEEDS_HUMAN`.
-
-If the curator returns any `NEEDS_HUMAN` items, surface them to the user before considering the session closed. If it returns a regression report, halt and surface that immediately — do not proceed.
+Each returns **PASS** or a list of concrete problems. **If either returns problems, send the node back to the writing agent (the one that wrote it, Steps 1/3) to fix, then re-review.** Only a clean PASS from both finalizes the node.
