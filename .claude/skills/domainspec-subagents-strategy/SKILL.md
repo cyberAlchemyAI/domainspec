@@ -1,56 +1,145 @@
 ---
 name: domainspec-subagents-strategy
-description: Route any subagent dispatch — check the Principle-1 trigger, hold the human gate, enforce the universal invariants, then route by dispatch_type to the owning type skill (research, review, and experiment are LIVE; code/plan/suggestion are reserved). The record/sheet form is owned by register-dispatch; field definitions by constitution §5. This skill defines no field and no type-specific judgment — it routes.
+description: "Route DomainSpec/Arcanum subagent dispatches: check the trigger, tension the sheet, hold the human gate, register, run, close, and preserve the append-only ledger."
 ---
 
-**Governing doc:** operationalizes `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` (v0.6.1-proposal). The live vault constitution is still v0.3.0; where the two conflict, v0.6.x wins (owner decision 2026-06-12; doc bumped to v0.6.0 then v0.6.1 on 2026-06-15 per §10 / §12). The wire `schema_version` is `"0.6.0"` (§10.1; the v0.6.1 bump is the `experiment` propose/run re-scope, not a row-schema change).
+# DomainSpec Subagents Strategy
 
-## When to dispatch (P1) — and what is not a dispatch (P11)
+## Overview
 
-Dispatch only when at least one trigger holds: **synthesis** (3+ sources to combine), **context protection** (raw output ≫ what the parent needs), **isolation** (discardable exploration), **parallelism** (independent tasks). Otherwise work inline.
+Use this skill when the user invokes `$domainspec-subagents-strategy`, asks to run a governed subagent dispatch, or asks to spawn subagents under the DomainSpec/Arcanum discipline. This skill is a router: it defines no dispatch fields and makes no type-specific research/review/experiment judgment by itself.
 
-**Helper rule (P11):** a single agent spawned *by* a running agent, within its parent's scope, is not a dispatch — no row, no gate; it is reported post-hoc in the parent's `agents_spawned`. It escalates to a real dispatch when it fans out (2+) or outgrows the parent's scope. *(The exact helper-vs-dispatch boundary is provisional — an open question, not settled law.)*
+It operationalizes the repo-local subagent strategy constitution when present:
+`implementation/domainspec/internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`.
+The ledger row schema remains `"0.6.0"` even when the constitution text is at a later proposal revision.
 
-## Lifecycle — the universal four steps (§3)
+Before acting, locate the active repo root. In `domainspec-core`, prefer the repo-local owner files under `implementation/domainspec/internal_tools/subagents-dispatch-hooks/` over any generated runtime copy.
+In standalone migrated repositories, prefer the repo-local `ops/subagents-strategy/`, `.agents/skills/`, `telemetry/agents/agents.yaml`, and `telemetry/agents/subagents-dispatch.yaml` surfaces over private upstream paths.
 
-1. **Propose.** The strategist fills the sheet — consulting the type skill (routing table below) for type judgment — and proposes it in chat, stating for each tensioned pair the question on which the two agents are predicted to disagree (P5). Before presenting to the human, run the **check-tension gate** (Pointers): two independent agents verify the sheet is genuinely tensioned (Tests 1–4); the sheet reaches the human only if **both PASS**, otherwise it returns here for revision.
-2. **Confirm.** The human's explicit affirmative — silence or a question is not confirmation. Nothing persists before it. The confirmed sheet is **frozen**; any strategist edit after confirm re-enters the gate (P2).
-3. **Register + run.** Append the dispatch row, then schedule groups **by dependency** (P4, amended 2026-06-12): a group is READY when every group with a `sequential`/`zig-zag` edge into it has produced what it must respond to (zig-zag counts only in its `from`→`to` direction — the `from` endpoint opens the exchange); launch all READY groups concurrently; `feedback` edges never count as dependencies; a sheet with no connections declares its groups independent; declared order is narration tiebreak only. Agents inside a group run in parallel. An agent error degrades to a **partial group result** that downstream groups and the `final_approver` must be told about.
-4. **Close.** Report `exit_reason` + `agents_spawned` in chat and in the findings doc, and append the close row. Two appends, one ledger, append-only (P3).
+## When To Dispatch
 
-For the record shape, the appender, and the close-row mechanics: **register-dispatch owns them** — see Pointers.
+Dispatch only when at least one Principle-1 trigger holds:
 
-## Universal invariants (every dispatch_type)
+- Synthesis: 3 or more sources, lenses, or returns must be combined.
+- Context protection: raw output would be much larger than what the parent should carry.
+- Isolation: exploration should be discardable or independently checked.
+- Parallelism: independent work can run concurrently.
 
-These bullets are operational restatements of constitution §4; §4 is authoritative on conflict.
+Otherwise, work inline.
 
-- **P5 — pairwise tension.** Any n ≥ 2 group must be pairwise tensioned (predictable disagreement per pair, named axis, per-agent position); checked by the **check-tension gate** (two independent agents) before the human confirm — untensioned sheets go back to the strategist for revision.
-- **P7 — aggregation is derived,** never a field: `robot_talks: true` → the group synthesizes; otherwise → concat. *(Non-binding note, per P7's own framing: a bare concat is never the dispatch's final deliverable.)*
-- **P10 — claim ≤ proof** in every artifact produced.
-- **P12 — final approval.** Every dispatch names a `final_approver`: `parent` (default) or a dedicated approver group whose single agent's role is `auditor` and that does no other work; never a working-group member (no self-approval); falls back to `parent` if its group never runs; the approver receives the full `working_folder`. One human gate only — the entry confirm.
-- **Three dials, three scopes.** `layers` (group) / `loop_cap` (edge) / `max_loops` (dispatch) — one scenario, one dial; if two seem to fit, the smallest scope wins. Decision table: constitution §5.
-- **exit_reason.** Closed vocabulary: `resolved | loop_ceiling_reached | dissent_irreconcilable | user_abort | error`. Precedence + decision procedure: constitution §5.
-- **P8 — trust-but-verify.** If a subagent wrote files or claimed a check passed, inspect the actual diff / run the actual check before treating it as done.
-- **P13 — meta + lineage.** A dispatch about dispatching is `meta: true`; `parent_dispatch_id` exists only on a dispatch planned by a meta dispatch; a meta-planned child re-enters the confirm gate.
-- **P14 — robot-talks binding.** A group with `robot_talks: true` binds `vault/constitution/robot-talks-constitution.md`; this constitution's single-gate rule overrides any extra human gate it would prescribe. A synthesizer downstream of a robot-talks group MUST receive each agent's initial AND final positions (collapse detection).
+Helper rule: a single helper agent spawned within a running agent's scope is not a dispatch. Record it post-hoc in the parent's `agents_spawned.helpers`. It escalates into a dispatch when it fans out to 2 or more agents or outgrows the parent's scope.
 
-## Routing by dispatch_type
+## Lifecycle
 
-LIVE status is **declared by constitution §5** (promoting a reserved type goes through §7's premise-debt re-confrontation — an owner act); a LIVE row must also point to an existing skill — a consistency check, not the definition. Routing to a RESERVED type: **refuse and tell the user** the type is not yet populated.
+1. Propose.
+   Read the relevant owner files, then draft a dispatch sheet. For each group with 2 or more agents, name the anti-bias axis and the concrete question where the agents are expected to disagree. Before presenting the sheet to the human, run the check-tension gate with two independent agents; only a double PASS reaches the human. If the runtime has no callable subagent tool, state that the gate cannot be executed and stop at a proposed sheet.
 
-| dispatch_type | status | skill |
-|---|---|---|
-| `research` | LIVE | `.claude/skills/research/SKILL.md` — research-type judgment: canonical shape, roles, gates, outputs |
-| `code` | RESERVED — must not be dispatched until populated | none |
-| `review` | LIVE (populated 2026-06-12, owner decision) | `.claude/skills/review/SKILL.md` — red-team judgment: attack lenses, severity taxonomy, verification discipline, change-request findings |
-| `plan` | RESERVED — must not be dispatched until populated | none |
-| `suggestion` | RESERVED — must not be dispatched until populated | none |
-| `experiment` | LIVE (populated 2026-06-14, owner decision) | `.claude/skills/experiment/SKILL.md` — falsification judgment: pre-registered criterion freeze, validity gates, SURVIVED/FALSIFIED/INVALID verdict (propose phase only — INVALID may be rendered here; SURVIVED/FALSIFIED rendered at the separate downstream run) |
+2. Confirm.
+   Wait for explicit human confirmation. Silence, discussion, or a question is not confirmation. After confirmation, the sheet is frozen; any strategist edit re-enters the check-tension gate.
 
-## Pointers (single owners)
+3. Register and run.
+   Append the dispatch row with the deterministic appender, then launch groups by dependency:
+   a group is READY when every `sequential` or `zig-zag` edge into it has produced what it must respond to. `feedback` edges never count as dependencies. A sheet with no connections declares groups independent. Agents inside a group run in parallel. If an agent errors, downstream groups and the final approver must receive the partial result.
 
-- **Form — record/sheet fill mechanics:** `register-dispatch` (repo: `internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`; deployed: `~/.claude/skills/register-dispatch/`) — field tables, enums, the appender, the close row, `invoked_by`.
-- **Definitions + skeleton:** constitution §5 (parameter reference) and §6 (annotated skeleton YAML).
-- **Agent names:** `telemetry/agents/agent-pool.yaml`.
-- **Anti-bias design:** `vault/discovery/anti-bias-vector-composition/` — reached via the type skill.
-- **Init-time tensioning gate:** `check-tension` (`.claude/skills/check-tension/SKILL.md`) — the two independent agents that verify Tests 1–4 before the human confirm; only "both PASS" reaches the human.
+   For research dispatches, the strategist appends `research.md` from verbatim explorer returns only. The writer writes `findings.md` only. Synthesizer and reviewer output is digested into `findings.md`; it is not transcribed into `research.md`.
+
+4. Close.
+   Close all spawned agents, report `exit_reason` and `agents_spawned`, and append the close row. The ledger gets exactly two appends per dispatch: the dispatch row and the close row. After closeout, update inventory and observability read models when present.
+
+## Required Strategy Response Shape
+
+When the user invokes this skill for a strategy, proposal, or dispatch design, the chat answer must surface the strategy itself, not only file paths or validation status. Include:
+
+1. **P1 trigger decision** - why this is or is not a dispatch.
+2. **Lanes / groups** - each group, its purpose, role, anti-bias axis, and whether it runs in parallel or depends on another group.
+3. **Subagents** - agent names, roles, angles, and output expectations.
+4. **Dependency flow** - sequential, zig-zag, feedback, and final-approval edges.
+5. **Gate / ledger state** - check-tension status, confirmation requirement, registration state, and closeout expectation.
+6. **Next human action** - usually `confirmed`, revise the sheet, or decline.
+
+For any durable proposal written to disk, add the same lanes/subagents summary to the proposal artifact unless doing so would duplicate a stricter local template.
+
+## Inventory Hook
+
+When the repository has an inventory package, inventory the **result of the strategy**, not just the existence of the dispatch machinery.
+
+For every durable strategy/proposal, create or update an inventory entry that captures:
+
+- the P1 trigger decision;
+- the lanes/groups and their roles;
+- the subagents, angles, and expected outputs;
+- the dependency flow;
+- the gate, confirmation, registration, and ledger state;
+- the next human action.
+
+This inventory entry is a non-authority read model. It must link to the proposal sheet and gate artifacts, but it does not replace the chat answer: the chat answer must still show the lanes and subagents directly.
+
+Minimum inventory checks for a durable strategy/proposal:
+
+- the human index links the strategy-result entry;
+- tags include `strategy-result`, `dispatch`, and `subagents`;
+- the inventory log records whether the proposal is unregistered, registered, run, or closed;
+- the strategy-result entry links the proposal sheet and gate artifacts;
+- after a run, durable findings, validation reports, and closeout evidence get their own entries or log rows.
+
+## Workflow Reflect Hook
+
+When the user correction or observer pass indicates that this skill's answer omitted lanes/subagents, confused inventory with the strategy result, or drifted from its response shape, preserve that as observability signal and run `workflow-reflect` before applying another behavior change.
+
+Use `sigil-development` as the lifecycle owner for edits. `workflow-reflect` may write reflection reports and state, but the strategy skill itself is only mutated after the reflection outcome is synthesized.
+
+Reflection-relevant signals include:
+
+- missing P1, lanes, subagents, dependency flow, gate state, or next human action in a strategy response;
+- inventory entries that point to machinery but omit the strategy result;
+- durable proposals that lack a lanes/subagents summary;
+- closeout that appends the dispatch ledger but leaves inventory or observability stale;
+- path drift between a standalone repository and the private upstream owner checkout.
+
+## Routing
+
+Route by `dispatch_type`. Reserved types must not be dispatched until populated.
+
+| dispatch_type | status   | owner skill                                                                                    |
+| ------------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `research`    | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/research/SKILL.md`   |
+| `review`      | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/review/SKILL.md`     |
+| `experiment`  | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/experiment/SKILL.md` |
+| `code`        | RESERVED | none                                                                                           |
+| `plan`        | RESERVED | none                                                                                           |
+| `suggestion`  | RESERVED | none                                                                                           |
+
+For `research`, `review`, or `experiment`, read the type skill before creating the sheet. This router owns only the universal dispatch process.
+
+## Registering
+
+Use the form owner:
+`implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`.
+
+Use the deterministic appender from the repo root:
+
+```sh
+node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs .register-dispatch.tmp.json
+```
+
+Create temporary JSON records with a normal file edit tool, run the appender, then delete the temp file. Do not hand-edit `telemetry/agents/subagents-dispatch.yaml`.
+
+For close rows, use `close_of`, `exit_reason`, `agents_spawned`, optional `feedback_prompts`, and optional `invoked_by`. Do not include `dispatch_id` in a close record.
+
+## Invariants
+
+- Pairwise tension: every group with 2 or more agents must have a named axis and per-agent angle.
+- Claim <= proof: every artifact produced by the dispatch must cite or preserve its evidence boundary.
+- Final approval: `final_approver` is `parent` unless a dedicated one-agent auditor group is declared; no working-group member self-approves.
+- Three dials, three scopes: `layers` belongs to a group, `loop_cap` belongs to a zig-zag or feedback edge, and `max_loops` belongs to the whole dispatch.
+- Exit reasons are `resolved`, `loop_ceiling_reached`, `dissent_irreconcilable`, `user_abort`, or `error`.
+- Trust but verify: if a subagent wrote files or claimed a check passed, inspect the diff or run the check before treating it as done.
+- Public/private boundary: when outputs land in public `arcanum`, do not write private parent paths, private submodule paths, emails, or workspace-only evidence into the public artifact.
+
+## Pointers
+
+- Constitution: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`
+- Check-tension gate: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/check-tension/SKILL.md`
+- Form and appender: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`
+- Agent pool: `telemetry/agents/agent-pool.yaml`
+- Dispatch ledger: `telemetry/agents/subagents-dispatch.yaml`

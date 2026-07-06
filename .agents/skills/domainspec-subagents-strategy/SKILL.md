@@ -1,110 +1,145 @@
 ---
 name: domainspec-subagents-strategy
-description: Coordinate fan-out (2+ parallel subagents) or recursive subagent dispatch using the 7-step lifecycle from domainspec-subagents-strategy-constitution.md. Use when about to dispatch 2+ subagents in parallel or to allow recursive dispatch. Single-agent dispatches run inline (no skill needed).
+description: "Route DomainSpec/Arcanum subagent dispatches: check the trigger, tension the sheet, hold the human gate, register, run, close, and preserve the append-only ledger."
 ---
 
-# Subagents-Strategy Skill
+# DomainSpec Subagents Strategy
 
-Operationalizes [vault/constitution/domainspec-subagents-strategy-constitution.md](../../../vault/constitution/domainspec-subagents-strategy-constitution.md). When this skill is active, **you (the parent Codex session) enact the strategist role**. Read the constitution for the full rules; this skill executes them.
+## Overview
 
-## When to invoke
+Use this skill when the user invokes `$domainspec-subagents-strategy`, asks to run a governed subagent dispatch, or asks to spawn subagents under the DomainSpec/Arcanum discipline. This skill is a router: it defines no dispatch fields and makes no type-specific research/review/experiment judgment by itself.
 
-Invoke when about to dispatch **2+ subagents in parallel (fan-out)** or **allow recursive dispatch**. Single-agent dispatch runs inline.
+It operationalizes the repo-local subagent strategy constitution when present:
+`implementation/domainspec/internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`.
+The ledger row schema remains `"0.6.0"` even when the constitution text is at a later proposal revision.
 
-The dispatch decision itself is governed by R1 (four triggers: synthesis / context-protection / isolation / parallelism). If none hold, do not dispatch at all.
+Before acting, locate the active repo root. In `domainspec-core`, prefer the repo-local owner files under `implementation/domainspec/internal_tools/subagents-dispatch-hooks/` over any generated runtime copy.
+In standalone migrated repositories, prefer the repo-local `ops/subagents-strategy/`, `.agents/skills/`, `telemetry/agents/agents.yaml`, and `telemetry/agents/subagents-dispatch.yaml` surfaces over private upstream paths.
 
-## The 7-step lifecycle (R3)
+## When To Dispatch
 
-### Step 1 — Propose in chat (you, as strategist)
+Dispatch only when at least one Principle-1 trigger holds:
 
-Output a chat proposal containing:
+- Synthesis: 3 or more sources, lenses, or returns must be combined.
+- Context protection: raw output would be much larger than what the parent should carry.
+- Isolation: exploration should be discardable or independently checked.
+- Parallelism: independent work can run concurrently.
 
-- **Mode** (R19): one of `single` | `task-fan-out` | `robot-talks` | `sequential` | `mixed`.
-- **Per-agent table** (R14, R18): for each child agent — id, model, one-liVne difficulty justification, token budget (or "unbounded"), declared output shape.
-- **Sequencing**: linear chain, parallel set, or DAG description.
-- **Recursion budget** (R13): defaults are depth 2 / breadth 5 / total cap 10. Override only with justification.
-- **Suggested working folder** (R15): propose `docs/features/<feature>/research/<topic>/` where `<feature>` is the active feature in the conversation and `<topic>` is the dispatch slug. The artifacts live alongside the feature's specs. **If no feature is active, halt the proposal and ask the user which feature this dispatch belongs to.** Never default to `.planning/` (deprecated) or `vault/` (reserved for codified discipline). If the work doesn't fit any existing feature, the user must name a new feature or decline the dispatch.
-- **Context** and **Goal** for this dispatch (R23): 2–4 sentences on where the need arose; 1–2 sentences on what the dispatch is trying to achieve.
+Otherwise, work inline.
 
-**No file is written.** R4: never persist the proposal as a file.
+Helper rule: a single helper agent spawned within a running agent's scope is not a dispatch. Record it post-hoc in the parent's `agents_spawned.helpers`. It escalates into a dispatch when it fans out to 2 or more agents or outgrows the parent's scope.
 
-### Step 2 — User confirms
+## Lifecycle
 
-Wait for explicit user response (R6a). Three valid responses:
+1. Propose.
+   Read the relevant owner files, then draft a dispatch sheet. For each group with 2 or more agents, name the anti-bias axis and the concrete question where the agents are expected to disagree. Before presenting the sheet to the human, run the check-tension gate with two independent agents; only a double PASS reaches the human. If the runtime has no callable subagent tool, state that the gate cannot be executed and stop at a proposed sheet.
 
-- **Confirm** → proceed to Step 3.
-- **Revise** → re-draft Step 1.
-- **Abandon** → stop. Nothing persists.
+2. Confirm.
+   Wait for explicit human confirmation. Silence, discussion, or a question is not confirmation. After confirmation, the sheet is frozen; any strategist edit re-enters the check-tension gate.
 
-The user also confirms (or revises) the **working folder choice** here.
+3. Register and run.
+   Append the dispatch row with the deterministic appender, then launch groups by dependency:
+   a group is READY when every `sequential` or `zig-zag` edge into it has produced what it must respond to. `feedback` edges never count as dependencies. A sheet with no connections declares groups independent. Agents inside a group run in parallel. If an agent errors, downstream groups and the final approver must receive the partial result.
 
-### Step 3 — Single-message fan-out
+   For research dispatches, the strategist appends `research.md` from verbatim explorer returns only. The writer writes `findings.md` only. Synthesizer and reviewer output is digested into `findings.md`; it is not transcribed into `research.md`.
 
-Dispatch all children in **one** assistant message (R8) using the Agent tool. Each child's briefing MUST carry the R10 fields:
+4. Close.
+   Close all spawned agents, report `exit_reason` and `agents_spawned`, and append the close row. The ledger gets exactly two appends per dispatch: the dispatch row and the close row. After closeout, update inventory and observability read models when present.
 
-- **Goal** — what to produce.
-- **Why it matters** — context for judgment calls.
-- **Already ruled out** — what the agent should not re-explore.
-- **Expected output shape** — structure / length / format.
-- **Length cap** — token or word limit.
+## Required Strategy Response Shape
 
-For **recursion** (children that may themselves dispatch): track running agent count across the dispatch tree. Refuse the next dispatch when total cap (R13: default 10) would be exceeded; escalate to user with: _"Budget hit at N agents — continue with raised budget, stop, or revise scope?"_
+When the user invokes this skill for a strategy, proposal, or dispatch design, the chat answer must surface the strategy itself, not only file paths or validation status. Include:
 
-Children DO NOT write files (R5). They return findings to you.
+1. **P1 trigger decision** - why this is or is not a dispatch.
+2. **Lanes / groups** - each group, its purpose, role, anti-bias axis, and whether it runs in parallel or depends on another group.
+3. **Subagents** - agent names, roles, angles, and output expectations.
+4. **Dependency flow** - sequential, zig-zag, feedback, and final-approval edges.
+5. **Gate / ledger state** - check-tension status, confirmation requirement, registration state, and closeout expectation.
+6. **Next human action** - usually `confirmed`, revise the sheet, or decline.
 
-### Step 4 — Collect and return (you, as strategist)
+For any durable proposal written to disk, add the same lanes/subagents summary to the proposal artifact unless doing so would duplicate a stricter local template.
 
-After all children return: gather their verbatim outputs. Bundle these together with the original Context + Goal and the user-confirmed working-folder path. **Do not write any file yourself** (R5).
+## Inventory Hook
 
-### Step 5 — Dispatch `domainspec-research-writer`
+When the repository has an inventory package, inventory the **result of the strategy**, not just the existence of the dispatch machinery.
 
-Invoke the agent with a briefing that contains:
+For every durable strategy/proposal, create or update an inventory entry that captures:
 
-- The collected child returns (verbatim, one block per child).
-- The original Context + Goal (from Step 1, user-confirmed in Step 2).
-- The user-confirmed working folder path.
+- the P1 trigger decision;
+- the lanes/groups and their roles;
+- the subagents, angles, and expected outputs;
+- the dependency flow;
+- the gate, confirmation, registration, and ledger state;
+- the next human action.
 
-The agent persists `<working_folder>/research/domainspec-research.md` per the template at `templates/domainspec-research.md`.
+This inventory entry is a non-authority read model. It must link to the proposal sheet and gate artifacts, but it does not replace the chat answer: the chat answer must still show the lanes and subagents directly.
 
-### Step 6 — Dispatch `domainspec-findings-writer`
+Minimum inventory checks for a durable strategy/proposal:
 
-Invoke the agent with a briefing that contains:
+- the human index links the strategy-result entry;
+- tags include `strategy-result`, `dispatch`, and `subagents`;
+- the inventory log records whether the proposal is unregistered, registered, run, or closed;
+- the strategy-result entry links the proposal sheet and gate artifacts;
+- after a run, durable findings, validation reports, and closeout evidence get their own entries or log rows.
 
-- The path to the freshly-written `domainspec-research.md`.
-- The original Context + Goal.
+## Workflow Reflect Hook
 
-The agent reads research.md and persists `<working_folder>/research/domainspec-findings.md` per the template at `templates/domainspec-findings.md`. The output MUST satisfy R16 (three sections in order), R17 (every Findings/Analysis claim cites research.md), R18 (Dispatch record schema fully populated), R21+R22 (four-component grade with `(judgment)` markers on coverage / independence / fidelity).
+When the user correction or observer pass indicates that this skill's answer omitted lanes/subagents, confused inventory with the strategy result, or drifted from its response shape, preserve that as observability signal and run `workflow-reflect` before applying another behavior change.
 
-### Step 7 — User-gate discovery promotion (R6b)
+Use `sigil-development` as the lifecycle owner for edits. `workflow-reflect` may write reflection reports and state, but the strategy skill itself is only mutated after the reflection outcome is synthesized.
 
-Present the findings file to the user and ask:
+Reflection-relevant signals include:
 
-> _"Findings written to `<path>/domainspec-findings.md`. Promote this to a discovery node? A discovery captures explored design space — options considered, trade-offs, decisions taken — so future work can build on it without re-doing the exploration."_
+- missing P1, lanes, subagents, dependency flow, gate state, or next human action in a strategy response;
+- inventory entries that point to machinery but omit the strategy result;
+- durable proposals that lack a lanes/subagents summary;
+- closeout that appends the dispatch ledger but leaves inventory or observability stale;
+- path drift between a standalone repository and the private upstream owner checkout.
 
-If the user confirms, classify the discovery's scope and propose the target path family:
+## Routing
 
-- **Knowledge scope** → `vault/discovery/<topic>-definitions/<slug>.md`. Choose this when the discovery's load-bearing claims govern the vault's own discipline — ontology axes, schema, edges, agent/skill protocols, premises, constitutions, or any rule future vault nodes will derive from. Signals: prompt mentions `vault/`, `node_type`, `layer`, ontology vocabulary, agent protocols, the lifecycle steps; output frames as a rule/convention/discipline.
-- **Application scope** → `docs/features/<feature>/discovery/<slug>.md`. Choose this when the discovery's claims live or die with one feature. Signals: prompt mentions `docs/features/<feature>/`, a feature's `SPEC.md` / `STORIES.md` / `DECISIONS.md`, a user story, a UAT criterion, a specific business rule; output's "challenge response" is "update the feature spec," not "amend the constitution."
+Route by `dispatch_type`. Reserved types must not be dispatched until populated.
 
-The strategist proposes scope + 1–3 candidate paths; the user confirms (or revises) before dispatch. There is no `regime` frontmatter field — existing labels (`layer`, `scope`, `tags`) carry the conceptual discrimination; the path encodes the operational choice.
+| dispatch_type | status   | owner skill                                                                                    |
+| ------------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `research`    | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/research/SKILL.md`   |
+| `review`      | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/review/SKILL.md`     |
+| `experiment`  | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/experiment/SKILL.md` |
+| `code`        | RESERVED | none                                                                                           |
+| `plan`        | RESERVED | none                                                                                           |
+| `suggestion`  | RESERVED | none                                                                                           |
 
-After the user confirms the target path, dispatch `domainspec-discovery-writer` with: path to findings.md + the confirmed target path + scope label (`knowledge` | `application`) for the briefing record.
+For `research`, `review`, or `experiment`, read the type skill before creating the sheet. This router owns only the universal dispatch process.
 
-If the user declines: dispatch ends. The two artifact files remain at `<working_folder>/research/`.
+## Registering
 
-## Verification before close (R11)
+Use the form owner:
+`implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`.
 
-Before treating the dispatch as complete:
+Use the deterministic appender from the repo root:
 
-- Read each child's actual return (not just summaries).
-- Confirm both artifact files exist at `<working_folder>/research/`.
-- Confirm the findings file's Findings and Analysis sections have research.md citations.
-- Confirm the Dispatch record is fully populated, including the four-component grade with `(judgment)` markers.
-- Confirm the user was asked the discovery-promotion gate.
+```sh
+node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs .register-dispatch.tmp.json
+```
 
-## References
+Create temporary JSON records with a normal file edit tool, run the appender, then delete the temp file. Do not hand-edit `telemetry/agents/subagents-dispatch.yaml`.
 
-- **Rules**: [vault/constitution/domainspec-subagents-strategy-constitution.md](../../../vault/constitution/domainspec-subagents-strategy-constitution.md) — 24 rules.
-- **Rationale & falsification**: [vault/premise/domainspec-subagents-strategy-premises.md](../../../vault/premise/domainspec-subagents-strategy-premises.md).
-- **Templates**: [templates/domainspec-research.md](../../../templates/domainspec-research.md), [templates/domainspec-findings.md](../../../templates/domainspec-findings.md).
-- **Writer agents** (defined under `.Codex/agents/`): `domainspec-research-writer`, `domainspec-findings-writer`, `domainspec-discovery-writer`.
+For close rows, use `close_of`, `exit_reason`, `agents_spawned`, optional `feedback_prompts`, and optional `invoked_by`. Do not include `dispatch_id` in a close record.
+
+## Invariants
+
+- Pairwise tension: every group with 2 or more agents must have a named axis and per-agent angle.
+- Claim <= proof: every artifact produced by the dispatch must cite or preserve its evidence boundary.
+- Final approval: `final_approver` is `parent` unless a dedicated one-agent auditor group is declared; no working-group member self-approves.
+- Three dials, three scopes: `layers` belongs to a group, `loop_cap` belongs to a zig-zag or feedback edge, and `max_loops` belongs to the whole dispatch.
+- Exit reasons are `resolved`, `loop_ceiling_reached`, `dissent_irreconcilable`, `user_abort`, or `error`.
+- Trust but verify: if a subagent wrote files or claimed a check passed, inspect the diff or run the check before treating it as done.
+- Public/private boundary: when outputs land in public `arcanum`, do not write private parent paths, private submodule paths, emails, or workspace-only evidence into the public artifact.
+
+## Pointers
+
+- Constitution: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`
+- Check-tension gate: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/check-tension/SKILL.md`
+- Form and appender: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`
+- Agent pool: `telemetry/agents/agent-pool.yaml`
+- Dispatch ledger: `telemetry/agents/subagents-dispatch.yaml`

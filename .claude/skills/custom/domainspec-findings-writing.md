@@ -1,6 +1,7 @@
 ---
 description: How to write a subagents-findings document — synthesis of the single subagents-research file from one dispatch.
 ---
+
 # Subagents Findings Writing
 
 ## Purpose
@@ -34,7 +35,7 @@ Fixed at the top and bottom; free in between.
   - **OQ-N (BLOCKER)** — <blocker question>. Recommendation: <rec>. Owner: <named owner>.
   ```
 
-**Everything between the opening and Open Questions is the writer's call.** Choose the sections that best convey *this* synthesis and drop what the material doesn't need. Useful candidates — not a required set:
+**Everything between the opening and Open Questions is the writer's call.** Choose the sections that best convey _this_ synthesis and drop what the material doesn't need. Useful candidates — not a required set:
 
 - **Agreements** — claims that multiple explorers' research independently supports (cite ≥2 explorers; qualify as `strong` / `majority` / `partial`).
 - **Disagreements** — where explorers diverge: the opposing positions with citations, and a recommendation (which side, escalate as `contradicts`, or re-dispatch).
@@ -60,6 +61,10 @@ In its `## Connections` block, the findings artifact must declare:
 - [ ] The `## Connections` block declares `derives-from` → the research file
 - [ ] Every `## Agent N` section of the research file is accounted for — nothing dropped silently
 - [ ] Claims are grounded in the research, not introduced from nowhere
+- [ ] Required-source rows declared by the dispatch sheet are present and cited
+- [ ] Any inventory index/entry reconciliation required by the dispatch sheet is present
+- [ ] Any dated external checks required by the dispatch sheet are present and source-bound
+- [ ] Claim <= proof is preserved: public, investor, formal-proof, completeness, correctness, market-uniqueness, certification, or compliance phrasing must not exceed the cited evidence
 - [ ] Where explorers disagree, the synthesis says what to do about it
 - [ ] The document synthesizes — it does not just paraphrase one explorer
 
