@@ -22,7 +22,9 @@
  *     - domainspec-subagents-strategy (router), research, review, experiment
  *       (type skills), robot-talks (companion) -> synced FROM this bundle, so
  *       internal_tools is the single source of truth and .claude/skills is the
- *       generated copy. Edit the skill HERE, then re-run install to push it.
+ *       generated copy. The router uses the declared runtime-composition
+ *       synchronizer; the remaining chain skills copy verbatim. Edit the skill
+ *       HERE, then re-run install to push it.
  *       Target repo = CLAUDE_PROJECT_DIR, else the current working directory.
  *
  * Idempotent and non-destructive: preserves existing ~/.claude/settings.json
@@ -42,6 +44,11 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const {
+  loadManifest,
+  syncOverlay,
+  validateOne,
+} = require('./scripts/sync-strategy-runtimes.cjs');
 
 const home = os.homedir();
 const claudeDir = path.join(home, '.claude');
@@ -55,7 +62,8 @@ const SKILL = 'register-dispatch';
 const SKILL_FILES = ['SKILL.md', 'append-dispatch.cjs'];
 // Chain skills: project-coupled, installed into the TARGET repo's .claude/skills
 // (not ~/.claude), with internal_tools/skills/<name>/ as the single source.
-const CHAIN_SKILLS = ['domainspec-subagents-strategy', 'research', 'review', 'experiment', 'check-tension', 'robot-talks'];
+const STRATEGY_SKILL = 'domainspec-subagents-strategy';
+const CHAIN_SKILLS = ['research', 'review', 'experiment', 'check-tension', 'robot-talks'];
 const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const projectSkillsDir = path.join(projectDir, '.claude', 'skills');
 // Copy every file in a source skill dir to its destination dir (skills carry
@@ -116,7 +124,7 @@ if (uninstall) {
   }
   const sk = path.join(skillsDir, SKILL);
   if (fs.existsSync(sk)) { fs.rmSync(sk, { recursive: true, force: true }); console.log('removed', sk); }
-  for (const name of CHAIN_SKILLS) {
+  for (const name of [STRATEGY_SKILL].concat(CHAIN_SKILLS)) {
     const p = path.join(projectSkillsDir, name);
     if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); console.log('removed', p); }
   }
@@ -144,9 +152,30 @@ for (const f of SKILL_FILES) {
   console.log('installed skill file', path.join(skillDst, f));
 }
 
-// 2b. Chain skills -> <repo>/.claude/skills (project-coupled; this bundle is
-// the single source). Synced verbatim, so the skills' `.claude/skills/...`
-// cross-references are correct at the install target.
+// 2b. Strategy router -> <repo>/.claude/skills through its declared
+// public-base + private-overlay composition. The public package must already
+// be a valid Arcanum bootstrap projection; installation fails closed on drift.
+const compositionManifest = loadManifest(
+  path.join(here, 'skills', STRATEGY_SKILL, 'runtime-composition.json'),
+);
+const publicErrors = validateOne({
+  repoRoot: projectDir,
+  manifest: compositionManifest,
+  runtime: 'claude',
+  kind: 'public',
+});
+if (publicErrors.length) {
+  console.error('Refusing to install the private strategy overlay:');
+  for (const error of publicErrors) console.error(' -', error);
+  process.exit(1);
+}
+console.log(
+  'installed composed strategy skill',
+  syncOverlay({ repoRoot: projectDir, manifest: compositionManifest, runtime: 'claude' }),
+);
+
+// 2c. Remaining chain skills -> <repo>/.claude/skills (project-coupled; this
+// bundle is the single source). These are still synchronized verbatim.
 for (const name of CHAIN_SKILLS) {
   const src = path.join(here, 'skills', name);
   if (!fs.existsSync(src)) { console.warn('skip chain skill (missing in bundle):', name); continue; }
@@ -178,5 +207,6 @@ console.log(
   '  • Workflow tool -> blocked (use Agent / research skill)\n' +
   '  • subagents-dispatch.yaml -> append-only (direct Edit/Write denied; append-dispatch.cjs is the only write path)\n' +
   `  PROJECT (${fwd(projectSkillsDir)}):\n` +
-  '  • chain skills synced from this bundle: ' + CHAIN_SKILLS.join(', ') + '\n' +
+  '  • composed strategy router synced from public base + private overlay\n' +
+  '  • remaining chain skills synced from this bundle: ' + CHAIN_SKILLS.join(', ') + '\n' +
   'Restart Claude Code sessions to pick up the change.');

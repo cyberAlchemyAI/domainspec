@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /*
- * Test battery for append-dispatch.cjs (schema v0.6.0 — group `role` removed, §11).
+ * Test battery for append-dispatch.cjs (schema v0.7.0 — sheet evidence binding).
  *
  *   node internal_tools/subagents-dispatch-hooks/tests/test-append-dispatch.cjs
  *
@@ -13,6 +13,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 
 const APPENDER = path.join(__dirname, '..', 'skills', 'register-dispatch', 'append-dispatch.cjs');
@@ -31,8 +32,38 @@ function readLedger(root) {
 }
 
 let seq = 0;
+function bindEvidence(root, record) {
+  const relative = path.join('dispatch-sheets', `${record.dispatch_id}.json`).replace(/\\/g, '/');
+  const sheet = path.join(root, relative);
+  fs.mkdirSync(path.dirname(sheet), { recursive: true });
+  const content = JSON.stringify({
+    dispatch_id: record.dispatch_id,
+    goal: record.goal,
+    groups: record.groups,
+    connections: record.connections || [],
+  }, null, 2) + '\n';
+  fs.writeFileSync(sheet, content);
+  const sheetSha256 = crypto.createHash('sha256').update(Buffer.from(content)).digest('hex');
+  record.evidence_binding = {
+    sheet_path: relative,
+    sheet_sha256: sheetSha256,
+    tension_verdicts: [
+      { handle: `${record.dispatch_id}:tension:1`, verdict: 'pass', sheet_sha256: sheetSha256 },
+      { handle: `${record.dispatch_id}:tension:2`, verdict: 'pass', sheet_sha256: sheetSha256 },
+    ],
+    confirmation: {
+      handle: `${record.dispatch_id}:confirmation`,
+      confirmed: true,
+      sheet_sha256: sheetSha256,
+    },
+  };
+  return { record, sheet };
+}
 // Run the appender against `root` with `record`, with optional extra env.
 function run(root, record, extraEnv) {
+  if (record && record.dispatch_id && !Object.prototype.hasOwnProperty.call(record, 'evidence_binding')) {
+    bindEvidence(root, record);
+  }
   const tmp = path.join(root, `rec-${++seq}.json`);
   fs.writeFileSync(tmp, JSON.stringify(record));
   const env = Object.assign({}, process.env, { CLAUDE_PROJECT_DIR: root }, extraEnv || {});
@@ -54,18 +85,20 @@ function note(name, why) { skip++; console.log('  SKIP  ' + name + ' — ' + why
 
 // expects exit 2 and (optionally) a stderr pattern
 function expectReject(name, root, record, pattern) {
+  const before = readLedger(root);
   const r = run(root, record);
-  const ok = r.status === 2 && (!pattern || pattern.test(r.stderr));
-  check(name, ok, `exit=${r.status}\nstderr=${r.stderr.trim()}`);
+  const after = readLedger(root);
+  const ok = r.status === 2 && (!pattern || pattern.test(r.stderr)) && after === before;
+  check(name, ok, `exit=${r.status}\nstderr=${r.stderr.trim()}\nledger_changed=${after !== before}`);
 }
 
 // ---------------------------------------------------------------- fixtures
 function validDispatch(over) {
   return Object.assign({
     dispatch_id: '2026-06-12-battery-main',
-    schema_version: '0.6.0',
+    schema_version: '0.7.0',
     dispatch_type: 'research',
-    goal: 'Prove the v0.6.0 appender end to end.',
+    goal: 'Prove the v0.7.0 appender end to end.',
     context: 'Synthetic record produced by the test battery. Runs against a temp ledger, never the real one.',
     max_loops: 2,
     final_approver: 'parent',
@@ -123,18 +156,20 @@ function twoFanout(over) {
 }
 
 // =====================================================================
-console.log('\n[1] valid full v0.5.2 row appends; emitted lines pass the self-check on a second append');
+console.log('\n[1] valid full v0.7.0 row appends; emitted lines pass the self-check on a second append');
 {
   const root = freshRoot();
   const r1 = run(root, validDispatch());
   check('1a valid dispatch row appends (exit 0)', r1.status === 0, r1.stderr || r1.stdout);
   const text = readLedger(root);
   check('1b row start emitted', /^  - dispatch_id: "2026-06-12-battery-main"$/m.test(text), text);
-  check('1c schema_version block key', /^    schema_version: "0\.6\.0"$/m.test(text), text);
+  check('1c schema_version block key', /^    schema_version: "0\.7\.0"$/m.test(text), text);
   check('1d invoked_by taken from record', /^    invoked_by: "tester@example\.com"$/m.test(text), text);
   check('1e created stamped by appender', /^    created: "\d{4}-\d{2}-\d{2}T/m.test(text), text);
   check('1f groups emitted as JSON column', /^    groups: \[\{"group_id":"explorers"/m.test(text), text);
   check('1g connections emitted as JSON column', /^    connections: \[\{"from":"explorers"/m.test(text), text);
+  check('1g2 evidence binding emitted as JSON column',
+    /^    evidence_binding: \{"sheet_path":"dispatch-sheets\//m.test(text), text);
   {
     const marker = 'Second line proves stringify newline escaping';
     const hits = text.split('\n').filter((l) => l.includes(marker));
@@ -147,12 +182,57 @@ console.log('\n[1] valid full v0.5.2 row appends; emitted lines pass the self-ch
   check('1j both rows present', /battery-main/.test(readLedger(root)) && /battery-second/.test(readLedger(root)));
 }
 
+console.log('\n[1E] sheet evidence binding is complete, digest-bound, and fail-closed');
+{
+  const root = freshRoot();
+  expectReject('1E-a missing evidence binding rejected', root,
+    validDispatch({ dispatch_id: '2026-06-12-evidence-missing', evidence_binding: null }),
+    /evidence_binding is required/);
+
+  const oneVerdict = validDispatch({ dispatch_id: '2026-06-12-evidence-one-verdict' });
+  bindEvidence(root, oneVerdict);
+  oneVerdict.evidence_binding.tension_verdicts.pop();
+  expectReject('1E-b one tension verdict rejected', root, oneVerdict, /exactly two verdict handles/);
+
+  const failedVerdict = validDispatch({ dispatch_id: '2026-06-12-evidence-failed-verdict' });
+  bindEvidence(root, failedVerdict);
+  failedVerdict.evidence_binding.tension_verdicts[1].verdict = 'fail';
+  expectReject('1E-c failing tension verdict rejected', root, failedVerdict, /verdict must be exactly "pass"/);
+
+  const noConfirmation = validDispatch({ dispatch_id: '2026-06-12-evidence-no-confirmation' });
+  bindEvidence(root, noConfirmation);
+  delete noConfirmation.evidence_binding.confirmation;
+  expectReject('1E-d absent confirmation rejected', root, noConfirmation, /confirmation is required/);
+
+  const changedSheet = validDispatch({ dispatch_id: '2026-06-12-evidence-changed-sheet' });
+  const changed = bindEvidence(root, changedSheet);
+  fs.appendFileSync(changed.sheet, 'post-confirmation mutation\n');
+  expectReject('1E-e post-confirmation sheet mutation rejected', root, changedSheet, /does not match current sheet bytes/);
+
+  const mismatchedConfirmation = validDispatch({ dispatch_id: '2026-06-12-evidence-confirmation-digest' });
+  bindEvidence(root, mismatchedConfirmation);
+  mismatchedConfirmation.evidence_binding.confirmation.sheet_sha256 = '0'.repeat(64);
+  expectReject('1E-f confirmation bound to another digest rejected', root, mismatchedConfirmation,
+    /confirmation\.sheet_sha256 must match/);
+
+  const duplicateHandle = validDispatch({ dispatch_id: '2026-06-12-evidence-duplicate-handle' });
+  bindEvidence(root, duplicateHandle);
+  duplicateHandle.evidence_binding.tension_verdicts[1].handle =
+    duplicateHandle.evidence_binding.tension_verdicts[0].handle;
+  expectReject('1E-g duplicate tension handle rejected', root, duplicateHandle, /duplicates another tension verdict handle/);
+
+  const fullChat = validDispatch({ dispatch_id: '2026-06-12-evidence-full-chat' });
+  bindEvidence(root, fullChat);
+  fullChat.evidence_binding.tension_verdicts[0].return_text = 'full chat must not be persisted';
+  expectReject('1E-h full return text is not an admitted evidence field', root, fullChat, /unknown key "return_text"/);
+}
+
 console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
 {
   const root = freshRoot();
   const fieldPattern = {
     dispatch_id: /dispatch_id is required/,
-    schema_version: /schema_version must be exactly "0\.6\.0"/,
+    schema_version: /schema_version must be exactly "0\.7\.0"/,
     dispatch_type: /dispatch_type must be one of/,
     goal: /goal is required/,
     context: /context is required/,
@@ -173,9 +253,9 @@ console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
 console.log('\n[3] wrong schema_version rejected');
 {
   const root = freshRoot();
-  expectReject('3a schema_version "0.3.0"', root, validDispatch({ schema_version: '0.3.0' }), /schema_version must be exactly "0\.6\.0"/);
-  expectReject('3b schema_version 0.6.0 as number', root, validDispatch({ schema_version: 0.6 }), /schema_version/);
-  expectReject('3c old schema_version "0.5.2" now rejected', root, validDispatch({ schema_version: '0.5.2' }), /schema_version must be exactly "0\.6\.0"/);
+  expectReject('3a prior schema_version "0.6.0"', root, validDispatch({ schema_version: '0.6.0' }), /schema_version must be exactly "0\.7\.0"/);
+  expectReject('3b schema_version 0.7.0 as number', root, validDispatch({ schema_version: 0.7 }), /schema_version/);
+  expectReject('3c old schema_version "0.5.2" now rejected', root, validDispatch({ schema_version: '0.5.2' }), /schema_version must be exactly "0\.7\.0"/);
 }
 
 console.log('\n[4] bad enum values rejected');
@@ -184,7 +264,7 @@ console.log('\n[4] bad enum values rejected');
   expectReject('4a dispatch_type "audit"', root, validDispatch({ dispatch_type: 'audit' }), /dispatch_type must be one of/);
   const g = validDispatch();
   g.groups[1].role = 'synthesize';
-  expectReject('4b group `role` is now an unknown key (removed v0.6.0)', root, g, /unknown key "role"/);
+  expectReject('4b group `role` remains an unknown key (removed v0.6.0)', root, g, /unknown key "role"/);
   const a = validDispatch();
   a.groups[1].agents[0].role = 'reviewer';
   expectReject('4c agent role "reviewer"', root, a, /role must be one of explorer/);
@@ -214,7 +294,7 @@ console.log('\n[5] pre-v0.5.2 keys rejected with the right per-provenance messag
   const legacy = { status: 'dispatched', anti_bias: { axis: 'x' }, agents: [{ role: 'explorer' }],
     corpus: 'research/audits', topic_slug: 'slug', session: 's1' };
   for (const [k, v] of Object.entries(legacy)) {
-    expectReject(`5 legacy ledger key ${k}`, root, validDispatch({ [k]: v }), new RegExp(`"${k}" is a pre-v0\\.5\\.2 ledger-row key, not in the v0\\.5\\.2 schema`));
+    expectReject(`5 legacy ledger key ${k}`, root, validDispatch({ [k]: v }), new RegExp(`"${k}" is a pre-v0\\.5\\.2 ledger-row key, not in the v0\\.7\\.0 schema`));
   }
 }
 
@@ -267,13 +347,40 @@ console.log('\n[10] working_folder rules');
   expectReject('10g bare "vault" rejected', root, validDispatch({ working_folder: 'vault' }), /must never point into vault\//);
   const rv = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-vaulted', working_folder: 'vaulted/x/' }));
   check('10h "vaulted/x/" accepted — no vault-guard false positive', rv.status === 0, rv.stderr || rv.stdout);
-  // a non-research type does not require working_folder (reserved-type note, still appends)
-  const r = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-code', dispatch_type: 'code', working_folder: undefined }));
-  check('10c non-research without working_folder appends (exit 0, RESERVED note)', r.status === 0 && /RESERVED type/.test(r.stdout), r.stderr || r.stdout);
+  for (const type of ['code', 'plan', 'suggestion']) {
+    expectReject(`10c RESERVED ${type} rejected before append`, root,
+      validDispatch({ dispatch_id: `2026-06-12-battery-${type}`, dispatch_type: type, working_folder: undefined }),
+      /is RESERVED and cannot be registered/);
+  }
   // experiment is LIVE (2026-06-14) — requires working_folder like research/review, no FORECAST note
   expectReject('10i experiment without working_folder rejected (LIVE type)', root, validDispatch({ dispatch_id: '2026-06-12-battery-exp-nf', dispatch_type: 'experiment', working_folder: undefined }), /working_folder is required when dispatch_type is "experiment"/);
   const re = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-experiment', dispatch_type: 'experiment' }));
-  check('10i experiment with working_folder appends (exit 0, no RESERVED note)', re.status === 0 && !/RESERVED type/.test(re.stdout), re.stderr || re.stdout);
+  check('10j experiment with working_folder appends (exit 0)', re.status === 0, re.stderr || re.stdout);
+  expectReject('10k absolute POSIX working_folder rejected', root,
+    validDispatch({ working_folder: '/tmp/outside' }), /must be repository-relative/);
+  expectReject('10l absolute Windows working_folder rejected', root,
+    validDispatch({ working_folder: 'C:\\outside' }), /must be repository-relative/);
+  expectReject('10m slash parent traversal rejected', root,
+    validDispatch({ working_folder: 'research/../../outside' }), /must not contain parent traversal/);
+  expectReject('10n backslash parent traversal rejected', root,
+    validDispatch({ working_folder: 'research\\..\\..\\outside' }), /must not contain parent traversal/);
+
+  const safe = run(root, validDispatch({
+    dispatch_id: '2026-06-12-battery-new-in-root',
+    working_folder: 'research/not-created-yet/deeper/',
+  }));
+  check('10o non-existing in-root folder accepted', safe.status === 0, safe.stderr || safe.stdout);
+
+  const outside = freshRoot();
+  const link = path.join(root, 'escape-link');
+  try {
+    fs.symlinkSync(outside, link, process.platform === 'win32' ? 'junction' : 'dir');
+    expectReject('10p existing symlink-parent escape rejected', root,
+      validDispatch({ working_folder: 'escape-link/not-created-yet/' }),
+      /resolves outside the repository root/);
+  } catch (e) {
+    check('10p existing symlink-parent escape rejected', false, `cannot create test symlink: ${e.message}`);
+  }
 }
 
 console.log('\n[11] close rows');
@@ -289,8 +396,9 @@ console.log('\n[11] close rows');
   expectReject('11e close row with unknown key rejected', root, validClose({ close_of: '2026-06-12-battery-second', bogus: 1 }), /unknown key "bogus" on a close record/);
   expectReject('11f close row with dispatch_id rejected', root, Object.assign(validClose(), { dispatch_id: 'x' }), /must use close_of, not dispatch_id/);
   expectReject('11g close row with caller-supplied closed rejected', root, validClose({ closed: '2026-01-01T00:00:00Z' }), /unknown key "closed"/);
-  const r2 = run(root, validClose({ close_of: 'never-dispatched', feedback_prompts: undefined }));
-  check('11h close without matching dispatch row warns but appends', r2.status === 0 && /warning: no dispatch row found/.test(r2.stdout), r2.stderr || r2.stdout);
+  expectReject('11h close without matching dispatch row rejected', root,
+    validClose({ close_of: 'never-dispatched', feedback_prompts: undefined }),
+    /does not reference an existing dispatch row/);
   // self-check still passes over the emitted close rows
   const r3 = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-after-close' }));
   check('11i ledger with close rows still passes self-check', r3.status === 0, r3.stderr || r3.stdout);
@@ -408,6 +516,19 @@ console.log('\n[16] anti_bias_global conditional (>= 2 fan-out groups) enforced'
   check('16e malformed sibling group: clean exit 2 on agents error, no spurious anti_bias_global error',
     r4.status === 2 && /agents is required and must be a non-empty array/.test(r4.stderr) && !/anti_bias_global/.test(r4.stderr),
     `exit=${r4.status}\nstderr=${r4.stderr.trim()}`);
+}
+
+console.log('\n[17] final approver separation');
+{
+  const root = freshRoot();
+  expectReject('17a working agent cannot be final approver after whitespace normalization', root,
+    validDispatch({ final_approver: '  Abramsky,   Samson  ' }),
+    /must not be a working agent/);
+  const r = run(root, validDispatch({
+    dispatch_id: '2026-06-12-battery-distinct-approver',
+    final_approver: 'Independent Maintainer',
+  }));
+  check('17b distinct final approver accepted', r.status === 0, r.stderr || r.stdout);
 }
 
 // ---------------------------------------------------------------- summary

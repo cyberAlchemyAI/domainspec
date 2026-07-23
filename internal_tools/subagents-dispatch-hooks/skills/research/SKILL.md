@@ -21,6 +21,28 @@ field defers to `register-dispatch`. It produces two files in the dispatch's
 `working_folder`: `research.md` (verbatim **explorer** returns, appended by the strategist)
 and `findings.md` (cited synthesis, written by the writer).
 
+## Inventory Preflight Consumption
+
+Before the first sheet draft, the router supplies a read-only
+`strategy-inventory-packet`. Use it to find prior findings, candidate owners,
+typed negatives, source leads, unresolved questions, and known evidence gaps.
+It should change the proposed source corpora, explorer angles, skeptic inputs,
+or explicit exclusions; merely listing matches is not consumption.
+
+Route packet fields narrowly:
+
+- explorers receive relevant source leads, selectors, and uncovered questions;
+- the precedent skeptic receives candidate owners and prior findings to verify;
+- the synthesizer receives the selected/excluded boundary and unresolved gaps;
+- the writer and auditor receive the non-authority and citation obligations.
+
+Inventory entries are discovery seeds, not research findings. Follow their
+source references and independently verify load-bearing claims. In particular,
+`no_inventory_match` never establishes `precedent-clean`: the precedent lane
+must still perform and cite its actual search. Missing Inventory, a flagged
+`index.md` fallback, or no match is non-blocking residue and must remain visible
+in the strategy and final findings.
+
 ## Pipeline
 
 The spine is **sequential** and fixed:
@@ -31,12 +53,12 @@ explorers ──▶ synthesizer ──▶ reviewers ──▶ writer ──▶ a
 
 Each stage hands forward; four edges are **conditional**, declared per dispatch:
 
-| edge | type | when | effect |
-|---|---|---|---|
-| explorers, reviewers | `robot_talks` | the group must confront *each other*, not just report in parallel | intra-group discussion — owned by `robot-talks` |
-| synthesizer ⇄ reviewers | `zig-zag` | the synthesis must survive attack before it is written | synthesizer drafts → reviewers attack → synthesizer revises, up to the loop cap |
-| synthesizer → explorers | `feedback` | the synthesizer finds material missing | re-opens the explorers for more; never declared by default |
-| auditor → writer | `revision` | always — **default one** | auditor returns `findings.md` to the writer for rework; may request more than one |
+| edge                    | type          | when                                                              | effect                                                                            |
+| ----------------------- | ------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| explorers, reviewers    | `robot_talks` | the group must confront _each other_, not just report in parallel | intra-group discussion — owned by `robot-talks`                                   |
+| synthesizer ⇄ reviewers | `zig-zag`     | the synthesis must survive attack before it is written            | synthesizer drafts → reviewers attack → synthesizer revises, up to the loop cap   |
+| synthesizer → explorers | `feedback`    | the synthesizer finds material missing                            | re-opens the explorers for more; never declared by default                        |
+| auditor → writer        | `revision`    | always — **default one**                                          | auditor returns `findings.md` to the writer for rework; may request more than one |
 
 `robot_talks`, `zig-zag`, and the synthesizer→explorers `feedback` edge are optional. The
 auditor→writer revision is structural: plan for one revision, allow more.
@@ -45,13 +67,13 @@ auditor→writer revision is structural: plan for one revision, allow more.
 
 Each role guards one failure mode and occupies one pipeline stage; no agent does two jobs.
 
-| `role` | stage | does | guards against | receives |
-|---|---|---|---|---|
-| `explorer` | 1 (n 2–4) | generates under **one tensioned angle** | monoculture | its angle prompt |
-| `synthesizer` | 2 (n 1) | reconciles explorer returns into a candidate picture; exchanges with reviewers; may pull more from explorers | "many returns, no coherent claim" | the collected explorer returns |
-| `skeptic` | 3 (reviewers) | attacks **one named gate** | folklore / vacuity | one gate + the synthesized picture |
-| `writer` | 4 (n 1) | persists **`findings.md` only** | "great research, no record" | the writing skill `domainspec-findings-writing` (→ `findings.md`) |
-| `auditor` | 5 (n 1) | evaluates **`findings.md` only**; approves or sends back for revision | "passed because nothing was checked" | `findings.md` + the dispatch `goal` |
+| `role`        | stage         | does                                                                                                         | guards against                       | receives                                                          |
+| ------------- | ------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------ | ----------------------------------------------------------------- |
+| `explorer`    | 1 (n 2–4)     | generates under **one tensioned angle**                                                                      | monoculture                          | its angle prompt                                                  |
+| `synthesizer` | 2 (n 1)       | reconciles explorer returns into a candidate picture; exchanges with reviewers; may pull more from explorers | "many returns, no coherent claim"    | the collected explorer returns                                    |
+| `skeptic`     | 3 (reviewers) | attacks **one named gate**                                                                                   | folklore / vacuity                   | one gate + the synthesized picture                                |
+| `writer`      | 4 (n 1)       | persists **`findings.md` only**                                                                              | "great research, no record"          | the writing skill `domainspec-findings-writing` (→ `findings.md`) |
+| `auditor`     | 5 (n 1)       | evaluates **`findings.md` only**; approves or sends back for revision                                        | "passed because nothing was checked" | `findings.md` + the dispatch `goal`                               |
 
 `research.md` is **not** a writer task. It is the verbatim transcript of the **explorer**
 returns, appended **mechanically by the strategist** (the parent that owns the dispatch)
@@ -70,7 +92,7 @@ final-approver invariant — authority: `domainspec-subagents-strategy`).
 
 A skeptic attacks exactly one gate:
 
-- **precedent** — is this already owned? Find the actual owner. A found owner is a *positive*
+- **precedent** — is this already owned? Find the actual owner. A found owner is a _positive_
   result, not a kill: it labels the candidate `build-from-owned` (owner exists, repo does
   not yet deploy it — cite and build) or `already-deployed`; an empty search certifies
   `precedent-clean` → `novel-attempt`. **Precedent never emits a KILL.**
@@ -104,9 +126,14 @@ respond to; `feedback` and `revision` edges never gate readiness. Launch all REA
 concurrently. If an agent errors, degrade to a partial group result and inform every
 downstream group and the auditor.
 
+Include only the relevant `strategy-inventory-packet` fields in each initial
+prompt and name how they affected that agent's corpus or gate. Packet summaries
+never replace the underlying source reads or the evidence produced by the
+research pipeline.
+
 **Early stop.** If no candidate survives its collapse-test (every candidate killed by
 non-vacuity or definitional-soundness), the writer records the typed negative in
-`findings.md` and the auditor approves it: a confirmed-kill close is a *successful*
+`findings.md` and the auditor approves it: a confirmed-kill close is a _successful_
 `resolved`, not an error. Being OWNED is not a kill and does not early-stop.
 
 ## Outputs
@@ -126,7 +153,7 @@ field is owned by `register-dispatch`):
 always filled (a citation, or `precedent-clean`); being owned never puts KILL in `verdict`:
 
 | candidate | owner (precedent) | witnessed? (non-vacuity) | sound? (definitional) | verdict |
-|---|---|---|---|---|
+| --------- | ----------------- | ------------------------ | --------------------- | ------- |
 
 A **KILL** (only no-witness or tautological) is banked as a typed negative: what it would
 have contributed + the exact fact that zeroed it. The auditor accepts `findings.md` only

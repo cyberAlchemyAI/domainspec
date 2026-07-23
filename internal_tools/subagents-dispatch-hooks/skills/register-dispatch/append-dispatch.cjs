@@ -8,18 +8,22 @@
  * <record.json> is a UTF-8 JSON file (a file arg, not stdin, so shell encoding
  * — e.g. PowerShell's UTF-16 pipes — can't corrupt the payload).
  *
- * SCHEMA — subagents-strategy constitution v0.6.0 (row schema; group `role`
- * removed at v0.6.0 — §11). Two row kinds, both appended by this script
+ * SCHEMA — subagents-strategy constitution v0.7.0 (row schema; dispatch
+ * evidence binding added at v0.7.0). Two row kinds, both appended by this script
  * (Principle 3: two appends, one place):
  *
  *   DISPATCH ROW — keyed by `dispatch_id`. Required: dispatch_id,
- *     schema_version ("0.6.0" exactly), dispatch_type
- *     (research|code|review|plan|suggestion|experiment), goal, context, max_loops (1..5),
+ *     schema_version ("0.7.0" exactly), dispatch_type
+ *     (research|code|review|plan|suggestion|experiment vocabulary; only LIVE
+ *     research|review|experiment rows are admitted), goal, context, max_loops (1..5),
  *     final_approver, groups[] (each group: group_id, agents[] — NO group
  *     `role` field; each agent: role explorer|synthesizer|skeptic|writer|auditor, model,
  *     token_budget, initial_prompt). Optional: meta (true), parent_dispatch_id,
  *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment; never vault/),
  *     invoked_by (tooling extension, not in constitution §5),
+ *     evidence_binding ({sheet_path, sheet_sha256, tension_verdicts[2],
+ *     confirmation}) binding two PASS handles and explicit confirmation to the
+ *     current live sheet bytes,
  *     connections[] ({from,to,type,loop_cap?}).
  *   CLOSE ROW — keyed by `close_of`. Required: exit_reason
  *     (resolved|loop_ceiling_reached|dissent_irreconcilable|user_abort|error)
@@ -28,8 +32,7 @@
  *     invoked_by (tooling extension, not in constitution §5).
  *
  * NOT ENFORCED here (deliberate — sheet-design rules owned by the strategist
- * and the human confirm gate): dispatch_id YYYY-MM-DD-<slug> format; P12
- * no-self-approval (final_approver never a working-group member); the
+ * and the human confirm gate): dispatch_id YYYY-MM-DD-<slug> format; the
  * layers>1 not-on-a-zig-zag/feedback-endpoint corollary; the semantic
  * four-test anti-bias decision rule (constitution P5: axis vocabulary /
  * clone / spread / evidence — gate-checked on the sheet). The anti_bias_global
@@ -42,9 +45,9 @@
  * `project_dir` is a control key (repo-root fallback), never emitted.
  *
  * VALIDATION SPLIT (grandfathering — constitution §2):
- *   - The INCOMING record is validated STRICTLY against the v0.5.2 schema
- *     before append: required fields, closed enums, conditional fields
- *     (working_folder on research; anti_bias/angle at n >= 2;
+ *   - The INCOMING record is validated STRICTLY against the v0.7.0 schema
+ *     before append: required fields, closed enums, evidence binding, conditional fields
+ *     (working_folder on LIVE types; anti_bias/angle at n >= 2;
  *     anti_bias_global when >= 2 groups have >= 2 agents; n ==
  *     agents.length; loop_cap only on zig-zag/feedback; connection endpoints
  *     declared), and unknown-key rejection — keys in constitution §7's removed
@@ -74,6 +77,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { execSync } = require('child_process');
 
 const src = process.argv[2];
@@ -92,7 +96,7 @@ const isNonEmptyStr = (v) => isStr(v) && v.trim() !== '';
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 // ---------------------------------------------------------------- schema
-const SCHEMA_VERSION = '0.6.0';   // row schema: group `role` removed at v0.6.0 (constitution §11)
+const SCHEMA_VERSION = '0.7.0';   // row schema: live sheet evidence binding required
 const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment'];
 // LIVE per constitution §5 (review 2026-06-12; experiment 2026-06-14, owner decisions); others
 // RESERVED (code, plan, suggestion) — recorded but not yet dispatchable.
@@ -108,6 +112,7 @@ const DISPATCH_KEYS = new Set([
   'max_loops', 'final_approver', 'groups',                       // required
   'meta', 'parent_dispatch_id', 'anti_bias_global', 'working_folder',
   'invoked_by', 'connections',                                   // optional
+  'evidence_binding',                                            // required
   'project_dir',                                                 // control key, not emitted
 ]);
 const CLOSE_KEYS = new Set([
@@ -128,22 +133,192 @@ const LEGACY_LEDGER_KEYS = new Set([
 const GROUP_KEYS = new Set(['group_id', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias']);
 const AGENT_KEYS = new Set(['role', 'model', 'token_budget', 'initial_prompt', 'agent_name', 'angle']);
 const CONN_KEYS = new Set(['from', 'to', 'type', 'loop_cap']);
+const EVIDENCE_BINDING_KEYS = new Set([
+  'sheet_path', 'sheet_sha256', 'tension_verdicts', 'confirmation',
+]);
+const TENSION_VERDICT_KEYS = new Set(['handle', 'verdict', 'sheet_sha256']);
+const CONFIRMATION_KEYS = new Set(['handle', 'confirmed', 'sheet_sha256']);
+const SHA256_RE = /^[a-f0-9]{64}$/;
+
+function normalizeIdentity(value) {
+  return value.trim().replace(/\s+/g, ' ');
+}
+
+function isContained(root, candidate) {
+  const relative = path.relative(root, candidate);
+  return relative === '' ||
+    (relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative));
+}
+
+function validateWorkingFolder(raw, rootInput) {
+  const errs = [];
+  const portable = raw.replace(/\\/g, '/');
+
+  if (path.isAbsolute(raw) || path.win32.isAbsolute(portable)) {
+    return [`working_folder must be repository-relative — got ${J(raw)}`];
+  }
+
+  const segments = portable.split('/').filter((part) => part !== '' && part !== '.');
+  if (segments.includes('..')) {
+    return [`working_folder must not contain parent traversal ("..") — got ${J(raw)}`];
+  }
+
+  let root;
+  try {
+    root = fs.realpathSync(rootInput);
+  } catch (e) {
+    return [`working_folder repository root cannot be resolved: ${J(rootInput)} (${e.code || e.message})`];
+  }
+
+  const candidate = path.resolve(root, ...segments);
+  if (!isContained(root, candidate)) {
+    return [`working_folder escapes the repository root — got ${J(raw)}`];
+  }
+
+  let nearestExisting = candidate;
+  while (!fs.existsSync(nearestExisting)) {
+    const parent = path.dirname(nearestExisting);
+    if (parent === nearestExisting) break;
+    nearestExisting = parent;
+  }
+
+  let resolvedExisting;
+  try {
+    resolvedExisting = fs.realpathSync(nearestExisting);
+  } catch (e) {
+    return [`working_folder nearest existing path cannot be resolved: ${J(nearestExisting)} (${e.code || e.message})`];
+  }
+  if (!isContained(root, resolvedExisting)) {
+    return [`working_folder resolves outside the repository root through ${J(nearestExisting)} — got ${J(raw)}`];
+  }
+
+  if (segments.length > 0 && /^vault$/i.test(segments[0])) {
+    errs.push(`working_folder must never point into vault/ (§5: "Never vault/**") — got ${J(raw)}`);
+  }
+  return errs;
+}
+
+const projectDir = process.env.CLAUDE_PROJECT_DIR ||
+  (isNonEmptyStr(rec.project_dir) ? rec.project_dir : process.cwd());
+
+function validateEvidenceBinding(binding, rootInput) {
+  const errs = [];
+  if (!isObj(binding)) {
+    return ['evidence_binding is required and must be an object'];
+  }
+  for (const k of Object.keys(binding)) {
+    if (!EVIDENCE_BINDING_KEYS.has(k)) errs.push(`evidence_binding: unknown key "${k}"`);
+  }
+  if (!isNonEmptyStr(binding.sheet_path)) {
+    errs.push('evidence_binding.sheet_path is required and must be a non-empty repository-relative string');
+  }
+  if (!isStr(binding.sheet_sha256) || !SHA256_RE.test(binding.sheet_sha256)) {
+    errs.push('evidence_binding.sheet_sha256 must be a lowercase SHA-256 digest');
+  }
+
+  if (isNonEmptyStr(binding.sheet_path)) {
+    const portable = binding.sheet_path.replace(/\\/g, '/');
+    const segments = portable.split('/').filter((part) => part !== '' && part !== '.');
+    if (path.isAbsolute(binding.sheet_path) || path.win32.isAbsolute(portable)) {
+      errs.push(`evidence_binding.sheet_path must be repository-relative — got ${J(binding.sheet_path)}`);
+    } else if (segments.includes('..')) {
+      errs.push(`evidence_binding.sheet_path must not contain parent traversal ("..") — got ${J(binding.sheet_path)}`);
+    } else {
+      let root;
+      try {
+        root = fs.realpathSync(rootInput);
+      } catch (e) {
+        errs.push(`evidence_binding repository root cannot be resolved: ${J(rootInput)} (${e.code || e.message})`);
+      }
+      if (root) {
+        const candidate = path.resolve(root, ...segments);
+        if (!isContained(root, candidate)) {
+          errs.push(`evidence_binding.sheet_path escapes the repository root — got ${J(binding.sheet_path)}`);
+        } else if (!fs.existsSync(candidate)) {
+          errs.push(`evidence_binding.sheet_path does not exist — got ${J(binding.sheet_path)}`);
+        } else {
+          let resolvedSheet;
+          try {
+            resolvedSheet = fs.realpathSync(candidate);
+          } catch (e) {
+            errs.push(`evidence_binding.sheet_path cannot be resolved: ${J(binding.sheet_path)} (${e.code || e.message})`);
+          }
+          if (resolvedSheet && !isContained(root, resolvedSheet)) {
+            errs.push(`evidence_binding.sheet_path resolves outside the repository root — got ${J(binding.sheet_path)}`);
+          } else if (resolvedSheet && !fs.statSync(resolvedSheet).isFile()) {
+            errs.push(`evidence_binding.sheet_path must name a regular file — got ${J(binding.sheet_path)}`);
+          } else if (resolvedSheet && SHA256_RE.test(binding.sheet_sha256 || '')) {
+            const actualDigest = crypto.createHash('sha256').update(fs.readFileSync(resolvedSheet)).digest('hex');
+            if (actualDigest !== binding.sheet_sha256) {
+              errs.push(`evidence_binding.sheet_sha256 does not match current sheet bytes for ${J(binding.sheet_path)}`);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const verdicts = binding.tension_verdicts;
+  if (!Array.isArray(verdicts) || verdicts.length !== 2) {
+    errs.push('evidence_binding.tension_verdicts must contain exactly two verdict handles');
+  } else {
+    const handles = new Set();
+    verdicts.forEach((verdict, index) => {
+      const where = `evidence_binding.tension_verdicts[${index}]`;
+      if (!isObj(verdict)) {
+        errs.push(`${where} must be an object`);
+        return;
+      }
+      for (const k of Object.keys(verdict)) {
+        if (!TENSION_VERDICT_KEYS.has(k)) errs.push(`${where}: unknown key "${k}"`);
+      }
+      if (!isNonEmptyStr(verdict.handle)) errs.push(`${where}.handle is required and must be non-empty`);
+      else if (handles.has(verdict.handle)) errs.push(`${where}.handle duplicates another tension verdict handle`);
+      else handles.add(verdict.handle);
+      if (verdict.verdict !== 'pass') errs.push(`${where}.verdict must be exactly "pass"`);
+      if (verdict.sheet_sha256 !== binding.sheet_sha256) {
+        errs.push(`${where}.sheet_sha256 must match evidence_binding.sheet_sha256`);
+      }
+    });
+  }
+
+  const confirmation = binding.confirmation;
+  if (!isObj(confirmation)) {
+    errs.push('evidence_binding.confirmation is required and must be an object');
+  } else {
+    for (const k of Object.keys(confirmation)) {
+      if (!CONFIRMATION_KEYS.has(k)) errs.push(`evidence_binding.confirmation: unknown key "${k}"`);
+    }
+    if (!isNonEmptyStr(confirmation.handle)) {
+      errs.push('evidence_binding.confirmation.handle is required and must be non-empty');
+    }
+    if (confirmation.confirmed !== true) {
+      errs.push('evidence_binding.confirmation.confirmed must be exactly true');
+    }
+    if (confirmation.sheet_sha256 !== binding.sheet_sha256) {
+      errs.push('evidence_binding.confirmation.sheet_sha256 must match evidence_binding.sheet_sha256');
+    }
+  }
+  return errs;
+}
 
 function validateDispatch(rec) {
   const errs = [];
   for (const k of Object.keys(rec)) {
     if (DISPATCH_KEYS.has(k)) continue;
     if (REMOVED_KEYS.has(k)) errs.push(`"${k}" was removed by schema v0.5.2 — drop it from the record`);
-    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.5.2 schema — drop it from the record`);
+    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.7.0 schema — drop it from the record`);
     else errs.push(`unknown key "${k}" on a dispatch record`);
   }
   if (!isNonEmptyStr(rec.dispatch_id)) errs.push('dispatch_id is required and must be a non-empty string');
   if (rec.schema_version !== SCHEMA_VERSION) errs.push(`schema_version must be exactly "${SCHEMA_VERSION}" (got ${J(rec.schema_version)})`);
   if (!DISPATCH_TYPES.includes(rec.dispatch_type)) errs.push(`dispatch_type must be one of ${DISPATCH_TYPES.join(' | ')} (got ${J(rec.dispatch_type)})`);
+  else if (!LIVE_TYPES.has(rec.dispatch_type)) errs.push(`dispatch_type ${J(rec.dispatch_type)} is RESERVED and cannot be registered; LIVE types are ${[...LIVE_TYPES].map(J).join(' | ')}`);
   if (!isNonEmptyStr(rec.goal)) errs.push('goal is required and must be a non-empty string');
   if (!isNonEmptyStr(rec.context)) errs.push('context is required and must be a non-empty string (subagents never see the parent conversation — §5)');
   if (!Number.isInteger(rec.max_loops) || rec.max_loops < 1 || rec.max_loops > 5) errs.push(`max_loops must be an integer in 1..5 (got ${J(rec.max_loops)})`);
   if (!isNonEmptyStr(rec.final_approver)) errs.push('final_approver is required and must be a non-empty string');
+  errs.push(...validateEvidenceBinding(rec.evidence_binding, projectDir));
   if (rec.meta !== undefined && rec.meta !== true) errs.push('meta, when present, must be boolean true (omit it otherwise — §5)');
   if (rec.parent_dispatch_id !== undefined && rec.parent_dispatch_id !== null && !isNonEmptyStr(rec.parent_dispatch_id)) errs.push('parent_dispatch_id must be a non-empty string (or null / omitted)');
   if (rec.anti_bias_global !== undefined && !isNonEmptyStr(rec.anti_bias_global)) errs.push('anti_bias_global, when present, must be a non-empty string');
@@ -155,12 +330,7 @@ function validateDispatch(rec) {
   }
   if (rec.working_folder !== undefined) {
     if (!isNonEmptyStr(rec.working_folder)) errs.push('working_folder must be a non-empty string');
-    else {
-      // Normalize before the vault guard: strip leading "./" / ".\", match
-      // case-insensitively, and reject bare "vault" as well as vault/ prefixes.
-      const wf = rec.working_folder.replace(/^\.[\/\\]+/, '');
-      if (/^vault([\/\\]|$)/i.test(wf)) errs.push(`working_folder must never point into vault/ (§5: "Never vault/**") — got ${J(rec.working_folder)}`);
-    }
+    else errs.push(...validateWorkingFolder(rec.working_folder, projectDir));
   }
 
   const groupIds = new Set();
@@ -202,6 +372,20 @@ function validateDispatch(rec) {
     if (fanoutGroups >= 2 && !isNonEmptyStr(rec.anti_bias_global)) {
       errs.push(`anti_bias_global is required when >= 2 groups have >= 2 agents (${fanoutGroups} fan-out groups declared — §5 conditional, Principle 5)`);
     }
+
+    if (isNonEmptyStr(rec.final_approver)) {
+      const approver = normalizeIdentity(rec.final_approver);
+      const workingNames = rec.groups
+        .filter(isObj)
+        .flatMap((g) => Array.isArray(g.agents) ? g.agents : [])
+        .filter(isObj)
+        .map((agent) => agent.agent_name)
+        .filter(isNonEmptyStr)
+        .map(normalizeIdentity);
+      if (workingNames.includes(approver)) {
+        errs.push(`final_approver ${J(rec.final_approver)} must not be a working agent (P12 no-self-approval)`);
+      }
+    }
   }
 
   if (rec.connections !== undefined) {
@@ -230,7 +414,7 @@ function validateClose(rec) {
   for (const k of Object.keys(rec)) {
     if (k === 'dispatch_id' || CLOSE_KEYS.has(k)) continue;
     if (REMOVED_KEYS.has(k)) errs.push(`"${k}" was removed by schema v0.5.2 — drop it from the record`);
-    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.5.2 schema — drop it from the record`);
+    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.7.0 schema — drop it from the record`);
     else errs.push(`unknown key "${k}" on a close record`);
   }
   if (!isNonEmptyStr(rec.close_of)) errs.push('close_of must be a non-empty string');
@@ -263,7 +447,6 @@ if (errs.length > 0) {
   process.exit(2);
 }
 
-const projectDir = process.env.CLAUDE_PROJECT_DIR || rec.project_dir || process.cwd();
 const file = path.join(projectDir, 'telemetry', 'agents', 'subagents-dispatch.yaml');
 
 // invoked_by: record value wins; otherwise resolve from git; fail-soft to null.
@@ -284,13 +467,15 @@ const header =
   '# Written by the register-dispatch skill. `groups`/`connections` (dispatch rows) and\n' +
   '# `agents_spawned`/`feedback_prompts` (close rows) are JSON columns.\n' +
   'dispatches:\n';
-fs.mkdirSync(path.dirname(file), { recursive: true });
-try { fs.writeFileSync(file, header, { flag: 'wx' }); } catch (_) { /* exists */ }
-
-const existing = fs.readFileSync(file, 'utf8');
+const existing = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : header;
 // Defensive: if a prior writer left the ledger without a trailing newline,
 // re-anchor so the appended row starts on its own line (YAML stays valid).
 const NL = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
+
+function ensureLedgerFile() {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  try { fs.writeFileSync(file, header, { flag: 'wx' }); } catch (_) { /* exists */ }
+}
 
 // Structural self-check of the existing ledger — STRUCTURE ONLY, never field
 // semantics: old rows are grandfathered (see header comment). Returns the
@@ -339,7 +524,9 @@ if (isClose) {
     process.exit(0);
   }
   if (!dispatchIds.has(rec.close_of)) {
-    console.log('warning: no dispatch row found for', rec.close_of, '— appending close row anyway.');
+    console.error(`invalid close record (schema v${SCHEMA_VERSION}):`);
+    console.error(`  - close_of ${J(rec.close_of)} does not reference an existing dispatch row`);
+    process.exit(2);
   }
   const lines = [
     '  - close_of: ' + J(rec.close_of),
@@ -349,6 +536,7 @@ if (isClose) {
     '    agents_spawned: ' + J(rec.agents_spawned),
   ];
   if (rec.feedback_prompts !== undefined) lines.push('    feedback_prompts: ' + J(rec.feedback_prompts));
+  ensureLedgerFile();
   fs.appendFileSync(file, NL + lines.join('\n') + '\n');
   console.log('closed dispatch', rec.close_of, '->', file);
   process.exit(0);
@@ -357,10 +545,6 @@ if (isClose) {
 if (dispatchIds.has(rec.dispatch_id)) {
   console.log('already registered:', rec.dispatch_id, '— no row appended.');
   process.exit(0);
-}
-
-if (!LIVE_TYPES.has(rec.dispatch_type)) {
-  console.log(`note: dispatch_type "${rec.dispatch_type}" is a RESERVED type — only ${[...LIVE_TYPES].map(J).join(' and ')} are LIVE under v0.6.0; recording anyway.`);
 }
 
 const lines = [
@@ -378,10 +562,12 @@ if (rec.meta === true)                lines.push('    meta: ' + J(true));
 if (rec.parent_dispatch_id != null)   lines.push('    parent_dispatch_id: ' + J(rec.parent_dispatch_id));
 if (rec.anti_bias_global != null)     lines.push('    anti_bias_global: ' + J(rec.anti_bias_global));
 if (rec.working_folder != null)       lines.push('    working_folder: ' + J(rec.working_folder));
+lines.push('    evidence_binding: ' + J(rec.evidence_binding));
 lines.push('    groups: ' + J(rec.groups));
 if (rec.connections !== undefined)    lines.push('    connections: ' + J(rec.connections));
 
 const agentCount = rec.groups.reduce((t, g) => t + g.agents.length, 0);
+ensureLedgerFile();
 fs.appendFileSync(file, NL + lines.join('\n') + '\n');
 console.log('registered dispatch', rec.dispatch_id, '->', file,
   '(' + agentCount + ' agents across ' + rec.groups.length + ' groups)');

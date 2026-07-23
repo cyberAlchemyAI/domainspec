@@ -1,0 +1,47 @@
+{
+  "schema_version": "domainspec.strategy-runtime-composition.v1",
+  "public_base": {
+    "source": "arcanum/arcana/subagent-strategy/SKILL.md",
+    "runtime_package": "subagent-strategy",
+    "generated_by": "arcanum/tools/bootstrap_arcanum.sh --profile",
+    "required_rules": {
+      "lifecycle": "govern every real dispatch through a tensioned proposal, explicit human confirmation, deterministic registration, dependency-aware execution, complete closeout",
+      "human_gate": "Confirmation freezes the sheet; any material edit re-enters Step 6.",
+      "private_boundary": "Never copy private owner prose or paths into this public contract."
+    }
+  },
+  "local_overlay": {
+    "source": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/domainspec-subagents-strategy/SKILL.md",
+    "runtime_package": "domainspec-subagents-strategy",
+    "generated_by": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/scripts/sync-strategy-runtimes.cjs",
+    "required_rules": {
+      "owner": "This adapter owns the DomainSpec constitution, type owners, form/schema, agent pool, registrar, ledger, Inventory policy, and local artifact paths.",
+      "research_output": "The writer writes `findings.md` only.",
+      "public_private": "Public/private boundary: when outputs land in public `arcanum`, do not write private parent paths, private submodule paths, emails, or workspace-only evidence into the public artifact."
+    }
+  },
+  "runtimes": {
+    "codex": {
+      "root": ".agents/skills",
+      "local_overlay": false,
+      "tool_name_map": {}
+    },
+    "claude": {
+      "root": ".claude/skills",
+      "local_overlay": true,
+      "tool_name_map": {
+        "Task": "Agent",
+        "AskQuestions": "AskUserQuestion"
+      }
+    }
+  },
+  "allowed_generated_metadata": [
+    "surface_kind",
+    "runtime",
+    "canonical_source",
+    "overlay_source",
+    "alias_of",
+    "generated_by",
+    "mutation_policy"
+  ]
+}

@@ -21,16 +21,39 @@ A review **closes `resolved`** once the `final_approver` accepts the change-requ
 FIX verdicts are deliverables, not non-resolution (single close definition in the Outputs
 section).
 
+## Inventory Preflight Consumption
+
+Before the first sheet draft, the router supplies a read-only
+`strategy-inventory-packet`. Use it to discover earlier audits and change
+requests, governing contracts, known regressions, target selectors, runnable
+checks, and unresolved risks. It should change attack coverage, lenses,
+verifier checks, agent inputs, or explicit exclusions; merely listing matches
+is not consumption.
+
+Route packet fields narrowly:
+
+- attackers receive relevant governing references, prior risks, and selectors;
+- verifiers receive candidate checks and source references to validate;
+- the synthesizer receives the selected/excluded boundary and unresolved gaps;
+- the coverage auditor receives the promised Inventory-informed coverage.
+
+Inventory is a discovery read model, not review evidence. Every surviving
+finding must still quote and verify the current target artifact, and severity or
+KEEP/FIX must never be derived from Inventory alone. Stale or fallback evidence
+must be checked against its source reference. Missing Inventory, a flagged
+`index.md` fallback, or no match is non-blocking residue and must remain visible
+in the strategy and findings.
+
 ## Roles — red-team semantics over the four-role vocabulary
 
 Review reuses the constitution's four agent roles (§5 Level 4) with red-team semantics:
 
-| role | red-team function | guards against | model guidance |
-|---|---|---|---|
-| `explorer` | **attacker** — attacks the full target corpus from ONE declared attack lens | blind spots — one lens sees what another cannot | heavier for subtle lenses |
-| `skeptic` | **verifier** — refutes findings against the literal artifact; runs the actual check | false positives — plausible-but-wrong findings surviving | heavy |
-| `writer` | **synthesizer** — dedupes, severity-ranks, writes the cited change requests; conventionally a single writer (the §6 skeleton's `n: 1`) | "great attack, no record" | heavy |
-| `auditor` | **coverage auditor** (placed by its incoming edge, downstream of the verifiers) — did every target get attacked from every declared lens; were refuted findings dropped | "passed because nothing was attacked" | light |
+| role       | red-team function                                                                                                                                                       | guards against                                           | model guidance            |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------- |
+| `explorer` | **attacker** — attacks the full target corpus from ONE declared attack lens                                                                                             | blind spots — one lens sees what another cannot          | heavier for subtle lenses |
+| `skeptic`  | **verifier** — refutes findings against the literal artifact; runs the actual check                                                                                     | false positives — plausible-but-wrong findings surviving | heavy                     |
+| `writer`   | **synthesizer** — dedupes, severity-ranks, writes the cited change requests; conventionally a single writer (the §6 skeleton's `n: 1`)                                  | "great attack, no record"                                | heavy                     |
+| `auditor`  | **coverage auditor** (placed by its incoming edge, downstream of the verifiers) — did every target get attacked from every declared lens; were refuted findings dropped | "passed because nothing was attacked"                    | light                     |
 
 A group's function is read off its agents' roles and its workflow position off its
 `connections`; there is no separate group-role enum.
@@ -69,8 +92,8 @@ claim ≤ proof; demote, never inflate).
 **Zero-findings red flag:** an attacker returning zero findings must state what it attacked
 and why the artifact survived each attempt. ALL attackers returning zero findings is a red
 flag — treat it as a failure to attack, not as cleanliness. **Who fires it:** the
-**coverage auditor** fires this flag; the `final_approver` only *checks the auditor fired
-it* (P12 — a dedicated approver does no other work). Residue: the coverage auditor is
+**coverage auditor** fires this flag; the `final_approver` only _checks the auditor fired
+it_ (P12 — a dedicated approver does no other work). Residue: the coverage auditor is
 OPTIONAL (canonical-shape section). When **no coverage-auditor group is declared and
 `final_approver` is `parent`, `parent` fires the flag** — `parent` is the strategist
 session, not a dedicated-approver agent bound by "no other work".
@@ -105,6 +128,11 @@ all READY groups concurrently; `feedback` edges never count as dependencies; a s
 no connections declares its groups independent; declared order is narration tiebreak only.
 Attackers run **read-only over the targets**: they never modify the artifacts under
 attack — findings are the only output.
+
+Include only the relevant `strategy-inventory-packet` fields in each initial
+prompt and name how they affected that agent's lens, selector, or verification
+check. Packet summaries never replace full-corpus attack or literal-artifact
+verification.
 
 ## Outputs (P9 pattern, review flavor)
 

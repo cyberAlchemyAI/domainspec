@@ -1,5 +1,17 @@
 ---
-tags: [hooks, skill, subagents, dispatch, governance, workflow, claude-code, internal-tools, cross-repo, portable]
+tags:
+  [
+    hooks,
+    skill,
+    subagents,
+    dispatch,
+    governance,
+    workflow,
+    claude-code,
+    internal-tools,
+    cross-repo,
+    portable,
+  ]
 node_type: readme
 is_session: false
 layer: architecture
@@ -19,12 +31,12 @@ A **self-contained, portable subagents-strategy system** — the complete `route
 
 A dispatch flows through three authority layers, each owning a distinct concern:
 
-| Layer | Skill | Owns |
-|-------|-------|------|
-| **Router** | [`skills/domainspec-subagents-strategy/`](skills/domainspec-subagents-strategy/SKILL.md) | the Principle-1 trigger, the human gate, universal invariants; routes by `dispatch_type` |
+| Layer                                                     | Skill                                                                                                                                            | Owns                                                                                             |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Router**                                                | [`skills/domainspec-subagents-strategy/`](skills/domainspec-subagents-strategy/SKILL.md)                                                         | the Principle-1 trigger, the human gate, universal invariants; routes by `dispatch_type`         |
 | **Type skill** (LIVE: `research`, `review`, `experiment`) | [`skills/research/`](skills/research/SKILL.md) · [`skills/review/`](skills/review/SKILL.md) · [`skills/experiment/`](skills/experiment/SKILL.md) | type-specific judgment only — roles, tension axes, the findings/verdict shape. Defines no field. |
-| **Form** | [`skills/register-dispatch/`](skills/register-dispatch/SKILL.md) | the ledger row schema, field tables, enums, the appender |
-| **Companion** | [`skills/robot-talks/`](skills/robot-talks/SKILL.md) | intra-group discussion when a group sets `robot_talks: true` |
+| **Form**                                                  | [`skills/register-dispatch/`](skills/register-dispatch/SKILL.md)                                                                                 | the ledger row schema, field tables, enums, the appender                                         |
+| **Companion**                                             | [`skills/robot-talks/`](skills/robot-talks/SKILL.md)                                                                                             | intra-group discussion when a group sets `robot_talks: true`                                     |
 
 The **law** these point to lives in [`constitution/`](constitution/): field semantics (§5), the `dispatch_type` vocabulary, and the principles (P1–P12). `constitution/subagents-strategy-constitution-proposal.md` is the single canonical constitution (the repo-root copy was deleted) and is the v0.6.0 law that governs the ledger (wire `schema_version` is now `0.6.0`); `constitution/robot-talks-constitution.md` is the companion bound by robot-talks groups.
 
@@ -59,8 +71,8 @@ It mitigates three risks in multi-agent practice, while the human stays the gate
 - **`constitution/`**: The **law** the skills point to — the single canonical location (the repo-root copy was deleted). `subagents-strategy-constitution-proposal.md` (v0.6.0 — field semantics §5, `dispatch_type` vocabulary, principles P1–P12) and `robot-talks-constitution.md`.
 - **`tests/`**: Zero-dependency test battery — `node tests/test-append-dispatch.cjs` runs the appender against temp ledgers (never the real one): valid/invalid records, enums, conditionals, idempotency, grandfathering, `invoked_by` resolution.
 - **[install.cjs](install.cjs)**: Per-user installer/uninstaller (`node install.cjs [--uninstall]`). Owns the install semantics: replace-semantics registrations from a source-of-truth table, event-generalized registration entries, retired-hook migration, and the Claude Code-specific vs harness-neutral boundary (documented in its header).
-- **`docs/`**: Model & background docs (the *why/what*, distinct from the field schema in SKILL.md).
-  - **[LEDGER-MODEL.md](docs/LEDGER-MODEL.md)**: The ledger's data model — what it is/isn't, the two-append discipline, the `dispatch → groups → agents` tree as JSON columns, and the L1/L2/L3 normalization. Read this for the *mental model*; SKILL.md owns the field-by-field schema.
+- **`docs/`**: Model & background docs (the _why/what_, distinct from the field schema in SKILL.md).
+  - **[LEDGER-MODEL.md](docs/LEDGER-MODEL.md)**: The ledger's data model — what it is/isn't, the two-append discipline, the `dispatch → groups → agents` tree as JSON columns, and the L1/L2/L3 normalization. Read this for the _mental model_; SKILL.md owns the field-by-field schema.
   - **[docs/discovery/agents-input-output/](docs/discovery/agents-input-output/discovery.md)**: The per-role I/O contracts discovery (the research-stage instance).
   - **[docs/discovery/experiment-promotion/](docs/discovery/experiment-promotion/discovery.md)**: The discovery promoting `experiment` to a LIVE `dispatch_type` (narrow recipe), which the `experiment` type skill operationalizes.
 
@@ -68,5 +80,5 @@ It mitigates three risks in multi-agent practice, while the human stays the gate
 
 This folder is the **canonical migration source** for the whole subagents-strategy system. Two caveats for anyone syncing or migrating it:
 
-- **Single source of truth.** This bundle is canonical for the whole system. [install.cjs](install.cjs) installs from here: the hooks + `register-dispatch` to `~/.claude` (global, portable infra), and the five chain skills to `<repo>/.claude/skills` (project-coupled — they reference this repo's constitution/vault). So `.claude/skills/` is the **generated copy**; edit a chain skill **here** under `skills/<name>/`, then re-run install to push it. Editing `.claude/skills/` directly and forgetting to back-port is the one drift path left — the next install would clobber it from the bundle. Target repo = `CLAUDE_PROJECT_DIR`, else the cwd install is run from.
+- **Single source of truth.** This bundle is canonical for the private adapter system. [install.cjs](install.cjs) installs the hooks + `register-dispatch` to `~/.claude`, composes the DomainSpec router from the public Arcanum `subagent-strategy` base plus the private owner, and copies the remaining chain skills to `<repo>/.claude/skills`. The explicit composition contract is [`skills/domainspec-subagents-strategy/runtime-composition.json`](skills/domainspec-subagents-strategy/runtime-composition.json). Use `node scripts/sync-strategy-runtimes.cjs --sync --runtime all --target <repo>` to synchronize both `.agents` and `.claude`, then run the same command with `--check`. Generated runtime files are witnesses, never independent authorities.
 - **Cross-references on migration.** The copied skills carry **repo-relative paths** to their live locations (`.claude/skills/<name>/SKILL.md`, the canonical constitution at `internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md` — the repo-root copy was deleted). On migration to another repo (Arcanum) these must be rebased to that repo's layout — e.g. point the type skills at `constitution/subagents-strategy-constitution-proposal.md` and at each other under `skills/`. The copies are faithful snapshots, not yet self-referential within the bundle.
