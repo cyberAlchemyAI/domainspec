@@ -6,7 +6,7 @@ description: Init-time anti-bias gate. Before the human confirm, two independent
 # check-tension — the init-time anti-bias gate
 
 Anti-bias is enforced **only at initialization**: the guarantee is that the agents of a
-dispatch are tensioned **by design**, checked here *before* the human confirm. There is **no
+dispatch are tensioned **by design**, checked here _before_ the human confirm. There is **no
 post-dispatch realization check** — the `Dissent:`-line apparatus was retired. This skill is
 the gate and **owns the rubric below**; it owns no dispatch field and no type judgment.
 
@@ -16,15 +16,21 @@ Between **Propose** and **Confirm** in the lifecycle (router §3), for any sheet
 **subject group** — a group with `n ≥ 2` and role `investigate` or `evaluate`. A sheet with
 no subject group has nothing to tension; the gate passes trivially.
 
+Precondition: the exact persisted sheet must already have passed its form
+owner's non-mutating confirmation-readiness validator. Both agents receive that
+same admitted sheet digest. This skill owns anti-bias only; it must not infer
+schema, registrar, final-approver, or dispatch-type admission from a tension
+PASS.
+
 ## The two agents (independent)
 
 Both read the **proposed sheet** — the `groups`, each agent's `angle`, each group's
 `anti_bias` (field meanings owned by `register-dispatch`) — and judge it against the rubric
 below. Read-only: neither writes to the source tree.
 
-| agent | does |
-|---|---|
-| **checker** («aponta») | applies tests 1–5 to every subject group; returns `PASS`, or per-pair / per-group apontamentos naming the exact failing test + a concrete fix |
+| agent                   | does                                                                                                                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **checker** («aponta»)  | applies tests 1–5 to every subject group; returns `PASS`, or per-pair / per-group apontamentos naming the exact failing test + a concrete fix                                  |
 | **reviewer** («revisa») | forms its **own** verdict on the same sheet, then marks agree / disagree on each of the checker's apontamentos — guards against both laxity and over-strictness in the checker |
 
 Spawn both in ONE message (parallel) — two **distinct, independent** agents; never the same
@@ -54,9 +60,9 @@ Per subject group — REJECT if any fires:
 
 - **Test 1 — axis.** `anti_bias` names one canonical axis above, or an explicitly declared composite of them. Outside the vocabulary → REJECT.
 - **Test 2 — clone.** No two `angle`s share the same core noun phrase — tokenize, drop
-  stopwords, and the pair must yield ≥ 2 distinct primary verbs *or* nouns → else REJECT.
+  stopwords, and the pair must yield ≥ 2 distinct primary verbs _or_ nouns → else REJECT.
 - **Test 3 — spread.** `investigate`: ≥ 2 distinct axes across the angles; all sharing one
-  methodology *or* one corpus → REJECT. `evaluate`: no two skeptics share an attack-vector
+  methodology _or_ one corpus → REJECT. `evaluate`: no two skeptics share an attack-vector
   (precedent + vacuity + definitional = three; three "find problems" = one) → else REJECT.
 - **Test 4 — evidence.** Every unordered pair carries its predicted-disagreement sentence
   ("a_i runs X, a_j runs Y on the [axis] axis; a bias in a_i would be exposed by a_j") →
@@ -71,7 +77,7 @@ Once per sheet (not per group):
 A group passing tests 1–4, and a sheet passing test 5, PASSES — no residual judgment beyond
 the evidence sentences.
 
-> **This gate is only the *tension* half of Principle 5.** The *partition* half — angles
+> **This gate is only the _tension_ half of Principle 5.** The _partition_ half — angles
 > non-overlapping AND covering the goal — is checked earlier by the
 > `domainspec-subagents-strategy` chain. A sheet must pass both; partition first, then this
 > gate.

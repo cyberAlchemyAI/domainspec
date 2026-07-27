@@ -6,7 +6,9 @@
     "generated_by": "arcanum/tools/bootstrap_arcanum.sh --profile",
     "required_rules": {
       "lifecycle": "govern every real dispatch through a tensioned proposal, explicit human confirmation, deterministic registration, dependency-aware execution, complete closeout",
-      "human_gate": "Confirmation freezes the sheet; any material edit re-enters Step 6.",
+      "confirmation_readiness": "Run the form owner's non-mutating confirmation-readiness validator against the exact persisted sheet.",
+      "stage_handoff_readiness": "A gate may return `needs_feedback` only with a typed defect, repair-owner stage, eligible already-confirmed edge, and remaining loop capacity; otherwise it returns `blocked`.",
+      "human_gate": "Confirmation freezes the exact admitted sheet bytes. Any later byte change returns to Step 5, reruns both tension checks, and requires new confirmation.",
       "private_boundary": "Never copy private owner prose or paths into this public contract."
     }
   },
@@ -16,6 +18,8 @@
     "generated_by": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/scripts/sync-strategy-runtimes.cjs",
     "required_rules": {
       "owner": "This adapter owns the DomainSpec constitution, type owners, form/schema, agent pool, registrar, ledger, Inventory policy, and local artifact paths.",
+      "confirmation_readiness": "Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.7.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.",
+      "stage_handoff_readiness": "The gate may instead return `needs_feedback` with a typed repair owner and one eligible already-confirmed edge, or `blocked`.",
       "research_output": "The writer writes `findings.md` only.",
       "public_private": "Public/private boundary: when outputs land in public `arcanum`, do not write private parent paths, private submodule paths, emails, or workspace-only evidence into the public artifact."
     }
@@ -23,7 +27,7 @@
   "runtimes": {
     "codex": {
       "root": ".agents/skills",
-      "local_overlay": false,
+      "local_overlay": true,
       "tool_name_map": {}
     },
     "claude": {

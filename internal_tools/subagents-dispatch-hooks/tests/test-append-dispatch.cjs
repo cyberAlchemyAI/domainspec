@@ -71,6 +71,28 @@ function run(root, record, extraEnv) {
   fs.unlinkSync(tmp);
   return { status: r.status, stdout: r.stdout || '', stderr: r.stderr || '' };
 }
+// Run only the non-mutating confirmation-readiness validator. The candidate
+// sheet intentionally has no evidence_binding because tension and confirmation
+// occur after this gate.
+function validateSheet(root, record, options = {}) {
+  const candidate = JSON.parse(JSON.stringify(record));
+  if (!options.preserveEvidenceBinding) delete candidate.evidence_binding;
+  const tmp = path.join(root, `sheet-${++seq}.json`);
+  const content = JSON.stringify(candidate, null, 2) + '\n';
+  fs.writeFileSync(tmp, content);
+  const env = Object.assign({}, process.env, { CLAUDE_PROJECT_DIR: root });
+  const r = spawnSync(process.execPath, [APPENDER, '--validate-sheet', tmp], {
+    env,
+    encoding: 'utf8',
+  });
+  fs.unlinkSync(tmp);
+  return {
+    status: r.status,
+    stdout: r.stdout || '',
+    stderr: r.stderr || '',
+    content,
+  };
+}
 
 let pass = 0, fail = 0, skip = 0;
 const failures = [];
@@ -156,6 +178,56 @@ function twoFanout(over) {
 }
 
 // =====================================================================
+console.log('\n[0] confirmation-readiness validates the exact sheet core before human confirmation');
+{
+  const root = freshRoot();
+  const valid = validateSheet(root, validDispatch());
+  const expectedDigest = crypto.createHash('sha256').update(Buffer.from(valid.content)).digest('hex');
+  check('0a valid sheet without evidence_binding passes',
+    valid.status === 0 && /SHEET_VALIDATION=pass/.test(valid.stdout),
+    valid.stderr || valid.stdout);
+  check('0b validator reports the exact live schema and sheet digest',
+    /SCHEMA_VERSION=0\.7\.0/.test(valid.stdout) &&
+      valid.stdout.includes(`SHEET_SHA256=${expectedDigest}`),
+    valid.stdout);
+  check('0c validation is non-mutating',
+    /LEDGER_MUTATION=none/.test(valid.stdout) && readLedger(root) === '',
+    readLedger(root));
+
+  const stale = validateSheet(root, validDispatch({ schema_version: '0.6.0' }));
+  check('0d stale form version warns and blocks before confirmation',
+    stale.status === 2 &&
+      /WARNING FORM_VERSION_DRIFT/.test(stale.stderr) &&
+      /live form owner requires "0\.7\.0"/.test(stale.stderr) &&
+      readLedger(root) === '',
+    `exit=${stale.status}\nstderr=${stale.stderr}`);
+
+  const selfApprover = validateSheet(root, validDispatch({
+    final_approver: 'Abramsky, Samson',
+  }));
+  check('0e working-agent final approver blocks before confirmation',
+    selfApprover.status === 2 && /must not be a working agent/.test(selfApprover.stderr),
+    selfApprover.stderr);
+
+  const reserved = validateSheet(root, validDispatch({ dispatch_type: 'plan' }));
+  check('0f reserved dispatch type blocks before confirmation',
+    reserved.status === 2 && /is RESERVED and cannot be registered/.test(reserved.stderr),
+    reserved.stderr);
+
+  const wrongShape = validateSheet(root, validDispatch({ groups: { explorers: [] } }));
+  check('0g stale non-row group shape blocks before confirmation',
+    wrongShape.status === 2 && /groups is required and must be a non-empty array/.test(wrongShape.stderr),
+    wrongShape.stderr);
+
+  const bound = validDispatch();
+  bindEvidence(root, bound);
+  const recursive = validateSheet(root, bound, { preserveEvidenceBinding: true });
+  check('0h evidence_binding is rejected from the frozen candidate sheet',
+    recursive.status === 2 && /evidence_binding must be absent/.test(recursive.stderr),
+    recursive.stderr);
+  check('0i every readiness case leaves the ledger untouched', readLedger(root) === '');
+}
+
 console.log('\n[1] valid full v0.7.0 row appends; emitted lines pass the self-check on a second append');
 {
   const root = freshRoot();

@@ -4,9 +4,17 @@
  * Append one row to <repo-root>/telemetry/agents/subagents-dispatch.yaml.
  *
  *   node append-dispatch.cjs <record.json>
+ *   node append-dispatch.cjs --validate-sheet <sheet.json>
  *
- * <record.json> is a UTF-8 JSON file (a file arg, not stdin, so shell encoding
+ * <record.json> / <sheet.json> is a UTF-8 JSON file (a file arg, not stdin, so shell encoding
  * — e.g. PowerShell's UTF-16 pipes — can't corrupt the payload).
+ *
+ * `--validate-sheet` is a non-mutating confirmation-readiness gate. It validates
+ * the dispatch-row core before tension checks or human confirmation, permits
+ * `evidence_binding` to be absent because confirmation does not exist yet, and
+ * exits before reading or writing the ledger. A stale schema version emits a
+ * typed warning and still fails closed. The caller must rematerialize from the
+ * live form owner, rerun validation, and only then request confirmation.
  *
  * SCHEMA — subagents-strategy constitution v0.7.0 (row schema; dispatch
  * evidence binding added at v0.7.0). Two row kinds, both appended by this script
@@ -80,11 +88,22 @@ const path = require('path');
 const crypto = require('crypto');
 const { execSync } = require('child_process');
 
-const src = process.argv[2];
-if (!src) { console.error('usage: node append-dispatch.cjs <record.json>'); process.exit(2); }
+const args = process.argv.slice(2);
+const validateSheetOnly = args[0] === '--validate-sheet';
+const src = validateSheetOnly ? args[1] : args[0];
+const expectedArgCount = validateSheetOnly ? 2 : 1;
+if (!src || args.length !== expectedArgCount) {
+  console.error('usage: node append-dispatch.cjs <record.json>');
+  console.error('   or: node append-dispatch.cjs --validate-sheet <sheet.json>');
+  process.exit(2);
+}
 
 let rec;
-try { rec = JSON.parse(fs.readFileSync(src, 'utf8').replace(/^\uFEFF/, '')); } // strip UTF-8 BOM
+let srcBytes;
+try {
+  srcBytes = fs.readFileSync(src);
+  rec = JSON.parse(srcBytes.toString('utf8').replace(/^\uFEFF/, ''));
+} // strip UTF-8 BOM
 catch (e) { console.error('cannot read/parse record:', e.message); process.exit(2); }
 if (rec === null || typeof rec !== 'object' || Array.isArray(rec)) {
   console.error('record must be a JSON object'); process.exit(2);
@@ -302,7 +321,8 @@ function validateEvidenceBinding(binding, rootInput) {
   return errs;
 }
 
-function validateDispatch(rec) {
+function validateDispatch(rec, options = {}) {
+  const requireEvidenceBinding = options.requireEvidenceBinding !== false;
   const errs = [];
   for (const k of Object.keys(rec)) {
     if (DISPATCH_KEYS.has(k)) continue;
@@ -318,7 +338,11 @@ function validateDispatch(rec) {
   if (!isNonEmptyStr(rec.context)) errs.push('context is required and must be a non-empty string (subagents never see the parent conversation — §5)');
   if (!Number.isInteger(rec.max_loops) || rec.max_loops < 1 || rec.max_loops > 5) errs.push(`max_loops must be an integer in 1..5 (got ${J(rec.max_loops)})`);
   if (!isNonEmptyStr(rec.final_approver)) errs.push('final_approver is required and must be a non-empty string');
-  errs.push(...validateEvidenceBinding(rec.evidence_binding, projectDir));
+  if (requireEvidenceBinding) {
+    errs.push(...validateEvidenceBinding(rec.evidence_binding, projectDir));
+  } else if (rec.evidence_binding !== undefined) {
+    errs.push('evidence_binding must be absent from a confirmation-readiness sheet; assemble it separately after confirmation');
+  }
   if (rec.meta !== undefined && rec.meta !== true) errs.push('meta, when present, must be boolean true (omit it otherwise — §5)');
   if (rec.parent_dispatch_id !== undefined && rec.parent_dispatch_id !== null && !isNonEmptyStr(rec.parent_dispatch_id)) errs.push('parent_dispatch_id must be a non-empty string (or null / omitted)');
   if (rec.anti_bias_global !== undefined && !isNonEmptyStr(rec.anti_bias_global)) errs.push('anti_bias_global, when present, must be a non-empty string');
@@ -440,11 +464,32 @@ function validateClose(rec) {
 // (`close_of` + exit_reason + agents_spawned). Close rows exist because the
 // registry is append-only: the original row is never updated on close.
 const isClose = rec.close_of != null;
-const errs = isClose ? validateClose(rec) : validateDispatch(rec);
+if (validateSheetOnly && isClose) {
+  console.error(`invalid dispatch sheet (schema v${SCHEMA_VERSION}):`);
+  console.error('  - --validate-sheet accepts a dispatch sheet, not a close record');
+  process.exit(2);
+}
+const errs = isClose
+  ? validateClose(rec)
+  : validateDispatch(rec, { requireEvidenceBinding: !validateSheetOnly });
 if (errs.length > 0) {
-  console.error(`invalid ${isClose ? 'close' : 'dispatch'} record (schema v${SCHEMA_VERSION}):`);
+  if (validateSheetOnly && rec.schema_version !== SCHEMA_VERSION) {
+    console.error(
+      `WARNING FORM_VERSION_DRIFT: candidate declares ${J(rec.schema_version)}; live form owner requires ${J(SCHEMA_VERSION)}. Rematerialize before tension or confirmation.`,
+    );
+  }
+  console.error(`invalid ${validateSheetOnly ? 'dispatch sheet' : isClose ? 'close' : 'dispatch'} record (schema v${SCHEMA_VERSION}):`);
   for (const e of errs) console.error('  - ' + e);
   process.exit(2);
+}
+
+if (validateSheetOnly) {
+  const digest = crypto.createHash('sha256').update(srcBytes).digest('hex');
+  console.log('SHEET_VALIDATION=pass');
+  console.log(`SCHEMA_VERSION=${SCHEMA_VERSION}`);
+  console.log(`SHEET_SHA256=${digest}`);
+  console.log('LEDGER_MUTATION=none');
+  process.exit(0);
 }
 
 const file = path.join(projectDir, 'telemetry', 'agents', 'subagents-dispatch.yaml');

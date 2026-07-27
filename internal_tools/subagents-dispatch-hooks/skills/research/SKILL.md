@@ -17,9 +17,12 @@ router `domainspec-subagents-strategy` has checked the trigger, held the human g
 routed by `dispatch_type: research`. This skill owns **research-type judgment only**:
 the roles, the gates, the pipeline, the tension axes, the verdict matrix. Every universal
 rule (lifecycle, human gate, final-approver invariant) defers to the router; every ledger
-field defers to `register-dispatch`. It produces two files in the dispatch's
-`working_folder`: `research.md` (verbatim **explorer** returns, appended by the strategist)
-and `findings.md` (cited synthesis, written by the writer).
+field defers to `register-dispatch`. A writer-reachable run produces two files
+in the dispatch's `working_folder`: `research.md` (verbatim **explorer** returns,
+appended by the strategist) and `findings.md` (cited synthesis, written by the
+writer). If evidence closure blocks before the writer, preserve `research.md`,
+the closure matrix, and the typed closeout residue without manufacturing
+`findings.md`.
 
 ## Inventory Preflight Consumption
 
@@ -48,7 +51,7 @@ in the strategy and final findings.
 The spine is **sequential** and fixed:
 
 ```
-explorers ──▶ synthesizer ──▶ reviewers ──▶ writer ──▶ auditor
+explorers ──▶ synthesizer ──▶ reviewers ──▶ evidence closure ──▶ writer ──▶ auditor
 ```
 
 Each stage hands forward; four edges are **conditional**, declared per dispatch:
@@ -63,17 +66,67 @@ Each stage hands forward; four edges are **conditional**, declared per dispatch:
 `robot_talks`, `zig-zag`, and the synthesizer→explorers `feedback` edge are optional. The
 auditor→writer revision is structural: plan for one revision, allow more.
 
+### Evidence closure before the writer
+
+Evidence closure is a type-owner handoff gate, not another agent role. Before
+the writer becomes READY, the strategist checks the exact synthesis package
+against the evidence contract declared in the confirmed strategy.
+
+Use the baseline `cited-synthesis` contract unless the goal requires the
+stronger `exact-binding` contract:
+
+| contract          | every load-bearing row must carry                                                                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cited-synthesis` | claim or fixture ID; immutable source identity; source-local selector; explorer return reference; evidence scope; `observed`, `executed`, or `unverified` proof status |
+| `exact-binding`   | everything above plus the exact selector, anchor, or structured pointer required to reproduce the claim or fixture                                                     |
+
+The strategy must select `exact-binding` when the requested result is an
+executable fixture, verified quote, machine-addressable graph binding, or other
+artifact whose correctness depends on an exact location. A placeholder such as
+`TODO`, `required artifact`, an invented selector, or a statement that evidence
+exists only "as far as the transcript supports" is not closed evidence.
+
+Return one verdict for the handoff:
+
+- `ready` — every required positive row is `bound`, `deferred`, or `killed`;
+- `needs_feedback` — a typed gap is correctable through an already-confirmed
+  edge with remaining loop capacity;
+- `blocked` — required evidence is unresolved and no eligible declared repair
+  route remains.
+
+For each non-ready row, report `defect_class`, `repair_owner_stage`,
+`missing_evidence`, `eligible_declared_edge`, and `loops_remaining`. Route by
+where the defect can actually be repaired:
+
+| defect                                                                                                       | repair owner and eligible route                             |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| source not read; provenance, quote, selector, anchor, or pointer missing                                     | `explorer`, through declared synthesizer→explorers feedback |
+| conflicting interpretation, architecture, or definition                                                      | `synthesizer` or `skeptic`, through the declared zig-zag    |
+| citation placement, verdict-matrix formatting, structure, or wording when supporting evidence already exists | `writer`, through auditor→writer revision                   |
+| approval disagreement                                                                                        | `auditor` or `parent`; never silently reassign it           |
+
+Do not spend auditor→writer revision capacity on explorer-owned missing
+evidence. If `needs_feedback`, keep the writer blocked until the repaired
+package is checked again. If `blocked`, preserve the partial result and surface
+the unresolved rows to the final approver; never invent a post-confirmation
+edge or exceed an edge or dispatch loop ceiling.
+
+When reviewers may add or change a required evidence-bound positive fixture,
+the strategy should declare bounded synthesizer→explorers feedback and reserve
+enough loop capacity before confirmation. This is conditional, not a reason to
+add explorer feedback to every research dispatch.
+
 ## Roles
 
 Each role guards one failure mode and occupies one pipeline stage; no agent does two jobs.
 
-| `role`        | stage         | does                                                                                                         | guards against                       | receives                                                          |
-| ------------- | ------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------ | ----------------------------------------------------------------- |
-| `explorer`    | 1 (n 2–4)     | generates under **one tensioned angle**                                                                      | monoculture                          | its angle prompt                                                  |
-| `synthesizer` | 2 (n 1)       | reconciles explorer returns into a candidate picture; exchanges with reviewers; may pull more from explorers | "many returns, no coherent claim"    | the collected explorer returns                                    |
-| `skeptic`     | 3 (reviewers) | attacks **one named gate**                                                                                   | folklore / vacuity                   | one gate + the synthesized picture                                |
-| `writer`      | 4 (n 1)       | persists **`findings.md` only**                                                                              | "great research, no record"          | the writing skill `domainspec-findings-writing` (→ `findings.md`) |
-| `auditor`     | 5 (n 1)       | evaluates **`findings.md` only**; approves or sends back for revision                                        | "passed because nothing was checked" | `findings.md` + the dispatch `goal`                               |
+| `role`        | stage         | does                                                                                                         | guards against                       | receives                                                                                      |
+| ------------- | ------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `explorer`    | 1 (n 2–4)     | generates under **one tensioned angle**                                                                      | monoculture                          | its angle prompt                                                                              |
+| `synthesizer` | 2 (n 1)       | reconciles explorer returns into a candidate picture; exchanges with reviewers; may pull more from explorers | "many returns, no coherent claim"    | the collected explorer returns                                                                |
+| `skeptic`     | 3 (reviewers) | attacks **one named gate**                                                                                   | folklore / vacuity                   | one gate + the synthesized picture                                                            |
+| `writer`      | 4 (n 1)       | persists **`findings.md` only**                                                                              | "great research, no record"          | evidence-closed synthesis + the writing skill `domainspec-findings-writing` (→ `findings.md`) |
+| `auditor`     | 5 (n 1)       | evaluates **`findings.md` only**; approves or sends back for revision                                        | "passed because nothing was checked" | `findings.md` + the dispatch `goal`                                                           |
 
 `research.md` is **not** a writer task. It is the verbatim transcript of the **explorer**
 returns, appended **mechanically by the strategist** (the parent that owns the dispatch)
@@ -122,9 +175,11 @@ PASS/REJECT enforcement over these axes runs before the human confirm and is own
 
 Spawn all agents of a group in **one message** so they run in parallel. A group is READY
 when every group with a `sequential`/`zig-zag` edge into it has produced what it must
-respond to; `feedback` and `revision` edges never gate readiness. Launch all READY groups
-concurrently. If an agent errors, degrade to a partial group result and inform every
-downstream group and the auditor.
+respond to and this type owner's handoff gate returns `ready`. `feedback` and `revision`
+edges are repair routes rather than initial dependencies: when the gate returns
+`needs_feedback`, the affected consumer remains blocked until repair is rechecked or the
+declared capacity is exhausted. Launch all READY groups concurrently. If an agent errors,
+degrade to a partial group result and inform every downstream group and the auditor.
 
 Include only the relevant `strategy-inventory-packet` fields in each initial
 prompt and name how they affected that agent's corpus or gate. Packet summaries
@@ -147,7 +202,14 @@ field is owned by `register-dispatch`):
   Omitted when there are no explorers (n = 1).
 - **`findings.md`** — cited synthesis, written by the **writer** per
   `domainspec-findings-writing`: every load-bearing claim cites the explorer return it
-  rests on. Always produced. For n = 1, `findings.md` is the only output.
+  rests on. The writer receives the evidence-closure matrix and must report `deferred` or
+  `killed` rows honestly; an `unresolved` exact binding cannot be described as executable
+  or approval-ready. Produced only after a `ready` handoff. For n = 1,
+  `findings.md` is the only normal research output.
+
+When evidence closure returns terminal `blocked`, the strategist closes with
+`research.md` when explorers ran, the closure matrix, and explicit residue. It
+does not launch the writer merely to satisfy the normal two-file shape.
 
 `findings.md` carries the **verdict matrix** — one row per candidate. The `owner` column is
 always filled (a citation, or `precedent-clean`); being owned never puts KILL in `verdict`:

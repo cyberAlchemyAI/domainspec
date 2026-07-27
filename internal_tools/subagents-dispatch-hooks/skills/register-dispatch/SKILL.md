@@ -13,6 +13,9 @@ are never edited in place.
 
 ## When to use
 
+- Before the tension and human gates, run the non-mutating confirmation-readiness
+  validator against the exact persisted candidate sheet. It validates the live
+  row core without requiring `evidence_binding` and never touches the ledger.
 - After (or as) you dispatch subagents for any non-trivial task.
 - **Principle-2 gate:** append only after the human's explicit confirm of the sheet —
   the gate is owned by the router (`domainspec-subagents-strategy`) / constitution P2;
@@ -35,12 +38,12 @@ ledger-row-only keys (`status`, `anti_bias` top level, `agents` top level, `corp
 error.
 
 **Not enforced by the appender** (sheet-design rules owned by the strategist and the
-human confirm gate): `final_approver` working-group membership (P12 no-self-approval),
-the `dispatch_id` `YYYY-MM-DD-<slug>` format, the `layers > 1`
+human confirm gate): the `dispatch_id` `YYYY-MM-DD-<slug>` format, the `layers > 1`
 not-on-a-zig-zag/feedback-endpoint corollary, and the semantic four-test anti-bias
 decision rule (constitution P5: axis vocabulary / clone / spread / evidence — gate-checked
 on the sheet). The `anti_bias_global` required-when-≥ 2-groups-fan-out conditional **is
-appender-enforced** since the 2026-06-12 in-place amendment (constitution §9).
+appender-enforced** since the 2026-06-12 in-place amendment (constitution §9), and
+working-agent / final-approver separation is also enforced.
 
 ### Top level
 
@@ -138,6 +141,33 @@ The skill ships a deterministic appender; do **not** hand-edit the YAML. To chec
 ledger (e.g. `dispatch_id` uniqueness), use the Read tool — the append-only hook blocks
 Bash access to the file, even read-only commands.
 
+### Before tension or confirmation
+
+1. Persist the candidate dispatch sheet using the current form owner. The sheet
+   contains the dispatch-row fields above except `evidence_binding`, which cannot
+   exist until tension and confirmation have happened.
+2. Run the non-mutating readiness gate from the repository root:
+   ```sh
+   node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs \
+     --validate-sheet path/to/dispatch-sheet.json
+   ```
+3. Continue only when it emits `SHEET_VALIDATION=pass`,
+   `SCHEMA_VERSION=<live-version>`, the exact `SHEET_SHA256`, and
+   `LEDGER_MUTATION=none`.
+4. `WARNING FORM_VERSION_DRIFT` means a selected runtime or candidate sheet is
+   stale. Warn the maintainer, rematerialize from this live form owner, and
+   validate again before tension or confirmation. The warning never admits an
+   invalid sheet.
+5. Any other form error blocks before tension. `check-tension` owns semantic
+   anti-bias; it does not replace this readiness gate.
+
+This ordering prevents form-version or registrar drift from creating a second
+human gate. Once the admitted digest is confirmed, any byte change remains
+material under the exact-digest contract and requires readiness validation,
+new tension verdicts, and new confirmation.
+
+### After confirmation
+
 1. Assemble the dispatch record as JSON (the fields above) — normally read straight off
    the confirmed dispatch sheet (goal, context, groups, connections, per-agent
    angle/model/token_budget/initial_prompt). Add `evidence_binding` from the
@@ -147,8 +177,8 @@ Bash access to the file, even read-only commands.
    `<repo-root>/.register-dispatch.tmp.json`
 3. Run the appender (prefer the Bash tool):
    ```sh
-   node "$HOME/.claude/skills/register-dispatch/append-dispatch.cjs" \
-        "$CLAUDE_PROJECT_DIR/.register-dispatch.tmp.json"
+   node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs \
+     .register-dispatch.tmp.json
    ```
    It creates `telemetry/agents/subagents-dispatch.yaml` (and its directories) with
    a header if absent, validates the record against schema v0.7.0 (exit 2 with the
@@ -301,7 +331,7 @@ instead of `dispatch_id`:
 
 | Field              | Required | Meaning / constraint                                                                                                                                                                                                                                                                                                            |
 | ------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `close_of`         | ✅       | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. Warns (but still appends) if no matching dispatch row exists — an orphan close row indicates a Principle-3 breach upstream (the dispatch row should have been written at dispatch).                                                              |
+| `close_of`         | ✅       | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. A close without a matching dispatch row is rejected; orphan close rows are not admitted.                                                                                                                                                         |
 | `exit_reason`      | ✅       | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: §5.                                                                                                                                                                                      |
 | `agents_spawned`   | ✅       | **JSON column** — object with numeric `total`, object `tree` (keyed by **agent** role — `explorer \| synthesizer \| skeptic \| writer \| auditor` — plus a `helpers` bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
 | `feedback_prompts` | –        | **JSON column** — array of strings: each `feedback`-edge ask, recorded **verbatim** in the close row (Principle 3 / §5 `feedback` semantics).                                                                                                                                                                                   |
