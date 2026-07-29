@@ -12,9 +12,11 @@ the gate and **owns the rubric below**; it owns no dispatch field and no type ju
 
 ## When it runs
 
-Between **Propose** and **Confirm** in the lifecycle (router §3), for any sheet that has a
-**subject group** — a group with `n ≥ 2` and role `investigate` or `evaluate`. A sheet with
-no subject group has nothing to tension; the gate passes trivially.
+Between **Propose** and **Confirm** in the lifecycle (router §3), for any sheet
+that has a **subject group**: a group with at least 2 agents whose agent roles
+include investigation work (`explorer`) or evaluation work (`skeptic` or
+`auditor`). Schema 0.8.0 has no group-level role. A sheet with no subject group
+has nothing to tension; the gate passes trivially.
 
 Precondition: the exact persisted sheet must already have passed its form
 owner's non-mutating confirmation-readiness validator. Both agents receive that
@@ -22,20 +24,36 @@ same admitted sheet digest. This skill owns anti-bias only; it must not infer
 schema, registrar, final-approver, or dispatch-type admission from a tension
 PASS.
 
+The input boundary is closed: each gate agent receives the exact persisted
+sheet bytes, their SHA-256 digest, and this rubric only. Companion strategy
+documents, parent-written summaries, prior chat, and any evidence not present
+in those sheet bytes are forbidden. In particular, Test 4 is satisfied only by
+the sheet's digest-owned `predicted_disagreements` records.
+
 ## The two agents (independent)
 
-Both read the **proposed sheet** — the `groups`, each agent's `angle`, each group's
-`anti_bias` (field meanings owned by `register-dispatch`) — and judge it against the rubric
-below. Read-only: neither writes to the source tree.
+Both read the **proposed sheet** — the `groups`, each agent's `role` and
+`angle`, each group's `anti_bias`, and `predicted_disagreements` (field
+meanings owned by `register-dispatch`) — and judge it against the rubric below.
+Read-only: neither writes to the source tree.
 
-| agent                   | does                                                                                                                                                                           |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **checker** («aponta»)  | applies tests 1–5 to every subject group; returns `PASS`, or per-pair / per-group apontamentos naming the exact failing test + a concrete fix                                  |
-| **reviewer** («revisa») | forms its **own** verdict on the same sheet, then marks agree / disagree on each of the checker's apontamentos — guards against both laxity and over-strictness in the checker |
+| agent                   | does                                                                                                                                                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **checker** («aponta»)  | applies tests 1–5 to every subject group; returns `PASS`, or per-pair / per-group apontamentos naming the exact failing test + a concrete fix                                                                    |
+| **reviewer** («revisa») | forms and freezes its **own** verdict on the same sheet; only afterward, when apontamentos exist, compares that frozen verdict with the checker's frozen report — guards against both laxity and over-strictness |
 
-Spawn both in ONE message (parallel) — two **distinct, independent** agents; never the same
-identity for both, since the reviewer's independence is the whole point. As gate
-infrastructure they carry no agent-pool identity and write nothing to it.
+Use two phases:
+
+1. **Independent verdicts.** Spawn both in one message (parallel) as two
+   distinct agents. Neither receives the other's work. Preserve each verdict,
+   evidence handle, and sheet digest before proceeding.
+2. **Comparison when needed.** If either verdict contains apontamentos, give
+   the frozen checker report to the reviewer and ask it to mark agree or
+   disagree for each item. This comparison may not change or replace the
+   reviewer's independent verdict.
+
+As gate infrastructure the agents carry no agent-pool identity and write
+nothing to it.
 
 Each **apontamento** is structured, not prose, so the strategist can act on it mechanically:
 
@@ -61,10 +79,13 @@ Per subject group — REJECT if any fires:
 - **Test 1 — axis.** `anti_bias` names one canonical axis above, or an explicitly declared composite of them. Outside the vocabulary → REJECT.
 - **Test 2 — clone.** No two `angle`s share the same core noun phrase — tokenize, drop
   stopwords, and the pair must yield ≥ 2 distinct primary verbs _or_ nouns → else REJECT.
-- **Test 3 — spread.** `investigate`: ≥ 2 distinct axes across the angles; all sharing one
-  methodology _or_ one corpus → REJECT. `evaluate`: no two skeptics share an attack-vector
-  (precedent + vacuity + definitional = three; three "find problems" = one) → else REJECT.
+- **Test 3 — spread.** Explorer groups: ≥ 2 distinct approaches across the
+  angles; all sharing one methodology _or_ one corpus → REJECT. Skeptic or
+  auditor groups: no two evaluators share an attack-vector (precedent + vacuity
+  - definitional = three; three "find problems" = one) → else REJECT. Mixed
+    groups apply both rules to their corresponding role subsets.
 - **Test 4 — evidence.** Every unordered pair carries its predicted-disagreement sentence
+  in the sheet's `predicted_disagreements`
   ("a_i runs X, a_j runs Y on the [axis] axis; a bias in a_i would be exposed by a_j") →
   else REJECT. Writing this per pair is what forces real tension instead of asserting it.
 
@@ -84,7 +105,8 @@ the evidence sentences.
 
 ## Outcome — only "both PASS" goes forward
 
-- **Both agents PASS** → the sheet proceeds to the human **Confirm**.
+- **Both independent verdicts PASS** → the sheet proceeds to the human
+  **Confirm**.
 - **Either agent reproves** → return to the strategist with the consolidated apontamentos;
   revise and re-run the gate.
 - **The two disagree** (one passes, one reproves; or they contradict on a point) → **also

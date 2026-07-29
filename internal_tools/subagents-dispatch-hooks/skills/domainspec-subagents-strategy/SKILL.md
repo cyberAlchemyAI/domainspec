@@ -24,7 +24,7 @@ bindings remain here.
 
 It operationalizes the repo-local subagent strategy constitution when present:
 `implementation/domainspec/internal_tools/subagents-dispatch-hooks/constitution/subagents-strategy-constitution-proposal.md`.
-The ledger row schema is `"0.7.0"` for new dispatch rows. Historical rows
+The ledger row schema is `"0.8.0"` for new dispatch rows. Historical rows
 remain structurally grandfathered.
 
 Before acting, locate the active repo root. In `domainspec-core`, prefer the repo-local owner files under `implementation/domainspec/internal_tools/subagents-dispatch-hooks/` over any generated runtime copy.
@@ -53,7 +53,11 @@ inline strategy. This lookup does not require an additional user prompt.
 1. Detect the repository-local Inventory package and use `inventory` in
    `lookup` mode.
 2. Derive lookup terms from the goal, target artifacts or question, dispatch
-   type, affected contract areas, and likely source or lens vocabulary.
+   type, affected contract areas, and likely source or lens vocabulary. When
+   the target spans repositories or a private working folder, query both the
+   active owner inventory and the target or consumer inventory. Include the
+   operational terms `final approver`, `agent pool`, `predicted disagreement`,
+   and `confirmation readiness` when those contracts affect the strategy.
 3. Read `index.json` first when it exists and is parseable. Use `index.md` only
    as a flagged fallback.
 4. Produce a named `strategy-inventory-packet` with lookup status, query terms,
@@ -81,20 +85,22 @@ current artifact. Automatic preflight must not expand into Inventory `install`,
 ## Lifecycle
 
 1. Propose.
-   Make the preliminary P1 decision, resolve the dispatch type, run the research/review Inventory preflight when applicable, and read the relevant type owner. Resolve the repo-local `register-dispatch` form owner before drafting. Persist the candidate as a schema 0.7.0 dispatch-row core without `evidence_binding`, then run:
+   Make the preliminary P1 decision, resolve the dispatch type, run the research/review Inventory preflight when applicable, and read the relevant type owner. Resolve the repo-local `register-dispatch` form owner before drafting. Persist the candidate as a schema 0.8.0 dispatch-row core without `evidence_binding`. Every group with 2 or more agents must include `predicted_disagreements`: exactly one `{pair: [lower_index, higher_index], statement}` record for every unordered agent-index pair. These records, not companion strategy prose, own Test 4 evidence. Then run:
 
    ```sh
    node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs \
      --validate-sheet <dispatch-sheet.json>
    ```
 
-   Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.7.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`. If a selected runtime or candidate declares another version, report `FORM_VERSION_DRIFT`, rematerialize from the repo-local owner, and validate again before tension or confirmation. Other form errors block. For each group with 2 or more agents, name the anti-bias axis and the concrete question where the agents are expected to disagree. Run the check-tension gate with two independent agents against the admitted digest; only a double PASS bound to that same digest reaches the human. Preserve the two evidence handles, verdicts, and digest, not the full returns. Any strategist edit after admission invalidates the digest and returns to confirmation-readiness validation before both tension checks. If the runtime has no callable subagent tool, state that the tension gate cannot be executed and stop at a validated but ungated proposal.
+   Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.8.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`. This is a composite readiness result, not merely syntax: the validator closes form/version, live type, agent-pool membership, non-null identity uniqueness, final-approver shape, complete pair coverage, and local path constraints. Type-owner prerequisites and public/private publication checks must also be closed before asking the human. If a selected runtime or candidate declares another version, report `FORM_VERSION_DRIFT`, rematerialize from the repo-local owner, and validate again before tension or confirmation. Other readiness errors block.
+
+   For each group with 2 or more agents, name the anti-bias axis and the concrete question where every pair is expected to disagree. Run the check-tension gate against the exact sheet bytes and rubric only: companion files, parent summaries, and unstored chat context are forbidden inputs. Phase 1 obtains two independent parallel verdicts bound to the admitted digest. If defects exist, Phase 2 may show the frozen checker apontamentos to the reviewer for comparison, without changing the reviewer's independent verdict. Only PASS/PASS reaches the human. Preserve the two evidence handles, independent verdicts, and digest, not the full returns. Any strategist edit after admission invalidates the digest and returns to confirmation-readiness validation before both tension checks. If the runtime has no callable subagent tool, state that the tension gate cannot be executed and stop at a validated but ungated proposal.
 
 2. Confirm.
-   Wait for explicit human confirmation only after confirmation readiness and both tension checks pass. Silence, discussion, or a question is not confirmation. Record a confirmation handle and the exact confirmed sheet digest. After confirmation, the sheet is frozen; any byte change returns to confirmation-readiness validation, both tension checks, and explicit reconfirmation. Never classify a post-confirmation schema edit as harmless under the current exact-byte binding.
+   Wait for explicit human confirmation only after composite confirmation readiness and both independent tension checks pass. Silence, discussion, a question, or approval to revise the draft is not dispatch confirmation. A normal run asks once, after the proposal is fully ready. Record a confirmation handle and the exact confirmed sheet digest. After confirmation, the sheet is frozen; any byte change returns to confirmation-readiness validation, both tension checks, and explicit reconfirmation. Never classify a genuine post-confirmation byte edit as harmless under the current exact-byte binding.
 
 3. Register and run.
-   Assemble schema 0.7.0 `evidence_binding` from the live sheet path/digest,
+   Assemble schema 0.8.0 `evidence_binding` from the live sheet path/digest,
    the two PASS handles, and the confirmation handle. Append the dispatch row
    with the deterministic appender; it independently hashes the current sheet
    and rejects incomplete or substituted evidence. Then launch groups by dependency:
@@ -126,7 +132,7 @@ When the user invokes this skill for a strategy, proposal, or dispatch design, t
 5. **Gate / ledger state** - confirmation-readiness status and live schema, check-tension status, confirmation requirement, registration state, and closeout expectation.
 6. **Inventory preflight** - for research/review, lookup status, selected and
    excluded evidence, gaps, and the concrete effect on lanes or agent inputs.
-7. **Next human action** - usually `confirmed`, revise the sheet, or decline.
+7. **Next human action** - `confirmed` only for a fully ready proposal; otherwise revise the sheet or decline.
 
 For any durable proposal written to disk, add the same lanes/subagents summary to the proposal artifact unless doing so would duplicate a stricter local template.
 
@@ -176,6 +182,13 @@ Reflection-relevant signals include:
   `register-dispatch` form owner;
 - stale runtime or schema projection discovered only after human confirmation;
 - repeated confirmation caused by a preventable pre-confirmation form defect.
+- pairwise disagreement evidence stored only in a companion document rather
+  than the admitted sheet bytes;
+- an unpooled or duplicated agent identity, or an invalid final approver,
+  discovered after the confirmation request;
+- draft-revision authorization mistaken for dispatch confirmation;
+- checker/reviewer comparison performed before both independent verdicts were
+  preserved;
 - a consuming stage launched because an upstream artifact existed even though
   the type-owner handoff gate had not returned `ready`;
 - research source bytes, provenance, selectors, anchors, or pointers sent to
@@ -225,7 +238,7 @@ node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/re
 ```
 
 Create temporary JSON records with a normal file edit tool. For new dispatch
-rows, include schema 0.7.0 `evidence_binding` with the live sheet path/digest,
+rows, include schema 0.8.0 `evidence_binding` with the live sheet path/digest,
 two unique PASS handles, and explicit confirmation handle, all bound to the
 same digest. Run the appender, then delete the temp file. Do not hand-edit
 `telemetry/agents/subagents-dispatch.yaml`.
@@ -234,12 +247,20 @@ For close rows, use `close_of`, `exit_reason`, `agents_spawned`, optional `feedb
 
 ## Invariants
 
-- Pairwise tension: every group with 2 or more agents must have a named axis and per-agent angle.
+- Pairwise tension: every group with 2 or more agents must have a named axis,
+  per-agent angle, and exactly one digest-owned `predicted_disagreements`
+  record for every unordered pair.
 - Claim <= proof: every artifact produced by the dispatch must cite or preserve its evidence boundary.
-- Final approval: `final_approver` is `parent` unless a dedicated one-agent auditor group is declared; no working-group member self-approves.
+- Agent identity: every non-null `agent_name` resolves in
+  `telemetry/agents/agent-pool.yaml` and appears only once in the dispatch.
+- Final approval: `final_approver` is `parent` unless it names the pooled sole
+  `auditor` in a singleton dedicated approval group; arbitrary external names
+  and working roles cannot approve.
 - Three dials, three scopes: `layers` belongs to a group, `loop_cap` belongs to a zig-zag or feedback edge, and `max_loops` belongs to the whole dispatch.
-- One human gate: preventable form and version drift is resolved before asking;
-  exact-byte changes after confirmation still require reconfirmation.
+- One human gate: all deterministic readiness defects are resolved before
+  asking, draft-revision authorization is not confirmation, and a normal ready
+  run asks once; exact-byte changes after confirmation still require
+  reconfirmation.
 - Stage readiness is owner-typed: `ready`, `needs_feedback`, or `blocked`.
   Repair traverses only an already-confirmed eligible edge with capacity.
 - Exit reasons are `resolved`, `loop_ceiling_reached`, `dissent_irreconcilable`, `user_abort`, or `error`.

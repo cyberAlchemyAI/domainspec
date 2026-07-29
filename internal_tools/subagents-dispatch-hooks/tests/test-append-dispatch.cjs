@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /*
- * Test battery for append-dispatch.cjs (schema v0.7.0 — sheet evidence binding).
+ * Test battery for append-dispatch.cjs (schema v0.8.0 — confirmation readiness).
  *
  *   node internal_tools/subagents-dispatch-hooks/tests/test-append-dispatch.cjs
  *
@@ -22,6 +22,15 @@ if (!fs.existsSync(APPENDER)) { console.error('appender not found:', APPENDER); 
 const roots = [];
 function freshRoot() {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'append-dispatch-test-'));
+  const pool = path.join(d, 'telemetry', 'agents', 'agent-pool.yaml');
+  fs.mkdirSync(path.dirname(pool), { recursive: true });
+  fs.writeFileSync(pool, [
+    'scientists:',
+    '  - name: "Abramsky, Samson"',
+    '  - name: "Brandenburg, Martin"',
+    '  - name: "Bourbaki, Nicolas"',
+    '',
+  ].join('\n'));
   roots.push(d);
   return d;
 }
@@ -118,9 +127,9 @@ function expectReject(name, root, record, pattern) {
 function validDispatch(over) {
   return Object.assign({
     dispatch_id: '2026-06-12-battery-main',
-    schema_version: '0.7.0',
+    schema_version: '0.8.0',
     dispatch_type: 'research',
-    goal: 'Prove the v0.7.0 appender end to end.',
+    goal: 'Prove the v0.8.0 appender end to end.',
     context: 'Synthetic record produced by the test battery. Runs against a temp ledger, never the real one.',
     max_loops: 2,
     final_approver: 'parent',
@@ -131,6 +140,12 @@ function validDispatch(over) {
       {
         group_id: 'explorers', n: 2,
         anti_bias: 'methodology (static reading vs dynamic probing)',
+        predicted_disagreements: [
+          {
+            pair: [0, 1],
+            statement: 'Agent 0 reads the static form while agent 1 probes runtime behavior on the methodology axis; each exposes the other approach’s blind spot.',
+          },
+        ],
         agents: [
           { agent_name: 'Abramsky, Samson', role: 'explorer', model: 'claude-sonnet-4-6', token_budget: 800,
             angle: 'static-reading side', initial_prompt: 'Explore statically.\nSecond line proves stringify newline escaping.' },
@@ -169,6 +184,12 @@ function twoFanout(over) {
   r.groups.push({
     group_id: 'reviewers', n: 2,
     anti_bias: 'attack-vector (precedent-kill vs non-vacuity)',
+    predicted_disagreements: [
+      {
+        pair: [0, 1],
+        statement: 'Agent 0 attacks precedent while agent 1 attacks vacuity on the attack-vector axis; each exposes a distinct false-positive mode.',
+      },
+    ],
     agents: [
       { role: 'skeptic', model: 'claude-opus-4-8', token_budget: 1000, angle: 'precedent-kill gate', initial_prompt: 'Attack precedent.' },
       { role: 'skeptic', model: 'claude-opus-4-8', token_budget: 1000, angle: 'non-vacuity gate', initial_prompt: 'Attack vacuity.' },
@@ -187,7 +208,7 @@ console.log('\n[0] confirmation-readiness validates the exact sheet core before 
     valid.status === 0 && /SHEET_VALIDATION=pass/.test(valid.stdout),
     valid.stderr || valid.stdout);
   check('0b validator reports the exact live schema and sheet digest',
-    /SCHEMA_VERSION=0\.7\.0/.test(valid.stdout) &&
+    /SCHEMA_VERSION=0\.8\.0/.test(valid.stdout) &&
       valid.stdout.includes(`SHEET_SHA256=${expectedDigest}`),
     valid.stdout);
   check('0c validation is non-mutating',
@@ -198,15 +219,15 @@ console.log('\n[0] confirmation-readiness validates the exact sheet core before 
   check('0d stale form version warns and blocks before confirmation',
     stale.status === 2 &&
       /WARNING FORM_VERSION_DRIFT/.test(stale.stderr) &&
-      /live form owner requires "0\.7\.0"/.test(stale.stderr) &&
+      /live form owner requires "0\.8\.0"/.test(stale.stderr) &&
       readLedger(root) === '',
     `exit=${stale.status}\nstderr=${stale.stderr}`);
 
   const selfApprover = validateSheet(root, validDispatch({
     final_approver: 'Abramsky, Samson',
   }));
-  check('0e working-agent final approver blocks before confirmation',
-    selfApprover.status === 2 && /must not be a working agent/.test(selfApprover.stderr),
+  check('0e non-auditor final approver blocks before confirmation',
+    selfApprover.status === 2 && /sole agent of a singleton group with role "auditor"/.test(selfApprover.stderr),
     selfApprover.stderr);
 
   const reserved = validateSheet(root, validDispatch({ dispatch_type: 'plan' }));
@@ -228,14 +249,14 @@ console.log('\n[0] confirmation-readiness validates the exact sheet core before 
   check('0i every readiness case leaves the ledger untouched', readLedger(root) === '');
 }
 
-console.log('\n[1] valid full v0.7.0 row appends; emitted lines pass the self-check on a second append');
+console.log('\n[1] valid full v0.8.0 row appends; emitted lines pass the self-check on a second append');
 {
   const root = freshRoot();
   const r1 = run(root, validDispatch());
   check('1a valid dispatch row appends (exit 0)', r1.status === 0, r1.stderr || r1.stdout);
   const text = readLedger(root);
   check('1b row start emitted', /^  - dispatch_id: "2026-06-12-battery-main"$/m.test(text), text);
-  check('1c schema_version block key', /^    schema_version: "0\.7\.0"$/m.test(text), text);
+  check('1c schema_version block key', /^    schema_version: "0\.8\.0"$/m.test(text), text);
   check('1d invoked_by taken from record', /^    invoked_by: "tester@example\.com"$/m.test(text), text);
   check('1e created stamped by appender', /^    created: "\d{4}-\d{2}-\d{2}T/m.test(text), text);
   check('1f groups emitted as JSON column', /^    groups: \[\{"group_id":"explorers"/m.test(text), text);
@@ -304,7 +325,7 @@ console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
   const root = freshRoot();
   const fieldPattern = {
     dispatch_id: /dispatch_id is required/,
-    schema_version: /schema_version must be exactly "0\.7\.0"/,
+    schema_version: /schema_version must be exactly "0\.8\.0"/,
     dispatch_type: /dispatch_type must be one of/,
     goal: /goal is required/,
     context: /context is required/,
@@ -325,9 +346,9 @@ console.log('\n[2] each missing required dispatch field is rejected (exit 2)');
 console.log('\n[3] wrong schema_version rejected');
 {
   const root = freshRoot();
-  expectReject('3a prior schema_version "0.6.0"', root, validDispatch({ schema_version: '0.6.0' }), /schema_version must be exactly "0\.7\.0"/);
-  expectReject('3b schema_version 0.7.0 as number', root, validDispatch({ schema_version: 0.7 }), /schema_version/);
-  expectReject('3c old schema_version "0.5.2" now rejected', root, validDispatch({ schema_version: '0.5.2' }), /schema_version must be exactly "0\.7\.0"/);
+  expectReject('3a prior schema_version "0.7.0"', root, validDispatch({ schema_version: '0.7.0' }), /schema_version must be exactly "0\.8\.0"/);
+  expectReject('3b schema_version 0.8.0 as number', root, validDispatch({ schema_version: 0.8 }), /schema_version/);
+  expectReject('3c old schema_version "0.5.2" now rejected', root, validDispatch({ schema_version: '0.5.2' }), /schema_version must be exactly "0\.8\.0"/);
 }
 
 console.log('\n[4] bad enum values rejected');
@@ -366,7 +387,7 @@ console.log('\n[5] pre-v0.5.2 keys rejected with the right per-provenance messag
   const legacy = { status: 'dispatched', anti_bias: { axis: 'x' }, agents: [{ role: 'explorer' }],
     corpus: 'research/audits', topic_slug: 'slug', session: 's1' };
   for (const [k, v] of Object.entries(legacy)) {
-    expectReject(`5 legacy ledger key ${k}`, root, validDispatch({ [k]: v }), new RegExp(`"${k}" is a pre-v0\\.5\\.2 ledger-row key, not in the v0\\.7\\.0 schema`));
+    expectReject(`5 legacy ledger key ${k}`, root, validDispatch({ [k]: v }), new RegExp(`"${k}" is a pre-v0\\.5\\.2 ledger-row key, not in the v0\\.8\\.0 schema`));
   }
 }
 
@@ -590,17 +611,157 @@ console.log('\n[16] anti_bias_global conditional (>= 2 fan-out groups) enforced'
     `exit=${r4.status}\nstderr=${r4.stderr.trim()}`);
 }
 
-console.log('\n[17] final approver separation');
+console.log('\n[17] agent-pool and final-approver admission');
 {
   const root = freshRoot();
-  expectReject('17a working agent cannot be final approver after whitespace normalization', root,
+  expectReject('17a explorer cannot be final approver after whitespace normalization', root,
     validDispatch({ final_approver: '  Abramsky,   Samson  ' }),
-    /must not be a working agent/);
-  const r = run(root, validDispatch({
-    dispatch_id: '2026-06-12-battery-distinct-approver',
+    /sole agent of a singleton group with role "auditor"/);
+  expectReject('17b arbitrary unpooled final approver rejected', root, validDispatch({
     final_approver: 'Independent Maintainer',
-  }));
-  check('17b distinct final approver accepted', r.status === 0, r.stderr || r.stdout);
+  }), /final_approver .* is not present in telemetry\/agents\/agent-pool\.yaml/);
+
+  const dedicated = validDispatch({
+    dispatch_id: '2026-06-12-battery-dedicated-approver',
+    final_approver: 'Brandenburg, Martin',
+  });
+  dedicated.groups.push({
+    group_id: 'approval',
+    agents: [{
+      agent_name: 'Brandenburg, Martin',
+      role: 'auditor',
+      model: 'claude-opus-4-8',
+      token_budget: 600,
+      initial_prompt: 'Evaluate the complete result and recommend accept or reject.',
+    }],
+  });
+  const approved = run(root, dedicated);
+  check('17c pooled singleton auditor final approver accepted',
+    approved.status === 0, approved.stderr || approved.stdout);
+
+  const wrongRole = validDispatch({
+    dispatch_id: '2026-06-12-battery-writer-approver',
+    final_approver: 'Brandenburg, Martin',
+  });
+  wrongRole.groups.push({
+    group_id: 'approval',
+    agents: [{
+      agent_name: 'Brandenburg, Martin',
+      role: 'writer',
+      model: 'claude-opus-4-8',
+      token_budget: 600,
+      initial_prompt: 'Write the result.',
+    }],
+  });
+  expectReject('17d pooled singleton non-auditor cannot approve', root, wrongRole,
+    /singleton group with role "auditor"/);
+
+  const multiAuditor = validDispatch({
+    dispatch_id: '2026-06-12-battery-multi-auditor',
+    final_approver: 'Brandenburg, Martin',
+  });
+  multiAuditor.groups.push({
+    group_id: 'approval',
+    anti_bias: 'attack-vector (scope vs precedent)',
+    predicted_disagreements: [{
+      pair: [0, 1],
+      statement: 'Agent 0 attacks scope while agent 1 attacks precedent on the attack-vector axis; each exposes a different approval error.',
+    }],
+    agents: [
+      {
+        agent_name: 'Brandenburg, Martin', role: 'auditor', model: 'm',
+        token_budget: 1, angle: 'scope gate', initial_prompt: 'Audit scope.',
+      },
+      {
+        agent_name: 'Bourbaki, Nicolas', role: 'auditor', model: 'm',
+        token_budget: 1, angle: 'precedent gate', initial_prompt: 'Audit precedent.',
+      },
+    ],
+  });
+  expectReject('17e final approver cannot come from a multi-agent auditor group', root, multiAuditor,
+    /sole agent of a singleton group with role "auditor"/);
+
+  const unpooledAgent = validDispatch({ dispatch_id: '2026-06-12-battery-unpooled-agent' });
+  unpooledAgent.groups[1].agents[0].agent_name = 'Unknown, Agent';
+  expectReject('17f unpooled working agent rejected', root, unpooledAgent,
+    /agent_name .* is not present in telemetry\/agents\/agent-pool\.yaml/);
+
+  const duplicateAgent = validDispatch({ dispatch_id: '2026-06-12-battery-duplicate-agent' });
+  duplicateAgent.groups[1].agents[0].agent_name = 'Abramsky, Samson';
+  expectReject('17g duplicate non-null identity rejected', root, duplicateAgent,
+    /non-null identities must be unique within a dispatch/);
+
+  const missingPoolRoot = freshRoot();
+  fs.unlinkSync(path.join(missingPoolRoot, 'telemetry', 'agents', 'agent-pool.yaml'));
+  const noPool = validateSheet(missingPoolRoot, validDispatch());
+  check('17h missing agent pool blocks before confirmation',
+    noPool.status === 2 && /agent pool is required before confirmation/.test(noPool.stderr),
+    noPool.stderr);
+}
+
+console.log('\n[18] predicted-disagreement evidence is complete and digest-owned');
+{
+  const root = freshRoot();
+  const base = validateSheet(root, validDispatch());
+  check('18a n=2 with exactly one canonical pair passes readiness',
+    base.status === 0, base.stderr || base.stdout);
+
+  const three = validDispatch({ dispatch_id: '2026-06-12-battery-three-pairs' });
+  three.groups[0].n = 3;
+  three.groups[0].agents.push({
+    agent_name: 'Bourbaki, Nicolas',
+    role: 'explorer',
+    model: 'm',
+    token_budget: 1,
+    angle: 'historical reconstruction side',
+    initial_prompt: 'Explore historical evidence.',
+  });
+  three.groups[0].predicted_disagreements = [
+    { pair: [0, 1], statement: 'Static reading and dynamic probing disagree on the methodology axis.' },
+    { pair: [0, 2], statement: 'Static reading and historical reconstruction disagree on the methodology axis.' },
+    { pair: [1, 2], statement: 'Dynamic probing and historical reconstruction disagree on the methodology axis.' },
+  ];
+  const threeResult = validateSheet(root, three);
+  check('18b n=3 requires and accepts exactly three canonical pairs',
+    threeResult.status === 0, threeResult.stderr || threeResult.stdout);
+
+  const missing = validDispatch({ dispatch_id: '2026-06-12-battery-missing-pair-evidence' });
+  delete missing.groups[0].predicted_disagreements;
+  const strategyCompanion = path.join(root, 'STRATEGY.md');
+  fs.writeFileSync(strategyCompanion, 'The missing predicted disagreement sentence exists only here.\n');
+  const missingResult = validateSheet(root, missing);
+  check('18c companion prose cannot rescue missing digest-owned pair evidence',
+    missingResult.status === 2 && /predicted_disagreements is required/.test(missingResult.stderr),
+    missingResult.stderr);
+
+  const duplicate = validDispatch({ dispatch_id: '2026-06-12-battery-duplicate-pair' });
+  duplicate.groups[0].predicted_disagreements.push({
+    pair: [0, 1],
+    statement: 'Duplicate pair statement.',
+  });
+  const duplicateResult = validateSheet(root, duplicate);
+  check('18d duplicate pair rejected before confirmation',
+    duplicateResult.status === 2 && /duplicates another predicted-disagreement pair/.test(duplicateResult.stderr),
+    duplicateResult.stderr);
+
+  for (const [name, pair, pattern] of [
+    ['reversed', [1, 0], /canonical unordered form/],
+    ['self', [0, 0], /canonical unordered form/],
+    ['out-of-range', [0, 2], /indexes must be in range/],
+  ]) {
+    const record = validDispatch({ dispatch_id: `2026-06-12-battery-${name}-pair` });
+    record.groups[0].predicted_disagreements[0].pair = pair;
+    const result = validateSheet(root, record);
+    check(`18 ${name} pair rejected before confirmation`,
+      result.status === 2 && pattern.test(result.stderr), result.stderr);
+  }
+
+  const empty = validDispatch({ dispatch_id: '2026-06-12-battery-empty-pair-statement' });
+  empty.groups[0].predicted_disagreements[0].statement = ' ';
+  const emptyResult = validateSheet(root, empty);
+  check('18h empty pair statement rejected before confirmation',
+    emptyResult.status === 2 && /statement is required/.test(emptyResult.stderr),
+    emptyResult.stderr);
 }
 
 // ---------------------------------------------------------------- summary

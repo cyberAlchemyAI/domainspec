@@ -137,9 +137,13 @@ authors only the synthesis (`findings.md`). See **Outputs**.
 at the confirm gate (the field is owned by `register-dispatch`). There is no `evaluator`
 role: criteria-scoring is a `skeptic` with a stated gate.
 
-The auditor is the dedicated `final_approver`: a single `auditor` agent, no other work,
-never in a working group, falling back to `parent` if its group never runs (the universal
-final-approver invariant — authority: `domainspec-subagents-strategy`).
+The auditor may be the dedicated `final_approver` when the schema 0.8.0 sheet
+represents it exactly once as the pooled sole `auditor` in a singleton approval
+group. That group performs only approval and revision; it is not an explorer,
+synthesizer, skeptic, or writer group. `parent` remains the default and the
+fallback if the auditor group never runs. The non-mutating registrar validates
+this shape before the human gate (universal authority:
+`domainspec-subagents-strategy`).
 
 ## Skeptic gates
 

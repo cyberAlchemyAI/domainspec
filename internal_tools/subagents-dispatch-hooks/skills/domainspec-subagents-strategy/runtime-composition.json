@@ -7,6 +7,9 @@
     "required_rules": {
       "lifecycle": "govern every real dispatch through a tensioned proposal, explicit human confirmation, deterministic registration, dependency-aware execution, complete closeout",
       "confirmation_readiness": "Run the form owner's non-mutating confirmation-readiness validator against the exact persisted sheet.",
+      "composite_readiness": "Confirmation readiness is one composite checkpoint: form and version, live type-owner prerequisites, agent eligibility and identity uniqueness, final-approver admission, complete digest-owned tension evidence, and configured publication boundaries must all close before the human gate.",
+      "tension_input_boundary": "Run the configured tension gate against only the admitted sheet bytes and the gate rubric; companion files, parent summaries, and unstored chat context cannot satisfy the gate.",
+      "confirmation_semantics": "Silence, discussion, a question, or authorization to revise the draft is not dispatch confirmation.",
       "stage_handoff_readiness": "A gate may return `needs_feedback` only with a typed defect, repair-owner stage, eligible already-confirmed edge, and remaining loop capacity; otherwise it returns `blocked`.",
       "human_gate": "Confirmation freezes the exact admitted sheet bytes. Any later byte change returns to Step 5, reruns both tension checks, and requires new confirmation.",
       "private_boundary": "Never copy private owner prose or paths into this public contract."
@@ -18,7 +21,11 @@
     "generated_by": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/scripts/sync-strategy-runtimes.cjs",
     "required_rules": {
       "owner": "This adapter owns the DomainSpec constitution, type owners, form/schema, agent pool, registrar, ledger, Inventory policy, and local artifact paths.",
-      "confirmation_readiness": "Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.7.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.",
+      "confirmation_readiness": "Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.8.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.",
+      "composite_readiness": "This is a composite readiness result, not merely syntax: the validator closes form/version, live type, agent-pool membership, non-null identity uniqueness, final-approver shape, complete pair coverage, and local path constraints.",
+      "tension_input_boundary": "Run the check-tension gate against the exact sheet bytes and rubric only: companion files, parent summaries, and unstored chat context are forbidden inputs.",
+      "confirmation_semantics": "Silence, discussion, a question, or approval to revise the draft is not dispatch confirmation.",
+      "approver_admission": "Final approval: `final_approver` is `parent` unless it names the pooled sole `auditor` in a singleton dedicated approval group; arbitrary external names and working roles cannot approve.",
       "stage_handoff_readiness": "The gate may instead return `needs_feedback` with a typed repair owner and one eligible already-confirmed edge, or `blocked`.",
       "research_output": "The writer writes `findings.md` only.",
       "public_private": "Public/private boundary: when outputs land in public `arcanum`, do not write private parent paths, private submodule paths, emails, or workspace-only evidence into the public artifact."

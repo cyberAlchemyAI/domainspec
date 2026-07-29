@@ -93,6 +93,30 @@ for (const runtime of ['codex', 'claude']) {
     `${runtime}: confirmation-readiness removal must fail`,
   );
 
+  const compositeRemoval = replaceAcrossWhitespace(
+    publicText,
+    'Confirmation readiness is one composite checkpoint: form and version, live type-owner prerequisites, agent eligibility and identity uniqueness, final-approver admission, complete digest-owned tension evidence, and configured publication boundaries must all close before the human gate.',
+    'Form syntax is enough.',
+  );
+  check(
+    errorsFor(runtime, 'public', compositeRemoval).some((error) =>
+      error.includes('missing protected rule composite_readiness'),
+    ),
+    `${runtime}: composite-readiness removal must fail`,
+  );
+
+  const boundaryRemoval = replaceAcrossWhitespace(
+    publicText,
+    'Run the configured tension gate against only the admitted sheet bytes and the gate rubric; companion files, parent summaries, and unstored chat context cannot satisfy the gate.',
+    'Use all available context.',
+  );
+  check(
+    errorsFor(runtime, 'public', boundaryRemoval).some((error) =>
+      error.includes('missing protected rule tension_input_boundary'),
+    ),
+    `${runtime}: tension-input boundary removal must fail`,
+  );
+
   const handoffRemoval = replaceAcrossWhitespace(
     publicText,
     'A gate may return `needs_feedback` only with a typed defect, repair-owner stage, eligible already-confirmed edge, and remaining loop capacity; otherwise it returns `blocked`.',
@@ -123,7 +147,7 @@ for (const overlayRuntime of ['codex', 'claude']) {
 
   const readinessRemoval = replaceAcrossWhitespace(
     overlayText,
-    'Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.7.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.',
+    'Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.8.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.',
     'Continue after drafting.',
   );
   check(
@@ -131,6 +155,30 @@ for (const overlayRuntime of ['codex', 'claude']) {
       error.includes('missing protected rule confirmation_readiness'),
     ),
     `${overlayRuntime}: local confirmation-readiness removal must fail`,
+  );
+
+  const compositeRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'This is a composite readiness result, not merely syntax: the validator closes form/version, live type, agent-pool membership, non-null identity uniqueness, final-approver shape, complete pair coverage, and local path constraints.',
+    'Syntax is enough.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', compositeRemoval).some((error) =>
+      error.includes('missing protected rule composite_readiness'),
+    ),
+    `${overlayRuntime}: local composite-readiness removal must fail`,
+  );
+
+  const approverRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'Final approval: `final_approver` is `parent` unless it names the pooled sole `auditor` in a singleton dedicated approval group; arbitrary external names and working roles cannot approve.',
+    'Any distinct name may approve.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', approverRemoval).some((error) =>
+      error.includes('missing protected rule approver_admission'),
+    ),
+    `${overlayRuntime}: local approver-admission removal must fail`,
   );
 
   const handoffRemoval = replaceAcrossWhitespace(

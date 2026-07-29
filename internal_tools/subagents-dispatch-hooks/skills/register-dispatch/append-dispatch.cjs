@@ -16,17 +16,19 @@
  * typed warning and still fails closed. The caller must rematerialize from the
  * live form owner, rerun validation, and only then request confirmation.
  *
- * SCHEMA — subagents-strategy constitution v0.7.0 (row schema; dispatch
- * evidence binding added at v0.7.0). Two row kinds, both appended by this script
+ * SCHEMA — subagents-strategy constitution v0.8.0 (row schema; digest-owned
+ * pairwise disagreement evidence and deterministic identity admission added at
+ * v0.8.0). Two row kinds, both appended by this script
  * (Principle 3: two appends, one place):
  *
  *   DISPATCH ROW — keyed by `dispatch_id`. Required: dispatch_id,
- *     schema_version ("0.7.0" exactly), dispatch_type
+ *     schema_version ("0.8.0" exactly), dispatch_type
  *     (research|code|review|plan|suggestion|experiment vocabulary; only LIVE
  *     research|review|experiment rows are admitted), goal, context, max_loops (1..5),
  *     final_approver, groups[] (each group: group_id, agents[] — NO group
  *     `role` field; each agent: role explorer|synthesizer|skeptic|writer|auditor, model,
- *     token_budget, initial_prompt). Optional: meta (true), parent_dispatch_id,
+ *     token_budget, initial_prompt; fan-out groups also carry complete
+ *     predicted_disagreements[] pair records). Optional: meta (true), parent_dispatch_id,
  *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment; never vault/),
  *     invoked_by (tooling extension, not in constitution §5),
  *     evidence_binding ({sheet_path, sheet_sha256, tension_verdicts[2],
@@ -42,8 +44,10 @@
  * NOT ENFORCED here (deliberate — sheet-design rules owned by the strategist
  * and the human confirm gate): dispatch_id YYYY-MM-DD-<slug> format; the
  * layers>1 not-on-a-zig-zag/feedback-endpoint corollary; the semantic
- * four-test anti-bias decision rule (constitution P5: axis vocabulary /
- * clone / spread / evidence — gate-checked on the sheet). The anti_bias_global
+ * anti-bias decision rule (constitution P5: axis vocabulary / clone / spread /
+ * semantic evidence quality — gate-checked on the sheet). Complete pairwise
+ * evidence presence, pool eligibility, identity uniqueness, and final-approver
+ * shape ARE deterministic admission rules. The anti_bias_global
  * required-when->=2-groups-fan-out conditional IS enforced here (2026-06-12
  * in-place amendment, constitution §9).
  *
@@ -53,7 +57,7 @@
  * `project_dir` is a control key (repo-root fallback), never emitted.
  *
  * VALIDATION SPLIT (grandfathering — constitution §2):
- *   - The INCOMING record is validated STRICTLY against the v0.7.0 schema
+ *   - The INCOMING record is validated STRICTLY against the v0.8.0 schema
  *     before append: required fields, closed enums, evidence binding, conditional fields
  *     (working_folder on LIVE types; anti_bias/angle at n >= 2;
  *     anti_bias_global when >= 2 groups have >= 2 agents; n ==
@@ -115,7 +119,7 @@ const isNonEmptyStr = (v) => isStr(v) && v.trim() !== '';
 const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 // ---------------------------------------------------------------- schema
-const SCHEMA_VERSION = '0.7.0';   // row schema: live sheet evidence binding required
+const SCHEMA_VERSION = '0.8.0';   // pairwise evidence + deterministic identity admission
 const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment'];
 // LIVE per constitution §5 (review 2026-06-12; experiment 2026-06-14, owner decisions); others
 // RESERVED (code, plan, suggestion) — recorded but not yet dispatchable.
@@ -149,8 +153,12 @@ const REMOVED_KEYS = new Set(['success_metric', 'constraints', 'created']);
 const LEGACY_LEDGER_KEYS = new Set([
   'status', 'anti_bias', 'agents', 'corpus', 'topic_slug', 'session',
 ]);
-const GROUP_KEYS = new Set(['group_id', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias']);
+const GROUP_KEYS = new Set([
+  'group_id', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias',
+  'predicted_disagreements',
+]);
 const AGENT_KEYS = new Set(['role', 'model', 'token_budget', 'initial_prompt', 'agent_name', 'angle']);
+const PREDICTED_DISAGREEMENT_KEYS = new Set(['pair', 'statement']);
 const CONN_KEYS = new Set(['from', 'to', 'type', 'loop_cap']);
 const EVIDENCE_BINDING_KEYS = new Set([
   'sheet_path', 'sheet_sha256', 'tension_verdicts', 'confirmation',
@@ -161,6 +169,73 @@ const SHA256_RE = /^[a-f0-9]{64}$/;
 
 function normalizeIdentity(value) {
   return value.trim().replace(/\s+/g, ' ');
+}
+
+function parsePoolNameScalar(raw) {
+  const value = raw.trim();
+  if (value.startsWith('"') && value.endsWith('"')) {
+    try {
+      return JSON.parse(value);
+    } catch (_) {
+      return null;
+    }
+  }
+  if (value.startsWith("'") && value.endsWith("'")) {
+    return value.slice(1, -1).replace(/''/g, "'");
+  }
+  return value.replace(/\s+#.*$/, '').trim();
+}
+
+function loadAgentPool(rootInput) {
+  let root;
+  try {
+    root = fs.realpathSync(rootInput);
+  } catch (e) {
+    return {
+      names: new Set(),
+      errors: [`agent pool repository root cannot be resolved: ${J(rootInput)} (${e.code || e.message})`],
+    };
+  }
+
+  const relativePoolPath = 'telemetry/agents/agent-pool.yaml';
+  const poolPath = path.join(root, ...relativePoolPath.split('/'));
+  if (!fs.existsSync(poolPath)) {
+    return {
+      names: new Set(),
+      errors: [`agent pool is required before confirmation and was not found at ${J(relativePoolPath)}`],
+    };
+  }
+
+  let text;
+  try {
+    text = fs.readFileSync(poolPath, 'utf8');
+  } catch (e) {
+    return {
+      names: new Set(),
+      errors: [`agent pool cannot be read at ${J(relativePoolPath)}: ${e.message}`],
+    };
+  }
+
+  const names = new Set();
+  const duplicates = new Set();
+  const errors = [];
+  for (const line of text.split(/\r?\n/)) {
+    const match = line.match(/^\s*-\s+name:\s*(.+?)\s*$/);
+    if (!match) continue;
+    const parsed = parsePoolNameScalar(match[1]);
+    if (!isNonEmptyStr(parsed)) {
+      errors.push(`agent pool contains an unreadable name entry: ${J(match[1])}`);
+      continue;
+    }
+    const normalized = normalizeIdentity(parsed);
+    if (names.has(normalized)) duplicates.add(normalized);
+    names.add(normalized);
+  }
+  if (names.size === 0) errors.push('agent pool contains no readable "- name:" entries');
+  for (const duplicate of duplicates) {
+    errors.push(`agent pool contains duplicate identity ${J(duplicate)}`);
+  }
+  return { names, errors };
 }
 
 function isContained(root, candidate) {
@@ -327,7 +402,7 @@ function validateDispatch(rec, options = {}) {
   for (const k of Object.keys(rec)) {
     if (DISPATCH_KEYS.has(k)) continue;
     if (REMOVED_KEYS.has(k)) errs.push(`"${k}" was removed by schema v0.5.2 — drop it from the record`);
-    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.7.0 schema — drop it from the record`);
+    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.8.0 schema — drop it from the record`);
     else errs.push(`unknown key "${k}" on a dispatch record`);
   }
   if (!isNonEmptyStr(rec.dispatch_id)) errs.push('dispatch_id is required and must be a non-empty string');
@@ -337,7 +412,9 @@ function validateDispatch(rec, options = {}) {
   if (!isNonEmptyStr(rec.goal)) errs.push('goal is required and must be a non-empty string');
   if (!isNonEmptyStr(rec.context)) errs.push('context is required and must be a non-empty string (subagents never see the parent conversation — §5)');
   if (!Number.isInteger(rec.max_loops) || rec.max_loops < 1 || rec.max_loops > 5) errs.push(`max_loops must be an integer in 1..5 (got ${J(rec.max_loops)})`);
-  if (!isNonEmptyStr(rec.final_approver)) errs.push('final_approver is required and must be a non-empty string');
+  if (!isNonEmptyStr(rec.final_approver)) {
+    errs.push('final_approver is required and must be "parent" or a pooled singleton auditor identity');
+  }
   if (requireEvidenceBinding) {
     errs.push(...validateEvidenceBinding(rec.evidence_binding, projectDir));
   } else if (rec.evidence_binding !== undefined) {
@@ -358,6 +435,9 @@ function validateDispatch(rec, options = {}) {
   }
 
   const groupIds = new Set();
+  const identityOccurrences = new Map();
+  const pool = loadAgentPool(projectDir);
+  errs.push(...pool.errors);
   if (!Array.isArray(rec.groups) || rec.groups.length === 0) {
     errs.push('groups is required and must be a non-empty array');
   } else {
@@ -379,6 +459,61 @@ function validateDispatch(rec, options = {}) {
       const fanout = agents !== null && agents.length >= 2;
       if (fanout && !isNonEmptyStr(g.anti_bias)) errs.push(`${gw}.anti_bias is required when the group has >= 2 agents (Principle 5)`);
       if (!fanout && g.anti_bias !== undefined && !isNonEmptyStr(g.anti_bias)) errs.push(`${gw}.anti_bias, when present, must be a non-empty string`);
+      if (fanout) {
+        const expectedPairs = new Set();
+        for (let left = 0; left < agents.length; left += 1) {
+          for (let right = left + 1; right < agents.length; right += 1) {
+            expectedPairs.add(`${left}:${right}`);
+          }
+        }
+        if (!Array.isArray(g.predicted_disagreements)) {
+          errs.push(`${gw}.predicted_disagreements is required when the group has >= 2 agents`);
+        } else {
+          const seenPairs = new Set();
+          g.predicted_disagreements.forEach((entry, pi) => {
+            const pw = `${gw}.predicted_disagreements[${pi}]`;
+            if (!isObj(entry)) {
+              errs.push(`${pw} must be an object`);
+              return;
+            }
+            for (const k of Object.keys(entry)) {
+              if (!PREDICTED_DISAGREEMENT_KEYS.has(k)) errs.push(`${pw}: unknown key "${k}"`);
+            }
+            if (!Array.isArray(entry.pair) || entry.pair.length !== 2 ||
+                !entry.pair.every(Number.isInteger)) {
+              errs.push(`${pw}.pair must be exactly two integer agent indexes`);
+            } else {
+              const [left, right] = entry.pair;
+              if (left < 0 || right < 0 || left >= agents.length || right >= agents.length) {
+                errs.push(`${pw}.pair indexes must be in range 0..${agents.length - 1}`);
+              } else if (left >= right) {
+                errs.push(`${pw}.pair must be canonical unordered form [lower_index, higher_index]`);
+              } else {
+                const key = `${left}:${right}`;
+                if (seenPairs.has(key)) {
+                  errs.push(`${pw}.pair duplicates another predicted-disagreement pair`);
+                }
+                seenPairs.add(key);
+              }
+            }
+            if (!isNonEmptyStr(entry.statement)) {
+              errs.push(`${pw}.statement is required and must be a non-empty string`);
+            }
+          });
+          for (const pair of expectedPairs) {
+            if (!seenPairs.has(pair)) {
+              errs.push(`${gw}.predicted_disagreements is missing required pair [${pair.replace(':', ', ')}]`);
+            }
+          }
+          for (const pair of seenPairs) {
+            if (!expectedPairs.has(pair)) {
+              errs.push(`${gw}.predicted_disagreements contains unexpected pair [${pair.replace(':', ', ')}]`);
+            }
+          }
+        }
+      } else if (g.predicted_disagreements !== undefined) {
+        errs.push(`${gw}.predicted_disagreements must be absent when the group has fewer than 2 agents`);
+      }
       if (agents) agents.forEach((a, ai) => {
         const aw = `${gw}.agents[${ai}]`;
         if (!isObj(a)) { errs.push(`${aw} must be an object`); return; }
@@ -387,7 +522,17 @@ function validateDispatch(rec, options = {}) {
         if (!isNonEmptyStr(a.model)) errs.push(`${aw}.model is required and must be a non-empty string`);
         if (!Number.isInteger(a.token_budget) || a.token_budget <= 0) errs.push(`${aw}.token_budget is required and must be a positive integer — no unlimited default (§5)`);
         if (!isNonEmptyStr(a.initial_prompt)) errs.push(`${aw}.initial_prompt is required and must be a non-empty string`);
-        if (a.agent_name !== undefined && a.agent_name !== null && !isNonEmptyStr(a.agent_name)) errs.push(`${aw}.agent_name must be a string or null`);
+        if (a.agent_name !== undefined && a.agent_name !== null && !isNonEmptyStr(a.agent_name)) {
+          errs.push(`${aw}.agent_name must be a string or null`);
+        } else if (isNonEmptyStr(a.agent_name)) {
+          const normalized = normalizeIdentity(a.agent_name);
+          if (!pool.names.has(normalized)) {
+            errs.push(`${aw}.agent_name ${J(a.agent_name)} is not present in telemetry/agents/agent-pool.yaml`);
+          }
+          const occurrences = identityOccurrences.get(normalized) || [];
+          occurrences.push({ group: g, agent: a, where: aw });
+          identityOccurrences.set(normalized, occurrences);
+        }
         if (fanout && !isNonEmptyStr(a.angle)) errs.push(`${aw}.angle is required when the group has >= 2 agents (Principle 5)`);
         if (!fanout && a.angle !== undefined && !isNonEmptyStr(a.angle)) errs.push(`${aw}.angle, when present, must be a non-empty string`);
       });
@@ -397,17 +542,27 @@ function validateDispatch(rec, options = {}) {
       errs.push(`anti_bias_global is required when >= 2 groups have >= 2 agents (${fanoutGroups} fan-out groups declared — §5 conditional, Principle 5)`);
     }
 
-    if (isNonEmptyStr(rec.final_approver)) {
+    for (const [identity, occurrences] of identityOccurrences) {
+      if (occurrences.length > 1) {
+        errs.push(`agent_name ${J(identity)} appears ${occurrences.length} times; non-null identities must be unique within a dispatch`);
+      }
+    }
+
+    if (isNonEmptyStr(rec.final_approver) && normalizeIdentity(rec.final_approver) !== 'parent') {
       const approver = normalizeIdentity(rec.final_approver);
-      const workingNames = rec.groups
-        .filter(isObj)
-        .flatMap((g) => Array.isArray(g.agents) ? g.agents : [])
-        .filter(isObj)
-        .map((agent) => agent.agent_name)
-        .filter(isNonEmptyStr)
-        .map(normalizeIdentity);
-      if (workingNames.includes(approver)) {
-        errs.push(`final_approver ${J(rec.final_approver)} must not be a working agent (P12 no-self-approval)`);
+      if (!pool.names.has(approver)) {
+        errs.push(`final_approver ${J(rec.final_approver)} is not present in telemetry/agents/agent-pool.yaml`);
+      }
+      const occurrences = identityOccurrences.get(approver) || [];
+      if (occurrences.length !== 1) {
+        errs.push(`final_approver ${J(rec.final_approver)} must appear exactly once as the sole auditor in a dedicated approval group`);
+      } else {
+        const occurrence = occurrences[0];
+        if (occurrence.agent.role !== 'auditor' ||
+            !Array.isArray(occurrence.group.agents) ||
+            occurrence.group.agents.length !== 1) {
+          errs.push(`final_approver ${J(rec.final_approver)} must be the sole agent of a singleton group with role "auditor"`);
+        }
       }
     }
   }
@@ -438,7 +593,7 @@ function validateClose(rec) {
   for (const k of Object.keys(rec)) {
     if (k === 'dispatch_id' || CLOSE_KEYS.has(k)) continue;
     if (REMOVED_KEYS.has(k)) errs.push(`"${k}" was removed by schema v0.5.2 — drop it from the record`);
-    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.7.0 schema — drop it from the record`);
+    else if (LEGACY_LEDGER_KEYS.has(k)) errs.push(`"${k}" is a pre-v0.5.2 ledger-row key, not in the v0.8.0 schema — drop it from the record`);
     else errs.push(`unknown key "${k}" on a close record`);
   }
   if (!isNonEmptyStr(rec.close_of)) errs.push('close_of must be a non-empty string');

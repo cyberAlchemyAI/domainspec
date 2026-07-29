@@ -6,7 +6,7 @@ description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagent
 # register-dispatch
 
 Record **one row per dispatch** in the repo ledger `telemetry/agents/subagents-dispatch.yaml`,
-under the subagents-strategy constitution **schema v0.7.0**. A dispatch contributes exactly
+under the subagents-strategy constitution **schema v0.8.0**. A dispatch contributes exactly
 **two appends** (constitution Principle 3): the **dispatch row** (the spec, at dispatch) and
 the **close row** (`close_of` + outcome, at termination). The ledger is append-only — rows
 are never edited in place.
@@ -27,35 +27,37 @@ are never edited in place.
   is not a dispatch (P11, owned by the router) — do not register it; it is reported in
   the parent's `agents_spawned`.
 
-## The dispatch row (schema v0.7.0)
+## The dispatch row (schema v0.8.0)
 
 The appender **validates the incoming record strictly** and rejects (exit 2) on any
 schema violation, listing every error. Unknown keys are rejected — keys in constitution
 §7's removed table (`success_metric`, `constraints`, `created`) get an explicit
 **removed by schema v0.5.2** error (historical: those keys were removed at v0.5.2); old
 ledger-row-only keys (`status`, `anti_bias` top level, `agents` top level, `corpus`,
-`topic_slug`, `session`) get a **pre-v0.5.2 ledger-row key, not in the v0.7.0 schema**
+`topic_slug`, `session`) get a **pre-v0.5.2 ledger-row key, not in the v0.8.0 schema**
 error.
 
 **Not enforced by the appender** (sheet-design rules owned by the strategist and the
 human confirm gate): the `dispatch_id` `YYYY-MM-DD-<slug>` format, the `layers > 1`
 not-on-a-zig-zag/feedback-endpoint corollary, and the semantic four-test anti-bias
-decision rule (constitution P5: axis vocabulary / clone / spread / evidence — gate-checked
-on the sheet). The `anti_bias_global` required-when-≥ 2-groups-fan-out conditional **is
-appender-enforced** since the 2026-06-12 in-place amendment (constitution §9), and
-working-agent / final-approver separation is also enforced.
+decision rule (constitution P5: axis vocabulary / clone / spread / semantic
+evidence quality — gate-checked on the sheet). The appender deterministically
+enforces complete pair coverage, pool membership, non-null identity uniqueness,
+and final-approver eligibility before tension or confirmation. The
+`anti_bias_global` required-when-≥ 2-groups-fan-out conditional is also
+appender-enforced.
 
 ### Top level
 
 | Field                | Required               | Meaning / constraint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | -------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `dispatch_id`        | ✅                     | Unique id, `YYYY-MM-DD-<slug>` (§5). Dedup key — re-registering the same id is a no-op.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `schema_version`     | ✅                     | Must be **exactly** `"0.7.0"`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `dispatch_type`      | ✅                     | `research \| code \| review \| plan \| suggestion \| experiment`. `research`, `review`, and `experiment` are LIVE (review 2026-06-12; experiment 2026-06-14, narrow recipe — owner decisions); the other three (`code`, `plan`, `suggestion`) are RESERVED and the appender rejects them under v0.7.0. `experiment` runs the falsification strategy (role-set designer/runner/adjudicator/skeptic; grader = falsification against a pre-registered criterion + internal validity + reproducibility; verdict SURVIVED/FALSIFIED/INVALID; the criterion is a `working_folder` artifact, never a column). |
+| `schema_version`     | ✅                     | Must be **exactly** `"0.8.0"`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `dispatch_type`      | ✅                     | `research \| code \| review \| plan \| suggestion \| experiment`. `research`, `review`, and `experiment` are LIVE (review 2026-06-12; experiment 2026-06-14, narrow recipe — owner decisions); the other three (`code`, `plan`, `suggestion`) are RESERVED and the appender rejects them under v0.8.0. `experiment` runs the falsification strategy (role-set designer/runner/adjudicator/skeptic; grader = falsification against a pre-registered criterion + internal validity + reproducibility; verdict SURVIVED/FALSIFIED/INVALID; the criterion is a `working_folder` artifact, never a column). |
 | `goal`               | ✅                     | Non-empty string — the human's objective, one or two sentences.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `context`            | ✅                     | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `max_loops`          | ✅                     | Integer 1..5 — whole-sequence re-run ceiling.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `final_approver`     | ✅                     | Non-empty string: `parent` or the `agent_name` of a dedicated approver agent (no self-approval — P12).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `final_approver`     | ✅                     | Exactly `parent`, or the pooled `agent_name` that appears once as the sole `auditor` in a singleton dedicated approval group. Arbitrary external names and working roles are rejected before confirmation.                                                                                                                                                                                                                                                                                                                                                                                             |
 | `evidence_binding`   | ✅                     | **JSON column** binding the live sheet file and SHA-256 to exactly two independent PASS verdict handles and one explicit-confirmation handle. See below.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `groups`             | ✅                     | **JSON column** — non-empty array of group objects (below).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `meta`               | –                      | If present, must be boolean `true` (planning/framework dispatches only).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -105,14 +107,15 @@ evidence before registration.
 
 ### Each object in `groups`
 
-| Key           | Required  | Meaning / constraint                                                                                                                                                                                   |
-| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `group_id`    | ✅        | Stable id, unique among groups; the target of `connections` references. A group has **no** `role` field — its function is read off its agents' roles, and its workflow position off its `connections`. |
-| `agents`      | ✅        | Non-empty array of agent objects (below). They run in parallel.                                                                                                                                        |
-| `n`           | –         | Integer ≥ 1; if present must equal `agents.length`.                                                                                                                                                    |
-| `robot_talks` | –         | Boolean — agents discuss after their parallel runs (n ≥ 2 only meaningful).                                                                                                                            |
-| `layers`      | –         | Integer ≥ 1 — sequential invocations of this group. Unenforced: a group with `layers > 1` may not sit on a zig-zag/feedback endpoint (§5 layers corollary).                                            |
-| `anti_bias`   | n ≥ 2: ✅ | The group's named tension axis. **Required when the group has ≥ 2 agents** (Principle 5).                                                                                                              |
+| Key                       | Required  | Meaning / constraint                                                                                                                                                                                                    |
+| ------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `group_id`                | ✅        | Stable id, unique among groups; the target of `connections` references. A group has **no** `role` field — its function is read off its agents' roles, and its workflow position off its `connections`.                  |
+| `agents`                  | ✅        | Non-empty array of agent objects (below). They run in parallel.                                                                                                                                                         |
+| `n`                       | –         | Integer ≥ 1; if present must equal `agents.length`.                                                                                                                                                                     |
+| `robot_talks`             | –         | Boolean — agents discuss after their parallel runs (n ≥ 2 only meaningful).                                                                                                                                             |
+| `layers`                  | –         | Integer ≥ 1 — sequential invocations of this group. Unenforced: a group with `layers > 1` may not sit on a zig-zag/feedback endpoint (§5 layers corollary).                                                             |
+| `anti_bias`               | n ≥ 2: ✅ | The group's named tension axis. **Required when the group has ≥ 2 agents** (Principle 5).                                                                                                                               |
+| `predicted_disagreements` | n ≥ 2: ✅ | Array of `{pair: [lower_index, higher_index], statement}`. Exactly one record is required for every unordered pair; it must be absent for singleton groups. This digest-owned field is the only Test 4 evidence source. |
 
 ### Each object in `groups[].agents`
 
@@ -122,8 +125,22 @@ evidence before registration.
 | `model`          | ✅        | Non-empty string — concrete model id, picked by difficulty.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `token_budget`   | ✅        | Positive integer — declared output-length target; **no unlimited default** (§5).                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `initial_prompt` | ✅        | Non-empty string — the full briefing the agent receives at launch. Newlines are fine: JSON.stringify escapes them into the single-line JSON column.                                                                                                                                                                                                                                                                                                                                                 |
-| `agent_name`     | –         | String from the agent pool, or `null`.                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `agent_name`     | –         | String from `telemetry/agents/agent-pool.yaml`, or `null`. Every non-null identity must resolve in that pool and appear only once in the dispatch.                                                                                                                                                                                                                                                                                                                                                  |
 | `angle`          | n ≥ 2: ✅ | This agent's position on the group's `anti_bias` axis. **Required when the group has ≥ 2 agents.**                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+### Agent and approver admission
+
+The non-mutating readiness validator resolves
+`telemetry/agents/agent-pool.yaml` before the human gate. A missing or
+unreadable pool, an unpooled non-null identity, or a repeated non-null identity
+blocks. `null` remains valid for an unnamed runtime selection.
+
+`final_approver: "parent"` is always the default valid shape. A named
+approver is valid only when that pooled identity occurs exactly once in
+`groups`, has role `auditor`, and is the only agent in that group. The
+singleton auditor is the approval stage, not a working explorer,
+synthesizer, skeptic, or writer. A named identity outside the groups or an
+arbitrary external maintainer string is invalid.
 
 ### Each object in `connections`
 
@@ -158,13 +175,18 @@ Bash access to the file, even read-only commands.
    stale. Warn the maintainer, rematerialize from this live form owner, and
    validate again before tension or confirmation. The warning never admits an
    invalid sheet.
-5. Any other form error blocks before tension. `check-tension` owns semantic
-   anti-bias; it does not replace this readiness gate.
+5. Any other readiness error blocks before tension. This includes an unpooled
+   or duplicated identity, an inadmissible final approver, or missing,
+   duplicated, reversed, self, out-of-range, or empty pair evidence.
+   `check-tension` owns semantic anti-bias quality; it does not replace this
+   deterministic readiness gate.
 
-This ordering prevents form-version or registrar drift from creating a second
-human gate. Once the admitted digest is confirmed, any byte change remains
-material under the exact-digest contract and requires readiness validation,
-new tension verdicts, and new confirmation.
+This ordering prevents deterministic registrar defects from creating a second
+human gate. Draft-revision authorization is not dispatch confirmation. Ask for
+confirmation once, only after readiness and both tension verdicts pass. Once
+the admitted digest is confirmed, any genuine byte change remains material
+under the exact-digest contract and requires readiness validation, new tension
+verdicts, and new confirmation.
 
 ### After confirmation
 
@@ -181,7 +203,7 @@ new tension verdicts, and new confirmation.
      .register-dispatch.tmp.json
    ```
    It creates `telemetry/agents/subagents-dispatch.yaml` (and its directories) with
-   a header if absent, validates the record against schema v0.7.0 (exit 2 with the
+   a header if absent, validates the record against schema v0.8.0 (exit 2 with the
    full error list on violation), appends one row, and is idempotent on
    `dispatch_id`. Before appending it structurally self-checks the existing ledger
    (line shapes, JSON values, unique ids) and refuses with exit 1 if the ledger is
@@ -197,7 +219,7 @@ new tension verdicts, and new confirmation.
 ```json
 {
   "dispatch_id": "2026-06-12-residue-precedent-sweep",
-  "schema_version": "0.7.0",
+  "schema_version": "0.8.0",
   "dispatch_type": "research",
   "goal": "Determine whether the residue-ledger pattern has prior art that constrains our naming.",
   "context": "The discovery names a residue ledger as novel. Before publishing we need to know if the pattern is already owned in the literature and under what name. Outputs feed the discovery's open-question section.",
@@ -232,6 +254,12 @@ new tension verdicts, and new confirmation.
       "group_id": "explorers",
       "n": 2,
       "anti_bias": "source corpus (formal-methods literature vs practitioner blogs)",
+      "predicted_disagreements": [
+        {
+          "pair": [0, 1],
+          "statement": "Agent 0 searches formal-methods literature while agent 1 searches practitioner sources on the source-corpus axis; each exposes the other's corpus blind spot."
+        }
+      ],
       "agents": [
         {
           "agent_name": "Abramsky, Samson",
@@ -275,7 +303,7 @@ resulting ledger row looks like:
 
 ```yaml
 - dispatch_id: "2026-06-12-residue-precedent-sweep"
-  schema_version: "0.7.0"
+  schema_version: "0.8.0"
   created: "2026-06-12T18:00:00.000Z"
   invoked_by: "victorboscaro@gmail.com"
   dispatch_type: "research"
@@ -298,6 +326,13 @@ resulting ledger row looks like:
         "group_id": "explorers",
         "n": 2,
         "anti_bias": "source corpus (formal-methods literature vs practitioner blogs)",
+        "predicted_disagreements":
+          [
+            {
+              "pair": [0, 1],
+              "statement": "Agent 0 searches formal sources while agent 1 searches practitioner sources; each exposes the other's corpus blind spot.",
+            },
+          ],
         "agents": […],
       },
       …,
@@ -349,6 +384,6 @@ Rows written under pre-v0.5.2 schemas (recognizable by the absence of
 are **valid historical artifacts and are never re-validated** against the new
 schema. The appender's pre-append self-check over the existing ledger is
 **structure-only** (line shapes, JSON values, unique ids) so old rows keep
-passing forever. Strict v0.7.0 validation applies **only to the incoming
+passing forever. Strict v0.8.0 validation applies **only to the incoming
 record**, before append. The ledger file's own header comment is likewise
 historical — written once at creation, never edited; it may lag the current schema.
