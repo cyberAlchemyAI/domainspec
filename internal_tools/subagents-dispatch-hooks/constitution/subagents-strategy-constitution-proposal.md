@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.8.0-proposal
-last_updated: 2026-07-28
+version: 0.8.1-proposal
+last_updated: 2026-08-02
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
@@ -116,8 +116,9 @@ does not enter this rule — it is message exchange between two groups, not a wa
 combining outputs.
 
 Lifecycle: **(1)** strategist fills the sheet and proposes it in chat → **(2)** human
-confirms (nothing persists before this; the confirmed sheet is **frozen** — any strategist
-edit after confirm re-enters the gate) → **(3)** dispatch row appended to the registry,
+confirms its material strategy (nothing persists before this; any later sheet-byte
+edit re-enters machine readiness and tension gates, while material change also re-enters
+the human gate) → **(3)** dispatch row appended to the registry,
 groups dispatched in order, outputs land in `working_folder` → **(4)** close: the strategist
 **reports** `exit_reason` + `agents_spawned` in chat and in the findings doc, AND appends
 the **close row** (`close_of`) to the registry. Neither row is ever edited in place — the
@@ -138,8 +139,11 @@ redesigning the framework itself — and is the only context in which dispatch l
    confirms, revises, or abandons. Approval to revise the draft is not dispatch
    confirmation. Nothing dispatches — and no row is written — before explicit
    confirmation. Silence or a question is not confirmation. A normal ready
-   proposal asks once. The confirmed sheet is **frozen**: any strategist edit
-   after confirm re-enters readiness, both tension checks, and the human gate.
+   proposal asks once. Human confirmation binds the reviewed material strategy,
+   not raw serialization bytes. Any later byte edit re-enters readiness and both
+   tension checks. The prior confirmation carries only when a deterministic
+   projection comparison proves the material strategy unchanged; material or
+   unclassifiable change re-enters the human gate.
 3. **Two appends, one place.** The strategist appends the **dispatch row** to `telemetry/agents/subagents-dispatch.yaml` at dispatch, and the **close row** (`close_of` carrying `exit_reason` + `agents_spawned`) at termination. Rows are **never edited in place** — the ledger is append-only, and the appender is the single, serializing write path. The outcome is additionally reported in chat (1–2 sentences) and in the findings document. No other persistence surface exists for dispatch metadata.
 4. **Execution shape.** Agents within a group run in parallel — each with its own start, briefing, and context. Groups are scheduled **by dependency**: a group is READY when every group with a `sequential` or `zig-zag` edge into it has produced what it must respond to (a zig-zag edge counts only in its `from`→`to` direction — the `from` endpoint opens the exchange); all READY groups launch concurrently; `feedback` edges never count as dependencies; a sheet with no connections declares its groups independent. Dependent work goes in a downstream group, joined by an edge. An agent error inside a group degrades to a **partial group result** that downstream groups and the `final_approver` must be told about; `exit_reason: error` is reserved for failures that leave the dispatch unable to produce its deliverable.
 5. **Anti-bias tension.** Any group with N ≥ 2 agents must be **pairwise tensioned**: for every pair, a competent observer could predict in advance a question on which they disagree. The group names the axis (`anti_bias`); each agent takes a position (`angle`). Non-overlapping is not enough. The check happens at the confirm gate: a sheet whose pairs have no predictable disagreement goes back for revision. The proposal must state, for each tensioned pair, the question on which the two are predicted to disagree.
@@ -1001,11 +1005,38 @@ That made preventable defects appear only after the human had confirmed.
 This is a row-schema change. New dispatch sheets use wire
 `schema_version: "0.8.0"`; historical rows remain structurally grandfathered.
 
-| #                                           | Decision                                                                                                                                                                                                                                         | Amendment |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
-| **CR-1 — digest-owned pair evidence**       | Every fan-out group adds `predicted_disagreements`, with exactly one canonical indexed record for every unordered pair. Companion prose cannot satisfy Test 4.                                                                                   |
-| **CR-2 — deterministic identity admission** | Before tension or confirmation, every non-null `agent_name` must resolve in the active pool and appear only once in the dispatch.                                                                                                                |
-| **CR-3 — approver admission**               | A named `final_approver` must be pooled and occur exactly once as the sole `auditor` of a singleton dedicated approval group. `parent` remains the default. Arbitrary external names and working roles are invalid.                              |
-| **CR-4 — sheet-only tension gate**          | The two independent tension verdicts receive only the exact sheet bytes, digest, and rubric. They run independently in parallel; checker/reviewer comparison occurs only after both verdicts are frozen.                                         |
-| **CR-5 — one human request**                | Draft revision is not confirmation. Form, type, pool, identity, approver, pair coverage, path, and tension obligations close before the normal single confirmation request. A genuine post-confirmation byte change still requires a fresh gate. |
-| **CR-6 — evidence boundary**                | The deterministic appender owns structural pair coverage and identity/approver admission. `check-tension` owns semantic axis, clone, spread, and evidence quality. Neither gate may infer the other's verdict.                                   |
+| #                                           | Decision                                                                                                                                                                                                                                                                              | Amendment |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| **CR-1 — digest-owned pair evidence**       | Every fan-out group adds `predicted_disagreements`, with exactly one canonical indexed record for every unordered pair. Companion prose cannot satisfy Test 4.                                                                                                                        |
+| **CR-2 — deterministic identity admission** | Before tension or confirmation, every non-null `agent_name` must resolve in the active pool and appear only once in the dispatch.                                                                                                                                                     |
+| **CR-3 — approver admission**               | A named `final_approver` must be pooled and occur exactly once as the sole `auditor` of a singleton dedicated approval group. `parent` remains the default. Arbitrary external names and working roles are invalid.                                                                   |
+| **CR-4 — sheet-only tension gate**          | The two independent tension verdicts receive only the exact sheet bytes, digest, and rubric. They run independently in parallel; checker/reviewer comparison occurs only after both verdicts are frozen.                                                                              |
+| **CR-5 — one human request**                | Draft revision is not confirmation. Form, type, pool, identity, approver, pair coverage, path, and tension obligations close before the normal single confirmation request. Byte revisions refresh machine gates; only material or unclassifiable changes require a fresh human gate. |
+| **CR-6 — evidence boundary**                | The deterministic appender owns structural pair coverage and identity/approver admission. `check-tension` owns semantic axis, clone, spread, and evidence quality. Neither gate may infer the other's verdict.                                                                        |
+
+## 16. v0.8.1 document amendment (2026-08-02 — semantic confirmation)
+
+Source: user-reported redundant-confirmation defect, maintenance Inventory
+lookup, and the required independent observer pass. The row schema remains
+`0.8.0`; this amendment changes lifecycle semantics and evidence interpretation,
+not ledger columns.
+
+1. Human confirmation binds a deterministic **material-strategy projection**:
+   objective and evidence boundary; dispatch type; lane purpose; agent identity,
+   role, angle, prompt, and source scope; outputs; dependency topology and loop
+   ceilings; final approver; destination; publication/privacy boundary;
+   validation; and stop conditions.
+2. Exact sheet SHA-256 values remain mandatory **machine-integrity evidence** for
+   readiness, both tension verdicts, and registrar attachment. Every byte edit
+   invalidates those machine receipts and reruns their gates.
+3. Whitespace, key order, digests and evidence handles, derived counts, schema
+   defaults, and canonical materialization of content already presented to the
+   human are mechanical only when a deterministic comparison proves the
+   material projection unchanged.
+4. A prior confirmation may carry to new admitted bytes only with a durable
+   material-equivalence receipt. Material change, unknown equivalence, or an
+   unprovable comparison fails closed and requires the revised strategy to be
+   presented and reconfirmed.
+5. `confirmation.sheet_sha256` binds the direct-or-carried confirmation handle
+   to the bytes being registered; it does not redefine human approval as assent
+   to serialization details.

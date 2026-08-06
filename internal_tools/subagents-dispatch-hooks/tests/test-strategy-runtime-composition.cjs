@@ -128,6 +128,30 @@ for (const runtime of ['codex', 'claude']) {
     ),
     `${runtime}: stage-handoff readiness removal must fail`,
   );
+
+  const humanGateRemoval = replaceAcrossWhitespace(
+    publicText,
+    'Human confirmation binds the material strategy that was presented, not the serialization bytes of its dispatch sheet.',
+    'Human confirmation binds the current bytes.',
+  );
+  check(
+    errorsFor(runtime, 'public', humanGateRemoval).some((error) =>
+      error.includes('missing protected rule human_gate'),
+    ),
+    `${runtime}: semantic human-gate removal must fail`,
+  );
+
+  const equivalenceRemoval = replaceAcrossWhitespace(
+    publicText,
+    'Carry the prior confirmation only when the configured deterministic equivalence check proves the material-strategy projection unchanged; record the equivalence receipt and attach the carried confirmation to the current machine digest.',
+    'Carry prior confirmation after byte changes.',
+  );
+  check(
+    errorsFor(runtime, 'public', equivalenceRemoval).some((error) =>
+      error.includes('missing protected rule material_equivalence'),
+    ),
+    `${runtime}: material-equivalence removal must fail`,
+  );
 }
 
 for (const overlayRuntime of ['codex', 'claude']) {
@@ -215,6 +239,30 @@ for (const overlayRuntime of ['codex', 'claude']) {
       error.includes('missing protected rule public_private'),
     ),
     `${overlayRuntime}: public/private removal must fail`,
+  );
+
+  const humanGateRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'Human confirmation binds the reviewed material strategy, not raw sheet bytes.',
+    'Human confirmation binds raw bytes.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', humanGateRemoval).some((error) =>
+      error.includes('missing protected rule human_gate'),
+    ),
+    `${overlayRuntime}: local semantic human-gate removal must fail`,
+  );
+
+  const equivalenceRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'Carry the prior confirmation only when they are equivalent, record a material-equivalence receipt, and attach that carried handle to the current digest at registration.',
+    'Carry prior confirmation after byte changes.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', equivalenceRemoval).some((error) =>
+      error.includes('missing protected rule material_equivalence'),
+    ),
+    `${overlayRuntime}: local material-equivalence removal must fail`,
   );
 
   const undeclaredOverlay = overlayText.replace(

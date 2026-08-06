@@ -30,6 +30,12 @@ documents, parent-written summaries, prior chat, and any evidence not present
 in those sheet bytes are forbidden. In particular, Test 4 is satisfied only by
 the sheet's digest-owned `predicted_disagreements` records.
 
+The digest identifies the exact machine input to this tension verdict; it does
+not define the scope of human confirmation. Every byte revision requires fresh
+independent tension verdicts on the new digest. Whether a prior human
+confirmation carries is owned by the router's deterministic material-strategy
+equivalence rule, not by this gate.
+
 ## The two agents (independent)
 
 Both read the **proposed sheet** — the `groups`, each agent's `role` and

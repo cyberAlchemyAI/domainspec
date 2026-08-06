@@ -94,14 +94,36 @@ current artifact. Automatic preflight must not expand into Inventory `install`,
 
    Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.8.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`. This is a composite readiness result, not merely syntax: the validator closes form/version, live type, agent-pool membership, non-null identity uniqueness, final-approver shape, complete pair coverage, and local path constraints. Type-owner prerequisites and public/private publication checks must also be closed before asking the human. If a selected runtime or candidate declares another version, report `FORM_VERSION_DRIFT`, rematerialize from the repo-local owner, and validate again before tension or confirmation. Other readiness errors block.
 
-   For each group with 2 or more agents, name the anti-bias axis and the concrete question where every pair is expected to disagree. Run the check-tension gate against the exact sheet bytes and rubric only: companion files, parent summaries, and unstored chat context are forbidden inputs. Phase 1 obtains two independent parallel verdicts bound to the admitted digest. If defects exist, Phase 2 may show the frozen checker apontamentos to the reviewer for comparison, without changing the reviewer's independent verdict. Only PASS/PASS reaches the human. Preserve the two evidence handles, independent verdicts, and digest, not the full returns. Any strategist edit after admission invalidates the digest and returns to confirmation-readiness validation before both tension checks. If the runtime has no callable subagent tool, state that the tension gate cannot be executed and stop at a validated but ungated proposal.
+   For each group with 2 or more agents, name the anti-bias axis and the concrete question where every pair is expected to disagree. Run the check-tension gate against the exact sheet bytes and rubric only: companion files, parent summaries, and unstored chat context are forbidden inputs. Phase 1 obtains two independent parallel verdicts bound to the admitted digest. If defects exist, Phase 2 may show the frozen checker apontamentos to the reviewer for comparison, without changing the reviewer's independent verdict. Only PASS/PASS reaches the human. Preserve the two evidence handles, independent verdicts, and digest, not the full returns. Any strategist byte edit after admission invalidates the machine digest and returns to confirmation-readiness validation before both tension checks. It does not automatically invalidate a prior human confirmation of an unchanged material strategy. If the runtime has no callable subagent tool, state that the tension gate cannot be executed and stop at a validated but ungated proposal.
 
 2. Confirm.
-   Wait for explicit human confirmation only after composite confirmation readiness and both independent tension checks pass. Silence, discussion, a question, or approval to revise the draft is not dispatch confirmation. A normal run asks once, after the proposal is fully ready. Record a confirmation handle and the exact confirmed sheet digest. After confirmation, the sheet is frozen; any byte change returns to confirmation-readiness validation, both tension checks, and explicit reconfirmation. Never classify a genuine post-confirmation byte edit as harmless under the current exact-byte binding.
+   Wait for explicit human confirmation only after composite confirmation readiness and both independent tension checks pass. Silence, discussion, a question, or approval to revise the draft is not dispatch confirmation. A normal run asks once, after the proposal is fully ready. Human confirmation binds the reviewed material strategy, not raw sheet bytes. Material fields are the goal and evidence boundary; dispatch type; group purposes; agent identities, roles, angles, prompts, and source scope; outputs; dependency topology and loop ceilings; final approver; working-folder destination; publication/privacy boundary; validation; and stop conditions.
+
+   Every later byte change still returns to confirmation-readiness validation and both tension checks on the new digest. After those gates pass, compare the prior and current material-strategy projections deterministically. Carry the prior confirmation only when they are equivalent, record a material-equivalence receipt, and attach that carried handle to the current digest at registration. Reconfirm only when a material field changed or equivalence is unknown or unprovable. Whitespace, key order, derived counts, schema defaults, evidence digests and handles, and canonical materialization of already-presented content are mechanical only when the equivalence receipt proves the material projection unchanged.
+
+   Use the local projection owner before the human gate and preserve its JSON
+   output beside the sheet:
+
+   ```sh
+   node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/domainspec-subagents-strategy/material-strategy.cjs \
+     --project <dispatch-sheet.json>
+   ```
+
+   After a byte revision, compare the preserved projection to the current
+   sheet. Exit `0` with `equivalence: same` carries confirmation; exit `2` with
+   `changed` requires reconfirmation; parse errors or unknown fields exit `1`
+   and fail closed:
+
+   ```sh
+   node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/domainspec-subagents-strategy/material-strategy.cjs \
+     --compare <confirmed-material-projection.json> <current-dispatch-sheet.json>
+   ```
 
 3. Register and run.
    Assemble schema 0.8.0 `evidence_binding` from the live sheet path/digest,
-   the two PASS handles, and the confirmation handle. Append the dispatch row
+   the two PASS handles, and either the direct confirmation handle or a carried
+   confirmation handle that references the deterministic material-equivalence
+   receipt. Append the dispatch row
    with the deterministic appender; it independently hashes the current sheet
    and rejects incomplete or substituted evidence. Then launch groups by dependency:
    a group is READY when every `sequential` or `zig-zag` edge into it has produced what it
@@ -182,6 +204,8 @@ Reflection-relevant signals include:
   `register-dispatch` form owner;
 - stale runtime or schema projection discovered only after human confirmation;
 - repeated confirmation caused by a preventable pre-confirmation form defect.
+- repeated confirmation caused only by sheet-byte changes when a deterministic
+  material-strategy comparison proves the human-reviewed strategy unchanged;
 - pairwise disagreement evidence stored only in a companion document rather
   than the admitted sheet bytes;
 - an unpooled or duplicated agent identity, or an invalid final approver,
@@ -257,10 +281,10 @@ For close rows, use `close_of`, `exit_reason`, `agents_spawned`, optional `feedb
   `auditor` in a singleton dedicated approval group; arbitrary external names
   and working roles cannot approve.
 - Three dials, three scopes: `layers` belongs to a group, `loop_cap` belongs to a zig-zag or feedback edge, and `max_loops` belongs to the whole dispatch.
-- One human gate: all deterministic readiness defects are resolved before
-  asking, draft-revision authorization is not confirmation, and a normal ready
-  run asks once; exact-byte changes after confirmation still require
-  reconfirmation.
+- One human gate per material strategy: all deterministic readiness defects are
+  resolved before asking, draft-revision authorization is not confirmation,
+  and a normal ready run asks once. Exact-byte changes always refresh machine
+  gates but require reconfirmation only for material or unclassifiable change.
 - Stage readiness is owner-typed: `ready`, `needs_feedback`, or `blocked`.
   Repair traverses only an already-confirmed eligible edge with capacity.
 - Exit reasons are `resolved`, `loop_ceiling_reached`, `dissent_irreconcilable`, `user_abort`, or `error`.
@@ -274,3 +298,4 @@ For close rows, use `close_of`, `exit_reason`, `agents_spawned`, optional `feedb
 - Form and appender: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/SKILL.md`
 - Agent pool: `telemetry/agents/agent-pool.yaml`
 - Dispatch ledger: `telemetry/agents/subagents-dispatch.yaml`
+- Material projection owner: `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/domainspec-subagents-strategy/material-strategy.cjs`

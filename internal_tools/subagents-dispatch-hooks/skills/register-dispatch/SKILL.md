@@ -17,7 +17,9 @@ are never edited in place.
   validator against the exact persisted candidate sheet. It validates the live
   row core without requiring `evidence_binding` and never touches the ledger.
 - After (or as) you dispatch subagents for any non-trivial task.
-- **Principle-2 gate:** append only after the human's explicit confirm of the sheet —
+- **Principle-2 gate:** append only after the human's explicit confirmation of
+  the material strategy, either directly or carried by a deterministic
+  material-equivalence receipt —
   the gate is owned by the router (`domainspec-subagents-strategy`) / constitution P2;
   never append before it.
 - Register **once per dispatch**, not once per agent or per group. A dispatch with three
@@ -58,7 +60,7 @@ appender-enforced.
 | `context`            | ✅                     | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `max_loops`          | ✅                     | Integer 1..5 — whole-sequence re-run ceiling.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `final_approver`     | ✅                     | Exactly `parent`, or the pooled `agent_name` that appears once as the sole `auditor` in a singleton dedicated approval group. Arbitrary external names and working roles are rejected before confirmation.                                                                                                                                                                                                                                                                                                                                                                                             |
-| `evidence_binding`   | ✅                     | **JSON column** binding the live sheet file and SHA-256 to exactly two independent PASS verdict handles and one explicit-confirmation handle. See below.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `evidence_binding`   | ✅                     | **JSON column** binding the live sheet file and SHA-256 to exactly two independent PASS verdict handles and one confirmation handle. The handle may represent direct confirmation or a prior confirmation carried by a deterministic material-equivalence receipt. See below.                                                                                                                                                                                                                                                                                                                          |
 | `groups`             | ✅                     | **JSON column** — non-empty array of group objects (below).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `meta`               | –                      | If present, must be boolean `true` (planning/framework dispatches only).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `parent_dispatch_id` | –                      | String (or null/omitted) — only on a dispatch planned by a meta dispatch.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -101,9 +103,12 @@ chat transcripts:
 `sheet_path` must be a repository-relative regular file that resolves inside
 the repository. The appender hashes its current bytes and rejects a digest
 mismatch, one or failing verdict, duplicate verdict handles, absent
-confirmation, or any digest that does not equal `sheet_sha256`. Any sheet edit
-after tension or confirmation therefore requires new verdict and confirmation
-evidence before registration.
+confirmation, or any digest that does not equal `sheet_sha256`. This exact
+digest is machine-integrity evidence: any sheet edit requires new readiness and
+tension evidence before registration. `confirmation.sheet_sha256` attaches the
+confirmation handle to the current admitted machine bytes; it does not mean the
+human approved serialization details. The router may carry a prior human
+confirmation only with a deterministic material-equivalence receipt.
 
 ### Each object in `groups`
 
@@ -183,17 +188,19 @@ Bash access to the file, even read-only commands.
 
 This ordering prevents deterministic registrar defects from creating a second
 human gate. Draft-revision authorization is not dispatch confirmation. Ask for
-confirmation once, only after readiness and both tension verdicts pass. Once
-the admitted digest is confirmed, any genuine byte change remains material
-under the exact-digest contract and requires readiness validation, new tension
-verdicts, and new confirmation.
+confirmation once, only after readiness and both tension verdicts pass. Any
+later byte change requires readiness validation and new tension verdicts on the
+current digest. It requires a new human confirmation only when the router's
+material-strategy projection changed or deterministic equivalence is unknown.
 
 ### After confirmation
 
 1. Assemble the dispatch record as JSON (the fields above) — normally read straight off
    the confirmed dispatch sheet (goal, context, groups, connections, per-agent
    angle/model/token_budget/initial_prompt). Add `evidence_binding` from the
-   frozen sheet, two tension PASS receipts, and explicit confirmation record.
+   current sheet, two current-digest tension PASS receipts, and a confirmation
+   record. A carried record must reference the router's deterministic
+   material-equivalence receipt in its handle or adjacent evidence.
 2. Write that JSON to a temp file (use the Write tool, so it is UTF-8 — do **not**
    pipe JSON through PowerShell, which mangles it to UTF-16):
    `<repo-root>/.register-dispatch.tmp.json`
