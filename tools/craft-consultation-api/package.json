@@ -1,0 +1,13 @@
+{
+  "name": "craft-consultation-api",
+  "version": "0.0.0-private",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": "26.6.0"
+  },
+  "scripts": {
+    "start": "node src/main.cjs",
+    "test": "node --test test/server.test.cjs"
+  }
+}
