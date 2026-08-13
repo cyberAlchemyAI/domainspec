@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.8.1-proposal
-last_updated: 2026-08-02
+version: 0.8.2-proposal
+last_updated: 2026-08-13
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
@@ -164,7 +164,7 @@ redesigning the framework itself — and is the only context in which dispatch l
       rubric.
 6. **Synthesizer midfield; writer/auditor downstream.** The canonical research pipeline is the sequential spine **explorers → synthesizer → reviewers → writer → auditor**, five distinct stages. Between explorers and reviewers there is always a **synthesizer** — it _reconciles_ the explorer returns into a candidate picture; it does **not** persist the deliverable files. Synthesizer ↔ reviewers iterate via **zig-zag**; synthesizer → explorers via **feedback**, which is **conditional** — it is instantiated only when there is a reviewer group _and_ material may be missing, not auto-instantiated in every dispatch. Reviewers never review raw explorer output directly. The **writer** is stage 4 (n:1): once the synthesizer ↔ reviewers exchange converges, the writer _persists_ **`findings.md` only** via `domainspec-findings-writing` — it is **no longer the synthesizer**, and it does **not** author `research.md` (the strategist appends that — see Principle 9). The **auditor** (stage 5) evaluates `findings.md` ONLY and owns the **revision** edge back to the writer (default one revision; more permitted). Conditional edges over the spine: `robot_talks` on explorers and/or reviewers; `zig-zag` synthesizer ⇄ reviewers; `feedback` synthesizer → explorers; `revision` auditor → writer (default 1).
 7. **Aggregation is derived.** A group with `robot_talks: true` → `synthesize`; otherwise → `concat` (an `n = 1` group simply returns its single output). Aggregation is never a field. Zig-zag is inter-group exchange — it does not change either group's combination rule. _(Non-binding note: a bare `concat` is intermediate plumbing, never the dispatch's final deliverable — concatenated parallel outputs feed a downstream `synthesize` group or the `final_approver`, they are not handed back as the answer.)_
-8. **Trust-but-verify.** If a subagent wrote files or claimed a check passed, the parent inspects the actual diff / runs the actual check before treating it as done.
+8. **Trust-but-verify.** If a subagent wrote files or claimed a check passed, the parent inspects the actual diff / runs the actual check before treating it as done. The same standard applies to **citations**: a reference is verified only when the cited location is opened and confirmed to license the claim resting on it, not merely to exist. A **line-accurate but non-licensing cite**—the cited lines exist and look relevant but do not establish the claim—counts as unverified.
 9. **Outputs.** For a `dispatch_type: research` dispatch, everything the dispatch produces lands in `working_folder`. `findings.md` is **authored by the writer stage** (stage 4) via `domainspec-findings-writing`; `research.md` (the verbatim explorer transcript) is **appended mechanically by the strategist** via `domainspec-research-writing` — neither the synthesizer nor the writer authors `research.md`. The two-file rule applies only to a **research fan-out (n ≥ 2)**: the collected returns (research) and the cited synthesis (findings) — every load-bearing claim in the findings cites the collected return it rests on, and the `final_approver` checks this when recommending acceptance. A **research n = 1** dispatch produces a single file, `findings.md`.
 10. **Claim ≤ proof** in every artifact produced.
 11. **Helper invocations are not dispatches.** A single agent spawned _by_ a running agent, within its parent's scope, needs no row and no gate — it is reported post-hoc in the parent's `agents_spawned` report (chat + findings, not written to the ledger row). It escalates to a real dispatch if it fans out (2+) or outgrows the scope. Spawn count is unregulated; reporting is the brake. _(The exact helper-vs-dispatch boundary is provisional — an open question, not settled law.)_
@@ -1040,3 +1040,20 @@ not ledger columns.
 5. `confirmation.sheet_sha256` binds the direct-or-carried confirmation handle
    to the bytes being registered; it does not redefine human approval as assent
    to serialization details.
+
+## 17. v0.8.2 document amendment (2026-08-13 — citation licensing forward-port)
+
+Source: the accepted 2026-06-16 comparison-answer red-team amendment, carried
+forward from the superseded v0.6.2 branch into the current DomainSpec authority
+surface during branch closure. The original review transcript and telemetry stay
+outside the publication candidate; the durable rule is preserved here.
+
+P8 now makes citation verification explicit: opening the cited location is
+necessary but insufficient. The verifier must confirm that the cited material
+actually licenses the claim made from it. A line-accurate but non-licensing cite
+is unverified even when its path, selector, and quoted lines are exact.
+
+This is a review-only principle clarification. It adds no field, enum, row
+shape, appender behavior, or deterministic validator, so the wire
+`schema_version` remains `0.8.0`. The document version advances
+`0.8.1-proposal` to `0.8.2-proposal`; no five-surface promotion is triggered.
