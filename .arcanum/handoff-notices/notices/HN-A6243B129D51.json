@@ -1,0 +1,120 @@
+{
+  "authority": {
+    "grants": [],
+    "kind": "communication-evidence",
+    "statement": "The notice and locator grant no permission or authority."
+  },
+  "notice_code": "HN-A6243B129D51",
+  "notice_digest": "a6243b129d5149a963edbce16e703e3367b2e8532825e2745bddc7e9a25ac974",
+  "notice_id": "hn:a6243b129d5149a963edbce16e703e3367b2e8532825e2745bddc7e9a25ac974",
+  "payload": {
+    "boundaries": [
+      "No end-to-end consumer, unauthorized execution, production incident or concrete provider was witnessed.",
+      "ExecutePipelineRoute is a candidate enforcement point, not a confirmed policy owner.",
+      "The AEO documentation contains partial gate and evidence concepts but does not already specify the proposed licensed-return contract.",
+      "Quality must mean evidence for explicitly declared obligations; no generic quality predicate is claimed.",
+      "A Lean specification may later state the abstract invariant but cannot replace runtime enforcement.",
+      "This notice is communication evidence only and grants no permission to implement, dispatch or promote the proposal."
+    ],
+    "created_at": "2026-08-15T18:19:22.613585Z",
+    "from": {
+      "kind": "team",
+      "label": "Victor and Codex"
+    },
+    "key_points": [
+      "Situation — In the inspected artifacts there are documented concepts and TypeScript types for decisions, stages, runs, inputs, required artifacts, providers, outcomes and evidence references. Their joint operation was not verified end to end, and no concrete production provider or mutation path was found in the inspected checkout.",
+      "Identified gap — A recorded decision reference is traceability, not proof that the decision is authentic, current and applicable to the exact action, inputs, executor and permitted effects. Likewise, a provider returning completed proves a terminal declaration, not that the result stayed in scope or discharged the declared obligations.",
+      "Why it matters — If concrete execution is connected without equivalent enforcement in another layer, decision and execution records may each be locally valid while the system cannot demonstrate the semantic link between them. This can weaken auditability, allow stale or mismatched authorization to be reused, and let downstream work advance on a terminal status without the evidence required by the intended contract.",
+      "Proposed invariant — No concrete action should begin without authorization bound to that exact action, and no substantive success should propagate without evidence bound to the obligations authorized for that action. This is a proposal for evaluation, not an existing invariant or an implementation decision.",
+      "Candidate design — A two-sided boundary would fail closed before dispatch by resolving authority, validity, scope, action identity and obligations; after return it would check the consumed authorization, observed effects and obligation evidence before accepting success. The policy owner, authorization issuer and enforcement point must remain separate decisions.",
+      "Why the AEO appears later in the analysis — ExecutePipelineRoute is the strongest visible candidate for an enforcement point because it validates route structure immediately before SandboxProviderPort.executeStage and accepts the terminal result afterward. executeStage is only an intended dispatch boundary in the inspected code; the concrete effect boundary and provider were not located.",
+      "Current AEO limitations — decisionSnapshotRef is an opaque non-empty string; input.provider is not proven to identify the injected adapter; promptArtifactSetHash is produced by the builder but does not reach ExecutePipelineRouteInput; the provider result contains only stageRunId, terminalOutcome and optional childRunId; the executable TelemetryEnvelope is materially smaller than the documented evidence envelope.",
+      "Bounded discovery proposal — If accepted, the next work should deliver exactly three things without implementing the gate: one real decision-to-effect flow including any external enforcement, a decision on policy owner versus enforcement point, and the minimum contract delta required to bind authorization and result evidence. Operational impact remains indeterminate until that real provider and downstream consumer are located.",
+      "Review result — Two independent red-team reviews required demoting system-wide claims, separating policy ownership from enforcement, conditioning consequences on the absence of external enforcement, removing the unsupported medium-impact estimate and making the proposed discovery finite. Those corrections are incorporated here."
+    ],
+    "next_actions": [
+      {
+        "action": "Accept or reject the bounded discovery, or identify the existing owner/enforcement contract that makes it unnecessary.",
+        "owner": "Vladimir"
+      },
+      {
+        "action": "If the discovery is accepted, open a separately authorized work item limited to the three declared outputs; do not begin implementation from this notice.",
+        "owner": "Victor"
+      }
+    ],
+    "next_route": {
+      "authorization": "not-granted",
+      "capability": "bounded-design-discovery",
+      "mode": "evaluate",
+      "target": "decision-to-action authorization and result-evidence boundary"
+    },
+    "notice_type": "discussion-draft",
+    "open_calls": [
+      {
+        "owner": "Vladimir",
+        "question": "Should the system adopt the proposed decision-to-action invariant as a design question and authorize the bounded three-output discovery described here?",
+        "status": "open"
+      },
+      {
+        "owner": "Vladimir or current runtime owner",
+        "question": "Is equivalent authorization and result-evidence enforcement already implemented outside the inspected checkout, and where is its authoritative contract?",
+        "status": "open"
+      },
+      {
+        "owner": "Future discovery owner, only if authorized",
+        "question": "Which real provider and downstream consumer form the first end-to-end flow on which ownership, enforcement and minimum contract delta can be decided?",
+        "status": "blocked"
+      }
+    ],
+    "project_scope": "docs/features/agent-execution-orchestrator",
+    "schema_version": "0.1.0",
+    "source_refs": [
+      {
+        "label": "Current structural validations, provider dispatch and terminal-result acceptance",
+        "ref": "backend/src/modules/agent-execution-orchestrator/application/execute-pipeline-route.ts"
+      },
+      {
+        "label": "Current provider input and minimal stage execution result contract",
+        "ref": "backend/src/modules/agent-execution-orchestrator/application/ports.ts"
+      },
+      {
+        "label": "Current decision reference, execution identity, outcome and telemetry types",
+        "ref": "backend/src/modules/agent-execution-orchestrator/domain/models.ts"
+      },
+      {
+        "label": "Decision reference validation and prompt artifact set hash production",
+        "ref": "backend/src/modules/agent-execution-orchestrator/application/build-prompt-artifacts.ts"
+      },
+      {
+        "label": "Current module wiring and reduced telemetry mapping",
+        "ref": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator-module.ts"
+      },
+      {
+        "label": "Current double-backed execution tests and their evidence boundary",
+        "ref": "backend/src/modules/agent-execution-orchestrator/application/agent-execution-orchestrator.slice.test.ts"
+      },
+      {
+        "label": "Documented gate, prompt and evidence-envelope rules",
+        "ref": "docs/features/agent-execution-orchestrator/rules.md"
+      },
+      {
+        "label": "Documented evidence and telemetry expectations",
+        "ref": "docs/features/agent-execution-orchestrator/observability.md"
+      },
+      {
+        "label": "Documented provider and artifact interfaces",
+        "ref": "docs/features/agent-execution-orchestrator/interfaces.md"
+      }
+    ],
+    "status": "open",
+    "subject": "Evaluate a verifiable decision-to-action boundary",
+    "to": {
+      "kind": "person",
+      "label": "Vladimir"
+    },
+    "why_now": "The architectural objective is to close the cycle from intent and governed decisions to concrete action and evidence. The inspected artifacts represent many parts of this cycle, but no end-to-end mechanism was witnessed that proves a specific decision authorized a specific action and that the returned evidence justified propagating success. This should be evaluated before a concrete execution path makes that boundary load-bearing."
+  },
+  "repository_fingerprint": "f50fe9a0d8db2d5d7ff93329eada4dcddbdb2b20a8c7fb9001d21a932e78d543",
+  "schema_version": "0.1.0",
+  "transport_claim": "local-artifact-only"
+}

@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "code": "HN-A6243B129D51",
+      "created_at": "2026-08-15T18:19:22.613585Z",
+      "digest": "a6243b129d5149a963edbce16e703e3367b2e8532825e2745bddc7e9a25ac974",
+      "json_path": ".arcanum/handoff-notices/notices/HN-A6243B129D51.json",
+      "markdown_path": ".arcanum/handoff-notices/notices/HN-A6243B129D51.md",
+      "notice_id": "hn:a6243b129d5149a963edbce16e703e3367b2e8532825e2745bddc7e9a25ac974",
+      "notice_type": "discussion-draft",
+      "project_scope": "docs/features/agent-execution-orchestrator",
+      "status": "open",
+      "subject": "Evaluate a verifiable decision-to-action boundary",
+      "supersedes": null
+    }
+  ],
+  "repository_fingerprint": "f50fe9a0d8db2d5d7ff93329eada4dcddbdb2b20a8c7fb9001d21a932e78d543",
+  "schema_version": "0.1.0"
+}
