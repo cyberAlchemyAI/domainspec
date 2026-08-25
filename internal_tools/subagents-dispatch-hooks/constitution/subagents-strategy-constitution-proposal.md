@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.8.2-proposal
-last_updated: 2026-08-13
+version: 0.8.3-proposal
+last_updated: 2026-08-17
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
@@ -45,9 +45,9 @@ are validated by the human at the confirm gate.)
   Each dispatch contributes exactly **two appends**: the **dispatch row** (the spec, written
   at dispatch) and the **close row** (`close_of` + outcome, written at termination). There is
   no separate spec file and no separate event log.
-- **Claim ≤ proof:** three of the six `dispatch_type` values (`code | plan | suggestion`)
-  are reserved names — defined in §5 but not yet active; `research`, `review`, and `experiment`
-  are LIVE (`review` 2026-06-12, `experiment` 2026-06-14, by owner decision — see §5 `dispatch_type`).
+- **Claim ≤ proof:** three of the seven `dispatch_type` values (`code | plan | suggestion`)
+  are reserved names — defined in §5 but not yet active; `research`, `review`, `experiment`,
+  and `other` are LIVE (`other` 2026-08-17 by owner decision — see §5 `dispatch_type`).
 - **Companion documents:** a group running robot-talks binds `vault/constitution/robot-talks-constitution.md`;
   the pool of allowed `agent_name`s lives at `telemetry/agents/agent-pool.yaml` (245 names, each
   tagged with an ordered `role_fit` list drawn from explorer / synthesizer / skeptic / writer / auditor).
@@ -225,11 +225,13 @@ semantics and gates nothing.
 
 **What:** which typed strategy (role-set + evaluation criterion) the dispatch enacts.
 **Why:** fixes the agent-role vocabulary in one move.
-**Values:** `research | code | review | plan | suggestion | experiment`. `research`, `review`, and `experiment` are LIVE; the other three (`code`, `plan`, `suggestion`) are reserved names and **must not be dispatched until populated**.
+**Values:** `research | code | review | plan | suggestion | experiment | other`. `research`, `review`, `experiment`, and `other` are LIVE; `code`, `plan`, and `suggestion` are reserved names and **must not be dispatched until populated**.
 _(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded in-place under the now-retired no-bump practice (§10); a LIVE-status change today requires a document-`version` bump regardless of the row schema (§10.1) — folded into the v0.6.0 versioned amendment (§11). §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)_
 _(`experiment` populated 2026-06-14 by owner decision, **narrow recipe** — **[scope superseded 2026-06-15: this dispatch is propose-only; the runner/adjudicator roles and the SURVIVED/FALSIFIED adjudication described below moved to a separate downstream run — see the scope clarification note immediately after this paragraph]**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing **agent-role** enum (`explorer | skeptic | writer | auditor`; no new values): designer (`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`auditor`, verdict against the criterion) · skeptic (`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)_
 
 _(**Scope clarification — 2026-06-15, owner decision.** `experiment` is scoped to the **pre-registration (propose) phase**: the **designer** (`writer`) and **skeptic** (`skeptic`) produce a **frozen, validity-checked `criterion.md`** — the experiment proposal. **Running the probe and adjudicating survived-vs-falsified is a separate downstream step**, not this dispatch; the **runner** (`explorer`) and **adjudicator** (`auditor`) belong to that later run. Verdict timing follows: **INVALID** may be rendered at propose (the skeptic kills an unfalsifiable design before freeze); **SURVIVED / FALSIFIED** are rendered only at the run. A propose dispatch therefore closes `resolved` on an accepted frozen `criterion.md`, never on SURVIVED/FALSIFIED. Type skill `.claude/skills/experiment/SKILL.md` is the authority on the propose/run split.)_
+
+_(`other` populated 2026-08-17 by owner decision as a bounded execution fallback. It applies only when no more specific LIVE owner fits and the confirmed outcome includes a repository mutation. Its type skill requires exact targets, allowed mutations, source evidence, validation, and one independent downstream `skeptic` reviewer for every mutating `writer` lane. It is not an alias for the RESERVED `code`, `plan`, or `suggestion` types. The row shape is unchanged, so wire `schema_version` remains `0.8.0`; this document version advances under §10.)_
 
 #### `goal` — R · **H**
 
@@ -293,7 +295,7 @@ once two or more groups each fan out, where uncoordinated axes would drift.
 **Enforcement:** the conditional is appender-enforced (exit 2) since the 2026-06-12 in-place
 amendment (§9) — a record with ≥ 2 fan-out groups and no `anti_bias_global` is rejected.
 
-#### `working_folder` — C · A (required when `dispatch_type` is `research`, `review`, or `experiment`)
+#### `working_folder` — C · A (required when `dispatch_type` is `research`, `review`, `experiment`, or `other`)
 
 **What:** where the dispatch's outputs land — research + findings documents, a spec file,
 or the code itself, depending on what the dispatch produces. For `research`, this is always a
@@ -302,6 +304,8 @@ docs path. For a research **n ≥ 2** dispatch the two files of Principle 9 are
 synthesis); a research **n = 1** dispatch produces a single `<working_folder>/findings.md`.
 **Why:** outputs need one declared home; the registry row only points at it.
 **How:** repo-relative path. Never `vault/**`.
+For `other`, it holds dispatch and review receipts and does not itself authorize writes;
+only exact targets named in the human-confirmed context may be mutated.
 
 ### Level 2 — GROUP (`groups[]`)
 
@@ -547,7 +551,7 @@ the group `role` field, which removes the CR-2 bucketing ambiguity.)
 # rows are never edited in place (Principle 3).
 - dispatch_id: 2026-06-12-example-slug
   schema_version: "0.8.0"
-  dispatch_type: research # research LIVE; review LIVE (2026-06-12); experiment LIVE (2026-06-14); code|plan|suggestion RESERVED
+  dispatch_type: research # research|review|experiment|other LIVE; code|plan|suggestion RESERVED
   goal: > # HUMAN input — the general objective;
     One or two sentences.             # the strategist decomposes it below.
   context: >
@@ -1057,3 +1061,27 @@ This is a review-only principle clarification. It adds no field, enum, row
 shape, appender behavior, or deterministic validator, so the wire
 `schema_version` remains `0.8.0`. The document version advances
 `0.8.1-proposal` to `0.8.2-proposal`; no five-surface promotion is triggered.
+
+## 18. v0.8.3 document amendment (2026-08-17 — LIVE `other` execution type)
+
+Owner decision: add `other` as a LIVE fallback for bounded repository work that
+must be executed but is not owned by `research`, `review`, or `experiment`.
+
+The promotion is deliberately narrow:
+
+1. the confirmed sheet names exact mutation targets, exclusions, governing
+   evidence, validation, outputs, and stop conditions;
+2. every mutating `writer` lane hands off to a distinct downstream `skeptic`
+   reviewer; same-file lanes are sequential and parallel lanes have disjoint
+   write sets;
+3. `working_folder` is required for dispatch and review receipts, but grants no
+   authority over unnamed targets;
+4. `resolved` requires declared validation, an `ACCEPT` from every independent
+   reviewer, and final approval;
+5. `other` must not bypass a more specific LIVE owner and does not activate the
+   reserved `code`, `plan`, or `suggestion` types.
+
+This adds one admitted enum value and LIVE owner without changing the row
+shape. The wire `schema_version` therefore remains `0.8.0`; the constitution
+version advances `0.8.2-proposal` to `0.8.3-proposal`. The code, type skill,
+§5 field table, tests, and README change together under §10.2.

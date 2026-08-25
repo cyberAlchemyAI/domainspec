@@ -23,13 +23,13 @@
  *
  *   DISPATCH ROW — keyed by `dispatch_id`. Required: dispatch_id,
  *     schema_version ("0.8.0" exactly), dispatch_type
- *     (research|code|review|plan|suggestion|experiment vocabulary; only LIVE
- *     research|review|experiment rows are admitted), goal, context, max_loops (1..5),
+ *     (research|code|review|plan|suggestion|experiment|other vocabulary; only LIVE
+ *     research|review|experiment|other rows are admitted), goal, context, max_loops (1..5),
  *     final_approver, groups[] (each group: group_id, agents[] — NO group
  *     `role` field; each agent: role explorer|synthesizer|skeptic|writer|auditor, model,
  *     token_budget, initial_prompt; fan-out groups also carry complete
  *     predicted_disagreements[] pair records). Optional: meta (true), parent_dispatch_id,
- *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment; never vault/),
+ *     anti_bias_global, working_folder (REQUIRED for LIVE types research/review/experiment/other; never vault/),
  *     invoked_by (tooling extension, not in constitution §5),
  *     evidence_binding ({sheet_path, sheet_sha256, tension_verdicts[2],
  *     confirmation}) binding two PASS handles and explicit confirmation to the
@@ -120,10 +120,11 @@ const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 // ---------------------------------------------------------------- schema
 const SCHEMA_VERSION = '0.8.0';   // pairwise evidence + deterministic identity admission
-const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment'];
-// LIVE per constitution §5 (review 2026-06-12; experiment 2026-06-14, owner decisions); others
+const DISPATCH_TYPES = ['research', 'code', 'review', 'plan', 'suggestion', 'experiment', 'other'];
+// LIVE per constitution §5 (review 2026-06-12; experiment 2026-06-14; other 2026-08-17,
+// owner decisions); remaining types
 // RESERVED (code, plan, suggestion) — recorded but not yet dispatchable.
-const LIVE_TYPES = new Set(['research', 'review', 'experiment']);
+const LIVE_TYPES = new Set(['research', 'review', 'experiment', 'other']);
 // Group `role` was removed from the row schema at v0.6.0 (constitution §11 / CR-2): a group's
 // function is read off its agents' roles, its workflow position off its connections.
 const AGENT_ROLES = ['explorer', 'synthesizer', 'skeptic', 'writer', 'auditor'];

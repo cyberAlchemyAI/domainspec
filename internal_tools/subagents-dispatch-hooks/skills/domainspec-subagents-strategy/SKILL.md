@@ -7,7 +7,7 @@ description: "Route DomainSpec/Arcanum subagent dispatches: check the trigger, t
 
 ## Overview
 
-Use this skill when the user invokes `$domainspec-subagents-strategy`, asks to run a governed subagent dispatch, or asks to spawn subagents under the DomainSpec/Arcanum discipline. This skill is a router: it defines no dispatch fields and makes no type-specific research/review/experiment judgment by itself.
+Use this skill when the user invokes `$domainspec-subagents-strategy`, asks to run a governed subagent dispatch, or asks to spawn subagents under the DomainSpec/Arcanum discipline. This skill is a router: it defines no dispatch fields and makes no type-specific research/review/experiment/other judgment by itself.
 
 ## Arcanum Core Boundary
 
@@ -229,12 +229,13 @@ Route by `dispatch_type`. Reserved types must not be dispatched until populated.
 | `research`    | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/research/SKILL.md`   |
 | `review`      | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/review/SKILL.md`     |
 | `experiment`  | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/experiment/SKILL.md` |
+| `other`       | LIVE     | `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/other/SKILL.md`      |
 | `code`        | RESERVED | none                                                                                           |
 | `plan`        | RESERVED | none                                                                                           |
 | `suggestion`  | RESERVED | none                                                                                           |
 
 For `research` or `review`, perform the Inventory preflight and read the type
-skill before creating the sheet. For `experiment`, read the type skill without
+skill before creating the sheet. For `experiment` or `other`, read the type skill without
 implying an automatic Inventory preflight. This router owns only the universal
 dispatch process.
 

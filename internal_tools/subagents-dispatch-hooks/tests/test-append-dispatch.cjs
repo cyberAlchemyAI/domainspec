@@ -449,6 +449,11 @@ console.log('\n[10] working_folder rules');
   expectReject('10i experiment without working_folder rejected (LIVE type)', root, validDispatch({ dispatch_id: '2026-06-12-battery-exp-nf', dispatch_type: 'experiment', working_folder: undefined }), /working_folder is required when dispatch_type is "experiment"/);
   const re = run(root, validDispatch({ dispatch_id: '2026-06-12-battery-experiment', dispatch_type: 'experiment' }));
   check('10j experiment with working_folder appends (exit 0)', re.status === 0, re.stderr || re.stdout);
+  expectReject('10j2 other without working_folder rejected (LIVE type)', root,
+    validDispatch({ dispatch_id: '2026-08-17-battery-other-nf', dispatch_type: 'other', working_folder: undefined }),
+    /working_folder is required when dispatch_type is "other"/);
+  const ro = run(root, validDispatch({ dispatch_id: '2026-08-17-battery-other', dispatch_type: 'other' }));
+  check('10j3 other with working_folder appends (exit 0)', ro.status === 0, ro.stderr || ro.stdout);
   expectReject('10k absolute POSIX working_folder rejected', root,
     validDispatch({ working_folder: '/tmp/outside' }), /must be repository-relative/);
   expectReject('10l absolute Windows working_folder rejected', root,

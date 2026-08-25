@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: explanatory, reference
 status: exploratory
-version: 0.1.0
-last_updated: 2026-06-13
+version: 0.2.0
+last_updated: 2026-08-17
 created_by: victorboscaro@gmail.com
 ---
 
@@ -16,7 +16,7 @@ This is the **mental model** of the dispatch ledger: what it is, how a row is sh
 that shape normalizes. It is *not* the field schema — the authoritative field-by-field reference
 is owned by [`register-dispatch/SKILL.md`](skills/register-dispatch/SKILL.md), and the field
 *semantics* (the law) are owned by the
-[subagents-strategy constitution, v0.6.0](../constitution/subagents-strategy-constitution-proposal.md) §5.
+[subagents-strategy constitution, v0.8.3 proposal](../constitution/subagents-strategy-constitution-proposal.md) §5.
 This doc owns only the model and points to those for everything else.
 
 ## 1. What it is — and is not
@@ -48,7 +48,7 @@ The ledger is **append-only**: rows are never edited in place. Closing a dispatc
 [`enforce-append-only-dispatch`](hooks/enforce-append-only-dispatch.cjs) hook. The appender is
 **idempotent** on `dispatch_id` / `close_of`, and **grandfathers** rows written under older
 schemas (they are historical artifacts, never re-validated). The current schema version is owned
-by [SKILL.md](skills/register-dispatch/SKILL.md) and the appender (v0.6.0 at time of writing).
+by [SKILL.md](skills/register-dispatch/SKILL.md) and the appender (wire v0.8.0 at time of writing).
 
 ## 3. The shape of a dispatch row — a tree in JSON columns
 
@@ -133,12 +133,12 @@ the hook cannot derive. (See [README](README.md) "Business Context".)
 
 The ledger is the record; the rest of the subsystem is split by authority:
 
-**The law (the canonical v0.6.0 proposal in `internal_tools/subagents-dispatch-hooks/constitution/`, pending vault promotion):**
-- [subagents-strategy constitution, v0.6.0](../constitution/subagents-strategy-constitution-proposal.md)
-  — field semantics (§5), the `dispatch_type` vocabulary (`research`/`review`/`experiment` LIVE), Principles
+**The law (the canonical v0.8.3 proposal in `internal_tools/subagents-dispatch-hooks/constitution/`, pending vault promotion):**
+- [subagents-strategy constitution, v0.8.3 proposal](../constitution/subagents-strategy-constitution-proposal.md)
+  — field semantics (§5), the `dispatch_type` vocabulary (`research`/`review`/`experiment`/`other` LIVE), Principles
   P3 (two-append) / P9 (citation) / P11 (helper-not-dispatch) / P12 (no self-approval). **Note:**
   the *active* `vault/constitution/` file is still v0.3.0 (rules `R1..R31`, a different
-  vocabulary) and does **not** govern the v0.6.0 ledger — the v0.6.0 law lives in this bundle's
+  vocabulary) and does **not** govern new v0.8.0 rows — the v0.8.3 proposal lives in this bundle's
   `constitution/` folder (the repo-root copy was deleted) until it is promoted into `vault/`.
 
 **The mechanism (here, in `internal_tools/subagents-dispatch-hooks/`):**
@@ -157,6 +157,7 @@ here):
 - `research` — the LIVE type skill for `dispatch_type: research`.
 - `review` — the LIVE type skill for `dispatch_type: review`.
 - `experiment` — the LIVE type skill for `dispatch_type: experiment` (narrow recipe, 2026-06-14).
+- `other` — the LIVE bounded-execution fallback; every mutating lane has an independent downstream reviewer.
 - `register-dispatch` — the form/record skill (canonical source here; installed per-user to
   `~/.claude/skills/`).
 

@@ -19,7 +19,7 @@
  *                            (agents = JSON column)
  *   chain skills (PROJECT, <repo>/.claude/skills — project-coupled, they
  *   reference this repo's constitution/vault):
- *     - domainspec-subagents-strategy (router), research, review, experiment
+ *     - domainspec-subagents-strategy (router), research, review, experiment, other
  *       (type skills), robot-talks (companion) -> synced FROM this bundle, so
  *       internal_tools is the single source of truth and .claude/skills is the
  *       generated copy. The router uses the declared runtime-composition
@@ -63,7 +63,7 @@ const SKILL_FILES = ['SKILL.md', 'append-dispatch.cjs'];
 // Chain skills: project-coupled, installed into the TARGET repo's .claude/skills
 // (not ~/.claude), with internal_tools/skills/<name>/ as the single source.
 const STRATEGY_SKILL = 'domainspec-subagents-strategy';
-const CHAIN_SKILLS = ['research', 'review', 'experiment', 'check-tension', 'robot-talks'];
+const CHAIN_SKILLS = ['research', 'review', 'experiment', 'other', 'check-tension', 'robot-talks'];
 const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const projectSkillsDir = path.join(projectDir, '.claude', 'skills');
 // Copy every file in a source skill dir to its destination dir (skills carry
