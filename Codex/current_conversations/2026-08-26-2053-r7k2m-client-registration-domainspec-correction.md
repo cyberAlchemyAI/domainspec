@@ -18,3 +18,8 @@ last_updated: 2026-08-26
 - [INSIGHT] A derivação determinística produziu 198 obrigações e IDs estáveis: 128 `derivable-needs-harness`, 70 `needs-formal`, 0 `derivable-pure`; `check` retornou `FRESH`, sem IDs novos ou pendentes.
 - [BLOCKER] O gate continua `planning_only: true` e `mutation_ready: false`; DomainSpec 0.2.2, Design 0.1.2 e Plan 0.2.2 seguem candidatos não aceitos, e as 70 regras sem `Formal` impedem alegar derivação completa.
 - [INSIGHT] Os 45 testes unitários puros do slice passaram via `unittest`; o runner Django não iniciou porque o runtime tem Django 5.0.4, abaixo do requisito `>=5.2` do projeto.
+- [DECISION] A autorização do owner em 2026-08-27 foi tratada como autorização para formalizar as 70 regras, não como aceitação implícita do DomainSpec/Design/Plan.
+- [INSIGHT] `operations.md` 0.2.3 agora contém 70 predicados falsificáveis; o lint determinístico retorna CLEAN, a derivação contém 268 obrigações (140 pure, 128 needs-harness, 0 unresolved) e o drift check retorna FRESH.
+- [INSIGHT] A mudança de forma tombstonou corretamente os 70 antigos IDs `needs-formal` e alocou 140 IDs `rule-validation` para os casos presença/ausência.
+- [INSIGHT] O ambiente Python foi atualizado para Django 5.2.17; `manage.py check` e os 45 testes unitários passaram. `pip check` ainda aponta um conflito preexistente `python-bcb`/`httpx`, fora do escopo.
+- [BLOCKER] DomainSpec 0.2.3 ainda precisa de refresh de Design/Plan e aceitação exata antes de qualquer mutação de produto; Design 0.1.2 e Plan 0.2.2 vinculam a candidata 0.2.2.
