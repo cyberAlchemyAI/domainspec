@@ -1,0 +1,1204 @@
+{
+  "feature": "client-registration",
+  "prefix": "CR",
+  "format_version": 1,
+  "entries": [
+    {
+      "key": "028f301c1b6e91a3ca3e4ac6c1f2cddf7e03cfb4",
+      "id": "CR-DOM-001",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:7"
+    },
+    {
+      "key": "05c4019e8da09f948145207bd23ecfad91aaffd7",
+      "id": "CR-DOM-002",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#Submerchant:field:1"
+    },
+    {
+      "key": "066e2d7f7734fca42fe0144dfd3507b36b8497a1",
+      "id": "CR-DOM-003",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderAttempt:field:0"
+    },
+    {
+      "key": "07ef3bdcfc72d3bb9d251b7c269d516051d40a6c",
+      "id": "CR-DOM-004",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:4"
+    },
+    {
+      "key": "093ebf7a12589ede23a74872879f14fc83476011",
+      "id": "CR-DOM-005",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:1"
+    },
+    {
+      "key": "0a9a70e8ae8afa443f739a225f00fa6f078d5fda",
+      "id": "CR-DOM-006",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:2"
+    },
+    {
+      "key": "0b48dc24aa724fcaa2f3bc3a0b96b0f1db38778f",
+      "id": "CR-DOM-007",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:7"
+    },
+    {
+      "key": "0e439899e33cf57efccf52d42cd75ea3890f0536",
+      "id": "CR-DOM-008",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:10"
+    },
+    {
+      "key": "0edce1ad5362f85d863eda3e92b3a49de5143592",
+      "id": "CR-DOM-009",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:9"
+    },
+    {
+      "key": "12849fbc357da80b4b12c865d15093a81661b7ce",
+      "id": "CR-DOM-010",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:4"
+    },
+    {
+      "key": "1c1b296a11ff7031bdde5d349d34fb30d433b134",
+      "id": "CR-DOM-011",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:2"
+    },
+    {
+      "key": "1e73fac10a0376998dc0ce792144b15a512c8d90",
+      "id": "CR-DOM-012",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:4"
+    },
+    {
+      "key": "20a10ded9f7f18dd6f2cf3b969b2e45489217450",
+      "id": "CR-DOM-013",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:5"
+    },
+    {
+      "key": "24c89c890e44f17c647fd507dcb020c438d22ab5",
+      "id": "CR-DOM-014",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:1"
+    },
+    {
+      "key": "273bcb430bee801d4c63e059625804ba54e7f409",
+      "id": "CR-DOM-015",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:6"
+    },
+    {
+      "key": "2a7aa3666b49dbb9928df6b1269da9d9b32b8467",
+      "id": "CR-DOM-016",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:1"
+    },
+    {
+      "key": "3077f2a72cf087ecb600f47a94de1889450e41e0",
+      "id": "CR-DOM-017",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderAttempt:field:4"
+    },
+    {
+      "key": "31b664978b4b36ebafae99a46e9622447e85114e",
+      "id": "CR-DOM-018",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderAttempt:field:3"
+    },
+    {
+      "key": "3305a7668f3cc501690aedf880cf469ae452183f",
+      "id": "CR-DOM-019",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:0"
+    },
+    {
+      "key": "38deb3943f839b86b6a082ce3eb801bdac0233fa",
+      "id": "CR-DOM-020",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:1"
+    },
+    {
+      "key": "3d009f1fffaf63ab04fb4333619acd8e99d8e3c0",
+      "id": "CR-DOM-021",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:1"
+    },
+    {
+      "key": "3efdebb815da976237ef3e32ee44d056d95279f7",
+      "id": "CR-DOM-022",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:3"
+    },
+    {
+      "key": "3fd351f00d0a9430940708de4b94ac49012cf8ec",
+      "id": "CR-DOM-023",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:2"
+    },
+    {
+      "key": "40464d1bba5dc98e417cae647b49220951566477",
+      "id": "CR-DOM-024",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:1"
+    },
+    {
+      "key": "40545a076f7f7f54e94b89c8299b38eeae34bca7",
+      "id": "CR-DOM-025",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:5"
+    },
+    {
+      "key": "41ea09eb5df1d5b5398036ad0113ab1a43ff9c3d",
+      "id": "CR-DOM-026",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:8"
+    },
+    {
+      "key": "4296278e8720fb114ffc9385d42af109aaf377dd",
+      "id": "CR-DOM-027",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:6"
+    },
+    {
+      "key": "479bd12a9b2aa3a63974b8e404b9f27d5e3abe9b",
+      "id": "CR-DOM-028",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:3"
+    },
+    {
+      "key": "47fb3724ea74e5f3befd8ba6e43032fdc72910c2",
+      "id": "CR-DOM-029",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:6"
+    },
+    {
+      "key": "4c84f68158e1dad7a61d60b934d56ac286fa0a88",
+      "id": "CR-DOM-030",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:3"
+    },
+    {
+      "key": "4d3b56dc7333eaf7056448f5d36d7b561f06209e",
+      "id": "CR-DOM-031",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:5"
+    },
+    {
+      "key": "4e38ab064c33230c311649d01fdc7990fdbbae64",
+      "id": "CR-DOM-032",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:0"
+    },
+    {
+      "key": "4e959272d7789827130b80655c467f3905f6b86f",
+      "id": "CR-DOM-033",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalAccount:field:4"
+    },
+    {
+      "key": "5030cb833ad5243edbcb67206092a0b1090adcf6",
+      "id": "CR-DOM-034",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:8"
+    },
+    {
+      "key": "516fa4d658bd8377323bbc3e65ff414e52e82fd0",
+      "id": "CR-DOM-035",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:4"
+    },
+    {
+      "key": "539653d3fa9c11736c56bdf4603f1b6d32fac7f4",
+      "id": "CR-DOM-036",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:2"
+    },
+    {
+      "key": "53ab3518a27dc39917ad410bb4e5d516434fa01c",
+      "id": "CR-DOM-037",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:7"
+    },
+    {
+      "key": "5d26e3502c0e05e42e839adb111dc8969c70105c",
+      "id": "CR-DOM-038",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:12"
+    },
+    {
+      "key": "603b60a0f57a0f182f713fd7351a394828b6f3a2",
+      "id": "CR-DOM-039",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:5"
+    },
+    {
+      "key": "606eb125d9d7a25f23a175e76d9c05fc05557c51",
+      "id": "CR-DOM-040",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalAccount:field:0"
+    },
+    {
+      "key": "6aa6c511dd27ff775a68f93f758b10f26c391ee3",
+      "id": "CR-DOM-041",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:6"
+    },
+    {
+      "key": "6b6c6bc79182c1a43c9b213e6123375404a7e34f",
+      "id": "CR-DOM-042",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:2"
+    },
+    {
+      "key": "6e1570b11d909d4b260800e12274a6780aa56678",
+      "id": "CR-DOM-043",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:9"
+    },
+    {
+      "key": "713345ca3b732f711e8526da8680d70ad010dc2a",
+      "id": "CR-DOM-044",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderAttempt:field:1"
+    },
+    {
+      "key": "71cc0af7f7ea82aa147a39f1c3184ad67b7c77ee",
+      "id": "CR-DOM-045",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:7"
+    },
+    {
+      "key": "7351396e842385e756ee2a9cd9efa883bcd73682",
+      "id": "CR-DOM-046",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:5"
+    },
+    {
+      "key": "75654207b305a65018fbb2edec1d571b7133f995",
+      "id": "CR-DOM-047",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:9"
+    },
+    {
+      "key": "77d8a7fbce1b553e4adcba59ad265c1545ae93d3",
+      "id": "CR-DOM-048",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:2"
+    },
+    {
+      "key": "79d0a9ea74eff0668b5b3fe62766d869fd35fbc9",
+      "id": "CR-DOM-049",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:7"
+    },
+    {
+      "key": "7e37de128dbcd2d5d18abe72d250518c6b86def1",
+      "id": "CR-DOM-050",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:4"
+    },
+    {
+      "key": "7e7aa40ad87ddfd3946c35210b31cc1d0b73c216",
+      "id": "CR-DOM-051",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:3"
+    },
+    {
+      "key": "8a420b961f93b5eca2ac5af1de189be064228150",
+      "id": "CR-DOM-052",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:10"
+    },
+    {
+      "key": "8a42aa53c658bdb7f0289b065e02340932556452",
+      "id": "CR-DOM-053",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderAttempt:field:2"
+    },
+    {
+      "key": "8ac782403f9a4a96fa4c42ebd1ea8142774db8f8",
+      "id": "CR-DOM-054",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:0"
+    },
+    {
+      "key": "8d8b7fa1c0f756d09ef1ef13e75bf953aec7e530",
+      "id": "CR-DOM-055",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:9"
+    },
+    {
+      "key": "8e02eca8de95a8d1a81531d237d017a9e996b4be",
+      "id": "CR-DOM-056",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:6"
+    },
+    {
+      "key": "8f0cf22322e6e1240cc67bd477f3df0274639d76",
+      "id": "CR-DOM-057",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:3"
+    },
+    {
+      "key": "90555cdf6176e079caee3c9b976954a40090cc83",
+      "id": "CR-DOM-058",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalAccount:field:1"
+    },
+    {
+      "key": "9166e75d7303a4aafdf2015443f4019cfc0d0522",
+      "id": "CR-DOM-059",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:4"
+    },
+    {
+      "key": "917d540e4301885eeba59fcc811dde2304db7c47",
+      "id": "CR-DOM-060",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:6"
+    },
+    {
+      "key": "94c826d594a1b15c6baf7a2493072dfeaed26566",
+      "id": "CR-DOM-061",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:2"
+    },
+    {
+      "key": "954a1f43d185985c76332d1d6ef29acda4ecc646",
+      "id": "CR-DOM-062",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:10"
+    },
+    {
+      "key": "978678beeb9a3041c8edd03082f842d0193f1c25",
+      "id": "CR-DOM-063",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:11"
+    },
+    {
+      "key": "9c8e4db98c3a975cf7ff22e441746858f46f6bf4",
+      "id": "CR-DOM-064",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#OperationAuthorization:field:0"
+    },
+    {
+      "key": "9e45052068d994f704bbca4fd0620afd39d9862f",
+      "id": "CR-DOM-065",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:8"
+    },
+    {
+      "key": "a482c387a178765860e20fbeff5af48662d4f71c",
+      "id": "CR-DOM-066",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#Submerchant:field:0"
+    },
+    {
+      "key": "a9d11087951f3bed3b4b458840e139afc180dcd7",
+      "id": "CR-DOM-067",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#Submerchant:field:4"
+    },
+    {
+      "key": "b0eb4b7b07638cc648fcfc5eb15d1e00209c4c51",
+      "id": "CR-DOM-068",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:7"
+    },
+    {
+      "key": "b3515271ffd56f9dc6de7e24d73452240ec5182d",
+      "id": "CR-DOM-069",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:11"
+    },
+    {
+      "key": "b4e97625122139fafa4837d32e3c5c81bf60cb90",
+      "id": "CR-DOM-070",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:8"
+    },
+    {
+      "key": "b7a1ee258b419adef4f8799d49a3148517ed8611",
+      "id": "CR-DOM-071",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:1"
+    },
+    {
+      "key": "bb05c27b2d5d6b755e100c5b218251c084802177",
+      "id": "CR-DOM-072",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:5"
+    },
+    {
+      "key": "bc57a751ba4140dddccd1c39ba202cef82df55bd",
+      "id": "CR-DOM-073",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:3"
+    },
+    {
+      "key": "c55ac660d34fb3b5a9328f9f2865d378005d56e8",
+      "id": "CR-DOM-074",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:2"
+    },
+    {
+      "key": "c5f553048168e42b0b30e4be64b5f7dc46aebc5f",
+      "id": "CR-DOM-075",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalAccount:field:5"
+    },
+    {
+      "key": "c6300c8528de295e95dd2a66e5a39e8e9cb4306b",
+      "id": "CR-DOM-076",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:6"
+    },
+    {
+      "key": "c9eb67bffdedd086eb0ae6437bf43867cfb9ce05",
+      "id": "CR-DOM-077",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:5"
+    },
+    {
+      "key": "cb340a09f0c2738ad03ac4c70d41ca1773d52b7f",
+      "id": "CR-DOM-078",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:5"
+    },
+    {
+      "key": "cf8fb82b9f625cd77ba7999ca83c314ed89b00ab",
+      "id": "CR-DOM-079",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#FamilyProjection:field:7"
+    },
+    {
+      "key": "d0ab3878bb5abbac26ebc501b0b82c4a404c8b71",
+      "id": "CR-DOM-080",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:1"
+    },
+    {
+      "key": "d3373e98ee5f357de16c3ef94caad515b0bab3f8",
+      "id": "CR-DOM-081",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:0"
+    },
+    {
+      "key": "d3387d1bd530f2f60e54f1c2394708342bd8ac00",
+      "id": "CR-DOM-082",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:5"
+    },
+    {
+      "key": "d592e00894e09eb2250bd80b6555038fad33b7da",
+      "id": "CR-DOM-083",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:0"
+    },
+    {
+      "key": "d892a537e6de74eed3effebdf020e879c62147d0",
+      "id": "CR-DOM-084",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:1"
+    },
+    {
+      "key": "d8f39de351760640080519292981d94d85615cfc",
+      "id": "CR-DOM-085",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:0"
+    },
+    {
+      "key": "d9fe8faa185489056241e6bd0e624a05e1a450d0",
+      "id": "CR-DOM-086",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:6"
+    },
+    {
+      "key": "df167069f862d74e199cec6e4087a4811c3533fd",
+      "id": "CR-DOM-087",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:8"
+    },
+    {
+      "key": "e10f0ae369c507d00cfe9b577054f1f205dd9457",
+      "id": "CR-DOM-088",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalAccount:field:3"
+    },
+    {
+      "key": "e4ee0ee15608117d40faaa73c1a3066b39a54c39",
+      "id": "CR-DOM-089",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:4"
+    },
+    {
+      "key": "e5903ccefc5fc48a43f0c0d5480e670a55fd802c",
+      "id": "CR-DOM-090",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#RegistrationSubmission:field:4"
+    },
+    {
+      "key": "e77906c79411f2f91a74dfb5e86a307457eca7d3",
+      "id": "CR-DOM-091",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:0"
+    },
+    {
+      "key": "ea91b436550df7e614b0d4ecb75f7284bb24bc19",
+      "id": "CR-DOM-092",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderConfigurationSnapshot:field:3"
+    },
+    {
+      "key": "ead89045c21ef278ec4cb454b1b4b91f49055188",
+      "id": "CR-DOM-093",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ClientFeeConfiguration:field:8"
+    },
+    {
+      "key": "f0b3595577cb40a5ab02ff2f6c9216992f08bd7e",
+      "id": "CR-DOM-094",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#Submerchant:field:2"
+    },
+    {
+      "key": "f26c8669874f97b2fcd5b167585178352e73fcd4",
+      "id": "CR-DOM-095",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:3"
+    },
+    {
+      "key": "f2bc306ea804d6de4bb17d962fcee9870c5c078b",
+      "id": "CR-DOM-096",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#Submerchant:field:3"
+    },
+    {
+      "key": "fa609e7a4e4d2fadf110171c9678cafae5f974fa",
+      "id": "CR-DOM-097",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:4"
+    },
+    {
+      "key": "fc1852d3e74aedf474134cf03a64e08f5fe7088d",
+      "id": "CR-DOM-098",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderOperation:field:7"
+    },
+    {
+      "key": "fcaafcc581e64173d157a40e1167746dcb02ade1",
+      "id": "CR-DOM-099",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:0"
+    },
+    {
+      "key": "fd1217bff5f576271eed35cda85a09a473257332",
+      "id": "CR-DOM-100",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#ProviderObservation:field:3"
+    },
+    {
+      "key": "fe5df708b2f0828a0bb490cd84e430be8a1e9cda",
+      "id": "CR-DOM-101",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DossierRevision:field:6"
+    },
+    {
+      "key": "ff836c7b7b35b80fc24ccc6b51240de23e8ad46d",
+      "id": "CR-DOM-102",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalAccount:field:2"
+    },
+    {
+      "key": "ffaf7b233e796b2ae3ae4e1a370c17d6b771c207",
+      "id": "CR-DOM-103",
+      "rule_type": "domain-field",
+      "anchor": "domain.md#DlocalRegistration:field:2"
+    },
+    {
+      "key": "4c71c47a397db131e5edc4b3d1fdc86e948d4f3d",
+      "id": "CR-ENUM-001",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#ProviderCode:enum"
+    },
+    {
+      "key": "cc4dd7c9652ae5681de948dbe84ffaee54ac208a",
+      "id": "CR-ENUM-002",
+      "rule_type": "domain-enum",
+      "anchor": "domain.md#ConfigurationValidationResult:enum"
+    },
+    {
+      "key": "498984678e0d44825f44f46e243473d6e3f00ef0",
+      "id": "CR-ERR-001",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#DispatchProviderOperation:errorstate:0"
+    },
+    {
+      "key": "72363b0cbfa9b81e0ff939524ff28be52dde5509",
+      "id": "CR-ERR-002",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#DispatchProviderOperation:errorstate:2"
+    },
+    {
+      "key": "c27ba9ae847d1ac6567dad566b9ef29adb0bc634",
+      "id": "CR-ERR-003",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#DispatchProviderOperation:errorstate:1"
+    },
+    {
+      "key": "fa7448549469f2be8f91eabce9bb6c873c552f24",
+      "id": "CR-ERR-004",
+      "rule_type": "error-obligation",
+      "anchor": "operations.md#DispatchProviderOperation:errorstate:3"
+    },
+    {
+      "key": "30bfaebdcc1298276c39c7ffa034ffb2c886e7f0",
+      "id": "CR-EVT-001",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#ClientFeeModeConfigured"
+    },
+    {
+      "key": "33b48752abd78a142a071947795a46b69be7ae40",
+      "id": "CR-EVT-002",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#Event Family Boundary"
+    },
+    {
+      "key": "462b5a038a215e2aa590104d21fd2d0f7896d842",
+      "id": "CR-EVT-003",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#DlocalRegistrationPrepared"
+    },
+    {
+      "key": "a730e9c605550df76f429a72877adb8e9926ac1d",
+      "id": "CR-EVT-004",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#LocalDispositionResolved"
+    },
+    {
+      "key": "b97b3cc002df98cd69d0609a8f69b62d567c488a",
+      "id": "CR-EVT-005",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#ProviderObservationApplied"
+    },
+    {
+      "key": "d7594c5e3dc9ffb4a51772e33cbf6a6f04675bc0",
+      "id": "CR-EVT-006",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#SubmerchantCreated"
+    },
+    {
+      "key": "f09008827b8d8843edf74725d8fe262c05828b1b",
+      "id": "CR-EVT-007",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#DossierRevisionAccepted"
+    },
+    {
+      "key": "f4f5e31a8e75f7499cbf77b8f12b1e207911b576",
+      "id": "CR-EVT-008",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#ProviderOperationOutcomeUnknown"
+    },
+    {
+      "key": "f96b30163cdcc7eba5783e0a3595064c7edf5f74",
+      "id": "CR-EVT-009",
+      "rule_type": "event-obligation",
+      "anchor": "events.md#OperationAuthorizationChanged"
+    },
+    {
+      "key": "207b3f100f8c800720bac7d1882dae07496666c4",
+      "id": "CR-MAP-001",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#SubmissionToDossierRevision"
+    },
+    {
+      "key": "20c69cb4e5fc77371325acdfebb0bd38b6021d25",
+      "id": "CR-MAP-002",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#DlocalResultToOperationOutcome"
+    },
+    {
+      "key": "24f9a0a6e6b3cb9cd617c6d2857cc14fa543bcab",
+      "id": "CR-MAP-003",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#RejectionToClientCommunication"
+    },
+    {
+      "key": "2672731dda6f71a4179f8bb9e1c4de97581a25ac",
+      "id": "CR-MAP-004",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#ProviderObservationToFamilyProjection"
+    },
+    {
+      "key": "4babe64a6085019f09b6c2e9526176b99cba5029",
+      "id": "CR-MAP-005",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#AuthorizationToPaymentEvent"
+    },
+    {
+      "key": "537da886747646cfc2bd738f7cd0f83df612d7f1",
+      "id": "CR-MAP-006",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#ProviderSnapshotToUploadPolicy"
+    },
+    {
+      "key": "5899ef4f641716f69ab5e353f7a81f4db40fd6f2",
+      "id": "CR-MAP-007",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#ExistingSubjectDossierDiff"
+    },
+    {
+      "key": "b1d70cdf41310508e888d63dd328da2fdd929a8a",
+      "id": "CR-MAP-008",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#FamilyProjectionsToOperationAuthorization"
+    },
+    {
+      "key": "ceb9e3e068e95f8e300c22840a46cb43e2440bf5",
+      "id": "CR-MAP-009",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#DossierToDlocalPayload"
+    },
+    {
+      "key": "ef3c0c3a9afaf9ebcbd2fcca8a3819d9374e9a38",
+      "id": "CR-MAP-010",
+      "rule_type": "mapping-row",
+      "anchor": "mappings.md#FeeConfigurationToPaymentFact"
+    },
+    {
+      "key": "00134a52091354211186a5d6404f42f27f5cc39c",
+      "id": "CR-NF-001",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:4"
+    },
+    {
+      "key": "0592b7d6ac3a7dedb9f35bbf70ef803316d4ee85",
+      "id": "CR-NF-002",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:2"
+    },
+    {
+      "key": "06d1dc38b13e0aa05c7c982aec44a14de17d6e04",
+      "id": "CR-NF-003",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ApplyProviderObservation:rule:0"
+    },
+    {
+      "key": "0871b36fca5ce54e94216b5f167b9d65eb8a392a",
+      "id": "CR-NF-004",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ConfirmDossierCorrection:rule:2"
+    },
+    {
+      "key": "0ab639e88bc0f0363462ff6c873b9b6629a9aed4",
+      "id": "CR-NF-005",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:3"
+    },
+    {
+      "key": "0cc8727108b8d58a445c8a11cfdefa19d08eb7da",
+      "id": "CR-NF-006",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:2"
+    },
+    {
+      "key": "109259d0a303a7fee0b03f61bab8f5ef43f9e312",
+      "id": "CR-NF-007",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:7"
+    },
+    {
+      "key": "16ed4d981b0808c420e56668d7fdc4c0fd0f123c",
+      "id": "CR-NF-008",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:8"
+    },
+    {
+      "key": "1898750bcc49606a1402ea2bf491e5ead073eda4",
+      "id": "CR-NF-009",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EvaluateOperationAuthorization:rule:0"
+    },
+    {
+      "key": "1a99b65f14eec150bf5f8fe189cc56301105545a",
+      "id": "CR-NF-010",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ConfirmDossierCorrection:rule:4"
+    },
+    {
+      "key": "1b247f8a4a8ca8616dfb063edd76206860b590fc",
+      "id": "CR-NF-011",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:1"
+    },
+    {
+      "key": "23c5bfa974612575ff8e86f2192fdf33b6f62a56",
+      "id": "CR-NF-012",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ApplyProviderObservation:rule:1"
+    },
+    {
+      "key": "24cc08c6641ddc1f4eff6fc723bad8a65cb88ae4",
+      "id": "CR-NF-013",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ApplyProviderObservation:rule:4"
+    },
+    {
+      "key": "25de58cfb0eeefe697e0f8f96625779d9371282c",
+      "id": "CR-NF-014",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:3"
+    },
+    {
+      "key": "2798e665b2c23412343e656452edded4caf042bd",
+      "id": "CR-NF-015",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ApplyProviderObservation:rule:2"
+    },
+    {
+      "key": "28dcdd9ed952c767e516768d8b0d3b6ceae6f497",
+      "id": "CR-NF-016",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:6"
+    },
+    {
+      "key": "2abec94cbad093531625d0c07f9cc5becbcfee04",
+      "id": "CR-NF-017",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:2"
+    },
+    {
+      "key": "32a133d26cac16b946c4fbbfe310538a2d19bc54",
+      "id": "CR-NF-018",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:0"
+    },
+    {
+      "key": "370073d49f0a09d8b6a69b3aa85e862f5e09b4cc",
+      "id": "CR-NF-019",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:2"
+    },
+    {
+      "key": "3d4846938f36995de9940955415f475ae0cb4cc7",
+      "id": "CR-NF-020",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:7"
+    },
+    {
+      "key": "437899b6c96bed6d164335ddd516797eff375471",
+      "id": "CR-NF-021",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:8"
+    },
+    {
+      "key": "4d2fdfb2bd76ba57580c39a2d4035219b900696e",
+      "id": "CR-NF-022",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:12"
+    },
+    {
+      "key": "52db9cb4fb28cd44706225f71bc061b0a240c412",
+      "id": "CR-NF-023",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:1"
+    },
+    {
+      "key": "54a258ca32224c7d3e0add6e0ff256f1c007de79",
+      "id": "CR-NF-024",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#DispatchProviderOperation:rule:3"
+    },
+    {
+      "key": "58cbc5cb19b697a5414b03735630e775fc766fdb",
+      "id": "CR-NF-025",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:9"
+    },
+    {
+      "key": "5a69ac8410201b75f7253aed8b07b8f7bb1df698",
+      "id": "CR-NF-026",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:4"
+    },
+    {
+      "key": "623146e596694806c6e6d50b635a6a850f48863c",
+      "id": "CR-NF-027",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ConfirmDossierCorrection:rule:1"
+    },
+    {
+      "key": "638af3c2f4bffd6d4f1f710c75ad60198df5f8e4",
+      "id": "CR-NF-028",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:0"
+    },
+    {
+      "key": "64c89cc6c7d1ab1f4843111cc1ba6ade2d7d7433",
+      "id": "CR-NF-029",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:8"
+    },
+    {
+      "key": "689ad1374fdbeb0ef58dbb024955cffa164b3b6f",
+      "id": "CR-NF-030",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:2"
+    },
+    {
+      "key": "68d87672611dd54daeca433f220e51d7e5e794d1",
+      "id": "CR-NF-031",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:4"
+    },
+    {
+      "key": "6d46da0f1f5ad3ed70b1f052fbeae86e90408209",
+      "id": "CR-NF-032",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:5"
+    },
+    {
+      "key": "7339a7604a8569ca4616cf364759f4f08213a11c",
+      "id": "CR-NF-033",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EvaluateOperationAuthorization:rule:3"
+    },
+    {
+      "key": "760dda38535ba82d2d0805b73d30643e307d1622",
+      "id": "CR-NF-034",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EvaluateOperationAuthorization:rule:4"
+    },
+    {
+      "key": "7c4a7d9e3731685cc6569c9b9152a3e1c1dccc38",
+      "id": "CR-NF-035",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:1"
+    },
+    {
+      "key": "7d59be3904f1942191f12faa327eae8590a34979",
+      "id": "CR-NF-036",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:4"
+    },
+    {
+      "key": "817bc33108839d79120bf2aab252051f08470176",
+      "id": "CR-NF-037",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:3"
+    },
+    {
+      "key": "85e79a2d18585b67cc366a6ca93e90384a0cd81d",
+      "id": "CR-NF-038",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#DispatchProviderOperation:rule:2"
+    },
+    {
+      "key": "8808b889a41b205de46248f32129b50378349c8e",
+      "id": "CR-NF-039",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:0"
+    },
+    {
+      "key": "897b37d2c0476f4d81ae24901a4e2f799fa127e3",
+      "id": "CR-NF-040",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:3"
+    },
+    {
+      "key": "8a0fd798c6fb02a433e0b6b95033db4a5a39200c",
+      "id": "CR-NF-041",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:7"
+    },
+    {
+      "key": "8febb2b39cdb87f87596126f0de69d1be4120213",
+      "id": "CR-NF-042",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ConfirmDossierCorrection:rule:5"
+    },
+    {
+      "key": "917bcd4007ab29538c14d7883b70b4a0d571efa9",
+      "id": "CR-NF-043",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:6"
+    },
+    {
+      "key": "955743c312d0451089d139c706942325db61ebd0",
+      "id": "CR-NF-044",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ApplyProviderObservation:rule:5"
+    },
+    {
+      "key": "992b16956239e8d72148549a6d916dfda9ecdba7",
+      "id": "CR-NF-045",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#DispatchProviderOperation:rule:1"
+    },
+    {
+      "key": "9b365b31ddf681f67d73facb3aca77559682b5aa",
+      "id": "CR-NF-046",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:5"
+    },
+    {
+      "key": "9bfa6f5b37cbfe73996da9a6c9446f11c3d4a0b7",
+      "id": "CR-NF-047",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:6"
+    },
+    {
+      "key": "a84993ea2abd0c0fbc97fc66c8d5d4ccdff15cfc",
+      "id": "CR-NF-048",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:5"
+    },
+    {
+      "key": "a8a1db7323b2902bae553ab1eee73393a5af5500",
+      "id": "CR-NF-049",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EvaluateOperationAuthorization:rule:2"
+    },
+    {
+      "key": "aa041b98dc72c6bb48b39f12293c404b4bdc9f10",
+      "id": "CR-NF-050",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:3"
+    },
+    {
+      "key": "ad5ef04c22c8c8bdc21921a9d6fcf19e4be6c8d3",
+      "id": "CR-NF-051",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:11"
+    },
+    {
+      "key": "b07b3be20508b595a3313bcc268f3324a8e02980",
+      "id": "CR-NF-052",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:0"
+    },
+    {
+      "key": "b3fc594851c25287e8a4918b04d286f62adfc76d",
+      "id": "CR-NF-053",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EvaluateOperationAuthorization:rule:1"
+    },
+    {
+      "key": "b93df2d6092fe17514c1ce8edd1f44c90a18ec41",
+      "id": "CR-NF-054",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:10"
+    },
+    {
+      "key": "bf4ea78bae31b0a36c7b420dbbbdc409f52866f1",
+      "id": "CR-NF-055",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:5"
+    },
+    {
+      "key": "c3e217e93d88592e6e8aa7590e3e75784296020c",
+      "id": "CR-NF-056",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ConfirmDossierCorrection:rule:0"
+    },
+    {
+      "key": "c4c3bc7f4063a71e988b9afc5c8c2b419b90c510",
+      "id": "CR-NF-057",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:6"
+    },
+    {
+      "key": "ca3548fdce72a51b8470c851506dcf2a83fc63b3",
+      "id": "CR-NF-058",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ReconcileProviderOperation:rule:5"
+    },
+    {
+      "key": "cb133d27c3d41a979d2b2f1757c2315c5e052edd",
+      "id": "CR-NF-059",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:1"
+    },
+    {
+      "key": "d19310fa3b55ced30067bb706298b750d8705c15",
+      "id": "CR-NF-060",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ConfirmDossierCorrection:rule:3"
+    },
+    {
+      "key": "d29d4bb262e444441bece37394e026c414efa3ba",
+      "id": "CR-NF-061",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#DispatchProviderOperation:rule:4"
+    },
+    {
+      "key": "d9bcd380ea50712789e901901968656e8b6f9f98",
+      "id": "CR-NF-062",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#SubmitRegistration:rule:7"
+    },
+    {
+      "key": "db78133486714a0a5d57eb92b1aa864261993ff4",
+      "id": "CR-NF-063",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:1"
+    },
+    {
+      "key": "e19b00c5f37818e37ac38dddb711c22f69a587b1",
+      "id": "CR-NF-064",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ResolveLocalDisposition:rule:7"
+    },
+    {
+      "key": "e71fc3add54bc874d4a07eee008f4e9ae7db4bff",
+      "id": "CR-NF-065",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:6"
+    },
+    {
+      "key": "ef37580e875ce72b512e76347b17c5748463ebe8",
+      "id": "CR-NF-066",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#EvaluateOperationAuthorization:rule:5"
+    },
+    {
+      "key": "f1b22b7a3d8841150fe9dcea5d1d6b59d4fd7f5f",
+      "id": "CR-NF-067",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#PrepareDlocalRegistration:rule:0"
+    },
+    {
+      "key": "f2f6b81c26c71339995e2dbd7147743d17517650",
+      "id": "CR-NF-068",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#DispatchProviderOperation:rule:0"
+    },
+    {
+      "key": "f571abe74d27b97074bf631927dc86b8a8b6e24e",
+      "id": "CR-NF-069",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ActivateProviderConfiguration:rule:4"
+    },
+    {
+      "key": "feb296b9ae261d11c9b175444279226db95a77bf",
+      "id": "CR-NF-070",
+      "rule_type": "needs-formal",
+      "anchor": "operations.md#ApplyProviderObservation:rule:3"
+    }
+  ],
+  "next": {
+    "NF": 71,
+    "DOM": 104,
+    "MAP": 11,
+    "EVT": 10,
+    "ERR": 5,
+    "ENUM": 3
+  },
+  "tombstones": []
+}

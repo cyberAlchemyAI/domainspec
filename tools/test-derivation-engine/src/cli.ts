@@ -1,7 +1,7 @@
 // CLI surface for the engine. Subcommands: roundtrip, derive, lint.
 // `roundtrip` runs the financial-settlement L0 falsification gate.
 
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
@@ -52,7 +52,7 @@ function engineCommit(): string {
 
 /** Feature name from a resolved feature dir (its basename). */
 function featureNameOf(featureDir: string): string {
-  return featureDir.split("/").filter(Boolean).pop() ?? "feature";
+  return basename(featureDir) || "feature";
 }
 
 /** Canonical docs actually present in a feature dir (for the completeness gate). */
