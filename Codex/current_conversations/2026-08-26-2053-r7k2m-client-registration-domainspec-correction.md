@@ -22,4 +22,5 @@ last_updated: 2026-08-26
 - [INSIGHT] `operations.md` 0.2.3 agora contém 70 predicados falsificáveis; o lint determinístico retorna CLEAN, a derivação contém 268 obrigações (140 pure, 128 needs-harness, 0 unresolved) e o drift check retorna FRESH.
 - [INSIGHT] A mudança de forma tombstonou corretamente os 70 antigos IDs `needs-formal` e alocou 140 IDs `rule-validation` para os casos presença/ausência.
 - [INSIGHT] O ambiente Python foi atualizado para Django 5.2.17; `manage.py check` e os 45 testes unitários passaram. `pip check` ainda aponta um conflito preexistente `python-bcb`/`httpx`, fora do escopo.
-- [BLOCKER] DomainSpec 0.2.3 ainda precisa de refresh de Design/Plan e aceitação exata antes de qualquer mutação de produto; Design 0.1.2 e Plan 0.2.2 vinculam a candidata 0.2.2.
+- [INSIGHT] Design 0.1.3 e Plan 0.2.3 foram atualizados para vincular DomainSpec 0.2.3; o verificador do contrato passou com 12 unidades de fronteira, 6 work packs e zero falhas.
+- [BLOCKER] DomainSpec 0.2.3, Design 0.1.3 e Plan 0.2.3 continuam candidatos sem aceitação exata; o gate permanece `planning_only: true` e `mutation_ready: false`, portanto nenhuma mutação de produto está autorizada.

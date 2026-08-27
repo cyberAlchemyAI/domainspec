@@ -1306,12 +1306,6 @@
       "anchor": "operations.md#ApplyProviderObservation:rule:2"
     },
     {
-      "key": "8dc3583928eb4c187bf005ed22661b112b2eabdb",
-      "id": "CR-RULE-090",
-      "rule_type": "rule-validation",
-      "anchor": "operations.md#SubmitRegistration:rule:0"
-    },
-    {
       "key": "8e595c8345585e72e69b6535448e32aae24c1a0a",
       "id": "CR-RULE-091",
       "rule_type": "rule-validation",
@@ -1334,12 +1328,6 @@
       "id": "CR-RULE-094",
       "rule_type": "rule-validation",
       "anchor": "operations.md#ConfirmDossierCorrection:rule:0"
-    },
-    {
-      "key": "98eb5d87bd8a33a23ef4a9636a85f2434e0548b4",
-      "id": "CR-RULE-095",
-      "rule_type": "rule-validation",
-      "anchor": "operations.md#SubmitRegistration:rule:0"
     },
     {
       "key": "9abcbf68ece4b6283c56c8a27cdfd0c69b3d54c2",
@@ -1610,6 +1598,18 @@
       "id": "CR-RULE-140",
       "rule_type": "rule-validation",
       "anchor": "operations.md#SubmitRegistration:rule:10"
+    },
+    {
+      "key": "3b4814f0fadd990139773c373026cbdc101ee318",
+      "id": "CR-RULE-141",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#SubmitRegistration:rule:0"
+    },
+    {
+      "key": "767abc60f8679d5d8ca192e399daebfa73cee0bb",
+      "id": "CR-RULE-142",
+      "rule_type": "rule-validation",
+      "anchor": "operations.md#SubmitRegistration:rule:0"
     }
   ],
   "next": {
@@ -1619,7 +1619,7 @@
     "EVT": 10,
     "ERR": 5,
     "ENUM": 3,
-    "RULE": 141
+    "RULE": 143
   },
   "tombstones": [
     {
@@ -1901,6 +1901,14 @@
     {
       "id": "CR-NF-070",
       "retired_key": "feb296b9ae261d11c9b175444279226db95a77bf"
+    },
+    {
+      "id": "CR-RULE-090",
+      "retired_key": "8dc3583928eb4c187bf005ed22661b112b2eabdb"
+    },
+    {
+      "id": "CR-RULE-095",
+      "retired_key": "98eb5d87bd8a33a23ef4a9636a85f2434e0548b4"
     }
   ]
 }
