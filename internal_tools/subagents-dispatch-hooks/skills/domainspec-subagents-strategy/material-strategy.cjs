@@ -9,7 +9,7 @@ const TOP_LEVEL_KEYS = new Set([
   'dispatch_id', 'schema_version', 'dispatch_type', 'goal', 'context',
   'max_loops', 'final_approver', 'groups', 'meta', 'parent_dispatch_id',
   'anti_bias_global', 'working_folder', 'invoked_by', 'connections',
-  'evidence_binding', 'project_dir',
+  'experiment_contract', 'other_contract', 'evidence_binding', 'project_dir',
 ]);
 const GROUP_KEYS = new Set([
   'group_id', 'agents', 'n', 'robot_talks', 'layers', 'anti_bias',
@@ -20,6 +20,32 @@ const AGENT_KEYS = new Set([
 ]);
 const DISAGREEMENT_KEYS = new Set(['pair', 'statement']);
 const CONNECTION_KEYS = new Set(['from', 'to', 'type', 'loop_cap']);
+const EXPERIMENT_CONTRACT_KEYS = new Set([
+  'phase', 'criterion_output_path', 'proposal_dispatch_id', 'criterion_ref',
+  'experiment_output_path', 'findings_output_path', 'adjudication',
+  'criterion_package', 'pre_freeze_obligations', 'execution_dispatch_ref',
+  'execution_briefings_ref',
+]);
+const EXACT_REF_KEYS = new Set(['path', 'sha256', 'size']);
+const ADJUDICATION_KEYS = new Set(['mode', 'rule_locator']);
+const CRITERION_PACKAGE_KEYS = new Set([
+  'source_ref', 'schema_ref', 'renderer_ref', 'generated_view_ref', 'protocol_ref',
+  'guide_manifest_ref', 'criterion_validator_ref',
+  'guide_equivalence_validator_ref',
+]);
+const OBLIGATION_KEYS = new Set([
+  'obligation_id', 'execution_role_id', 'receipt_ref', 'gate_id',
+  'required_read_scopes', 'independent_of_role_ids',
+]);
+const OTHER_CONTRACT_KEYS = new Set([
+  'owner_capability', 'targets', 'allowed_mutations', 'forbidden_mutations',
+  'source_refs', 'validation_commands', 'expected_result', 'stop_conditions',
+  'lanes',
+]);
+const OTHER_LANE_KEYS = new Set([
+  'lane_id', 'writer_group_id', 'reviewer_group_id', 'target_paths',
+  'connection_type',
+]);
 
 function failUnknown(object, allowed, label) {
   if (!object || typeof object !== 'object' || Array.isArray(object)) {
@@ -36,6 +62,82 @@ function pickDefined(object, keys) {
     if (object[key] !== undefined) out[key] = object[key];
   }
   return out;
+}
+
+function projectExperimentContract(contract) {
+  failUnknown(contract, EXPERIMENT_CONTRACT_KEYS, 'experiment_contract');
+  const projected = pickDefined(contract, [
+    'phase', 'criterion_output_path', 'proposal_dispatch_id',
+    'experiment_output_path', 'findings_output_path',
+  ]);
+  if (contract.criterion_ref !== undefined) {
+    failUnknown(contract.criterion_ref, EXACT_REF_KEYS, 'experiment_contract.criterion_ref');
+    projected.criterion_ref = pickDefined(contract.criterion_ref, ['path', 'sha256', 'size']);
+  }
+  if (contract.adjudication !== undefined) {
+    failUnknown(contract.adjudication, ADJUDICATION_KEYS, 'experiment_contract.adjudication');
+    projected.adjudication = pickDefined(contract.adjudication, ['mode', 'rule_locator']);
+  }
+  if (contract.criterion_package !== undefined) {
+    failUnknown(contract.criterion_package, CRITERION_PACKAGE_KEYS, 'experiment_contract.criterion_package');
+    projected.criterion_package = {};
+    for (const key of CRITERION_PACKAGE_KEYS) {
+      if (contract.criterion_package[key] === undefined) continue;
+      failUnknown(
+        contract.criterion_package[key],
+        EXACT_REF_KEYS,
+        `experiment_contract.criterion_package.${key}`,
+      );
+      projected.criterion_package[key] = pickDefined(
+        contract.criterion_package[key],
+        ['path', 'sha256', 'size'],
+      );
+    }
+  }
+  for (const key of ['execution_dispatch_ref', 'execution_briefings_ref']) {
+    if (contract[key] === undefined) continue;
+    failUnknown(contract[key], EXACT_REF_KEYS, `experiment_contract.${key}`);
+    projected[key] = pickDefined(contract[key], ['path', 'sha256', 'size']);
+  }
+  if (contract.pre_freeze_obligations !== undefined) {
+    if (!Array.isArray(contract.pre_freeze_obligations)) {
+      throw new Error('experiment_contract.pre_freeze_obligations must be an array');
+    }
+    projected.pre_freeze_obligations = contract.pre_freeze_obligations.map((item, index) => {
+      failUnknown(item, OBLIGATION_KEYS, `experiment_contract.pre_freeze_obligations[${index}]`);
+      return pickDefined(item, [
+        'obligation_id', 'execution_role_id', 'receipt_ref', 'gate_id',
+        'required_read_scopes', 'independent_of_role_ids',
+      ]);
+    });
+  }
+  return projected;
+}
+
+function projectOtherContract(contract) {
+  failUnknown(contract, OTHER_CONTRACT_KEYS, 'other_contract');
+  const projected = pickDefined(contract, [
+    'owner_capability', 'targets', 'allowed_mutations', 'forbidden_mutations',
+    'validation_commands', 'expected_result', 'stop_conditions',
+  ]);
+  if (contract.source_refs !== undefined) {
+    if (!Array.isArray(contract.source_refs)) throw new Error('other_contract.source_refs must be an array');
+    projected.source_refs = contract.source_refs.map((ref, index) => {
+      failUnknown(ref, EXACT_REF_KEYS, `other_contract.source_refs[${index}]`);
+      return pickDefined(ref, ['path', 'sha256', 'size']);
+    });
+  }
+  if (contract.lanes !== undefined) {
+    if (!Array.isArray(contract.lanes)) throw new Error('other_contract.lanes must be an array');
+    projected.lanes = contract.lanes.map((lane, index) => {
+      failUnknown(lane, OTHER_LANE_KEYS, `other_contract.lanes[${index}]`);
+      return pickDefined(lane, [
+        'lane_id', 'writer_group_id', 'reviewer_group_id', 'target_paths',
+        'connection_type',
+      ]);
+    });
+  }
+  return projected;
 }
 
 function materialProjection(sheet) {
@@ -90,6 +192,12 @@ function materialProjection(sheet) {
       'dispatch_type', 'goal', 'context', 'max_loops', 'final_approver',
       'meta', 'parent_dispatch_id', 'anti_bias_global', 'working_folder',
     ]),
+    ...(sheet.experiment_contract === undefined
+      ? {}
+      : { experiment_contract: projectExperimentContract(sheet.experiment_contract) }),
+    ...(sheet.other_contract === undefined
+      ? {}
+      : { other_contract: projectOtherContract(sheet.other_contract) }),
     groups,
     ...(connections === undefined ? {} : { connections }),
   };
@@ -118,7 +226,7 @@ function sha256(value) {
 function project(sheet) {
   const material = materialProjection(sheet);
   return {
-    projection_schema: 'domainspec.material-strategy.v1',
+    projection_schema: 'domainspec.material-strategy.v3',
     material_sha256: sha256(stableJson(material)),
     material,
   };
@@ -130,7 +238,11 @@ function loadJson(file) {
 
 function projectionFromFile(file) {
   const value = loadJson(file);
-  if (value && value.projection_schema === 'domainspec.material-strategy.v1') {
+  if (value && [
+    'domainspec.material-strategy.v1',
+    'domainspec.material-strategy.v2',
+    'domainspec.material-strategy.v3',
+  ].includes(value.projection_schema)) {
     if (!value.material || typeof value.material !== 'object') {
       throw new Error(`${file}: projection is missing material`);
     }

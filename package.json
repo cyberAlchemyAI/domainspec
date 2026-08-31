@@ -1,21 +1,41 @@
 {
   "name": "domainspec-runtime-workspace",
   "private": true,
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "26.8.1"
+  },
   "workspaces": [
     "backend",
-    "apps/*"
+    "apps/web",
+    "tools/craft-consultation-api",
+    "tools/test-derivation-engine"
   ],
+  "pnpm": {
+    "overrides": {
+      "fast-uri": "3.1.5",
+      "find-my-way": "9.7.0",
+      "nanoid": "3.3.18",
+      "postcss": "8.5.23",
+      "tsx>esbuild": "0.28.1",
+      "vitest@3.2.6>vite": "6.4.3",
+      "vite@6.4.3>esbuild": "0.25.12",
+      "vite@8.1.5>esbuild": "0.28.1"
+    }
+  },
+  "devDependencies": {
+    "tsx": "4.20.6"
+  },
   "scripts": {
     "build": "pnpm -r build",
     "check": "pnpm -r check",
-    "code-tags:extract": "pnpm dlx tsx governance/tags/tools/extract-code-tags.ts --output governance/tags/code-tags.json --mode strict",
-    "code-tags:validate": "pnpm dlx tsx governance/tags/tools/validate-code-tags.ts --input governance/tags/code-tags.json --waivers governance/tags/code-tag-waivers.yaml --mode strict",
-    "code-tags:composability": "pnpm dlx tsx governance/tags/tools/check-code-tag-composability.ts --input governance/tags/code-tags.json --mode strict",
-    "code-tags:drift": "pnpm dlx tsx governance/tags/tools/compare-code-tag-drift.ts --input governance/tags/code-tags.json --mode strict --report governance/tags/CODE-TAG-DRIFT-REPORT.md",
-    "code-tags:test": "pnpm dlx tsx --test governance/tags/tools/tests/*.test.ts",
+    "code-tags:extract": "tsx governance/tags/tools/extract-code-tags.ts --output governance/tags/code-tags.json --mode strict",
+    "code-tags:validate": "tsx governance/tags/tools/validate-code-tags.ts --input governance/tags/code-tags.json --waivers governance/tags/code-tag-waivers.yaml --mode strict",
+    "code-tags:composability": "tsx governance/tags/tools/check-code-tag-composability.ts --input governance/tags/code-tags.json --mode strict",
+    "code-tags:drift": "tsx governance/tags/tools/compare-code-tag-drift.ts --input governance/tags/code-tags.json --mode strict --report governance/tags/CODE-TAG-DRIFT-REPORT.md",
+    "code-tags:test": "tsx --test governance/tags/tools/tests/*.test.ts",
     "check:code-tags": "pnpm run code-tags:extract && pnpm run code-tags:validate && pnpm run code-tags:composability && pnpm run code-tags:drift",
-    "governance:attenuation:audit": "pnpm dlx tsx tools/governance-attenuation-audit.ts",
+    "governance:attenuation:audit": "tsx tools/governance-attenuation-audit.ts",
     "dev": "pnpm -r --parallel dev",
     "dev:local": "pnpm -r --parallel dev",
     "dev:local:poker-docs": "KG_DOCS_IMPORT_PATH=$(pwd)/../../validation/poker-team/docs/features pnpm -r --parallel dev",

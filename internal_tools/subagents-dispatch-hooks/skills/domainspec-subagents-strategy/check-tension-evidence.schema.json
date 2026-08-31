@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://domainspec.local/schemas/check-tension-evidence.v1.json",
+  "title": "DomainSpec Check Tension Evidence",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "sheet_ref",
+    "independently_frozen",
+    "verdicts"
+  ],
+  "properties": {
+    "schema_version": { "const": "domainspec.check-tension-evidence.v1" },
+    "sheet_ref": { "$ref": "#/$defs/exact_ref" },
+    "independently_frozen": { "const": true },
+    "verdicts": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["slot", "handle", "verdict", "sheet_sha256"],
+        "properties": {
+          "slot": { "enum": ["checker", "reviewer"] },
+          "handle": { "type": "string", "minLength": 1 },
+          "verdict": { "enum": ["pass", "reprove"] },
+          "sheet_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "exact_ref": {
+      "type": "object",
+      "required": ["path", "sha256", "size"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

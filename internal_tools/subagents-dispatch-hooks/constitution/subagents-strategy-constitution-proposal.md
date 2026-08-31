@@ -5,8 +5,8 @@ is_session: false
 layer: architecture
 nature: procedural, technical
 status: draft
-version: 0.8.3-proposal
-last_updated: 2026-08-17
+version: 0.9.1-proposal
+last_updated: 2026-08-27
 replaces: vault/constitution/domainspec-subagents-strategy-constitution.md@v0.3.0 (and the v0.4.0 draft; v0.5.1 amended in place after the 2026-06-12 adversarial assessment)
 derives_from: vault/premise/domainspec-subagents-strategy-premises.md@v0.4.0
 ---
@@ -45,9 +45,9 @@ are validated by the human at the confirm gate.)
   Each dispatch contributes exactly **two appends**: the **dispatch row** (the spec, written
   at dispatch) and the **close row** (`close_of` + outcome, written at termination). There is
   no separate spec file and no separate event log.
-- **Claim ≤ proof:** three of the seven `dispatch_type` values (`code | plan | suggestion`)
-  are reserved names — defined in §5 but not yet active; `research`, `review`, `experiment`,
-  and `other` are LIVE (`other` 2026-08-17 by owner decision — see §5 `dispatch_type`).
+- **Claim ≤ proof:** three of the six `dispatch_type` values (`code | plan | suggestion`)
+  are reserved names — defined in §5 but not yet active; `research`, `review`, and `experiment`
+  are LIVE (`review` 2026-06-12, `experiment` 2026-06-14, by owner decision — see §5 `dispatch_type`).
 - **Companion documents:** a group running robot-talks binds `vault/constitution/robot-talks-constitution.md`;
   the pool of allowed `agent_name`s lives at `telemetry/agents/agent-pool.yaml` (245 names, each
   tagged with an ordered `role_fit` list drawn from explorer / synthesizer / skeptic / writer / auditor).
@@ -132,16 +132,19 @@ redesigning the framework itself — and is the only context in which dispatch l
 
 1. **Trigger.** Dispatch only when at least one holds: _synthesis_ (3+ sources to combine), _context protection_ (raw output ≫ what the parent needs), _isolation_ (discardable exploration), _parallelism_ (independent tasks). Otherwise work inline.
 2. **Human gate.** The strategist proposes the filled sheet in chat only after
-   composite confirmation readiness and both independent tension verdicts
-   pass. Form/version, live type, agent-pool membership, identity uniqueness,
+   composite confirmation readiness and the sheet's exact tension disposition
+   passes: two independent verdicts for a subject-group sheet, or the canonical
+   digest-bound mechanical no-subject pair when no tension agents run.
+   Form/version, live type, agent-pool membership, identity uniqueness,
    final-approver shape, complete digest-owned pair evidence, and local path
    constraints are deterministic pre-confirmation obligations. The human
    confirms, revises, or abandons. Approval to revise the draft is not dispatch
    confirmation. Nothing dispatches — and no row is written — before explicit
    confirmation. Silence or a question is not confirmation. A normal ready
    proposal asks once. Human confirmation binds the reviewed material strategy,
-   not raw serialization bytes. Any later byte edit re-enters readiness and both
-   tension checks. The prior confirmation carries only when a deterministic
+   not raw serialization bytes. Any later byte edit re-enters readiness and the
+   applicable tension-disposition check. The prior confirmation carries only
+   when a deterministic
    projection comparison proves the material strategy unchanged; material or
    unclassifiable change re-enters the human gate.
 3. **Two appends, one place.** The strategist appends the **dispatch row** to `telemetry/agents/subagents-dispatch.yaml` at dispatch, and the **close row** (`close_of` carrying `exit_reason` + `agents_spawned`) at termination. Rows are **never edited in place** — the ledger is append-only, and the appender is the single, serializing write path. The outcome is additionally reported in chat (1–2 sentences) and in the findings document. No other persistence surface exists for dispatch metadata.
@@ -202,13 +205,12 @@ strategist checks the ledger before assigning; if the slug repeats within a date
 
 #### `schema_version` — R · A
 
-**What:** the **row-schema** version this row conforms to — currently `"0.8.0"`.
-Schema 0.8.0 adds digest-owned `predicted_disagreements` plus deterministic
-agent-pool, identity-uniqueness, and final-approver admission. Earlier rows
-remain historical.
+**What:** the **row-schema** version this row conforms to — currently `"0.9.0"`.
+Schema 0.9.0 adds the phased `experiment_contract`, exact proposal/criterion
+lineage, and phase-matched `experiment_closeout`. Earlier rows remain historical.
 **Why:** grandfathering (§2) and future migrations are mechanizable only if every row names
 its schema; pre-v0.5.2 rows are recognizable by this field's absence.
-**How:** the literal row-schema version in force at dispatch time (`"0.8.0"`). Note this is
+**How:** the literal row-schema version in force at dispatch time (`"0.9.0"`). Note this is
 the **wire** schema_version, which tracks row-schema changes only — distinct from the
 document `version` (§10.1), which also bumps on prose/principle changes.
 
@@ -225,13 +227,11 @@ semantics and gates nothing.
 
 **What:** which typed strategy (role-set + evaluation criterion) the dispatch enacts.
 **Why:** fixes the agent-role vocabulary in one move.
-**Values:** `research | code | review | plan | suggestion | experiment | other`. `research`, `review`, `experiment`, and `other` are LIVE; `code`, `plan`, and `suggestion` are reserved names and **must not be dispatched until populated**.
+**Values:** `research | code | review | plan | suggestion | experiment`. `research`, `review`, and `experiment` are LIVE; the other three (`code`, `plan`, `suggestion`) are reserved names and **must not be dispatched until populated**.
 _(`review` populated 2026-06-12 by owner decision: the red-team strategy — attack existing artifacts to surface flaws for improvement; type skill `.claude/skills/review/SKILL.md`; reuses the four research agent roles with red-team semantics. Recorded in-place under the now-retired no-bump practice (§10); a LIVE-status change today requires a document-`version` bump regardless of the row schema (§10.1) — folded into the v0.6.0 versioned amendment (§11). §7 debt re-confrontation per the promotion rule: all three debts re-confronted and AFFIRMED open unchanged — review adds no spawn/cost machinery, no lifecycle change, and the registry remains the sole persistence surface.)_
 _(`experiment` populated 2026-06-14 by owner decision, **narrow recipe** — **[scope superseded 2026-06-15: this dispatch is propose-only; the runner/adjudicator roles and the SURVIVED/FALSIFIED adjudication described below moved to a separate downstream run — see the scope clarification note immediately after this paragraph]**: the falsification strategy — run a probe against a success/failure criterion **pre-registered** (frozen before the result exists), and adjudicate survived-vs-falsified. Type skill `.claude/skills/experiment/SKILL.md`; discovery `internal_tools/subagents-dispatch-hooks/docs/discovery/experiment-promotion/discovery.md`. **Role-set** maps onto the existing **agent-role** enum (`explorer | skeptic | writer | auditor`; no new values): designer (`writer`, authors the pre-registered criterion as a `working_folder` artifact) · runner (`explorer`, runs the probe = reasoning/investigation, **not** code execution) · adjudicator (`auditor`, verdict against the criterion) · skeptic (`skeptic`, attacks internal validity). **Grader:** falsification against the pre-registered criterion + internal validity + reproducibility (deterministic re-adjudication) — distinct from `research` (coverage / claim ≤ proof). **Verdict:** SURVIVED / FALSIFIED / INVALID. **Open questions resolved at promotion:** peer type, not a sub-mode of `research` (the grader differs — criterion fixed *before* the result, vs coverage judged *after*); the `runner`↔`code` collision deferred by the narrow recipe — the code-execution runner stays RESERVED, gated on `code` landing. Recorded without a row-schema change: no new column; the criterion is a `working_folder` artifact, never `success_metric`. §7 debt re-confrontation per the promotion rule: see §7 (P-SS-8 / P-SS-9 unchanged; the NEW persistence debt narrowed — the criterion is governance-grade but off-registry).)_
 
-_(**Scope clarification — 2026-06-15, owner decision.** `experiment` is scoped to the **pre-registration (propose) phase**: the **designer** (`writer`) and **skeptic** (`skeptic`) produce a **frozen, validity-checked `criterion.md`** — the experiment proposal. **Running the probe and adjudicating survived-vs-falsified is a separate downstream step**, not this dispatch; the **runner** (`explorer`) and **adjudicator** (`auditor`) belong to that later run. Verdict timing follows: **INVALID** may be rendered at propose (the skeptic kills an unfalsifiable design before freeze); **SURVIVED / FALSIFIED** are rendered only at the run. A propose dispatch therefore closes `resolved` on an accepted frozen `criterion.md`, never on SURVIVED/FALSIFIED. Type skill `.claude/skills/experiment/SKILL.md` is the authority on the propose/run split.)_
-
-_(`other` populated 2026-08-17 by owner decision as a bounded execution fallback. It applies only when no more specific LIVE owner fits and the confirmed outcome includes a repository mutation. Its type skill requires exact targets, allowed mutations, source evidence, validation, and one independent downstream `skeptic` reviewer for every mutating `writer` lane. It is not an alias for the RESERVED `code`, `plan`, or `suggestion` types. The row shape is unchanged, so wire `schema_version` remains `0.8.0`; this document version advances under §10.)_
+_(**Historical scope clarification — 2026-06-15, superseded by §18 on 2026-08-27.** The propose/run split remains, but both phases now use one typed `experiment` dispatch contract. The run is still a separate downstream dispatch; it is no longer undesigned.)_
 
 #### `goal` — R · **H**
 
@@ -295,7 +295,7 @@ once two or more groups each fan out, where uncoordinated axes would drift.
 **Enforcement:** the conditional is appender-enforced (exit 2) since the 2026-06-12 in-place
 amendment (§9) — a record with ≥ 2 fan-out groups and no `anti_bias_global` is rejected.
 
-#### `working_folder` — C · A (required when `dispatch_type` is `research`, `review`, `experiment`, or `other`)
+#### `working_folder` — C · A (required when `dispatch_type` is `research`, `review`, or `experiment`)
 
 **What:** where the dispatch's outputs land — research + findings documents, a spec file,
 or the code itself, depending on what the dispatch produces. For `research`, this is always a
@@ -304,8 +304,29 @@ docs path. For a research **n ≥ 2** dispatch the two files of Principle 9 are
 synthesis); a research **n = 1** dispatch produces a single `<working_folder>/findings.md`.
 **Why:** outputs need one declared home; the registry row only points at it.
 **How:** repo-relative path. Never `vault/**`.
-For `other`, it holds dispatch and review receipts and does not itself authorize writes;
-only exact targets named in the human-confirmed context may be mutated.
+
+#### `experiment_contract` — C · A (required exactly when `dispatch_type` is `experiment`)
+
+**What:** the phase and immutable experiment inputs/outputs carried as one strict JSON object.
+
+**Propose:** `{phase: "propose", criterion_output_path}`. The output path is relative to
+`working_folder` and declares the criterion artifact to be frozen or rejected as invalid.
+
+**Run:** `{phase: "run", proposal_dispatch_id, criterion_ref,
+experiment_output_path, findings_output_path, adjudication}`. `criterion_ref` is an exact
+repository-relative `{path, sha256, size}` reference. `adjudication` is exactly
+`{mode: "parent_mechanical", rule_locator}` under the accepted D2-A route; the locator is the
+criterion path plus an anchored fragment naming the frozen rule.
+
+**Why:** the run must be re-adjudicable from a proposal that predates its results. The appender
+therefore verifies, before confirmation, that the proposal is a closed v0.9.0 propose row with
+status `frozen`, that its exact criterion ref equals the run ref, and that current bytes still
+match. The contract is material strategy: changing its phase, proposal identity, digest, paths,
+mode, or rule locator invalidates material equivalence.
+
+**Boundary:** output paths are distinct and contained under `working_folder`. This field carries
+bindings, not hypothesis prose or a revived `success_metric`; experiment meaning remains in the
+criterion artifact.
 
 ### Level 2 — GROUP (`groups[]`)
 
@@ -543,6 +564,22 @@ with **helper invocations** (Principle 11) in their own bucket, + loop iteration
 the group `role` field, which removes the CR-2 bucketing ambiguity.)
 **Why:** spawn count is unregulated, so reporting is the entire accountability mechanism.
 
+#### `experiment_closeout` — C · A (required for v0.9.0 experiment close rows)
+
+**What:** a phase-matched typed closeout, distinct from `exit_reason`.
+
+- Resolved propose: `phase: propose`, `status: frozen` with exact `criterion_ref`, or
+  `status: invalid` with no frozen ref.
+- Non-resolved propose: `phase: propose`, `status: not_frozen`, with no outcome ref.
+- Resolved run: `phase: run`, `status: adjudicated`, one verdict from
+  `SURVIVED | FALSIFIED | INVALID`, and exact `criterion_ref`, `experiment_ref`, and
+  `findings_ref`.
+- Non-resolved run: `phase: run`, `status: not_adjudicated`, with no verdict or result refs.
+
+**Why:** operational completion and scientific meaning are different axes. An error or user abort
+cannot be made to look like a scientific outcome. The closeout phase and exact refs must equal the
+registered contract and current artifact bytes.
+
 ## 6. Skeleton YAML
 
 ```yaml
@@ -550,8 +587,8 @@ the group `role` field, which removes the CR-2 bucketing ambiguity.)
 # a close row ({close_of, exit_reason, agents_spawned}) is appended at termination.
 # rows are never edited in place (Principle 3).
 - dispatch_id: 2026-06-12-example-slug
-  schema_version: "0.8.0"
-  dispatch_type: research # research|review|experiment|other LIVE; code|plan|suggestion RESERVED
+  schema_version: "0.9.0"
+  dispatch_type: research # research LIVE; review LIVE (2026-06-12); experiment LIVE (2026-06-14); code|plan|suggestion RESERVED
   goal: > # HUMAN input — the general objective;
     One or two sentences.             # the strategist decomposes it below.
   context: >
@@ -1009,14 +1046,14 @@ That made preventable defects appear only after the human had confirmed.
 This is a row-schema change. New dispatch sheets use wire
 `schema_version: "0.8.0"`; historical rows remain structurally grandfathered.
 
-| #                                           | Decision                                                                                                                                                                                                                                                                              | Amendment |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| **CR-1 — digest-owned pair evidence**       | Every fan-out group adds `predicted_disagreements`, with exactly one canonical indexed record for every unordered pair. Companion prose cannot satisfy Test 4.                                                                                                                        |
-| **CR-2 — deterministic identity admission** | Before tension or confirmation, every non-null `agent_name` must resolve in the active pool and appear only once in the dispatch.                                                                                                                                                     |
-| **CR-3 — approver admission**               | A named `final_approver` must be pooled and occur exactly once as the sole `auditor` of a singleton dedicated approval group. `parent` remains the default. Arbitrary external names and working roles are invalid.                                                                   |
-| **CR-4 — sheet-only tension gate**          | The two independent tension verdicts receive only the exact sheet bytes, digest, and rubric. They run independently in parallel; checker/reviewer comparison occurs only after both verdicts are frozen.                                                                              |
-| **CR-5 — one human request**                | Draft revision is not confirmation. Form, type, pool, identity, approver, pair coverage, path, and tension obligations close before the normal single confirmation request. Byte revisions refresh machine gates; only material or unclassifiable changes require a fresh human gate. |
-| **CR-6 — evidence boundary**                | The deterministic appender owns structural pair coverage and identity/approver admission. `check-tension` owns semantic axis, clone, spread, and evidence quality. Neither gate may infer the other's verdict.                                                                        |
+| #                                           | Decision                                                                                                                                                                                                                                                                                                                   | Amendment |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| **CR-1 — digest-owned pair evidence**       | Every fan-out group adds `predicted_disagreements`, with exactly one canonical indexed record for every unordered pair. Companion prose cannot satisfy Test 4.                                                                                                                                                             |
+| **CR-2 — deterministic identity admission** | Before tension or confirmation, every non-null `agent_name` must resolve in the active pool and appear only once in the dispatch.                                                                                                                                                                                          |
+| **CR-3 — approver admission**               | A named `final_approver` must be pooled and occur exactly once as the sole `auditor` of a singleton dedicated approval group. `parent` remains the default. Arbitrary external names and working roles are invalid.                                                                                                        |
+| **CR-4 — sheet-only tension gate**          | For a subject-group sheet, the two independent tension verdicts receive only the exact sheet bytes, digest, and rubric. They run independently in parallel; checker/reviewer comparison occurs only after both verdicts are frozen. A no-subject sheet follows the mechanical disposition in §19 and spawns neither agent. |
+| **CR-5 — one human request**                | Draft revision is not confirmation. Form, type, pool, identity, approver, pair coverage, path, and tension obligations close before the normal single confirmation request. Byte revisions refresh machine gates; only material or unclassifiable changes require a fresh human gate.                                      |
+| **CR-6 — evidence boundary**                | The deterministic appender owns structural pair coverage and identity/approver admission. `check-tension` owns semantic axis, clone, spread, and evidence quality. Neither gate may infer the other's verdict.                                                                                                             |
 
 ## 16. v0.8.1 document amendment (2026-08-02 — semantic confirmation)
 
@@ -1062,26 +1099,65 @@ shape, appender behavior, or deterministic validator, so the wire
 `schema_version` remains `0.8.0`. The document version advances
 `0.8.1-proposal` to `0.8.2-proposal`; no five-surface promotion is triggered.
 
-## 18. v0.8.3 document amendment (2026-08-17 — LIVE `other` execution type)
+## 18. v0.9.0 amendment (2026-08-27 — phased experiment run contract)
 
-Owner decision: add `other` as a LIVE fallback for bounded repository work that
-must be executed but is not owned by `research`, `review`, or `experiment`.
+Owner decision: **D1-A + D2-A**. Keep one LIVE `experiment` type, add explicit
+`propose` and `run` phases, and use deterministic parent adjudication against a
+rule frozen inside the exact criterion. A separate `experiment-run` type and an
+agent-auditor adjudication path were not selected.
 
-The promotion is deliberately narrow:
+This is a row-schema and lifecycle change. The document version and wire
+`schema_version` both advance to `0.9.0`; historical rows remain structurally
+grandfathered. The atomic surface includes the appender, experiment type skill,
+register-dispatch form, constitution field definitions, README, material
+projection, and tests.
 
-1. the confirmed sheet names exact mutation targets, exclusions, governing
-   evidence, validation, outputs, and stop conditions;
-2. every mutating `writer` lane hands off to a distinct downstream `skeptic`
-   reviewer; same-file lanes are sequential and parallel lanes have disjoint
-   write sets;
-3. `working_folder` is required for dispatch and review receipts, but grants no
-   authority over unnamed targets;
-4. `resolved` requires declared validation, an `ACCEPT` from every independent
-   reviewer, and final approval;
-5. `other` must not bypass a more specific LIVE owner and does not activate the
-   reserved `code`, `plan`, or `suggestion` types.
+| #                                             | Decision                                                                               | Amendment                                                                                                                                                                                             |
+| --------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **EXR-1 — one type, two rows**                | Preserve the peer falsification grader without duplicating taxonomy.                   | `experiment_contract.phase` is `propose` or `run`; a run is a distinct downstream dispatch row, never an in-place transition of the proposal row.                                                     |
+| **EXR-2 — exact lineage**                     | Discharge the deferred criterion-pointer debt.                                         | A run binds `proposal_dispatch_id` and exact `{path, sha256, size}` criterion ref. Readiness proves the proposal closed resolved and frozen with the identical ref before the human gate.             |
+| **EXR-3 — deterministic parent adjudication** | Keep scoring mechanical and avoid a seventh model confound.                            | The run contract fixes `adjudication.mode: parent_mechanical` and a criterion-anchored `rule_locator`. This is a mechanical evaluation step, not final approval and not authority to change the rule. |
+| **EXR-4 — typed closeout**                    | Separate operational exit from scientific outcome.                                     | `experiment_closeout` records frozen/invalid/not_frozen for propose and adjudicated/not_adjudicated for run. Only an adjudicated run may carry SURVIVED/FALSIFIED/INVALID and exact result refs.      |
+| **EXR-5 — material confirmation**             | Criterion or grader changes are semantic, even when represented by digests.            | The complete experiment contract is included in `domainspec.material-strategy.v2`; any phase, lineage, digest, path, mode, or rule-locator change requires renewed material confirmation.             |
+| **EXR-6 — controlled replication**            | Identical trial conditions must not be distorted to satisfy pairwise-tension rhetoric. | Experiment runs may use independent singleton explorer groups. Runtime waves are scheduling only; comparisons are rendered by the frozen criterion and scorer.                                        |
 
-This adds one admitted enum value and LIVE owner without changing the row
-shape. The wire `schema_version` therefore remains `0.8.0`; the constitution
-version advances `0.8.2-proposal` to `0.8.3-proposal`. The code, type skill,
-§5 field table, tests, and README change together under §10.2.
+**Premise-debt re-confrontation.** P-SS-8 remains open: this change does not
+bound native spawn cost. P-SS-9 remains linear but now spans two explicitly
+typed rows: propose must close before run readiness. The experiment persistence
+debt is **discharged for the phased adapter** because the ledger now binds the
+proposal, criterion, outputs, adjudication rule locator, and verdict refs. The
+ledger still stores handles and digests rather than full result bodies.
+
+**Authority ceiling.** A valid closeout proves only that the registered
+experiment was adjudicated under its frozen rule. It grants no acceptance,
+promotion, publication, deployment, code-execution, or external-effect
+authority. The RESERVED `code` type remains RESERVED.
+
+## 19. v0.9.1 document and validator repair (2026-08-27 — truthful no-subject evidence)
+
+Owner decision: **D3-A**. Wire `schema_version` remains `0.9.0`; the dispatch-row
+shape and material-strategy projection do not change. The document version
+advances to `0.9.1-proposal` because the authority-bearing appender now closes
+an evidence-provenance gap made reachable by EXR-6.
+
+A sheet has a subject group exactly when one group contains at least two agents
+and at least one of those agents has role `explorer`, `skeptic`, or `auditor`.
+Subject-group sheets retain two independent digest-bound PASS verdicts. A sheet
+without a subject group spawns no checker or reviewer and carries exactly two
+mechanical gate-slot handles:
+
+```text
+check-tension:no-subject:checker:<sheet_sha256>
+check-tension:no-subject:reviewer:<sheet_sha256>
+```
+
+The handles are not agent judgments. The appender recomputes the predicate from
+the exact confirmed sheet, requires the registered row to preserve that
+predicate, accepts only the canonical pair on the no-subject branch, rejects
+the reserved prefix on the subject branch, and continues to require explicit
+human confirmation in both cases. Any sheet-byte change invalidates the digest
+and therefore the disposition evidence.
+
+**Authority ceiling.** This repair proves only truthful tension-gate provenance
+for registration. It grants no confirmation, dispatch, experiment execution,
+scientific verdict, acceptance, publication, deployment, or external effect.

@@ -59,7 +59,7 @@ const here = __dirname;
 
 const HOOKS = ['remind-register-dispatch.cjs', 'block-workflow.cjs', 'enforce-append-only-dispatch.cjs'];
 const SKILL = 'register-dispatch';
-const SKILL_FILES = ['SKILL.md', 'append-dispatch.cjs'];
+const SKILL_FILES = ['SKILL.md', 'append-dispatch.cjs', 'registration-envelope.schema.json'];
 // Chain skills: project-coupled, installed into the TARGET repo's .claude/skills
 // (not ~/.claude), with internal_tools/skills/<name>/ as the single source.
 const STRATEGY_SKILL = 'domainspec-subagents-strategy';

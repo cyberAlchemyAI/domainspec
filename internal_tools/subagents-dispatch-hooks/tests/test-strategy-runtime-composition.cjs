@@ -83,7 +83,7 @@ for (const runtime of ['codex', 'claude']) {
 
   const readinessRemoval = replaceAcrossWhitespace(
     publicText,
-    "Run the form owner's non-mutating confirmation-readiness validator against the exact persisted sheet.",
+    "Run the form owner's non-mutating confirmation-readiness validator against the exact temporary sheet.",
     'Ask the user before validation.',
   );
   check(
@@ -95,7 +95,7 @@ for (const runtime of ['codex', 'claude']) {
 
   const compositeRemoval = replaceAcrossWhitespace(
     publicText,
-    'Confirmation readiness is one composite checkpoint: form and version, live type-owner prerequisites, agent eligibility and identity uniqueness, final-approver admission, complete digest-owned tension evidence, and configured publication boundaries must all close before the human gate.',
+    'Confirmation readiness is one composite checkpoint: form and version, live type-owner prerequisites, agent eligibility and identity uniqueness, final-approver admission, complete digest-owned tension evidence, configured publication boundaries, and any native runtime binding must all close before the human gate.',
     'Form syntax is enough.',
   );
   check(
@@ -131,7 +131,7 @@ for (const runtime of ['codex', 'claude']) {
 
   const humanGateRemoval = replaceAcrossWhitespace(
     publicText,
-    'Human confirmation binds the material strategy that was presented, not the serialization bytes of its dispatch sheet.',
+    'Human confirmation binds the exact admitted strategy sheet that was presented.',
     'Human confirmation binds the current bytes.',
   );
   check(
@@ -141,16 +141,28 @@ for (const runtime of ['codex', 'claude']) {
     `${runtime}: semantic human-gate removal must fail`,
   );
 
-  const equivalenceRemoval = replaceAcrossWhitespace(
+  const exactSheetRemoval = replaceAcrossWhitespace(
     publicText,
-    'Carry the prior confirmation only when the configured deterministic equivalence check proves the material-strategy projection unchanged; record the equivalence receipt and attach the carried confirmation to the current machine digest.',
-    'Carry prior confirmation after byte changes.',
+    'Any byte change, including mechanical reserialization, invalidates readiness, tension verdicts, and confirmation and returns the lifecycle to validation and explicit reconfirmation.',
+    'Carry confirmation after byte changes.',
   );
   check(
-    errorsFor(runtime, 'public', equivalenceRemoval).some((error) =>
-      error.includes('missing protected rule material_equivalence'),
+    errorsFor(runtime, 'public', exactSheetRemoval).some((error) =>
+      error.includes('missing protected rule exact_sheet_invalidation'),
     ),
-    `${runtime}: material-equivalence removal must fail`,
+    `${runtime}: exact-sheet invalidation removal must fail`,
+  );
+
+  const executionEntryRemoval = replaceAcrossWhitespace(
+    publicText,
+    'Do not insert post-confirmation registration evidence into the closure-bound canonical dispatch.',
+    'Insert registration evidence into the dispatch.',
+  );
+  check(
+    errorsFor(runtime, 'public', executionEntryRemoval).some((error) =>
+      error.includes('missing protected rule execution_entry'),
+    ),
+    `${runtime}: execution-entry cycle protection removal must fail`,
   );
 }
 
@@ -171,7 +183,7 @@ for (const overlayRuntime of ['codex', 'claude']) {
 
   const readinessRemoval = replaceAcrossWhitespace(
     overlayText,
-    'Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.8.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.',
+    'Continue only when the command emits `SHEET_VALIDATION=pass`, `SCHEMA_VERSION=0.10.0`, the exact `SHEET_SHA256`, and `LEDGER_MUTATION=none`.',
     'Continue after drafting.',
   );
   check(
@@ -179,6 +191,30 @@ for (const overlayRuntime of ['codex', 'claude']) {
       error.includes('missing protected rule confirmation_readiness'),
     ),
     `${overlayRuntime}: local confirmation-readiness removal must fail`,
+  );
+
+  const closureRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'For every schema 0.10.0 candidate, compile one `domainspec.preconfirmation-closure.v1` receipt after the tension branch is known and before asking for confirmation.',
+    'Ask for confirmation after tension.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', closureRemoval).some((error) =>
+      error.includes('missing protected rule preconfirmation_closure'),
+    ),
+    `${overlayRuntime}: preconfirmation-closure removal must fail`,
+  );
+
+  const experimentLineageRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'For `experiment/run`, it also performs a bounded read-only ledger check and proves a resolved frozen proposal plus an identical current criterion ref; `LEDGER_READ=proposal_lineage_only` does not authorize mutation.',
+    'Experiment runs use their declared criterion.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', experimentLineageRemoval).some((error) =>
+      error.includes('missing protected rule experiment_lineage'),
+    ),
+    `${overlayRuntime}: experiment-lineage removal must fail`,
   );
 
   const compositeRemoval = replaceAcrossWhitespace(
@@ -191,6 +227,42 @@ for (const overlayRuntime of ['codex', 'claude']) {
       error.includes('missing protected rule composite_readiness'),
     ),
     `${overlayRuntime}: local composite-readiness removal must fail`,
+  );
+
+  const subjectPredicateRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'A subject group has at least 2 agents and includes an `explorer`, `skeptic`, or `auditor`.',
+    'A subject group contains agents.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', subjectPredicateRemoval).some((error) =>
+      error.includes('missing protected rule subject_group_predicate'),
+    ),
+    `${overlayRuntime}: subject-group predicate removal must fail`,
+  );
+
+  const noSubjectRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'A no-subject sheet spawns no tension agents and must carry exactly the canonical digest-bound checker/reviewer no-subject pair; a subject-group sheet retains two independent PASS verdicts, and explicit human confirmation remains mandatory in both branches.',
+    'No-subject sheets skip tension.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', noSubjectRemoval).some((error) =>
+      error.includes('missing protected rule no_subject_tension_disposition'),
+    ),
+    `${overlayRuntime}: no-subject disposition removal must fail`,
+  );
+
+  const byteRefreshRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'Any strategist byte edit after admission invalidates the machine digest and returns to confirmation-readiness validation before the applicable tension disposition: fresh independent verdicts on the subject branch or a freshly derived canonical pair on the no-subject branch.',
+    'Byte edits keep the prior tension result.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', byteRefreshRemoval).some((error) =>
+      error.includes('missing protected rule byte_revision_tension_refresh'),
+    ),
+    `${overlayRuntime}: byte-revision tension refresh removal must fail`,
   );
 
   const approverRemoval = replaceAcrossWhitespace(
@@ -263,6 +335,30 @@ for (const overlayRuntime of ['codex', 'claude']) {
       error.includes('missing protected rule material_equivalence'),
     ),
     `${overlayRuntime}: local material-equivalence removal must fail`,
+  );
+
+  const profileRegistrationRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'Use the canonical private runtime profile: preserve the durable material-bound source sheet, generate one run-local registration envelope after confirmation, consume only that envelope, and verify the normalized ledger row before execution.',
+    'Register after confirmation.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', profileRegistrationRemoval).some((error) =>
+      error.includes('missing protected rule profile_driven_registration'),
+    ),
+    `${overlayRuntime}: profile-driven registration removal must fail`,
+  );
+
+  const otherOwnerRemoval = replaceAcrossWhitespace(
+    overlayText,
+    'The `other` LIVE type is owned by the bounded execution skill and requires explicit targets, mutations, validation, stop conditions, and independent downstream review for every mutating lane.',
+    'The other type may execute work.',
+  );
+  check(
+    errorsFor(overlayRuntime, 'overlay', otherOwnerRemoval).some((error) =>
+      error.includes('missing protected rule other_type_owner'),
+    ),
+    `${overlayRuntime}: other type owner removal must fail`,
   );
 
   const undeclaredOverlay = overlayText.replace(

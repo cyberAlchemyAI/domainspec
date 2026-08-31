@@ -1,0 +1,55 @@
+{
+  "schema_version": "arcanum.subagent-strategy-runtime-profile.v1",
+  "profile_id": "domainspec.subagent-strategy.private.v1",
+  "profile_version": "1.0.0",
+  "row_schemas": {
+    "current": "0.10.0",
+    "historical_validate_only": ["0.9.0"]
+  },
+  "confirmation": {
+    "mode": "material_projection",
+    "binding_digest": "material_projection",
+    "equivalence_receipt_kind": "domainspec.material-strategy-equivalence.v1"
+  },
+  "source_lifecycle": "durable",
+  "ledger": "telemetry/agents/subagents-dispatch.yaml",
+  "runtime_temp_root": "telemetry/agents/runtime/subagents-strategy",
+  "adapter_module": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs",
+  "adapter_base": "project_root",
+  "adapter_operations": {
+    "readiness": "--validate-sheet",
+    "register": "--consume",
+    "close": "--consume"
+  },
+  "required_admission_receipt_kind": "domainspec.preconfirmation-closure.v1",
+  "dispatch_types": {
+    "research": {
+      "status": "live",
+      "owner_capability": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/research/SKILL.md"
+    },
+    "review": {
+      "status": "live",
+      "owner_capability": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/review/SKILL.md"
+    },
+    "experiment": {
+      "status": "live",
+      "owner_capability": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/experiment/SKILL.md"
+    },
+    "other": {
+      "status": "live",
+      "owner_capability": "implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/other/SKILL.md"
+    },
+    "code": {
+      "status": "reserved",
+      "owner_capability": null
+    },
+    "plan": {
+      "status": "reserved",
+      "owner_capability": null
+    },
+    "suggestion": {
+      "status": "reserved",
+      "owner_capability": null
+    }
+  }
+}

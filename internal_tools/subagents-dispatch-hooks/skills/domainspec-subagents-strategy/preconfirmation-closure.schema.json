@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://domainspec.local/schemas/preconfirmation-closure.v1.json",
+  "title": "DomainSpec Preconfirmation Closure Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "scope",
+    "status",
+    "inputs",
+    "form",
+    "material_strategy",
+    "tension_disposition",
+    "consumer_closure",
+    "experiment_checks",
+    "execution_rehearsal",
+    "blockers",
+    "first_nonzero"
+  ],
+  "properties": {
+    "schema_version": { "const": "domainspec.preconfirmation-closure.v1" },
+    "scope": { "enum": ["dispatch", "experiment"] },
+    "status": { "enum": ["pass", "block"] },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "sheet_ref",
+        "material_projection_ref",
+        "tension_evidence_ref",
+        "execution_dispatch_ref",
+        "execution_briefings_ref",
+        "criterion_package_refs",
+        "consumer_versions"
+      ],
+      "properties": {
+        "sheet_ref": { "$ref": "#/$defs/exact_ref" },
+        "material_projection_ref": { "$ref": "#/$defs/exact_ref" },
+        "tension_evidence_ref": { "$ref": "#/$defs/nullable_exact_ref" },
+        "execution_dispatch_ref": { "$ref": "#/$defs/nullable_exact_ref" },
+        "execution_briefings_ref": { "$ref": "#/$defs/nullable_exact_ref" },
+        "criterion_package_refs": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/exact_ref" }
+        },
+        "consumer_versions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/exact_ref" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "form": {
+      "type": "object",
+      "required": [
+        "status",
+        "schema_version",
+        "sheet_sha256",
+        "ledger_read",
+        "ledger_mutation"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "block"] },
+        "schema_version": { "type": ["string", "null"] },
+        "sheet_sha256": { "type": ["string", "null"] },
+        "ledger_read": { "type": ["string", "null"] },
+        "ledger_mutation": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "material_strategy": {
+      "type": "object",
+      "required": ["status", "projection_schema", "material_sha256"],
+      "properties": {
+        "status": { "enum": ["pass", "block"] },
+        "projection_schema": { "type": ["string", "null"] },
+        "material_sha256": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "tension_disposition": {
+      "type": "object",
+      "required": [
+        "status",
+        "branch",
+        "expected_handle_class",
+        "canonical_handles"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "block"] },
+        "branch": { "enum": ["subject", "no_subject", null] },
+        "expected_handle_class": {
+          "enum": ["independent_pass_pair", "canonical_no_subject_pair", null]
+        },
+        "canonical_handles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "consumer_closure": { "$ref": "#/$defs/check_group" },
+    "experiment_checks": { "$ref": "#/$defs/check_group" },
+    "execution_rehearsal": {
+      "type": "object",
+      "required": ["status", "spawn_attempt_count", "waves", "blockers"],
+      "properties": {
+        "status": { "enum": ["pass", "block"] },
+        "spawn_attempt_count": { "const": 0 },
+        "waves": { "type": "array" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "check", "message"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "check": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "first_nonzero": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "exact_ref": {
+      "type": "object",
+      "required": ["path", "sha256", "size"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "nullable_exact_ref": {
+      "oneOf": [{ "$ref": "#/$defs/exact_ref" }, { "type": "null" }]
+    },
+    "check_group": {
+      "type": "object",
+      "required": ["status"],
+      "properties": { "status": { "enum": ["pass", "block"] } },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "pass" } } },
+      "then": {
+        "properties": {
+          "blockers": { "maxItems": 0 },
+          "first_nonzero": { "const": 0 },
+          "form": { "properties": { "status": { "const": "pass" } } },
+          "material_strategy": {
+            "properties": { "status": { "const": "pass" } }
+          },
+          "tension_disposition": {
+            "properties": { "status": { "const": "pass" } }
+          },
+          "consumer_closure": {
+            "properties": { "status": { "const": "pass" } }
+          },
+          "experiment_checks": {
+            "properties": { "status": { "const": "pass" } }
+          },
+          "execution_rehearsal": {
+            "properties": { "status": { "const": "pass" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "pass" },
+          "tension_disposition": {
+            "properties": { "branch": { "const": "subject" } },
+            "required": ["branch"]
+          }
+        },
+        "required": ["status", "tension_disposition"]
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "tension_evidence_ref": { "$ref": "#/$defs/exact_ref" }
+            }
+          },
+          "tension_disposition": {
+            "properties": {
+              "expected_handle_class": { "const": "independent_pass_pair" },
+              "canonical_handles": { "minItems": 2, "maxItems": 2 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tension_disposition": {
+            "properties": { "branch": { "const": "no_subject" } },
+            "required": ["branch"]
+          }
+        },
+        "required": ["tension_disposition"]
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "properties": { "tension_evidence_ref": { "type": "null" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scope": { "const": "experiment" },
+          "status": { "const": "pass" }
+        },
+        "required": ["scope", "status"]
+      },
+      "then": {
+        "properties": {
+          "inputs": {
+            "properties": {
+              "execution_dispatch_ref": { "$ref": "#/$defs/exact_ref" },
+              "execution_briefings_ref": { "$ref": "#/$defs/exact_ref" },
+              "criterion_package_refs": { "minProperties": 1 }
+            }
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "properties": { "scope": { "const": "dispatch" } },
+          "required": ["scope"]
+        },
+        "then": {
+          "properties": {
+            "inputs": {
+              "properties": {
+                "execution_dispatch_ref": { "type": "null" },
+                "execution_briefings_ref": { "type": "null" },
+                "criterion_package_refs": { "maxProperties": 0 }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

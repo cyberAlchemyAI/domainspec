@@ -1,6 +1,6 @@
 ---
 name: check-tension
-description: Init-time anti-bias gate. Before the human confirm, two independent agents verify a proposed dispatch sheet is genuinely tensioned against the rubric this skill owns (four tension tests + cross-group coherence); the sheet reaches the human only if BOTH pass — any reproval or disagreement returns it to the strategist. Gate infrastructure: not itself a dispatch, not subject to its own gate.
+description: Init-time anti-bias gate. Before the human confirm, subject-group sheets receive two independent rubric verdicts; no-subject sheets receive an exact digest-bound mechanical disposition without spawning gate agents. Gate infrastructure: not itself a dispatch, not subject to its own gate.
 ---
 
 # check-tension — the init-time anti-bias gate
@@ -15,14 +15,15 @@ the gate and **owns the rubric below**; it owns no dispatch field and no type ju
 Between **Propose** and **Confirm** in the lifecycle (router §3), for any sheet
 that has a **subject group**: a group with at least 2 agents whose agent roles
 include investigation work (`explorer`) or evaluation work (`skeptic` or
-`auditor`). Schema 0.8.0 has no group-level role. A sheet with no subject group
-has nothing to tension; the gate passes trivially.
+`auditor`). Wire schema 0.9.0 has no group-level role. A sheet with no subject
+group has nothing to tension; the gate passes mechanically without spawning
+the checker or reviewer.
 
 Precondition: the exact persisted sheet must already have passed its form
-owner's non-mutating confirmation-readiness validator. Both agents receive that
-same admitted sheet digest. This skill owns anti-bias only; it must not infer
-schema, registrar, final-approver, or dispatch-type admission from a tension
-PASS.
+owner's non-mutating confirmation-readiness validator. On the subject branch,
+both agents receive that same admitted sheet digest. This skill owns anti-bias
+only; it must not infer schema, registrar, final-approver, or dispatch-type
+admission from a tension PASS.
 
 The input boundary is closed: each gate agent receives the exact persisted
 sheet bytes, their SHA-256 digest, and this rubric only. Companion strategy
@@ -30,13 +31,31 @@ documents, parent-written summaries, prior chat, and any evidence not present
 in those sheet bytes are forbidden. In particular, Test 4 is satisfied only by
 the sheet's digest-owned `predicted_disagreements` records.
 
-The digest identifies the exact machine input to this tension verdict; it does
-not define the scope of human confirmation. Every byte revision requires fresh
-independent tension verdicts on the new digest. Whether a prior human
-confirmation carries is owned by the router's deterministic material-strategy
-equivalence rule, not by this gate.
+The digest identifies the exact machine input to this tension disposition; it
+does not define the scope of human confirmation. Every byte revision requires
+fresh disposition evidence on the new digest: independent verdicts on the
+subject branch or a freshly derived canonical pair on the no-subject branch.
+Whether a prior human confirmation carries is owned by the router's
+deterministic material-strategy equivalence rule, not by this gate.
 
-## The two agents (independent)
+## No-subject disposition
+
+After readiness reports the exact `SHEET_SHA256`, a no-subject sheet emits two
+deterministic gate-slot records with `verdict: "pass"` and that same digest:
+
+```text
+check-tension:no-subject:checker:<sheet_sha256>
+check-tension:no-subject:reviewer:<sheet_sha256>
+```
+
+These handles preserve the two-slot evidence shape but are **not independent
+judgments**. The checker and reviewer are not spawned, no model result is
+invented, and explicit human confirmation remains mandatory. The registrar
+recomputes the subject-group predicate from the exact sheet: a no-subject sheet
+accepts only this canonical pair, while a subject-group sheet rejects the
+reserved prefix and still requires two real independent PASS receipts.
+
+## The two agents (subject branch only, independent)
 
 Both read the **proposed sheet** — the `groups`, each agent's `role` and
 `angle`, each group's `anti_bias`, and `predicted_disagreements` (field

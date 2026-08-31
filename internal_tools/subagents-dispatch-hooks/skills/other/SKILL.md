@@ -24,6 +24,27 @@ Before the sheet can reach confirmation, its `context` must name:
 - the validation commands or deterministic checks;
 - the expected durable result and stop conditions.
 
+The sheet must also encode those obligations in `other_contract` so admission
+does not depend on prose interpretation:
+
+- `owner_capability` is exactly
+  `implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/other/SKILL.md`;
+- `targets` is a non-empty unique list of portable repository-relative paths;
+- `allowed_mutations`, `forbidden_mutations`, `validation_commands`, and
+  `stop_conditions` are non-empty unique string lists;
+- `source_refs` is a non-empty list of current exact `{path, sha256, size}`
+  references;
+- `expected_result` is one non-empty durable-outcome statement;
+- `lanes` is a non-empty list of `{lane_id, writer_group_id,
+reviewer_group_id, target_paths, connection_type}` objects, where
+  `connection_type` is `sequential` or `zig-zag`.
+
+Every declared target belongs to exactly one lane. Target paths may not overlap
+across lanes. Each lane names one singleton pooled `writer` and one distinct
+singleton pooled `skeptic`, and its declared writer-to-reviewer edge must exist
+in `connections`. A current `other` sheet without this complete machine
+contract is not confirmation-ready and cannot be registered.
+
 `working_folder` is required. It stores the dispatch sheet and validation/review receipts; it
 does not broaden write authority. A target outside `working_folder` is writable only when it is
 named explicitly in the confirmed context.

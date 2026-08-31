@@ -1,3 +1,9 @@
 packages:
   - backend
-  - apps/*
+  - apps/web
+  - tools/craft-consultation-api
+  - tools/test-derivation-engine
+
+onlyBuiltDependencies:
+  - better-sqlite3
+  - esbuild

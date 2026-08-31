@@ -1,5 +1,9 @@
 {
   "name": "@domainspec/web",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "26.8.1"
+  },
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,11 +19,11 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "1.59.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.2",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "@vitejs/plugin-react": "6.0.1",
+    "typescript": "7.0.2",
+    "vite": "8.1.5"
   }
 }

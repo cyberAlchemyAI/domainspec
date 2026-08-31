@@ -1,12 +1,13 @@
 ---
 name: register-dispatch
-description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagents-dispatch.yaml — two appends per dispatch (dispatch row + close row), with each agent's angle and the anti_bias axis. Use whenever you dispatch one or more subagents (a research-skill run OR an ad-hoc Agent call); `research`, `review`, `experiment`, and `other` are LIVE — `code`, `plan`, and `suggestion` remain reserved. Trivial single lookups that spawn no subagent do not need registration. Single owner of the record/sheet fill mechanics — the form layer of the router → type-skill → form chain (field tables, enums, appender, close row).
+description: Record a subagent dispatch in <repo-root>/telemetry/agents/subagents-dispatch.yaml through the profile-driven registrar. `research`, `review`, `experiment`, and `other` are LIVE; `code`, `plan`, and `suggestion` remain reserved. The durable material-bound sheet is preserved while one run-local registration envelope is consumed.
 ---
 
 # register-dispatch
 
 Record **one row per dispatch** in the repo ledger `telemetry/agents/subagents-dispatch.yaml`,
-under the subagents-strategy constitution **schema v0.8.0**. A dispatch contributes exactly
+under the subagents-strategy constitution **schema v0.10.0** for new rows. Schema
+v0.9.0 and older ledger rows remain read-only historical inputs. A dispatch contributes exactly
 **two appends** (constitution Principle 3): the **dispatch row** (the spec, at dispatch) and
 the **close row** (`close_of` + outcome, at termination). The ledger is append-only — rows
 are never edited in place.
@@ -15,7 +16,16 @@ are never edited in place.
 
 - Before the tension and human gates, run the non-mutating confirmation-readiness
   validator against the exact persisted candidate sheet. It validates the live
-  row core without requiring `evidence_binding` and never touches the ledger.
+  row core without requiring `evidence_binding` and never mutates the ledger. A
+  run-phase experiment performs one bounded read-only lookup to prove its closed
+  proposal and exact criterion lineage before confirmation.
+- For a v0.10.0 candidate, registration additionally requires one exact passing
+  `domainspec.preconfirmation-closure.v1` receipt over the same sheet,
+  material projection, criterion package, execution topology, briefings, and
+  consumer versions. The receipt uses `scope: experiment` when experiment-only
+  topology and criterion checks are reachable; other dispatches use `scope:
+dispatch` and bind null execution refs rather than inventing an inapplicable
+  rehearsal. Confirmation must bind the same `material_sha256`.
 - After (or as) you dispatch subagents for any non-trivial task.
 - **Principle-2 gate:** append only after the human's explicit confirmation of
   the material strategy, either directly or carried by a deterministic
@@ -29,14 +39,14 @@ are never edited in place.
   is not a dispatch (P11, owned by the router) — do not register it; it is reported in
   the parent's `agents_spawned`.
 
-## The dispatch row (schema v0.8.0)
+## The dispatch row (schema v0.10.0; v0.9.0 historical compatibility)
 
 The appender **validates the incoming record strictly** and rejects (exit 2) on any
 schema violation, listing every error. Unknown keys are rejected — keys in constitution
 §7's removed table (`success_metric`, `constraints`, `created`) get an explicit
 **removed by schema v0.5.2** error (historical: those keys were removed at v0.5.2); old
 ledger-row-only keys (`status`, `anti_bias` top level, `agents` top level, `corpus`,
-`topic_slug`, `session`) get a **pre-v0.5.2 ledger-row key, not in the v0.8.0 schema**
+`topic_slug`, `session`) get a **pre-v0.5.2 ledger-row key, not in the v0.9.0 schema**
 error.
 
 **Not enforced by the appender** (sheet-design rules owned by the strategist and the
@@ -51,25 +61,26 @@ appender-enforced.
 
 ### Top level
 
-| Field                | Required               | Meaning / constraint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| -------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `dispatch_id`        | ✅                     | Unique id, `YYYY-MM-DD-<slug>` (§5). Dedup key — re-registering the same id is a no-op.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `schema_version`     | ✅                     | Must be **exactly** `"0.8.0"`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `dispatch_type`      | ✅                     | `research \| code \| review \| plan \| suggestion \| experiment \| other`. `research`, `review`, `experiment`, and `other` are LIVE; `code`, `plan`, and `suggestion` are RESERVED and rejected. `other` is the bounded execution fallback: exact targets, mutation scope, sources, validation, and an independent downstream reviewer per mutating lane are mandatory under its type skill. |
-| `goal`               | ✅                     | Non-empty string — the human's objective, one or two sentences.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `context`            | ✅                     | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `max_loops`          | ✅                     | Integer 1..5 — whole-sequence re-run ceiling.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `final_approver`     | ✅                     | Exactly `parent`, or the pooled `agent_name` that appears once as the sole `auditor` in a singleton dedicated approval group. Arbitrary external names and working roles are rejected before confirmation.                                                                                                                                                                                                                                                                                                                                                                                             |
-| `evidence_binding`   | ✅                     | **JSON column** binding the live sheet file and SHA-256 to exactly two independent PASS verdict handles and one confirmation handle. The handle may represent direct confirmation or a prior confirmation carried by a deterministic material-equivalence receipt. See below.                                                                                                                                                                                                                                                                                                                          |
-| `groups`             | ✅                     | **JSON column** — non-empty array of group objects (below).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `meta`               | –                      | If present, must be boolean `true` (planning/framework dispatches only).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `parent_dispatch_id` | –                      | String (or null/omitted) — only on a dispatch planned by a meta dispatch.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| `anti_bias_global`   | ≥ 2 fan-out groups: ✅ | String — dispatch-wide tension theme. **Required when ≥ 2 groups have ≥ 2 agents — appender-enforced (exit 2)** since the 2026-06-12 in-place amendment (constitution §9).                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| `working_folder`     | LIVE types: ✅         | Repo-relative path where dispatch outputs or receipts land. **Required when `dispatch_type` is `research`, `review`, `experiment`, or `other`; must never start with `vault/`.** For `other`, it does not authorize writes beyond the exact confirmed targets.                                                                                                                                                                                                                                                                                                                                        |
-| `invoked_by`         | –                      | Email of the invoking human. If omitted, the appender resolves it from `git config user.email` (fail-soft: warning + `null`). Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment.                                                                                                                                                                                                                                                                                                                                                |
-| `connections`        | –                      | **JSON column** — array of `{from, to, type, loop_cap?}` objects (below).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| `project_dir`        | –                      | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Never emitted to the ledger.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `created`            | stamped                | ISO timestamp **stamped by the appender** — supplying it is rejected (removed by v0.5.2).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Field                 | Required               | Meaning / constraint                                                                                                                                                                                                                                                                                                                                                              |
+| --------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dispatch_id`         | ✅                     | Unique id, `YYYY-MM-DD-<slug>` (§5). Dedup key — re-registering the same id is a no-op.                                                                                                                                                                                                                                                                                           |
+| `schema_version`      | ✅                     | New candidates and new dispatch rows must be **exactly** `"0.10.0"`. Existing `"0.9.0"` sheets and ledger rows remain validate-only historical inputs; they cannot be newly registered or rewritten.                                                                                                                                                                              |
+| `dispatch_type`       | ✅                     | `research \| code \| review \| plan \| suggestion \| experiment \| other`. `research`, `review`, `experiment`, and `other` are LIVE; the other three remain RESERVED. Experiment owns explicit `propose` and `run` contracts. `other` is the bounded execution fallback and requires the exact scope and independent downstream review described by its type owner.               |
+| `goal`                | ✅                     | Non-empty string — the human's objective, one or two sentences.                                                                                                                                                                                                                                                                                                                   |
+| `context`             | ✅                     | Non-empty string — 2–4 sentences of framing; the only channel subagents get (§5).                                                                                                                                                                                                                                                                                                 |
+| `max_loops`           | ✅                     | Integer 1..5 — whole-sequence re-run ceiling.                                                                                                                                                                                                                                                                                                                                     |
+| `final_approver`      | ✅                     | Exactly `parent`, or the pooled `agent_name` that appears once as the sole `auditor` in a singleton dedicated approval group. Arbitrary external names and working roles are rejected before confirmation.                                                                                                                                                                        |
+| `evidence_binding`    | ✅                     | **JSON column** binding the live sheet file and SHA-256 to exactly two tension-disposition handles and one confirmation handle. V0.10.0 also requires the exact passing preconfirmation-closure receipt and `confirmation.material_sha256`. Subject-group sheets require two independent PASS receipts; no-subject sheets require the canonical mechanical checker/reviewer pair. |
+| `groups`              | ✅                     | **JSON column** — non-empty array of group objects (below).                                                                                                                                                                                                                                                                                                                       |
+| `meta`                | –                      | If present, must be boolean `true` (planning/framework dispatches only).                                                                                                                                                                                                                                                                                                          |
+| `parent_dispatch_id`  | –                      | String (or null/omitted) — only on a dispatch planned by a meta dispatch.                                                                                                                                                                                                                                                                                                         |
+| `anti_bias_global`    | ≥ 2 fan-out groups: ✅ | String — dispatch-wide tension theme. **Required when ≥ 2 groups have ≥ 2 agents — appender-enforced (exit 2)** since the 2026-06-12 in-place amendment (constitution §9).                                                                                                                                                                                                        |
+| `working_folder`      | LIVE types: ✅         | Repo-relative path where outputs or dispatch receipts land. **Required when `dispatch_type` is `research`, `review`, `experiment`, or `other`; must never start with `vault/`.** It does not broaden confirmed write authority.                                                                                                                                                   |
+| `experiment_contract` | experiment: ✅         | Strict JSON object required exactly for `dispatch_type: experiment`. `propose` declares the criterion output. `run` binds a closed proposal, exact criterion, distinct outputs, and `parent_mechanical` adjudication with a rule locator. It is forbidden for other types.                                                                                                        |
+| `invoked_by`          | –                      | Email of the invoking human. If omitted, the appender resolves it from `git config user.email` (fail-soft: warning + `null`). Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment.                                                                                                                           |
+| `connections`         | –                      | **JSON column** — array of `{from, to, type, loop_cap?}` objects (below).                                                                                                                                                                                                                                                                                                         |
+| `project_dir`         | –                      | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Never emitted to the ledger.                                                                                                                                                                                                                                                                                  |
+| `created`             | stamped                | ISO timestamp **stamped by the appender** — supplying it is rejected (removed by v0.5.2).                                                                                                                                                                                                                                                                                         |
 
 ### `evidence_binding`
 
@@ -109,6 +120,64 @@ tension evidence before registration. `confirmation.sheet_sha256` attaches the
 confirmation handle to the current admitted machine bytes; it does not mean the
 human approved serialization details. The router may carry a prior human
 confirmation only with a deterministic material-equivalence receipt.
+
+The appender parses the exact confirmed sheet and recomputes the `check-tension`
+subject-group predicate: at least two agents in one group, with at least one
+`explorer`, `skeptic`, or `auditor`. Subject-group sheets keep the ordinary two
+independent PASS handles. A sheet with no subject group spawns no tension agents
+and must instead carry exactly this digest-bound set:
+
+```text
+check-tension:no-subject:checker:<sheet_sha256>
+check-tension:no-subject:reviewer:<sheet_sha256>
+```
+
+Those two records are mechanical gate slots, not independent judgments. The
+registrar rejects invented ordinary handles for a no-subject sheet, reserved
+no-subject handles for a subject-group sheet, predicate drift between the sheet
+and registered row, and any missing, duplicate, partial, or stale pair. Neither
+branch bypasses `confirmation.confirmed: true`.
+
+For experiment rows, the appender also parses the confirmed sheet and requires
+its `experiment_contract` to equal the registered contract exactly. The sheet
+digest alone cannot license a different phase, criterion, output path, or
+adjudication rule.
+
+### `experiment_contract`
+
+Propose shape:
+
+```json
+{
+  "phase": "propose",
+  "criterion_output_path": "CRITERION.md"
+}
+```
+
+Run shape:
+
+```json
+{
+  "phase": "run",
+  "proposal_dispatch_id": "2026-08-27-example-propose",
+  "criterion_ref": {
+    "path": "experiments/example/CRITERION.md",
+    "sha256": "<64 lowercase hex characters>",
+    "size": 1234
+  },
+  "experiment_output_path": "experiment.md",
+  "findings_output_path": "findings.md",
+  "adjudication": {
+    "mode": "parent_mechanical",
+    "rule_locator": "experiments/example/CRITERION.md#mechanical-verdict-rule"
+  }
+}
+```
+
+Output paths are relative to `working_folder`. Exact references use
+repository-relative paths, SHA-256, and positive byte size. Run readiness reads
+only the referenced proposal and close rows and blocks unless the proposal is a
+resolved v0.10.0 propose row with status `frozen` and an identical criterion ref.
 
 ### Each object in `groups`
 
@@ -188,45 +257,52 @@ Bash access to the file, even read-only commands.
 
 This ordering prevents deterministic registrar defects from creating a second
 human gate. Draft-revision authorization is not dispatch confirmation. Ask for
-confirmation once, only after readiness and both tension verdicts pass. Any
-later byte change requires readiness validation and new tension verdicts on the
+confirmation once, only after readiness and the applicable tension disposition
+passes. Any later byte change requires readiness validation and new
+digest-bound tension evidence on the
 current digest. It requires a new human confirmation only when the router's
 material-strategy projection changed or deterministic equivalence is unknown.
 
 ### After confirmation
 
-1. Assemble the dispatch record as JSON (the fields above) — normally read straight off
-   the confirmed dispatch sheet (goal, context, groups, connections, per-agent
-   angle/model/token_budget/initial_prompt). Add `evidence_binding` from the
-   current sheet, two current-digest tension PASS receipts, and a confirmation
-   record. A carried record must reference the router's deterministic
-   material-equivalence receipt in its handle or adjacent evidence.
-2. Write that JSON to a temp file (use the Write tool, so it is UTF-8 — do **not**
-   pipe JSON through PowerShell, which mangles it to UTF-16):
-   `<repo-root>/.register-dispatch.tmp.json`
-3. Run the appender (prefer the Bash tool):
+1. Preserve the confirmed sheet at its durable evidence path. Assemble the
+   registration record from it and add `evidence_binding`: the exact tension
+   disposition, confirmation handle/material digest, and passing closure ref.
+2. Generate one `domainspec.subagent-strategy-registration-envelope.v1` under
+   `telemetry/agents/runtime/subagents-strategy/`. It binds the private profile,
+   durable source-sheet exact ref, material confirmation, optional equivalence
+   receipt, closure admission receipt, executable projection digest, temporary
+   close path, and the complete registration record. The envelope is run-local;
+   the sheet, material projection, tension evidence, and closure stay durable.
+3. Run the shared-mechanics appender through the private adapter:
    ```sh
    node implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/register-dispatch/append-dispatch.cjs \
-     .register-dispatch.tmp.json
+     --consume telemetry/agents/runtime/subagents-strategy/<dispatch-id>.tmp.json
    ```
-   It creates `telemetry/agents/subagents-dispatch.yaml` (and its directories) with
-   a header if absent, validates the record against schema v0.8.0 (exit 2 with the
-   full error list on violation), appends one row, and is idempotent on
-   `dispatch_id`. Before appending it structurally self-checks the existing ledger
-   (line shapes, JSON values, unique ids) and refuses with exit 1 if the ledger is
-   corrupt — fix the corruption before registering anything else.
-   The repo root is resolved as `$CLAUDE_PROJECT_DIR`, falling back to a
-   `project_dir` key in the record, then to the current working directory — so
-   if the env var is unset, run the appender from the repo root (or set
-   `project_dir` in the JSON) and pass the temp file as a relative path.
-4. Delete the temp file.
+   It validates schema v0.10.0 and the envelope, delegates locking, structural
+   history checks, durable append, and exact-content idempotence to the public
+   registrar engine, appends the normalized private row, then consumes only the
+   registration envelope. A failed validation or append preserves the envelope.
+   The repo root is resolved from `$ARCANUM_PROJECT_DIR`, then
+   `$CODEX_PROJECT_DIR`, then `$CLAUDE_PROJECT_DIR`, falling back to a
+   `project_dir` key in the record and finally the current working directory.
+4. Verify the normalized ledger row and consumed-envelope state before any
+   native action is emitted. Write the later raw close row to the declared
+   `temporary_close` path, then run the profile engine in `close` mode:
+   ```sh
+   node arcanum/arcana/subagent-strategy/scripts/strategy-runtime.cjs close \
+     telemetry/agents/runtime/subagents-strategy/<dispatch-id>.close.tmp.json \
+     --profile implementation/domainspec/internal_tools/subagents-dispatch-hooks/skills/domainspec-subagents-strategy/runtime-profile.json
+   ```
+   A successful close appends exactly one paired row and consumes only that
+   run-local close record.
 
 ## Example record
 
 ```json
 {
   "dispatch_id": "2026-06-12-residue-precedent-sweep",
-  "schema_version": "0.8.0",
+  "schema_version": "0.10.0",
   "dispatch_type": "research",
   "goal": "Determine whether the residue-ledger pattern has prior art that constrains our naming.",
   "context": "The discovery names a residue ledger as novel. Before publishing we need to know if the pattern is already owned in the literature and under what name. Outputs feed the discovery's open-question section.",
@@ -310,7 +386,7 @@ resulting ledger row looks like:
 
 ```yaml
 - dispatch_id: "2026-06-12-residue-precedent-sweep"
-  schema_version: "0.8.0"
+  schema_version: "0.10.0"
   created: "2026-06-12T18:00:00.000Z"
   invoked_by: "victorboscaro@gmail.com"
   dispatch_type: "research"
@@ -371,18 +447,52 @@ instead of `dispatch_id`:
 }
 ```
 
-| Field              | Required | Meaning / constraint                                                                                                                                                                                                                                                                                                            |
-| ------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `close_of`         | ✅       | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. A close without a matching dispatch row is rejected; orphan close rows are not admitted.                                                                                                                                                         |
-| `exit_reason`      | ✅       | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: §5.                                                                                                                                                                                      |
-| `agents_spawned`   | ✅       | **JSON column** — object with numeric `total`, object `tree` (keyed by **agent** role — `explorer \| synthesizer \| skeptic \| writer \| auditor` — plus a `helpers` bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
-| `feedback_prompts` | –        | **JSON column** — array of strings: each `feedback`-edge ask, recorded **verbatim** in the close row (Principle 3 / §5 `feedback` semantics).                                                                                                                                                                                   |
-| `invoked_by`       | –        | As on the dispatch row: record value, else `git config user.email`, else `null` with a warning. Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment.                                                                                                       |
-| `project_dir`      | –        | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Accepted by the appender, never emitted to the ledger.                                                                                                                                                                                                      |
-| `closed`           | stamped  | ISO timestamp **stamped by the appender** — supplying it is rejected.                                                                                                                                                                                                                                                           |
+| Field                 | Required            | Meaning / constraint                                                                                                                                                                                                                                                                                                            |
+| --------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `close_of`            | ✅                  | The `dispatch_id` being closed. Dedup key — re-closing the same id is a no-op. A close without a matching dispatch row is rejected; orphan close rows are not admitted.                                                                                                                                                         |
+| `exit_reason`         | ✅                  | Closed vocabulary: `resolved \| loop_ceiling_reached \| dissent_irreconcilable \| user_abort \| error`. Precedence when several apply: §5.                                                                                                                                                                                      |
+| `agents_spawned`      | ✅                  | **JSON column** — object with numeric `total`, object `tree` (keyed by **agent** role — `explorer \| synthesizer \| skeptic \| writer \| auditor` — plus a `helpers` bucket), and **required** non-negative integer `loops_used` (constitution §5 lists loop iterations used as a component of `agents_spawned`, not optional). |
+| `feedback_prompts`    | –                   | **JSON column** — array of strings: each `feedback`-edge ask, recorded **verbatim** in the close row (Principle 3 / §5 `feedback` semantics).                                                                                                                                                                                   |
+| `experiment_closeout` | v0.9 experiment: ✅ | Phase-matched typed closeout. Resolved proposals use `frozen` or `invalid`; abnormal proposals use `not_frozen`. Resolved runs use `adjudicated` with a verdict and three exact refs; abnormal runs use `not_adjudicated` without a verdict.                                                                                    |
+| `invoked_by`          | –                   | As on the dispatch row: record value, else `git config user.email`, else `null` with a warning. Tooling-level extension, not in constitution §5 (owner-directed 2026-06-12), pending a one-line constitutional amendment.                                                                                                       |
+| `project_dir`         | –                   | Control key: repo-root fallback when `CLAUDE_PROJECT_DIR` is unset. Accepted by the appender, never emitted to the ledger.                                                                                                                                                                                                      |
+| `closed`              | stamped             | ISO timestamp **stamped by the appender** — supplying it is rejected.                                                                                                                                                                                                                                                           |
 
 A close record must **not** carry `dispatch_id`, a top-level `agents` array, or any
 other key not in this table — unknown keys are rejected (exit 2).
+
+### Experiment closeouts
+
+Resolved proposal:
+
+```json
+{
+  "experiment_closeout": {
+    "phase": "propose",
+    "status": "frozen",
+    "criterion_ref": { "path": "...", "sha256": "...", "size": 1234 }
+  }
+}
+```
+
+Resolved run:
+
+```json
+{
+  "experiment_closeout": {
+    "phase": "run",
+    "status": "adjudicated",
+    "verdict": "SURVIVED",
+    "criterion_ref": { "path": "...", "sha256": "...", "size": 1234 },
+    "experiment_ref": { "path": "...", "sha256": "...", "size": 2345 },
+    "findings_ref": { "path": "...", "sha256": "...", "size": 3456 }
+  }
+}
+```
+
+`SURVIVED`, `FALSIFIED`, and `INVALID` are scientific verdicts, not execution
+statuses. A non-resolved exit must use `not_frozen` or `not_adjudicated`; the
+appender rejects a fabricated outcome.
 
 ## Grandfathering (old rows)
 
@@ -391,6 +501,6 @@ Rows written under pre-v0.5.2 schemas (recognizable by the absence of
 are **valid historical artifacts and are never re-validated** against the new
 schema. The appender's pre-append self-check over the existing ledger is
 **structure-only** (line shapes, JSON values, unique ids) so old rows keep
-passing forever. Strict v0.8.0 validation applies **only to the incoming
+passing forever. Strict v0.9.0 validation applies **only to the incoming
 record**, before append. The ledger file's own header comment is likewise
 historical — written once at creation, never edited; it may lag the current schema.
