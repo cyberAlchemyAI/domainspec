@@ -216,3 +216,53 @@ test("compare-code-tag-drift passes when code and docs triples align", () => {
     rmSync(tempRoot, { recursive: true, force: true });
   }
 });
+
+test("compare-code-tag-drift reports documentation-ahead triples without blocking strict mode", () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), "domainspec-code-tag-test-"));
+  const outputPath = join(tempRoot, "code-tags.json");
+  const reportPath = join(tempRoot, "CODE-TAG-DRIFT-REPORT.md");
+  const featuresRoot = createTempFeaturesRoot(tempRoot);
+
+  try {
+    const extractResult = runExtract(outputPath);
+    assert.equal(extractResult.status, 0, extractResult.stderr || extractResult.stdout);
+    const extracted = JSON.parse(readFileSync(outputPath, "utf-8"));
+    const taggedEdge = extracted.tags.find((tag: { edges?: unknown[] }) => (tag.edges?.length ?? 0) > 0);
+    assert.ok(taggedEdge);
+    taggedEdge.edges = [];
+    writeFileSync(outputPath, JSON.stringify(extracted, null, 2) + "\n", "utf-8");
+
+    const driftResult = runTsxScript([
+      driftScript, "--input", outputPath, "--features-root", featuresRoot,
+      "--report", reportPath, "--mode", "strict",
+    ]);
+    assert.equal(driftResult.status, 0, driftResult.stderr || driftResult.stdout);
+    assert.match(readFileSync(reportPath, "utf-8"), /- Docs only: 1/);
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
+test("compare-code-tag-drift rejects implementation-ahead triples in strict mode", () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), "domainspec-code-tag-test-"));
+  const outputPath = join(tempRoot, "code-tags.json");
+  const reportPath = join(tempRoot, "CODE-TAG-DRIFT-REPORT.md");
+  const featuresRoot = createTempFeaturesRoot(tempRoot);
+
+  try {
+    const extractResult = runExtract(outputPath);
+    assert.equal(extractResult.status, 0, extractResult.stderr || extractResult.stdout);
+    const specPath = join(featuresRoot, "payments", "SPEC.md");
+    const spec = readFileSync(specPath, "utf-8");
+    writeFileSync(specPath, spec.replace("| payment.ProcessPayment | produces | payment.PaymentInitiated |\n", ""), "utf-8");
+
+    const driftResult = runTsxScript([
+      driftScript, "--input", outputPath, "--features-root", featuresRoot,
+      "--report", reportPath, "--mode", "strict",
+    ]);
+    assert.equal(driftResult.status, 1, driftResult.stderr || driftResult.stdout);
+    assert.match(readFileSync(reportPath, "utf-8"), /- Code only: 1/);
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
+});

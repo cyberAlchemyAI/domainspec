@@ -138,8 +138,10 @@ console.log(
   `compare-code-tag-drift: docsTriples=${docsTriples.length} codeTriples=${codeTriples.length} docsOnly=${docsOnly.length} codeOnly=${codeOnly.length} directionMismatch=${directionMismatch.length} typeMismatch=${typeMismatch.length} report=${toRelative(reportPath)}`,
 );
 
+// Specifications may intentionally lead implementation. Strict mode blocks
+// implementation that is absent, reversed, or typed differently in the
+// specification, while preserving docs-only relationships as visible backlog.
 const blocking =
-  docsOnly.length > 0 ||
   codeOnly.length > 0 ||
   directionMismatch.length > 0 ||
   typeMismatch.length > 0;
